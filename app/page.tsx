@@ -1,9 +1,5 @@
+import { redirect } from "next/navigation";
+
 export default function Home() {
-  return (
-    <iframe
-      src="/kynect-landing.html"
-      style={{ border: "none" }}
-      className="w-screen h-screen"
-    />
-  );
+  redirect("/kynect-landing-13.html");
 }
