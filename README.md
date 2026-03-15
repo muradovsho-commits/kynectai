@@ -1,17 +1,39 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Run locally (after cloning)
+
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+2. **Set up environment variables**
+   ```bash
+   cp .env.example .env.local
+   ```
+   Then add your Convex URL (and optionally Apollo API key) to `.env.local`.
+
+3. **Set up Convex** (required for auth, dashboard, contact finder)
+   ```bash
+   npx convex dev
+   ```
+   - If you don’t have a Convex project yet, the CLI will create one and print a URL.
+   - Paste that URL into `.env.local` as `NEXT_PUBLIC_CONVEX_URL=https://....convex.cloud`.
+
+4. **Start the dev server**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000). If Convex isn’t configured yet, the app will show setup instructions.
+
+**Optional:** Add `APOLLO_API_KEY` to `.env.local` for the Contact Finder search (get a key at [apollo.io](https://app.apollo.io)).
+
 ## Getting Started
 
-First, run the development server:
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
