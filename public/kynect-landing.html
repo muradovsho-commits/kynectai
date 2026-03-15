@@ -8,13 +8,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-::root{
+:root{
   --black:#0a0a0a;--white:#fff;
   --g50:#f8f8f7;--g100:#f0efed;--g200:#e4e2de;--g400:#9e9b96;--g600:#6b6860;
   --green:#16a34a;--red:#dc2626;--amber:#f59e0b;--blue:#3b82f6;
 }
 html{scroll-behavior:smooth;}
-body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--black);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--black);overflow-x:hidden;-webkit-font-smoothing:antialiased;transition:opacity 0.22s ease,transform 0.22s ease;}
+.page-exit{opacity:0;transform:translateY(8px);}
 
 /* ── NAV ── */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:62px;transition:all 0.3s;}
@@ -78,544 +79,785 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
 .demo-compose{border-top:1px solid var(--g200);padding:12px 14px;}
 .compose-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
 .compose-title{font-size:11px;font-weight:700;}
-.compose-pill{font-size:10px;color:var(--g400);padding:3px 8px;border-radius:100px;background:var(--g50);}
-.compose-body{font-size:11px;color:var(--g600);line-height:1.6;}
+.compose-badge{font-size:9px;font-weight:700;background:var(--g100);color:var(--g600);padding:2px 6px;border-radius:4px;}
+.compose-msg{background:var(--g50);border:1px solid var(--g200);border-radius:8px;padding:9px 12px;font-size:10px;color:var(--g600);line-height:1.6;min-height:48px;}
 
-/* ── SOCIAL PROOF STRIP ── */
-.strip{background:var(--g50);border-top:1px solid var(--g200);border-bottom:1px solid var(--g200);padding:18px 48px;font-size:12px;color:var(--g400);display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;}
-.strip span{font-weight:600;color:var(--g600);}
+/* ── PROBLEMS ── */
+.problems{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--g200);border-bottom:1px solid var(--g200);}
+.problem-item{padding:40px 36px;text-align:center;border-right:1px solid var(--g200);}
+.problem-item:last-child{border-right:none;}
+.problem-icon{width:28px;height:28px;margin:0 auto 14px;opacity:0.4;}
+.problem-icon svg{width:100%;height:100%;}
+.problem-title{font-size:15px;font-weight:600;margin-bottom:8px;}
+.problem-desc{font-size:13px;color:var(--g600);line-height:1.55;}
 
-/* ── LAYOUT SECTIONS ── */
-.section{padding:80px 48px;max-width:1120px;margin:0 auto;}
-.section-header{margin-bottom:40px;}
-.section-kicker{font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:1.4px;margin-bottom:10px;}
-.section-title{font-family:'Instrument Serif',serif;font-size:clamp(32px,4vw,46px);line-height:1.1;letter-spacing:-1px;margin-bottom:10px;}
+/* ── FEATURES ── */
+.features-section{padding:96px 48px;}
+.features-header{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;margin-bottom:64px;}
+.section-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--g400);margin-bottom:14px;}
+.section-title{font-family:'Instrument Serif',serif;font-size:clamp(34px,3.8vw,50px);line-height:1.1;letter-spacing:-1px;max-width:600px;}
 .section-title em{font-style:italic;}
-.section-sub{font-size:15px;color:var(--g600);max-width:460px;line-height:1.6;}
+.section-sub{font-size:16px;color:var(--g600);margin-top:14px;max-width:460px;line-height:1.6;}
+.network-box{background:var(--g50);border:1px solid var(--g200);border-radius:20px;overflow:hidden;height:280px;position:relative;}
+.network-box canvas{width:100%;height:100%;display:block;}
+.network-label{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--g400);}
 
-/* problems grid */
-.problems-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:20px;}
-.problem-card{border:1px solid var(--g200);border-radius:14px;padding:22px 20px;background:var(--white);}
-.problem-emoji{font-size:22px;margin-bottom:8px;}
-.problem-title{font-size:14px;font-weight:600;margin-bottom:6px;}
-.problem-copy{font-size:13px;color:var(--g600);line-height:1.55;}
+.features-bento{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;}
+.f-card{background:var(--g50);border:1px solid var(--g200);border-radius:20px;padding:32px;overflow:hidden;position:relative;transition:transform 0.2s,box-shadow 0.2s;}
+.f-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.07);}
+.f-num{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--g400);margin-bottom:12px;}
+.f-title{font-family:'Instrument Serif',serif;font-size:26px;letter-spacing:-0.5px;line-height:1.2;margin-bottom:10px;}
+.f-title em{font-style:italic;}
+.f-desc{font-size:13px;color:var(--g600);line-height:1.6;max-width:340px;}
+.f-card-1{grid-column:span 7;min-height:380px;}
+.f-card-2{grid-column:span 5;min-height:380px;}
+.f-card-3{grid-column:span 5;min-height:360px;}
+.f-card-4{grid-column:span 7;min-height:360px;}
+.f-card-5{grid-column:span 4;min-height:340px;}
+.f-card-6{grid-column:span 4;min-height:340px;}
+.f-card-7{grid-column:span 4;min-height:340px;}
 
-/* dual feature rows */
-.feature-row{display:grid;grid-template-columns:1.1fr 1.1fr;gap:32px;margin-top:32px;align-items:flex-start;}
-.feature-card{border:1px solid var(--g200);border-radius:16px;padding:22px 20px;background:var(--white);}
-.feature-label{font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:1.4px;margin-bottom:8px;}
-.feature-head{font-size:16px;font-weight:700;margin-bottom:8px;}
-.feature-text{font-size:13px;color:var(--g600);line-height:1.6;margin-bottom:14px;}
-.feature-pill-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
-.f-pill{font-size:11px;font-weight:600;padding:4px 9px;border-radius:100px;background:var(--g50);color:var(--g600);}
+/* contact rows */
+.contact-anim{margin-top:24px;}
+.contact-row{display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--g200);border-radius:12px;padding:16px 20px;margin-bottom:10px;opacity:0;transform:translateX(-10px);transition:opacity 0.4s ease,transform 0.4s ease;}
+.contact-row.show{opacity:1;transform:translateX(0);}
+.cr-name{font-weight:700;font-size:15px;margin-bottom:3px;}
+.cr-role{color:var(--g400);font-size:12px;}
+.cr-tags{display:flex;gap:7px;flex-shrink:0;}
+.mbadge{font-size:11px;font-weight:600;padding:4px 12px;border-radius:100px;}
+.mb-li{background:#dbeafe;color:#1e40af;}
+.mb-em{background:#dcfce7;color:#15803d;}
+.mb-v{background:#fef9c3;color:#854d0e;}
 
-.mini-search{background:var(--g50);border-radius:10px;border:1px solid var(--g200);padding:10px 12px;font-size:11px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.mini-tagline{font-size:11px;color:var(--g400);margin-bottom:4px;}
-.mini-list{font-size:11px;color:var(--g600);line-height:1.6;}
+/* intel */
+.intel-profile{background:var(--white);border:1px solid var(--g200);border-radius:12px;padding:12px 14px;margin-top:20px;margin-bottom:8px;}
+.intel-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.intel-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;flex-shrink:0;}
+.intel-name{font-size:12px;font-weight:600;}
+.intel-role{font-size:10px;color:var(--g400);}
+.intel-summary{font-size:10px;color:var(--g600);line-height:1.6;border-top:1px solid var(--g100);padding-top:8px;}
+.intel-starters{margin-top:8px;}
+.is-label{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--g400);margin-bottom:5px;}
+.intel-starter{background:var(--g50);border:1px solid var(--g200);border-radius:5px;padding:5px 8px;font-size:9px;color:var(--g600);margin-bottom:4px;opacity:0;transform:translateY(5px);transition:opacity 0.3s ease,transform 0.3s ease;}
+.intel-starter.show{opacity:1;transform:translateY(0);}
 
-.steps-list{margin-top:10px;}
-.step{display:flex;gap:10px;margin-bottom:10px;font-size:12px;color:var(--g600);}
-.step-badge{width:18px;height:18px;border-radius:999px;background:var(--black);color:var(--white);font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:600;margin-top:1px;}
-.step-title{font-weight:600;color:var(--black);}
+/* outreach */
+.angle-tabs{display:flex;gap:5px;flex-wrap:wrap;margin-top:20px;margin-bottom:10px;}
+.angle-tab{font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;border:1px solid var(--g200);background:var(--white);color:var(--g600);cursor:pointer;transition:all 0.15s;}
+.angle-tab.active{background:var(--black);color:var(--white);border-color:var(--black);}
+.message-box{background:var(--white);border:1px solid var(--g200);border-radius:10px;padding:11px 13px;font-size:10px;color:var(--g600);line-height:1.65;min-height:88px;}
+.msg-cursor{display:inline-block;width:2px;height:11px;background:var(--black);animation:blink 1s step-end infinite;vertical-align:middle;margin-left:1px;}
 
-/* job / outcomes row */
-.stats-row{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;margin-top:32px;}
-.stats-card{border:1px solid var(--g200);border-radius:16px;padding:22px 20px;background:var(--white);}
-.jobs-list{margin-top:10px;}
-.job{border:1px solid var(--g200);border-radius:10px;padding:10px 12px;font-size:11px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;background:var(--g50);}
-.job-main{display:flex;flex-direction:column;gap:2px;}
-.job-role{font-weight:600;}
-.job-meta{color:var(--g400);}
-.job-pill{font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;background:#fef3c7;color:#92400e;}
-.metric-row{display:flex;align-items:center;justify-content:space-between;font-size:12px;margin-bottom:8px;}
-.metric-label{color:var(--g600);}
-.metric-value{font-weight:700;}
-.metric-bar-bg{flex:1;height:6px;background:var(--g100);border-radius:3px;margin-left:10px;overflow:hidden;}
-.metric-bar{height:100%;border-radius:3px;background:var(--black);}
+/* rate bars */
+.rate-anim{margin-top:20px;}
+.rate-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.rate-label{font-size:10px;color:var(--g600);width:108px;flex-shrink:0;}
+.rate-bar-bg{flex:1;height:7px;background:var(--g200);border-radius:4px;overflow:hidden;}
+.rate-bar{height:100%;border-radius:4px;background:var(--black);width:0%;transition:width 1.2s cubic-bezier(0.4,0,0.2,1);}
+.rate-pct{font-size:10px;font-weight:700;width:30px;text-align:right;}
+.rate-live{display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:600;color:#15803d;margin-top:8px;}
+.rate-live-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;}
 
-/* pricing */
-.pricing-section{background:var(--g50);padding:80px 48px;margin-top:60px;border-top:1px solid var(--g200);border-bottom:1px solid var(--g200);}
-.pricing-inner{max-width:920px;margin:0 auto;display:grid;grid-template-columns:1.1fr 1fr;gap:32px;align-items:flex-start;}
-.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.plan{border-radius:16px;border:1.5px solid var(--g200);padding:22px 20px;background:var(--white);}
-.plan.pro{border-color:var(--black);position:relative;}
-.plan-label{font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px;}
-.plan-name{font-size:15px;font-weight:700;margin-bottom:4px;}
-.plan-price{font-size:32px;font-weight:800;letter-spacing:-1px;margin-bottom:2px;}
-.plan-price span{font-size:13px;font-weight:400;color:var(--g400);}
-.plan-copy{font-size:12px;color:var(--g600);margin-bottom:12px;}
-.plan-feature{font-size:12px;color:var(--g600);padding:4px 0;display:flex;gap:8px;}
-.plan-feature::before{content:'✓';font-size:11px;font-weight:700;color:var(--black);}
-.plan-cta{margin-top:16px;display:block;text-align:center;padding:10px;border-radius:9px;font-size:13px;font-weight:600;text-decoration:none;transition:all 0.15s;}
-.plan-cta.outline{border:1.5px solid var(--g200);color:var(--black);background:var(--white);}
-.plan-cta.outline:hover{border-color:var(--black);transform:translateY(-1px);}
-.plan-cta.solid{background:var(--black);color:var(--white);}
-.plan-cta.solid:hover{opacity:0.85;transform:translateY(-1px);}
-.badge{position:absolute;top:-10px;right:16px;background:var(--black);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;}
+/* pipeline */
+.pipeline-anim{margin-top:18px;display:flex;gap:7px;}
+.pipe-col{flex:1;}
+.pipe-col-title{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--g400);margin-bottom:5px;display:flex;align-items:center;gap:4px;}
+.pipe-dot{width:5px;height:5px;border-radius:50%;}
+.pipe-card{background:var(--white);border:1px solid var(--g200);border-radius:7px;padding:6px 8px;font-size:9px;font-weight:600;margin-bottom:4px;cursor:grab;transition:box-shadow 0.15s,transform 0.15s;}
+.pipe-card:hover{box-shadow:0 3px 10px rgba(0,0,0,0.09);transform:scale(1.02);}
+.pipe-card-firm{font-size:8px;color:var(--g400);font-weight:400;margin-top:1px;}
 
-/* FAQ */
-.faq-section{padding:80px 48px;max-width:920px;margin:0 auto;}
-.faq-grid{display:grid;grid-template-columns:1.1fr 1.4fr;gap:40px;}
-.faq-list{margin-top:8px;}
+/* jobs */
+.jobs-anim{margin-top:18px;}
+.job-row{background:var(--white);border:1px solid var(--g200);border-radius:9px;padding:9px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;opacity:0;transform:translateY(7px);transition:opacity 0.4s ease,transform 0.4s ease;}
+.job-row.show{opacity:1;transform:translateY(0);}
+.job-title{font-size:11px;font-weight:600;}
+.job-firm{font-size:9px;color:var(--g400);margin-top:1px;}
+.job-deadline{font-size:9px;font-weight:700;color:var(--red);background:#fef2f2;padding:2px 7px;border-radius:4px;}
+
+/* coach */
+.coach-anim{margin-top:16px;}
+.coach-label{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--g400);margin-bottom:4px;}
+.coach-msg{border-radius:9px;padding:9px 11px;font-size:10px;line-height:1.6;margin-bottom:7px;}
+.coach-msg.them{background:var(--g100);color:var(--g600);border-bottom-left-radius:2px;}
+.coach-msg.kynect{background:var(--black);color:rgba(255,255,255,0.85);border-bottom-right-radius:2px;}
+
+/* ── SOCIAL PROOF ── */
+.proof{background:var(--g50);padding:96px 0;overflow:hidden;}
+.proof-inner{padding:0 48px;margin-bottom:52px;}
+.logo-ticker-wrap{overflow:hidden;margin-bottom:44px;position:relative;}
+.logo-ticker-wrap::before,.logo-ticker-wrap::after{content:'';position:absolute;top:0;bottom:0;width:120px;z-index:2;}
+.logo-ticker-wrap::before{left:0;background:linear-gradient(to right,var(--g50),transparent);}
+.logo-ticker-wrap::after{right:0;background:linear-gradient(to left,var(--g50),transparent);}
+.logo-ticker{display:flex;gap:60px;width:max-content;animation:ticker 28s linear infinite;}
+.logo-ticker:hover{animation-play-state:paused;}
+.logo-item{font-family:'Instrument Serif',serif;font-size:18px;color:var(--black);opacity:0.32;white-space:nowrap;letter-spacing:-0.3px;}
+.t-ticker-wrap{overflow:hidden;position:relative;}
+.t-ticker-wrap::before,.t-ticker-wrap::after{content:'';position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none;}
+.t-ticker-wrap::before{left:0;background:linear-gradient(to right,var(--g50),transparent);}
+.t-ticker-wrap::after{right:0;background:linear-gradient(to left,var(--g50),transparent);}
+.t-ticker{display:flex;gap:16px;width:max-content;animation:ticker 42s linear infinite;}
+.t-ticker:hover{animation-play-state:paused;}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.t-card{width:330px;flex-shrink:0;background:var(--white);border:1px solid var(--g200);border-radius:14px;padding:24px;}
+.t-stars{font-size:12px;color:var(--amber);margin-bottom:12px;letter-spacing:2px;}
+.t-text{font-size:13px;color:var(--g600);line-height:1.7;margin-bottom:16px;}
+.t-author{font-size:12px;font-weight:700;}
+.t-school{font-size:11px;color:var(--g400);margin-top:2px;}
+.t-firm{display:inline-block;margin-top:8px;font-size:9px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--g400);background:var(--g100);padding:2px 7px;border-radius:4px;}
+
+/* ── JOBS STRIP ── */
+.jobs-strip{border-top:1px solid var(--g200);border-bottom:1px solid var(--g200);}
+.jobs-strip-inner{max-width:1200px;margin:0 auto;padding:28px 48px;display:flex;align-items:center;gap:36px;}
+.jobs-strip-label{font-size:13px;font-weight:600;flex-shrink:0;max-width:160px;line-height:1.4;}
+.jobs-marquee{flex:1;overflow:hidden;position:relative;}
+.jobs-marquee::before,.jobs-marquee::after{content:'';position:absolute;top:0;bottom:0;width:60px;z-index:2;}
+.jobs-marquee::before{left:0;background:linear-gradient(to right,var(--white),transparent);}
+.jobs-marquee::after{right:0;background:linear-gradient(to left,var(--white),transparent);}
+.jobs-inner{display:flex;gap:8px;width:max-content;animation:ticker 22s linear infinite;}
+.jobs-inner:hover{animation-play-state:paused;}
+.j-pill{background:var(--g50);border:1px solid var(--g200);border-radius:8px;padding:7px 12px;white-space:nowrap;cursor:pointer;transition:all 0.15s;}
+.j-pill:hover{border-color:var(--black);}
+.j-role{font-size:11px;font-weight:600;}
+.j-loc{font-size:9px;color:var(--g400);margin-top:1px;}
+.j-tag{font-size:8px;font-weight:700;color:var(--green);margin-top:3px;display:block;}
+
+/* ── PRICING ── */
+.pricing-section{padding:96px 48px;}
+.pricing-callout{display:inline-flex;align-items:center;gap:8px;background:#fef2f2;border:1px solid #fecaca;border-radius:100px;padding:7px 18px;font-size:12px;color:var(--red);font-weight:600;margin-bottom:36px;}
+
+/* Comparison */
+.comp-intro{display:grid;grid-template-columns:2fr 1fr 1fr 1.15fr;margin-bottom:0;}
+.comp-intro>div{padding-bottom:10px;}
+.comp-intro .ci-label{font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--g400);text-align:center;}
+.comp-intro .ci-price{font-size:13px;font-weight:700;text-align:center;margin-top:3px;}
+.ci-kynect-price{font-size:20px;font-weight:800;letter-spacing:-1px;}
+.comp-table{background:var(--g50);border:1px solid var(--g200);border-radius:18px;overflow:hidden;}
+.comp-table-header{display:grid;grid-template-columns:2fr 1fr 1fr 1.15fr;}
+.comp-table-header>div{padding:13px 20px;font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;border-bottom:1px solid var(--g200);}
+.cth-feat{color:var(--g400);}
+.cth-li,.cth-ap{color:var(--g400);text-align:center;}
+.cth-ky{background:var(--black);color:var(--white);text-align:center;}
+.comp-row{display:grid;grid-template-columns:2fr 1fr 1fr 1.15fr;border-bottom:1px solid var(--g200);}
+.comp-row:last-child{border-bottom:none;}
+.comp-row>div{padding:11px 20px;font-size:12px;display:flex;align-items:center;}
+.cr-feat{font-weight:500;}
+.cr-li,.cr-ap{justify-content:center;}
+.cr-ky{justify-content:center;background:rgba(0,0,0,0.025);font-weight:700;}
+.c-yes{color:var(--green);}
+.c-no{color:var(--red);}
+.comp-total{display:grid;grid-template-columns:2fr 1fr 1fr 1.15fr;background:var(--g100);}
+.comp-total>div{padding:13px 20px;font-size:13px;font-weight:700;display:flex;align-items:center;}
+.ct-ky{justify-content:center;background:rgba(0,0,0,0.04);}
+.ct-li,.ct-ap{justify-content:center;color:var(--red);}
+.comp-note{text-align:center;font-size:12px;color:var(--g400);padding:14px;border-top:1px solid var(--g200);}
+.comp-bottom-labels{display:grid;grid-template-columns:2fr 1fr 1fr 1.15fr;margin-top:6px;}
+.comp-bottom-labels>div{text-align:center;padding:8px 12px;font-size:11px;color:var(--g400);line-height:1.4;}
+.cbl-ky{display:flex;justify-content:center;}
+.cbl-ky-pill{background:var(--black);color:var(--white);font-size:11px;font-weight:700;padding:5px 14px;border-radius:8px;}
+
+.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:680px;margin:48px auto 0;}
+.pricing-card{border:1.5px solid var(--g200);border-radius:16px;padding:32px;}
+.pricing-card.featured{border-color:var(--black);position:relative;}
+.pricing-badge{position:absolute;top:-11px;right:22px;background:var(--black);color:var(--white);font-size:10px;font-weight:700;padding:3px 12px;border-radius:100px;}
+.pricing-tier{font-size:13px;font-weight:700;margin-bottom:6px;}
+.pricing-price{font-size:44px;font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:4px;}
+.pricing-price span{font-size:16px;font-weight:400;color:var(--g400);letter-spacing:0;}
+.pricing-label{font-size:12px;color:var(--g600);margin-bottom:18px;}
+.pricing-divider{height:1px;background:var(--g200);margin:18px 0;}
+.pricing-feature{font-size:13px;color:var(--g600);padding:5px 0;display:flex;gap:8px;}
+.pricing-feature::before{content:'✓';font-weight:700;color:var(--black);flex-shrink:0;}
+.pricing-btn{display:block;text-align:center;padding:12px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;margin-top:22px;transition:all 0.15s;}
+.pricing-btn:hover{opacity:0.8;transform:translateY(-1px);}
+.pricing-btn-outline{border:1.5px solid var(--g200);color:var(--black);}
+.pricing-btn-outline:hover{border-color:var(--black);}
+.pricing-btn-solid{background:var(--black);color:var(--white);}
+
+/* ── FAQ ── */
+.faq-section{background:var(--g50);padding:96px 48px;}
+.faq-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:80px;align-items:start;}
 .faq-item{border-bottom:1px solid var(--g200);}
-.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px 0;font-size:14px;font-weight:500;background:none;border:none;cursor:pointer;text-align:left;color:var(--black);}
-.faq-q .icon{font-size:16px;color:var(--g400);transition:transform 0.2s;flex-shrink:0;}
-.faq-a{font-size:13px;color:var(--g600);line-height:1.7;padding-bottom:16px;display:none;}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;padding:18px 0;font-size:14px;font-weight:500;background:none;border:none;cursor:pointer;text-align:left;color:var(--black);}
+.faq-q .icon{font-size:18px;color:var(--g400);transition:transform 0.22s;flex-shrink:0;}
+.faq-a{font-size:13px;color:var(--g600);line-height:1.75;padding-bottom:18px;display:none;}
 .faq-item.open .faq-a{display:block;}
 .faq-item.open .icon{transform:rotate(45deg);}
 
-/* CTA band */
-.cta-band{margin:0 48px 60px;background:var(--black);border-radius:20px;padding:38px 40px;display:flex;align-items:center;justify-content:space-between;gap:26px;color:#f9fafb;}
-.cta-text{font-family:'Instrument Serif',serif;font-size:clamp(26px,3vw,34px);letter-spacing:-1px;line-height:1.2;max-width:520px;}
-.cta-text em{font-style:italic;}
-.cta-sub{font-size:13px;color:#d1d5db;margin-top:6px;}
-.cta-actions{display:flex;gap:10px;flex-wrap:wrap;}
-.cta-btn-primary{background:#f9fafb;color:var(--black);padding:11px 20px;border-radius:999px;font-size:13px;font-weight:600;text-decoration:none;transition:opacity 0.15s,transform 0.15s;}
-.cta-btn-primary:hover{opacity:0.9;transform:translateY(-1px);}
-.cta-btn-ghost{background:transparent;color:#e5e7eb;padding:11px 16px;border-radius:999px;font-size:13px;font-weight:500;text-decoration:none;border:1px solid rgba(148,163,184,0.6);transition:background 0.15s,transform 0.15s;}
-.cta-btn-ghost:hover{background:rgba(15,23,42,0.6);transform:translateY(-1px);}
+/* ── CTA BAND ── */
+.cta-band{margin:0 48px 48px;background:var(--black);border-radius:20px;padding:68px 72px;display:flex;align-items:center;justify-content:space-between;gap:40px;position:relative;overflow:hidden;}
+.cta-band::before{content:'';position:absolute;top:-80px;right:120px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.04),transparent 70%);}
+.cta-band-title{font-family:'Instrument Serif',serif;font-size:clamp(26px,3vw,38px);line-height:1.15;letter-spacing:-1px;max-width:460px;color:var(--white);z-index:1;}
+.cta-band-title em{font-style:italic;}
+.cta-band-right{z-index:1;display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
+.cta-btn-main{background:var(--white);color:var(--black);padding:13px 28px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;transition:opacity 0.15s,transform 0.15s;}
+.cta-btn-main:hover{opacity:0.9;transform:translateY(-1px);}
+.cta-sub-note{font-size:11px;color:rgba(255,255,255,0.35);}
 
-/* FOOTER */
-footer{padding:40px 48px 32px;border-top:1px solid var(--g200);font-size:12px;color:var(--g400);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
-.footer-left{display:flex;align-items:center;gap:10px;}
-.footer-logo{font-family:'Instrument Serif',serif;font-size:28px;letter-spacing:-1px;color:var(--black);}
+/* ── FOOTER ── */
+footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
+.footer-logo{font-family:'Instrument Serif',serif;font-size:52px;letter-spacing:-2px;line-height:1;margin-bottom:36px;}
 .footer-logo em{font-style:italic;}
-.footer-links{display:flex;gap:14px;}
-.footer-links a{text-decoration:none;color:var(--g400);transition:color 0.15s;}
-.footer-links a:hover{color:var(--black);}
+.footer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-bottom:40px;}
+.footer-col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--g400);margin-bottom:14px;}
+.footer-col a{display:block;font-size:13px;color:var(--g600);text-decoration:none;margin-bottom:9px;transition:color 0.15s;}
+.footer-col a:hover{color:var(--black);}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--g200);}
+.footer-copy{font-size:12px;color:var(--g400);}
 
-/* ANIMATIONS */
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulseGreen{0%,100%{opacity:1}50%{opacity:0.4}}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.55s ease,transform 0.55s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-d1{transition-delay:0.1s;}
+.reveal-d2{transition-delay:0.2s;}
 
-/* RESPONSIVE */
+/* ── RESPONSIVE ── */
 @media(max-width:960px){
-  nav,nav.scrolled{padding:0 20px;}
-  .hero{grid-template-columns:1fr;gap:40px;padding:96px 20px 56px;}
-  .hero-right{order:-1;}
-  .section,.pricing-section,.faq-section{padding:64px 20px;}
-  .pricing-inner{grid-template-columns:1fr;}
-  .feature-row{grid-template-columns:1fr;}
-  .stats-row{grid-template-columns:1fr;}
-  .faq-grid{grid-template-columns:1fr;}
-  .cta-band{margin:0 20px 48px;padding:28px 24px;flex-direction:column;align-items:flex-start;}
-  footer{padding:32px 20px;}
-}
-@media(max-width:640px){
+  nav{padding:0 20px;}
   .nav-links{display:none;}
-  .hero{padding-top:86px;}
-  .hero-sub{font-size:15px;}
-  .section{padding-top:52px;padding-bottom:52px;}
+  .hero{grid-template-columns:1fr;padding:88px 20px 60px;gap:36px;}
+  .hero-right{order:-1;}
+  .problems{grid-template-columns:1fr;}
+  .problem-item{border-right:none;border-bottom:1px solid var(--g200);}
+  .features-section{padding:64px 20px;}
+  .features-header{grid-template-columns:1fr;}
+  .features-bento{grid-template-columns:1fr 1fr;}
+  .f-card-1,.f-card-2,.f-card-3,.f-card-4,.f-card-5,.f-card-6,.f-card-7{grid-column:span 2;}
+  .pricing-section{padding:64px 20px;}
+  .pricing-grid{grid-template-columns:1fr;max-width:420px;}
+  .faq-section{padding:64px 20px;}
+  .faq-grid{grid-template-columns:1fr;gap:32px;}
+  .cta-band{margin:0 20px 32px;padding:48px 36px;flex-direction:column;align-items:flex-start;}
+  .cta-band-right{align-items:flex-start;}
+  footer{padding:48px 20px 28px;}
+  .footer-grid{grid-template-columns:1fr;}
+  .jobs-strip-inner{flex-direction:column;padding:20px;}
 }
 </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav id="nav">
-  <a href="/" class="nav-logo">Kynect<em>.</em></a>
+  <a href="#" class="nav-logo">Kynect<em>.</em></a>
   <div class="nav-links">
-    <a href="#how-it-works">How it works</a>
+    <a href="#features">Features</a>
     <a href="#pricing">Pricing</a>
+    <a href="#proof">Testimonials</a>
     <a href="#faq">FAQ</a>
   </div>
   <div class="nav-actions">
     <a href="/signin" class="nav-signin">Sign in</a>
-    <a href="/onboarding" class="nav-cta">Get started</a>
+    <a href="/signup" class="nav-cta">Get Started</a>
   </div>
 </nav>
 
-<main>
-  <section class="hero">
+<!-- HERO -->
+<section style="min-height:100vh;display:flex;align-items:center;background:var(--white);">
+  <div class="hero">
     <div>
-      <div class="hero-badge">Built for finance recruiting</div>
-      <h1>Kynect uses AI to get you <em>more replies</em>.</h1>
-      <p class="hero-sub">Search verified contacts, write personalized outreach, and track every conversation — so you spend time networking, not copy‑pasting.</p>
-      <div class="hero-typing-row">
-        <strong>Example search:</strong> <span id="typing"></span><span class="demo-cursor"></span>
-      </div>
+      <div class="hero-badge">AI-powered · Built for finance recruiting</div>
+      <h1>Stop Guessing.<br><em>Start Landing</em> Interviews.</h1>
+      <p class="hero-sub">Kynect finds verified contacts at your target firms, writes personalized outreach, and shows you exactly which messages get replies — all in one place.</p>
+      <div class="hero-typing-row">Targeting: <strong id="hero-type"></strong><span class="demo-cursor"></span></div>
       <div class="hero-btns">
-        <a href="/onboarding" class="btn-primary">Start free search</a>
-        <a href="#pricing" class="btn-secondary">Upgrade to Pro — $12/mo</a>
+        <a href="/signup" class="btn-primary">Start for Free</a>
+        <a href="#features" class="btn-secondary">See How It Works</a>
       </div>
-      <div class="hero-reassure">No credit card required · Designed for IB, PE, HF, and consulting recruiting</div>
+      <p class="hero-reassure">Takes 30 seconds. No credit card required.</p>
       <div class="hero-proof">
         <div class="proof-avatars">
-          <div class="proof-av" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">EC</div>
-          <div class="proof-av" style="background:linear-gradient(135deg,#f97316,#facc15)">SP</div>
-          <div class="proof-av" style="background:linear-gradient(135deg,#22c55e,#16a34a)">JL</div>
+          <div class="proof-av" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">S</div>
+          <div class="proof-av" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)">J</div>
+          <div class="proof-av" style="background:linear-gradient(135deg,#22c55e,#16a34a)">M</div>
+          <div class="proof-av" style="background:linear-gradient(135deg,#ec4899,#f43f5e)">A</div>
         </div>
-        <div class="hero-proof-text">
-          Early users from Stern, Wharton, Columbia, and more.
-        </div>
+        <span class="hero-proof-text">Used by students recruiting at Goldman, JPMorgan, Blackstone & more</span>
       </div>
     </div>
-
     <div class="hero-right">
       <div class="demo-win">
         <div class="demo-bar">
-          <div class="demo-dot" style="background:#ef4444"></div>
-          <div class="demo-dot" style="background:#fbbf24"></div>
-          <div class="demo-dot" style="background:#22c55e"></div>
-          <span class="demo-url">app.kynect.ai/search</span>
+          <div class="demo-dot" style="background:#ff5f57"></div>
+          <div class="demo-dot" style="background:#febc2e"></div>
+          <div class="demo-dot" style="background:#28c840"></div>
+          <span class="demo-url">kynect.app/search</span>
         </div>
         <div class="demo-search">
           <svg class="demo-search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <span class="demo-typing-text">Goldman Sachs IB analysts · New York</span>
+          <span class="demo-typing-text" id="typing-text"></span><span class="demo-cursor"></span>
         </div>
         <div class="demo-results">
           <div class="demo-result">
-            <div>
-              <div class="res-name">Emily Zhang</div>
-              <div class="res-meta">IB Analyst · TMT · Goldman Sachs · New York</div>
-            </div>
-            <div class="res-tags">
-              <span class="rtag rtag-li">LinkedIn</span>
-              <span class="rtag rtag-em">Email</span>
-            </div>
+            <div><div class="res-name">James Chen</div><div class="res-meta">IB Analyst · Goldman Sachs · New York · ✓ Verified</div></div>
+            <div class="res-tags"><span class="rtag rtag-li">LinkedIn</span><span class="rtag rtag-em">Email</span></div>
           </div>
           <div class="demo-result">
-            <div>
-              <div class="res-name">Marcus Chen</div>
-              <div class="res-meta">IB Analyst · FIG · Goldman Sachs · New York</div>
-            </div>
-            <div class="res-tags">
-              <span class="rtag rtag-li">LinkedIn</span>
-              <span class="rtag rtag-em">Email</span>
-            </div>
+            <div><div class="res-name">Sarah Park</div><div class="res-meta">Associate · William Blair · Chicago · ✓ Verified</div></div>
+            <div class="res-tags"><span class="rtag rtag-li">LinkedIn</span><span class="rtag rtag-em">Email</span></div>
           </div>
           <div class="demo-result">
-            <div>
-              <div class="res-name">Sarah Park</div>
-              <div class="res-meta">IB Analyst · Healthcare · Goldman Sachs · New York</div>
-            </div>
-            <div class="res-tags">
-              <span class="rtag rtag-li">LinkedIn</span>
-              <span class="rtag rtag-em">Email</span>
-            </div>
+            <div><div class="res-name">Marcus Williams</div><div class="res-meta">PE Associate · Insight Partners · NYC · ✓ Verified</div></div>
+            <div class="res-tags"><span class="rtag rtag-li">LinkedIn</span><span class="rtag rtag-em">Email</span></div>
           </div>
         </div>
         <div class="demo-compose">
           <div class="compose-head">
-            <div class="compose-title">AI outreach for Emily</div>
-            <div class="compose-pill">Alumni angle · Ross</div>
+            <div class="compose-title">Write outreach with AI</div>
+            <div class="compose-badge">Alumni angle</div>
           </div>
-          <div class="compose-body">
-            “Hi Emily — I’m a junior at Ross as well, currently recruiting for IB. I saw you went from IBC into Goldman’s TMT group and would love 10–15 minutes to hear about your experience and any advice for someone a year or two behind you…”
-          </div>
+          <div class="compose-msg" id="hero-compose-msg"></div>
         </div>
       </div>
     </div>
-  </section>
-
-  <div class="strip">
-    <span>Built with feedback from students recruiting for Goldman Sachs, J.P. Morgan, Evercore, McKinsey, Blackstone, and more.</span>
   </div>
+</section>
 
-  <section class="section" id="how-it-works">
-    <div class="section-header">
-      <div class="section-kicker">Why Kynect</div>
-      <h2 class="section-title">Recruiting is a <em>numbers game</em> — but you shouldn&apos;t feel like a spreadsheet.</h2>
-      <p class="section-sub">Kynect helps you find the right people, send better messages, and stay on top of every conversation.</p>
-    </div>
+<!-- PROBLEMS -->
+<div class="problems">
+  <div class="problem-item">
+    <div class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+    <div class="problem-title">Hours Lost to Sourcing</div>
+    <div class="problem-desc">Digging through LinkedIn to find one reachable contact at a target firm is a full-time job on its own</div>
+  </div>
+  <div class="problem-item">
+    <div class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+    <div class="problem-title">Messages That Go Nowhere</div>
+    <div class="problem-desc">Copy-pasted templates get ignored. Without a personal angle, your email lands in the trash</div>
+  </div>
+  <div class="problem-item">
+    <div class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+    <div class="problem-title">Zero Pipeline Visibility</div>
+    <div class="problem-desc">Managing outreach in a spreadsheet means missed follow-ups, forgotten replies, and dropped opportunities</div>
+  </div>
+</div>
 
-    <div class="problems-grid">
-      <div class="problem-card">
-        <div class="problem-emoji">⏱</div>
-        <div class="problem-title">You waste hours on LinkedIn.</div>
-        <div class="problem-copy">Manually searching for alumni at every target firm, guessing emails, and copy‑pasting into a sheet.</div>
-      </div>
-      <div class="problem-card">
-        <div class="problem-emoji">📉</div>
-        <div class="problem-title">Your messages get ghosted.</div>
-        <div class="problem-copy">Generic templates sound like everyone else. You need specific, personal angles that actually get replies.</div>
-      </div>
-      <div class="problem-card">
-        <div class="problem-emoji">🧮</div>
-        <div class="problem-title">No real system.</div>
-        <div class="problem-copy">Tabs everywhere. You don&apos;t know who replied, who needs a follow‑up, or which angles work best.</div>
-      </div>
-    </div>
-
-    <div class="feature-row">
-      <div class="feature-card">
-        <div class="feature-label">Contact finder</div>
-        <div class="feature-head">Search once. Get 10+ verified contacts.</div>
-        <p class="feature-text">Type &quot;Evercore IB analysts · New York&quot; and get a clean list of people with verified emails + LinkedIn — no scraping, no guesswork.</p>
-        <div class="feature-pill-row">
-          <span class="f-pill">Verified emails</span>
-          <span class="f-pill">LinkedIn profiles</span>
-          <span class="f-pill">Title + group</span>
-        </div>
-        <div class="mini-search">
-          <svg class="demo-search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <span>Blackstone PE associates · New York</span>
-        </div>
-        <div class="mini-list">
-          • Filter by sector, level, location<br/>
-          • Export to your pipeline in one click
-        </div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-label">AI outreach</div>
-        <div class="feature-head">Messages that actually feel personal.</div>
-        <p class="feature-text">Kynect uses alumni, clubs, deals, and shared interests to write emails that sound like you — not a template every banker has seen 50 times.</p>
-        <div class="steps-list">
-          <div class="step">
-            <div class="step-badge">1</div>
-            <div>
-              <div class="step-title">Pick the angle.</div>
-              <div>Alumni, shared interest, deal reference, mutual connection, or &quot;cold but specific&quot;.</div>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-badge">2</div>
-            <div>
-              <div class="step-title">Kynect drafts the message.</div>
-              <div>Short, specific, and tuned for a 15‑minute coffee chat — not a generic &quot;can I pick your brain&quot;.</div>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-badge">3</div>
-            <div>
-              <div class="step-title">You edit &amp; send.</div>
-              <div>Make it yours in seconds, then send via your email or LinkedIn.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="feature-row">
-      <div class="feature-card">
-        <div class="feature-label">Hit rate insights</div>
-        <div class="feature-head">Know what&apos;s working across the platform.</div>
-        <p class="feature-text">See which message angles get the highest reply rates across Kynect — anonymized, aggregated, and updated as students send more outreach.</p>
-        <div class="mini-list">
-          • Alumni angle vs shared interest vs deal reference<br/>
-          • Different reply rates by firm type (BB, EB, MM)<br/>
-          • Which follow‑ups actually move chats to interviews
-        </div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-label">Pipeline tracker</div>
-        <div class="feature-head">A simple board for all your convos.</div>
-        <p class="feature-text">One place for &quot;Sent&quot;, &quot;Replied&quot;, &quot;Coffee Chat&quot;, &quot;Interview&quot;, and &quot;Offer&quot; — so you never drop a follow‑up again.</p>
-        <div class="steps-list">
-          <div class="step">
-            <div class="step-badge">✓</div>
-            <div>Drag contacts between stages as you move from first email to offer.</div>
-          </div>
-          <div class="step">
-            <div className="step-badge">★</div>
-            <div>See total conversations by firm and stage at a glance.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="stats-row">
-      <div class="stats-card">
-        <div class="section-kicker">Jobs &amp; timelines</div>
-        <div class="feature-head">Stay on top of real finance timelines.</div>
-        <p class="feature-text">Kynect keeps a focused list of IB, PE, HF, and consulting roles with realistic deadlines — no ghost postings from last year.</p>
-        <div class="jobs-list">
-          <div class="job">
-            <div class="job-main">
-              <div class="job-role">Summer Analyst — Investment Banking</div>
-              <div class="job-meta">Goldman Sachs · New York · Due Jan 15</div>
-            </div>
-            <span class="job-pill">IB · SA</span>
-          </div>
-          <div class="job">
-            <div class="job-main">
-              <div class="job-role">IB Summer Analyst</div>
-              <div class="job-meta">J.P. Morgan · New York · Due Jan 22</div>
-            </div>
-            <span class="job-pill">IB · SA</span>
-          </div>
-          <div class="job">
-            <div class="job-main">
-              <div class="job-role">Growth Equity Intern</div>
-              <div class="job-meta">Insight Partners · New York · Due Feb 1</div>
-            </div>
-            <span class="job-pill">GE · Intern</span>
-          </div>
-        </div>
-      </div>
-      <div class="stats-card">
-        <div class="section-kicker">What actually works</div>
-        <div class="feature-head">Example reply rates by template.</div>
-        <div class="metric-row">
-          <div class="metric-label">Alumni angle</div>
-          <div class="metric-value">68%</div>
-        </div>
-        <div class="metric-bar-bg"><div class="metric-bar" style="width:68%"></div></div>
-        <div class="metric-row" style="margin-top:10px;">
-          <div class="metric-label">Shared interest</div>
-          <div class="metric-value">54%</div>
-        </div>
-        <div class="metric-bar-bg"><div class="metric-bar" style="width:54%"></div></div>
-        <div class="metric-row" style="margin-top:10px;">
-          <div class="metric-label">Deal reference</div>
-          <div class="metric-value">41%</div>
-        </div>
-        <div class="metric-bar-bg"><div class="metric-bar" style="width:41%"></div></div>
-        <div class="metric-row" style="margin-top:10px;">
-          <div class="metric-label">Generic intro</div>
-          <div class="metric-value">8%</div>
-        </div>
-        <div class="metric-bar-bg"><div class="metric-bar" style="width:8%"></div></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="pricing-section" id="pricing">
-    <div class="pricing-inner">
-      <div>
-        <div class="section-kicker">Pricing</div>
-        <h2 class="section-title">Start for free. Upgrade when recruiting heats up.</h2>
-        <p class="section-sub">Use the free plan to get your first chats. When it&apos;s go‑time, Pro gives you unlimited searches and full hit‑rate data.</p>
-      </div>
-      <div class="pricing-grid">
-        <div class="plan">
-          <div class="plan-label">Free</div>
-          <div class="plan-name">Starter</div>
-          <div class="plan-price">$0<span>/month</span></div>
-          <p class="plan-copy">For exploring Kynect and sending your first wave of outreach.</p>
-          <div class="plan-feature">15 contact searches / month</div>
-          <div class="plan-feature">10 AI‑written messages / month</div>
-          <div class="plan-feature">Job list &amp; basic tracker</div>
-          <div class="plan-feature">Email support</div>
-          <a href="/onboarding" class="plan-cta outline">Start free</a>
-        </div>
-        <div class="plan pro">
-          <div class="badge">Most popular</div>
-          <div class="plan-label">Pro</div>
-          <div class="plan-name">Unlimited</div>
-          <div class="plan-price">$12<span>/month</span></div>
-          <p class="plan-copy">For serious recruiting seasons when you&apos;re sending dozens of messages a week.</p>
-          <div class="plan-feature">Unlimited contact searches</div>
-          <div class="plan-feature">Unlimited AI‑written messages</div>
-          <div class="plan-feature">Full hit‑rate intelligence</div>
-          <div class="plan-feature">Conversation coaching</div>
-          <div class="plan-feature">Priority support</div>
-          <a href="/onboarding" class="plan-cta solid">Go Pro</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="faq-section" id="faq">
-    <div class="faq-grid">
-      <div>
-        <div class="section-kicker">FAQ</div>
-        <h2 class="section-title">You bring the hustle.<br/><em>Kynect handles the system.</em></h2>
-        <p class="section-sub">Have more questions? Email <strong>founders@kynect.ai</strong>.</p>
-      </div>
-      <div class="faq-list">
-        <div class="faq-item open">
-          <button class="faq-q" onclick="toggleFaq(this)">
-            What is Kynect?
-            <span class="icon">+</span>
-          </button>
-          <div class="faq-a">
-            Kynect is an AI‑powered networking toolkit for finance recruiting. It helps you find verified contacts, write better messages, and track every conversation so you can land coffee chats and interviews faster.
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">
-            Who is Kynect for?
-            <span class="icon">+</span>
-          </button>
-          <div class="faq-a">
-            Kynect is built for undergraduate and graduate students targeting IB, PE, HF, and consulting roles, as well as early‑career professionals lateraling into those seats.
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">
-            Will bankers know I&apos;m using AI?
-            <span class="icon">+</span>
-          </button>
-          <div class="faq-a">
-            No. Kynect uses the real details in your background and the contact&apos;s profile to write specific, human messages — not generic templates. It&apos;s built to sound like you, not like ChatGPT.
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">
-            How is this different from just using ChatGPT?
-            <span class="icon">+</span>
-          </button>
-          <div class="faq-a">
-            ChatGPT doesn&apos;t know your contact list, which templates work platform‑wide, or what stage each conversation is in. Kynect does — so it can help you decide who to reach out to, what to say, and when to follow up.
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="cta-band">
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div class="features-header reveal">
     <div>
-      <div class="cta-text">Welcome to the future of networking. <em>Ready to Kynect?</em></div>
-      <div class="cta-sub">Start with 15 free searches. Upgrade only when you&apos;re ready to go all‑in.</div>
+      <div class="section-label">What you get</div>
+      <h2 class="section-title">Every tool you need,<br><em>nothing you don't</em></h2>
+      <p class="section-sub">Seven features built specifically for finance recruiting — from your first search to your signed offer.</p>
     </div>
-    <div class="cta-actions">
-      <a href="/onboarding" class="cta-btn-primary">Start free search →</a>
-      <a href="/signin" class="cta-btn-ghost">Sign in</a>
+    <div class="network-box">
+      <canvas id="network-canvas"></canvas>
+      <div class="network-label">Your network, visualized</div>
     </div>
   </div>
-</main>
 
-<footer>
-  <div class="footer-left">
-    <div class="footer-logo">Kynect<em>.</em></div>
-    <span>Built for finance students and early‑career candidates.</span>
+  <div class="features-bento">
+
+    <!-- 01 Contact Finder -->
+    <div class="f-card f-card-1 reveal" id="fc1">
+      <div class="f-num">01 — Contact Finder</div>
+      <div class="f-title">Find anyone<br>at any firm.</div>
+      <div class="f-desc">Search by firm, role, school, or location. Get verified emails and LinkedIn profiles in seconds — no manual digging.</div>
+      <div class="contact-anim">
+        <div class="contact-row" id="cr1"><div><div class="cr-name">Emily Zhang</div><div class="cr-role">IB Analyst · Goldman Sachs · New York</div></div><div class="cr-tags"><span class="mbadge mb-li">LinkedIn</span><span class="mbadge mb-em">Email</span><span class="mbadge mb-v">✓ Verified</span></div></div>
+        <div class="contact-row" id="cr2"><div><div class="cr-name">Alex Torres</div><div class="cr-role">PE Associate · Insight Partners · NYC</div></div><div class="cr-tags"><span class="mbadge mb-li">LinkedIn</span><span class="mbadge mb-em">Email</span><span class="mbadge mb-v">✓ Verified</span></div></div>
+        <div class="contact-row" id="cr3"><div><div class="cr-name">Jordan Lee</div><div class="cr-role">IB Analyst · William Blair · Chicago</div></div><div class="cr-tags"><span class="mbadge mb-li">LinkedIn</span><span class="mbadge mb-em">Email</span><span class="mbadge mb-v">✓ Verified</span></div></div>
+        <div class="contact-row" id="cr4"><div><div class="cr-name">Priya Nair</div><div class="cr-role">Growth Equity · KKR · San Francisco</div></div><div class="cr-tags"><span class="mbadge mb-li">LinkedIn</span><span class="mbadge mb-em">Email</span><span class="mbadge mb-v">✓ Verified</span></div></div>
+      </div>
+    </div>
+
+    <!-- 02 Contact Intelligence -->
+    <div class="f-card f-card-2 reveal reveal-d1" id="fc2">
+      <div class="f-num">02 — Contact Intelligence</div>
+      <div class="f-title"><em>Know</em> who<br>you're writing to.</div>
+      <div class="f-desc">AI reads the contact's LinkedIn and gives you a summary plus conversation starters before you write a word.</div>
+      <div class="intel-profile">
+        <div class="intel-top">
+          <div class="intel-av">EZ</div>
+          <div><div class="intel-name">Emily Zhang</div><div class="intel-role">IB Analyst · Goldman Sachs</div></div>
+        </div>
+        <div class="intel-summary" id="intel-summary"></div>
+      </div>
+      <div class="intel-starters">
+        <div class="is-label">Conversation starters</div>
+        <div class="intel-starter" id="is1">Ask about her path from UMich Ross into Goldman's TMT group</div>
+        <div class="intel-starter" id="is2">Mention her article on M&A deal structuring from last year</div>
+        <div class="intel-starter" id="is3">Reference the Semiconductor sector coverage she works on</div>
+      </div>
+    </div>
+
+    <!-- 03 AI Outreach -->
+    <div class="f-card f-card-3 reveal" id="fc3">
+      <div class="f-num">03 — AI Outreach Writer</div>
+      <div class="f-title">Messages that<br><em>actually land.</em></div>
+      <div class="f-desc">Pick an angle, get a personalized message. Tailored to the contact and your own profile — never generic.</div>
+      <div class="angle-tabs">
+        <div class="angle-tab active" onclick="switchAngle(this,'alumni')">Alumni</div>
+        <div class="angle-tab" onclick="switchAngle(this,'deal')">Deal Reference</div>
+        <div class="angle-tab" onclick="switchAngle(this,'interest')">Shared Interest</div>
+        <div class="angle-tab" onclick="switchAngle(this,'mutual')">Mutual Connection</div>
+      </div>
+      <div class="message-box" id="msg-box"></div>
+    </div>
+
+    <!-- 04 Reply Rate -->
+    <div class="f-card f-card-4 reveal reveal-d1" id="fc4">
+      <div class="f-num">04 — Reply Rate Intelligence</div>
+      <div class="f-title">Write what works.<br><em>Not what feels right.</em></div>
+      <div class="f-desc">Kynect tracks which angles get replies across the entire platform. Every time a user marks an outreach as replied, the data gets sharper for everyone.</div>
+      <div class="rate-anim">
+        <div class="rate-row"><div class="rate-label">Alumni angle</div><div class="rate-bar-bg"><div class="rate-bar" id="rb1" data-target="68"></div></div><div class="rate-pct">68%</div></div>
+        <div class="rate-row"><div class="rate-label">Shared interest</div><div class="rate-bar-bg"><div class="rate-bar" id="rb2" data-target="54"></div></div><div class="rate-pct">54%</div></div>
+        <div class="rate-row"><div class="rate-label">Deal reference</div><div class="rate-bar-bg"><div class="rate-bar" id="rb3" data-target="41"></div></div><div class="rate-pct">41%</div></div>
+        <div class="rate-row"><div class="rate-label">Mutual connection</div><div class="rate-bar-bg"><div class="rate-bar" id="rb4" data-target="37"></div></div><div class="rate-pct">37%</div></div>
+        <div class="rate-row"><div class="rate-label">Generic intro</div><div class="rate-bar-bg"><div class="rate-bar" id="rb5" data-target="8"></div></div><div class="rate-pct">8%</div></div>
+        <span class="rate-live"><span class="rate-live-dot"></span>Live data from 2,400+ messages</span>
+      </div>
+    </div>
+
+    <!-- 05 Pipeline -->
+    <div class="f-card f-card-5 reveal" id="fc5">
+      <div class="f-num">05 — Outreach Pipeline</div>
+      <div class="f-title">Your full<br><em>pipeline,</em><br>one board.</div>
+      <div class="f-desc">Drag-and-drop Kanban. Track every contact from drafted to coffee chat.</div>
+      <div class="pipeline-anim">
+        <div class="pipe-col">
+          <div class="pipe-col-title"><div class="pipe-dot" style="background:#94a3b8"></div>Sent</div>
+          <div class="pipe-card">Emily Zhang<div class="pipe-card-firm">Goldman Sachs</div></div>
+          <div class="pipe-card">Marcus Li<div class="pipe-card-firm">Blackstone</div></div>
+        </div>
+        <div class="pipe-col">
+          <div class="pipe-col-title"><div class="pipe-dot" style="background:var(--amber)"></div>Replied</div>
+          <div class="pipe-card" style="border-color:#fde68a">Sarah Kim<div class="pipe-card-firm">JPMorgan</div></div>
+        </div>
+        <div class="pipe-col">
+          <div class="pipe-col-title"><div class="pipe-dot" style="background:#22c55e"></div>Chat</div>
+          <div class="pipe-card" style="border-color:#bbf7d0">Alex Chen<div class="pipe-card-firm">Evercore</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 06 Job Board -->
+    <div class="f-card f-card-6 reveal reveal-d1" id="fc6">
+      <div class="f-num">06 — Live Job Board</div>
+      <div class="f-title">Real roles.<br><em>No ghost</em><br>postings.</div>
+      <div class="f-desc">Finance listings updated daily. Posts auto-expire after 30 days — every role you see is still open.</div>
+      <div class="jobs-anim">
+        <div class="job-row" id="jr1"><div><div class="job-title">Summer Analyst — IB</div><div class="job-firm">Goldman Sachs · New York</div></div><div class="job-deadline">Jan 15</div></div>
+        <div class="job-row" id="jr2"><div><div class="job-title">IB Summer Analyst</div><div class="job-firm">William Blair · Chicago</div></div><div class="job-deadline">Jan 22</div></div>
+        <div class="job-row" id="jr3"><div><div class="job-title">Growth Equity Intern</div><div class="job-firm">Insight Partners · NYC</div></div><div class="job-deadline">Feb 1</div></div>
+      </div>
+    </div>
+
+    <!-- 07 Coach -->
+    <div class="f-card f-card-7 reveal reveal-d2" id="fc7">
+      <div class="f-num">07 — AI Conversation Coach</div>
+      <div class="f-title">They replied.<br><em>Now what?</em></div>
+      <div class="f-desc">Paste any reply and get precise coaching on your next move.</div>
+      <div class="coach-anim">
+        <div class="coach-label">Their reply</div>
+        <div class="coach-msg them">"Thanks for reaching out! Happy to connect — what did you want to discuss?"</div>
+        <div class="coach-label" style="margin-top:8px">Kynect recommends</div>
+        <div class="coach-msg kynect" id="coach-text"></div>
+      </div>
+    </div>
+
   </div>
-  <div class="footer-links">
-    <a href="#pricing">Pricing</a>
-    <a href="#faq">FAQ</a>
-    <a href="mailto:founders@kynect.ai">Contact</a>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="proof" id="proof">
+  <div class="proof-inner reveal">
+    <div class="section-label">Results that speak</div>
+    <h2 class="section-title">Used by students who've <em>landed offers</em></h2>
+  </div>
+  <div class="logo-ticker-wrap" style="margin-bottom:44px">
+    <div class="logo-ticker">
+      <span class="logo-item">Goldman Sachs</span><span class="logo-item">J.P. Morgan</span><span class="logo-item">Morgan Stanley</span><span class="logo-item">Insight Partners</span><span class="logo-item">William Blair</span><span class="logo-item">Evercore</span><span class="logo-item">Blackstone</span><span class="logo-item">McKinsey & Company</span><span class="logo-item">KKR</span><span class="logo-item">Lazard</span><span class="logo-item">Centerview Partners</span><span class="logo-item">PJT Partners</span>
+      <span class="logo-item">Goldman Sachs</span><span class="logo-item">J.P. Morgan</span><span class="logo-item">Morgan Stanley</span><span class="logo-item">Insight Partners</span><span class="logo-item">William Blair</span><span class="logo-item">Evercore</span><span class="logo-item">Blackstone</span><span class="logo-item">McKinsey & Company</span><span class="logo-item">KKR</span><span class="logo-item">Lazard</span><span class="logo-item">Centerview Partners</span><span class="logo-item">PJT Partners</span>
+    </div>
+  </div>
+  <div class="t-ticker-wrap" style="padding-bottom:80px">
+    <div class="t-ticker">
+      <div class="t-card"><div class="t-stars">★★★★★</div><div class="t-text">"I went from sending 4 emails a week to 25 — and actually getting responses. The alumni angle Kynect suggested got me three coffee chats in my first week."</div><div class="t-author">Anonymous</div><div class="t-school">NYU Stern '26</div><span class="t-firm">Goldman Sachs Summer Analyst</span></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><div class="t-text">"The reply rate data is the real unlock. I stopped using the generic intro angle after seeing it converts at 8%. Switched to deal reference and my reply rate tripled."</div><div class="t-author">Anonymous</div><div class="t-school">UPenn Wharton '27</div><span class="t-firm">J.P. Morgan Summer Analyst</span></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><div class="t-text">"I was using LinkedIn, a spreadsheet, and ChatGPT and still dropping the ball. Kynect consolidated everything. The pipeline board alone is worth it."</div><div class="t-author">Anonymous</div><div class="t-school">Columbia '26</div><span class="t-firm">Evercore Investment Banking Intern</span></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><div class="t-text">"Finding a reachable contact at William Blair used to take an hour. With Kynect I had a verified email in 60 seconds and a coffee chat that week."</div><div class="t-author">Anonymous</div><div class="t-school">University of Michigan Ross '26</div><span class="t-firm">William Blair IB Intern</span></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><div class="t-text">"The Contact Intelligence feature is underrated. Before I wrote a single word I knew exactly what to reference. My open rate on first emails has never been higher."</div><div class="t-author">Anonymous</div><div class="t-school">Georgetown McDonough '27</div><span class="t-firm">Morgan Stanley Summer Analyst</span></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><div class="t-text">"As a non-target student breaking into PE, Kynect gave me a real edge. I found direct contacts at Insight Partners and sent messages that felt human, not mass blast."</div><div class="t-author">Anonymous</div><div class="t-school">Boston University '26</div><span class="t-firm">Insight Partners Growth Equity Intern</span></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><div class="t-text">"I went from sending 4 emails a week to 25 — and actually getting responses. The alumni angle Kynect suggested got me three coffee chats in my first week."</div><div class="t-author">Anonymous</div><div class="t-school">NYU Stern '26</div><span class="t-firm">Goldman Sachs Summer Analyst</span></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><div class="t-text">"The reply rate data is the real unlock. I stopped using the generic intro angle after seeing it converts at 8%. Switched to deal reference and my reply rate tripled."</div><div class="t-author">Anonymous</div><div class="t-school">UPenn Wharton '27</div><span class="t-firm">J.P. Morgan Summer Analyst</span></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><div class="t-text">"I was using LinkedIn, a spreadsheet, and ChatGPT and still dropping the ball. Kynect consolidated everything. The pipeline board alone is worth it."</div><div class="t-author">Anonymous</div><div class="t-school">Columbia '26</div><span class="t-firm">Evercore Investment Banking Intern</span></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><div class="t-text">"Finding a reachable contact at William Blair used to take an hour. With Kynect I had a verified email in 60 seconds and a coffee chat that week."</div><div class="t-author">Anonymous</div><div class="t-school">University of Michigan Ross '26</div><span class="t-firm">William Blair IB Intern</span></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><div class="t-text">"The Contact Intelligence feature is underrated. Before I wrote a single word I knew exactly what to reference. My open rate on first emails has never been higher."</div><div class="t-author">Anonymous</div><div class="t-school">Georgetown McDonough '27</div><span class="t-firm">Morgan Stanley Summer Analyst</span></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><div class="t-text">"As a non-target student breaking into PE, Kynect gave me a real edge. I found direct contacts at Insight Partners and sent messages that felt human, not mass blast."</div><div class="t-author">Anonymous</div><div class="t-school">Boston University '26</div><span class="t-firm">Insight Partners Growth Equity Intern</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- JOBS STRIP -->
+<div class="jobs-strip">
+  <div class="jobs-strip-inner">
+    <div class="jobs-strip-label">Roles Kynect students are targeting right now</div>
+    <div class="jobs-marquee">
+      <div class="jobs-inner">
+        <div class="j-pill"><div class="j-role">IB Summer Analyst</div><div class="j-loc">Goldman Sachs · New York</div><div class="j-tag">Internship</div></div>
+        <div class="j-pill"><div class="j-role">PE Analyst</div><div class="j-loc">KKR · New York</div><div class="j-tag">Full-time</div></div>
+        <div class="j-pill"><div class="j-role">IB Analyst</div><div class="j-loc">William Blair · Chicago</div><div class="j-tag">Internship</div></div>
+        <div class="j-pill"><div class="j-role">Growth Equity Intern</div><div class="j-loc">Insight Partners · NYC</div><div class="j-tag">Internship</div></div>
+        <div class="j-pill"><div class="j-role">HF Analyst</div><div class="j-loc">Citadel · Chicago</div><div class="j-tag">Full-time</div></div>
+        <div class="j-pill"><div class="j-role">Consulting Intern</div><div class="j-loc">McKinsey · Boston</div><div class="j-tag">Internship</div></div>
+        <div class="j-pill"><div class="j-role">Off-cycle PE Analyst</div><div class="j-loc">Blackstone · NYC</div><div class="j-tag">Off-cycle</div></div>
+        <div class="j-pill"><div class="j-role">IB Summer Analyst</div><div class="j-loc">Lazard · New York</div><div class="j-tag">Internship</div></div>
+        <div class="j-pill"><div class="j-role">IB Summer Analyst</div><div class="j-loc">Goldman Sachs · New York</div><div class="j-tag">Internship</div></div>
+        <div class="j-pill"><div class="j-role">PE Analyst</div><div class="j-loc">KKR · New York</div><div class="j-tag">Full-time</div></div>
+        <div class="j-pill"><div class="j-role">IB Analyst</div><div class="j-loc">William Blair · Chicago</div><div class="j-tag">Internship</div></div>
+        <div class="j-pill"><div class="j-role">Growth Equity Intern</div><div class="j-loc">Insight Partners · NYC</div><div class="j-tag">Internship</div></div>
+        <div class="j-pill"><div class="j-role">HF Analyst</div><div class="j-loc">Citadel · Chicago</div><div class="j-tag">Full-time</div></div>
+        <div class="j-pill"><div class="j-role">Consulting Intern</div><div class="j-loc">McKinsey · Boston</div><div class="j-tag">Internship</div></div>
+        <div class="j-pill"><div class="j-role">Off-cycle PE Analyst</div><div class="j-loc">Blackstone · NYC</div><div class="j-tag">Off-cycle</div></div>
+        <div class="j-pill"><div class="j-role">IB Summer Analyst</div><div class="j-loc">Lazard · New York</div><div class="j-tag">Internship</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="reveal" style="text-align:center">
+    <div class="section-label" style="text-align:center">Pricing</div>
+    <h2 class="section-title" style="margin:0 auto 12px;text-align:center">Simple pricing.<br><em>Real results.</em></h2>
+    <p style="font-size:16px;color:var(--g600);text-align:center;margin:0 auto 32px">Start free. Upgrade when you're ready to go all in.</p>
+    <div style="display:flex;justify-content:center;margin-bottom:40px">
+      <div class="pricing-callout">Students cobbling together LinkedIn Premium + Apollo spend $90–140/mo and still write every message manually</div>
+    </div>
+  </div>
+
+  <!-- Comparison -->
+  <div class="reveal" style="max-width:860px;margin:0 auto;transition-delay:0.1s">
+    <div class="comp-intro">
+      <div></div>
+      <div style="text-align:center;padding-bottom:10px">
+        <div class="ci-label">LinkedIn Premium</div>
+        <div class="ci-price" style="color:var(--red)">$39.99/mo</div>
+        <div style="font-size:11px;color:var(--g400);margin-top:2px">Sourcing only</div>
+      </div>
+      <div style="text-align:center;padding-bottom:10px">
+        <div class="ci-label">Apollo / Hunter</div>
+        <div class="ci-price" style="color:var(--red)">$49–99/mo</div>
+        <div style="font-size:11px;color:var(--g400);margin-top:2px">Emails only</div>
+      </div>
+      <div style="text-align:center;padding-bottom:10px;position:relative">
+        <div style="position:absolute;top:-26px;left:50%;transform:translateX(-50%);background:var(--black);color:var(--white);font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px;white-space:nowrap">Everything included</div>
+        <div class="ci-label">Kynect Pro</div>
+        <div class="ci-price ci-kynect-price">$12/mo</div>
+      </div>
+    </div>
+    <div class="comp-table">
+      <div class="comp-table-header">
+        <div class="cth-feat">What you need</div>
+        <div class="cth-li">LinkedIn</div>
+        <div class="cth-ap">Apollo</div>
+        <div class="cth-ky">Kynect Pro</div>
+      </div>
+      <div class="comp-row"><div class="cr-feat">Built for finance recruiting</div><div class="cr-li c-no">✗</div><div class="cr-ap c-no">✗</div><div class="cr-ky c-yes">✓</div></div>
+      <div class="comp-row"><div class="cr-feat">Verified emails + LinkedIn profiles</div><div class="cr-li c-no">✗</div><div class="cr-ap c-yes" style="font-size:11px">✓ (extra cost)</div><div class="cr-ky c-yes">✓</div></div>
+      <div class="comp-row"><div class="cr-feat">AI-personalized cold outreach</div><div class="cr-li c-no">✗</div><div class="cr-ap c-no">✗</div><div class="cr-ky c-yes">✓</div></div>
+      <div class="comp-row"><div class="cr-feat">Reply rate intelligence</div><div class="cr-li c-no">✗</div><div class="cr-ap c-no">✗</div><div class="cr-ky c-yes">✓</div></div>
+      <div class="comp-row"><div class="cr-feat">Outreach pipeline tracker</div><div class="cr-li c-no">✗</div><div class="cr-ap c-no">✗</div><div class="cr-ky c-yes">✓</div></div>
+      <div class="comp-row"><div class="cr-feat">Live finance job board</div><div class="cr-li c-no">✗</div><div class="cr-ap c-no">✗</div><div class="cr-ky c-yes">✓</div></div>
+      <div class="comp-row"><div class="cr-feat">AI conversation coach</div><div class="cr-li c-no">✗</div><div class="cr-ap c-no">✗</div><div class="cr-ky c-yes">✓</div></div>
+      <div class="comp-total"><div style="font-weight:700;padding:13px 20px">Monthly cost</div><div class="ct-li">$39.99/mo</div><div class="ct-ap">$49–99/mo</div><div class="ct-ky">$12/mo</div></div>
+      <div class="comp-note">Kynect replaces the entire stack for <strong>$12/mo</strong> — and does more than both combined.</div>
+    </div>
+    <div class="comp-bottom-labels">
+      <div></div>
+      <div>Sourcing only.<br>Still write everything yourself.</div>
+      <div>Emails only.<br>Still no outreach help.</div>
+      <div class="cbl-ky"><span class="cbl-ky-pill">The whole stack. One price.</span></div>
+    </div>
+  </div>
+
+  <div class="pricing-grid reveal" style="transition-delay:0.2s">
+    <div class="pricing-card">
+      <div class="pricing-tier">Free</div>
+      <div class="pricing-price">$0<span>/mo</span></div>
+      <div class="pricing-label">Get started, no card required.</div>
+      <div class="pricing-divider"></div>
+      <div class="pricing-feature">15 contact searches per month</div>
+      <div class="pricing-feature">10 AI-written messages per month</div>
+      <div class="pricing-feature">Live job board access</div>
+      <div class="pricing-feature">Basic outreach pipeline</div>
+      <div class="pricing-feature">Email support</div>
+      <a href="/signup" class="pricing-btn pricing-btn-outline">Get started free</a>
+    </div>
+    <div class="pricing-card featured">
+      <div class="pricing-badge">Most popular</div>
+      <div class="pricing-tier">Pro</div>
+      <div class="pricing-price">$12<span>/mo</span></div>
+      <div class="pricing-label">For students serious about breaking in.</div>
+      <div class="pricing-divider"></div>
+      <div class="pricing-feature">Unlimited contact searches</div>
+      <div class="pricing-feature">Unlimited AI-written messages</div>
+      <div class="pricing-feature">Full reply rate intelligence</div>
+      <div class="pricing-feature">Contact Intelligence (AI summaries)</div>
+      <div class="pricing-feature">Conversation coach + priority support</div>
+      <a href="/signup" class="pricing-btn pricing-btn-solid">Get started</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="faq-grid reveal">
+    <div>
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">Questions?<br><em>We've got<br>answers.</em></h2>
+      <p style="font-size:15px;color:var(--g600);margin-top:16px;line-height:1.6">Still not sure? Email us at<br><strong>founders@kynect.app</strong></p>
+    </div>
+    <div>
+      <div class="faq-item open">
+        <button class="faq-q" onclick="toggleFaq(this)">How does Kynect find verified contact info?<span class="icon">+</span></button>
+        <div class="faq-a">Kynect connects to professional data sources to surface verified work emails and LinkedIn profiles. Every result goes through a verification layer — so you're not wasting time on bounced emails or outdated profiles.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Is the outreach really personalized, or just a template with my name swapped in?<span class="icon">+</span></button>
+        <div class="faq-a">It's genuinely personalized. Kynect uses your actual background — school, major, clubs, interests — combined with real details about the contact. The result is a message that reflects a real reason you're reaching out to that specific person. No merge tags, no obvious AI tells.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How is Kynect different from just using LinkedIn?<span class="icon">+</span></button>
+        <div class="faq-a">LinkedIn shows you who's out there — Kynect tells you how to reach them, what to say, and whether it's working. You get verified emails, AI-written outreach, platform-wide reply rate data, a pipeline to track every conversation, and a job board with no ghost postings. It's the full recruiting stack, not just a directory.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Can I use Kynect if I go to a non-target school?<span class="icon">+</span></button>
+        <div class="faq-a">Kynect was built with non-target students in mind. Cold outreach is your primary path in — and that's exactly what Kynect optimizes. Students from non-target schools have used Kynect to land interviews at Goldman, Blackstone, Insight Partners, and more.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Do I need a credit card to start?<span class="icon">+</span></button>
+        <div class="faq-a">No. Sign up and start immediately — no payment required. Upgrade to Pro only when you're ready.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Can I cancel anytime?<span class="icon">+</span></button>
+        <div class="faq-a">Yes. Cancel Pro anytime from your account settings with no penalties. You'll keep access through the end of your billing period.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<div class="cta-band reveal" style="margin:0 48px 48px">
+  <div class="cta-band-title">Your next offer starts with one message. <em>Let's write it together.</em></div>
+  <div class="cta-band-right">
+    <a href="/signup" class="cta-btn-main">Start Connecting →</a>
+    <span class="cta-sub-note">Built by people who've been through IB recruiting.</span>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Kynect<em>.</em></div>
+  <div class="footer-grid">
+    <div class="footer-col"><div class="footer-col-title">Product</div><a href="#">Features</a><a href="#">Pricing</a><a href="#">FAQ</a><a href="#">Changelog</a></div>
+    <div class="footer-col"><div class="footer-col-title">Company</div><a href="#">About</a><a href="#">Contact</a><a href="#">Privacy Policy</a><a href="#">Terms of Use</a></div>
+    <div class="footer-col"><div class="footer-col-title">Social</div><a href="#">LinkedIn</a><a href="#">Instagram</a><a href="#">Twitter / X</a></div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">Kynect. All rights reserved © 2026</span>
+    <span class="footer-copy">Built for finance students.</span>
   </div>
 </footer>
 
 <script>
-// nav scroll
-const navEl = document.getElementById('nav') || document.querySelector('nav');
-window.addEventListener('scroll', () => {
-  if (!navEl) return;
-  if (window.scrollY > 10) navEl.classList.add('scrolled');
-  else navEl.classList.remove('scrolled');
+// ── Nav scroll ──
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>20));
+
+// ── Scroll reveal ──
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// ── Hero typing (search bar) ──
+const phrases=["Goldman Sachs IB analysts","Blackstone PE associates","Insight Partners growth investors","William Blair investment bankers"];
+let pi=0,ci=0,di=false;
+const tel=document.getElementById('typing-text');
+function type(){const p=phrases[pi];if(!di){tel.textContent=p.slice(0,++ci);if(ci===p.length){di=true;setTimeout(type,1800);return;}}else{tel.textContent=p.slice(0,--ci);if(ci===0){di=false;pi=(pi+1)%phrases.length;}}setTimeout(type,di?42:72);}
+type();
+
+// ── Hero role typing ──
+const roles=["investment banking","private equity","hedge funds","consulting","growth equity"];
+let ri=0,rc=0,rd=false;
+const rel=document.getElementById('hero-type');
+function typeRole(){const r=roles[ri];if(!rd){rel.textContent=r.slice(0,++rc);if(rc===r.length){rd=true;setTimeout(typeRole,1600);return;}}else{rel.textContent=r.slice(0,--rc);if(rc===0){rd=false;ri=(ri+1)%roles.length;}}setTimeout(typeRole,rd?45:80);}
+typeRole();
+
+// ── Hero compose msg ──
+const hcMsg="Hi Emily — I'm a junior at NYU Stern also targeting IB. I noticed we both went through the Investment Banking Club and you navigated Goldman's process last year. Would love to hear about your experience and any advice for someone on a similar path.";
+let hcI=0;const hcEl=document.getElementById('hero-compose-msg');
+function typeHC(){if(hcI<=hcMsg.length){hcEl.innerHTML=hcMsg.slice(0,hcI++)+'<span class="demo-cursor"></span>';setTimeout(typeHC,22);}}
+setTimeout(typeHC,1400);
+
+// ── Card 1: contact rows ──
+const c1obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)['cr1','cr2','cr3','cr4'].forEach((id,i)=>setTimeout(()=>{const el=document.getElementById(id);if(el)el.classList.add('show');},i*180));}),{threshold:0.2});
+const fc1=document.getElementById('fc1');if(fc1)c1obs.observe(fc1);
+
+// ── Card 2: intel typing ──
+const intelText="Emily is a 2nd-year IB Analyst in Goldman's TMT coverage group, focused on semiconductor and software M&A. She graduated from UMich Ross in 2023, was president of the Investment Banking Club, and has published two pieces on deal structuring. She responds well to specific deal references.";
+let intelIdx=0;const intelEl=document.getElementById('intel-summary');
+function typeIntel(){if(intelIdx<=intelText.length){intelEl.textContent=intelText.slice(0,intelIdx++);setTimeout(typeIntel,16);}else{setTimeout(()=>['is1','is2','is3'].forEach((id,i)=>setTimeout(()=>{const el=document.getElementById(id);if(el)el.classList.add('show');},i*220)),300);}}
+const i2obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting&&intelIdx===0)typeIntel();}),{threshold:0.3});
+const fc2=document.getElementById('fc2');if(fc2)i2obs.observe(fc2);
+
+// ── Card 3: outreach writer ──
+const messages={
+  alumni:"Hi Emily — I'm a junior at NYU Stern targeting IB. I noticed we were both in the Investment Banking Club and you went through Goldman's recruiting process last year. I'd love to hear about your experience and any advice you'd share for someone following a similar path.",
+  deal:"Hi Emily — I came across Goldman's recent acquisition of a SaaS company in the infrastructure space and noticed your group advised on the deal. I'm a junior at NYU Stern targeting IB and would love to hear your perspective on how the deal came together.",
+  interest:"Hi Emily — I've been following the semiconductor M&A space closely and read your piece on deal structuring last year. As a junior at Stern targeting IB, I'd love to connect and hear how you approach evaluating targets in tech-heavy sectors.",
+  mutual:"Hi Emily — I was speaking with [Mutual Contact] recently and your name came up. She mentioned you'd be a great person to connect with as I navigate IB recruiting. I'm a junior at Stern and would love to hear about your path into Goldman's TMT group."
+};
+function typeMessage(text){const box=document.getElementById('msg-box');box.innerHTML='';let i=0;const iv=setInterval(()=>{box.innerHTML=text.slice(0,++i)+'<span class="msg-cursor"></span>';if(i>=text.length){clearInterval(iv);box.innerHTML=text;}},18);}
+function switchAngle(tab,key){document.querySelectorAll('.angle-tab').forEach(t=>t.classList.remove('active'));tab.classList.add('active');typeMessage(messages[key]);}
+const o3obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)typeMessage(messages.alumni);}),{threshold:0.3});
+const fc3=document.getElementById('fc3');if(fc3)o3obs.observe(fc3);
+
+// ── Card 4: rate bars ──
+const r4obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)['rb1','rb2','rb3','rb4','rb5'].forEach(id=>{const el=document.getElementById(id);if(el)setTimeout(()=>el.style.width=el.dataset.target+'%',200)});}),{threshold:0.3});
+const fc4=document.getElementById('fc4');if(fc4)r4obs.observe(fc4);
+
+// ── Card 6: job rows ──
+const j6obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)['jr1','jr2','jr3'].forEach((id,i)=>setTimeout(()=>{const el=document.getElementById(id);if(el)el.classList.add('show');},i*180));}),{threshold:0.2});
+const fc6=document.getElementById('fc6');if(fc6)j6obs.observe(fc6);
+
+// ── Card 7: coach typing ──
+const coachText="Lead with one specific deal or project they worked on. Ask about the day-to-day, not comp. Keep it under 3 sentences. Save any referral ask for the second conversation.";
+let coachIdx=0;const coachEl=document.getElementById('coach-text');
+function typeCoach(){if(coachIdx<=coachText.length){coachEl.textContent=coachText.slice(0,coachIdx++);setTimeout(typeCoach,18);}}
+const c7obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting&&coachIdx===0)typeCoach();}),{threshold:0.3});
+const fc7=document.getElementById('fc7');if(fc7)c7obs.observe(fc7);
+
+// ── Network canvas ──
+(function(){
+  const canvas=document.getElementById('network-canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const labels=['Goldman','JPMorgan','Blackstone','Evercore','KKR','W. Blair','Morgan St.','Insight','Lazard','PJT'];
+  let nodes=[],W,H;
+  function resize(){const rect=canvas.parentElement.getBoundingClientRect();W=canvas.width=rect.width*devicePixelRatio;H=canvas.height=(rect.height-40)*devicePixelRatio;canvas.style.width=rect.width+'px';canvas.style.height=(rect.height-40)+'px';nodes=labels.map(l=>({x:(Math.random()*0.8+0.1)*W,y:(Math.random()*0.7+0.1)*H,vx:(Math.random()-0.5)*0.4,vy:(Math.random()-0.5)*0.4,r:W*0.013+Math.random()*W*0.007,label:l,pulse:Math.random()*Math.PI*2}));}
+  function draw(){ctx.clearRect(0,0,W,H);const dpr=devicePixelRatio||1;for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<W*0.32){ctx.beginPath();ctx.moveTo(nodes[i].x,nodes[i].y);ctx.lineTo(nodes[j].x,nodes[j].y);ctx.strokeStyle=`rgba(10,10,10,${(1-d/(W*0.32))*0.15})`;ctx.lineWidth=1*dpr;ctx.stroke();}}
+  nodes.forEach(n=>{n.pulse+=0.03;const r=n.r*(1+Math.sin(n.pulse)*0.07);ctx.beginPath();ctx.arc(n.x,n.y,r,0,Math.PI*2);ctx.fillStyle='rgba(10,10,10,0.06)';ctx.fill();ctx.beginPath();ctx.arc(n.x,n.y,r,0,Math.PI*2);ctx.strokeStyle='rgba(10,10,10,0.18)';ctx.lineWidth=1*dpr;ctx.stroke();ctx.fillStyle='rgba(10,10,10,0.55)';ctx.font=`600 ${10*dpr}px DM Sans,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(n.label,n.x,n.y);n.x+=n.vx;n.y+=n.vy;if(n.x<n.r||n.x>W-n.r)n.vx*=-1;if(n.y<n.r||n.y>H-n.r)n.vy*=-1;});requestAnimationFrame(draw);}
+  window.addEventListener('resize',resize);resize();draw();
+})();
+
+// ── FAQ ──
+function toggleFaq(btn){const item=btn.closest('.faq-item');document.querySelectorAll('.faq-item.open').forEach(i=>{if(i!==item)i.classList.remove('open');});item.classList.toggle('open');}
+
+// ── Smooth auth navigation ──
+document.querySelectorAll('a[href="/signin"], a[href="/signup"]').forEach(link=>{
+  link.addEventListener('click',e=>{
+    if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||e.button!==0)return;
+    e.preventDefault();
+    const href=link.getAttribute('href');
+    if(!href)return;
+    document.body.classList.add('page-exit');
+    setTimeout(()=>{window.location.href=href;},220);
+  });
 });
-
-// typing loop
-const phrases = [
-  "Goldman Sachs IB analysts · New York",
-  "Blackstone PE associates · New York",
-  "McKinsey business analysts · SF"
-];
-let pIdx = 0, cIdx = 0, deleting = false;
-const typingEl = document.getElementById('typing');
-function loopType(){
-  if(!typingEl) return;
-  const phrase = phrases[pIdx];
-  if(!deleting){
-    typingEl.textContent = phrase.slice(0, ++cIdx);
-    if(cIdx === phrase.length){ deleting = true; setTimeout(loopType, 1400); return; }
-  }else{
-    typingEl.textContent = phrase.slice(0, --cIdx);
-    if(cIdx === 0){ deleting = false; pIdx = (pIdx+1)%phrases.length; }
-  }
-  setTimeout(loopType, deleting ? 40 : 70);
-}
-loopType();
-
-// FAQ toggle
-function toggleFaq(btn){
-  const item = btn.closest('.faq-item');
-  document.querySelectorAll('.faq-item.open').forEach(i => { if(i !== item) i.classList.remove('open'); });
-  item.classList.toggle('open');
-}
 </script>
 </body>
 </html>
-

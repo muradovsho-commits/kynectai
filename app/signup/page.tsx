@@ -5,12 +5,14 @@ import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import { api } from "../../convex/_generated/api";
 
-export default function SigninPage() {
+export default function SignupPage() {
   const router = useRouter();
-  const signIn = useMutation((api as any).auth?.signIn);
+  const signUp = useMutation((api as any).auth?.signUp);
 
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,9 +20,15 @@ export default function SigninPage() {
     event.preventDefault();
     setError(null);
 
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     try {
       setSubmitting(true);
-      const result = await signIn({
+      const result = await signUp({
+        fullName,
         email,
         password,
       });
@@ -36,10 +44,10 @@ export default function SigninPage() {
         )}; path=/; max-age=${60 * 60 * 24 * 30}`;
       }
 
-      router.push("/dashboard");
+      router.push("/onboarding");
     } catch (err) {
-      console.error("Sign in failed", err);
-      setError("Invalid email or password.");
+      console.error("Sign up failed", err);
+      setError("Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -53,14 +61,25 @@ export default function SigninPage() {
             Kynect<em>.</em>
           </div>
           <h1 className="font-['Instrument_Serif'] text-[28px] leading-tight tracking-[-1px]">
-            Welcome <em>back</em>
+            Create your <em>account</em>
           </h1>
           <p className="mt-2 text-sm text-[#6b6860]">
-            Sign in to continue where you left off.
+            Start sourcing contacts and writing outreach in minutes.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-semibold">Full name</label>
+            <input
+              className="h-11 w-full rounded-[10px] border border-[#e4e2de] px-3.5 text-[14px] outline-none transition focus:border-black focus:shadow-[0_0_0_3px_rgba(10,10,10,0.06)]"
+              placeholder="Alex Chen"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+            />
+          </div>
+
           <div className="space-y-1.5">
             <label className="text-[13px] font-semibold">Email</label>
             <input
@@ -85,6 +104,20 @@ export default function SigninPage() {
             />
           </div>
 
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-semibold">
+              Confirm password
+            </label>
+            <input
+              type="password"
+              className="h-11 w-full rounded-[10px] border border-[#e4e2de] px-3.5 text-[14px] outline-none transition focus:border-black focus:shadow-[0_0_0_3px_rgba(10,10,10,0.06)]"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              minLength={8}
+            />
+          </div>
+
           {error && (
             <p className="text-sm text-[#dc2626]" aria-live="polite">
               {error}
@@ -96,17 +129,17 @@ export default function SigninPage() {
             disabled={submitting}
             className="mt-2 flex h-11 w-full items-center justify-center rounded-[10px] bg-black text-[14px] font-semibold text-white transition hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {submitting ? "Signing in..." : "Sign in"}
+            {submitting ? "Creating account..." : "Create Account"}
           </button>
         </form>
 
         <p className="mt-6 text-center text-[13px] text-[#6b6860]">
-          Don&apos;t have an account?{" "}
+          Already have an account?{" "}
           <a
-            href="/signup"
+            href="/signin"
             className="font-semibold text-black underline-offset-2 hover:underline"
           >
-            Sign up
+            Sign in
           </a>
         </p>
       </div>

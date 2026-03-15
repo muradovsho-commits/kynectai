@@ -1,5 +1,8 @@
-import { redirect } from "next/navigation";
-
 export default function Home() {
-  redirect("/kynect-landing-13.html");
+  return (
+    <iframe
+      src="/kynect-landing.html"
+      style={{ width: "100vw", height: "100vh", border: "none" }}
+    />
+  );
 }
