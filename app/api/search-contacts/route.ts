@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const APOLLO_URL = "https://api.apollo.io/api/v1/mixed_people/search";
-const LOCATIONS = ["New York", "San Francisco", "Chicago", "Boston", "Los Angeles"];
+const DEFAULT_LOCATIONS = ["New York, NY", "San Francisco, CA", "Chicago, IL", "Boston, MA", "Los Angeles, CA"];
 
 type ApiContact = {
   id?: string;
@@ -58,8 +58,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => ({}));
     const query = typeof body.query === "string" ? body.query.trim() : "";
     const filters = body.filters && typeof body.filters === "object" ? body.filters : {};
-    const role = filters.role && typeof filters.role === "string" ? filters.role.trim() : undefined;
-    const firm = filters.firm && typeof filters.firm === "string" ? filters.firm.trim() : undefined;
+    const roleArr = Array.isArray(filters.role) ? filters.role.map((r) => (typeof r === "string" ? r.trim() : "")).filter(Boolean) : [];
+    const firmArr = Array.isArray(filters.firm) ? filters.firm.map((f) => (typeof f === "string" ? f.trim() : "")).filter(Boolean) : [];
+    const locationArr = Array.isArray(filters.location) ? filters.location.map((loc) => (typeof loc === "string" ? loc.trim() : "")).filter(Boolean) : [];
 
     const apiKey = process.env.APOLLO_API_KEY;
     if (!apiKey) {
@@ -69,9 +70,9 @@ export async function POST(request: NextRequest) {
     const payload: Record<string, unknown> = {
       api_key: apiKey,
       q_keywords: query || undefined,
-      person_titles: role ? [role] : undefined,
-      organization_names: firm ? [firm] : undefined,
-      person_locations: LOCATIONS,
+      person_titles: roleArr.length ? roleArr : undefined,
+      organization_names: firmArr.length ? firmArr : undefined,
+      person_locations: locationArr.length ? locationArr : DEFAULT_LOCATIONS,
       page: 1,
       per_page: 25,
     };

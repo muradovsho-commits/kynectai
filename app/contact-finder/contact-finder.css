@@ -72,23 +72,6 @@ body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text
 .search-btn:hover { opacity: 0.85; transform: translateY(-1px); }
 
 .filter-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
-.filter-label { font-size: 11px; font-weight: 700; color: var(--text-3); align-self: center; margin-right: 2px; }
-.filter-chip { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; border: 1.5px solid var(--border-2); background: var(--surface); font-size: 12px; font-weight: 500; color: var(--text-2); cursor: pointer; transition: all 0.15s; white-space: nowrap; position: relative; }
-.filter-chip:hover { border-color: var(--text); color: var(--text); }
-.filter-chip.active { background: var(--text); color: var(--surface); border-color: var(--text); }
-.filter-chip svg { width: 11px; height: 11px; }
-.filter-dropdown { position: absolute; top: calc(100% + 6px); left: 0; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 6px; min-width: 160px; z-index: 200; box-shadow: 0 8px 32px rgba(0,0,0,0.12); display: none; }
-.filter-chip.open .filter-dropdown { display: block; }
-.filter-dropdown.two-level { z-index: 200; }
-.filter-dropdown-search { padding: 6px; border-bottom: 1px solid var(--border); }
-.filter-search-input { width: 100%; padding: 8px 10px; border: 1.5px solid var(--border-2); border-radius: 8px; font-size: 13px; font-family: 'Sora', sans-serif; color: var(--text); background: var(--bg); outline: none; }
-.filter-search-input::placeholder { color: var(--text-3); }
-.filter-dropdown-list { max-height: 260px; overflow-y: auto; padding: 4px 0; }
-.filter-no-results { padding: 12px 12px; font-size: 13px; color: var(--text-3); text-align: center; }
-.filter-option { padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-2); transition: background 0.1s; white-space: nowrap; }
-.filter-option:hover { background: var(--surface-2); color: var(--text); }
-.filter-option.selected { color: var(--text); font-weight: 600; }
-.filter-option.selected::after { content: '✓'; float: right; }
 
 .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .results-count { font-size: 13px; font-weight: 600; color: var(--text-2); }
