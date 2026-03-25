@@ -62,8 +62,8 @@ export default function SigninPage() {
           window.localStorage.setItem("offerbell_onboarding_profile", JSON.stringify({
             firstName: pts[0] || "",
             lastName: pts.slice(1).join(" ") || "",
-            university: "Not set",
-            targetRoles: ["Not set"],
+            university: "",
+            targetRoles: [],
             targetFirms: [],
             major: "",
             year: "",

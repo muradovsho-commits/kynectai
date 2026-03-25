@@ -100,19 +100,53 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
     if (step !== 0) return;
     const check = () => {
       try {
+        // Check DOM fields directly (My Account page form)
+        const schoolSelect = document.querySelector('[data-tutorial="profile-section"] select') as HTMLSelectElement;
+        const yearSelect = document.querySelectorAll('[data-tutorial="profile-section"] select')[1] as HTMLSelectElement;
+        const roleSelect = document.querySelectorAll('[data-tutorial="profile-section"] select')[2] as HTMLSelectElement;
+        const firstNameInput = document.querySelector('[data-tutorial="profile-section"] input') as HTMLInputElement;
+
+        if (schoolSelect && yearSelect && firstNameInput) {
+          const hasSchool = schoolSelect.value && !schoolSelect.value.includes('Select');
+          const hasYear = yearSelect.value && !yearSelect.value.includes('Select');
+          const hasRole = roleSelect?.value && !roleSelect.value.includes('Select');
+          const hasName = firstNameInput.value.trim().length > 0;
+          setProfileValid(!!(hasSchool && hasYear && hasName));
+          return;
+        }
+
+        // Fallback: check localStorage
         const raw = localStorage.getItem('offerbell_onboarding_profile');
         if (!raw) { setProfileValid(false); return; }
         const p = JSON.parse(raw);
-        setProfileValid(!!(p.university && p.year && p.targetRoles?.length > 0));
+        setProfileValid(!!(p.university && p.year && (p.targetRoles?.length > 0 || p.targetRole)));
       } catch { setProfileValid(false); }
     };
     check();
-    const interval = setInterval(check, 1000);
+    const interval = setInterval(check, 500);
     return () => clearInterval(interval);
   }, [step]);
 
   const advance = useCallback(async () => {
     if (step === 0 && STEPS[0].validateBeforeAdvance && !profileValid) return;
+
+    // If on step 0, trigger save on the My Account page
+    if (step === 0) {
+      const saveBtn = document.querySelector('[data-tutorial="profile-section"]')
+        ?.parentElement
+        ?.querySelector('button');
+      // Find the Save Changes button by text
+      const allBtns = document.querySelectorAll('button');
+      for (const btn of allBtns) {
+        if (btn.textContent?.includes('Save Changes') || btn.textContent?.includes('Save now')) {
+          btn.click();
+          break;
+        }
+      }
+      // Small delay to let save complete
+      await new Promise(r => setTimeout(r, 300));
+    }
+
     const nextStep = step + 1;
     setAnimating(true);
     if (nextStep >= STEPS.length) {

@@ -70,13 +70,18 @@ export default function DashboardPage() {
     if (typeof window === "undefined") return;
     const stored = window.localStorage.getItem("offerbell_user_id");
     if (!stored) { router.replace("/signin"); return; }
-    // If no profile exists yet, create a minimal stub so the app doesn't break
+    // If no profile exists yet, create a minimal stub with signup data so the app doesn't break
     try {
       const raw = window.localStorage.getItem("offerbell_onboarding_profile");
       if (!raw) {
+        const signupName = window.localStorage.getItem("offerbell_signup_name") || "";
+        const signupEmail = window.localStorage.getItem("offerbell_signup_email") || "";
+        const parts = signupName.trim().split(/\s+/);
+        const firstName = parts[0] || "";
+        const lastName = parts.slice(1).join(" ") || "";
         window.localStorage.setItem("offerbell_onboarding_profile", JSON.stringify({
-          firstName: "", lastName: "", university: "", major: "", year: "",
-          targetRoles: [], recruitYear: "", targetFirms: [], email: "", plan: "free"
+          firstName, lastName, university: "", major: "", year: "",
+          targetRoles: [], recruitYear: "", targetFirms: [], email: signupEmail, plan: "free"
         }));
       }
     } catch {}

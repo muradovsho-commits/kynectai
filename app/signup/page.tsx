@@ -40,6 +40,8 @@ export default function SignupPage() {
       // Flag that this is a new user who needs onboarding
       if (typeof window !== "undefined") {
         window.localStorage.setItem("offerbell_needs_onboarding", "true");
+        window.localStorage.setItem("offerbell_signup_name", fullName);
+        window.localStorage.setItem("offerbell_signup_email", email);
       }
       setSuccess(true);
     } catch (err: any) {
