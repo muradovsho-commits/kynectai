@@ -154,6 +154,7 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
     if (nextStep >= STEPS.length) {
       try { await completeTutorial({ userId: userId as any }); } catch {}
       localStorage.setItem('offerbell_tutorial_complete', 'true');
+      try { const raw = localStorage.getItem('offerbell_onboarding_profile'); if (raw) { const p = JSON.parse(raw); p.tutorialComplete = true; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(p)); } } catch {}
       onComplete();
     } else {
       try { await setTutorialStep({ userId: userId as any, step: nextStep }); } catch {}
@@ -165,6 +166,7 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
   const skip = useCallback(async () => {
     try { await completeTutorial({ userId: userId as any }); } catch {}
     localStorage.setItem('offerbell_tutorial_complete', 'true');
+    try { const raw = localStorage.getItem('offerbell_onboarding_profile'); if (raw) { const p = JSON.parse(raw); p.tutorialComplete = true; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(p)); } } catch {}
     onComplete();
   }, [userId, completeTutorial, onComplete]);
 

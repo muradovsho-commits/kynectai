@@ -91,11 +91,20 @@ export default function DashboardPage() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const complete = localStorage.getItem('offerbell_tutorial_complete');
-    if (!complete) {
-      const step = parseInt(localStorage.getItem('offerbell_tutorial_step') || '0', 10);
-      setTutorialStep(step);
-      setShowTutorial(true);
+    // Also check inside onboarding profile (survives cross-origin deploys)
+    let profileComplete = false;
+    try {
+      const prof = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}');
+      if (prof.tutorialComplete) profileComplete = true;
+    } catch {}
+    if (complete || profileComplete) {
+      // Make sure both are set for future checks
+      localStorage.setItem('offerbell_tutorial_complete', 'true');
+      return;
     }
+    const step = parseInt(localStorage.getItem('offerbell_tutorial_step') || '0', 10);
+    setTutorialStep(step);
+    setShowTutorial(true);
   }, []);
 
   // Theme
