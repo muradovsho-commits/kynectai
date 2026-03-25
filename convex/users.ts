@@ -112,6 +112,6 @@ export const setTutorialStep = mutation({
 export const completeTutorial = mutation({
   args: { userId: v.id("users") },
   handler: async (ctx, { userId }) => {
-    await ctx.db.patch(userId, { onboardingComplete: true, onboardingStep: 4 });
+    await ctx.db.patch(userId, { onboardingComplete: true, onboardingStep: 5 });
   },
 });

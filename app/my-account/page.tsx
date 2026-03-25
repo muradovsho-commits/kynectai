@@ -27,9 +27,9 @@ export default function MyAccountPage() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
-  const [school, setSchool] = useState('New York University');
-  const [year, setYear] = useState('Class of 2026');
-  const [targetRole, setTargetRole] = useState('Investment Banking');
+  const [school, setSchool] = useState('');
+  const [year, setYear] = useState('');
+  const [targetRole, setTargetRole] = useState('');
   const [notifs, setNotifs] = useState({ usage: true, jobs: true, followup: false, updates: true });
   const [barsAnimated, setBarsAnimated] = useState(false);
   const [searchesUsed, setSearchesUsed] = useState(0);
@@ -193,18 +193,21 @@ export default function MyAccountPage() {
             <div style={{display:'flex',flexDirection:'column',gap:6}}>
               <label style={{fontSize:12,fontWeight:700,color:'var(--text)'}}>School</label>
               <select style={inp} value={school} onChange={e=>{setSchool(e.target.value);mark();}}>
+                <option value="">Select school...</option>
                 {SCHOOLS.map(s=><option key={s}>{s}</option>)}
               </select>
             </div>
             <div style={{display:'flex',flexDirection:'column',gap:6}}>
               <label style={{fontSize:12,fontWeight:700,color:'var(--text)'}}>Graduation Year</label>
               <select style={inp} value={year} onChange={e=>{setYear(e.target.value);mark();}}>
+                <option value="">Select year...</option>
                 {YEARS.map(y=><option key={y}>{y}</option>)}
               </select>
             </div>
             <div style={{display:'flex',flexDirection:'column',gap:6}}>
               <label style={{fontSize:12,fontWeight:700,color:'var(--text)'}}>Target Role</label>
               <select style={inp} value={targetRole} onChange={e=>{setTargetRole(e.target.value);mark();}}>
+                <option value="">Select role...</option>
                 {VERTICALS.map(v=><option key={v}>{v}</option>)}
               </select>
             </div>
@@ -212,7 +215,7 @@ export default function MyAccountPage() {
         </div>
 
         {/* Plan */}
-        <div style={{marginBottom:28}}>
+        <div data-tutorial="plan-section" style={{marginBottom:28}}>
           <div style={{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:14,display:'flex',alignItems:'center',gap:8}}>Plan & Billing<div style={{flex:1,height:1,background:'var(--border)'}}/></div>
           {userPlan === 'pro' ? (
             <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,padding:20,display:'flex',alignItems:'center',justifyContent:'space-between',gap:20}}>

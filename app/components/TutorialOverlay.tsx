@@ -14,11 +14,19 @@ type TutorialOverlayProps = {
 const STEPS = [
   {
     title: 'Complete Your Profile',
-    description: 'Fill out your school, graduation year, and target role so we can personalize everything for you.',
+    description: 'Select your school, graduation year, and target role so we can personalize everything for you.',
     route: '/my-account',
     spotlightSelector: '[data-tutorial="profile-section"]',
     cta: 'Go to My Account',
     validateBeforeAdvance: true,
+  },
+  {
+    title: 'Upgrade & Manage Your Plan',
+    description: 'This is where you can upgrade to Pro for unlimited outreach messages and AI Coach access — or downgrade anytime. No surprises.',
+    route: '/my-account',
+    spotlightSelector: '[data-tutorial="plan-section"]',
+    cta: 'Got it',
+    validateBeforeAdvance: false,
   },
   {
     title: 'Explore the Learning Hub',
@@ -101,25 +109,19 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
     const check = () => {
       try {
         // Check DOM fields directly (My Account page form)
-        const schoolSelect = document.querySelector('[data-tutorial="profile-section"] select') as HTMLSelectElement;
-        const yearSelect = document.querySelectorAll('[data-tutorial="profile-section"] select')[1] as HTMLSelectElement;
-        const roleSelect = document.querySelectorAll('[data-tutorial="profile-section"] select')[2] as HTMLSelectElement;
+        const selects = document.querySelectorAll('[data-tutorial="profile-section"] select') as NodeListOf<HTMLSelectElement>;
         const firstNameInput = document.querySelector('[data-tutorial="profile-section"] input') as HTMLInputElement;
 
-        if (schoolSelect && yearSelect && firstNameInput) {
-          const hasSchool = schoolSelect.value && !schoolSelect.value.includes('Select');
-          const hasYear = yearSelect.value && !yearSelect.value.includes('Select');
-          const hasRole = roleSelect?.value && !roleSelect.value.includes('Select');
+        if (selects.length >= 3 && firstNameInput) {
           const hasName = firstNameInput.value.trim().length > 0;
-          setProfileValid(!!(hasSchool && hasYear && hasName));
+          const hasSchool = selects[0].value && selects[0].value !== '' && !selects[0].value.includes('Select');
+          const hasYear = selects[1].value && selects[1].value !== '' && !selects[1].value.includes('Select');
+          const hasRole = selects[2].value && selects[2].value !== '' && !selects[2].value.includes('Select');
+          setProfileValid(!!(hasName && hasSchool && hasYear && hasRole));
           return;
         }
 
-        // Fallback: check localStorage
-        const raw = localStorage.getItem('offerbell_onboarding_profile');
-        if (!raw) { setProfileValid(false); return; }
-        const p = JSON.parse(raw);
-        setProfileValid(!!(p.university && p.year && (p.targetRoles?.length > 0 || p.targetRole)));
+        setProfileValid(false);
       } catch { setProfileValid(false); }
     };
     check();
@@ -283,7 +285,7 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
             fontFamily: "'Sora', sans-serif",
             transition: 'all .15s',
           }}>
-            {isLast ? 'Start Exploring →' : step < STEPS.length - 2 ? 'Continue →' : 'Continue →'}
+            {isLast ? 'Start Exploring →' : currentStep.cta + ' →'}
           </button>
         </div>
       </div>
