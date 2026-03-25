@@ -198,30 +198,59 @@ function getSenderFromEmail() {
   return null;
 }
 
+function isEmailView() {
+  // Multiple ways to detect we're viewing an individual email
+  // .hP = subject line, .gD = sender element, h2[data-thread-perm-id] = thread heading
+  // Also check URL pattern for opened emails (contains /m/ or hash with msg id)
+  if (document.querySelector('.hP')) return true;
+  if (document.querySelector('.gD')) return true;
+  if (document.querySelector('h2[data-thread-perm-id]')) return true;
+  if (document.querySelector('[data-message-id]')) return true;
+  // URL-based: Gmail uses hash fragments like #inbox/FMfcgz... when viewing an email
+  const hash = window.location.hash;
+  if (hash && hash.match(/#[a-z]+\/[A-Za-z0-9]+/)) return true;
+  return false;
+}
+
 function injectButton() {
   // Don't double-inject
   if (document.querySelector('.offerbell-add-btn')) return;
 
   // Only inject when viewing an email (not inbox list)
-  const emailView = document.querySelector('.hP');  // Subject line in email view
-  if (!emailView) return;
+  if (!isEmailView()) return;
 
-  // Find the toolbar area in the email view
-  const toolbar = document.querySelector('.iH > div') || document.querySelector('.G-tF');
-  if (!toolbar) {
-    // Fallback: inject near the subject line
-    const subjectRow = emailView.closest('tr') || emailView.parentElement;
-    if (subjectRow) {
-      const btn = createButton();
-      btn.addEventListener('click', handleButtonClick);
-      subjectRow.appendChild(btn);
-    }
+  // Try to find Gmail toolbar areas (multiple selectors for different Gmail versions)
+  const toolbar = document.querySelector('.iH > div')
+    || document.querySelector('.G-tF')
+    || document.querySelector('.bAo .x')
+    || document.querySelector('[gh="mtb"]');
+
+  if (toolbar) {
+    const btn = createButton();
+    btn.addEventListener('click', handleButtonClick);
+    toolbar.appendChild(btn);
     return;
   }
 
+  // Try to inject near the subject line
+  const subjectEl = document.querySelector('.hP')
+    || document.querySelector('h2[data-thread-perm-id]');
+  if (subjectEl) {
+    const subjectRow = subjectEl.closest('tr') || subjectEl.parentElement;
+    if (subjectRow) {
+      const btn = createButton();
+      btn.addEventListener('click', handleButtonClick);
+      subjectRow.style.position = 'relative';
+      subjectRow.appendChild(btn);
+      return;
+    }
+  }
+
+  // Final fallback: floating button (always visible, always works)
   const btn = createButton();
+  btn.classList.add('offerbell-floating');
   btn.addEventListener('click', handleButtonClick);
-  toolbar.appendChild(btn);
+  document.body.appendChild(btn);
 }
 
 function handleButtonClick(e) {
@@ -257,14 +286,15 @@ const observer = new MutationObserver(() => {
   const currentUrl = window.location.href;
   if (currentUrl !== lastUrl) {
     lastUrl = currentUrl;
+    // Remove any existing button on navigation (especially floating ones)
+    document.querySelectorAll('.offerbell-add-btn').forEach(el => el.remove());
     // Small delay to let Gmail render
     setTimeout(injectButton, 800);
   }
 
   // Also re-check periodically when DOM changes (Gmail is an SPA)
   if (!document.querySelector('.offerbell-add-btn')) {
-    const emailView = document.querySelector('.hP');
-    if (emailView) {
+    if (isEmailView()) {
       setTimeout(injectButton, 300);
     }
   }
