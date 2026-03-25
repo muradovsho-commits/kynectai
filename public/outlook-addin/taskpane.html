@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OfferBell</title>
+<script src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fafaf9; color: #0c0c0c; padding: 16px; -webkit-font-smoothing: antialiased; }
+
+  .logo { font-size: 16px; font-weight: 700; margin-bottom: 16px; letter-spacing: -.3px; }
+  .logo em { font-style: italic; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; margin-bottom: 16px; }
+  .tab { flex: 1; padding: 8px 0; text-align: center; font-size: 12px; font-weight: 600; border-radius: 8px; border: 1.5px solid #dddcda; background: #fff; color: #636160; cursor: pointer; }
+  .tab.active { background: #0c0c0c; color: #fff; border-color: #0c0c0c; }
+
+  /* Section labels */
+  .section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #9b9997; margin-bottom: 6px; margin-top: 4px; }
+
+  /* Fields */
+  .field { margin-bottom: 10px; }
+  .field label { display: block; font-size: 11px; font-weight: 600; color: #636160; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }
+  .field input, .field select, .field textarea { width: 100%; padding: 8px 10px; border: 1.5px solid #dddcda; border-radius: 8px; font-size: 13px; font-family: inherit; color: #0c0c0c; background: #fff; outline: none; }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: #0c0c0c; }
+  .field textarea { resize: vertical; min-height: 50px; }
+  .row { display: flex; gap: 8px; }
+  .row .field { flex: 1; }
+
+  /* Buttons */
+  .btn-primary { width: 100%; padding: 10px; background: #0c0c0c; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-primary:hover { background: #1a1a19; }
+  .btn-secondary { width: 100%; padding: 8px; background: #f5f4f2; color: #636160; border: 1.5px solid #dddcda; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 6px; }
+  .btn-secondary:hover { background: #ebebea; }
+
+  /* Angle grid */
+  .angle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+  .angle-opt { padding: 8px 10px; border: 1.5px solid #ebebea; border-radius: 8px; background: #fff; cursor: pointer; text-align: left; font-family: inherit; }
+  .angle-opt strong { display: block; font-size: 11px; font-weight: 700; color: #0c0c0c; }
+  .angle-opt span { font-size: 9px; color: #9b9997; }
+  .angle-opt:hover { border-color: #0c0c0c; }
+  .angle-opt.active { background: #0c0c0c; border-color: #0c0c0c; }
+  .angle-opt.active strong { color: #fff; }
+  .angle-opt.active span { color: rgba(255,255,255,.5); }
+
+  /* Tone */
+  .tone-row { display: flex; gap: 4px; margin-bottom: 10px; }
+  .tone-opt { flex: 1; padding: 6px 8px; border-radius: 100px; border: 1.5px solid #dddcda; background: #fff; font-size: 11px; font-weight: 600; color: #636160; cursor: pointer; text-align: center; font-family: inherit; }
+  .tone-opt.active { background: #0c0c0c; border-color: #0c0c0c; color: #fff; }
+
+  /* Result */
+  .result-box { background: #fff; border: 1.5px solid #ebebea; border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+  .result-subject { font-size: 13px; font-weight: 700; color: #0c0c0c; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #ebebea; }
+  .result-body { font-size: 12px; line-height: 1.7; color: #0c0c0c; white-space: pre-wrap; max-height: 200px; overflow-y: auto; }
+
+  /* Success */
+  .success { text-align: center; padding: 24px 0; }
+  .success svg { margin-bottom: 8px; }
+  .success div { font-size: 14px; font-weight: 700; color: #0c0c0c; }
+  .success a { display: block; margin-top: 6px; font-size: 12px; color: #0c0c0c; text-decoration: underline; }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%) translateY(60px); background: #0c0c0c; color: #fff; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 600; transition: transform .3s; white-space: nowrap; z-index: 100; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .hidden { display: none; }
+  .loading { text-align: center; padding: 30px 0; }
+  .loading div:first-child { font-size: 14px; font-weight: 700; color: #0c0c0c; margin-bottom: 4px; }
+  .loading div:last-child { font-size: 11px; color: #9b9997; }
+  .error { text-align: center; padding: 20px 0; }
+  .error div:first-child { font-size: 13px; font-weight: 700; color: #dc2626; margin-bottom: 4px; }
+  .error div:last-child { font-size: 11px; color: #9b9997; }
+</style>
+</head>
+<body>
+
+<div class="logo">Offer<em>Bell.</em></div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" id="tab-add" onclick="switchTab('add')">Add Contact</div>
+  <div class="tab" id="tab-write" onclick="switchTab('write')">Write Outreach</div>
+</div>
+
+<!-- ═══ ADD CONTACT TAB ═══ -->
+<div id="panel-add">
+  <div class="row">
+    <div class="field"><label>First Name</label><input id="a-fname" placeholder="First name"></div>
+    <div class="field"><label>Last Name</label><input id="a-lname" placeholder="Last name"></div>
+  </div>
+  <div class="field"><label>Email</label><input id="a-email" placeholder="Email"></div>
+  <div class="row">
+    <div class="field"><label>Firm</label><input id="a-firm" placeholder="Company"></div>
+    <div class="field"><label>Role</label><input id="a-role" placeholder="e.g. VP, Analyst"></div>
+  </div>
+  <div class="field"><label>Status</label>
+    <select id="a-status">
+      <option value="drafted">Drafted</option>
+      <option value="sent" selected>Sent</option>
+      <option value="spoken">Spoken With</option>
+      <option value="stay">Staying in Touch</option>
+    </select>
+  </div>
+  <div class="field"><label>Notes</label><textarea id="a-notes" rows="2" placeholder="Optional notes..."></textarea></div>
+  <button class="btn-primary" onclick="addContact()">Add to OfferBell</button>
+  <div id="add-success" class="success hidden">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <div>Contact added!</div>
+    <a href="https://www.offerbell.org/outreach-tracker" target="_blank">Open Tracker</a>
+  </div>
+</div>
+
+<!-- ═══ WRITE OUTREACH TAB ═══ -->
+<div id="panel-write" class="hidden">
+
+  <!-- Step 1 -->
+  <div id="w-step1">
+    <div class="section-label">Contact</div>
+    <div class="row">
+      <div class="field"><label>Name</label><input id="w-name" placeholder="Contact name"></div>
+      <div class="field"><label>Firm</label><input id="w-firm" placeholder="Company"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Role</label><input id="w-role" placeholder="e.g. IB Analyst"></div>
+      <div class="field"><label>School</label><input id="w-school" placeholder="Optional"></div>
+    </div>
+    <div class="section-label" style="margin-top:6px">About You</div>
+    <div class="row">
+      <div class="field"><label>Your Name</label><input id="w-yourname" placeholder="Your name"></div>
+      <div class="field"><label>Your School</label><input id="w-yourschool" placeholder="e.g. Ohio State"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Year</label><input id="w-year" placeholder="e.g. Junior"></div>
+      <div class="field"><label>Target Role</label><input id="w-target" value="Investment Banking" placeholder="e.g. IB"></div>
+    </div>
+    <button class="btn-primary" onclick="showWriteStep(2)">Choose Angle →</button>
+  </div>
+
+  <!-- Step 2 -->
+  <div id="w-step2" class="hidden">
+    <div class="section-label">Networking Angle</div>
+    <div class="angle-grid">
+      <button class="angle-opt active" data-angle="alumni" onclick="pickAngle(this)"><strong>Alumni</strong><span>Same school or program</span></button>
+      <button class="angle-opt" data-angle="deal" onclick="pickAngle(this)"><strong>Deal Reference</strong><span>Recent transaction</span></button>
+      <button class="angle-opt" data-angle="interest" onclick="pickAngle(this)"><strong>Shared Interest</strong><span>Common topic</span></button>
+      <button class="angle-opt" data-angle="mutual" onclick="pickAngle(this)"><strong>Mutual Connection</strong><span>Someone referred you</span></button>
+      <button class="angle-opt" data-angle="career" onclick="pickAngle(this)"><strong>Career Path</strong><span>Similar trajectory</span></button>
+      <button class="angle-opt" data-angle="cold" onclick="pickAngle(this)"><strong>No Connection</strong><span>Cold outreach</span></button>
+    </div>
+    <div class="field"><label id="w-ctx-label">What do you have in common?</label><input id="w-ctx" placeholder="e.g. NYU Stern IB Club"></div>
+    <div class="section-label">Tone</div>
+    <div class="tone-row">
+      <button class="tone-opt active" data-tone="Professional" onclick="pickTone(this)">Professional</button>
+      <button class="tone-opt" data-tone="Conversational" onclick="pickTone(this)">Conversational</button>
+      <button class="tone-opt" data-tone="Direct & brief" onclick="pickTone(this)">Direct</button>
+    </div>
+    <button class="btn-primary" onclick="generateOutreach()">Generate Message →</button>
+    <button class="btn-secondary" onclick="showWriteStep(1)">← Back</button>
+  </div>
+
+  <!-- Step 3 -->
+  <div id="w-step3" class="hidden">
+    <div id="w-loading" class="loading">
+      <div>Generating your message…</div>
+      <div>Just a second.</div>
+    </div>
+    <div id="w-error" class="error hidden">
+      <div>Failed to generate</div>
+      <div>Check your connection and try again.</div>
+    </div>
+    <div id="w-result" class="hidden">
+      <div class="result-box">
+        <div class="result-subject" id="w-subject"></div>
+        <div class="result-body" id="w-body"></div>
+      </div>
+      <button class="btn-primary" onclick="copyOutreach()">Copy to Clipboard</button>
+      <button class="btn-secondary" onclick="generateOutreach()">↻ Regenerate</button>
+      <button class="btn-secondary" onclick="showWriteStep(2)">← Edit</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const OFFERBELL_URL = 'https://www.offerbell.org';
+let senderName = '', senderEmail = '', senderFirm = '';
+let selectedAngle = 'alumni', selectedTone = 'Professional';
+let generatedSubject = '', generatedBody = '';
+
+const ctxLabels = { alumni:'What do you have in common?', deal:'Which deal or transaction?', interest:"What's the shared interest?", mutual:'Who referred you?', career:'What path are you targeting?', cold:'Why this specific person?' };
+const ctxPlaceholders = { alumni:'e.g. NYU Stern IB Club', deal:"e.g. Goldman's acquisition of GreenSky", interest:'e.g. semiconductor M&A', mutual:'e.g. Jane Smith from Goldman', career:'e.g. IB then PE', cold:'e.g. Their group covers sectors I want' };
+const angleLabels = { alumni:'Alumni', deal:'Deal Reference', interest:'Shared Interest', mutual:'Mutual Connection', career:'Career Path', cold:'No Connection' };
+
+// ── Office.js Init ──
+Office.onReady(function(info) {
+  if (info.host === Office.HostType.Outlook) {
+    const item = Office.context.mailbox.item;
+    if (item) {
+      // Get sender info
+      if (item.from) {
+        senderName = item.from.displayName || '';
+        senderEmail = item.from.emailAddress || '';
+      } else if (item.sender) {
+        senderName = item.sender.displayName || '';
+        senderEmail = item.sender.emailAddress || '';
+      }
+
+      senderFirm = inferFirm(senderEmail);
+
+      // Pre-fill Add Contact
+      const parts = splitName(senderName);
+      document.getElementById('a-fname').value = parts.first;
+      document.getElementById('a-lname').value = parts.last;
+      document.getElementById('a-email').value = senderEmail;
+      document.getElementById('a-firm').value = senderFirm;
+
+      // Pre-fill Write Outreach
+      document.getElementById('w-name').value = senderName;
+      document.getElementById('w-firm').value = senderFirm;
+    }
+  }
+});
+
+function inferFirm(email) {
+  const domain = email.split('@')[1] || '';
+  const free = ['gmail.com','yahoo.com','hotmail.com','outlook.com','aol.com','icloud.com','protonmail.com','mail.com','live.com','msn.com','ymail.com'];
+  if (free.includes(domain)) return '';
+  const f = domain.split('.')[0];
+  return f.charAt(0).toUpperCase() + f.slice(1);
+}
+
+function splitName(full) {
+  const p = full.trim().split(/\s+/);
+  if (p.length === 0) return { first: '', last: '' };
+  if (p.length === 1) return { first: p[0], last: '' };
+  return { first: p[0], last: p.slice(1).join(' ') };
+}
+
+// ── Tabs ──
+function switchTab(tab) {
+  document.getElementById('tab-add').classList.toggle('active', tab === 'add');
+  document.getElementById('tab-write').classList.toggle('active', tab === 'write');
+  document.getElementById('panel-add').classList.toggle('hidden', tab !== 'add');
+  document.getElementById('panel-write').classList.toggle('hidden', tab !== 'write');
+}
+
+// ── Add Contact ──
+function addContact() {
+  const fname = document.getElementById('a-fname').value.trim();
+  const lname = document.getElementById('a-lname').value.trim();
+  if (!fname && !lname) { document.getElementById('a-fname').style.borderColor = '#ef4444'; return; }
+  const data = {
+    fname, lname,
+    email: document.getElementById('a-email').value.trim(),
+    firm: document.getElementById('a-firm').value.trim(),
+    role: document.getElementById('a-role').value.trim(),
+    status: document.getElementById('a-status').value,
+    notes: document.getElementById('a-notes').value.trim(),
+  };
+  const params = new URLSearchParams(data);
+  window.open(OFFERBELL_URL + '/add-contact?' + params.toString(), '_blank');
+  document.getElementById('add-success').classList.remove('hidden');
+  setTimeout(function() { document.getElementById('add-success').classList.add('hidden'); }, 3000);
+}
+
+// ── Write Outreach ──
+function showWriteStep(n) {
+  document.getElementById('w-step1').classList.toggle('hidden', n !== 1);
+  document.getElementById('w-step2').classList.toggle('hidden', n !== 2);
+  document.getElementById('w-step3').classList.toggle('hidden', n !== 3);
+}
+
+function pickAngle(el) {
+  document.querySelectorAll('.angle-opt').forEach(function(b) { b.classList.remove('active'); });
+  el.classList.add('active');
+  selectedAngle = el.getAttribute('data-angle');
+  document.getElementById('w-ctx-label').textContent = ctxLabels[selectedAngle] || 'Context';
+  document.getElementById('w-ctx').placeholder = ctxPlaceholders[selectedAngle] || '';
+}
+
+function pickTone(el) {
+  document.querySelectorAll('.tone-opt').forEach(function(b) { b.classList.remove('active'); });
+  el.classList.add('active');
+  selectedTone = el.getAttribute('data-tone');
+}
+
+async function generateOutreach() {
+  showWriteStep(3);
+  document.getElementById('w-loading').classList.remove('hidden');
+  document.getElementById('w-result').classList.add('hidden');
+  document.getElementById('w-error').classList.add('hidden');
+
+  const prompt = 'Write a compelling cold email for an undergraduate student to a finance professional.\n' +
+    'Student Info: name=' + document.getElementById('w-yourname').value + ', school=' + document.getElementById('w-yourschool').value + ', year=' + document.getElementById('w-year').value + ', target role=' + document.getElementById('w-target').value + '.\n' +
+    'Contact Info: name=' + document.getElementById('w-name').value + ', firm=' + document.getElementById('w-firm').value + ', role=' + document.getElementById('w-role').value + ', school=' + document.getElementById('w-school').value + '.\n' +
+    'Networking Angle: ' + (angleLabels[selectedAngle] || selectedAngle) + '. Context: ' + (document.getElementById('w-ctx').value || 'None provided') + '.\n' +
+    'Tone: ' + selectedTone + '.\n\n' +
+    'Rules:\n1. Do not use overly formal or robotic words like "delve", "robust", "thrilled", or "tapestry".\n2. Make it sound like a natural, ambitious college student. 4-8 sentences.\n3. First line must be "Subject: [your subject here]". Then two newlines, then body. No other commentary.\n4. Subject in Title Case.\n5. Pay attention to contact role and firm.';
+
+  try {
+    const res = await fetch(OFFERBELL_URL + '/api/generate-outreach', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: prompt })
+    });
+    const data = await res.json();
+    const rawText = data.text || '';
+    const match = rawText.match(/^Subject:\s*(.+)$/im);
+    if (match) {
+      generatedSubject = match[1];
+      generatedBody = rawText.replace(/^Subject:\s*.+(\r?\n)+/i, '').trim();
+    } else {
+      generatedSubject = 'Networking Inquiry';
+      generatedBody = rawText.trim();
+    }
+    document.getElementById('w-subject').textContent = generatedSubject;
+    document.getElementById('w-body').textContent = generatedBody;
+    document.getElementById('w-loading').classList.add('hidden');
+    document.getElementById('w-result').classList.remove('hidden');
+  } catch (err) {
+    document.getElementById('w-loading').classList.add('hidden');
+    document.getElementById('w-error').classList.remove('hidden');
+  }
+}
+
+function copyOutreach() {
+  const text = 'Subject: ' + generatedSubject + '\n\n' + generatedBody;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text);
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+  showToast('Copied to clipboard!');
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2000);
+}
+</script>
+</body>
+</html>
