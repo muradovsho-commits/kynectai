@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "OfferBell — Add to Outreach Tracker",
+  "version": "1.0.0",
+  "description": "Add contacts from Gmail directly to your OfferBell Outreach Tracker with one click.",
+  "permissions": ["activeTab"],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*"],
+      "matches": ["https://mail.google.com/*"]
+    }
+  ]
+}
