@@ -171,13 +171,26 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
   if (step >= STEPS.length) return null;
   const currentStep = STEPS[step];
   const isLast = step === STEPS.length - 1;
-  const pad = 12;
 
-  // Calculate spotlight bounds
-  const sx = spotlightRect ? spotlightRect.left - pad : 0;
-  const sy = spotlightRect ? spotlightRect.top - pad : 0;
-  const sw = spotlightRect ? spotlightRect.width + pad * 2 : 0;
-  const sh = spotlightRect ? spotlightRect.height + pad * 2 : 0;
+  // Elevate the spotlighted element above the overlay so it's fully interactive
+  useEffect(() => {
+    if (!currentStep.spotlightSelector) return;
+    const el = document.querySelector(currentStep.spotlightSelector) as HTMLElement;
+    if (el) {
+      el.style.position = 'relative';
+      el.style.zIndex = '100000';
+      el.style.background = 'var(--surface, #fff)';
+      el.style.borderRadius = '16px';
+    }
+    return () => {
+      if (el) {
+        el.style.zIndex = '';
+        el.style.position = '';
+        el.style.background = '';
+        el.style.borderRadius = '';
+      }
+    };
+  }, [step, currentStep.spotlightSelector, navigated]);
 
   return (
     <div style={{
@@ -185,24 +198,8 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
       transition: 'opacity .3s',
       opacity: animating ? 0 : 1,
     }}>
-      {/* Full-screen blocker that catches ALL clicks outside spotlight and card */}
-      {spotlightRect ? (
-        <>
-          {/* Top blocker */}
-          <div style={{ position:'fixed', top:0, left:0, right:0, height: Math.max(0, sy), background:'rgba(0,0,0,0.65)' }} />
-          {/* Left blocker */}
-          <div style={{ position:'fixed', top: sy, left:0, width: Math.max(0, sx), height: sh, background:'rgba(0,0,0,0.65)' }} />
-          {/* Right blocker */}
-          <div style={{ position:'fixed', top: sy, left: sx + sw, right:0, height: sh, background:'rgba(0,0,0,0.65)' }} />
-          {/* Bottom blocker */}
-          <div style={{ position:'fixed', top: sy + sh, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.65)' }} />
-          {/* Spotlight border */}
-          <div style={{ position:'fixed', top: sy, left: sx, width: sw, height: sh, borderRadius:16, border:'2px solid rgba(255,255,255,0.2)', pointerEvents:'none' }} />
-        </>
-      ) : (
-        /* No spotlight — full screen dim blocker */
-        <div style={{ position:'fixed', inset:0, background: isLast ? 'rgba(0,0,0,0.75)' : 'rgba(0,0,0,0.65)' }} />
-      )}
+      {/* Single full-screen dim overlay — blocks all clicks */}
+      <div style={{ position:'fixed', inset:0, background: isLast ? 'rgba(0,0,0,0.75)' : 'rgba(0,0,0,0.65)' }} />
 
       {/* Card */}
       <div style={{
