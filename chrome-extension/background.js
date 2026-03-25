@@ -3,7 +3,7 @@
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'generateOutreach') {
-    fetch('https://offerbell.org/api/generate-outreach', {
+    fetch('https://www.offerbell.org/api/generate-outreach', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt: request.prompt })

@@ -4,7 +4,7 @@
   "version": "1.1.0",
   "description": "Add contacts and generate outreach emails directly from Gmail with OfferBell.",
   "permissions": ["activeTab"],
-  "host_permissions": ["https://offerbell.org/*"],
+  "host_permissions": ["https://offerbell.org/*", "https://www.offerbell.org/*"],
   "background": {
     "service_worker": "background.js"
   },

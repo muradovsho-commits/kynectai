@@ -6,7 +6,7 @@ const client = new Anthropic({
 });
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://mail.google.com",
+  "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };
