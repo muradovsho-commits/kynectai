@@ -171,44 +171,36 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
   const isLast = step === STEPS.length - 1;
   const pad = 12;
 
+  // Calculate spotlight bounds
+  const sx = spotlightRect ? spotlightRect.left - pad : 0;
+  const sy = spotlightRect ? spotlightRect.top - pad : 0;
+  const sw = spotlightRect ? spotlightRect.width + pad * 2 : 0;
+  const sh = spotlightRect ? spotlightRect.height + pad * 2 : 0;
+
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 99999,
       transition: 'opacity .3s',
       opacity: animating ? 0 : 1,
-      pointerEvents: 'none',
     }}>
-      {/* Dimmed backdrop with spotlight cutout — pointer-events:none so users can interact with spotlighted area */}
-      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
-        <defs>
-          <mask id="tutorial-mask">
-            <rect width="100%" height="100%" fill="white" />
-            {spotlightRect && (
-              <rect
-                x={spotlightRect.left - pad}
-                y={spotlightRect.top - pad}
-                width={spotlightRect.width + pad * 2}
-                height={spotlightRect.height + pad * 2}
-                rx="16"
-                fill="black"
-              />
-            )}
-          </mask>
-        </defs>
-        <rect width="100%" height="100%" fill="rgba(0,0,0,0.65)" mask="url(#tutorial-mask)" />
-        {spotlightRect && (
-          <rect
-            x={spotlightRect.left - pad}
-            y={spotlightRect.top - pad}
-            width={spotlightRect.width + pad * 2}
-            height={spotlightRect.height + pad * 2}
-            rx="16"
-            fill="none"
-            stroke="rgba(255,255,255,0.2)"
-            strokeWidth="2"
-          />
-        )}
-      </svg>
+      {/* Full-screen blocker that catches ALL clicks outside spotlight and card */}
+      {spotlightRect ? (
+        <>
+          {/* Top blocker */}
+          <div style={{ position:'fixed', top:0, left:0, right:0, height: Math.max(0, sy), background:'rgba(0,0,0,0.65)' }} />
+          {/* Left blocker */}
+          <div style={{ position:'fixed', top: sy, left:0, width: Math.max(0, sx), height: sh, background:'rgba(0,0,0,0.65)' }} />
+          {/* Right blocker */}
+          <div style={{ position:'fixed', top: sy, left: sx + sw, right:0, height: sh, background:'rgba(0,0,0,0.65)' }} />
+          {/* Bottom blocker */}
+          <div style={{ position:'fixed', top: sy + sh, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.65)' }} />
+          {/* Spotlight border */}
+          <div style={{ position:'fixed', top: sy, left: sx, width: sw, height: sh, borderRadius:16, border:'2px solid rgba(255,255,255,0.2)', pointerEvents:'none' }} />
+        </>
+      ) : (
+        /* No spotlight — full screen dim blocker */
+        <div style={{ position:'fixed', inset:0, background: isLast ? 'rgba(0,0,0,0.75)' : 'rgba(0,0,0,0.65)' }} />
+      )}
 
       {/* Card */}
       <div style={{
@@ -223,7 +215,6 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
         padding: isLast ? '40px 36px' : '28px 28px 24px',
         boxShadow: '0 24px 80px rgba(0,0,0,0.5)',
         textAlign: isLast ? 'center' : 'left',
-        pointerEvents: 'auto',
       }}>
         {/* Step indicator */}
         {!isLast && (
