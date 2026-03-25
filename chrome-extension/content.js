@@ -185,7 +185,10 @@ function createWritePopup(senderInfo) {
           </svg>
           Write Outreach
         </div>
-        <button class="offerbell-popup-close">&times;</button>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span id="ob-w-usage" style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:100px;background:#f5f4f2;color:#636160;border:1px solid #dddcda"></span>
+          <button class="offerbell-popup-close">&times;</button>
+        </div>
       </div>
 
       <!-- Step 1: Details -->
@@ -275,6 +278,36 @@ function createWritePopup(senderInfo) {
   let generatedSubject = '';
   let generatedBody = '';
 
+  // Load usage data from chrome.storage
+  let messagesSent = 0;
+  let userPlan = 'free';
+
+  function updateUsageBadge() {
+    const badge = overlay.querySelector('#ob-w-usage');
+    if (!badge) return;
+    if (userPlan === 'pro') {
+      badge.textContent = 'Unlimited — Pro';
+      badge.style.background = '#ecfdf5';
+      badge.style.color = '#166534';
+      badge.style.borderColor = '#bbf7d0';
+    } else {
+      const remaining = Math.max(0, 5 - messagesSent);
+      badge.textContent = remaining + ' of 5 left';
+      badge.style.background = remaining <= 1 ? '#fef2f2' : '#f5f4f2';
+      badge.style.color = remaining <= 1 ? '#dc2626' : '#636160';
+      badge.style.borderColor = remaining <= 1 ? '#fecaca' : '#dddcda';
+    }
+  }
+
+  // Load saved usage from chrome.storage.local
+  try {
+    chrome.storage.local.get(['offerbell_messages_sent', 'offerbell_plan'], (data) => {
+      messagesSent = data.offerbell_messages_sent || 0;
+      userPlan = data.offerbell_plan || 'free';
+      updateUsageBadge();
+    });
+  } catch (e) { updateUsageBadge(); }
+
   const ctxLabels = { alumni: 'What do you have in common?', deal: 'Which deal or transaction?', interest: "What's the shared interest?", mutual: 'Who referred you?', career: 'What path are you targeting?', cold: 'Why this specific person?' };
   const ctxPlaceholders = { alumni: 'e.g. NYU Stern IB Club, Goldman on-campus recruiting', deal: "e.g. Goldman's acquisition of GreenSky", interest: 'e.g. semiconductor M&A, impact investing', mutual: 'e.g. Jane Smith from Goldman', career: 'e.g. IB at a bulge bracket, then PE', cold: 'e.g. Their group covers sectors I want to work in' };
 
@@ -315,8 +348,22 @@ function createWritePopup(senderInfo) {
 
   // Generate
   async function generate() {
+    // Check limit client-side first
+    if (userPlan !== 'pro' && messagesSent >= 5) {
+      showStep(3);
+      overlay.querySelector('#ob-w-loading').innerHTML = `
+        <div style="font-size:14px;font-weight:700;color:#dc2626;margin-bottom:6px">Free plan limit reached</div>
+        <div style="font-size:12px;color:#9b9997;margin-bottom:14px">You've used all 5 free messages this month.</div>
+        <a href="${OFFERBELL_URL}/checkout" target="_blank" style="display:inline-block;background:#0c0c0c;color:#fff;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none">Upgrade to Pro</a>
+      `;
+      overlay.querySelector('#ob-w-result').style.display = 'none';
+      overlay.querySelector('#ob-w-result-footer').style.display = 'none';
+      return;
+    }
+
     showStep(3);
     overlay.querySelector('#ob-w-loading').style.display = '';
+    overlay.querySelector('#ob-w-loading').innerHTML = '<div style="font-size:15px;font-weight:700;color:#0c0c0c;margin-bottom:4px">Generating your message…</div><div style="font-size:12px;color:#9b9997">Just a second.</div>';
     overlay.querySelector('#ob-w-result').style.display = 'none';
     overlay.querySelector('#ob-w-result-footer').style.display = 'none';
 
@@ -337,8 +384,17 @@ Rules:
 
     try {
       const response = await new Promise((resolve, reject) => {
-        chrome.runtime.sendMessage({ action: 'generateOutreach', prompt }, (resp) => {
+        chrome.runtime.sendMessage({
+          action: 'generateOutreach',
+          prompt,
+          messagesSent,
+          plan: userPlan
+        }, (resp) => {
           if (chrome.runtime.lastError) { reject(new Error(chrome.runtime.lastError.message)); return; }
+          if (resp && resp.limitReached) {
+            reject(new Error('LIMIT_REACHED'));
+            return;
+          }
           if (resp && resp.success) { resolve(resp.data); } else { reject(new Error(resp?.error || 'Unknown error')); }
         });
       });
@@ -351,13 +407,27 @@ Rules:
         generatedSubject = 'Networking Inquiry';
         generatedBody = rawText.trim();
       }
+
+      // Update count
+      messagesSent = response.newCount || (messagesSent + 1);
+      try { chrome.storage.local.set({ offerbell_messages_sent: messagesSent }); } catch (e) {}
+      updateUsageBadge();
+
       overlay.querySelector('#ob-w-subject').textContent = generatedSubject;
       overlay.querySelector('#ob-w-body').textContent = generatedBody;
       overlay.querySelector('#ob-w-loading').style.display = 'none';
       overlay.querySelector('#ob-w-result').style.display = '';
       overlay.querySelector('#ob-w-result-footer').style.display = '';
     } catch (err) {
-      overlay.querySelector('#ob-w-loading').innerHTML = '<div style="font-size:14px;font-weight:700;color:#dc2626;margin-bottom:4px">Failed to generate</div><div style="font-size:12px;color:#9b9997">Check your connection and try again.</div>';
+      if (err.message === 'LIMIT_REACHED') {
+        overlay.querySelector('#ob-w-loading').innerHTML = `
+          <div style="font-size:14px;font-weight:700;color:#dc2626;margin-bottom:6px">Free plan limit reached</div>
+          <div style="font-size:12px;color:#9b9997;margin-bottom:14px">You've used all 5 free messages this month.</div>
+          <a href="${OFFERBELL_URL}/checkout" target="_blank" style="display:inline-block;background:#0c0c0c;color:#fff;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none">Upgrade to Pro</a>
+        `;
+      } else {
+        overlay.querySelector('#ob-w-loading').innerHTML = '<div style="font-size:14px;font-weight:700;color:#dc2626;margin-bottom:4px">Failed to generate</div><div style="font-size:12px;color:#9b9997">Check your connection and try again.</div>';
+      }
     }
   }
 
