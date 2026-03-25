@@ -332,13 +332,13 @@ Rules:
 5. Pay close attention to the contact's specific role and firm.`;
 
     try {
-      const res = await fetch(OFFERBELL_URL + '/api/generate-outreach', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
+      const response = await new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({ action: 'generateOutreach', prompt }, (resp) => {
+          if (chrome.runtime.lastError) { reject(new Error(chrome.runtime.lastError.message)); return; }
+          if (resp && resp.success) { resolve(resp.data); } else { reject(new Error(resp?.error || 'Unknown error')); }
+        });
       });
-      const data = await res.json();
-      const rawText = data.text || '';
+      const rawText = response.text || '';
       const match = rawText.match(/^Subject:\s*(.+)$/im);
       if (match) {
         generatedSubject = match[1];
@@ -445,7 +445,7 @@ function attachButtonEvents(btn, handler) {
 }
 
 function injectButton() {
-  if (document.querySelector('.offerbell-add-btn')) return;
+  if (document.querySelector('.offerbell-btn-group')) return;
   if (!isEmailView()) return;
 
   const container = document.createElement('div');
