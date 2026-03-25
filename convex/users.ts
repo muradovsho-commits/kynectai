@@ -115,3 +115,19 @@ export const completeTutorial = mutation({
     await ctx.db.patch(userId, { onboardingComplete: true, onboardingStep: 5 });
   },
 });
+
+export const getAllUsers = query({
+  handler: async (ctx) => {
+    const users = await ctx.db.query("users").order("desc").collect();
+    return users.map(u => ({
+      id: u._id,
+      name: u.name,
+      email: u.email,
+      emailVerified: u.emailVerified ?? false,
+      plan: u.plan || "free",
+      outreachCount: u.outreachCount || 0,
+      onboardingComplete: u.onboardingComplete ?? false,
+      createdAt: u.createdAt,
+    }));
+  },
+});
