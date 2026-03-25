@@ -299,12 +299,31 @@ function createWritePopup(senderInfo) {
     }
   }
 
-  // Load saved usage from chrome.storage.local
+  // Load saved usage from chrome.storage.local, then try to sync with web app
   try {
     chrome.storage.local.get(['offerbell_messages_sent', 'offerbell_plan'], (data) => {
       messagesSent = data.offerbell_messages_sent || 0;
       userPlan = data.offerbell_plan || 'free';
       updateUsageBadge();
+      // Try to get latest count from web app via background
+      chrome.runtime.sendMessage({
+        action: 'syncUsage',
+        messagesSent,
+        plan: userPlan
+      }, (resp) => {
+        if (resp && resp.success && resp.data) {
+          const serverCount = resp.data.messagesSent || 0;
+          const serverPlan = resp.data.plan || 'free';
+          // Use the higher count (in case either side is ahead)
+          if (serverCount > messagesSent) messagesSent = serverCount;
+          if (serverPlan === 'pro') userPlan = 'pro';
+          chrome.storage.local.set({
+            offerbell_messages_sent: messagesSent,
+            offerbell_plan: userPlan
+          });
+          updateUsageBadge();
+        }
+      });
     });
   } catch (e) { updateUsageBadge(); }
 
@@ -410,7 +429,15 @@ Rules:
 
       // Update count
       messagesSent = response.newCount || (messagesSent + 1);
-      try { chrome.storage.local.set({ offerbell_messages_sent: messagesSent }); } catch (e) {}
+      try {
+        chrome.storage.local.set({ offerbell_messages_sent: messagesSent });
+        // Sync back to web app
+        chrome.runtime.sendMessage({
+          action: 'syncUsage',
+          messagesSent,
+          plan: userPlan
+        }, () => {});
+      } catch (e) {}
       updateUsageBadge();
 
       overlay.querySelector('#ob-w-subject').textContent = generatedSubject;

@@ -33,7 +33,16 @@ export default function OutreachWriterPage() {
   const [messagesSent, setMessagesSent] = useState(0);
   useEffect(() => {
     try {
-      setMessagesSent(parseInt(localStorage.getItem('offerbell_messages_sent') || '0', 10));
+      const localCount = parseInt(localStorage.getItem('offerbell_messages_sent') || '0', 10);
+      // Also check cookie (set by extension) for a potentially higher count
+      const cookieMatch = document.cookie.match(/offerbell_msg_count=(\d+)/);
+      const cookieCount = cookieMatch ? parseInt(cookieMatch[1], 10) : 0;
+      const maxCount = Math.max(localCount, cookieCount);
+      setMessagesSent(maxCount);
+      // Persist the higher count back to localStorage
+      if (maxCount > localCount) {
+        localStorage.setItem('offerbell_messages_sent', String(maxCount));
+      }
     } catch {}
   }, []);
 
@@ -158,11 +167,18 @@ Rules:
           const newQ = await incrementOutreachCount({ userId: storedUid as any });
           localStorage.setItem("offerbell_messages_sent", String(newQ));
           setMessagesSent(newQ);
+          // Sync to extension via cookie
+          document.cookie = `offerbell_msg_count=${newQ}; path=/; max-age=2592000; SameSite=Lax`;
         } else {
           const prev = parseInt(localStorage.getItem("offerbell_messages_sent") || "0", 10); 
           localStorage.setItem("offerbell_messages_sent", String(prev + 1)); 
           setMessagesSent(prev + 1);
+          // Sync to extension via cookie
+          document.cookie = `offerbell_msg_count=${prev + 1}; path=/; max-age=2592000; SameSite=Lax`;
         }
+        // Also sync plan
+        const currentPlan = localStorage.getItem('offerbell_plan') || 'free';
+        document.cookie = `offerbell_plan=${currentPlan}; path=/; max-age=2592000; SameSite=Lax`;
       } catch {}
     } catch (e) {
       console.error(e);
