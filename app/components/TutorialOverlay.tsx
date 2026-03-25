@@ -142,9 +142,10 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
       position: 'fixed', inset: 0, zIndex: 99999,
       transition: 'opacity .3s',
       opacity: animating ? 0 : 1,
+      pointerEvents: 'none',
     }}>
-      {/* Dimmed backdrop with spotlight cutout */}
-      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+      {/* Dimmed backdrop with spotlight cutout — pointer-events:none so users can interact with spotlighted area */}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
         <defs>
           <mask id="tutorial-mask">
             <rect width="100%" height="100%" fill="white" />
@@ -188,6 +189,7 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
         padding: isLast ? '40px 36px' : '28px 28px 24px',
         boxShadow: '0 24px 80px rgba(0,0,0,0.5)',
         textAlign: isLast ? 'center' : 'left',
+        pointerEvents: 'auto',
       }}>
         {/* Step indicator */}
         {!isLast && (
@@ -246,17 +248,7 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
           </div>
         )}
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-          {!isLast ? (
-            <button onClick={skip} style={{
-              background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)',
-              fontSize: '12px', fontWeight: 600, cursor: 'pointer',
-              fontFamily: "'Sora', sans-serif", padding: '8px 0',
-            }}>
-              Skip tutorial
-            </button>
-          ) : <div />}
-
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px' }}>
           <button onClick={advance} disabled={step === 0 && !profileValid} style={{
             background: (step === 0 && !profileValid) ? 'rgba(255,255,255,0.1)' : '#fff',
             color: (step === 0 && !profileValid) ? 'rgba(255,255,255,0.3)' : '#0c0c0c',
