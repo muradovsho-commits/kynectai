@@ -15,7 +15,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://mail.google.com/*"],
+      "matches": ["https://mail.google.com/*", "https://outlook.office365.com/*", "https://outlook.office.com/*", "https://outlook.live.com/*"],
       "js": ["content.js"],
       "css": ["content.css"],
       "run_at": "document_idle"

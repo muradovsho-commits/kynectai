@@ -1,7 +1,11 @@
-// OfferBell Chrome Extension — Gmail Content Script
+// OfferBell Chrome Extension — Gmail + Outlook Web Content Script
 // Injects "Add to OfferBell" + "Write Outreach" buttons when viewing an email
 
 const OFFERBELL_URL = 'https://offerbell.org';
+
+function isOutlook() {
+  return location.hostname.includes('outlook.office') || location.hostname.includes('outlook.live');
+}
 
 // ── Helpers ──────────────────────────────────────────────
 
@@ -410,6 +414,48 @@ Rules:
 // ── Gmail DOM Observer ───────────────────────────────────
 
 function getSenderFromEmail() {
+  // ── Outlook Web ──
+  if (isOutlook()) {
+    // Outlook renders sender in various ways
+    const selectors = [
+      '[aria-label*="From"] span.lpc-hoverTarget',
+      'div[role="heading"] span.lpc-hoverTarget',
+      'span[autoid="_pe_b"]',
+      'span.lpc-hoverTarget',
+      'button[aria-label*="email actions"] + div span',
+    ];
+    for (const sel of selectors) {
+      const el = document.querySelector(sel);
+      if (el) {
+        const name = el.textContent?.trim() || '';
+        // Try to find email from the hovercard or nearby elements
+        const emailEl = el.closest('[data-lpc-hover-target-id]') || el;
+        const emailAttr = emailEl.getAttribute('data-lpc-hover-target-id') || '';
+        // Also check for email in aria-label
+        const parentLabel = el.closest('[aria-label]');
+        const ariaLabel = parentLabel ? parentLabel.getAttribute('aria-label') : '';
+        const emailMatch = ariaLabel.match(/[\w.-]+@[\w.-]+\.\w+/) || emailAttr.match(/[\w.-]+@[\w.-]+\.\w+/);
+        if (name && emailMatch) return { name, email: emailMatch[0].toLowerCase() };
+        if (name) return { name, email: '' };
+      }
+    }
+    // Try to get email from the reading pane header
+    const detailSpans = document.querySelectorAll('div[role="main"] span');
+    for (const sp of detailSpans) {
+      const text = sp.textContent || '';
+      const emailMatch = text.match(/[\w.-]+@[\w.-]+\.\w+/);
+      if (emailMatch) {
+        // Walk backwards to find the name
+        const parent = sp.closest('div');
+        const nameEl = parent ? parent.querySelector('span.lpc-hoverTarget') || parent.querySelector('span') : null;
+        const name = nameEl && nameEl !== sp ? nameEl.textContent.trim() : text.split('<')[0].trim();
+        return { name, email: emailMatch[0].toLowerCase() };
+      }
+    }
+    return null;
+  }
+
+  // ── Gmail ──
   const selectors = ['span[email]', '.go', 'h3.iw span[email]', '[data-hovercard-id]'];
   for (const sel of selectors) {
     const el = document.querySelector(sel);
@@ -430,6 +476,15 @@ function getSenderFromEmail() {
 }
 
 function isEmailView() {
+  // ── Outlook Web ──
+  if (isOutlook()) {
+    // Outlook shows a reading pane when an email is selected
+    return !!(document.querySelector('[role="main"] [aria-label*="Message"]')
+      || document.querySelector('div[data-app-section="ReadingPane"]')
+      || document.querySelector('[aria-label="Reading Pane"]')
+      || document.querySelector('[autoid="_rp_b"]'));
+  }
+  // ── Gmail ──
   if (document.querySelector('.hP')) return true;
   if (document.querySelector('.gD')) return true;
   if (document.querySelector('h2[data-thread-perm-id]')) return true;
@@ -457,6 +512,22 @@ function injectButton() {
   container.appendChild(addBtn);
   container.appendChild(writeBtn);
 
+  if (isOutlook()) {
+    // Outlook: try to inject in the reading pane toolbar
+    const outlookToolbar = document.querySelector('[aria-label="Message actions"]')
+      || document.querySelector('[role="main"] div[class*="actionBar"]')
+      || document.querySelector('[autoid="_rp_d"]');
+    if (outlookToolbar) {
+      outlookToolbar.appendChild(container);
+      return;
+    }
+    // Fallback: floating
+    container.classList.add('offerbell-floating');
+    document.body.appendChild(container);
+    return;
+  }
+
+  // Gmail toolbar injection
   const toolbar = document.querySelector('.iH > div')
     || document.querySelector('.G-tF')
     || document.querySelector('.bAo .x')

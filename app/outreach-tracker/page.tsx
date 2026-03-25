@@ -4,7 +4,6 @@ import Sidebar from "../components/Sidebar";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import '../contact-finder/contact-finder.css';
-import EmailSyncPanel from './EmailSyncPanel';
 import RemindersPanel from './RemindersPanel';
 
 const STATUSES: Record<string, { label: string; cls: string }> = {
@@ -252,13 +251,33 @@ export default function OutreachTrackerPage() {
             <button onClick={() => setModalOpen(true)} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 10, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif' }}>+ Add Contact</button>
           </div>
 
-          {/* Email & Calendar Sync */}
-          <EmailSyncPanel onContactsUpdated={() => {
-            try {
-              const saved = localStorage.getItem('offerbell_tracker_v3');
-              if (saved) setContacts(JSON.parse(saved));
-            } catch {}
-          }} />
+          {/* Chrome Extension Banner */}
+          <div style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '20px 24px', marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--text)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--surface)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </div>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>OfferBell Chrome Extension</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.5 }}>Add contacts and write outreach emails directly from Gmail &amp; Outlook — without leaving your inbox.</div>
+                </div>
+              </div>
+              <a href="https://chrome.google.com/webstore" target="_blank" rel="noopener noreferrer" style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 10, padding: '10px 20px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}>Install Extension</a>
+            </div>
+            <div style={{ display: 'flex', gap: 16, marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
+              {[
+                { icon: '✓', text: 'Works in Gmail & Outlook Web' },
+                { icon: '✓', text: 'Add contacts with one click' },
+                { icon: '✓', text: 'AI-powered outreach writer' },
+              ].map(f => (
+                <div key={f.text} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#16a34a' }}>{f.icon}</span>
+                  <span style={{ fontSize: 11, color: 'var(--text-2)', fontWeight: 500 }}>{f.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* Reminders */}
           <RemindersPanel contacts={contacts} onOpenContact={(id) => {
