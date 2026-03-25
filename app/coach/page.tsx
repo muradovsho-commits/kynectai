@@ -213,8 +213,12 @@ export default function CoachPage() {
         }),
       });
       const data = await res.json();
-      const reply = data.text || data.error || 'Something went wrong — please try again.';
-      setMessages((prev) => [...prev, { role: 'assistant', content: reply }]);
+      if (!res.ok) {
+        setMessages((prev) => [...prev, { role: 'assistant', content: '⚠️ ' + (data.error || 'Coach is temporarily unavailable. Please try again.') }]);
+      } else {
+        const reply = data.text || 'Something went wrong — please try again.';
+        setMessages((prev) => [...prev, { role: 'assistant', content: reply }]);
+      }
     } catch (err: any) {
       setMessages((prev) => [...prev, { role: 'assistant', content: 'Connection error: ' + (err?.message || 'please try again.') }]);
     }
