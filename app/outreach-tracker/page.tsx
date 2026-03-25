@@ -266,6 +266,20 @@ export default function OutreachTrackerPage() {
             if (c) openDrawer(c);
           }} />
 
+          {/* Chrome Extension Banner */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12, padding: '14px 20px', marginBottom: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 34, height: 34, borderRadius: 8, background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
+              </div>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>Chrome Extension</div>
+                <div style={{ fontSize: 12, color: 'var(--text-3)' }}>Add contacts from Gmail to your tracker with one click</div>
+              </div>
+            </div>
+            <a href="/install-extension.html" target="_blank" rel="noopener noreferrer" style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif', textDecoration: 'none', whiteSpace: 'nowrap' }}>Install Extension</a>
+          </div>
+
           {/* Stats */}
           <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
             {[
