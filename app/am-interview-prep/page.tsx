@@ -129,58 +129,33 @@ export default function InterviewPrepPage() {
         </div>
 
         {activeModule === '' ? (
-          <div className="prep-content" style={{maxWidth:"1060px"}}>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 320px",gap:"28px",marginBottom:"28px"}}>
-              <div>
-                <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"16px",padding:"28px 32px",marginBottom:"20px"}}>
-                  <h2 style={{fontFamily:"'Instrument Serif', serif",fontSize:"22px",color:"var(--text)",marginBottom:"10px"}}>Welcome to the Asset Management Interview Guide</h2>
-                  <p style={{fontSize:"14px",color:"var(--text-2)",lineHeight:1.7,marginBottom:"20px"}}>This curriculum is designed by portfolio managers and analysts from leading asset management firms. Modules cover everything from equity research fundamentals to stock pitch mechanics and market discussion prep.</p>
-                  <div style={{fontSize:"11px",fontWeight:700,color:"var(--text)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"12px"}}>How to Use This Guide</div>
-                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px"}}>
-                    {[
-                      "Build a strong foundation in markets and macro first.",
-                      "Practice delivering a stock pitch in under 3 minutes.",
-                      "Stay current on market news and sector themes.",
-                      "Prepare behavioral answers around investment conviction.",
-                    ].map((tip, i) => (
-                      <div key={i} style={{display:"flex",alignItems:"flex-start",gap:"8px",fontSize:"13px",color:"var(--text-2)",lineHeight:1.5}}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{flexShrink:0,marginTop:"2px"}}><circle cx="12" cy="12" r="10" fill="#10b981"/><path d="M8 12l2.5 2.5L16 9.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                        {tip}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div style={{fontSize:"14px",fontWeight:700,color:"var(--text)",marginBottom:"12px"}}>Quick Access</div>
-                <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:"10px"}}>
-                  {MODULES.map(m => (
-                    <div key={m.id} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }} className="module-card" style={{textAlign:"left",padding:"18px 16px",cursor:"pointer"}}>
-                      <div style={{marginBottom:"10px"}}>{ICONS[m.id]}</div>
-                      <div className="module-name" style={{fontSize:"13px"}}>{m.title}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"16px",padding:"24px",position:"sticky",top:"24px"}}>
-                  <div style={{fontSize:"16px",fontWeight:700,color:"var(--text)",marginBottom:"4px"}}>Study Path</div>
-                  <p style={{fontSize:"12px",color:"var(--text-3)",lineHeight:1.5,marginBottom:"20px"}}>Follow this expert-vetted sequence for optimal preparation efficiency.</p>
-                  <div style={{position:"relative"}}>
-                    <div style={{position:"absolute",left:"17px",top:"20px",bottom:"20px",width:"2px",background:"var(--border)"}}/>
-                    {MODULES.map((m, i) => (
-                      <div key={m.id} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }} style={{display:"flex",gap:"14px",marginBottom: i < MODULES.length - 1 ? "20px" : "0",cursor:"pointer",position:"relative",zIndex:1}}>
-                        <div style={{width:"36px",height:"36px",borderRadius:"50%",background: i < 3 ? "var(--text)" : "var(--surface-2)",border: i >= 3 ? "2px solid var(--border)" : "none",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",fontWeight:700,color: i < 3 ? "var(--surface)" : "var(--text-2)",flexShrink:0}}> {i + 1}</div>
-                        <div style={{paddingTop:"2px"}}>
-                          <div style={{fontSize:"13px",fontWeight:700,color:"var(--text)"}}> {m.title}</div>
-                          <div style={{fontSize:"11px",color:"var(--text-3)",marginTop:"2px",lineHeight:1.4}}>{m.sub}</div>
-                          <div style={{fontSize:"10px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:".5px",marginTop:"4px"}}>{m.sections.length} topics</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div style={{fontSize:"11px",color:"var(--text-3)",textAlign:"right",marginTop:"10px"}}>Last updated: Mar 2026</div>
+          <div className="prep-content">
+            <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"16px",padding:"28px 32px",marginBottom:"20px"}}>
+              <h2 style={{fontFamily:"'Instrument Serif', serif",fontSize:"22px",color:"var(--text)",marginBottom:"8px"}}>Welcome to the Asset Management Guide</h2>
+              <p style={{fontSize:"14px",color:"var(--text-2)",lineHeight:1.7,marginBottom:"16px"}}>This guide takes you through the mind of a portfolio manager — from navigating macro interest rate cycles and discounted cash flows to formulating the perfect variant perception for a stock pitch.</p>
+              <p style={{fontSize:"14px",color:"var(--text-2)",lineHeight:1.7}}>Select a module above to start reading.</p>
+            </div>
+            <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"16px",padding:"20px 24px",marginBottom:"20px"}}>
+              <div style={{fontSize:"13px",fontWeight:700,color:"var(--text)",marginBottom:"8px"}}>How to Use This Guide</div>
+              <div style={{fontSize:"13px",color:"var(--text-2)",lineHeight:1.7}}>
+                <p style={{marginBottom:"8px"}}><strong>Macro First:</strong> Start with Macro & Markets. Asset managers look at the big picture before zooming in on specific stocks. Understand yield curves and Fed policy inside out.</p>
+                <p style={{marginBottom:"8px"}}><strong>Perfecting the Pitch:</strong> You cannot pass an AM interview without a polished stock pitch. Spend a week developing 1 Long and 1 Short pitch strictly adhering to the Variant Perception framework outlined.</p>
+                <p style={{marginBottom:"0"}}><strong>Mindset:</strong> Behavioral prep for AM requires proving you are analytical, passionate about news/markets, and objective. Show them you can handle being wrong.</p>
               </div>
             </div>
+
+            <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"12px"}}>Study Approach</div>
+            {MODULES.map((m, i) => (
+              <div key={m.id} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }} style={{display:"flex",alignItems:"center",gap:"16px",padding:"14px 18px",background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"12px",marginBottom:"8px",cursor:"pointer"}}>
+                <div style={{width:"32px",height:"32px",borderRadius:"50%",background:"var(--surface-2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",fontWeight:700,color:"var(--text-2)",flexShrink:0}}>{i + 1}</div>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:"14px",fontWeight:600,color:"var(--text)"}}>{m.title}</div>
+                  <div style={{fontSize:"12px",color:"var(--text-3)",marginTop:"2px"}}>{m.sub}</div>
+                </div>
+                <div style={{fontSize:"12px",color:"var(--text-3)"}}>{m.sections.length} topics</div>
+              </div>
+            ))}
+
           </div>
         ) : (
         <div className="prep-content">
