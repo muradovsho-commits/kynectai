@@ -123,33 +123,58 @@ export default function InterviewPrepPage() {
         </div>
 
         {activeModule === '' ? (
-          <div className="prep-content">
-            <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"16px",padding:"28px 32px",marginBottom:"20px"}}>
-              <h2 style={{fontFamily:"'Instrument Serif', serif",fontSize:"22px",color:"var(--text)",marginBottom:"8px"}}>Welcome to Accounting Prep</h2>
-              <p style={{fontSize:"14px",color:"var(--text-2)",lineHeight:1.7,marginBottom:"16px"}}>If you are interviewing at Deloitte, PwC, EY, or KPMG, you are entering the world of Professional Services. You must firmly decide between the two massive pillars: Assurance (Audit) which looks backward at historical numbers, or Tax, which minimizes future corporate tax burdens.</p>
-              <p style={{fontSize:"14px",color:"var(--text-2)",lineHeight:1.7}}>Select a module above to start your review.</p>
-            </div>
-            <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"16px",padding:"20px 24px",marginBottom:"20px"}}>
-              <div style={{fontSize:"13px",fontWeight:700,color:"var(--text)",marginBottom:"8px"}}>How to Use This Guide</div>
-              <div style={{fontSize:"13px",color:"var(--text-2)",lineHeight:1.7}}>
-                <p style={{marginBottom:"8px"}}><strong>Service Line Clarity:</strong> You will fail a Big 4 interview instantly if you apply for Audit but sound like you really want to do Strategy Consulting or IB. Know the difference between Advisory, Assurance, and Tax.</p>
-                <p style={{marginBottom:"8px"}}><strong>Technical Foundation:</strong> While not as intense as an IB LBO test, you must be able to fluently walk an interviewer through the impact of a $10 depreciation charge on the 3 statements.</p>
-                <p style={{marginBottom:"0"}}><strong>The CPA Journey:</strong> Every Big 4 firm is obsessed with your "CPA eligibility." You must know your 150-credit hour timeline perfectly before walking into an interview.</p>
-              </div>
-            </div>
-
-            <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"12px"}}>Study Approach</div>
-            {MODULES.map((m, i) => (
-              <div key={m.id} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }} style={{display:"flex",alignItems:"center",gap:"16px",padding:"14px 18px",background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"12px",marginBottom:"8px",cursor:"pointer"}}>
-                <div style={{width:"32px",height:"32px",borderRadius:"50%",background:"var(--surface-2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",fontWeight:700,color:"var(--text-2)",flexShrink:0}}>{i + 1}</div>
-                <div style={{flex:1}}>
-                  <div style={{fontSize:"14px",fontWeight:600,color:"var(--text)"}}>{m.title}</div>
-                  <div style={{fontSize:"12px",color:"var(--text-3)",marginTop:"2px"}}>{m.sub}</div>
+          <div className="prep-content" style={{maxWidth:"1060px"}}>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 320px",gap:"28px",marginBottom:"28px"}}>
+              <div>
+                <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"16px",padding:"28px 32px",marginBottom:"20px"}}>
+                  <h2 style={{fontFamily:"'Instrument Serif', serif",fontSize:"22px",color:"var(--text)",marginBottom:"10px"}}>Welcome to the Accounting Interview Guide</h2>
+                  <p style={{fontSize:"14px",color:"var(--text-2)",lineHeight:1.7,marginBottom:"20px"}}>This curriculum is developed by CPAs and audit managers from Big 4 and national firms. We've organized technical accounting, audit procedures, tax concepts, and behavioral prep into an efficient study path.</p>
+                  <div style={{fontSize:"11px",fontWeight:700,color:"var(--text)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"12px"}}>How to Use This Guide</div>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px"}}>
+                    {[
+                      "Start with technical accounting fundamentals.",
+                      "Understand the audit lifecycle end to end.",
+                      "Review firm-specific culture and values before interviews.",
+                      "Practice behavioral answers with concrete examples.",
+                    ].map((tip, i) => (
+                      <div key={i} style={{display:"flex",alignItems:"flex-start",gap:"8px",fontSize:"13px",color:"var(--text-2)",lineHeight:1.5}}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{flexShrink:0,marginTop:"2px"}}><circle cx="12" cy="12" r="10" fill="#10b981"/><path d="M8 12l2.5 2.5L16 9.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        {tip}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div style={{fontSize:"12px",color:"var(--text-3)"}}>{m.sections.length} topics</div>
+                <div style={{fontSize:"14px",fontWeight:700,color:"var(--text)",marginBottom:"12px"}}>Quick Access</div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:"10px"}}>
+                  {MODULES.map(m => (
+                    <div key={m.id} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }} className="module-card" style={{textAlign:"left",padding:"18px 16px",cursor:"pointer"}}>
+                      <div style={{marginBottom:"10px"}}>{ICONS[m.id]}</div>
+                      <div className="module-name" style={{fontSize:"13px"}}>{m.title}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-
+              <div>
+                <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"16px",padding:"24px",position:"sticky",top:"24px"}}>
+                  <div style={{fontSize:"16px",fontWeight:700,color:"var(--text)",marginBottom:"4px"}}>Study Path</div>
+                  <p style={{fontSize:"12px",color:"var(--text-3)",lineHeight:1.5,marginBottom:"20px"}}>Follow this expert-vetted sequence for optimal preparation efficiency.</p>
+                  <div style={{position:"relative"}}>
+                    <div style={{position:"absolute",left:"17px",top:"20px",bottom:"20px",width:"2px",background:"var(--border)"}}/>
+                    {MODULES.map((m, i) => (
+                      <div key={m.id} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }} style={{display:"flex",gap:"14px",marginBottom: i < MODULES.length - 1 ? "20px" : "0",cursor:"pointer",position:"relative",zIndex:1}}>
+                        <div style={{width:"36px",height:"36px",borderRadius:"50%",background: i < 3 ? "var(--text)" : "var(--surface-2)",border: i >= 3 ? "2px solid var(--border)" : "none",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",fontWeight:700,color: i < 3 ? "var(--surface)" : "var(--text-2)",flexShrink:0}}> {i + 1}</div>
+                        <div style={{paddingTop:"2px"}}>
+                          <div style={{fontSize:"13px",fontWeight:700,color:"var(--text)"}}> {m.title}</div>
+                          <div style={{fontSize:"11px",color:"var(--text-3)",marginTop:"2px",lineHeight:1.4}}>{m.sub}</div>
+                          <div style={{fontSize:"10px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:".5px",marginTop:"4px"}}>{m.sections.length} topics</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div style={{fontSize:"11px",color:"var(--text-3)",textAlign:"right",marginTop:"10px"}}>Last updated: Mar 2026</div>
+              </div>
+            </div>
           </div>
         ) : (
         <div className="prep-content">
