@@ -65,20 +65,21 @@ export default function DashboardPage() {
     return weekNum % TIPS.length;
   });
 
-  // Auth + onboarding guard
+  // Auth guard — no onboarding redirect, tutorial handles profile setup
   useEffect(() => {
     if (typeof window === "undefined") return;
     const stored = window.localStorage.getItem("offerbell_user_id");
     if (!stored) { router.replace("/signin"); return; }
+    // If no profile exists yet, create a minimal stub so the app doesn't break
     try {
       const raw = window.localStorage.getItem("offerbell_onboarding_profile");
-      if (raw) {
-        const prof = JSON.parse(raw);
-        if (!prof.university || !prof.targetRoles || prof.targetRoles.length === 0) {
-          router.replace("/onboarding"); return;
-        }
-      } else { router.replace("/onboarding"); return; }
-    } catch { router.replace("/onboarding"); return; }
+      if (!raw) {
+        window.localStorage.setItem("offerbell_onboarding_profile", JSON.stringify({
+          firstName: "", lastName: "", university: "", major: "", year: "",
+          targetRoles: [], recruitYear: "", targetFirms: [], email: "", plan: "free"
+        }));
+      }
+    } catch {}
   }, [router]);
 
   // Tutorial trigger — show on first post-verification login

@@ -50,10 +50,10 @@ export default function SigninPage() {
           }
         } catch {}
       }
-      // Only send to onboarding if this is a brand new sign-up
+      // Send all users to dashboard — tutorial handles first-time setup
       if (typeof window !== "undefined" && window.localStorage.getItem("offerbell_needs_onboarding")) {
         window.localStorage.removeItem("offerbell_needs_onboarding");
-        router.push("/onboarding");
+        router.push("/dashboard");
       } else {
         // Existing user — create default profile if missing and go to dashboard
         if (typeof window !== "undefined" && !window.localStorage.getItem("offerbell_onboarding_profile")) {
