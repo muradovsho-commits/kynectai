@@ -1,6 +1,7 @@
 "use client";
 
 import Sidebar from "../components/Sidebar";
+import TutorialOverlay from "../components/TutorialOverlay";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -55,6 +56,8 @@ export default function DashboardPage() {
   const [messagesSent, setMessagesSent] = useState(0);
   const [pipelineCount, setPipelineCount] = useState(0);
   const [upgradeToast, setUpgradeToast] = useState("");
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState(0);
   const [tipIdx] = useState(() => {
     const now = new Date();
     const startOfYear = new Date(now.getFullYear(), 0, 1);
@@ -77,6 +80,17 @@ export default function DashboardPage() {
       } else { router.replace("/onboarding"); return; }
     } catch { router.replace("/onboarding"); return; }
   }, [router]);
+
+  // Tutorial trigger — show on first post-verification login
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const complete = localStorage.getItem('offerbell_tutorial_complete');
+    if (!complete) {
+      const step = parseInt(localStorage.getItem('offerbell_tutorial_step') || '0', 10);
+      setTutorialStep(step);
+      setShowTutorial(true);
+    }
+  }, []);
 
   // Theme
   useEffect(() => {
@@ -202,6 +216,14 @@ export default function DashboardPage() {
           {upgradeToast}
           <a href="/checkout">Upgrade</a>
         </div>
+      )}
+
+      {showTutorial && (
+        <TutorialOverlay
+          userId={typeof window !== 'undefined' ? (localStorage.getItem('offerbell_user_id') || '') : ''}
+          initialStep={tutorialStep}
+          onComplete={() => setShowTutorial(false)}
+        />
       )}
     </div>
   );

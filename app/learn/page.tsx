@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Sidebar from '../components/Sidebar';
+import TutorialOverlay from '../components/TutorialOverlay';
 import '../contact-finder/contact-finder.css';
 import './learn.css';
 
@@ -66,6 +67,18 @@ const ARROW = <svg viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" str
 
 export default function LearnPage() {
   const totalModules = GUIDES.reduce((s, g) => s + g.modules, 0) + 7; // +7 for career roadmaps tracks
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState(0);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const complete = localStorage.getItem('offerbell_tutorial_complete');
+    if (!complete) {
+      const step = parseInt(localStorage.getItem('offerbell_tutorial_step') || '0', 10);
+      setTutorialStep(step);
+      setShowTutorial(true);
+    }
+  }, []);
 
   return (
     <div className="app">
@@ -73,7 +86,7 @@ export default function LearnPage() {
       <Sidebar activePage="learn" />
 
       {/* ── Main Content ── */}
-      <main className="learn-main">
+      <main className="learn-main" data-tutorial="learning-hub">
         {/* Career Roadmaps Hero (Rectangle Style) */}
         <div className="learn-hero">
           <div className="learn-hero-badge">Expert Curated</div>
@@ -120,7 +133,7 @@ export default function LearnPage() {
         </div>
 
         {/* Unified Card Grid Header */}
-        <div className="learn-section-header">
+        <div className="learn-section-header" data-tutorial="interview-guides">
           <h2>Interview Preparatory Guides</h2>
           <p>Master the technical and behavioral nuances to secure your dream offer.</p>
         </div>
@@ -161,6 +174,14 @@ export default function LearnPage() {
           </div>
         </div>
       </main>
+
+      {showTutorial && (
+        <TutorialOverlay
+          userId={typeof window !== 'undefined' ? (localStorage.getItem('offerbell_user_id') || '') : ''}
+          initialStep={tutorialStep}
+          onComplete={() => setShowTutorial(false)}
+        />
+      )}
     </div>
   );
 }

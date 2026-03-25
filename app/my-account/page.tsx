@@ -1,6 +1,7 @@
 'use client';
 
 import Sidebar from "../components/Sidebar";
+import TutorialOverlay from "../components/TutorialOverlay";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useMutation } from 'convex/react';
@@ -21,6 +22,8 @@ export default function MyAccountPage() {
   const [isDark, setIsDark] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState(0);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -35,6 +38,17 @@ export default function MyAccountPage() {
   const [userPlan, setUserPlan] = useState('free');
   const [planActivatedAt, setPlanActivatedAt] = useState<number | null>(null);
   const [promoCode, setPromoCode] = useState<string | null>(null);
+
+  // Tutorial check
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const complete = localStorage.getItem('offerbell_tutorial_complete');
+    if (!complete) {
+      const step = parseInt(localStorage.getItem('offerbell_tutorial_step') || '0', 10);
+      setTutorialStep(step);
+      setShowTutorial(true);
+    }
+  }, []);
 
   useEffect(() => {
     const t = localStorage.getItem('offerbell-theme');
@@ -161,7 +175,7 @@ export default function MyAccountPage() {
         </div>
 
         {/* Profile Form */}
-        <div style={{marginBottom:28}}>
+        <div data-tutorial="profile-section" style={{marginBottom:28}}>
           <div style={{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:14,display:'flex',alignItems:'center',gap:8}}>Profile<div style={{flex:1,height:1,background:'var(--border)'}}/></div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
             <div style={{display:'flex',flexDirection:'column',gap:6}}>
@@ -345,6 +359,14 @@ export default function MyAccountPage() {
         {saved ? 'Saved!' : 'Changes unsaved'}
         {!saved && <button onClick={saveChanges} type="button" style={{background:'var(--surface)',color:'var(--text)',padding:'6px 16px',borderRadius:100,fontSize:12,fontWeight:700,border:'none',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Save now</button>}
       </div>
+
+      {showTutorial && (
+        <TutorialOverlay
+          userId={typeof window !== 'undefined' ? (localStorage.getItem('offerbell_user_id') || '') : ''}
+          initialStep={tutorialStep}
+          onComplete={() => setShowTutorial(false)}
+        />
+      )}
     </div>
   );
 }

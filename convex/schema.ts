@@ -15,6 +15,8 @@ export default defineSchema({
     plan: v.optional(v.string()),
     planActivatedAt: v.optional(v.number()),
     promoCode: v.optional(v.string()),
+    onboardingStep: v.optional(v.number()),
+    onboardingComplete: v.optional(v.boolean()),
   }).index("by_email", ["email"])
     .index("by_verificationToken", ["verificationToken"])
     .index("by_resetToken", ["resetToken"]),

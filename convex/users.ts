@@ -89,3 +89,29 @@ export const incrementOutreachCount = mutation({
     return newCount;
   }
 });
+
+export const getTutorialState = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, { userId }) => {
+    const user = await ctx.db.get(userId);
+    if (!user) return { onboardingStep: 0, onboardingComplete: false };
+    return {
+      onboardingStep: user.onboardingStep ?? 0,
+      onboardingComplete: user.onboardingComplete ?? false,
+    };
+  },
+});
+
+export const setTutorialStep = mutation({
+  args: { userId: v.id("users"), step: v.number() },
+  handler: async (ctx, { userId, step }) => {
+    await ctx.db.patch(userId, { onboardingStep: step });
+  },
+});
+
+export const completeTutorial = mutation({
+  args: { userId: v.id("users") },
+  handler: async (ctx, { userId }) => {
+    await ctx.db.patch(userId, { onboardingComplete: true, onboardingStep: 4 });
+  },
+});
