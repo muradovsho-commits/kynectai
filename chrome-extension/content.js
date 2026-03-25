@@ -34,7 +34,8 @@ function splitName(fullName) {
 // ── UI Injection ─────────────────────────────────────────
 
 function createButton() {
-  const btn = document.createElement('div');
+  const btn = document.createElement('button');
+  btn.type = 'button';
   btn.className = 'offerbell-add-btn';
   btn.innerHTML = `
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -212,6 +213,13 @@ function isEmailView() {
   return false;
 }
 
+function attachButtonEvents(btn) {
+  // Use both mousedown (fires before Gmail can intercept) and click as backup
+  // capture: true ensures we get the event first
+  btn.addEventListener('mousedown', handleButtonClick, true);
+  btn.addEventListener('click', handleButtonClick, true);
+}
+
 function injectButton() {
   // Don't double-inject
   if (document.querySelector('.offerbell-add-btn')) return;
@@ -227,7 +235,7 @@ function injectButton() {
 
   if (toolbar) {
     const btn = createButton();
-    btn.addEventListener('click', handleButtonClick);
+    attachButtonEvents(btn);
     toolbar.appendChild(btn);
     return;
   }
@@ -239,7 +247,7 @@ function injectButton() {
     const subjectRow = subjectEl.closest('tr') || subjectEl.parentElement;
     if (subjectRow) {
       const btn = createButton();
-      btn.addEventListener('click', handleButtonClick);
+      attachButtonEvents(btn);
       subjectRow.style.position = 'relative';
       subjectRow.appendChild(btn);
       return;
@@ -249,13 +257,20 @@ function injectButton() {
   // Final fallback: floating button (always visible, always works)
   const btn = createButton();
   btn.classList.add('offerbell-floating');
-  btn.addEventListener('click', handleButtonClick);
+  attachButtonEvents(btn);
   document.body.appendChild(btn);
 }
 
+let _lastClickTime = 0;
 function handleButtonClick(e) {
   e.stopPropagation();
+  e.stopImmediatePropagation();
   e.preventDefault();
+
+  // Debounce: prevent double-fire from mousedown + click
+  const now = Date.now();
+  if (now - _lastClickTime < 500) return;
+  _lastClickTime = now;
 
   const senderInfo = getSenderFromEmail();
   if (!senderInfo) {
