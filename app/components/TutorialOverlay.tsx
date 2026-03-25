@@ -172,25 +172,37 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
   const currentStep = STEPS[step];
   const isLast = step === STEPS.length - 1;
 
-  // Elevate the spotlighted element above the overlay so it's fully interactive
+  // Elevate the spotlighted element above the overlay ONLY for interactive steps
+  const needsInteraction = step === 0; // Only profile step needs form interaction
   useEffect(() => {
     if (!currentStep.spotlightSelector) return;
-    const el = document.querySelector(currentStep.spotlightSelector) as HTMLElement;
-    if (el) {
-      el.style.position = 'relative';
-      el.style.zIndex = '100000';
-      el.style.background = 'var(--surface, #fff)';
-      el.style.borderRadius = '16px';
-    }
-    return () => {
-      if (el) {
-        el.style.zIndex = '';
-        el.style.position = '';
-        el.style.background = '';
-        el.style.borderRadius = '';
+    const findAndSetup = () => {
+      const el = document.querySelector(currentStep.spotlightSelector!) as HTMLElement;
+      if (!el) return;
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (needsInteraction) {
+        el.style.position = 'relative';
+        el.style.zIndex = '100000';
+        el.style.background = 'var(--surface, #fff)';
+        el.style.borderRadius = '16px';
       }
     };
-  }, [step, currentStep.spotlightSelector, navigated]);
+    const t1 = setTimeout(findAndSetup, 400);
+    const t2 = setTimeout(findAndSetup, 900);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      if (currentStep.spotlightSelector) {
+        const el = document.querySelector(currentStep.spotlightSelector) as HTMLElement;
+        if (el) {
+          el.style.zIndex = '';
+          el.style.position = '';
+          el.style.background = '';
+          el.style.borderRadius = '';
+        }
+      }
+    };
+  }, [step, currentStep.spotlightSelector, navigated, needsInteraction]);
 
   return (
     <div style={{
@@ -203,17 +215,19 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
 
       {/* Card */}
       <div style={{
-        position: 'absolute',
+        position: 'fixed',
         bottom: isLast ? '50%' : '32px',
         left: '50%',
         transform: isLast ? 'translate(-50%, 50%)' : 'translateX(-50%)',
         width: isLast ? '440px' : '400px',
+        maxWidth: '90vw',
         background: '#111110',
         border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: '20px',
         padding: isLast ? '40px 36px' : '28px 28px 24px',
         boxShadow: '0 24px 80px rgba(0,0,0,0.5)',
         textAlign: isLast ? 'center' : 'left',
+        zIndex: 100001,
       }}>
         {/* Step indicator */}
         {!isLast && (
