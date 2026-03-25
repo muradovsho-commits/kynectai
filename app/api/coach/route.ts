@@ -65,10 +65,38 @@ The user is currently on the "${track || "Investment Banking"}" recruiting track
     if (!res.ok) {
       const errorText = await res.text();
       console.error("Gemini API error:", res.status, errorText);
-      return NextResponse.json(
-        { error: "Failed to get response from Coach" },
-        { status: 502, headers: corsHeaders }
-      );
+      
+      // Try fallback without systemInstruction (older format)
+      const fallbackBody = {
+        contents: [
+          { role: "user", parts: [{ text: systemInstruction + "\n\n---\n\n" + messages[0].content }] },
+          ...geminiContents.slice(1),
+        ],
+        generationConfig: {
+          temperature: 0.8,
+          topP: 0.95,
+          maxOutputTokens: 2048,
+        },
+      };
+
+      const res2 = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(fallbackBody),
+      });
+
+      if (!res2.ok) {
+        const err2 = await res2.text();
+        console.error("Gemini fallback error:", res2.status, err2);
+        return NextResponse.json(
+          { error: "Coach is temporarily unavailable. " + res2.status, debug: err2.slice(0, 200) },
+          { status: 502, headers: corsHeaders }
+        );
+      }
+
+      const data2 = await res2.json();
+      const text2 = data2.candidates?.[0]?.content?.parts?.[0]?.text || "Something went wrong — please try again.";
+      return NextResponse.json({ text: text2 }, { headers: corsHeaders });
     }
 
     const data = await res.json();

@@ -213,10 +213,10 @@ export default function CoachPage() {
         }),
       });
       const data = await res.json();
-      const reply = data.text || 'Something went wrong — please try again.';
+      const reply = data.text || data.error || 'Something went wrong — please try again.';
       setMessages((prev) => [...prev, { role: 'assistant', content: reply }]);
-    } catch {
-      setMessages((prev) => [...prev, { role: 'assistant', content: 'Something went wrong — please try again.' }]);
+    } catch (err: any) {
+      setMessages((prev) => [...prev, { role: 'assistant', content: 'Connection error: ' + (err?.message || 'please try again.') }]);
     }
     setIsLoading(false);
     scrollBottom();
