@@ -157,6 +157,7 @@ export default function CoachPage() {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatLabel, setChatLabel] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
+  const [conversationHistory, setConversationHistory] = useState<Record<string, Message[]>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [inputVal, setInputVal] = useState('');
   const [isDark, setIsDark] = useState(false);
@@ -236,23 +237,43 @@ export default function CoachPage() {
   };
 
   const openChat = (label: string, prompt?: string) => {
+    // Save current conversation before switching
+    if (chatLabel && messages.length > 0) {
+      setConversationHistory(prev => ({ ...prev, [chatLabel]: messages }));
+    }
     setChatLabel(label);
     setChatOpen(true);
-    if (prompt) {
-      setInputVal(prompt);
-      setTimeout(() => textareaRef.current?.focus(), 100);
+    // Restore previous conversation for this label, or start fresh
+    const prev = conversationHistory[label];
+    if (prev && prev.length > 0) {
+      setMessages(prev);
+      setInputVal('');
+    } else {
+      setMessages([]);
+      if (prompt) {
+        setInputVal(prompt);
+      }
     }
+    setTimeout(() => textareaRef.current?.focus(), 100);
   };
 
   const startNewConversation = () => {
+    // Save current conversation before starting new
+    if (chatLabel && messages.length > 0) {
+      setConversationHistory(prev => ({ ...prev, [chatLabel]: messages }));
+    }
     setMessages([]);
     setInputVal('');
-    setChatLabel('');
+    setChatLabel('New conversation');
     setChatOpen(true);
     setTimeout(() => textareaRef.current?.focus(), 100);
   };
 
   const closeChat = () => {
+    // Save current conversation when going back
+    if (chatLabel && messages.length > 0) {
+      setConversationHistory(prev => ({ ...prev, [chatLabel]: messages }));
+    }
     setChatOpen(false);
   };
 
@@ -348,7 +369,7 @@ export default function CoachPage() {
                     <div className="coach-feature-desc">{f.desc}</div>
                   </div>
                 </div>
-                <button className={`coach-feature-cta ${f.color}`} type="button">Start with this</button>
+                <button className={`coach-feature-cta ${f.color}`} type="button">Explore →</button>
               </div>
             ))}
           </div>
@@ -396,7 +417,7 @@ export default function CoachPage() {
               </button>
               {chatLabel && <span className="coach-chat-title">{chatLabel}</span>}
             </div>
-            <button className="coach-chat-new" onClick={() => { setMessages([]); setInputVal(''); setChatLabel('New conversation'); }} type="button">
+            <button className="coach-chat-new" onClick={() => { if (chatLabel && messages.length > 0) { setConversationHistory(prev => ({ ...prev, [chatLabel]: messages })); } setMessages([]); setInputVal(''); setChatLabel('New conversation'); }} type="button">
               New conversation
             </button>
           </div>
