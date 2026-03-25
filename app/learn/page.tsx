@@ -86,7 +86,7 @@ export default function LearnPage() {
       <Sidebar activePage="learn" />
 
       {/* ── Main Content ── */}
-      <main className="learn-main" data-tutorial="learning-hub">
+      <main className="learn-main">
         {/* Career Roadmaps Hero (Rectangle Style) */}
         <div className="learn-hero">
           <div className="learn-hero-badge">Expert Curated</div>
@@ -109,6 +109,7 @@ export default function LearnPage() {
         </div>
 
         {/* Quiz Banner */}
+        <div data-tutorial="career-discovery">
         <div className="learn-quiz-banner" style={{ marginTop: '20px' }}>
           <div className="learn-quiz-icon">
             <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
@@ -131,9 +132,11 @@ export default function LearnPage() {
           </div>
           <Link href="/recruiting-manual" className="learn-quiz-btn">Explore Paths <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></Link>
         </div>
+        </div>
 
         {/* Unified Card Grid Header */}
-        <div className="learn-section-header" data-tutorial="interview-guides">
+        <div data-tutorial="interview-guides">
+        <div className="learn-section-header">
           <h2>Interview Preparatory Guides</h2>
           <p>Master the technical and behavioral nuances to secure your dream offer.</p>
         </div>
@@ -161,6 +164,7 @@ export default function LearnPage() {
               Speak to a Coach
             </button>
           </Link>
+        </div>
         </div>
 
         {/* Footer */}
