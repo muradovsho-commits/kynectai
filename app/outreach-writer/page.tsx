@@ -236,6 +236,36 @@ Rules:
             {userPlan === "pro" ? "Unlimited messages — Pro plan" : `${Math.max(0, 5 - messagesSent)} messages remaining this month`}
           </div>
 
+          {/* Chrome Extension Banner */}
+          <div style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '20px 24px', marginBottom: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--text)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--surface)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </div>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>OfferBell Chrome Extension</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.5 }}>Write and send outreach emails directly from Gmail &amp; Outlook — without leaving your inbox.</div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                <span style={{ fontSize: 11, fontWeight: 600, color: '#f59e0b', background: '#fef3c7', padding: '4px 10px', borderRadius: 100, whiteSpace: 'nowrap' }}>Awaiting Approval</span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 16, marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
+              {[
+                { icon: '✓', text: 'Works in Gmail & Outlook Web' },
+                { icon: '✓', text: 'Generate outreach right in your inbox' },
+                { icon: '✓', text: 'Insert into reply with one click' },
+              ].map((f: {icon: string; text: string}) => (
+                <div key={f.text} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#16a34a' }}>{f.icon}</span>
+                  <span style={{ fontSize: 11, color: 'var(--text-2)', fontWeight: 500 }}>{f.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Steps */}
           <div style={{display:'flex',alignItems:'center',marginBottom:28}}>
             {[1,2,3].map((n,i) => (

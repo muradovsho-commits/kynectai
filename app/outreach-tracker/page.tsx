@@ -263,7 +263,9 @@ export default function OutreachTrackerPage() {
                   <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.5 }}>Add contacts and write outreach emails directly from Gmail &amp; Outlook — without leaving your inbox.</div>
                 </div>
               </div>
-              <a href="https://chrome.google.com/webstore" target="_blank" rel="noopener noreferrer" style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 10, padding: '10px 20px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}>Install Extension</a>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                <span style={{ fontSize: 11, fontWeight: 600, color: '#f59e0b', background: '#fef3c7', padding: '4px 10px', borderRadius: 100, whiteSpace: 'nowrap' }}>Awaiting Approval</span>
+              </div>
             </div>
             <div style={{ display: 'flex', gap: 16, marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
               {[
