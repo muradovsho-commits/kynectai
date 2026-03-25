@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Install OfferBell Extension</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0c0c10;
+    color: #e4e4eb;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 20px 80px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #a5b4fc;
+    letter-spacing: 0.3px;
+    margin-bottom: 24px;
+  }
+  .badge svg { flex-shrink: 0; }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    color: #fff;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: #8b8ba0;
+    text-align: center;
+    max-width: 480px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+  }
+
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    box-shadow: 0 4px 24px rgba(99, 102, 241, 0.35);
+    margin-bottom: 56px;
+  }
+  .download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.45);
+  }
+
+  .steps {
+    width: 100%;
+    max-width: 640px;
+  }
+
+  .steps h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+
+  .step {
+    display: flex;
+    gap: 20px;
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .step:last-child { border-bottom: none; }
+
+  .step-num {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #a5b4fc;
+  }
+
+  .step-content h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .step-content p {
+    font-size: 14px;
+    color: #8b8ba0;
+    line-height: 1.6;
+  }
+
+  .step-content code {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    color: #c4b5fd;
+  }
+
+  .note {
+    margin-top: 40px;
+    padding: 16px 20px;
+    background: rgba(99, 102, 241, 0.08);
+    border: 1px solid rgba(99, 102, 241, 0.15);
+    border-radius: 12px;
+    max-width: 640px;
+    width: 100%;
+  }
+
+  .note p {
+    font-size: 13px;
+    color: #8b8ba0;
+    line-height: 1.6;
+  }
+  .note strong { color: #a5b4fc; }
+</style>
+</head>
+<body>
+
+  <div class="badge">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><path d="M8 12l2.5 2.5L16 9"/>
+    </svg>
+    Chrome Extension
+  </div>
+
+  <h1>OfferBell for Gmail</h1>
+  <p class="subtitle">Add contacts from Gmail to your Outreach Tracker with one click. Takes 30 seconds to set up.</p>
+
+  <a href="https://github.com/muradovsho-commits/kynectai/archive/refs/heads/main.zip" class="download-btn" download>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    Download Extension
+  </a>
+
+  <div class="steps">
+    <h2>Setup in 4 steps</h2>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Download & Unzip</h3>
+        <p>Click the button above. Unzip the downloaded file. Inside you'll see a folder called <code>chrome-extension</code> — that's the one you need.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Open Chrome Extensions</h3>
+        <p>In Chrome, go to <code>chrome://extensions</code> in your address bar. Toggle on <strong style="color:#fff">Developer mode</strong> in the top-right corner.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Load the extension</h3>
+        <p>Click <strong style="color:#fff">Load unpacked</strong> in the top-left. Navigate to and select the <code>chrome-extension</code> folder you unzipped.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Open Gmail</h3>
+        <p>Go to Gmail and open any email. You'll see the purple <strong style="color:#a5b4fc">Add to OfferBell</strong> button in the toolbar. Click it to save contacts to your tracker.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <p><strong>Note:</strong> Chrome may show a warning about developer mode extensions. This is normal for self-hosted extensions. Click "Keep" to continue. We're working on getting OfferBell listed on the Chrome Web Store for one-click install.</p>
+  </div>
+
+</body>
+</html>
