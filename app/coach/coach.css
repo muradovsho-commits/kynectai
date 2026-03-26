@@ -211,7 +211,6 @@
 }
 
 .coach-chat-area-inner {
-  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -307,7 +306,7 @@
 .coach-empty-sub {
   font-size: 13px;
   color: var(--coach-text-3);
-  max-width: 360px;
+  max-width: 500px;
   line-height: 1.6;
 }
 
@@ -319,7 +318,6 @@
 }
 
 .coach-input-area-inner {
-  max-width: 900px;
   margin: 0 auto;
 }
 
