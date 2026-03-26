@@ -69,9 +69,8 @@ Return ONLY a JSON array. No explanation, no markdown. Example format:
       body: JSON.stringify({
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         generationConfig: {
-          temperature: 0.3,
+          temperature: 0.4,
           maxOutputTokens: 4096,
-          responseMimeType: "application/json",
         },
       }),
     });
@@ -84,8 +83,14 @@ Return ONLY a JSON array. No explanation, no markdown. Example format:
 
     const data = await res.json();
     const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    const cleaned = raw.replace(/```json\n?|```\n?/g, "").trim();
-    const parsed = JSON.parse(cleaned);
+    
+    // Extract JSON from response — handle markdown wrapping
+    let jsonStr = raw;
+    const jsonMatch = raw.match(/\[[\s\S]*\]/);
+    if (jsonMatch) jsonStr = jsonMatch[0];
+    else jsonStr = raw.replace(/```json\n?|```\n?/g, "").trim();
+    
+    const parsed = JSON.parse(jsonStr);
     return Array.isArray(parsed) ? parsed : null;
   } catch (e) {
     console.error("Gemini parse error:", e);
