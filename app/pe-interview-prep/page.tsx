@@ -17,6 +17,10 @@ import { PE_RETURNS_SECTIONS } from './pe-returns-data';
 import { PE_DEAL_SECTIONS } from './pe-deal-data';
 import { PE_ADVANCED_SECTIONS } from './pe-advanced-data';
 import { PE_MASTERY_SECTIONS } from './pe-mastery-data';
+import { PE_RESUME_SECTIONS } from './pe-resume-data';
+import { PE_WHY_SECTIONS } from './pe-why-data';
+import { PE_PITCH_SECTIONS } from './pe-pitch-data';
+import { PE_STRESS_SECTIONS } from './pe-stress-data';
 
 type Section = { title: string; content: string };
 
@@ -31,6 +35,10 @@ const MODULES: { id: string; title: string; sub: string; sections: Section[] }[]
   { id: 'pe_deal', title: 'Deal Process', sub: 'CIM, IOI, LOI, management rollover, option pools', sections: PE_DEAL_SECTIONS },
   { id: 'pe_advanced', title: 'Advanced Edge Cases', sub: 'Melting ice cube, WC peg, secondary buyouts', sections: PE_ADVANCED_SECTIONS },
   { id: 'pe_mastery', title: 'Interview Mastery', sub: 'Paper LBO case study, psychology, communication', sections: PE_MASTERY_SECTIONS },
+  { id: 'pe_resume', title: 'Resume Walkthrough', sub: 'Narrative arc, investor trajectory, weak vs. elite', sections: PE_RESUME_SECTIONS },
+  { id: 'pe_why', title: 'The "Why" Questions', sub: 'Why PE, why this firm, avoiding clichés', sections: PE_WHY_SECTIONS },
+  { id: 'pe_pitch', title: 'Investment Pitch', sub: '4-part IC memo structure, commercial acumen', sections: PE_PITCH_SECTIONS },
+  { id: 'pe_stress', title: 'Stress Test & Pushback', sub: 'Failures, handling pushback, composure', sections: PE_STRESS_SECTIONS },
 ];
 
 const ICONS: Record<string, React.ReactElement> = {
@@ -44,6 +52,10 @@ const ICONS: Record<string, React.ReactElement> = {
   pe_deal: <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4m-2.93-7.07-2.83 2.83m-8.48 8.48-2.83 2.83m0-14.14 2.83 2.83m8.48 8.48 2.83 2.83"/></svg>,
   pe_advanced: <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
   pe_mastery: <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>,
+  pe_resume: <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+  pe_why: <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
+  pe_pitch: <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
+  pe_stress: <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
 };
 
 export default function InterviewPrepPage() {
@@ -139,6 +151,16 @@ export default function InterviewPrepPage() {
           <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Advanced & Interview Mastery</div>
           <div className="module-grid" style={{marginBottom:"16px"}}>
             {MODULES.filter(m => ['pe_advanced','pe_mastery'].includes(m.id)).map(m => (
+              <div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>
+                {ICONS[m.id]}
+                <div className="module-name">{m.title}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Behavioral & Fit</div>
+          <div className="module-grid" style={{marginBottom:"16px"}}>
+            {MODULES.filter(m => ['pe_resume','pe_why','pe_pitch','pe_stress'].includes(m.id)).map(m => (
               <div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>
                 {ICONS[m.id]}
                 <div className="module-name">{m.title}</div>
