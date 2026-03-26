@@ -93,4 +93,16 @@ export default defineSchema({
   })
     .index("by_userId", ["userId"])
     .index("by_userId_dismissed", ["userId", "dismissed"]),
+
+  marketPosts: defineTable({
+    userId: v.id("users"),
+    content: v.string(),
+    sentiment: v.string(),
+    upvotes: v.number(),
+    downvotes: v.number(),
+    replies: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_createdAt", ["createdAt"])
+    .index("by_userId", ["userId"]),
 });

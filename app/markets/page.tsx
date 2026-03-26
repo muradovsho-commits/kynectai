@@ -3,23 +3,34 @@
 import Sidebar from "../components/Sidebar";
 import { useState, useEffect, useMemo, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { Id } from "../../convex/_generated/dataModel";
 import './markets.css';
 
-type Post = {
-  id: number;
-  author: { name: string; handle: string; avatar: string; badge: boolean };
-  createdAt: number; // Unix timestamp
+type PostResponse = {
+  _id: Id<"marketPosts">;
+  _creationTime: number;
+  userId: Id<"users">;
   content: string;
-  sentiment: 'Bullish' | 'Bearish' | 'Neutral';
+  sentiment: string;
   upvotes: number;
   downvotes: number;
   replies: number;
+  createdAt: number;
+  author: {
+    name: string;
+    handle: string;
+    avatar: string;
+    badge: boolean;
+  };
 };
 
 // Formatting helpers
 function timeAgo(ms: number) {
   const diff = Date.now() - ms;
   const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return `Just now`;
   if (minutes < 60) return `${Math.max(1, minutes)}m ago`;
   const hours = Math.floor(minutes / 60);
   if (hours < 24) return `${hours}h ago`;
@@ -31,60 +42,29 @@ const extractTags = (text: string): string[] => {
   return Array.from(new Set(matches)).map(t => t.toLowerCase());
 };
 
-// Mock initial data
-const now = Date.now();
-const INITIAL_POSTS: Post[] = [
-  {
-    id: 1,
-    author: { name: 'Alex Chen', handle: '@alexc', avatar: 'AC', badge: true },
-    createdAt: now - 1000 * 60 * 120, // 2h ago
-    content: 'CPI data hotter than expected at 3.5%. The market is ignoring this but I expect a massive repricing in rates next week. #macro #fixedincome',
-    sentiment: 'Bearish',
-    upvotes: 42, downvotes: 2, replies: 5,
-  },
-  {
-    id: 2,
-    author: { name: 'Sarah Jenkins', handle: '@sjenkins', avatar: 'SJ', badge: false },
-    createdAt: now - 1000 * 60 * 45, // 45m ago
-    content: 'If NVDA holds $900 through earnings, the entire semi sector is getting dragged up 15%. IV is priced for perfection though. #equities #semis',
-    sentiment: 'Bullish',
-    upvotes: 89, downvotes: 5, replies: 12,
-  },
-  {
-    id: 3,
-    author: { name: 'Marcus T.', handle: '@marcustrade', avatar: 'MT', badge: true },
-    createdAt: now - 1000 * 60 * 300, // 5h ago
-    content: 'Goldman Sachs just quietly expanded their FICC desk headcount while reducing IB advisory roles. Revenue shift clearly happening. #firms #ib',
-    sentiment: 'Neutral',
-    upvotes: 156, downvotes: 0, replies: 28,
-  },
-  {
-    id: 4,
-    author: { name: 'Elena R.', handle: '@elerio', avatar: 'ER', badge: true },
-    createdAt: now - 1000 * 60 * 15, // 15m ago (Rising velocity)
-    content: 'Oil surging past $85 on geopolitical tensions. Energy stocks look fundamentally cheap here compared to the broader market multiple. Building a position in XLE. #energy #macro #commodities',
-    sentiment: 'Bullish',
-    upvotes: 34, downvotes: 0, replies: 3,
-  },
-  {
-    id: 5,
-    author: { name: 'Dan R.', handle: '@dr_macro', avatar: 'DR', badge: false },
-    createdAt: now - 1000 * 60 * 5, // 5m ago
-    content: 'Anyone touching long duration bonds today is playing with fire. The curve isn\'t fully pricing in this sticky inflation print. #fixedincome #macro',
-    sentiment: 'Bearish',
-    upvotes: 12, downvotes: 1, replies: 0,
-  }
-];
-
 const SENTIMENT_COLORS = {
   Bullish: { bg: 'rgba(16, 185, 129, 0.1)', text: '#10b981', dot: '#10b981' },
   Bearish: { bg: 'rgba(239, 68, 68, 0.1)', text: '#ef4444', dot: '#ef4444' },
   Neutral: { bg: 'var(--surface-2)', text: 'var(--text-2)', dot: 'var(--text-3)' }
 };
 
+// SVG Assets
+const SVGS = {
+  PinSolid: <svg className="pin-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11.78L20.24 16H13v6l-1 2-1-2v-6H3.76L8 11.78V4h8v7.78z"/></svg>,
+  PinOutline: <svg className="pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 11.78L20.24 16H13v6l-1 2-1-2v-6H3.76L8 11.78V4h8v7.78z" fill="none"/></svg>,
+  Flame: <svg className="flame-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2c0 0-3 3-3 8 0 0-4-3-4-8-3 3-5 7-5 12 0 5 4 9 9 9s9-4 9-9c0-5-2-9-5-12z"/><path d="M12 17c0 0-1-1-1-3 0 0-2-1-2-3-1 1-2 3-2 5 0 2 1 4 3 4s3-2 3-4z"/></svg>,
+  Bullish: <svg className="sentiment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 7L13.5 15.5 8.5 10.5 2 17"/><path d="M16 7H22V13"/></svg>,
+  Bearish: <svg className="sentiment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 17L13.5 8.5 8.5 13.5 2 7"/><path d="M16 17H22V11"/></svg>,
+  Neutral: <svg className="sentiment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 12h14"/></svg>,
+};
+
 export default function MarketsPage() {
   const router = useRouter();
-  const [posts, setPosts] = useState<Post[]>(INITIAL_POSTS);
+  
+  // Dynamic Convex Data
+  const rawPosts = useQuery(api.marketPosts.list) || [];
+  const createPost = useMutation(api.marketPosts.create);
+  const actionPost = useMutation(api.marketPosts.action);
   
   // Navigation State
   const [activeFeed, setActiveFeed] = useState<string>('Global');
@@ -93,29 +73,37 @@ export default function MarketsPage() {
   // Composer State
   const [composeText, setComposeText] = useState('');
   const [composeSentiment, setComposeSentiment] = useState<'Bullish'|'Bearish'|'Neutral'>('Neutral');
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const stored = window.localStorage.getItem('offerbell_user_id');
     if (!stored) { router.replace('/signin'); }
+    else { setUserId(stored); }
   }, [router]);
 
   // Extract hashtags live while composing to show user if they meet requirements
   const composeTags = extractTags(composeText);
-  const canPost = composeText.trim().length > 0 && composeTags.length > 0 && composeText.length <= 280;
+  const canPost = composeText.trim().length > 0 && composeTags.length > 0 && composeText.length <= 280 && userId;
 
-  const handlePost = () => {
+  const handlePost = async () => {
     if (!canPost) return;
-    const newPost: Post = {
-      id: Date.now(),
-      author: { name: 'You', handle: '@user', avatar: 'U', badge: false },
-      createdAt: Date.now(),
-      content: composeText,
-      sentiment: composeSentiment,
-      upvotes: 0, downvotes: 0, replies: 0,
-    };
-    setPosts([newPost, ...posts]);
-    setComposeText('');
+    try {
+      await createPost({
+        userId: userId as Id<"users">,
+        content: composeText,
+        sentiment: composeSentiment,
+      });
+      setComposeText('');
+    } catch (e) {
+      console.error(e);
+      alert("Failed to submit post.");
+    }
+  };
+
+  const handleAction = async (postId: Id<"marketPosts">, type: string) => {
+    // Optimistic UI for votes can be handled via Convex natively, or we let the latency handle it.
+    await actionPost({ postId, type });
   };
 
   const handlePinTag = (tag: string, e: any) => {
@@ -148,12 +136,12 @@ export default function MarketsPage() {
     });
   };
 
-  // Calculate Trending & Rising tags
+  // Calculate Trending & Rising tags natively
   const { trending, rising } = useMemo(() => {
     const tagStats: Record<string, { count: number; recentCount: number; bullish: number; bearish: number }> = {};
     const oneHourAgo = Date.now() - 1000 * 60 * 60;
     
-    posts.forEach(post => {
+    rawPosts.forEach(post => {
       const tags = extractTags(post.content);
       const isRecent = post.createdAt > oneHourAgo;
       
@@ -188,10 +176,10 @@ export default function MarketsPage() {
       .slice(0, 3);
 
     return { trending: sortedTrending, rising: sortedRising };
-  }, [posts]);
+  }, [rawPosts]);
 
   // Filter feed logic
-  const filteredPosts = posts.filter(p => {
+  const filteredPosts = rawPosts.filter(p => {
     if (activeFeed === 'Global') return true;
     if (activeFeed === 'Following') return true; // Mock Following as Global for now
     // If activeFeed is a hashtag (starts with #)
@@ -217,7 +205,9 @@ export default function MarketsPage() {
 
             {/* Composer */}
             <div className="markets-composer">
-              <div className="composer-avatar">U</div>
+              <div className="composer-avatar">
+                {rawPosts.length > 0 && userId === rawPosts[0].userId ? rawPosts[0].author.avatar : 'U'}
+              </div>
               <div className="composer-body">
                 <textarea 
                   placeholder="Drop a hot take. Don't forget your #hashtags..."
@@ -272,17 +262,16 @@ export default function MarketsPage() {
             {/* Posts Feed */}
             <div className="posts-container">
               {filteredPosts.length === 0 ? (
-                <div className="no-posts">
-                  <div style={{ fontSize: 40, marginBottom: 16 }}>📉</div>
+                <div className="no-posts" style={{ padding: '60px 40px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 40, marginBottom: 16 }}>📈</div>
                   <div style={{ color: 'var(--text)', fontWeight: 600, fontSize: 16, marginBottom: 8 }}>Nothing here yet.</div>
                   <div style={{ color: 'var(--text-3)', fontSize: 14 }}>Be the first to tag a post with {activeFeed}.</div>
                 </div>
               ) : (
                 filteredPosts.map(post => {
-                  const sColor = SENTIMENT_COLORS[post.sentiment];
-                  const postHashtags = extractTags(post.content);
+                  const sColor = (SENTIMENT_COLORS as any)[post.sentiment] || SENTIMENT_COLORS.Neutral;
                   return (
-                    <div key={post.id} className="post-card">
+                    <div key={post._id} className="post-card">
                       <div className="post-sidebar">
                         <div className="post-avatar">{post.author.avatar}</div>
                         <div className="post-thread-line"></div>
@@ -302,18 +291,22 @@ export default function MarketsPage() {
                           <div className="post-sentiment-tag" style={{ background: sColor.bg, color: sColor.text }}>
                             <span className="sentiment-dot" style={{ backgroundColor: sColor.dot }}></span>
                             {post.sentiment}
+                            {post.sentiment === 'Bullish' && SVGS.Bullish}
+                            {post.sentiment === 'Bearish' && SVGS.Bearish}
+                            {post.sentiment === 'Neutral' && SVGS.Neutral}
                           </div>
                         </div>
                         
                         <div className="post-text">{renderContent(post.content)}</div>
                         
                         <div className="post-actions">
-                          <button className="action-btn upvote">
+                          <button className="action-btn upvote" onClick={() => handleAction(post._id, 'upvote')}>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
                             <span>{post.upvotes}</span>
                           </button>
-                          <button className="action-btn downvote">
+                          <button className="action-btn downvote" onClick={() => handleAction(post._id, 'downvote')}>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-2"></path></svg>
+                            {post.downvotes > 0 && <span style={{marginLeft: 4}}>{post.downvotes}</span>}
                           </button>
                           <button className="action-btn reply">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
@@ -339,7 +332,7 @@ export default function MarketsPage() {
                 <div key={t.tag} className="trending-item" onClick={() => setActiveFeed(t.tag)}>
                   <div className="trending-info">
                     <div className="trending-name">{idx + 1}. {t.tag}</div>
-                    <div className="trending-volume">{t.count * 123 + Math.floor(Math.random()*100)} posts</div>
+                    <div className="trending-volume">{t.count} posts</div>
                   </div>
                   <div className={`trending-sentiment ${t.borderClass}`}>
                     <button 
@@ -347,7 +340,7 @@ export default function MarketsPage() {
                       onClick={(e) => handlePinTag(t.tag, e)}
                       title={pinnedTags.includes(t.tag) ? "Unpin tag" : "Pin to feed"}
                     >
-                      {pinnedTags.includes(t.tag) ? '📌' : '📍'}
+                      {pinnedTags.includes(t.tag) ? SVGS.PinSolid : SVGS.PinOutline}
                     </button>
                   </div>
                 </div>
@@ -356,8 +349,8 @@ export default function MarketsPage() {
 
             {rising.length > 0 && (
               <div className="trending-widget rising-widget">
-                <div className="widget-header">
-                  Rising <span style={{fontSize: 14}}>🔥</span>
+                <div className="widget-header" style={{ display: 'flex', alignItems: 'center' }}>
+                  Rising {SVGS.Flame}
                 </div>
                 {rising.map((t) => (
                   <div key={t.tag} className="trending-item" onClick={() => setActiveFeed(t.tag)}>
@@ -369,7 +362,7 @@ export default function MarketsPage() {
                       className="pin-tag-btn" 
                       onClick={(e) => handlePinTag(t.tag, e)}
                     >
-                      📍
+                      {pinnedTags.includes(t.tag) ? SVGS.PinSolid : SVGS.PinOutline}
                     </button>
                   </div>
                 ))}
