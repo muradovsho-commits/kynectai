@@ -17,7 +17,7 @@ type Story = {
 };
 
 const CATEGORIES = ['All', 'Macro', 'Equities', 'Fixed Income', 'Volatility', 'Firms', 'Geopolitical', 'Explainer'];
-const HEAT_ICONS: Record<string, string> = { high: '🔥', medium: '📊', low: '📌' };
+const HEAT_LABELS: Record<string, string> = { high: 'High Impact', medium: 'Medium Impact', low: 'Low Impact' };
 const HEAT_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   high: { bg: 'rgba(239,68,68,0.08)', text: '#dc2626', border: '#fecaca' },
   medium: { bg: 'rgba(245,158,11,0.08)', text: '#d97706', border: '#fde68a' },
@@ -122,7 +122,7 @@ export default function MarketIntelPage() {
                 {/* Tags + Heat */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10, flexWrap: 'wrap' }}>
                   <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 100, background: heat.bg, color: heat.text, border: `1px solid ${heat.border}` }}>
-                    {HEAT_ICONS[story.heat] || '📌'} {story.heat?.charAt(0).toUpperCase() + story.heat?.slice(1)} Impact
+                    {HEAT_LABELS[story.heat] || 'Medium Impact'}
                   </span>
                   {story.tags?.map(tag => (
                     <span key={tag} style={{ fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 100, background: 'var(--surface-2)', color: 'var(--text-3)', border: '1px solid var(--border)' }}>{tag}</span>

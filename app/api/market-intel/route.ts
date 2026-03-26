@@ -1,32 +1,29 @@
 import { NextResponse } from "next/server";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
-
 const RSS_FEEDS = [
   { url: "https://news.google.com/rss/search?q=finance+markets+economy&hl=en-US&gl=US&ceid=US:en", source: "Google News" },
-  { url: "https://news.google.com/rss/search?q=investment+banking+wall+street&hl=en-US&gl=US&ceid=US:en", source: "Google News" },
-  { url: "https://news.google.com/rss/search?q=federal+reserve+interest+rates&hl=en-US&gl=US&ceid=US:en", source: "Google News" },
-  { url: "https://news.google.com/rss/search?q=stock+market+today&hl=en-US&gl=US&ceid=US:en", source: "Google News" },
+  { url: "https://news.google.com/rss/search?q=investment+banking+wall+street+deals&hl=en-US&gl=US&ceid=US:en", source: "Google News" },
+  { url: "https://news.google.com/rss/search?q=federal+reserve+interest+rates+bonds&hl=en-US&gl=US&ceid=US:en", source: "Google News" },
+  { url: "https://news.google.com/rss/search?q=stocks+equities+earnings&hl=en-US&gl=US&ceid=US:en", source: "Google News" },
+  { url: "https://news.google.com/rss/search?q=hedge+fund+private+equity+M%26A&hl=en-US&gl=US&ceid=US:en", source: "Google News" },
   { url: "https://www.cnbc.com/id/100003114/device/rss/rss.html", source: "CNBC" },
-  { url: "https://feeds.marketwatch.com/marketwatch/topstories/", source: "MarketWatch" },
 ];
 
-async function fetchRSS(feedUrl: string, source: string): Promise<{ title: string; link: string; source: string; pubDate: string }[]> {
+async function fetchRSS(feedUrl: string, source: string) {
   try {
-    const res = await fetch(feedUrl, { 
+    const res = await fetch(feedUrl, {
       next: { revalidate: 900 },
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; OfferBell/1.0)' }
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; OfferBell/1.0)" },
     });
     if (!res.ok) return [];
     const text = await res.text();
     const items: { title: string; link: string; source: string; pubDate: string }[] = [];
     const itemMatches = text.match(/<item>([\s\S]*?)<\/item>/g) || [];
     for (const item of itemMatches.slice(0, 5)) {
-      const title = item.match(/<title><!\[CDATA\[(.*?)\]\]>|<title>(.*?)<\/title>/)?.[1] || item.match(/<title>(.*?)<\/title>/)?.[1] || "";
+      const title =
+        item.match(/<title><!\[CDATA\[(.*?)\]\]>/)?.[1] ||
+        item.match(/<title>(.*?)<\/title>/)?.[1] ||
+        "";
       const link = item.match(/<link>(.*?)<\/link>/)?.[1] || "";
       const pubDate = item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] || "";
       if (title) items.push({ title: title.trim(), link, source, pubDate });
@@ -37,25 +34,32 @@ async function fetchRSS(feedUrl: string, source: string): Promise<{ title: strin
   }
 }
 
-async function analyzeWithGemini(headlines: { title: string; source: string }[]): Promise<any[]> {
+async function analyzeHeadlines(headlines: { title: string; source: string }[]) {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || headlines.length === 0) return [];
+  if (!apiKey || headlines.length === 0) return null;
 
-  const headlineList = headlines.map((h, i) => `${i + 1}. [${h.source}] ${h.title}`).join("\n");
+  const list = headlines.map((h, i) => `${i + 1}. [${h.source}] ${h.title}`).join("\n");
 
-  const prompt = `You are a finance market analyst. Analyze these headlines and return ONLY valid JSON (no markdown, no backticks).
+  const prompt = `You are a finance market analyst for college students preparing for Wall Street interviews.
+
+Analyze these news headlines. For each, provide analysis relevant to finance recruiting.
 
 Headlines:
-${headlineList}
+${list}
 
-Return a JSON array where each item has:
-- "title": the headline (cleaned up)
-- "summary": 1 sentence summary
-- "impact": object with "ib" (investment banking impact), "quant" (quant/trading impact), "trading" (market impact) — each 1 short sentence
-- "tags": array of tags from: ["Macro", "Equities", "Fixed Income", "Volatility", "Firms", "Geopolitical", "Explainer"]
-- "heat": "high", "medium", or "low" based on market significance
+For each headline return:
+- title: cleaned headline text
+- summary: 1 sentence plain English summary
+- ib: how this affects investment banking (deals, M&A, IPOs, advisory)
+- quant: how this affects quant trading and systematic strategies  
+- trading: broader market and trading implications
+- tags: assign 1-2 tags from EXACTLY these options: Macro, Equities, Fixed Income, Volatility, Firms, Geopolitical
+- heat: high, medium, or low based on how important this is for a finance interview
 
-Only include the 6 most important headlines. Return ONLY the JSON array, nothing else.`;
+Pick the 8 most important headlines. Ensure a MIX of tags — not all Macro. Include Equities, Fixed Income, Firms, Geopolitical where relevant.
+
+Return ONLY a JSON array. No explanation, no markdown. Example format:
+[{"title":"...","summary":"...","ib":"...","quant":"...","trading":"...","tags":["Macro","Equities"],"heat":"high"}]`;
 
   try {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
@@ -64,74 +68,85 @@ Only include the 6 most important headlines. Return ONLY the JSON array, nothing
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: { 
-          temperature: 0.3, 
-          maxOutputTokens: 2048,
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 4096,
           responseMimeType: "application/json",
         },
       }),
     });
+
     if (!res.ok) {
-      const errText = await res.text();
-      console.error("Gemini market intel error:", res.status, errText.slice(0, 300));
-      return [];
+      const err = await res.text();
+      console.error("Gemini error:", res.status, err.slice(0, 500));
+      return null;
     }
+
     const data = await res.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    const cleaned = text.replace(/```json\n?|```\n?/g, "").trim();
+    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    const cleaned = raw.replace(/```json\n?|```\n?/g, "").trim();
     const parsed = JSON.parse(cleaned);
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed) ? parsed : null;
   } catch (e) {
-    console.error("Gemini market analysis parse error:", e);
-    return [];
+    console.error("Gemini parse error:", e);
+    return null;
   }
 }
 
 export async function GET() {
   try {
-    // Fetch all RSS feeds in parallel
     const allFeeds = await Promise.all(
       RSS_FEEDS.map((f) => fetchRSS(f.url, f.source))
     );
-    const allHeadlines = allFeeds.flat().slice(0, 15);
+    const allHeadlines = allFeeds.flat();
 
-    if (allHeadlines.length === 0) {
-      return NextResponse.json({ 
-        stories: [], 
-        error: "No headlines fetched from RSS feeds",
-        debug: RSS_FEEDS.map(f => f.url).join(", ")
-      }, { headers: corsHeaders });
+    // Deduplicate by title similarity
+    const seen = new Set<string>();
+    const unique = allHeadlines.filter((h) => {
+      const key = h.title.toLowerCase().slice(0, 40);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).slice(0, 20);
+
+    if (unique.length === 0) {
+      return NextResponse.json({ stories: [], error: "No headlines available" });
     }
 
-    // Analyze with Gemini
-    const analyzed = await analyzeWithGemini(allHeadlines);
+    const analyzed = await analyzeHeadlines(unique);
 
-    if (analyzed.length === 0) {
-      // Gemini failed — return raw headlines as fallback
-      const fallbackStories = allHeadlines.slice(0, 8).map(h => ({
-        title: h.title,
-        summary: "",
-        impact: { ib: "Analysis unavailable", quant: "Analysis unavailable", trading: "Analysis unavailable" },
-        tags: ["Macro"],
-        heat: "medium",
-        link: h.link,
-        source: h.source,
-        pubDate: h.pubDate,
+    if (analyzed && analyzed.length > 0) {
+      const stories = analyzed.map((a: any, i: number) => ({
+        title: a.title || unique[i]?.title || "",
+        summary: a.summary || "",
+        impact: {
+          ib: a.ib || "",
+          quant: a.quant || "",
+          trading: a.trading || "",
+        },
+        tags: Array.isArray(a.tags) ? a.tags : ["Macro"],
+        heat: a.heat || "medium",
+        link: unique[i]?.link || "",
+        source: unique[i]?.source || "",
+        pubDate: unique[i]?.pubDate || "",
       }));
-      return NextResponse.json({ stories: fallbackStories }, { headers: corsHeaders });
+      return NextResponse.json({ stories });
     }
 
-    // Merge links back
-    const stories = analyzed.map((a: any, i: number) => ({
-      ...a,
-      link: allHeadlines[i]?.link || "",
-      source: allHeadlines[i]?.source || "",
-      pubDate: allHeadlines[i]?.pubDate || "",
+    // Fallback: raw headlines without analysis
+    const fallback = unique.slice(0, 8).map((h) => ({
+      title: h.title,
+      summary: "",
+      impact: { ib: "", quant: "", trading: "" },
+      tags: ["Macro"],
+      heat: "medium",
+      link: h.link,
+      source: h.source,
+      pubDate: h.pubDate,
     }));
-
-    return NextResponse.json({ stories }, { headers: corsHeaders });
+    return NextResponse.json({ stories: fallback });
   } catch (error) {
     console.error("Market intel error:", error);
-    return NextResponse.json({ stories: [], error: "Failed to fetch market intelligence" }, { status: 500, headers: corsHeaders });
+    return NextResponse.json({ stories: [], error: "Failed to load" }, { status: 500 });
   }
 }
