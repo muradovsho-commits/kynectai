@@ -19,6 +19,11 @@ const ICONS: Record<string,React.ReactElement> = {
   ge: <svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>,
   am: <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
   accounting: <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15L11 17L15 13"/></svg>,
+  st: <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+  er: <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>,
+  re: <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+  vc: <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>,
+  rx: <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
 };
 
 /* ── TRACK DATA ── */
@@ -171,6 +176,111 @@ const TRACKS: Track[] = [
       { title:'Networking & Prep', sections:[
         { title:'Why Networking Matters', content:`<p>Because the Big 4 hire thousands of students, networking ensures your resume doesn't get lost in the portal. A referral from a Manager or Partner guarantees a first-round interview.</p>` },
         { title:'Outreach Strategy', content:`<p>Campus recruiters are the gatekeepers. Connect with them and school alumni early. Use OfferBell's <strong>Contact Finder</strong> to pull real emails for audit and tax partners in your target city, and use the <strong>Outreach Writer</strong> to craft an introduction.</p>` },
+      ]},
+    ]
+  },
+
+  // ── Sales & Trading ──
+  {
+    id:'st', title:'Sales & Trading', sub:'Trading, research, algorithms',
+    chapters:[
+      { title:'What Is Sales & Trading?', sections:[
+        { title:'Overview', content:`<p>Sales & Trading (S&T) is a division within investment banks that facilitates the buying and selling of financial instruments — stocks, bonds, commodities, derivatives, and currencies. Unlike investment banking, which is advisory, S&T is about <strong>making markets</strong> and <strong>managing risk</strong> in real time.</p><p>S&T professionals sit on the "sell side," connecting institutional investors (hedge funds, pension funds, asset managers) with the securities they want to buy or sell. The division generates revenue through bid-ask spreads, commissions, and proprietary positioning.</p>` },
+        { title:'The Three Desks', content:`<p><strong>Sales:</strong> The relationship managers. They talk to institutional clients, understand their investment needs, and pitch trade ideas. Think of them as the bridge between the client and the trading floor.</p><p><strong>Trading:</strong> The execution engine. Traders make markets, manage inventory risk, and execute client orders. They are compensated on P&L — the actual money they make for the bank.</p><p><strong>Structuring:</strong> The engineers. They design custom derivative products for clients with specific hedging or investment needs. Highly quantitative.</p>` },
+        { title:'Firm Tiers & Key Players', content:`<h4>Top S&T Franchises</h4><div class="firm-tier"><div class="firm-tier-list"><span class="firm-pill">Goldman Sachs</span><span class="firm-pill">J.P. Morgan</span><span class="firm-pill">Morgan Stanley</span><span class="firm-pill">Citi</span><span class="firm-pill">Bank of America</span></div></div><h4>Strong European Desks</h4><div class="firm-tier"><div class="firm-tier-list"><span class="firm-pill">Barclays</span><span class="firm-pill">Deutsche Bank</span><span class="firm-pill">UBS</span><span class="firm-pill">BNP Paribas</span></div></div>` },
+        { title:'Compensation', content:`<table class="salary-table"><tr><th>Level</th><th>Base</th><th>Bonus</th><th>Total Comp</th></tr><tr><td>Analyst</td><td>$100-$110K</td><td>$50-$100K</td><td>$150-$210K</td></tr><tr><td>Associate</td><td>$150-$200K</td><td>$100-$250K</td><td>$250-$450K</td></tr><tr><td>VP/Director</td><td>$200-$300K</td><td>$200-$500K+</td><td>$400K-$800K+</td></tr><tr><td>MD</td><td>$400K+</td><td>$500K-$3M+</td><td>$1M-$5M+</td></tr></table><p>Compensation is more variable than IB — it's tied directly to your desk's P&L and individual contribution.</p>` },
+        { title:'Culture, Hours & Lifestyle', content:`<p>Hours are <strong>market-driven</strong>: typically 7AM-6PM (equities) or 6AM-5PM (fixed income/FX). Live markets mean predictable hours — when the market closes, you can go home. Weekends are generally free unless you're studying for a licensing exam.</p><p>The culture is faster-paced and more meritocratic than IB. Performance is measured daily via P&L. It's less political but more stressful in real-time. You're making split-second decisions with millions of dollars.</p>` },
+      ]},
+      { title:'The Recruiting Process', sections:[
+        { title:'How Recruiting Works', content:`<p>S&T hiring follows the same structure as IB: sophomore year networking → junior year summer internship → full-time conversion. However, S&T interviews test very different skills — market knowledge, mental math, and risk intuition rather than DCFs and LBOs.</p>` },
+        { title:'The Interview Process', content:`<p>Expect a mix of:</p><ul><li><strong>Market questions:</strong> "Where is the S&P 500 trading? What happened to oil prices this week? What's the 10-year Treasury yield?"</li><li><strong>Brainteasers & probability:</strong> "I flip a coin — if it's heads, I give you $10. If tails, you give me $5. Would you play?"</li><li><strong>Trading games:</strong> Mock trading exercises testing risk management and quick math.</li><li><strong>Behavioral:</strong> "Why S&T over IB?" "Why trading over sales?"</li></ul>` },
+      ]},
+      { title:'Networking & Prep', sections:[
+        { title:'How to Stand Out', content:`<p>Read the WSJ and Bloomberg daily. Have a view on markets. Know current rates, indices, and recent moves. Use OfferBell's <strong>Market Intel</strong> to stay sharp on what's moving and why. Practice mental math and probability daily.</p>` },
+      ]},
+    ]
+  },
+
+  // ── Equity Research ──
+  {
+    id:'er', title:'Equity Research', sub:'Stock analysis, coverage, reports',
+    chapters:[
+      { title:'What Is Equity Research?', sections:[
+        { title:'Overview', content:`<p>Equity Research (ER) analysts study public companies in specific sectors and publish research reports with buy, hold, or sell recommendations. They are the sell-side's "opinion engine" — institutional investors (hedge funds, mutual funds) rely on ER reports to inform their investment decisions.</p><p>Unlike IB (which advises on transactions), ER is about <strong>deep fundamental analysis</strong> of businesses and forming a view on their stock price.</p>` },
+        { title:'What They Actually Do', content:`<p>At the junior level (Research Associate), your work includes:</p><ul><li><strong>Modeling:</strong> Building and maintaining detailed financial models for companies in your coverage universe.</li><li><strong>Writing:</strong> Drafting research notes, earnings previews, initiation reports (30-50 page deep dives).</li><li><strong>Industry analysis:</strong> Tracking industry trends, attending conferences, listening to earnings calls.</li><li><strong>Client interaction:</strong> Hosting calls with buy-side investors to discuss your views.</li></ul>` },
+        { title:'Firm Tiers & Key Players', content:`<h4>Top ER Platforms</h4><div class="firm-tier"><div class="firm-tier-list"><span class="firm-pill">Goldman Sachs</span><span class="firm-pill">J.P. Morgan</span><span class="firm-pill">Morgan Stanley</span><span class="firm-pill">BofA Securities</span><span class="firm-pill">Barclays</span></div></div><h4>Strong Independents</h4><div class="firm-tier"><div class="firm-tier-list"><span class="firm-pill">Bernstein</span><span class="firm-pill">Wolfe Research</span><span class="firm-pill">Cowen</span><span class="firm-pill">Evercore ISI</span></div></div>` },
+        { title:'Compensation', content:`<table class="salary-table"><tr><th>Level</th><th>Base</th><th>Bonus</th><th>Total Comp</th></tr><tr><td>Research Associate</td><td>$100-$125K</td><td>$50-$100K</td><td>$150-$225K</td></tr><tr><td>Senior Associate / VP</td><td>$150-$250K</td><td>$100-$300K</td><td>$250-$550K</td></tr><tr><td>Senior Analyst (Named)</td><td>$300-$500K</td><td>$300K-$2M+</td><td>$600K-$3M+</td></tr></table><p>Comp is lower than IB at the junior level, but top-ranked senior analysts can earn $1M+ and become franchise players.</p>` },
+        { title:'Culture, Hours & Lifestyle', content:`<p>Hours are <strong>50-65 per week</strong> normally, spiking to 70+ during earnings season (4 times a year). The rhythm is predictable — you know when earnings are and can plan around them.</p><p>It's one of the best lifestyle-to-comp ratios on Wall Street. You're paid to think deeply about businesses, write well, and form opinions — not pull all-nighters on pitch books.</p>` },
+      ]},
+      { title:'The Recruiting Process', sections:[
+        { title:'How Recruiting Works', content:`<p>ER recruiting is less structured than IB. Many roles are filled through networking and direct applications. Some banks have formal summer programs; others hire on an as-needed basis when a senior analyst needs an associate.</p>` },
+        { title:'The Interview Process', content:`<p>Expect:</p><ul><li><strong>Stock pitch:</strong> "Pitch me a stock you'd buy right now." This is the centerpiece of every ER interview.</li><li><strong>Accounting & valuation:</strong> DCF, comps, financial statement analysis.</li><li><strong>Industry knowledge:</strong> Deep questions about the sector you're interviewing for.</li><li><strong>Writing sample:</strong> Some firms ask for a sample research report or investment thesis.</li></ul>` },
+      ]},
+      { title:'Networking & Prep', sections:[
+        { title:'How to Stand Out', content:`<p>Prepare 2-3 polished stock pitches with clear catalysts, valuation support, and risk/mitigants. Read 10-Ks, listen to earnings calls, and develop a genuine interest in following companies. Use OfferBell's <strong>Coach</strong> to practice pitching stocks and getting feedback on your thesis structure.</p>` },
+      ]},
+    ]
+  },
+
+  // ── Real Estate ──
+  {
+    id:'re', title:'Real Estate', sub:'REPE, REITs, development, brokerage',
+    chapters:[
+      { title:'What Is Real Estate Finance?', sections:[
+        { title:'Overview', content:`<p>Real estate finance encompasses the investment, development, and management of physical properties — office buildings, apartments, retail centers, industrial warehouses, and hotels. The two main career paths are <strong>Real Estate Private Equity (REPE)</strong> and <strong>REITs (Real Estate Investment Trusts)</strong>.</p><p>REPE firms acquire, improve, and sell properties using leverage — similar to traditional PE but with real assets instead of companies. REITs are publicly traded companies that own and operate income-producing real estate.</p>` },
+        { title:'Key Sectors', content:`<ul><li><strong>Multifamily:</strong> Apartment complexes. Considered the most recession-resistant.</li><li><strong>Office:</strong> Commercial office space. Highly cyclical post-COVID.</li><li><strong>Industrial:</strong> Warehouses and logistics centers. Booming due to e-commerce.</li><li><strong>Retail:</strong> Shopping centers and malls. Challenged but selectively attractive.</li><li><strong>Hospitality:</strong> Hotels and resorts. Highest risk, highest return potential.</li></ul>` },
+        { title:'Firm Tiers & Key Players', content:`<h4>REPE Mega-Funds</h4><div class="firm-tier"><div class="firm-tier-list"><span class="firm-pill">Blackstone Real Estate</span><span class="firm-pill">Brookfield</span><span class="firm-pill">Starwood Capital</span><span class="firm-pill">KKR Real Estate</span></div></div><h4>Dedicated RE Firms</h4><div class="firm-tier"><div class="firm-tier-list"><span class="firm-pill">Hines</span><span class="firm-pill">Tishman Speyer</span><span class="firm-pill">Related Companies</span><span class="firm-pill">Greystar</span></div></div><h4>Top REITs</h4><div class="firm-tier"><div class="firm-tier-list"><span class="firm-pill">Prologis</span><span class="firm-pill">Equity Residential</span><span class="firm-pill">Simon Property Group</span><span class="firm-pill">Digital Realty</span></div></div>` },
+        { title:'Compensation', content:`<table class="salary-table"><tr><th>Level</th><th>Base</th><th>Bonus</th><th>Total Comp</th></tr><tr><td>Analyst</td><td>$80-$100K</td><td>$20-$60K</td><td>$100-$160K</td></tr><tr><td>Associate</td><td>$120-$160K</td><td>$50-$150K</td><td>$170-$310K</td></tr><tr><td>VP / Principal</td><td>$200-$350K</td><td>$150-$500K</td><td>$350K-$850K</td></tr><tr><td>Partner / MD</td><td>$400K+</td><td>Carry + bonus</td><td>$1M-$5M+</td></tr></table>` },
+        { title:'Culture, Hours & Lifestyle', content:`<p>Hours are <strong>55-70 per week</strong> at REPE firms, less at REITs and development companies. Real estate is tangible — you visit properties, walk construction sites, and negotiate with tenants. Many people love it because you can see and touch what you invest in.</p>` },
+      ]},
+      { title:'The Recruiting Process', sections:[
+        { title:'How Recruiting Works', content:`<p>Real estate recruiting is less structured than IB/PE. Many positions are filled through networking and real estate-specific programs. Top feeder paths include IB real estate groups, REPE internships, and dedicated undergraduate real estate programs (Wharton, Wisconsin, Georgetown).</p>` },
+        { title:'The Interview Process', content:`<p>Expect:</p><ul><li><strong>Real estate financial modeling:</strong> Pro forma models, development models, waterfall structures.</li><li><strong>Market knowledge:</strong> Cap rates, NOI, occupancy trends in specific markets.</li><li><strong>Deal walkthroughs:</strong> "Walk me through how you'd evaluate an apartment building acquisition."</li><li><strong>Case studies:</strong> Given a property and financials, determine whether to invest.</li></ul>` },
+      ]},
+      { title:'Networking & Prep', sections:[
+        { title:'How to Stand Out', content:`<p>Learn the language: cap rate, NOI, IRR, cash-on-cash return, debt service coverage ratio. Understand how a real estate pro forma works. Follow local and national market trends via CBRE, JLL, and CoStar reports.</p>` },
+      ]},
+    ]
+  },
+
+  // ── Venture Capital ──
+  {
+    id:'vc', title:'Venture Capital', sub:'Startups, seed to growth stage',
+    chapters:[
+      { title:'What Is Venture Capital?', sections:[
+        { title:'Overview', content:`<p>Venture Capital (VC) firms invest in early-stage startups and high-growth companies in exchange for equity ownership. Unlike PE (which buys mature companies with debt), VC invests in companies that often have little or no revenue — betting on the founder, the product, and the market opportunity.</p><p>VC is about <strong>pattern recognition</strong>: identifying which founding teams and markets have the potential for 10-100x returns.</p>` },
+        { title:'The VC Stages', content:`<ul><li><strong>Pre-Seed / Seed:</strong> $100K-$3M checks. Investing in an idea or early prototype. Highest risk, highest potential return.</li><li><strong>Series A:</strong> $5-$15M. Product-market fit has been demonstrated. The company needs capital to scale.</li><li><strong>Series B-C:</strong> $20-$100M+. Growth-stage investing. The company is scaling revenue and building out the team.</li><li><strong>Late-Stage / Growth:</strong> $100M+. Near-IPO companies. Lower risk, lower return multiple.</li></ul>` },
+        { title:'Firm Tiers & Key Players', content:`<h4>Top-Tier VC Firms</h4><div class="firm-tier"><div class="firm-tier-list"><span class="firm-pill">Sequoia Capital</span><span class="firm-pill">Andreessen Horowitz (a16z)</span><span class="firm-pill">Benchmark</span><span class="firm-pill">Lightspeed</span><span class="firm-pill">Accel</span></div></div><h4>Growth-Stage</h4><div class="firm-tier"><div class="firm-tier-list"><span class="firm-pill">General Catalyst</span><span class="firm-pill">Tiger Global</span><span class="firm-pill">Coatue</span><span class="firm-pill">Insight Partners</span></div></div><h4>Seed-Stage</h4><div class="firm-tier"><div class="firm-tier-list"><span class="firm-pill">Y Combinator</span><span class="firm-pill">First Round Capital</span><span class="firm-pill">Lux Capital</span><span class="firm-pill">Founders Fund</span></div></div>` },
+        { title:'Compensation', content:`<table class="salary-table"><tr><th>Level</th><th>Base</th><th>Bonus / Carry</th><th>Total Comp</th></tr><tr><td>Analyst</td><td>$80-$120K</td><td>$10-$30K</td><td>$90-$150K</td></tr><tr><td>Associate</td><td>$120-$180K</td><td>$30-$80K + small carry</td><td>$150-$260K</td></tr><tr><td>Principal / VP</td><td>$200-$350K</td><td>Significant carry</td><td>$400K-$1M+</td></tr><tr><td>Partner</td><td>$300-$500K</td><td>Carry (fund-dependent)</td><td>$1M-$20M+</td></tr></table><p>Base pay is lower than PE/IB, but carried interest from successful exits (IPOs, acquisitions) is where the real wealth is created.</p>` },
+        { title:'Culture, Hours & Lifestyle', content:`<p>Hours are <strong>50-60 per week</strong>, making VC one of the best lifestyles in finance. However, the work is always-on — you're constantly reading, networking, and evaluating opportunities. The culture is entrepreneurial and intellectually curious. You attend conferences, meet founders, and stay on top of technology trends.</p>` },
+      ]},
+      { title:'The Recruiting Process', sections:[
+        { title:'How Recruiting Works', content:`<p>VC recruiting is the <strong>least structured</strong> path in finance. There is no centralized recruiting process. Most junior roles are filled through: direct networking, founder referrals, VC fellowship programs (like Kauffman Fellows), or transitions from IB/consulting/startups.</p><p>Some firms hire undergrads for 2-year analyst programs, but these are rare and ultra-competitive.</p>` },
+        { title:'The Interview Process', content:`<p>Expect:</p><ul><li><strong>Market mapping:</strong> "What sectors excite you and why?"</li><li><strong>Startup evaluation:</strong> "Here's a pitch deck — would you invest?"</li><li><strong>Company deep-dives:</strong> "Tell me about a company you think is undervalued."</li><li><strong>Founder empathy:</strong> "What makes a great founding team?"</li><li><strong>Portfolio construction:</strong> Understanding power law, fund math, ownership targets.</li></ul>` },
+      ]},
+      { title:'Networking & Prep', sections:[
+        { title:'How to Stand Out', content:`<p>Build a thesis. Identify 2-3 sectors you're genuinely passionate about and develop deep knowledge. Start a blog, write deal memos, or participate in VC fellowships. Network relentlessly with VCs and founders. Use OfferBell's <strong>Outreach Writer</strong> to craft cold emails to VCs that demonstrate your sector knowledge.</p>` },
+      ]},
+    ]
+  },
+
+  // ── Restructuring ──
+  {
+    id:'rx', title:'Restructuring', sub:'Distressed debt, turnarounds, bankruptcy',
+    chapters:[
+      { title:'What Is Restructuring?', sections:[
+        { title:'Overview', content:`<p>Restructuring (RX) is the process of reorganizing a company's financial structure when it is in financial distress — facing potential bankruptcy, covenant violations, or inability to service debt. Restructuring professionals advise either the company (debtor) or the creditors (lenders) on how to renegotiate obligations and preserve value.</p><p>Unlike IB (which works on healthy companies doing M&A), restructuring works on <strong>companies in crisis</strong>. It is considered one of the most intellectually challenging areas of finance because it requires deep knowledge of capital structure, bankruptcy law, and negotiation dynamics.</p>` },
+        { title:'What They Actually Do', content:`<ul><li><strong>Liability management:</strong> Analyzing the company's debt stack and finding ways to reduce obligations.</li><li><strong>Liquidity analysis:</strong> Building 13-week cash flow models to determine how long the company can survive.</li><li><strong>Negotiation:</strong> Mediating between debtors, creditors, and equity holders over who takes losses.</li><li><strong>Valuation in distress:</strong> Determining enterprise value when traditional metrics break down.</li><li><strong>Plan of Reorganization:</strong> Structuring the terms under which a company exits bankruptcy.</li></ul>` },
+        { title:'Firm Tiers & Key Players', content:`<h4>Elite RX Advisory</h4><div class="firm-tier"><div class="firm-tier-list"><span class="firm-pill">Houlihan Lokey</span><span class="firm-pill">PJT Partners</span><span class="firm-pill">Evercore</span><span class="firm-pill">Lazard</span><span class="firm-pill">Moelis</span></div></div><h4>Bulge Bracket RX Groups</h4><div class="firm-tier"><div class="firm-tier-list"><span class="firm-pill">Goldman Sachs</span><span class="firm-pill">J.P. Morgan</span><span class="firm-pill">Morgan Stanley</span></div></div><h4>Distressed Debt Funds (Buy-Side)</h4><div class="firm-tier"><div class="firm-tier-list"><span class="firm-pill">Apollo</span><span class="firm-pill">Oaktree Capital</span><span class="firm-pill">Elliott Management</span><span class="firm-pill">Cerberus</span></div></div>` },
+        { title:'Compensation', content:`<table class="salary-table"><tr><th>Level</th><th>Base</th><th>Bonus</th><th>Total Comp</th></tr><tr><td>Analyst</td><td>$110-$120K</td><td>$80-$130K</td><td>$190-$250K</td></tr><tr><td>Associate</td><td>$175-$225K</td><td>$120-$250K</td><td>$295-$475K</td></tr><tr><td>VP</td><td>$250-$350K</td><td>$200-$400K</td><td>$450-$750K</td></tr><tr><td>MD</td><td>$400K+</td><td>$500K-$2M+</td><td>$1M-$3M+</td></tr></table><p>Restructuring comp is on par with top IB groups and tends to be <strong>counter-cyclical</strong> — when the economy tanks, RX bankers are busiest and best-paid.</p>` },
+        { title:'Culture, Hours & Lifestyle', content:`<p>Hours are <strong>70-85 per week</strong>, comparable to IB. When a company is on the brink of bankruptcy, timelines are compressed and the work is urgent. The culture attracts highly analytical, argumentative personalities who enjoy the intellectual combat of creditor negotiations.</p><p>The upside: restructuring is one of the most recession-proof careers in finance. When markets crash, your phone rings.</p>` },
+      ]},
+      { title:'The Recruiting Process', sections:[
+        { title:'How Recruiting Works', content:`<p>RX recruiting follows IB timelines. Top RX groups (Houlihan Lokey, PJT, Evercore) recruit through the same OCR and networking channels as M&A groups. Many analysts rotate into restructuring from other IB groups after their first year.</p>` },
+        { title:'The Interview Process', content:`<p>Expect:</p><ul><li><strong>Accounting deep-dives:</strong> 3-statement mastery, especially around debt and equity.</li><li><strong>Distressed-specific technicals:</strong> "What is a credit default swap?" "Walk me through a Chapter 11 process." "What is DIP financing?"</li><li><strong>Capital structure analysis:</strong> "Who gets paid first in a liquidation?"</li><li><strong>Behavioral:</strong> "Why restructuring over M&A?" — must show genuine intellectual curiosity about distress.</li></ul>` },
+      ]},
+      { title:'Networking & Prep', sections:[
+        { title:'How to Stand Out', content:`<p>Understand the bankruptcy code (Chapter 7 vs. 11), priority of claims (the "waterfall"), and distressed valuation concepts. Follow distressed situations in the news (large bankruptcies, debt restructurings). Use OfferBell's <strong>Coach</strong> to practice RX-specific technical questions.</p>` },
       ]},
     ]
   },

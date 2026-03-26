@@ -20,7 +20,7 @@ const GUIDES = [
     id: 'pe',
     title: 'Private Equity',
     desc: 'The definitive LBO track. Understand fund structures, deal sourcing, and the rigorous case study rounds characteristic of mega-funds and mid-markets.',
-    modules: 5,
+    modules: 14,
     href: '/pe-interview-prep',
     iconClass: 'icon-pe',
     icon: <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>,
@@ -29,7 +29,7 @@ const GUIDES = [
     id: 'consulting',
     title: 'Consulting',
     desc: 'Master the MBB framework. From MECE principles to mental math proficiency and executive presence for high-stakes casing.',
-    modules: 5,
+    modules: 10,
     href: '/consulting-interview-prep',
     iconClass: 'icon-consulting',
     icon: <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>,
@@ -61,12 +61,57 @@ const GUIDES = [
     iconClass: 'icon-am',
     icon: <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>,
   },
+  {
+    id: 'st',
+    title: 'Sales & Trading',
+    desc: 'Market fundamentals, mental math, probability, trading games, and how to deliver a compelling trade idea under pressure.',
+    modules: 4,
+    href: '/st-interview-prep',
+    iconClass: 'icon-st',
+    icon: <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+  },
+  {
+    id: 'er',
+    title: 'Equity Research',
+    desc: 'Financial modeling, EPS forecasting, and the art of the stock pitch. Learn to think like a sell-side analyst covering public companies.',
+    modules: 4,
+    href: '/er-interview-prep',
+    iconClass: 'icon-er',
+    icon: <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>,
+  },
+  {
+    id: 're',
+    title: 'Real Estate',
+    desc: 'REPE, REITs, and development. Master cap rates, NOI, pro forma modeling, waterfall structures, and property-level analysis.',
+    modules: 3,
+    href: '/re-interview-prep',
+    iconClass: 'icon-re',
+    icon: <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+  },
+  {
+    id: 'vc',
+    title: 'Venture Capital',
+    desc: 'Fund economics, startup evaluation, SaaS metrics, and building a sector thesis. Learn to think like an early-stage investor.',
+    modules: 3,
+    href: '/vc-interview-prep',
+    iconClass: 'icon-vc',
+    icon: <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>,
+  },
+  {
+    id: 'rx',
+    title: 'Restructuring',
+    desc: 'Chapter 11 mechanics, priority of claims, fulcrum security analysis, and distressed valuation. The most intellectually demanding area of finance.',
+    modules: 3,
+    href: '/rx-interview-prep',
+    iconClass: 'icon-rx',
+    icon: <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
+  },
 ];
 
 const ARROW = <svg viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>;
 
 export default function LearnPage() {
-  const totalModules = GUIDES.reduce((s, g) => s + g.modules, 0) + 7; // +7 for career roadmaps tracks
+  const totalModules = GUIDES.reduce((s, g) => s + g.modules, 0) + 12; // +12 for career roadmaps tracks
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
 
