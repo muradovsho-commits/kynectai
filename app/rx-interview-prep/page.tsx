@@ -12,17 +12,15 @@ import { RX_FUNDAMENTALS_SECTIONS, RX_TECHNICALS_SECTIONS, RX_BEHAVIORAL_SECTION
 type Section = { title: string; content: string };
 
 const MODULES: { id: string; title: string; sub: string; sections: Section[] }[] = [
-  { id: 'rx_fund', title: 'Markets & Asset Classes', sub: 'Equities, fixed income, FX, commodities, derivatives', sections: ST_MARKETS_SECTIONS },
-  { id: 'rx_beh', title: 'Quant & Probability', sub: 'Mental math, expected value, brainteasers, trading games', sections: ST_QUANT_SECTIONS },
-  { id: 'rx_tech', title: 'Technical Concepts', sub: 'Options, bond math, FX, macro', sections: ST_TECHNICALS_SECTIONS },
-  { id: 'rx_unused', title: 'S&T Behavioral', sub: 'Why S&T, trade ideas, market questions', sections: ST_BEHAVIORAL_SECTIONS },
+  { id: 'rx_fund', title: 'RX Fundamentals', sub: 'Chapter 11, priority of claims, DIP financing', sections: RX_FUNDAMENTALS_SECTIONS },
+  { id: 'rx_tech', title: 'RX Technicals', sub: 'Distressed valuation, fulcrum security, credit analysis', sections: RX_TECHNICALS_SECTIONS },
+  { id: 'rx_beh', title: 'RX Behavioral', sub: 'Why restructuring, distressed cases, pushback', sections: RX_BEHAVIORAL_SECTIONS },
 ];
 
 const ICONS: Record<string, React.ReactElement> = {
   rx_fund: <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>,
   rx_beh: <svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="3"/></svg>,
   rx_tech: <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
-  rx_unused: <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
 };
 
 export default function InterviewPrepPage() {
@@ -54,19 +52,18 @@ export default function InterviewPrepPage() {
         <div className="prep-header">
           <div style={{marginBottom:"16px"}}><Link href="/learn" style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"14px",fontWeight:600,color:"var(--text-3)",textDecoration:"none"}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back to Overview</Link></div>
           <div className="prep-title">Restructuring <em>Guide</em></div>
-          <div className="prep-sub">Master restructuring and distressed finance interview preparation.</div>
+          <div className="prep-sub">Master restructuring — Chapter 11, distressed valuation, and creditor negotiations.</div>
         </div>
         <div style={{marginBottom:"28px"}}>
           <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Fundamentals & Technicals</div>
           <div className="module-grid" style={{marginBottom:"16px"}}>{MODULES.filter(m => ['rx_fund','rx_tech'].includes(m.id)).map(m => (<div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>{ICONS[m.id]}<div className="module-name">{m.title}</div></div>))}</div>
           <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Behavioral & Fit</div>
-          <div className="module-grid" style={{marginBottom:"16px"}}>{MODULES.filter(m => ['rx_beh','rx_unused'].includes(m.id)).map(m => (<div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>{ICONS[m.id]}<div className="module-name">{m.title}</div></div>))}</div>
         </div>
         {activeModule === '' ? (
           <div className="prep-content">
             <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"16px",padding:"28px 32px",marginBottom:"20px"}}>
               <h2 style={{fontFamily:"'Instrument Serif', serif",fontSize:"22px",color:"var(--text)",marginBottom:"8px"}}>Welcome to the Restructuring Guide</h2>
-              <p style={{fontSize:"14px",color:"var(--text-2)",lineHeight:1.7,marginBottom:"16px"}}>This guide prepares you for the unique demands of S&T interviews — real-time market knowledge, mental math under pressure, probability reasoning, and trade idea delivery.</p>
+              <p style={{fontSize:"14px",color:"var(--text-2)",lineHeight:1.7,marginBottom:"16px"}}>This guide prepares you for the unique demands of RX interviews — bankruptcy mechanics, fulcrum security analysis, and distressed deal dynamics.</p>
               <p style={{fontSize:"14px",color:"var(--text-2)",lineHeight:1.7}}>Select a module above to start reading.</p>
             </div>
             <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"12px"}}>Study Approach</div>
