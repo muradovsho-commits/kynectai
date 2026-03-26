@@ -267,7 +267,9 @@ export default function MarketsPage() {
             <div className="posts-container">
               {filteredPosts.length === 0 ? (
                 <div className="no-posts" style={{ padding: '60px 40px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 40, marginBottom: 16 }}>📈</div>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16, color: 'var(--text-3)' }}>
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                  </div>
                   <div style={{ color: 'var(--text)', fontWeight: 600, fontSize: 16, marginBottom: 8 }}>Nothing here yet.</div>
                   <div style={{ color: 'var(--text-3)', fontSize: 14 }}>Be the first to tag a post with {activeFeed}.</div>
                 </div>
