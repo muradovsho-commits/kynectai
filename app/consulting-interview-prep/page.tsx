@@ -7,28 +7,43 @@ import { useRouter } from 'next/navigation';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/interview-prep.css';
 
-import { CONS_FRAMEWORKS_SECTIONS } from './consulting-frameworks-data';
-import { CONS_MATH_SECTIONS } from './consulting-math-data';
-import { CONS_EXECUTION_SECTIONS } from './consulting-execution-data';
-import { CONS_BEHAVIORAL_SECTIONS } from './consulting-behavioral-data';
-import { CONS_FIRMS_SECTIONS } from './consulting-firms-data';
+import { CONS_MINDSET_SECTIONS } from './cons-mindset-data';
+import { CONS_STRUCTURE_SECTIONS } from './cons-structure-data';
+import { CONS_CASE_FLOW_SECTIONS } from './cons-case-flow-data';
+import { CONS_CASE_TYPES_SECTIONS } from './cons-case-types-data';
+import { CONS_QUANT_SECTIONS } from './cons-quant-data';
+import { CONS_INTUITION_SECTIONS } from './cons-intuition-data';
+import { CONS_FIT_SECTIONS } from './cons-fit-data';
+import { CONS_ADVANCED_SECTIONS } from './cons-advanced-data';
+import { CONS_PARTNER_SECTIONS } from './cons-partner-data';
+import { CONS_MASTERY_SECTIONS } from './cons-mastery-data';
 
 type Section = { title: string; content: string };
 
 const MODULES: { id: string; title: string; sub: string; sections: Section[] }[] = [
-  { id: 'cons_frameworks', title: 'Case Frameworks', sub: 'Profitability, Market Entry, M&A', sections: CONS_FRAMEWORKS_SECTIONS },
-  { id: 'cons_math', title: 'Case Math & Mental Agility', sub: 'Market Sizing, Breakeven, ROI', sections: CONS_MATH_SECTIONS },
-  { id: 'cons_execution', title: 'Case Execution', sub: 'Structuring, Chart Reading, Synthesis', sections: CONS_EXECUTION_SECTIONS },
-  { id: 'cons_behavioral', title: 'PEI & Fit Interviews', sub: 'McKinsey PEI, BCG Leadership, Tone', sections: CONS_BEHAVIORAL_SECTIONS },
-  { id: 'cons_firms', title: 'Firm Profiles & Culture', sub: 'MBB vs Tier 2, Staffing Models, Travel', sections: CONS_FIRMS_SECTIONS },
+  { id: 'cons_mindset', title: 'Consulting Mindset', sub: 'Hypothesis thinking, MECE, first principles', sections: CONS_MINDSET_SECTIONS },
+  { id: 'cons_structure', title: 'Framework Building', sub: 'Issue trees, building blocks, prioritization', sections: CONS_STRUCTURE_SECTIONS },
+  { id: 'cons_case_flow', title: 'Case Fundamentals', sub: 'Case flow, clarifying questions, synthesis', sections: CONS_CASE_FLOW_SECTIONS },
+  { id: 'cons_case_types', title: 'Core Case Types', sub: 'Profitability, market entry, M&A, growth, pricing', sections: CONS_CASE_TYPES_SECTIONS },
+  { id: 'cons_quant', title: 'Quant & Mental Math', sub: 'Breakeven, market sizing, exhibit reading', sections: CONS_QUANT_SECTIONS },
+  { id: 'cons_intuition', title: 'Business Intuition', sub: 'Industry patterns, trade-offs, commercial judgment', sections: CONS_INTUITION_SECTIONS },
+  { id: 'cons_fit', title: 'PEI & Fit Interviews', sub: 'Tell me about yourself, STAR, story bank', sections: CONS_FIT_SECTIONS },
+  { id: 'cons_advanced', title: 'Advanced Techniques', sub: 'Hypothesis trees, second-order thinking, brainstorming', sections: CONS_ADVANCED_SECTIONS },
+  { id: 'cons_partner', title: 'Partner-Level Thinking', sub: 'Pushback, ambiguity, executive synthesis', sections: CONS_PARTNER_SECTIONS },
+  { id: 'cons_mastery', title: 'Case Walkthroughs', sub: 'Full profitability, market entry, PEI examples', sections: CONS_MASTERY_SECTIONS },
 ];
 
 const ICONS: Record<string, React.ReactElement> = {
-  cons_frameworks: <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>,
-  cons_math: <svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="3"/></svg>,
-  cons_execution: <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
-  cons_behavioral: <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
-  cons_firms: <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+  cons_mindset: <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>,
+  cons_structure: <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>,
+  cons_case_flow: <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+  cons_case_types: <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
+  cons_quant: <svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="3"/></svg>,
+  cons_intuition: <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
+  cons_fit: <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+  cons_advanced: <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+  cons_partner: <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+  cons_mastery: <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>,
 };
 
 export default function InterviewPrepPage() {
@@ -101,9 +116,9 @@ export default function InterviewPrepPage() {
         </div>
 
         <div style={{marginBottom:"28px"}}>
-          <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>The Case Interview (Strategy & Math)</div>
+          <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Foundations</div>
           <div className="module-grid" style={{marginBottom:"16px"}}>
-            {MODULES.filter(m => ['cons_frameworks','cons_math', 'cons_execution'].includes(m.id)).map(m => (
+            {MODULES.filter(m => ['cons_mindset','cons_structure','cons_case_flow','cons_case_types'].includes(m.id)).map(m => (
               <div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>
                 {ICONS[m.id]}
                 <div className="module-name">{m.title}</div>
@@ -111,9 +126,19 @@ export default function InterviewPrepPage() {
             ))}
           </div>
 
-          <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Behavioral & Industry Knowledge</div>
+          <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Analysis & Judgment</div>
           <div className="module-grid" style={{marginBottom:"16px"}}>
-            {MODULES.filter(m => ['cons_behavioral', 'cons_firms'].includes(m.id)).map(m => (
+            {MODULES.filter(m => ['cons_quant','cons_intuition','cons_advanced'].includes(m.id)).map(m => (
+              <div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>
+                {ICONS[m.id]}
+                <div className="module-name">{m.title}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Behavioral & Mastery</div>
+          <div className="module-grid" style={{marginBottom:"16px"}}>
+            {MODULES.filter(m => ['cons_fit','cons_partner','cons_mastery'].includes(m.id)).map(m => (
               <div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>
                 {ICONS[m.id]}
                 <div className="module-name">{m.title}</div>
