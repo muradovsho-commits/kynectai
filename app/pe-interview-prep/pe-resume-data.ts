@@ -1,5 +1,15 @@
 export const PE_RESUME_SECTIONS = [
   {
+    title: `The Behavioral Framework`,
+    content: `<p>In Investment Banking, behavioral interviews are a test of endurance — they want to know if you will quit at 3:00 AM. In Private Equity, the behavioral interview is a <strong>risk-assessment matrix</strong>.</p>
+<p>A PE Partner is evaluating you for three things:</p>
+<ol>
+<li><strong>Analytical Integrity:</strong> Will you hide a mistake in a model that costs the fund $50 Million?</li>
+<li><strong>Commercial Instinct:</strong> Do you actually understand how businesses make money, or are you just good at Excel?</li>
+<li><strong>The Airport Test:</strong> If we are stuck at O'Hare for six hours on a diligence trip, are you an interesting, tolerable human being?</li>
+</ol>`
+  },
+  {
     title: `11.1 The "Investor's Trajectory" Framework`,
     content: `<p>Most candidates treat the resume walkthrough as a chronological reading of bullet points. <strong>This is an immediate failure.</strong> The Partner already read your resume; they want to see if you can synthesize information and pitch a cohesive narrative.</p>
 <p>Your story must prove that every step of your life has been a deliberate progression toward becoming a principal investor.</p>

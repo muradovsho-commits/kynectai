@@ -8,13 +8,15 @@ export const PE_DEBT_SECTIONS = [
   {
     title: `6.2 Deep Dive: The Full Capital Stack`,
     content: `<h4>1. The Revolving Credit Facility (Revolver)</h4>
-<p>A corporate credit card used for working capital shortfalls. Cost: SOFR + ~200-300 bps.</p>
+<p>A corporate credit card used strictly for working capital shortfalls. Consider a business managing complex supply chains — their working capital needs fluctuate wildly depending on the performance cycle and seasonal inventory returns. We put a massive Revolver in place to ensure they never miss a payroll or a debt payment during a cash-poor month.</p>
+<p>Cost: SOFR + ~200-300 bps.</p>
 <h4>2. Senior Secured Debt (TLA & TLB)</h4>
 <p><strong>Term Loan A:</strong> From traditional banks. Heavy amortization (5-10% principal/year). Banks want money back quickly.</p>
-<p><strong>Term Loan B:</strong> From institutional investors. Minimal amortization (1%/year) with a massive "bullet" payment at the end.</p>
-<p><strong>Why PE loves TLBs:</strong> No heavy annual principal payments, leaving more FCF for growth or dividends.</p>
+<p><strong>Term Loan B:</strong> From institutional investors (CLOs, hedge funds). Minimal amortization (1%/year) with a massive "bullet" payment at maturity (5-7 years).</p>
+<p><strong>Why PE loves TLBs:</strong> No heavy annual principal payments, leaving more FCF for growth or dividends to the sponsor.</p>
 <h4>3. High Yield Bonds / Mezzanine Debt</h4>
-<p>Unsecured. If the company goes bankrupt, these get paid after senior lenders take hard assets. Cost: 8-12% fixed interest. Often features PIK (Payment-in-Kind), where interest compounds onto principal instead of requiring cash.</p>`
+<p>Unsecured debt. If the company goes bankrupt, these get paid after senior lenders take hard assets. Cost: 8-12% fixed interest.</p>
+<p><strong>The PIK Toggle:</strong> This debt often allows for Payment-in-Kind (PIK), where interest compounds onto the principal balance instead of requiring physical cash payment.</p>`
   },
   {
     title: `6.3 Covenants (Maintenance vs. Incurrence)`,

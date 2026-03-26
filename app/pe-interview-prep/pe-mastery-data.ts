@@ -20,6 +20,13 @@ export const PE_MASTERY_SECTIONS = [
 <li>Cash Flow: CapEx = D&A. NWC = zero. Tax rate = 0%.</li>
 <li>Exit: 8x EV/EBITDA (Multiple Contraction).</li>
 </ul>
+<h4>The Questions:</h4>
+<ol>
+<li>What is the initial Sponsor Equity check?</li>
+<li>What is the cumulative Free Cash Flow generated over the 5 years?</li>
+<li>What is the Exit Equity Value?</li>
+<li>What is the MOIC and approximate IRR?</li>
+</ol>
 <h4>Step 1: Entry Valuation</h4>
 <p>EV = $50M x 10x = $500M. Debt = $50M x 4.0x = $200M. Equity Check = $500M - $200M = <strong>$300M</strong>.</p>
 <h4>Step 2: Annual Cash Flow</h4>

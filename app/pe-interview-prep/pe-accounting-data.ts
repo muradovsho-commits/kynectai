@@ -67,4 +67,26 @@ export const PE_ACCOUNTING_SECTIONS = [
 <p><strong>Follow-up:</strong> "How did the company make $2 in cash if Net Income dropped?"</p>
 <p><strong>Your response:</strong> "Because depreciation is a non-cash expense. No actual cash left the business. The accounting expense lowered taxable income, saving $2 on the tax bill. The cash increase is purely the realization of that tax shield."</p>`
   },
+  {
+    title: `1.6 The "Perfect Answer" Framework`,
+    content: `<p>When asked an accounting question (e.g., "Walk me through the three statements when X happens"), you must structure your answer rigidly. Do not jump around.</p>
+<ol>
+<li><strong>Income Statement:</strong> State the impact to Revenue, Expenses, Taxes, and Net Income.</li>
+<li><strong>Cash Flow Statement:</strong> Start with Net Income, adjust for non-cash items, adjust for changes in working capital, and arrive at the Net Change in Cash.</li>
+<li><strong>Balance Sheet:</strong> Start with Cash, adjust other Assets, adjust Liabilities, adjust Retained Earnings, and explicitly state: "And the Balance Sheet balances."</li>
+</ol>`
+  },
+  {
+    title: `1.7 Practice & Drills (Module 1)`,
+    content: `<h4>Drill 1.1: The Inventory Write-Down</h4>
+<p><strong>Prompt:</strong> A company discovers that $50 of its inventory is obsolete and must be written down. Walk me through the 3 statements. Assume a 20% tax rate.</p>
+<p><strong>Answer:</strong> IS: Pre-tax income down $50. Taxes down $10. NI down $40. CFS: NI down $40. Add back non-cash write-down of $50. Net cash up $10. BS: Cash up $10. Inventory down $50. Total Assets down $40. RE down $40. Balances.</p>
+<h4>Drill 1.2: Brain Teaser</h4>
+<p><strong>Prompt:</strong> Could a company ever have negative Shareholders' Equity?</p>
+<p><strong>Answer:</strong> Yes. Two common scenarios:</p>
+<ol>
+<li>The company has been losing money for years, generating massive negative Net Income which flows into Retained Earnings as a deficit, wiping out initial equity capital.</li>
+<li><strong>The PE LBO Scenario:</strong> A Private Equity firm does a "Dividend Recapitalization." They issue new debt and use the proceeds to pay themselves a massive cash dividend. The dividend reduces Retained Earnings so severely that Shareholders' Equity turns negative. (Covered extensively in Module 7.)</li>
+</ol>`
+  },
 ];
