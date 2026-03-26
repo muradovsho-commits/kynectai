@@ -7,28 +7,43 @@ import { useRouter } from 'next/navigation';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/interview-prep.css';
 
+import { PE_ACCOUNTING_SECTIONS } from './pe-accounting-data';
+import { PE_STATEMENTS_SECTIONS } from './pe-statements-data';
+import { PE_VALUATION_SECTIONS } from './pe-valuation-data';
+import { PE_FUNDAMENTALS_SECTIONS } from './pe-fundamentals-data';
 import { PE_LBO_SECTIONS } from './pe-lbo-data';
-import { PE_DEAL_PROCESS_SECTIONS } from './pe-deal-process-data';
-import { PE_VALUE_CREATION_SECTIONS } from './pe-value-creation-data';
-import { PE_CASE_STUDY_SECTIONS } from './pe-case-study-data';
-import { PE_BEHAVIORAL_SECTIONS } from './pe-behavioral-data';
+import { PE_DEBT_SECTIONS } from './pe-debt-data';
+import { PE_RETURNS_SECTIONS } from './pe-returns-data';
+import { PE_DEAL_SECTIONS } from './pe-deal-data';
+import { PE_ADVANCED_SECTIONS } from './pe-advanced-data';
+import { PE_MASTERY_SECTIONS } from './pe-mastery-data';
 
 type Section = { title: string; content: string };
 
 const MODULES: { id: string; title: string; sub: string; sections: Section[] }[] = [
-  { id: 'pe_deal', title: 'Deal Process & Intro', sub: 'What is PE, Sourcing, Diligence', sections: PE_DEAL_PROCESS_SECTIONS },
-  { id: 'pe_value', title: 'Value Creation', sub: 'Add-ons, Multiple Expansion, Roll-ups', sections: PE_VALUE_CREATION_SECTIONS },
-  { id: 'pe_lbo', title: 'LBOs & Returns Math', sub: 'Paper LBOs, Debt Tranches, IRR/MOIC', sections: PE_LBO_SECTIONS },
-  { id: 'pe_case', title: 'Case Studies', sub: 'Modeling tests, Investment Memos', sections: PE_CASE_STUDY_SECTIONS },
-  { id: 'pe_behavioral', title: 'PE Behavioral', sub: 'Why PE, Collegiate vs Lateral, Fit', sections: PE_BEHAVIORAL_SECTIONS },
+  { id: 'pe_accounting', title: 'Accounting Mastery', sub: 'Accrual vs. cash, 3-statement linkages, working capital', sections: PE_ACCOUNTING_SECTIONS },
+  { id: 'pe_statements', title: 'Financial Statements', sub: 'EBITDA to FCF bridge, Net Debt, capital structure', sections: PE_STATEMENTS_SECTIONS },
+  { id: 'pe_valuation', title: 'Valuation', sub: 'DCF, trading comps, precedent transactions', sections: PE_VALUATION_SECTIONS },
+  { id: 'pe_fundamentals', title: 'PE Fundamentals', sub: 'LBO logic, target anatomy, value creation', sections: PE_FUNDAMENTALS_SECTIONS },
+  { id: 'pe_lbo', title: 'LBO Modeling', sub: 'Sources & uses, debt tranches, cash flow waterfall', sections: PE_LBO_SECTIONS },
+  { id: 'pe_debt', title: 'Debt & Capital Structure', sub: 'Capital stack, covenants, PIK interest', sections: PE_DEBT_SECTIONS },
+  { id: 'pe_returns', title: 'Returns & Investor Thinking', sub: 'IRR vs. MOIC, dividend recaps, PE fade', sections: PE_RETURNS_SECTIONS },
+  { id: 'pe_deal', title: 'Deal Process', sub: 'CIM, IOI, LOI, management rollover, option pools', sections: PE_DEAL_SECTIONS },
+  { id: 'pe_advanced', title: 'Advanced Edge Cases', sub: 'Melting ice cube, WC peg, secondary buyouts', sections: PE_ADVANCED_SECTIONS },
+  { id: 'pe_mastery', title: 'Interview Mastery', sub: 'Paper LBO case study, psychology, communication', sections: PE_MASTERY_SECTIONS },
 ];
 
 const ICONS: Record<string, React.ReactElement> = {
-  pe_lbo: <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 11v4"/></svg>,
-  pe_deal: <svg viewBox="0 0 24 24"><path d="M4 2h16v20H4z"/><path d="M8 6h8m-8 4h8m-8 4h5"/></svg>,
-  pe_value: <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
-  pe_case: <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4m-2.93-7.07-2.83 2.83m-8.48 8.48-2.83 2.83m0-14.14 2.83 2.83m8.48 8.48 2.83 2.83"/></svg>,
-  pe_behavioral: <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+  pe_accounting: <svg viewBox="0 0 24 24"><path d="M4 2h16v20H4z"/><path d="M8 6h8m-8 4h8m-8 4h5"/></svg>,
+  pe_statements: <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
+  pe_valuation: <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
+  pe_fundamentals: <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>,
+  pe_lbo: <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+  pe_debt: <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>,
+  pe_returns: <svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>,
+  pe_deal: <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4m-2.93-7.07-2.83 2.83m-8.48 8.48-2.83 2.83m0-14.14 2.83 2.83m8.48 8.48 2.83 2.83"/></svg>,
+  pe_advanced: <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+  pe_mastery: <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>,
 };
 
 export default function InterviewPrepPage() {
@@ -101,9 +116,9 @@ export default function InterviewPrepPage() {
         </div>
 
         <div style={{marginBottom:"28px"}}>
-          <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Foundations & Deal Process</div>
+          <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Foundations</div>
           <div className="module-grid" style={{marginBottom:"16px"}}>
-            {MODULES.filter(m => ['pe_deal','pe_value'].includes(m.id)).map(m => (
+            {MODULES.filter(m => ['pe_accounting','pe_statements','pe_valuation','pe_fundamentals'].includes(m.id)).map(m => (
               <div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>
                 {ICONS[m.id]}
                 <div className="module-name">{m.title}</div>
@@ -111,9 +126,9 @@ export default function InterviewPrepPage() {
             ))}
           </div>
 
-          <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>LBO Modeling & Applied Math</div>
+          <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>LBO & Deal Mechanics</div>
           <div className="module-grid" style={{marginBottom:"16px"}}>
-            {MODULES.filter(m => ['pe_lbo','pe_case'].includes(m.id)).map(m => (
+            {MODULES.filter(m => ['pe_lbo','pe_debt','pe_returns','pe_deal'].includes(m.id)).map(m => (
               <div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>
                 {ICONS[m.id]}
                 <div className="module-name">{m.title}</div>
@@ -121,9 +136,9 @@ export default function InterviewPrepPage() {
             ))}
           </div>
 
-          <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Behavioral & Fit</div>
+          <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Advanced & Interview Mastery</div>
           <div className="module-grid" style={{marginBottom:"16px"}}>
-            {MODULES.filter(m => m.id === 'pe_behavioral').map(m => (
+            {MODULES.filter(m => ['pe_advanced','pe_mastery'].includes(m.id)).map(m => (
               <div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>
                 {ICONS[m.id]}
                 <div className="module-name">{m.title}</div>
