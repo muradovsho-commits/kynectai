@@ -168,7 +168,7 @@
 }
 
 .coach-chat-area-inner {
-  max-width: 700px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -276,7 +276,7 @@
 }
 
 .coach-input-area-inner {
-  max-width: 700px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -292,10 +292,10 @@
 .coach-input-box {
   background: #1a1a1a;
   border: 1.5px solid #333;
-  border-radius: 14px;
-  padding: 12px 14px;
+  border-radius: 12px;
+  padding: 8px 12px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 10px;
   transition: border-color 0.15s;
 }
@@ -311,16 +311,16 @@
   color: #f0efed;
   outline: none;
   resize: none;
-  max-height: 140px;
-  line-height: 1.6;
-  padding: 0;
+  max-height: 100px;
+  line-height: 1.5;
+  padding: 4px 0;
 }
 
 .coach-chat-input::placeholder { color: #555; }
 
 .coach-send-btn {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: #7c3aed;
   color: #fff;
