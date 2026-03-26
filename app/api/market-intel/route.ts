@@ -64,16 +64,25 @@ Only include the 6 most important headlines. Return ONLY the JSON array, nothing
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.3, maxOutputTokens: 2048 },
+        generationConfig: { 
+          temperature: 0.3, 
+          maxOutputTokens: 2048,
+          responseMimeType: "application/json",
+        },
       }),
     });
-    if (!res.ok) return [];
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("Gemini market intel error:", res.status, errText.slice(0, 300));
+      return [];
+    }
     const data = await res.json();
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
     const cleaned = text.replace(/```json\n?|```\n?/g, "").trim();
-    return JSON.parse(cleaned);
+    const parsed = JSON.parse(cleaned);
+    return Array.isArray(parsed) ? parsed : [];
   } catch (e) {
-    console.error("Gemini market analysis error:", e);
+    console.error("Gemini market analysis parse error:", e);
     return [];
   }
 }
