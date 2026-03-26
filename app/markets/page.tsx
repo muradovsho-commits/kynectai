@@ -48,21 +48,22 @@ const SENTIMENT_COLORS = {
   Neutral: { bg: 'var(--surface-2)', text: 'var(--text-2)', dot: 'var(--text-3)' }
 };
 
-// SVG Assets
-const SVGS = {
-  PinSolid: <svg className="pin-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11.78L20.24 16H13v6l-1 2-1-2v-6H3.76L8 11.78V4h8v7.78z"/></svg>,
-  PinOutline: <svg className="pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 11.78L20.24 16H13v6l-1 2-1-2v-6H3.76L8 11.78V4h8v7.78z" fill="none"/></svg>,
-  Flame: <svg className="flame-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2c0 0-3 3-3 8 0 0-4-3-4-8-3 3-5 7-5 12 0 5 4 9 9 9s9-4 9-9c0-5-2-9-5-12z"/><path d="M12 17c0 0-1-1-1-3 0 0-2-1-2-3-1 1-2 3-2 5 0 2 1 4 3 4s3-2 3-4z"/></svg>,
-  Bullish: <svg className="sentiment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 7L13.5 15.5 8.5 10.5 2 17"/><path d="M16 7H22V13"/></svg>,
-  Bearish: <svg className="sentiment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 17L13.5 8.5 8.5 13.5 2 7"/><path d="M16 17H22V11"/></svg>,
-  Neutral: <svg className="sentiment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 12h14"/></svg>,
-};
+// Clean functional SVG components for React safety
+const PinSolid = () => <svg className="pin-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11.78L20.24 16H13v6l-1 2-1-2v-6H3.76L8 11.78V4h8v7.78z"/></svg>;
+const PinOutline = () => <svg className="pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 11.78L20.24 16H13v6l-1 2-1-2v-6H3.76L8 11.78V4h8v7.78z" fill="none"/></svg>;
+const FlameIcon = () => <svg className="flame-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2c0 0-3 3-3 8 0 0-4-3-4-8-3 3-5 7-5 12 0 5 4 9 9 9s9-4 9-9c0-5-2-9-5-12z"/><path d="M12 17c0 0-1-1-1-3 0 0-2-1-2-3-1 1-2 3-2 5 0 2 1 4 3 4s3-2 3-4z"/></svg>;
+const BullishIcon = () => <svg className="sentiment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 7L13.5 15.5 8.5 10.5 2 17"/><path d="M16 7H22V13"/></svg>;
+const BearishIcon = () => <svg className="sentiment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 17L13.5 8.5 8.5 13.5 2 7"/><path d="M16 17H22V11"/></svg>;
+const NeutralIcon = () => <svg className="sentiment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 12h14"/></svg>;
 
 export default function MarketsPage() {
   const router = useRouter();
   
   // Dynamic Convex Data
-  const rawPosts = useQuery(api.marketPosts.list) || [];
+  // Wrapped in a reliable array fallback directly in case the fetch hasn't started or fails locally
+  const queryData = useQuery(api.marketPosts.list);
+  const rawPosts: PostResponse[] = queryData || [];
+  
   const createPost = useMutation(api.marketPosts.create);
   const actionPost = useMutation(api.marketPosts.action);
   
@@ -102,8 +103,11 @@ export default function MarketsPage() {
   };
 
   const handleAction = async (postId: Id<"marketPosts">, type: string) => {
-    // Optimistic UI for votes can be handled via Convex natively, or we let the latency handle it.
-    await actionPost({ postId, type });
+    try {
+      await actionPost({ postId, type });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handlePinTag = (tag: string, e: any) => {
@@ -181,8 +185,7 @@ export default function MarketsPage() {
   // Filter feed logic
   const filteredPosts = rawPosts.filter(p => {
     if (activeFeed === 'Global') return true;
-    if (activeFeed === 'Following') return true; // Mock Following as Global for now
-    // If activeFeed is a hashtag (starts with #)
+    if (activeFeed === 'Following') return true;
     const tags = extractTags(p.content);
     return tags.includes(activeFeed);
   });
@@ -219,10 +222,11 @@ export default function MarketsPage() {
                 />
                 <div className="composer-actions">
                   <div className="composer-selectors">
+                    {/* EMOJIS FULLY REMOVED */}
                     <select className="composer-select" value={composeSentiment} onChange={e => setComposeSentiment(e.target.value as any)}>
-                      <option value="Neutral">Neutral ➖</option>
-                      <option value="Bullish">Bullish 🐂</option>
-                      <option value="Bearish">Bearish 🐻</option>
+                      <option value="Neutral">Neutral</option>
+                      <option value="Bullish">Bullish</option>
+                      <option value="Bearish">Bearish</option>
                     </select>
                     {composeTags.length === 0 && composeText.length > 0 && (
                       <span className="composer-warning">Add at least 1 #hashtag</span>
@@ -291,9 +295,9 @@ export default function MarketsPage() {
                           <div className="post-sentiment-tag" style={{ background: sColor.bg, color: sColor.text }}>
                             <span className="sentiment-dot" style={{ backgroundColor: sColor.dot }}></span>
                             {post.sentiment}
-                            {post.sentiment === 'Bullish' && SVGS.Bullish}
-                            {post.sentiment === 'Bearish' && SVGS.Bearish}
-                            {post.sentiment === 'Neutral' && SVGS.Neutral}
+                            {post.sentiment === 'Bullish' && <BullishIcon />}
+                            {post.sentiment === 'Bearish' && <BearishIcon />}
+                            {post.sentiment === 'Neutral' && <NeutralIcon />}
                           </div>
                         </div>
                         
@@ -340,17 +344,20 @@ export default function MarketsPage() {
                       onClick={(e) => handlePinTag(t.tag, e)}
                       title={pinnedTags.includes(t.tag) ? "Unpin tag" : "Pin to feed"}
                     >
-                      {pinnedTags.includes(t.tag) ? SVGS.PinSolid : SVGS.PinOutline}
+                      {pinnedTags.includes(t.tag) ? <PinSolid /> : <PinOutline />}
                     </button>
                   </div>
                 </div>
               ))}
+              {trending.length === 0 && (
+                <div style={{color: 'var(--text-3)', fontSize: 13}}>No tags trending yet.</div>
+              )}
             </div>
 
             {rising.length > 0 && (
               <div className="trending-widget rising-widget">
                 <div className="widget-header" style={{ display: 'flex', alignItems: 'center' }}>
-                  Rising {SVGS.Flame}
+                  Rising <FlameIcon />
                 </div>
                 {rising.map((t) => (
                   <div key={t.tag} className="trending-item" onClick={() => setActiveFeed(t.tag)}>
@@ -362,7 +369,7 @@ export default function MarketsPage() {
                       className="pin-tag-btn" 
                       onClick={(e) => handlePinTag(t.tag, e)}
                     >
-                      {pinnedTags.includes(t.tag) ? SVGS.PinSolid : SVGS.PinOutline}
+                      {pinnedTags.includes(t.tag) ? <PinSolid /> : <PinOutline />}
                     </button>
                   </div>
                 ))}

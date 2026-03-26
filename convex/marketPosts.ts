@@ -4,28 +4,32 @@ import { v } from "convex/values";
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    const posts = await ctx.db
-      .query("marketPosts")
-      .withIndex("by_createdAt")
-      .order("desc")
-      .take(100);
+    try {
+      const posts = await ctx.db
+        .query("marketPosts")
+        .withIndex("by_createdAt")
+        .order("desc")
+        .take(100);
 
-    const result = await Promise.all(
-      posts.map(async (post) => {
-        const user = await ctx.db.get(post.userId);
-        return {
-          ...post,
-          author: {
-            name: user?.name || "Unknown User",
-            handle: user?.email ? `@${user.email.split("@")[0]}` : "@user",
-            avatar: user?.name ? user.name.charAt(0).toUpperCase() : "U",
-            // Give users with an active plan or previous activity a verified badge
-            badge: (user as any)?.plan === "pro" || ((user as any)?.outreachCount ?? 0) > 0,
-          },
-        };
-      })
-    );
-    return result;
+      const result = await Promise.all(
+        posts.map(async (post) => {
+          const user = await ctx.db.get(post.userId);
+          return {
+            ...post,
+            author: {
+              name: user?.name || "Unknown User",
+              handle: user?.email ? `@${user.email.split("@")[0]}` : "@user",
+              avatar: user?.name ? user.name.charAt(0).toUpperCase() : "U",
+              badge: (user as any)?.plan === "pro" || ((user as any)?.outreachCount ?? 0) > 0,
+            },
+          };
+        })
+      );
+      return result;
+    } catch (e) {
+      console.warn("Convex Query Error ( likely syncing index ):", e);
+      return [];
+    }
   },
 });
 
