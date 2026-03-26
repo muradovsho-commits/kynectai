@@ -111,3 +111,25 @@ export const action = mutation({
     }
   },
 });
+
+export const remove = mutation({
+  args: {
+    postId: v.id("marketPosts"),
+    userId: v.string(), // Native pseudo-auth enforcement from client 
+  },
+  handler: async (ctx, args) => {
+    const post = await ctx.db.get(args.postId);
+    if (!post) throw new Error("Post not found");
+    if (post.userId !== args.userId) throw new Error("Unauthorized to delete this post");
+    
+    // Decrement parent replies counter if it was part of a thread
+    if (post.replyTo) {
+      const parent = await ctx.db.get(post.replyTo);
+      if (parent && parent.replies > 0) {
+        await ctx.db.patch(post.replyTo, { replies: parent.replies - 1 });
+      }
+    }
+
+    await ctx.db.delete(args.postId);
+  },
+});

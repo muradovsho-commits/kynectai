@@ -68,10 +68,12 @@ export default function MarketsPage() {
   
   const createPost = useMutation(api.marketPosts.create);
   const actionPost = useMutation(api.marketPosts.action);
+  const removePost = useMutation(api.marketPosts.remove);
   
   // Navigation State
   const [activeFeed, setActiveFeed] = useState<string>('Global');
-  const [pinnedTags, setPinnedTags] = useState<string[]>(['#macro', '#equities']);
+  // Removed hardcoded hashtags as requested by the user
+  const [followedTags, setFollowedTags] = useState<string[]>([]);
 
   // Composer State
   const [composeText, setComposeText] = useState('');
@@ -81,12 +83,21 @@ export default function MarketsPage() {
   // Reply State
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
+  
+  // Search State
+  const [searchQuery, setSearchQuery] = useState('');
 
+  // Hydrate local cache
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const stored = window.localStorage.getItem('offerbell_user_id');
     if (!stored) { router.replace('/signin'); }
     else { setUserId(stored); }
+    
+    try {
+      const savedTags = window.localStorage.getItem('offerbell_followed_tags');
+      if (savedTags) setFollowedTags(JSON.parse(savedTags));
+    } catch(e) {}
   }, [router]);
 
   const canPost = composeText.trim().length > 0 && composeText.length <= 280 && userId;
@@ -125,21 +136,42 @@ export default function MarketsPage() {
 
   const handleAction = async (postId: Id<"marketPosts">, type: string) => {
     if (!userId) return;
+    try { await actionPost({ postId, type, userId }); } 
+    catch (e) { console.error(e); }
+  };
+  
+  const handleDelete = async (postId: Id<"marketPosts">) => {
+    if (!userId) return;
+    if (!confirm("Are you sure you want to delete this post?")) return;
     try {
-      await actionPost({ postId, type, userId });
-    } catch (e) {
-      console.error(e);
+      await removePost({ postId, userId });
+    } catch(e) {
+      console.error("Failed to delete post", e);
     }
   };
 
-  const handlePinTag = (tag: string, e: any) => {
+  const handleFollowTag = (tag: string, e: any) => {
     e.stopPropagation();
-    if (pinnedTags.includes(tag)) {
-      setPinnedTags(pinnedTags.filter(t => t !== tag));
+    let newTags;
+    if (followedTags.includes(tag)) {
+      newTags = followedTags.filter(t => t !== tag);
       if (activeFeed === tag) setActiveFeed('Global');
     } else {
-      setPinnedTags([...pinnedTags, tag]);
+      newTags = [...followedTags, tag];
     }
+    setFollowedTags(newTags);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('offerbell_followed_tags', JSON.stringify(newTags));
+    }
+  };
+
+  const executeSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    let target = searchQuery.trim().toLowerCase();
+    if (!target.startsWith('#')) target = '#' + target;
+    setActiveFeed(target);
+    setSearchQuery('');
   };
 
   const renderContent = (text: string): ReactNode => {
@@ -198,8 +230,16 @@ export default function MarketsPage() {
 
   // Threaded layout separation
   const rootPosts = rawPosts.filter(p => {
-    if (p.replyTo) return false; // Hide replies from main array
-    if (activeFeed === 'Global' || activeFeed === 'Following') return true;
+    if (p.replyTo) return false; 
+    
+    // Filter matching Following tab
+    if (activeFeed === 'Following') {
+      const tags = extractTags(p.content);
+      return tags.some(t => followedTags.includes(t));
+    }
+    
+    if (activeFeed === 'Global') return true;
+    
     const tags = extractTags(p.content);
     return tags.includes(activeFeed);
   });
@@ -213,8 +253,8 @@ export default function MarketsPage() {
     return (
       <div key={post._id} style={{
         padding: isReply ? '16px 0 0 48px' : '20px 24px',
-        borderBottom: isReply ? 'none' : '1px solid var(--border)',
-        borderTop: isReply ? '1px solid var(--border-2)' : 'none',
+        borderBottom: 'none',
+        borderTop: isReply ? '1px solid var(--border-2)' : '1px solid var(--border)',
         marginTop: isReply ? '16px' : '0'
       }}>
         <div style={{ display: 'flex', gap: '12px' }}>
@@ -274,6 +314,18 @@ export default function MarketsPage() {
                 >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                   <span>{post.replies}</span>
+                </button>
+              )}
+              
+              {/* Delete Button (Only visibly authorized on frontend, secured universally in backend) */}
+              {userId === post.userId && (
+                <button 
+                  className="action-btn flag" 
+                  style={{ marginLeft: 'auto', opacity: 0.5, color: '#ef4444' }} 
+                  onClick={() => handleDelete(post._id)}
+                  title="Delete post"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                 </button>
               )}
             </div>
@@ -372,10 +424,10 @@ export default function MarketsPage() {
                 <button className={`market-tab ${activeFeed === 'Global' ? 'active' : ''}`} onClick={() => setActiveFeed('Global')}>Global</button>
                 <button className={`market-tab ${activeFeed === 'Following' ? 'active' : ''}`} onClick={() => setActiveFeed('Following')}>Following</button>
                 <div className="tab-divider"></div>
-                {pinnedTags.map(tag => (
+                {followedTags.map(tag => (
                   <div key={tag} className={`pinned-tab-group ${activeFeed === tag ? 'active' : ''}`}>
                     <button className="pinned-tab-label" onClick={() => setActiveFeed(tag)}>{tag}</button>
-                    <button className="pinned-tab-unpin" onClick={(e) => handlePinTag(tag, e)}>×</button>
+                    <button className="pinned-tab-unpin" onClick={(e) => handleFollowTag(tag, e)}>×</button>
                   </div>
                 ))}
               </div>
@@ -388,8 +440,12 @@ export default function MarketsPage() {
                   <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16, color: 'var(--text-3)' }}>
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                   </div>
-                  <div style={{ color: 'var(--text)', fontWeight: 600, fontSize: 16, marginBottom: 8 }}>Nothing here yet.</div>
-                  <div style={{ color: 'var(--text-3)', fontSize: 14 }}>Be the first to start a conversation here.</div>
+                  <div style={{ color: 'var(--text)', fontWeight: 600, fontSize: 16, marginBottom: 8 }}>
+                    {activeFeed === 'Following' ? "You aren't following any active tags." : "Nothing here yet."}
+                  </div>
+                  <div style={{ color: 'var(--text-3)', fontSize: 14 }}>
+                    {activeFeed === 'Following' ? "Pin a hashtag from the trending column to populate your feed." : `Be the first to start a conversation here.`}
+                  </div>
                 </div>
               ) : (
                 rootPosts.map(post => renderPostNode(post, false))
@@ -399,6 +455,22 @@ export default function MarketsPage() {
 
           {/* RIGHT COLUMN: TRENDING */}
           <div className="markets-sidebar-col">
+            
+            {/* Search Bar Input */}
+            <div className="trending-widget" style={{ marginBottom: 0, padding: '16px 20px' }}>
+              <form onSubmit={executeSearch} style={{ display: 'flex' }}>
+                 <svg style={{ position: 'absolute', width: 16, height: 16, margin: '10px', color: 'var(--text-3)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                 <input 
+                   type="text" 
+                   placeholder="Search hashtags..." 
+                   className="composer-input"
+                   style={{ background: 'var(--surface-2)', padding: '8px 16px 8px 36px', borderRadius: '100px', fontSize: '13px' }}
+                   value={searchQuery}
+                   onChange={(e) => setSearchQuery(e.target.value)}
+                 />
+              </form>
+            </div>
+
             <div className="trending-widget">
               <div className="widget-header">Trending Tags</div>
               {trending.map((t, idx) => (
@@ -410,10 +482,10 @@ export default function MarketsPage() {
                   <div className={`trending-sentiment ${t.borderClass}`}>
                     <button 
                       className="pin-tag-btn" 
-                      onClick={(e) => handlePinTag(t.tag, e)}
-                      title={pinnedTags.includes(t.tag) ? "Unpin tag" : "Pin to feed"}
+                      onClick={(e) => handleFollowTag(t.tag, e)}
+                      title={followedTags.includes(t.tag) ? "Unfollow tag" : "Follow tag"}
                     >
-                      {pinnedTags.includes(t.tag) ? <PinSolid /> : <PinOutline />}
+                      {followedTags.includes(t.tag) ? <PinSolid /> : <PinOutline />}
                     </button>
                   </div>
                 </div>
@@ -436,9 +508,9 @@ export default function MarketsPage() {
                     </div>
                     <button 
                       className="pin-tag-btn" 
-                      onClick={(e) => handlePinTag(t.tag, e)}
+                      onClick={(e) => handleFollowTag(t.tag, e)}
                     >
-                      {pinnedTags.includes(t.tag) ? <PinSolid /> : <PinOutline />}
+                      {followedTags.includes(t.tag) ? <PinSolid /> : <PinOutline />}
                     </button>
                   </div>
                 ))}
