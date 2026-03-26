@@ -16,11 +16,11 @@ import { ACCT_FIRMS_SECTIONS } from './acct-firms-data';
 type Section = { title: string; content: string };
 
 const MODULES: { id: string; title: string; sub: string; sections: Section[] }[] = [
-  { id: 'acct_audit', title: 'Audit & Assurance', sub: 'SOX Compliance, Walkthroughs, Test of Controls', sections: ACCT_AUDIT_SECTIONS },
-  { id: 'acct_tax', title: 'Tax Services', sub: 'Corporate, State & Local, M&A Tax Structuring', sections: ACCT_TAX_SECTIONS },
-  { id: 'acct_tech', title: 'Technical Accounting', sub: 'ASC 606 (Revenue), Lease Accounting (ASC 842), 3-Statement', sections: ACCT_TECH_SECTIONS },
-  { id: 'acct_behavioral', title: 'Big 4 Behavioral & CPA', sub: 'Partner Interviews, The CPA Journey, Busy Season', sections: ACCT_BEHAVIORAL_SECTIONS },
-  { id: 'acct_firms', title: 'Firm Profiles & Exits', sub: 'Big 4 vs Mid-Tier, Controllership vs FP&A Exits', sections: ACCT_FIRMS_SECTIONS },
+  { id: 'acct_tech', title: 'Foundations & Mechanics', sub: 'Accrual accounting, journal entries, 3-statement flow', sections: ACCT_TECH_SECTIONS },
+  { id: 'acct_audit', title: 'Revenue, Assets & Estimates', sub: 'Revenue recognition, inventory, PP&E, fraud, materiality', sections: ACCT_AUDIT_SECTIONS },
+  { id: 'acct_tax', title: 'Audit Foundations & Procedures', sub: 'Assertions, risk model, evidence, controls, substantive testing', sections: ACCT_TAX_SECTIONS },
+  { id: 'acct_firms', title: 'Audit in Practice & Question Bank', sub: 'Revenue/inventory/payroll audit, 17 interview questions', sections: ACCT_FIRMS_SECTIONS },
+  { id: 'acct_behavioral', title: 'Behavioral & Mastery', sub: 'Why audit, professionalism, 6-week plan, appendices', sections: ACCT_BEHAVIORAL_SECTIONS },
 ];
 
 const ICONS: Record<string, React.ReactElement> = {
@@ -103,7 +103,7 @@ export default function InterviewPrepPage() {
         <div style={{marginBottom:"28px"}}>
           <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>The Technical Service Lines</div>
           <div className="module-grid" style={{marginBottom:"16px"}}>
-            {MODULES.filter(m => ['acct_audit','acct_tax', 'acct_tech'].includes(m.id)).map(m => (
+            {MODULES.filter(m => ['acct_tech','acct_audit', 'acct_tax'].includes(m.id)).map(m => (
               <div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>
                 {ICONS[m.id]}
                 <div className="module-name">{m.title}</div>
@@ -113,7 +113,7 @@ export default function InterviewPrepPage() {
 
           <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Behavioral & Industry Knowledge</div>
           <div className="module-grid" style={{marginBottom:"16px"}}>
-            {MODULES.filter(m => ['acct_behavioral', 'acct_firms'].includes(m.id)).map(m => (
+            {MODULES.filter(m => ['acct_firms', 'acct_behavioral'].includes(m.id)).map(m => (
               <div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>
                 {ICONS[m.id]}
                 <div className="module-name">{m.title}</div>
