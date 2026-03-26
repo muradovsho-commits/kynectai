@@ -145,22 +145,14 @@ export default function CoachPage() {
     try { const prof = JSON.parse(window.localStorage.getItem('offerbell_onboarding_profile') || '{}'); profilePlan = prof.plan || 'free'; } catch {}
     if (plan !== 'pro' && profilePlan !== 'pro') { router.replace('/dashboard?upgrade=coach'); return; }
     if (!stored) { router.replace('/signin'); return; }
-    // Always dark for coach
-    document.documentElement.setAttribute('data-theme', 'dark');
+    // Use saved theme preference
+    const savedTheme = localStorage.getItem('offerbell-theme');
+    if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
     try {
       const raw = localStorage.getItem('offerbell_onboarding_profile');
       if (raw) { const p = JSON.parse(raw); setUserName({ first: p.firstName || '', last: p.lastName || '' }); }
     } catch {}
   }, [router]);
-
-  // Restore theme on unmount
-  useEffect(() => {
-    return () => {
-      const saved = localStorage.getItem('offerbell-theme');
-      if (saved) document.documentElement.setAttribute('data-theme', saved);
-      else document.documentElement.removeAttribute('data-theme');
-    };
-  }, []);
 
   const scrollBottom = useCallback(() => {
     setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
