@@ -56,7 +56,7 @@ For each headline return:
 - tags: assign 1-2 tags from EXACTLY these options: Macro, Equities, Fixed Income, Volatility, Firms, Geopolitical
 - heat: high, medium, or low based on how important this is for a finance interview
 
-Pick the 8 most important headlines. Ensure a MIX of tags — not all Macro. Include Equities, Fixed Income, Firms, Geopolitical where relevant.
+Analyze all of these headlines. Ensure a MIX of tags — not all Macro. Include Equities, Fixed Income, Firms, Geopolitical where relevant.
 
 [{"title":"...","summary":"...","ib":"...","quant":"...","trading":"...","tags":["Macro","Equities"],"heat":"high"}]
 IMPORTANT: Ensure ALL strings are properly JSON escaped (escape double quotes inside your text with \\").`;
@@ -114,7 +114,7 @@ export async function GET() {
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
-    }).slice(0, 20);
+    }).slice(0, 8);
 
     if (unique.length === 0) {
       return NextResponse.json({ stories: [], error: "No headlines available" });
