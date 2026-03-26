@@ -9,17 +9,24 @@ export const list = query({
         .query("marketPosts")
         .withIndex("by_createdAt")
         .order("desc")
-        .take(100);
+        .take(500);
 
       const result = await Promise.all(
         posts.map(async (post) => {
           const user = await ctx.db.get(post.userId);
+          
+          // Anonymize email: convert "John Doe" into "John D."
+          const nameParts = (user?.name || "Unknown").trim().split(/\s+/);
+          const first = nameParts[0] || "Trader";
+          const lastInit = nameParts.length > 1 ? nameParts[nameParts.length - 1].charAt(0).toUpperCase() + "." : "";
+          const displayName = `${first} ${lastInit}`.trim();
+          
           return {
             ...post,
             author: {
-              name: user?.name || "Unknown User",
-              handle: user?.email ? `@${user.email.split("@")[0]}` : "@user",
-              avatar: user?.name ? user.name.charAt(0).toUpperCase() : "U",
+              name: displayName,
+              handle: `@${first.toLowerCase()}`,
+              avatar: first.charAt(0).toUpperCase(),
               badge: (user as any)?.plan === "pro" || ((user as any)?.outreachCount ?? 0) > 0,
             },
           };
@@ -38,8 +45,16 @@ export const create = mutation({
     userId: v.id("users"),
     content: v.string(),
     sentiment: v.string(),
+    replyTo: v.optional(v.id("marketPosts")),
   },
   handler: async (ctx, args) => {
+    if (args.replyTo) {
+      const parent = await ctx.db.get(args.replyTo);
+      if (parent) {
+        await ctx.db.patch(args.replyTo, { replies: parent.replies + 1 });
+      }
+    }
+    
     return await ctx.db.insert("marketPosts", {
       userId: args.userId,
       content: args.content,
@@ -48,6 +63,9 @@ export const create = mutation({
       downvotes: 0,
       replies: 0,
       createdAt: Date.now(),
+      replyTo: args.replyTo,
+      upvotedBy: [],
+      downvotedBy: [],
     });
   },
 });
@@ -56,15 +74,40 @@ export const action = mutation({
   args: {
     postId: v.id("marketPosts"),
     type: v.string(), // "upvote" | "downvote"
+    userId: v.string(),
   },
   handler: async (ctx, args) => {
     const post = await ctx.db.get(args.postId);
     if (!post) throw new Error("Post not found");
     
+    const upvotedBy = post.upvotedBy || [];
+    const downvotedBy = post.downvotedBy || [];
+
     if (args.type === "upvote") {
-      await ctx.db.patch(args.postId, { upvotes: post.upvotes + 1 });
+      if (!upvotedBy.includes(args.userId)) {
+        await ctx.db.patch(args.postId, { 
+          upvotes: post.upvotes + 1, 
+          upvotedBy: [...upvotedBy, args.userId] 
+        });
+      } else {
+        // Toggle Off
+        await ctx.db.patch(args.postId, { 
+          upvotes: post.upvotes - 1, 
+          upvotedBy: upvotedBy.filter(id => id !== args.userId) 
+        });
+      }
     } else if (args.type === "downvote") {
-      await ctx.db.patch(args.postId, { downvotes: post.downvotes + 1 });
+      if (!downvotedBy.includes(args.userId)) {
+        await ctx.db.patch(args.postId, { 
+          downvotes: post.downvotes + 1, 
+          downvotedBy: [...downvotedBy, args.userId] 
+        });
+      } else {
+        await ctx.db.patch(args.postId, { 
+          downvotes: post.downvotes - 1, 
+          downvotedBy: downvotedBy.filter(id => id !== args.userId) 
+        });
+      }
     }
   },
 });

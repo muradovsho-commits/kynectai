@@ -102,6 +102,9 @@ export default defineSchema({
     downvotes: v.number(),
     replies: v.number(),
     createdAt: v.number(),
+    replyTo: v.optional(v.id("marketPosts")),
+    upvotedBy: v.optional(v.array(v.string())),
+    downvotedBy: v.optional(v.array(v.string())),
   })
     .index("by_createdAt", ["createdAt"])
     .index("by_userId", ["userId"]),
