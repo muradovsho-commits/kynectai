@@ -449,3 +449,93 @@
   gap: 10px;
   line-height: 1.5;
 }
+
+/* Hashtag Architecture Additions */
+.inline-hashtag {
+  color: #3b82f6;
+  cursor: pointer;
+  font-weight: 500;
+}
+.inline-hashtag:hover {
+  text-decoration: underline;
+}
+
+.composer-warning {
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+}
+
+.tab-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: auto 12px;
+}
+
+.pinned-tab-group {
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.pinned-tab-group:hover, .pinned-tab-group.active {
+  background: rgba(255,255,255,0.02);
+}
+.pinned-tab-group.active {
+  border-bottom-color: var(--text);
+}
+.pinned-tab-label {
+  padding: 16px 8px;
+  padding-left: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-3);
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.pinned-tab-group.active .pinned-tab-label {
+  color: var(--text);
+}
+.pinned-tab-unpin {
+  background: none;
+  border: none;
+  color: var(--text-3);
+  cursor: pointer;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0px;
+  margin-right: 8px;
+  font-size: 16px;
+}
+.pinned-tab-unpin:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--text);
+}
+
+.pin-tag-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  padding: 4px;
+}
+.trending-item:hover .pin-tag-btn {
+  opacity: 1;
+}
+
+.rising-widget {
+  background: linear-gradient(145deg, rgba(59, 130, 246, 0.05) 0%, transparent 100%);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
