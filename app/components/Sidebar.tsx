@@ -66,6 +66,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
         <div className="nav-group">
           <span className="nav-group-label">Intelligence</span>
           <Link className={cls('hit-rate-intel')} href="/hit-rate-intel"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Hit Rate Intel<span className="nav-pill pill-pro">Pro</span></Link>
+          <Link className={cls('market-intel')} href="/market-intel"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="6" width="4" height="15" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>Market Intel</Link>
           <Link className={cls('coach')} href="/coach"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Coach<span className="nav-pill pill-pro">Pro</span></Link>
         </div>
         <div className="nav-group">
