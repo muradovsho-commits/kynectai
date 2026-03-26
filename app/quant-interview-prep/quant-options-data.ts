@@ -1,83 +1,113 @@
+// Quant Finance Mastery Manual — Module 5 (Stochastic Processes) + Module 6 (Derivatives/Greeks)
 export const QUANT_OPTIONS_SECTIONS = [
   {
-    title: `1. Call and Put Option Fundamentals`,
-    content: `<p>If you are applying to an Options Market Maker (like Citadel Securities, SIG, or Optiver), you need to know options math with absolute fluency. Derivatives trading is the most mathematically intense subset of finance.</p>
-<br/>
-<p><strong>A Call Option</strong> gives the holder the right (but not the obligation) to BUY the underlying asset at a specific 'Strike Price' ($K$) on or before an 'Expiration Date' ($T$).</p>
-<p><em>Payoff at expiration:</em> $Max(0, S_T - K)$, where $S_T$ is the stock price at expiration.</p>
-<br/>
-<p><strong>A Put Option</strong> gives the holder the right to SELL the underlying asset at the Strike Price.</p>
-<p><em>Payoff at expiration:</em> $Max(0, K - S_T)$</p>
-<br/>
-<p><strong>Intrinsic vs. Extrinsic Value:</strong></p>
-<p>• <strong>Intrinsic Value:</strong> The value of the option if it expired exactly right now. (e.g., A $100 Strike Call on a stock trading at $105 has $5 of intrinsic value).</p>
-<p>• <strong>Extrinsic (Time) Value:</strong> The premium paid above intrinsic value. It prices the <em>possibility</em> that the stock moves further into the money before expiration. At expiration, Time Value decays to zero.</p>`
+    title: '5.1–5.3 Why Stochastic Processes Matter, Brownian Motion, GBM',
+    content: `<h3>5.1 Why Stochastic Processes Matter</h3>
+<p>Asset prices evolve over time under uncertainty. Stochastic processes are the mathematical language for describing that evolution.</p>
+<p><strong>They are central to:</strong> options pricing, interest rate modeling, volatility models, filtering and hidden states, continuous-time portfolio theory.</p>
+
+<h3>5.2 Brownian Motion</h3>
+<p><strong>What it is:</strong> Standard Brownian motion is a continuous-time stochastic process with: B(0)=0, independent increments, normally distributed increments, continuous paths.</p>
+<p><strong>Why it matters:</strong> It is the fundamental building block in many continuous-time models.</p>
+<p><strong>Intuition:</strong> It is an idealized continuous random walk.</p>
+
+<h3>5.3 Geometric Brownian Motion (GBM)</h3>
+<p><strong>Standard stock-price model form:</strong> dS_t = μ S_t dt + σ S_t dW_t</p>
+<p><strong>Why it matters:</strong> GBM implies lognormal prices and is the foundation of Black-Scholes.</p>
+<p><strong>Intuition:</strong> Price changes have a drift component and a random shock proportional to current price.</p>
+<p><strong>Limitation:</strong> Real prices exhibit jumps, stochastic volatility, clustering, and heavy tails beyond GBM assumptions.</p>`,
   },
   {
-    title: `2. Put-Call Parity (The Arbitrage Law)`,
-    content: `<p>Put-Call parity is the fundamental law of European options pricing. It proves that a persistent arbitrage opportunity cannot exist between calls, puts, and the underlying stock without market makers destroying it instantly.</p>
-<br/>
-<p><strong>The Formula:</strong><br/>
-$C - P = S - K \\cdot e^{-rT}$</p>
-<p>Where:<br/>
-$C$ = Call Price<br/>
-$P$ = Put Price<br/>
-$S$ = Spot Price of the Stock<br/>
-$K$ = Strike Price<br/>
-$r$ = Risk-free interest rate<br/>
-$T$ = Time to expiration</p>
-<br/>
-<p><strong>Interview Application: Synthetic Positions & Arbitrage</strong><br/>
-Ignoring interest rates for a moment, $C - P = S - K$. By moving the variables algebraically, you can create "synthetic" positions.<br/>
-For example, $S = C - P + K$. This means buying 100 shares of stock is mathematically identical to buying a Call, selling a Put (at the same strike), and holding cash equal to the Strike price. <br/>
-If the market misprices one of these legs (e.g., the Call is being heavily speculated on by retail traders and becomes overpriced), a quant algorithm will "sell the synthetic stock" by selling the Call and buying the Put, while simultaneously buying the actual underlying stock, locking in a risk-free arbitrage profit.</p>`
+    title: '5.4–5.6 Ito\'s Lemma, Risk-Neutral Measure, Markov Processes',
+    content: `<h3>5.4 Ito's Lemma</h3>
+<p><strong>Why it matters:</strong> Ito's Lemma is the stochastic calculus analog of the chain rule. It is essential for deriving option dynamics and pricing PDEs.</p>
+<p><strong>Intuition:</strong> In stochastic systems, second-order terms matter because the random component has quadratic variation.</p>
+<p><strong>Interview expectation:</strong> You may not need full derivations at every role, but you should understand what Ito's Lemma does and why it matters.</p>
+
+<h3>5.5 Risk-Neutral Measure</h3>
+<p><strong>Core idea:</strong> Under no-arbitrage and suitable assumptions, derivative pricing can be done using expected discounted payoffs under a risk-neutral probability measure.</p>
+<p><strong>Intuition:</strong> The risk-neutral world is not the real world. It is a pricing device. In that world, expected asset growth is adjusted so discounted prices behave like martingales.</p>
+<p><strong>Interview trap:</strong> Do not say risk-neutral probabilities are "true probabilities." They are pricing probabilities.</p>
+
+<h3>5.6 Markov Processes</h3>
+<p>A process is Markov if the future depends on the present state, not the full past history, given the current state.</p>
+<p><strong>Why it matters:</strong> Markov structure simplifies pricing and dynamic programming.</p>`,
   },
   {
-    title: `3. The First-Order Greeks (Delta & Vega)`,
-    content: `<p>The Black-Scholes model outputs a single theoretical price, but traders focus almost entirely on "The Greeks"—the partial derivatives of the option price with respect to various market inputs.</p>
-<br/>
-<p><strong>Delta ($\\Delta = \\frac{\\partial V}{\\partial S}$): Directional Exposure</strong><br/>
-Measures how much the option price changes for a $1 change in the underlying stock. <br/>
-• A Deep "In-The-Money" Call acts like holding stock, with a Delta approaching +1.0.<br/>
-• An "At-The-Money" Call is effectively a coin-flip, with a Delta of $\\approx$ +0.50.<br/>
-• A Put option has a negative Delta (from 0 to -1.0) because its value increases as the stock falls.</p>
-<br/>
-<p><strong>Vega ($\\nu = \\frac{\\partial V}{\\partial \\sigma}$): Variance Exposure</strong><br/>
-Measures how much the option price changes for a 1% increase in Implied Volatility ($\\sigma$). Options are essentially insurance policies against volatility. When markets crash and panic ensues, volatility spikes, and <em>all</em> option premiums (both calls and puts) skyrocket because Vega is strictly positive for all long option positions.</p>`
+    title: '5.7–5.8 Mean-Reverting Processes, Jump Processes + Module 5 Practice',
+    content: `<h3>5.7 Mean-Reverting Processes</h3>
+<p><strong>Example: Ornstein-Uhlenbeck.</strong> Used conceptually in rates, spreads, and statistical arbitrage contexts.</p>
+<p><strong>Why it matters:</strong> Some financial quantities revert toward a long-run level rather than drifting freely.</p>
+<p><strong>Caveat:</strong> Mean reversion can weaken or disappear across regimes.</p>
+
+<h3>5.8 Jump Processes</h3>
+<p>Real markets do not move continuously all the time. Jumps matter around: earnings, macro releases, defaults, liquidity shocks.</p>
+<p><strong>Why it matters:</strong> Pure diffusion models may understate tail risk and event risk.</p>
+
+<h3>Module 5 Practice Drills</h3>
+<p><strong>Technical drills:</strong> Explain Brownian motion in plain English. Explain why GBM leads to lognormal prices. Explain what Ito's Lemma does conceptually. Explain risk-neutral pricing without jargon. Explain why jumps matter in markets.</p>
+<p><strong>Interview-style questions:</strong> What is the difference between real-world drift and risk-neutral drift? Why is Brownian motion useful but unrealistic? What does mean reversion imply for trading strategies?</p>`,
   },
   {
-    title: `4. The Second-Order Greeks (Gamma & Theta)`,
-    content: `<p>While Delta tells you your exposure right now, your exposure will change the second the stock ticks. Second-order greeks measure that acceleration.</p>
-<br/>
-<p><strong>Gamma ($\\Gamma = \\frac{\\partial \\Delta}{\\partial S} = \\frac{\\partial^2 V}{\\partial S^2}$): The Acceleration Greek</strong><br/>
-Gamma is the second-order derivative—it measures the rate of change of <em>Delta</em>. It is highest for At-The-Money options with short expirations. If you are "Long Gamma" (you bought options), violent market swings help you because your Delta dynamically self-hedges in your favor. If you are "Short Gamma" (you sold options), violent moves will violently expand your losses.</p>
-<br/>
-<p><strong>Theta ($\\Theta = \\frac{\\partial V}{\\partial t}$): Time Decay</strong><br/>
-Measures how much value the option loses per day due to the literal passage of time. Theta is inherently negative for option buyers because every day that passes brings the option closer to expiration, leaving less time for a favorable move. Market makers frequently short options to collect positive Theta (earning "Theta decay" as rent).</p>`
+    title: '6.1–6.5 Why Derivatives Matter, Basic Types, No-Arbitrage, Put-Call Parity, Black-Scholes',
+    content: `<h3>6.1 Why Derivatives Matter in Quant Finance</h3>
+<p>Derivatives are central to many quant roles because they: embed nonlinear payoffs, require dynamic pricing and hedging, reveal market-implied expectations, connect directly to volatility and risk management.</p>
+
+<h3>6.2 Basic Derivative Types</h3>
+<p><strong>Forwards and futures:</strong> Contracts to buy or sell later at a pre-agreed price.</p>
+<p><strong>Options:</strong> Rights, not obligations, to buy or sell at a strike. Calls, puts, European vs American, vanilla vs exotic.</p>
+<p><strong>Swaps:</strong> Exchange of cash flow streams. Common in rates, credit, FX.</p>
+
+<h3>6.3 No-Arbitrage Pricing Intuition</h3>
+<p><strong>First-principles idea:</strong> If two portfolios have the same future payoff in all states, they must have the same price today, otherwise arbitrage would exist.</p>
+<p><strong>Why it matters:</strong> This is the foundation of derivative pricing.</p>
+
+<h3>6.4 Put-Call Parity</h3>
+<p>For European options under standard assumptions: C - P = S - K e^{-rT}</p>
+<p><strong>Why it matters:</strong> This is a core arbitrage identity and interview favorite.</p>
+<p><strong>Intuition:</strong> A long call plus cash replicates a long put plus stock position.</p>
+
+<h3>6.5 Black-Scholes Intuition</h3>
+<p><strong>What the model does:</strong> Provides a closed-form price for European options under assumptions including: lognormal underlying price, constant volatility, constant rates, frictionless markets, no arbitrage, continuous hedging.</p>
+<p><strong>Why it matters:</strong> It is a foundational model in quant finance. Even when unrealistic, it is the baseline language for implied vol and Greeks.</p>
+<p><strong>What really drives option value:</strong> underlying price, strike, time to maturity, volatility, rates, dividends.</p>`,
   },
   {
-    title: `5. Delta Hedging Mechanics`,
-    content: `<p>Options market makers (like Optiver) do not gamble on whether a stock goes up or down. They make their money strictly off the bid/ask spread and "Delta Hedge" their books to remain fundamentally neutral to the underlying stock price.</p>
-<br/>
-<p><strong>Example of Delta Hedging:</strong><br/>
-Retail investors flood the market buying 1,000 Call Options on Tesla from you (the market maker). Assume the ATM Delta is 0.50. You are now short the calls, meaning your portfolio is "Short 500 Deltas" ($1000 \\times 0.50 \\times -1$). If Tesla stock goes up $1, you will lose a massive amount of money. <br/>
-To neutralize this risk, you immediately enter the underlying equity market and BUY 50,000 shares of actual Tesla stock (Option contract multiplier = 100 shares. 500 Deltas $\\times$ 100). Now your net position is Delta = 0. You are immunized against small stock movements.</p>
-<br/>
-<p><strong>The Trap of Gamma:</strong><br/>
-Because you sold the options, you are Short Gamma. As Tesla stock rises, the Delta of the calls you sold increases from 0.50 to 0.60. You are now short 600 Deltas, but only own 500 equivalent shares! You must constantly adjust your hedge by buying MORE stock at higher prices, and selling it at lower prices, to stay Delta-neutral. This constant hedging bleed costs money, which is why you charged the customer a massive Implied Volatility premium upfront.</p>`
+    title: '6.6–6.7 Option Greeks, Volatility',
+    content: `<h3>6.6 Option Greeks</h3>
+<p><strong>Delta:</strong> Sensitivity to underlying price.</p>
+<p><strong>Gamma:</strong> Sensitivity of delta to underlying price. Measures curvature.</p>
+<p><strong>Vega:</strong> Sensitivity to volatility.</p>
+<p><strong>Theta:</strong> Sensitivity to time decay.</p>
+<p><strong>Rho:</strong> Sensitivity to interest rates.</p>
+<p><strong>Why they matter:</strong> Greeks are central to: hedging, inventory management, scenario analysis, risk aggregation.</p>
+<p><strong>Strong intuition:</strong> Delta is first-order exposure, gamma is convexity, vega is volatility exposure, theta is time decay.</p>
+
+<h3>6.7 Volatility</h3>
+<p><strong>Historical / realized volatility:</strong> Computed from past price moves.</p>
+<p><strong>Implied volatility:</strong> Volatility input that makes a model price match market price.</p>
+<p><strong>Why implied vol matters:</strong> It is often treated as the market's pricing language for options.</p>
+<p><strong>Volatility smile / surface:</strong> Implied volatility varies by strike and maturity.</p>
+<p><strong>Why this matters:</strong> The smile tells you Black-Scholes assumptions are not literally true in markets.</p>`,
   },
   {
-    title: `6. Black-Scholes & Stochastic Calculus (Basics)`,
-    content: `<p>For advanced Quantitative Research roles, you will be expected to understand the stochastic calculus that derives the Black-Scholes model.</p>
-<br/>
-<p><strong>Geometric Brownian Motion (GBM):</strong><br/>
-Stock prices are modeled as following a continuous-time stochastic process:<br/>
-$dS = \\mu S dt + \\sigma S dW$<br/>
-Where $dS$ is the change in stock price, $\\mu$ is the drift (expected return), $dt$ is the deterministic time step, $\\sigma$ is the volatility, and $dW$ is a Wiener process (Standard Brownian Motion representing random noise).</p>
-<br/>
-<p><strong>Ito's Lemma:</strong><br/>
-Ito's Lemma is the stochastic equivalent of the chain rule in standard calculus. Because the Wiener process $dW$ accumulates variance at a rate of $t$ (not $t^2$), we cannot ignore second-derivative terms in Taylor expansions. <br/>
-$df(S, t) = \\frac{\\partial f}{\\partial t} dt + \\frac{\\partial f}{\\partial S} dS + \\frac{1}{2} \\frac{\\partial^2 f}{\\partial S^2} (dS)^2$<br/>
-Plugging GBM into Ito's Lemma and constructing a risk-free portfolio (by Delta hedging perfectly) leads directly to the Black-Scholes Partial Differential Equation (PDE).</p>`
-  }
+    title: '6.8–6.10 Hedging, American vs European, Fixed Income Derivatives + Module 6 Practice',
+    content: `<h3>6.8 Hedging Intuition</h3>
+<p><strong>Delta hedging:</strong> Neutralizes first-order exposure to small price moves.</p>
+<p><strong>Why hedging is imperfect:</strong> discrete, not continuous, rebalancing; transaction costs; jumps; model error; changing volatility.</p>
+<p><strong>Interview nuance:</strong> Perfect hedging is a model idealization, not a practical reality.</p>
+
+<h3>6.9 American vs European Options</h3>
+<p>American options can be exercised early; European only at maturity.</p>
+<p><strong>Why this matters:</strong> Early exercise affects pricing and requires different methods.</p>
+<p><strong>Common intuition:</strong> An American call on a non-dividend-paying stock is usually not exercised early because you preserve optionality.</p>
+
+<h3>6.10 Fixed Income Derivative Intuition</h3>
+<p>Rates products require thinking in terms of: discount factors, forward rates, yield curves, duration and convexity, short-rate or forward-rate models.</p>
+<p>Even if you are not a rates candidate, basic curve and duration intuition is valuable.</p>
+
+<h3>Module 6 Practice Drills</h3>
+<p><strong>Technical drills:</strong> Explain put-call parity. Explain why higher volatility increases option value. Explain delta and gamma in plain English. Explain implied vs realized volatility. Explain why perfect continuous hedging is unrealistic.</p>
+<p><strong>Interview-style questions:</strong> What affects option prices? Why does time usually increase option value? What is the difference between intrinsic value and time value? What is a volatility smile and what does it imply?</p>`,
+  },
 ];

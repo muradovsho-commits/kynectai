@@ -1,122 +1,128 @@
+// Quant Finance Mastery Manual — Module 1 (Foundations) + Module 2 (Probability)
 export const QUANT_PROB_SECTIONS = [
   {
-    title: `1. Combinatorics & Permutations`,
-    content: `<p>Before diving into continuous math, you must completely master discrete counting operations. These form the base of all discrete card and dice problems.</p>
-<br/>
-<p><strong>Permutations (Order Matters):</strong></p>
-<p>How many ways can you arrange $n$ distinct objects? <strong>Answer: $n!$</strong></p>
-<p>How many ways can you pick $k$ objects from $n$ and arrange them? <strong>Answer: $P(n, k) = \\frac{n!}{(n-k)!}$</strong></p>
-<br/>
-<p><strong>Combinations (Order Does NOT Matter):</strong></p>
-<p>How many ways can you choose a committee of $k$ people from an $n$-person group? <strong>Answer: $C(n, k) = \\binom{n}{k} = \\frac{n!}{k!(n-k)!}$</strong></p>
-<br/>
-<p><strong>Classic Problem: Stars and Bars (Multichoose)</strong><br/>
-"How many ways can you distribute 10 identical identical apples among 3 different children?"<br/>
-Imagine 10 apples (stars) and 2 dividers (bars) to separate them into 3 distinct groups. You have $10 + 2 = 12$ total positions in a line, and you need to choose 2 of those positions to place the dividers.<br/>
-<strong>Answer: $C(12, 2) = \\frac{12 \\times 11}{2} = 66$ ways.</strong></p>`
+    title: '1.1 What Quant Finance Actually Is',
+    content: `<p>Quant finance is the use of mathematical, statistical, computational, and economic methods to model markets, price securities, manage risk, identify trading opportunities, and build decision systems under uncertainty.</p>
+<p><strong>Why it exists:</strong> Financial markets are noisy, uncertain, and fast-moving. Human intuition alone is not enough for: pricing derivatives, estimating risk, forecasting signals, allocating capital, executing trades efficiently, managing large portfolios under constraints.</p>
+<p><strong>When it is used:</strong> Derivatives pricing, systematic trading, portfolio construction, market making, execution optimization, risk management, statistical arbitrage, volatility modeling, credit modeling, macro and cross-asset research.</p>`,
   },
   {
-    title: `2. Conditional Probability & Bayes' Theorem`,
-    content: `<p>Bayes' Theorem is the most tested mathematical concept in quantitative finance. It is the mathematical framework for updating your beliefs (The Posterior) when new information arrives (The Evidence).</p>
-<br/>
-<p><strong>Bayes' Theorem Formula:</strong><br/>
-$P(A|B) = \\frac{P(B|A) \\cdot P(A)}{P(B)} = \\frac{P(B|A) \\cdot P(A)}{P(B|A)P(A) + P(B|\\sim A)P(\\sim A)}$</p>
-<br/>
-<p><strong>Classic "False Positive" Question (The Rare Disease):</strong><br/>
-"A disease affects 1% of the population. A test for the disease is 99% accurate (it correctly identifies 99% of sick people, and correctly identifies 99% of healthy people). If you take the test and it returns positive, what is the probability you actually have the disease?"</p>
-<p><em>Solution via Natural Frequencies:</em><br/>
-Let's use a hypothetical population of 10,000 to make the math intuitive.<br/>
-1. Actual Sick: 100 people (1% of 10k). Actual Healthy: 9,900 people.<br/>
-2. True Positives (Sick people who correctly test positive): 99% of 100 = 99.<br/>
-3. False Positives (Healthy people who incorrectly test positive): 1% error rate applied to 9,900 = 99.<br/>
-4. Total Positive Tests observed: 99 + 99 = 198.<br/>
-5. $P(\\text{Sick} | \\text{Positive}) = \\frac{\\text{True Positives}}{\\text{Total Positives}} = \\frac{99}{198} = \\mathbf{50\\%}$.<br/>
-<em>(Most candidates instinctively guess 99%. Getting this right is absolutely mandatory.)</em></p>`
+    title: '1.2 The Core Categories of Quant Roles',
+    content: `<p><strong>Quant trader:</strong> Uses statistics, probability, market intuition, and automation to identify and exploit short-horizon opportunities. Often works with: market microstructure, pricing dislocations, inventory management, execution decisions, mental math and fast decision-making.</p>
+<p><strong>Quant researcher:</strong> Builds predictive models, tests hypotheses, analyzes data, develops signals, and studies market behavior. Often works with: statistics, time series, machine learning, factor models, alpha research.</p>
+<p><strong>Quant developer:</strong> Implements pricing engines, research infrastructure, execution systems, and production pipelines. Often works with: C++ / Python / Java, algorithms and data structures, concurrency, optimization, numerical libraries, distributed systems.</p>
+<p><strong>Quant analyst / strat / pricing quant:</strong> Builds and maintains valuation models, risk models, and analytics for trading desks or portfolio teams. Often works with: stochastic calculus, PDEs, Monte Carlo, calibration, curve construction, sensitivities / Greeks.</p>`,
   },
   {
-    title: `3. Common Probability Distributions (Discrete)`,
-    content: `<p>You must know the Probability Mass Function (PMF), Expected Value ($E[X]$), and Variance ($Var(X)$) for the standard discrete distributions cold.</p>
-<br/>
-<p><strong>1. Bernoulli Distribution:</strong><br/>
-A single trial with two outcomes (Success=1 with probability $p$, Failure=0 with probability $1-p$).<br/>
-$E[X] = p$<br/>
-$Var(X) = p(1-p)$</p>
-<br/>
-<p><strong>2. Binomial Distribution:</strong><br/>
-The summation of $n$ independent Bernoulli trials. Number of successes in $n$ trials.<br/>
-$PMF: P(X=k) = \\binom{n}{k} p^k (1-p)^{n-k}$<br/>
-$E[X] = np$<br/>
-$Var(X) = np(1-p)$</p>
-<br/>
-<p><strong>3. Poisson Distribution:</strong><br/>
-Models the number of independent events occurring in a fixed interval of time (e.g., how many high-frequency trades occur in the next millisecond), given an average rate $\\lambda$.<br/>
-$PMF: P(X=k) = \\frac{\\lambda^k e^{-\\lambda}}{k!}$<br/>
-$E[X] = \\lambda$<br/>
-$Var(X) = \\lambda$<br/>
-<em>Key interview trivia: The Poisson distribution is the only standard distribution where the expected value always equals the variance.</em></p>`
+    title: '1.3–1.4 What Quant Interviews Test & The Quant Mindset',
+    content: `<h3>1.3 What Quant Interviews Are Really Testing</h3>
+<p>Most candidates misunderstand quant interviews. They think the interview is just a harder math exam. It is not.</p>
+<p><strong>Interviewers are usually testing some mix of:</strong> mathematical rigor, speed and accuracy under pressure, probabilistic intuition, ability to reason from first principles, coding fluency, modeling judgment, clarity of explanation, humility and honesty when uncertain, ability to simplify complex problems.</p>
+<p>A great candidate is not just "smart." A great candidate is structured, precise, and calm.</p>
+
+<h3>1.4 The Quant Mindset</h3>
+<p><strong>Think in assumptions:</strong> Every model rests on assumptions. Top candidates constantly ask: What is being assumed here? Is that realistic? What happens if it is wrong?</p>
+<p><strong>Think in distributions, not certainties:</strong> Quant finance is about uncertainty. You are rarely asked "What will happen?" You are usually asking: What is the distribution of possible outcomes? What is the expected value? What is the variance? What are the tail risks?</p>
+<p><strong>Think in trade-offs:</strong> A model can be: elegant but unrealistic, realistic but computationally intractable, predictive in-sample but unstable out-of-sample, profitable gross but not net of costs. Strong quants think in trade-offs, not absolutes.</p>
+<p><strong>Think in implementation, not just theory:</strong> A strategy with a strong theoretical edge may fail in reality because of: latency, transaction costs, liquidity constraints, market impact, stale data, bad assumptions.</p>`,
   },
   {
-    title: `4. Common Probability Distributions (Continuous)`,
-    content: `<p>For quantitative researchers and derivatives traders, continuous distributions govern the behavior of asset prices and Brownian motion.</p>
-<br/>
-<p><strong>1. Normal (Gaussian) Distribution:</strong><br/>
-The classic bell curve. $X \\sim N(\\mu, \\sigma^2)$.<br/>
-You MUST memorize the Empirical Rule: 68% of data falls within 1 standard deviation ($1\\sigma$), 95% within $2\\sigma$, and 99.7% within $3\\sigma$. You should also know that the sum of two independent normal variables $N(\\mu_1, \\sigma_1^2)$ and $N(\\mu_2, \\sigma_2^2)$ is $N(\\mu_1+\\mu_2, \\sigma_1^2+\\sigma_2^2)$. <em>(Notice that variances add, not standard deviations).</em></p>
-<br/>
-<p><strong>2. Lognormal Distribution:</strong><br/>
-If $Y = e^X$ and $X$ is Normally distributed, then $Y$ is Lognormal. <br/>
-Why is this important? Stock prices are generally modeled as Lognormal distributions rather than Normal distributions because stock prices cannot drop below $0, but can theoretically stretch to infinity on the upside (they have a right skew).</p>
-<br/>
-<p><strong>3. Uniform Distribution:</strong><br/>
-A continuous flat distribution on interval $[a, b]$.<br/>
-$E[X] = \\frac{a+b}{2}$<br/>
-$Var(X) = \\frac{(b-a)^2}{12}$</p>`
+    title: '1.5–1.7 The Quant Finance Stack, Elite vs Average, Mental Framework',
+    content: `<h3>1.5 The Quant Finance Stack</h3>
+<p>You can think of quant finance as a layered system:</p>
+<ul><li><strong>Mathematics:</strong> linear algebra, calculus, probability, optimization</li><li><strong>Statistics and inference:</strong> estimation, hypothesis testing, regression, time series</li><li><strong>Market and instrument knowledge:</strong> equities, futures, options, rates, credit, FX</li><li><strong>Modeling:</strong> stochastic processes, pricing models, risk models, alpha models</li><li><strong>Computation:</strong> programming, simulation, optimization routines, production systems</li><li><strong>Execution and reality:</strong> slippage, liquidity, microstructure, operational constraints</li></ul>
+
+<h3>1.6 How Elite Candidates Sound Different</h3>
+<p><strong>Average candidate:</strong> Recites formulas without explaining them. Solves toy puzzles but misses real-world caveats. Gives vague coding answers. Uses jargon without precision. Does not check assumptions.</p>
+<p><strong>Elite candidate:</strong> Starts from definitions. States assumptions explicitly. Solves cleanly and checks edge cases. Connects math to market behavior. Explains limitations of models. Communicates with calm precision.</p>
+
+<h3>1.7 Mental Framework for Any Quant Problem</h3>
+<p>When given a quant question, use this sequence:</p>
+<ol><li>Define the objective</li><li>Clarify assumptions</li><li>Choose a model or framework</li><li>Solve analytically if possible</li><li>Approximate or simulate if necessary</li><li>Interpret the result</li><li>Stress-test the assumptions</li></ol>
+<p>This framework applies to probability puzzles, coding questions, derivatives pricing, and research design.</p>
+
+<h3>Module 1 Practice Drills</h3>
+<p><strong>Explain-out-loud drills:</strong> What is quant finance? What is the difference between quant trading and quant research? Why do models fail? Why is expected value not enough by itself?</p>
+<p><strong>Self-test checklist:</strong> Did I define the problem clearly? Did I state assumptions? Did I distinguish theory from implementation? Did I interpret the answer, not just compute it?</p>`,
   },
   {
-    title: `5. Linearity of Expectation`,
-    content: `<p>Linearity of Expectation is a "cheat code" for solving incredibly complex probability problems. It states that the expected value of a sum of random variables is equal to the sum of their individual expected values, <strong>regardless of whether the variables are independent or correlated.</strong></p>
-<br/>
-<p><strong>Formula:</strong> $E[X + Y] = E[X] + E[Y]$</p>
-<br/>
-<p><strong>Classic Problem: The Hat Check</strong><br/>
-"100 people check their hats at a restaurant. The attendant loses the tickets and gives the 100 hats back completely at random. What is the expected number of people who receive their correct hat?"</p>
-<p><em>Solution Framework:</em><br/>
-Trying to calculate the exact probability distribution of achieving 0, 1, 2... or 100 correct hats involves derangements and gets mathematically terrifying immediately.<br/>
-Instead, define an indicator variable $X_i$ for person $i$:<br/>
-$X_i = 1$ if person $i$ gets their hat back, else $0$.<br/>
-The expected value for one individual is: $E[X_i] = 1 \\times P(\\text{gets correct hat}) = 1 \\times \\frac{1}{100} = 0.01$.<br/>
-The total expected number of correct hats is $E[X_1 + X_2 + ... + X_{100}]$.<br/>
-By Linearity of Expectation: $E[\\sum X_i] = \\sum E[X_i] = 100 \\times 0.01 = \\mathbf{1}$.<br/>
-Remarkably, the answer is exactly 1, regardless of how many people (whether 10 or 1,000,000) check their hats.</p>`
+    title: '2.1–2.3 Why Probability Matters, Random Variables, Expectation',
+    content: `<h3>2.1 Why Probability Is the Language of Quant Finance</h3>
+<p>Markets are uncertain. Prices move randomly in the short run, order flow is noisy, and outcomes are distributions rather than fixed numbers. Probability is the mathematical framework for reasoning about uncertainty.</p>
+<p><strong>Why interviewers care so much:</strong> Probability is the backbone of: expected value calculations, options pricing, risk estimation, signal evaluation, market making logic, Bayesian updating. A quant candidate who is weak in probability is missing the core language of the field.</p>
+
+<h3>2.2 Random Variables</h3>
+<p><strong>What they are:</strong> A random variable maps outcomes of a random experiment to numerical values.</p>
+<p><strong>Types:</strong> Discrete random variables: finite or countable outcomes. Continuous random variables: values over intervals.</p>
+<p><strong>Finance intuition:</strong> Examples include: daily return, number of trades in a minute, terminal stock price, default indicator, realized volatility over a period.</p>
+
+<h3>2.3 Expectation</h3>
+<p><strong>Definition:</strong> The expectation of a random variable is its average value in the probabilistic sense. For a discrete variable: E[X] = sum of x * P(X=x). For a continuous variable: E[X] = integral of x f(x) dx.</p>
+<p><strong>Intuition:</strong> Expectation is the center of gravity of the distribution.</p>
+<p><strong>Why it matters:</strong> Many quant problems reduce to expected value. Examples: fair game price, expected PnL, expected payoff of an option under a measure, expected reward in reinforcement or bandit settings.</p>
+<p><strong>Important caveat:</strong> Expected value alone is not enough. A trade with positive expected value but extreme downside risk may still be unattractive.</p>`,
   },
   {
-    title: `6. Markov Chains & Random Walks`,
-    content: `<p>Many trading strategies involve modeling the market as a series of distinct states. A Markov Chain is a stochastic model describing a sequence of possible events in which the probability of each event depends <em>only</em> on the state attained in the previous event (the "Memoryless Property").</p>
-<br/>
-<p><strong>Classic "Gambler's Ruin" Problem:</strong><br/>
-"You start with $N$ dollars. You flip a coin. Heads, you win $1. Tails, you lose $1. You play until you either reach $T$ (Target) dollars, or go broke ($0). What is the probability you reach $T$ before going broke?"</p>
-<br/>
-<p><em>Solution via Martingales:</em><br/>
-For a fair coin ($p = 0.5$), this is a symmetric random walk. Your expected value over time does not change. Therefore, your expected value at the end of the game must equal your starting capital.<br/>
-Let $P_w$ be the probability of reaching the target $T$. The probability of going broke is $(1 - P_w)$.<br/>
-$E[\\text{Final Wealth}] = (P_w \\times T) + ((1 - P_w) \\times 0) = N$<br/>
-$P_w \\cdot T = N$<br/>
-$\\mathbf{P_w = \\frac{N}{T}}$<br/>
-If you start with $20 and want to reach $100 before hitting $0, your probability of success is simply $20 / 100 = 20\\%$.</p>`
+    title: '2.4–2.5 Variance/Std Dev, Covariance/Correlation',
+    content: `<h3>2.4 Variance and Standard Deviation</h3>
+<p><strong>Definition:</strong> Variance measures dispersion around the mean. Var(X) = E[(X - E[X])²] = E[X²] - (E[X])². Standard deviation is the square root of variance.</p>
+<p><strong>Why it matters:</strong> Variance is central to: volatility, portfolio theory, signal-to-noise ratio, confidence intervals, risk-adjusted returns.</p>
+<p><strong>Interview nuance:</strong> Candidates often give the formula but fail to explain meaning. Variance quantifies uncertainty, instability, or dispersion of outcomes.</p>
+
+<h3>2.5 Covariance and Correlation</h3>
+<p><strong>Covariance:</strong> Measures how two variables move together. Cov(X,Y) = E[(X - E[X])(Y - E[Y])]</p>
+<p><strong>Correlation:</strong> Standardized covariance: Corr(X,Y) = Cov(X,Y)/(σ_X σ_Y)</p>
+<p><strong>Why it matters in finance:</strong> portfolio diversification, factor modeling, pairs trading, hedging, risk decomposition.</p>
+<p><strong>Important caveat:</strong> Correlation is not stable. It changes across regimes, especially in crises.</p>`,
   },
   {
-    title: `7. Modern Portfolio Theory (Mean-Variance)`,
-    content: `<p>Quantitative researchers must understand portfolio optimization. Harry Markowitz's Mean-Variance optimization shows how diversifying correctly can increase your expected returns while simultaneously lowering your overall variance (risk).</p>
-<br/>
-<p><strong>Variance of a 2-Asset Portfolio:</strong><br/>
-$\\sigma_p^2 = w_A^2 \\sigma_A^2 + w_B^2 \\sigma_B^2 + 2w_A w_B \\sigma_A \\sigma_B \\rho_{A,B}$</p>
-<p>Where:<br/>
-$w$ = weight of the asset in the portfolio<br/>
-$\\sigma$ = standard deviation (volatility) of the asset<br/>
-$\\rho$ = Correlation coefficient between the two assets (ranges from -1 to 1)</p>
-<br/>
-<p><strong>Interview Intuition:</strong><br/>
-If $\\rho = 1$, the assets move identically; there is no diversification benefit. <br/>
-If $\\rho = -1$, the assets move in perfect opposite directions. You can weight them to create a portfolio with <strong>zero variance</strong> (a perfect, risk-free hedge). Quant funds aggressively search for uncorrelated signals ($\\rho \\approx 0$) so they can lever up heavily without increasing overall portfolio volatility.</p>`
-  }
+    title: '2.6–2.7 Conditional Probability, Bayes\' Rule, Independence',
+    content: `<h3>2.6 Conditional Probability and Bayes' Rule</h3>
+<p><strong>Conditional probability:</strong> P(A|B) = P(A and B) / P(B)</p>
+<p><strong>Bayes' Rule:</strong> P(A|B) = P(B|A)P(A)/P(B)</p>
+<p><strong>Why this matters:</strong> Bayesian thinking appears everywhere: signal updating, market maker inference from order flow, event-driven trading, model updating under new evidence.</p>
+<p><strong>Interview intuition:</strong> Bayes' Rule is about revising beliefs when new information arrives.</p>
+
+<h3>2.7 Independence</h3>
+<p>Two random variables are independent if: P(A and B) = P(A)P(B)</p>
+<p><strong>Why this matters:</strong> Candidates frequently assume independence when it is not justified. Many interview puzzles are designed to catch this mistake.</p>
+<p><strong>Finance caveat:</strong> Asset returns are often not independent, especially during market stress.</p>`,
+  },
+  {
+    title: '2.8 Common Distributions',
+    content: `<p><strong>Bernoulli:</strong> Single trial success/failure. Useful for directional events, fills, defaults.</p>
+<p><strong>Binomial:</strong> Number of successes in n independent Bernoulli trials. Useful in toy pricing setups and counting-type questions.</p>
+<p><strong>Poisson:</strong> Counts events over a time interval. Useful for trade arrivals, defaults in simplified settings, jump timing.</p>
+<p><strong>Exponential:</strong> Time between Poisson events. Useful for waiting-time intuition.</p>
+<p><strong>Uniform:</strong> All values in an interval equally likely. Common in puzzles and simulation.</p>
+<p><strong>Normal (Gaussian):</strong> The most famous continuous distribution. Used widely because of tractability and central limit arguments.</p>
+<p><strong>Lognormal:</strong> If log-price is normal, price is lognormal. Central in Black-Scholes-style modeling.</p>
+<p><strong>Heavy-tailed distributions:</strong> Important because real returns often exhibit fatter tails than Gaussian assumptions suggest.</p>`,
+  },
+  {
+    title: '2.9–2.12 LLN, CLT, Order Statistics, Martingales, Interview Questions + Module 2 Practice',
+    content: `<h3>2.9 Law of Large Numbers and Central Limit Theorem</h3>
+<p><strong>Law of Large Numbers:</strong> Sample averages converge to the true expectation under suitable conditions.</p>
+<p><strong>Central Limit Theorem:</strong> Sums or averages of many independent variables tend toward a normal distribution under broad conditions.</p>
+<p><strong>Why interviewers care:</strong> These justify: Monte Carlo convergence intuition, confidence intervals, sampling-based reasoning, approximate normality in certain settings.</p>
+<p><strong>Important caveat:</strong> Convergence speed matters, independence matters, and tails matter.</p>
+
+<h3>2.10 Order Statistics and Extremes</h3>
+<p>Quants are often asked about: maximum of random draws, expected minimum / maximum, stopping times, records and extremes. These matter in: risk management, barrier options, best bid / ask dynamics, selection bias problems.</p>
+
+<h3>2.11 Martingales</h3>
+<p><strong>First-principles idea:</strong> A martingale is a process whose expected next value, conditional on current information, equals its current value.</p>
+<p><strong>Why it matters:</strong> Martingales are central to: no-arbitrage pricing, risk-neutral valuation, stopping time arguments, fair game logic.</p>
+<p><strong>Intuition:</strong> A martingale is a fair game under the information you currently have.</p>
+
+<h3>2.12 Common Probability Interview Questions</h3>
+<p><strong>Example 1: Expected flips until first heads.</strong> Let X be number of flips until first heads with p=1/2. Method 1: geometric expectation 1/p = 2. Method 2: recursive: X = 1 with probability 1/2, else 1 + X with probability 1/2. So E[X] = (1/2)·1 + (1/2)(1 + E[X]) → E[X]=2.</p>
+<p><strong>Example 2: Probability of at least one success.</strong> Use complement: P(at least one) = 1 - P(none).</p>
+<p><strong>Example 3: Two-envelope / information-trap style questions.</strong> The key is always to define the sample space precisely and avoid conditioning sloppily.</p>
+
+<h3>Module 2 Practice Drills</h3>
+<p><strong>Technical drills:</strong> Derive expectation and variance of a Bernoulli variable. Explain Poisson vs exponential relationship. Explain Bayes' Rule in plain English. Explain why covariance matters in portfolio risk. Explain CLT and why it is useful but dangerous to overuse.</p>
+<p><strong>Interview-style questions:</strong> What is a martingale? What is the expected value of a geometric random variable? Why is correlation insufficient in crises? When is normality a bad assumption?</p>
+<p><strong>Self-testing framework — For any probability question, ask:</strong> What is the sample space? Are events independent? Can I use symmetry? Can I use complement? Can I solve recursively? What assumptions am I making?</p>`,
+  },
 ];

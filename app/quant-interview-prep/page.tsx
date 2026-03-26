@@ -16,11 +16,11 @@ import { QUANT_BEHAVIORAL_SECTIONS } from './quant-behavioral-data';
 type Section = { title: string; content: string };
 
 const MODULES: { id: string; title: string; sub: string; sections: Section[] }[] = [
-  { id: 'quant_brain', title: 'Brainteasers & Mental Math', sub: 'Logic puzzles, Expected Value, Fast Math', sections: QUANT_BRAIN_SECTIONS },
-  { id: 'quant_prob', title: 'Probability & Statistics', sub: 'Distributions, Bayes Theorem, Combinatorics', sections: QUANT_PROB_SECTIONS },
-  { id: 'quant_options', title: 'Options & Stochastic Calc', sub: 'Black-Scholes, Greeks, Arbitrage', sections: QUANT_OPTIONS_SECTIONS },
-  { id: 'quant_coding', title: 'Algorithms & Structures', sub: 'Time Complexity, Order Books, C++/Python', sections: QUANT_CODING_SECTIONS },
-  { id: 'quant_behavioral', title: 'Quant Behavioral', sub: 'Why Quant, Research Mindset, Market Views', sections: QUANT_BEHAVIORAL_SECTIONS },
+  { id: 'quant_prob', title: 'Foundations & Probability', sub: 'Quant mindset, random variables, expectation, distributions, martingales', sections: QUANT_PROB_SECTIONS },
+  { id: 'quant_brain', title: 'Statistics & Math Tools', sub: 'Inference, regression, time series, linear algebra, optimization', sections: QUANT_BRAIN_SECTIONS },
+  { id: 'quant_options', title: 'Stochastic Processes & Derivatives', sub: 'Brownian motion, Ito, Black-Scholes, Greeks, volatility', sections: QUANT_OPTIONS_SECTIONS },
+  { id: 'quant_coding', title: 'Trading Systems & Implementation', sub: 'Time series, portfolio, microstructure, Monte Carlo, programming, ML', sections: QUANT_CODING_SECTIONS },
+  { id: 'quant_behavioral', title: 'Questions, Behavioral & Mastery', sub: 'Interview question bank, fit, 6-week plan, appendices', sections: QUANT_BEHAVIORAL_SECTIONS },
 ];
 
 const ICONS: Record<string, React.ReactElement> = {
