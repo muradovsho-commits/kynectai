@@ -17,8 +17,8 @@ const YEARS = ["Class of 2025","Class of 2026","Class of 2027","Class of 2028","
 
 export default function MyAccountPage() {
   const router = useRouter();
-  const deleteAccountMutation = useMutation((api as any).auth?.deleteAccount);
-  const downgradePlanMutation = useMutation((api as any).auth?.downgradePlan);
+  const deleteAccountMutation = useMutation(api.auth.deleteAccount);
+  const downgradePlanMutation = useMutation(api.auth.downgradePlan);
   const [isDark, setIsDark] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -342,7 +342,7 @@ export default function MyAccountPage() {
           <div style={{display:'flex',flexDirection:'column',gap:10}}>
             {[
               {title:'Reset all data',desc:'Clear your outreach tracker, saved contacts, and message history. This cannot be undone.',action:() => { if (confirm('Are you sure? This will clear all your tracking data and cannot be undone.')) { localStorage.removeItem('offerbell_tracker_v3'); localStorage.setItem('offerbell_tracker_v3', '[]'); localStorage.removeItem('offerbell_searches_used'); localStorage.removeItem('offerbell_messages_sent'); localStorage.removeItem('offerbell_waitlist_joined'); localStorage.setItem('offerbell_tracker_seeded', 'true'); window.location.reload(); }}},
-              {title:'Delete account',desc:'Permanently delete your account and all associated data.',action:async () => { if (confirm('Are you sure you want to delete your account? This is permanent and cannot be undone.')) { try { const uid = localStorage.getItem('offerbell_user_id'); if (uid) await deleteAccountMutation({ userId: uid }); } catch(e) { console.error(e); } localStorage.clear(); document.cookie = 'offerbell_user_id=; path=/; max-age=0'; router.push('/signin'); }}},
+              {title:'Delete account',desc:'Permanently delete your account and all associated data.',action:async () => { if (confirm('Are you sure you want to delete your account? This is permanent and cannot be undone.')) { try { const uid = localStorage.getItem('offerbell_user_id'); if (uid) { await deleteAccountMutation({ userId: uid }); localStorage.clear(); document.cookie = 'offerbell_user_id=; path=/; max-age=0'; router.push('/signin'); } } catch(e) { console.error('Deletion Exception:', e); alert('Could not reach the database. Please try again.'); } }}},
             ].map(d=>(
               <div key={d.title} style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,padding:20,display:'flex',alignItems:'center',justifyContent:'space-between',gap:20}}>
                 <div>
