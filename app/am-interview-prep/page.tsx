@@ -15,10 +15,10 @@ import { AM_STOCK_PITCH_SECTIONS } from './am-stock-pitch-data';
 type Section = { title: string; content: string };
 
 const MODULES: { id: string; title: string; sub: string; sections: Section[] }[] = [
-  { id: 'am_markets', title: 'Macro & Markets', sub: 'Yield curves, Interest rates, Asset classes', sections: AM_MARKETS_SECTIONS },
-  { id: 'am_tech', title: 'Valuation & Technicals', sub: 'Intrinsic vs Relative, FCF, DDM', sections: AM_TECH_SECTIONS },
-  { id: 'am_pitch', title: 'Stock Pitching', sub: 'Variant perception, Catalysts, Risks', sections: AM_STOCK_PITCH_SECTIONS },
-  { id: 'am_behavioral', title: 'AM Behavioral', sub: 'Why AM, Prior mistakes, Risk management', sections: AM_BEHAVIORAL_SECTIONS },
+  { id: 'am_tech', title: 'Investing Foundations & Markets', sub: 'AM mindset, asset classes, pricing, benchmarks, efficiency', sections: AM_TECH_SECTIONS },
+  { id: 'am_markets', title: 'Fundamental Analysis & Valuation', sub: 'Business models, margins, ROIC, DCF, multiples, margin of safety', sections: AM_MARKETS_SECTIONS },
+  { id: 'am_pitch', title: 'Portfolio, Macro & Stock Pitch', sub: 'Sizing, risk, diversification, rates, inflation, pitch structure', sections: AM_STOCK_PITCH_SECTIONS },
+  { id: 'am_behavioral', title: 'Cross-Asset, Performance & Mastery', sub: 'Fixed income, attribution, question bank, behavioral, appendices', sections: AM_BEHAVIORAL_SECTIONS },
 ];
 
 const ICONS: Record<string, React.ReactElement> = {
@@ -99,7 +99,7 @@ export default function InterviewPrepPage() {
         <div style={{marginBottom:"28px"}}>
           <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Foundations & Markets</div>
           <div className="module-grid" style={{marginBottom:"16px"}}>
-            {MODULES.filter(m => ['am_markets','am_tech'].includes(m.id)).map(m => (
+            {MODULES.filter(m => ['am_tech','am_markets'].includes(m.id)).map(m => (
               <div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>
                 {ICONS[m.id]}
                 <div className="module-name">{m.title}</div>
