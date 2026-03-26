@@ -113,7 +113,7 @@ export default function MarketIntelPage() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {filtered.map((story, i) => {
-            const heat = HEAT_COLORS[story.heat] || HEAT_COLORS.low;
+            const heat = HEAT_COLORS[story.heat?.toLowerCase()] || HEAT_COLORS.low;
             return (
               <div key={i} style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '24px 28px', transition: 'border-color .15s' }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--text-3)')}
@@ -122,7 +122,7 @@ export default function MarketIntelPage() {
                 {/* Tags + Heat */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10, flexWrap: 'wrap' }}>
                   <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 100, background: heat.bg, color: heat.text, border: `1px solid ${heat.border}` }}>
-                    {HEAT_LABELS[story.heat] || 'Medium Impact'}
+                    {HEAT_LABELS[story.heat?.toLowerCase()] || 'Medium Impact'}
                   </span>
                   {story.tags?.map(tag => (
                     <span key={tag} style={{ fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 100, background: 'var(--surface-2)', color: 'var(--text-3)', border: '1px solid var(--border)' }}>{tag}</span>

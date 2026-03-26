@@ -58,11 +58,11 @@ For each headline return:
 
 Pick the 8 most important headlines. Ensure a MIX of tags — not all Macro. Include Equities, Fixed Income, Firms, Geopolitical where relevant.
 
-Return ONLY a JSON array. No explanation, no markdown. Example format:
-[{"title":"...","summary":"...","ib":"...","quant":"...","trading":"...","tags":["Macro","Equities"],"heat":"high"}]`;
+[{"title":"...","summary":"...","ib":"...","quant":"...","trading":"...","tags":["Macro","Equities"],"heat":"high"}]
+IMPORTANT: Ensure ALL strings are properly JSON escaped (escape double quotes inside your text with \\").`;
 
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -71,6 +71,7 @@ Return ONLY a JSON array. No explanation, no markdown. Example format:
         generationConfig: {
           temperature: 0.4,
           maxOutputTokens: 4096,
+          responseMimeType: "application/json",
         },
       }),
     });
@@ -90,6 +91,7 @@ Return ONLY a JSON array. No explanation, no markdown. Example format:
     if (jsonMatch) jsonStr = jsonMatch[0];
     else jsonStr = raw.replace(/```json\n?|```\n?/g, "").trim();
     
+    console.log("Raw JSON string to parse:", jsonStr);
     const parsed = JSON.parse(jsonStr);
     return Array.isArray(parsed) ? parsed : null;
   } catch (e) {
