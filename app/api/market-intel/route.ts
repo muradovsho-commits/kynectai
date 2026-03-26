@@ -7,14 +7,20 @@ const corsHeaders = {
 };
 
 const RSS_FEEDS = [
-  { url: "https://feeds.reuters.com/reuters/businessNews", source: "Reuters" },
-  { url: "https://feeds.reuters.com/reuters/topNews", source: "Reuters" },
-  { url: "https://feeds.finance.yahoo.com/rss/2.0/headline?s=^GSPC&region=US&lang=en-US", source: "Yahoo Finance" },
+  { url: "https://news.google.com/rss/search?q=finance+markets+economy&hl=en-US&gl=US&ceid=US:en", source: "Google News" },
+  { url: "https://news.google.com/rss/search?q=investment+banking+wall+street&hl=en-US&gl=US&ceid=US:en", source: "Google News" },
+  { url: "https://news.google.com/rss/search?q=federal+reserve+interest+rates&hl=en-US&gl=US&ceid=US:en", source: "Google News" },
+  { url: "https://news.google.com/rss/search?q=stock+market+today&hl=en-US&gl=US&ceid=US:en", source: "Google News" },
+  { url: "https://www.cnbc.com/id/100003114/device/rss/rss.html", source: "CNBC" },
+  { url: "https://feeds.marketwatch.com/marketwatch/topstories/", source: "MarketWatch" },
 ];
 
 async function fetchRSS(feedUrl: string, source: string): Promise<{ title: string; link: string; source: string; pubDate: string }[]> {
   try {
-    const res = await fetch(feedUrl, { next: { revalidate: 900 } }); // cache 15 min
+    const res = await fetch(feedUrl, { 
+      next: { revalidate: 900 },
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; OfferBell/1.0)' }
+    });
     if (!res.ok) return [];
     const text = await res.text();
     const items: { title: string; link: string; source: string; pubDate: string }[] = [];
@@ -81,14 +87,33 @@ export async function GET() {
     const allHeadlines = allFeeds.flat().slice(0, 15);
 
     if (allHeadlines.length === 0) {
-      return NextResponse.json({ stories: [], error: "No headlines fetched" }, { headers: corsHeaders });
+      return NextResponse.json({ 
+        stories: [], 
+        error: "No headlines fetched from RSS feeds",
+        debug: RSS_FEEDS.map(f => f.url).join(", ")
+      }, { headers: corsHeaders });
     }
 
     // Analyze with Gemini
     const analyzed = await analyzeWithGemini(allHeadlines);
 
+    if (analyzed.length === 0) {
+      // Gemini failed — return raw headlines as fallback
+      const fallbackStories = allHeadlines.slice(0, 8).map(h => ({
+        title: h.title,
+        summary: "",
+        impact: { ib: "Analysis unavailable", quant: "Analysis unavailable", trading: "Analysis unavailable" },
+        tags: ["Macro"],
+        heat: "medium",
+        link: h.link,
+        source: h.source,
+        pubDate: h.pubDate,
+      }));
+      return NextResponse.json({ stories: fallbackStories }, { headers: corsHeaders });
+    }
+
     // Merge links back
-    const stories = analyzed.map((a, i) => ({
+    const stories = analyzed.map((a: any, i: number) => ({
       ...a,
       link: allHeadlines[i]?.link || "",
       source: allHeadlines[i]?.source || "",
