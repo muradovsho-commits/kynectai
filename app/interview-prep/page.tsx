@@ -20,14 +20,14 @@ import { QUIZ_QUESTIONS } from './quiz-data';
 type Section = { title: string; content: string };
 
 const MODULES: { id: string; title: string; sub: string; sections: Section[] }[] = [
-  { id: 'core', title: 'Core Concepts', sub: 'Financial modeling, TVM, PV, IRR, WACC', sections: CORE_SECTIONS },
-  { id: 'accounting', title: 'Accounting', sub: 'Three statements, FCF, ratios', sections: ACCOUNTING_SECTIONS },
-  { id: 'ev', title: 'EV & Valuation', sub: 'Equity Value, Enterprise Value, multiples', sections: EV_SECTIONS },
-  { id: 'dcf', title: 'DCF Analysis', sub: 'DCF, comps, precedent transactions', sections: DCF_SECTIONS },
-  { id: 'ma', title: 'M&A Models', sub: 'Accretion/dilution, merger models', sections: MA_SECTIONS },
-  { id: 'lbo', title: 'LBO Models', sub: 'Leveraged buyouts, paper LBO', sections: LBO_SECTIONS },
-  { id: 'behavioral', title: 'Behavioral', sub: 'TMAY, fit, stories, strengths', sections: BEHAVIORAL_SECTIONS },
-  { id: 'markets', title: 'Market Awareness', sub: 'Bloomberg, WSJ, stock pitches', sections: MARKETS_SECTIONS },
+  { id: 'accounting', title: 'Accounting Mastery', sub: 'Three statements, linkages, walkthroughs, working capital', sections: ACCOUNTING_SECTIONS },
+  { id: 'ev', title: 'Valuation Fundamentals', sub: 'EV vs Equity Value, comps, precedent transactions', sections: EV_SECTIONS },
+  { id: 'dcf', title: 'DCF & Advanced Valuation', sub: 'UFCF, WACC, terminal value, real-world nuance', sections: DCF_SECTIONS },
+  { id: 'ma', title: 'Mergers & Acquisitions', sub: 'Accretion/dilution, synergies, purchase accounting', sections: MA_SECTIONS },
+  { id: 'lbo', title: 'Leveraged Buyouts', sub: 'LBO mechanics, IRR drivers, good candidates', sections: LBO_SECTIONS },
+  { id: 'core', title: 'Modeling & Interview Mastery', sub: 'Financial modeling, 6-week plan, appendices', sections: CORE_SECTIONS },
+  { id: 'behavioral', title: 'Behavioral & Storytelling', sub: 'TMAY, Why IB?, stories, fit interviews', sections: BEHAVIORAL_SECTIONS },
+  { id: 'markets', title: 'Technical Question Bank', sub: '20 interview questions with strong & weak answers', sections: MARKETS_SECTIONS },
   { id: 'quiz', title: 'Technicals Test', sub: '30 multiple choice questions', sections: [] },
 ];
 
