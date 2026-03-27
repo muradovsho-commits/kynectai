@@ -6,6 +6,12 @@ import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
 import './flashcards.css';
 import { IB_FLASHCARDS } from './ib-flashcard-data';
+import { PE_FLASHCARDS } from './pe-flashcard-data';
+import { CONSULTING_FLASHCARDS } from './consulting-flashcard-data';
+import { QUANT_FLASHCARDS } from './quant-flashcard-data';
+import { ACCT_FLASHCARDS } from './acct-flashcard-data';
+import { AM_FLASHCARDS } from './am-flashcard-data';
+import { ST_FLASHCARDS, ER_FLASHCARDS, RE_FLASHCARDS, VC_FLASHCARDS, RX_FLASHCARDS } from './other-flashcard-data';
 
 type Track = {
   id: string;
@@ -26,32 +32,62 @@ const TRACKS: Track[] = [
   {
     id: 'pe', title: 'Private Equity',
     desc: 'LBO modeling, fund economics, deal sourcing, portfolio operations, and PE-specific behavioral prep.',
-    cards: 0, iconClass: 'icon-pe',
+    cards: PE_FLASHCARDS.length, iconClass: 'icon-pe',
     icon: <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>,
   },
   {
     id: 'consulting', title: 'Consulting',
-    desc: 'Case frameworks, market sizing, profitability analysis, MECE structure, and MBB behavioral.',
-    cards: 0, iconClass: 'icon-consulting',
+    desc: 'Case frameworks, market sizing, profitability analysis, MECE structure, mental math, and MBB behavioral.',
+    cards: CONSULTING_FLASHCARDS.length, iconClass: 'icon-consulting',
     icon: <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>,
   },
   {
     id: 'quant', title: 'Quant Research',
     desc: 'Probability, statistics, stochastic calculus, derivatives pricing, brainteasers, and coding questions.',
-    cards: 0, iconClass: 'icon-quant',
+    cards: QUANT_FLASHCARDS.length, iconClass: 'icon-quant',
     icon: <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
   },
   {
     id: 'accounting', title: 'Accounting & Audit',
     desc: 'Journal entries, audit assertions, financial statement analysis, materiality, and Big 4 behavioral.',
-    cards: 0, iconClass: 'icon-accounting',
+    cards: ACCT_FLASHCARDS.length, iconClass: 'icon-accounting',
     icon: <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15L11 17L15 13"/></svg>,
   },
   {
     id: 'am', title: 'Asset Management',
     desc: 'Stock pitches, portfolio construction, macro analysis, valuation, and buy-side behavioral.',
-    cards: 0, iconClass: 'icon-am',
+    cards: AM_FLASHCARDS.length, iconClass: 'icon-am',
     icon: <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>,
+  },
+  {
+    id: 'st', title: 'Sales & Trading',
+    desc: 'Market structure, fixed income, options Greeks, trade ideas, and macro positioning.',
+    cards: ST_FLASHCARDS.length, iconClass: 'icon-st',
+    icon: <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+  },
+  {
+    id: 'er', title: 'Equity Research',
+    desc: 'Earnings models, consensus estimates, price targets, stock coverage, and sell-side process.',
+    cards: ER_FLASHCARDS.length, iconClass: 'icon-er',
+    icon: <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>,
+  },
+  {
+    id: 're', title: 'Real Estate',
+    desc: 'NOI, cap rates, waterfall structures, REIT metrics, debt sizing, and property-level analysis.',
+    cards: RE_FLASHCARDS.length, iconClass: 'icon-re',
+    icon: <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+  },
+  {
+    id: 'vc', title: 'Venture Capital',
+    desc: 'Term sheets, SaaS metrics, cap tables, fund economics, and startup evaluation.',
+    cards: VC_FLASHCARDS.length, iconClass: 'icon-vc',
+    icon: <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>,
+  },
+  {
+    id: 'rx', title: 'Restructuring',
+    desc: 'Chapter 11, priority of claims, fulcrum security, DIP financing, and distressed valuation.',
+    cards: RX_FLASHCARDS.length, iconClass: 'icon-rx',
+    icon: <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
   },
 ];
 
@@ -71,8 +107,13 @@ export default function FlashcardsPage() {
   }, [router]);
 
   const allCards = useMemo(() => {
-    if (activeTrack === 'ib') return IB_FLASHCARDS;
-    return [];
+    const map: Record<string, typeof IB_FLASHCARDS> = {
+      ib: IB_FLASHCARDS, pe: PE_FLASHCARDS, consulting: CONSULTING_FLASHCARDS,
+      quant: QUANT_FLASHCARDS, accounting: ACCT_FLASHCARDS, am: AM_FLASHCARDS,
+      st: ST_FLASHCARDS, er: ER_FLASHCARDS, re: RE_FLASHCARDS,
+      vc: VC_FLASHCARDS, rx: RX_FLASHCARDS,
+    };
+    return activeTrack ? (map[activeTrack] || []) : [];
   }, [activeTrack]);
 
   const categories = useMemo(() => {

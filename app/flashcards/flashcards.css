@@ -46,6 +46,11 @@
 .flash-track-icon.icon-quant { background: #ede9fe; color: #6d28d9; }
 .flash-track-icon.icon-accounting { background: #dcfce7; color: #16a34a; }
 .flash-track-icon.icon-am { background: #e0f2fe; color: #0284c7; }
+.flash-track-icon.icon-st { background: #fce7f3; color: #db2777; }
+.flash-track-icon.icon-er { background: #fef9c3; color: #ca8a04; }
+.flash-track-icon.icon-re { background: #f0fdf4; color: #15803d; }
+.flash-track-icon.icon-vc { background: #f5f3ff; color: #7c3aed; }
+.flash-track-icon.icon-rx { background: #fef2f2; color: #dc2626; }
 
 .flash-track-title { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
 .flash-track-desc { font-size: 13px; color: var(--text-3); line-height: 1.55; flex: 1; margin-bottom: 18px; }
