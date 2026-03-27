@@ -11,7 +11,8 @@ import { CONSULTING_FLASHCARDS } from './consulting-flashcard-data';
 import { QUANT_FLASHCARDS } from './quant-flashcard-data';
 import { ACCT_FLASHCARDS } from './acct-flashcard-data';
 import { AM_FLASHCARDS } from './am-flashcard-data';
-import { ST_FLASHCARDS, ER_FLASHCARDS, RE_FLASHCARDS, VC_FLASHCARDS, RX_FLASHCARDS } from './other-flashcard-data';
+import { ST_FLASHCARDS } from './st-flashcard-data';
+import { ER_FLASHCARDS, RE_FLASHCARDS, VC_FLASHCARDS, RX_FLASHCARDS } from './other-flashcard-data';
 
 type Track = {
   id: string;
