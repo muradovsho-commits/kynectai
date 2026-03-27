@@ -12,10 +12,10 @@ import { ST_MARKETS_SECTIONS, ST_QUANT_SECTIONS, ST_BEHAVIORAL_SECTIONS, ST_TECH
 type Section = { title: string; content: string };
 
 const MODULES: { id: string; title: string; sub: string; sections: Section[] }[] = [
-  { id: 'st_markets', title: 'Markets & Asset Classes', sub: 'Equities, fixed income, FX, commodities, derivatives', sections: ST_MARKETS_SECTIONS },
-  { id: 'st_quant', title: 'Quant & Probability', sub: 'Mental math, expected value, brainteasers, trading games', sections: ST_QUANT_SECTIONS },
-  { id: 'st_technicals', title: 'Technical Concepts', sub: 'Options, bond math, FX, macro', sections: ST_TECHNICALS_SECTIONS },
-  { id: 'st_behavioral', title: 'S&T Behavioral', sub: 'Why S&T, trade ideas, market questions', sections: ST_BEHAVIORAL_SECTIONS },
+  { id: 'st_markets', title: 'Part I: Foundations', sub: 'How to Use This Manual + Modules 1-3', sections: ST_MARKETS_SECTIONS },
+  { id: 'st_quant', title: 'Part II: Macro, Risk, and Clients', sub: 'Modules 4-6', sections: ST_QUANT_SECTIONS },
+  { id: 'st_technicals', title: 'Part III: Derivatives and Trade Ideas', sub: 'Modules 7-8', sections: ST_TECHNICALS_SECTIONS },
+  { id: 'st_behavioral', title: 'Part IV: Interview Mastery', sub: 'Modules 9-10, Appendices, and Closing Note', sections: ST_BEHAVIORAL_SECTIONS },
 ];
 
 const ICONS: Record<string, React.ReactElement> = {
@@ -53,8 +53,8 @@ export default function InterviewPrepPage() {
       <main className="main">
         <div className="prep-header">
           <div style={{marginBottom:"16px"}}><Link href="/learn" style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"14px",fontWeight:600,color:"var(--text-3)",textDecoration:"none"}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back to Overview</Link></div>
-          <div className="prep-title">Sales & Trading <em>Guide</em></div>
-          <div className="prep-sub">Master the trading floor — from market fundamentals and probability to trade ideas and risk management.</div>
+          <div className="prep-title">Sales & Trading <em>Interview Prep Guide</em></div>
+          <div className="prep-sub">The full Sales & Trading Mastery Manual, organized in the current guide layout.</div>
         </div>
         <div style={{marginBottom:"28px"}}>
           <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Markets & Technicals</div>
@@ -65,9 +65,9 @@ export default function InterviewPrepPage() {
         {activeModule === '' ? (
           <div className="prep-content">
             <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"16px",padding:"28px 32px",marginBottom:"20px"}}>
-              <h2 style={{fontFamily:"'Instrument Serif', serif",fontSize:"22px",color:"var(--text)",marginBottom:"8px"}}>Welcome to the Sales & Trading Guide</h2>
-              <p style={{fontSize:"14px",color:"var(--text-2)",lineHeight:1.7,marginBottom:"16px"}}>This guide prepares you for the unique demands of S&T interviews — real-time market knowledge, mental math under pressure, probability reasoning, and trade idea delivery.</p>
-              <p style={{fontSize:"14px",color:"var(--text-2)",lineHeight:1.7}}>Select a module above to start reading.</p>
+              <h2 style={{fontFamily:"'Instrument Serif', serif",fontSize:"22px",color:"var(--text)",marginBottom:"8px"}}>Welcome to the Sales & Trading Interview Prep Guide</h2>
+              <p style={{fontSize:"14px",color:"var(--text-2)",lineHeight:1.7,marginBottom:"16px"}}>This module now contains the complete Sales & Trading Mastery Manual without omissions, split into four parts to preserve the existing experience.</p>
+              <p style={{fontSize:"14px",color:"var(--text-2)",lineHeight:1.7}}>Select a part above to begin.</p>
             </div>
             <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"12px"}}>Study Approach</div>
             {MODULES.map((m, i) => (<div key={m.id} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }} style={{display:"flex",alignItems:"center",gap:"16px",padding:"14px 18px",background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"12px",marginBottom:"8px",cursor:"pointer"}}><div style={{width:"32px",height:"32px",borderRadius:"50%",background:"var(--surface-2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",fontWeight:700,color:"var(--text-2)",flexShrink:0}}>{i + 1}</div><div style={{flex:1}}><div style={{fontSize:"14px",fontWeight:600,color:"var(--text)"}}>{m.title}</div><div style={{fontSize:"12px",color:"var(--text-3)",marginTop:"2px"}}>{m.sub}</div></div><div style={{fontSize:"12px",color:"var(--text-3)"}}>{m.sections.length} topics</div></div>))}
