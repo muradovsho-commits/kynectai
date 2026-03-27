@@ -1,0 +1,158 @@
+/* ── Technical Practice / Flashcards ── */
+.flash-main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; background: var(--bg); }
+
+.flash-hero {
+  margin: 40px 40px 0;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 36px 40px;
+}
+[data-theme="dark"] .flash-hero { background: var(--surface-2); border-color: var(--border); }
+
+.flash-hero-badge {
+  display: inline-block;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: #7c3aed; margin-bottom: 14px;
+}
+.flash-hero-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 42px; letter-spacing: -1px; line-height: 1.05;
+  color: var(--text); margin-bottom: 12px;
+}
+.flash-hero-title em { font-style: italic; }
+.flash-hero-desc { font-size: 14px; color: var(--text-3); line-height: 1.6; max-width: 600px; }
+
+.flash-hero-stats { display: flex; gap: 28px; margin-top: 20px; }
+.flash-hero-stat-val { font-size: 28px; font-weight: 800; color: var(--text); }
+.flash-hero-stat-label { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }
+
+/* Section header */
+.flash-section { padding: 32px 40px 0; }
+.flash-section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+}
+.flash-section-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 28px; color: var(--text); letter-spacing: -0.5px;
+}
+.flash-section-count { font-size: 12px; color: var(--text-3); font-weight: 600; }
+
+/* Category filter pills */
+.flash-filters {
+  display: flex; gap: 8px; flex-wrap: wrap; padding: 0 40px; margin-bottom: 24px;
+}
+.flash-filter-pill {
+  padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border);
+  font-size: 12px; font-weight: 600; color: var(--text-3);
+  background: var(--surface); cursor: pointer; transition: all 0.15s;
+  font-family: 'Sora', sans-serif;
+}
+.flash-filter-pill:hover { border-color: #7c3aed; color: var(--text); }
+.flash-filter-pill.active { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+
+/* Card grid */
+.flash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  padding: 0 40px 40px;
+}
+
+/* Flip card */
+.flash-card-wrapper {
+  perspective: 1000px;
+  height: 220px;
+  cursor: pointer;
+}
+
+.flash-card {
+  position: relative;
+  width: 100%; height: 100%;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.flash-card.flipped { transform: rotateY(180deg); }
+
+.flash-card-front,
+.flash-card-back {
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.flash-card-front {
+  background: var(--surface);
+}
+
+.flash-card-back {
+  background: #f0ecff;
+  border-color: #c4b5fd;
+  transform: rotateY(180deg);
+}
+[data-theme="dark"] .flash-card-back {
+  background: #1e1a2e;
+  border-color: #4c3d8f;
+}
+
+.flash-card-cat {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.flash-card-front .flash-card-cat { color: #7c3aed; }
+.flash-card-back .flash-card-cat { color: #a78bfa; }
+
+.flash-card-q {
+  font-size: 15px; font-weight: 600; line-height: 1.5;
+  color: var(--text); flex: 1;
+}
+
+.flash-card-a {
+  font-size: 13px; line-height: 1.65;
+  color: var(--text); flex: 1;
+}
+[data-theme="dark"] .flash-card-a { color: #ddd; }
+
+.flash-card-hint {
+  font-size: 10px; color: var(--text-3);
+  margin-top: auto; padding-top: 8px;
+  text-align: right;
+}
+.flash-card-back .flash-card-hint { color: #7c3aed; }
+
+/* Progress bar on card */
+.flash-card-progress {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px; border-radius: 0 0 12px 12px; overflow: hidden;
+  background: rgba(0,0,0,0.05);
+}
+[data-theme="dark"] .flash-card-progress { background: rgba(255,255,255,0.05); }
+.flash-card-progress-bar { height: 100%; background: #7c3aed; transition: width 0.3s; }
+
+/* Shuffle button */
+.flash-shuffle-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--surface); color: var(--text);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  font-family: 'Sora', sans-serif;
+  transition: all 0.15s;
+}
+.flash-shuffle-btn:hover { border-color: #7c3aed; color: #7c3aed; }
+
+/* Responsive */
+@media (max-width: 700px) {
+  .flash-hero, .flash-section, .flash-filters, .flash-grid { padding-left: 20px; padding-right: 20px; }
+  .flash-hero { margin: 20px 20px 0; }
+  .flash-grid { grid-template-columns: 1fr; }
+}
