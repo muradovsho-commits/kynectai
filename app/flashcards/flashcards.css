@@ -131,4 +131,64 @@
   .flash-hero { margin: 20px 20px 0; }
   .flash-track-grid { grid-template-columns: 1fr; }
   .flash-grid { grid-template-columns: 1fr; }
+  .flash-diff-row { padding-left: 20px; padding-right: 20px; }
 }
+
+/* ── Difficulty filter row ── */
+.flash-diff-row {
+  display: flex; gap: 8px; padding: 0 40px 16px; flex-wrap: wrap;
+}
+.flash-diff-pill {
+  padding: 5px 12px; border-radius: 16px; border: 1.5px solid var(--border);
+  font-size: 11px; font-weight: 700; color: var(--text-3);
+  background: var(--surface); cursor: pointer; transition: all 0.15s;
+  font-family: 'Sora', sans-serif; letter-spacing: 0.3px;
+}
+.flash-diff-pill:hover { border-color: #999; color: var(--text); }
+.flash-diff-pill.active { color: #fff; }
+.flash-diff-pill.diff-easy { border-color: #22c55e33; }
+.flash-diff-pill.diff-easy:hover { border-color: #22c55e; color: #16a34a; }
+.flash-diff-pill.diff-easy.active { background: #22c55e; border-color: #22c55e; color: #fff; }
+.flash-diff-pill.diff-medium { border-color: #f59e0b33; }
+.flash-diff-pill.diff-medium:hover { border-color: #f59e0b; color: #d97706; }
+.flash-diff-pill.diff-medium.active { background: #f59e0b; border-color: #f59e0b; color: #fff; }
+.flash-diff-pill.diff-hard { border-color: #ef444433; }
+.flash-diff-pill.diff-hard:hover { border-color: #ef4444; color: #dc2626; }
+.flash-diff-pill.diff-hard.active { background: #ef4444; border-color: #ef4444; color: #fff; }
+
+/* ── Card top row (category + difficulty) ── */
+.flash-card-top-row {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+}
+
+/* ── Difficulty badge on card ── */
+.flash-diff-badge {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 10px;
+}
+.flash-diff-badge.diff-easy { background: #dcfce7; color: #16a34a; }
+.flash-diff-badge.diff-medium { background: #fef3c7; color: #d97706; }
+.flash-diff-badge.diff-hard { background: #fee2e2; color: #dc2626; }
+[data-theme="dark"] .flash-diff-badge.diff-easy { background: #14532d; color: #4ade80; }
+[data-theme="dark"] .flash-diff-badge.diff-medium { background: #451a03; color: #fbbf24; }
+[data-theme="dark"] .flash-diff-badge.diff-hard { background: #450a0a; color: #f87171; }
+
+/* ── Card bottom row (firm + hint) ── */
+.flash-card-bottom-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: auto; padding-top: 8px; gap: 8px;
+}
+
+/* ── Firm tag ── */
+.flash-card-firm {
+  font-size: 9px; font-weight: 600; color: var(--text-3);
+  background: var(--bg); border: 1px solid var(--border);
+  padding: 2px 8px; border-radius: 8px; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; max-width: 60%;
+}
+.flash-card-back .flash-card-firm {
+  background: rgba(124,58,237,0.08); border-color: rgba(124,58,237,0.2); color: #7c3aed;
+}
+[data-theme="dark"] .flash-card-firm { background: #1a1a1a; border-color: #333; }
+[data-theme="dark"] .flash-card-back .flash-card-firm { background: #1a1030; border-color: #3d2a6e; color: #a78bfa; }
+

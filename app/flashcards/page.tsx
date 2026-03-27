@@ -99,6 +99,7 @@ export default function FlashcardsPage() {
   const [activeTrack, setActiveTrack] = useState<string | null>(null);
   const [flipped, setFlipped] = useState<Record<number, boolean>>({});
   const [activeCategory, setActiveCategory] = useState('All');
+  const [activeDifficulty, setActiveDifficulty] = useState('All');
   const [shuffled, setShuffled] = useState(false);
   const [shuffleKey, setShuffleKey] = useState(0);
 
@@ -123,7 +124,8 @@ export default function FlashcardsPage() {
   }, [allCards]);
 
   const filtered = useMemo(() => {
-    const base = activeCategory === 'All' ? allCards : allCards.filter(c => c.category === activeCategory);
+    let base = activeCategory === 'All' ? allCards : allCards.filter(c => c.category === activeCategory);
+    if (activeDifficulty !== 'All') base = base.filter(c => c.difficulty === activeDifficulty);
     if (!shuffled) return base;
     const arr = [...base];
     for (let i = arr.length - 1; i > 0; i--) {
@@ -132,14 +134,14 @@ export default function FlashcardsPage() {
     }
     return arr;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allCards, activeCategory, shuffleKey, shuffled]);
+  }, [allCards, activeCategory, activeDifficulty, shuffleKey, shuffled]);
 
   const toggleFlip = useCallback((idx: number) => {
     setFlipped(prev => ({ ...prev, [idx]: !prev[idx] }));
   }, []);
 
-  const openTrack = (id: string) => { setActiveTrack(id); setActiveCategory('All'); setFlipped({}); setShuffled(false); };
-  const goBack = () => { setActiveTrack(null); setFlipped({}); };
+  const openTrack = (id: string) => { setActiveTrack(id); setActiveCategory('All'); setActiveDifficulty('All'); setFlipped({}); setShuffled(false); };
+  const goBack = () => { setActiveTrack(null); setFlipped({}); setActiveDifficulty('All'); };
 
   const flippedCount = Object.values(flipped).filter(Boolean).length;
   const trackInfo = TRACKS.find(t => t.id === activeTrack);
@@ -234,19 +236,39 @@ export default function FlashcardsPage() {
           </button>
         </div>
 
+        <div className="flash-diff-row">
+          {['All','Easy','Medium','Hard'].map(d => (
+            <button key={d} className={`flash-diff-pill${d !== 'All' ? ' diff-'+d.toLowerCase() : ''}${activeDifficulty === d ? ' active' : ''}`} onClick={() => { setActiveDifficulty(d); setFlipped({}); }} type="button">
+              {d === 'All' ? 'All Levels' : d}
+            </button>
+          ))}
+        </div>
+
         <div className="flash-grid">
           {filtered.map((card, i) => (
             <div key={`${shuffleKey}-${i}`} className="flash-card-wrapper" onClick={() => toggleFlip(i)}>
               <div className={`flash-card${flipped[i] ? ' flipped' : ''}`}>
                 <div className="flash-card-front">
-                  <div className="flash-card-cat">{card.category}</div>
+                  <div className="flash-card-top-row">
+                    <div className="flash-card-cat">{card.category}</div>
+                    {card.difficulty && <span className={`flash-diff-badge diff-${card.difficulty.toLowerCase()}`}>{card.difficulty}</span>}
+                  </div>
                   <div className="flash-card-q">{card.q}</div>
-                  <div className="flash-card-hint">Click to reveal →</div>
+                  <div className="flash-card-bottom-row">
+                    {card.firm && <span className="flash-card-firm">Reported in {card.firm} interview</span>}
+                    <span className="flash-card-hint">Click to reveal →</span>
+                  </div>
                 </div>
                 <div className="flash-card-back">
-                  <div className="flash-card-cat">Answer</div>
+                  <div className="flash-card-top-row">
+                    <div className="flash-card-cat">Answer</div>
+                    {card.difficulty && <span className={`flash-diff-badge diff-${card.difficulty.toLowerCase()}`}>{card.difficulty}</span>}
+                  </div>
                   <div className="flash-card-a">{card.a}</div>
-                  <div className="flash-card-hint">Click to flip back</div>
+                  <div className="flash-card-bottom-row">
+                    {card.firm && <span className="flash-card-firm">{card.firm}</span>}
+                    <span className="flash-card-hint">Click to flip back</span>
+                  </div>
                 </div>
               </div>
             </div>
