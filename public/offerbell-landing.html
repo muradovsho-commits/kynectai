@@ -336,7 +336,6 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 .career-icon-ambassador{background:linear-gradient(135deg,#ede9fe,#ddd6fe);}
 .career-icon-analyst{background:linear-gradient(135deg,#dbeafe,#bfdbfe);}
 .career-icon-engineer{background:linear-gradient(135deg,#dcfce7,#bbf7d0);}
-.career-icon-mentor{background:linear-gradient(135deg,#fef3c7,#fde68a);}
 .career-title{font-family:'Instrument Serif',serif;font-size:24px;letter-spacing:-0.5px;margin-bottom:10px;}
 .career-title em{font-style:italic;}
 .career-type{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--g400);margin-bottom:12px;}
@@ -345,23 +344,6 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 .career-tag{font-size:10px;font-weight:600;padding:4px 10px;border-radius:100px;background:var(--g100);color:var(--g600);}
 .career-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--black);text-decoration:none;transition:gap 0.2s;}
 .career-link:hover{gap:10px;}
-
-/* ── GIVE BACK ── */
-.giveback-section{background:var(--g50);padding:96px 48px;border-top:1px solid var(--g200);border-bottom:1px solid var(--g200);}
-.giveback-header{text-align:center;margin-bottom:56px;}
-.giveback-header .section-title{margin:0 auto;}
-.giveback-header .section-sub{margin:14px auto 0;}
-.mentor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1100px;margin:0 auto 48px;}
-.mentor-card{background:var(--white);border:1px solid var(--g200);border-radius:16px;padding:28px 24px;transition:transform 0.25s,box-shadow 0.25s;}
-.mentor-card:hover{transform:translateY(-3px);box-shadow:0 10px 36px rgba(0,0,0,0.08);}
-.mentor-icon{width:24px;height:24px;margin-bottom:14px;color:var(--black);opacity:0.8;}
-.mentor-track{font-family:'Instrument Serif',serif;font-size:20px;letter-spacing:-0.3px;margin-bottom:8px;}
-.mentor-track em{font-style:italic;}
-.mentor-desc{font-size:12px;color:var(--g600);line-height:1.65;}
-.giveback-cta{text-align:center;}
-.giveback-cta-btn{display:inline-flex;align-items:center;gap:8px;background:var(--black);color:var(--white);padding:14px 32px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;transition:opacity 0.15s,transform 0.15s;}
-.giveback-cta-btn:hover{opacity:0.85;transform:translateY(-2px);}
-.giveback-note{font-size:11px;color:var(--g400);margin-top:12px;}
 
 /* ── RESPONSIVE ── */
 @media(max-width:960px){
@@ -381,8 +363,6 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
   .faq-grid{grid-template-columns:1fr;gap:32px;}
   .careers-section{padding:64px 20px;}
   .careers-grid{grid-template-columns:1fr;}
-  .giveback-section{padding:64px 20px;}
-  .mentor-grid{grid-template-columns:1fr 1fr;}
   .cta-band{margin:0 20px 32px;padding:48px 36px;flex-direction:column;align-items:flex-start;}
   .cta-band-right{align-items:flex-start;}
   footer{padding:48px 20px 28px;}
@@ -406,7 +386,6 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
     <a href="#proof">Testimonials</a>
     <a href="#pricing">Pricing</a>
     <a href="#careers">Careers</a>
-    <a href="#giveback">Give Back Initiative</a>
     <a href="#faq">FAQ</a>
   </div>
   <div class="nav-actions">
@@ -421,7 +400,7 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
     <div>
       <div class="hero-badge">AI-powered · Your all-in-one recruiting hub</div>
       <h1>Stop Guessing.<br><em>Start Landing</em> Interviews.</h1>
-      <p class="hero-sub">Career roadmaps, AI-personalized outreach, a live job board, elite interview prep, and a mentorship initiative — OfferBell gives you everything you need to land your dream role in IB, PE, consulting, accounting, and beyond.</p>
+      <p class="hero-sub">Career roadmaps, AI-personalized outreach, a live job board, and elite interview prep — OfferBell gives you everything you need to land your dream role in IB, PE, consulting, accounting, and beyond.</p>
       <div class="hero-typing-row">Targeting: <strong id="hero-type"></strong><span class="demo-cursor"></span></div>
       <div class="hero-btns">
         <a href="/signup" class="btn-primary">Start for Free</a>
@@ -483,7 +462,7 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
   <div class="problem-item">
     <div class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
     <div class="problem-title">No Clue Where to Start</div>
-    <div class="problem-desc">Most students don't even know what careers exist in business — let alone how to recruit for them. No roadmap, no mentors, just guesswork</div>
+    <div class="problem-desc">Most students don't even know what careers exist in business — let alone how to recruit for them. No roadmap, no guidance, just guesswork</div>
   </div>
   <div class="problem-item">
     <div class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
@@ -632,18 +611,6 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
         <div style="display:flex;align-items:center;gap:10px;"><span style="color:var(--green);font-size:16px;">✓</span> Technical Models & Frameworks</div>
         <div style="display:flex;align-items:center;gap:10px;"><span style="color:var(--green);font-size:16px;">✓</span> LBO & Case Study Walkthroughs</div>
         <div style="display:flex;align-items:center;gap:10px;"><span style="color:var(--green);font-size:16px;">✓</span> Behavioral Story Mapping</div>
-      </div>
-    </div>
-
-    <div class="f-card f-card-9 reveal reveal-d2" id="fc9" style="display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#bbf7d0;">
-      <div>
-        <div class="f-num" style="color:#15803d">09 — Mentorship Program <span style="background:#a16207;color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;margin-left:8px;letter-spacing:0.5px">COMING SOON</span></div>
-        <div class="f-title">1-on-1 guidance<br>from <em>pros.</em></div>
-        <div class="f-desc" style="color:#166534">Our Give Back Initiative will pair students with mentors who recently landed top offers in investment banking, private equity, consulting, and more. Completely free, regardless of your plan. We're building out the program now — join the waitlist to be notified when mentorship opens.</div>
-      </div>
-      <div style="margin-top:24px;">
-        <a href="mailto:kynectofficial@gmail.com?subject=Mentorship%20Waitlist&body=Hi%20OfferBell%20team%2C%0A%0AI'd%20like%20to%20be%20notified%20when%20the%20mentorship%20program%20opens.%0A%0AThank%20you!" style="display:inline-block;background:var(--black);color:var(--white);padding:10px 20px;font-weight:700;font-size:13px;border-radius:8px;text-decoration:none;">Join Waitlist →</a>
-        <div style="font-size:11px;color:#15803d;margin-top:8px;">We'll notify you when applications open</div>
       </div>
     </div>
 
@@ -830,61 +797,6 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
       <div class="career-tags"><span class="career-tag">React / Next.js</span><span class="career-tag">AI / ML</span><span class="career-tag">Full-Stack</span></div>
       <a href="mailto:kynectofficial@gmail.com?subject=Software%20Engineer%20Application" class="career-link">Learn More →</a>
     </div>
-    <div class="career-card reveal">
-      <div class="career-icon career-icon-mentor">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:24px;height:24px;color:#f59e0b;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      </div>
-      <div class="career-type">Volunteer · Flexible</div>
-      <div class="career-title">Industry <em>Mentor</em></div>
-      <div class="career-desc">Join our Give Back Initiative. Share your recruiting experience and help the next generation of students land top roles across all industries.<br><br><strong>To apply:</strong> Email us your name and resume. We will respond within 12 hours.</div>
-      <div class="career-tags"><span class="career-tag">Finance</span><span class="career-tag">Network</span><span class="career-tag">Give Back</span></div>
-      <a href="#giveback" class="career-link">View Program →</a>
-    </div>
-  </div>
-</section>
-
-<!-- GIVE BACK INITIATIVE -->
-<section class="giveback-section" id="giveback">
-  <div class="giveback-header reveal">
-    <div class="section-label">Give Back Initiative</div>
-    <h2 class="section-title">Mentor the <em>next generation</em></h2>
-    <p class="section-sub">Our mentorship program will connect students who successfully landed top offers with those currently breaking in. Share your knowledge, shape careers, and give back to the community that helped you. We're expanding the program now — sign up to be notified when it launches.</p>
-  </div>
-  <div class="mentor-grid">
-    <div class="mentor-card reveal">
-      <svg class="mentor-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-      <div class="mentor-track"><em>Growth</em> Equity</div>
-      <div class="mentor-desc">Help students navigate the path to top growth equity firms. Share your interview prep approach and insights from landing your own internship or full-time offer.</div>
-    </div>
-    <div class="mentor-card reveal reveal-d1">
-      <svg class="mentor-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v18Z"/><path d="M14 2v20"/><path d="M14 6h8"/><path d="M14 10h8"/><path d="M14 14h8"/><path d="M14 18h8"/></svg>
-      <div class="mentor-track"><em>Private</em> Equity</div>
-      <div class="mentor-desc">Share your experience mastering LBO fundamentals and due diligence cases to help mentees navigate the competitive PE recruiting landscape.</div>
-    </div>
-    <div class="mentor-card reveal reveal-d2">
-      <svg class="mentor-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-      <div class="mentor-track"><em>Consulting</em></div>
-      <div class="mentor-desc">Help students master case interviews based on the preparation that earned your offer, from structuring frameworks to communicating insights effectively.</div>
-    </div>
-    <div class="mentor-card reveal">
-      <svg class="mentor-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-      <div class="mentor-track"><em>Investment</em> Banking</div>
-      <div class="mentor-desc">Advise on technicals and behaviorals to help candidates stand out during early IB recruiting timelines, drawing directly from your successful process.</div>
-    </div>
-    <div class="mentor-card reveal reveal-d1">
-      <svg class="mentor-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-      <div class="mentor-track"><em>Asset</em> Management</div>
-      <div class="mentor-desc">Coach students on crafting solid investment pitches and developing the portfolio mindset required to break into leading asset management programs.</div>
-    </div>
-    <div class="mentor-card reveal reveal-d2">
-      <svg class="mentor-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15L11 17L15 13"/></svg>
-      <div class="mentor-track"><em>Accounting</em> & Audit</div>
-      <div class="mentor-desc">Guide aspiring accountants through Big 4 recruiting, technical prep, and the CPA pathway based on your firsthand experience in the profession.</div>
-    </div>
-  </div>
-  <div class="giveback-cta reveal">
-    <a href="mailto:kynectofficial@gmail.com?subject=Mentorship%20Interest%20—%20Notify%20Me" class="giveback-cta-btn">Get Notified When We Launch →</a>
-    <p class="giveback-note">Flexible time commitment · Fully remote · Open to incoming interns & recent grads · Launching soon</p>
   </div>
 </section>
 
@@ -939,7 +851,7 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
   <div class="footer-logo">OfferBell<em>.</em></div>
   <div class="footer-grid" style="grid-template-columns:repeat(4,1fr)">
     <div class="footer-col"><div class="footer-col-title">Product</div><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#">Changelog</a></div>
-    <div class="footer-col"><div class="footer-col-title">Opportunities</div><a href="#careers">Careers</a><a href="#giveback">Give Back Initiative</a><a href="mailto:kynectofficial@gmail.com">Open Roles</a></div>
+    <div class="footer-col"><div class="footer-col-title">Opportunities</div><a href="#careers">Careers</a><a href="mailto:kynectofficial@gmail.com">Open Roles</a></div>
     <div class="footer-col"><div class="footer-col-title">Company</div><a href="#">About</a><a href="#">Contact</a><a href="#">Privacy Policy</a><a href="#">Terms of Use</a></div>
     <div class="footer-col"><div class="footer-col-title">Social</div><a href="#">LinkedIn</a><a href="#">Instagram</a><a href="#">Twitter / X</a></div>
   </div>
