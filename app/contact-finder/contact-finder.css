@@ -432,8 +432,8 @@ body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text
   /* Sidebar becomes a slide-over */
   .sidebar { width: 272px !important; left: -280px; transition: left 0.25s ease, background 0.3s; z-index: 100; box-shadow: none; position: fixed !important; }
   .sidebar.mobile-open { left: 0; box-shadow: 8px 0 30px rgba(0,0,0,0.15); }
-  .mobile-hamburger { display: flex; }
-  .mobile-close { display: block; }
+  .mobile-hamburger { display: flex !important; }
+  .mobile-close { display: block !important; }
   .mobile-overlay { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 90; backdrop-filter: blur(2px); }
   .sidebar-top-row { display: flex; align-items: center; justify-content: space-between; padding: 0; }
   .sidebar-top-row .sidebar-logo { border-bottom: none; flex: 1; }

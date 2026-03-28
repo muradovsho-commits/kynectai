@@ -54,8 +54,9 @@ export default function Sidebar({ activePage }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile hamburger button */}
-      <button className="mobile-hamburger" onClick={() => setMobileOpen(true)} type="button" aria-label="Open menu">
+      {/* Mobile hamburger button — hidden on desktop via both inline + CSS */}
+      <button className="mobile-hamburger" onClick={() => setMobileOpen(true)} type="button" aria-label="Open menu"
+        style={{ display: 'none' }}>
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
 
@@ -65,7 +66,8 @@ export default function Sidebar({ activePage }: SidebarProps) {
       <aside className={`sidebar${mobileOpen ? ' mobile-open' : ''}`}>
         <div className="sidebar-top-row">
           <div className="sidebar-logo"><Link href="/my-account" style={{color:'inherit',textDecoration:'none'}}>OfferBell<em>.</em></Link></div>
-          <button className="mobile-close" onClick={() => setMobileOpen(false)} type="button" aria-label="Close menu">
+          <button className="mobile-close" onClick={() => setMobileOpen(false)} type="button" aria-label="Close menu"
+            style={{ display: 'none' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
