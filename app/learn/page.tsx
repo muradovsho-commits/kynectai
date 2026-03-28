@@ -56,7 +56,7 @@ const GUIDES = [
     id: 'st',
     title: 'Sales & Trading',
     desc: 'Market fundamentals, mental math, probability, trading games, and how to deliver a compelling trade idea under pressure.',
-    modules: 4,
+    modules: 7,
     href: '/st-interview-prep',
     iconClass: 'icon-st',
     icon: <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
