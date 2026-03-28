@@ -413,3 +413,105 @@ body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text
   font-size: 16px;
   color: var(--text-2);
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — all mobile styles below this line
+   Only affects screens < 768px. Desktop layout is untouched.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Mobile hamburger button — hidden on desktop */
+.mobile-hamburger { display: none; position: fixed; top: 14px; left: 14px; z-index: 50; width: 40px; height: 40px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.mobile-close { display: none; background: none; border: none; color: var(--text-3); cursor: pointer; padding: 4px; }
+.mobile-overlay { display: none; }
+.sidebar-top-row { display: contents; }
+
+@media (max-width: 768px) {
+  /* Sidebar becomes a slide-over */
+  :root, [data-theme="light"], [data-theme="dark"] { --sidebar-w: 0px; }
+  .sidebar { width: 272px; left: -280px; transition: left 0.25s ease, background 0.3s; z-index: 100; box-shadow: none; }
+  .sidebar.mobile-open { left: 0; box-shadow: 8px 0 30px rgba(0,0,0,0.15); }
+  .mobile-hamburger { display: flex; }
+  .mobile-close { display: block; }
+  .mobile-overlay { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 90; backdrop-filter: blur(2px); }
+  .sidebar-top-row { display: flex; align-items: center; justify-content: space-between; padding: 0; }
+  .sidebar-top-row .sidebar-logo { border-bottom: none; flex: 1; }
+
+  /* Main content takes full width */
+  .main, .flash-main, [style*="margin-left: var(--sidebar-w)"], [style*="margin-left:var(--sidebar-w)"] { margin-left: 0 !important; }
+
+  /* Dashboard */
+  .dash-main { padding: 60px 16px 40px !important; }
+  .dash-greeting { font-size: 26px !important; }
+  .dash-sub { font-size: 12px !important; }
+  .dash-progress-stats { grid-template-columns: 1fr 1fr !important; }
+  .dash-today-grid { grid-template-columns: 1fr !important; }
+
+  /* General content padding */
+  .main { padding: 60px 16px 40px !important; }
+
+  /* Flash main */
+  .flash-main { margin-left: 0 !important; }
+  .flash-landing { padding: 60px 16px 40px !important; }
+  .flash-drill { padding: 60px 16px 40px !important; max-width: 100% !important; }
+  .flash-landing-title { font-size: 28px !important; }
+  .flash-track-grid { grid-template-columns: 1fr !important; }
+  .flash-drill-head { flex-direction: column !important; gap: 12px !important; }
+  .flash-mode-toggle { width: 100% !important; }
+  .flash-mode-btn { flex: 1 !important; justify-content: center !important; font-size: 11px !important; padding: 6px 8px !important; }
+  .flash-filter-bar { flex-wrap: wrap !important; }
+  .flash-card-single { padding: 18px 16px 14px !important; }
+  .flash-question { font-size: 15px !important; }
+  .flash-grid { grid-template-columns: 1fr !important; }
+  .flash-nav-row { gap: 8px !important; }
+  .flash-keyboard-hint { display: none !important; }
+  .perf-panel { display: none !important; }
+
+  /* Outreach tracker */
+  .tracker-stats { grid-template-columns: 1fr 1fr !important; }
+
+  /* Hit rate intel */
+  .hit-stats-grid { grid-template-columns: 1fr 1fr !important; }
+  .hit-angles-grid { grid-template-columns: 1fr !important; }
+
+  /* Tables — horizontal scroll */
+  table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+
+  /* Learn hub */
+  .learn-grid { grid-template-columns: 1fr !important; }
+
+  /* Pro modal */
+  .pro-modal { padding: 28px 20px !important; max-width: 360px !important; }
+
+  /* General grid overrides for inline styles */
+  [style*="gridTemplateColumns: repeat(3"] { grid-template-columns: 1fr !important; }
+  [style*="gridTemplateColumns: repeat(4"] { grid-template-columns: 1fr 1fr !important; }
+  [style*="gridTemplateColumns: 1.1fr 0.9fr"] { grid-template-columns: 1fr !important; }
+  [style*="grid-template-columns:repeat(3"] { grid-template-columns: 1fr !important; }
+  [style*="grid-template-columns:repeat(4"] { grid-template-columns: 1fr 1fr !important; }
+  [style*="grid-template-columns:1fr 1fr 1fr 1fr"] { grid-template-columns: 1fr 1fr !important; }
+
+  /* Coach page */
+  .coach-container { padding: 60px 12px 20px !important; }
+
+  /* Interview prep pages */
+  .prep-container { padding: 60px 16px 40px !important; }
+
+  /* Recruiting manual */
+  .manual-container { padding: 60px 16px 40px !important; }
+
+  /* Font sizes */
+  [style*="fontSize:28"] { font-size: 22px !important; }
+  [style*="fontSize: 28"] { font-size: 22px !important; }
+  [style*="fontSize:36"] { font-size: 26px !important; }
+  [style*="fontSize: 36"] { font-size: 26px !important; }
+
+  /* Checkout page */
+  [style*="gridTemplateColumns: '1.1fr"] { grid-template-columns: 1fr !important; }
+}
+
+/* Small phones */
+@media (max-width: 400px) {
+  .flash-landing-stats { flex-direction: column !important; gap: 12px !important; }
+  .flash-stat-num { font-size: 20px !important; }
+  .dash-progress-stats { grid-template-columns: 1fr !important; }
+}
