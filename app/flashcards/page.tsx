@@ -254,7 +254,7 @@ export default function FlashcardsPage() {
         <Sidebar activePage="flashcards" />
         <main className="flash-main">
           <div className="flash-landing">
-            <div className="flash-landing-badge">Technical Practice</div>
+            <div className="flash-landing-badge">Interview Flashcards</div>
             <div className="flash-landing-title">Interview <em>Flashcards</em></div>
             <div className="flash-landing-sub">Master every technical concept with curated interview questions reported in actual interviews across top firms. Filter by topic and difficulty, then drill one card at a time.</div>
             <div className="flash-landing-stats">

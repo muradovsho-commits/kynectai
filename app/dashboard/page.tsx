@@ -184,10 +184,10 @@ export default function DashboardPage() {
               <div className="dash-action-desc">Choose a contact and send one email.</div>
               <div className="dash-action-link">Go to Outreach / Pipeline →</div>
             </Link>
-            <Link className="dash-action-card" href="/coach">
-              <div className="dash-action-title">Practice for 10 minutes</div>
-              <div className="dash-action-desc">Run a quick session with AI Coach.</div>
-              <div className="dash-action-link">Open AI Coach →</div>
+            <Link className="dash-action-card" href="/flashcards">
+              <div className="dash-action-title">Drill interview questions</div>
+              <div className="dash-action-desc">Practice with 1,500+ technical flashcards across all tracks.</div>
+              <div className="dash-action-link">Open Interview Flashcards →</div>
             </Link>
           </div>
         </div>

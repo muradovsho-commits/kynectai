@@ -71,7 +71,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
         <div className="nav-group">
           <span className="nav-group-label">Learn</span>
           <Link className={cls('learn')} href="/learn"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Learning Hub</Link>
-          <Link className={cls('flashcards')} href="/flashcards"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>Technical Practice</Link>
+          <Link className={cls('flashcards')} href="/flashcards"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>Interview Flashcards</Link>
         </div>
         <div className="nav-group">
           <span className="nav-group-label">Account</span>
