@@ -10,13 +10,18 @@ export default function CheckoutSuccessPage() {
 
   useEffect(() => {
     const now = Date.now();
+    // Get plan type from URL
+    const params = new URLSearchParams(window.location.search);
+    const planType = params.get('plan') || localStorage.getItem('offerbell_billing_cycle') || 'monthly';
+    
     // Save pro plan to localStorage
     try {
       const raw = localStorage.getItem("offerbell_onboarding_profile");
       const existing = raw ? JSON.parse(raw) : {};
-      localStorage.setItem("offerbell_onboarding_profile", JSON.stringify({ ...existing, plan: "pro", planActivatedAt: now }));
+      localStorage.setItem("offerbell_onboarding_profile", JSON.stringify({ ...existing, plan: "pro", planActivatedAt: now, billingCycle: planType }));
       localStorage.setItem("offerbell_plan", "pro");
       localStorage.setItem("offerbell_plan_activated_at", String(now));
+      localStorage.setItem("offerbell_billing_cycle", planType);
     } catch {}
 
     // Persist to database

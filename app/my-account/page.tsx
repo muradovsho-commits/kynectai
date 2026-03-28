@@ -38,6 +38,7 @@ export default function MyAccountPage() {
   const [userPlan, setUserPlan] = useState('free');
   const [planActivatedAt, setPlanActivatedAt] = useState<number | null>(null);
   const [promoCode, setPromoCode] = useState<string | null>(null);
+  const [billingCycle, setBillingCycle] = useState<string>('monthly');
 
   // Tutorial check
   useEffect(() => {
@@ -62,6 +63,7 @@ export default function MyAccountPage() {
     try { const plan = localStorage.getItem('offerbell_plan') || 'free'; const prof = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}'); setUserPlan(prof.plan || plan); } catch {}
     try { const at = localStorage.getItem('offerbell_plan_activated_at'); if (at) setPlanActivatedAt(parseInt(at, 10)); } catch {}
     try { const pc = localStorage.getItem('offerbell_promo_code'); if (pc) setPromoCode(pc); } catch {}
+    try { const bc = localStorage.getItem('offerbell_billing_cycle'); if (bc) setBillingCycle(bc); } catch {}
 
     // Load profile from onboarding localStorage
     try {
@@ -146,7 +148,7 @@ export default function MyAccountPage() {
           </div>
           <div style={{display:'flex',flexDirection:'column',gap:8,alignItems:'flex-end'}}>
             <button onClick={saveChanges} type="button" style={{background:'var(--text)',color:'var(--surface)',padding:'9px 20px',borderRadius:10,fontSize:13,fontWeight:700,border:'none',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Save Changes</button>
-            <button type="button" onClick={() => { localStorage.removeItem('offerbell_user_id'); localStorage.removeItem('userId'); localStorage.removeItem('offerbell_plan'); localStorage.removeItem('offerbell_flash_perf'); document.cookie = 'offerbell_user_id=; path=/; max-age=0'; router.push('/'); }} style={{background:'var(--surface)',color:'var(--text-2)',padding:'8px 20px',borderRadius:10,fontSize:13,fontWeight:600,border:'1.5px solid var(--border-2)',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Sign Out</button>
+            <button type="button" onClick={() => { localStorage.removeItem('offerbell_user_id'); localStorage.removeItem('userId'); localStorage.removeItem('offerbell_plan'); localStorage.removeItem('offerbell_flash_perf'); localStorage.removeItem('offerbell_billing_cycle'); localStorage.removeItem('offerbell_plan_activated_at'); document.cookie = 'offerbell_user_id=; path=/; max-age=0'; router.push('/'); }} style={{background:'var(--surface)',color:'var(--text-2)',padding:'8px 20px',borderRadius:10,fontSize:13,fontWeight:600,border:'1.5px solid var(--border-2)',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Sign Out</button>
           </div>
         </div>
 
@@ -252,13 +254,13 @@ export default function MyAccountPage() {
                         }
                         // Generic promo — show code + standard renewal
                         if (planActivatedAt) {
-                          return <>Activated via code <strong>{promoCode}</strong> · Renews {fmtDate(planActivatedAt + 30 * 24 * 60 * 60 * 1000)}</>;
+                          return <>Activated via code <strong>{promoCode}</strong> · Renews {fmtDate(planActivatedAt + (billingCycle === 'annual' ? 365 : 30) * 24 * 60 * 60 * 1000)}</>;
                         }
                         return <>Activated via code <strong>{promoCode}</strong></>;
                       }
                       // Standard paid user
                       if (planActivatedAt) {
-                        return <>Renews {fmtDate(planActivatedAt + 30 * 24 * 60 * 60 * 1000)}</>;
+                        return <>Renews {fmtDate(planActivatedAt + (billingCycle === 'annual' ? 365 : 30) * 24 * 60 * 60 * 1000)}</>;
                       }
                       return null;
                     })()}
@@ -270,12 +272,14 @@ export default function MyAccountPage() {
                   <div style={{fontFamily:"'Instrument Serif',serif",fontSize:24,fontStyle:'italic',color:'var(--text)',letterSpacing:'-.3px'}}>
                     {promoCode && (promoCode.toLowerCase().includes('lifetime') || promoCode.toLowerCase().includes('forever') || promoCode.toLowerCase().includes('free'))
                       ? <>$0 <span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/mo</span></>
-                      : <>$20 <span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/mo</span></>
+                      : billingCycle === 'annual'
+                        ? <>$199 <span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/yr</span></>
+                        : <>$20 <span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/mo</span></>
                     }
                   </div>
                   <div style={{fontSize:11,color:'#16a34a',marginTop:2,fontWeight:600}}>Active</div>
                 </div>
-                <button type="button" onClick={async () => { if (confirm('Are you sure you want to downgrade to the Free plan? You will lose access to Pro features.')) { try { const raw = localStorage.getItem('offerbell_onboarding_profile'); const existing = raw ? JSON.parse(raw) : {}; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify({ ...existing, plan: 'free', planActivatedAt: undefined, promoCode: undefined, promoApplied: false })); localStorage.setItem('offerbell_plan', 'free'); localStorage.removeItem('offerbell_plan_activated_at'); localStorage.removeItem('offerbell_promo_code'); const userId = localStorage.getItem('offerbell_user_id'); if (userId && downgradePlanMutation) { await downgradePlanMutation({ userId }).catch(() => {}); } } catch {} window.location.reload(); }}} style={{background:'var(--surface)',color:'var(--text-2)',padding:'9px 20px',borderRadius:10,fontSize:13,fontWeight:600,border:'1.5px solid var(--border-2)',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Downgrade</button>
+                <button type="button" onClick={async () => { if (confirm('Are you sure you want to downgrade to the Free plan? You will lose access to Pro features.')) { try { const raw = localStorage.getItem('offerbell_onboarding_profile'); const existing = raw ? JSON.parse(raw) : {}; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify({ ...existing, plan: 'free', planActivatedAt: undefined, promoCode: undefined, promoApplied: false, billingCycle: undefined })); localStorage.setItem('offerbell_plan', 'free'); localStorage.removeItem('offerbell_plan_activated_at'); localStorage.removeItem('offerbell_promo_code'); localStorage.removeItem('offerbell_billing_cycle'); const userId = localStorage.getItem('offerbell_user_id'); if (userId && downgradePlanMutation) { await downgradePlanMutation({ userId }).catch(() => {}); } } catch {} window.location.reload(); }}} style={{background:'var(--surface)',color:'var(--text-2)',padding:'9px 20px',borderRadius:10,fontSize:13,fontWeight:600,border:'1.5px solid var(--border-2)',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Downgrade</button>
               </div>
             </div>
           ) : (
@@ -294,7 +298,7 @@ export default function MyAccountPage() {
                   <div style={{fontFamily:"'Instrument Serif',serif",fontSize:24,fontStyle:'italic',color:'var(--text)',letterSpacing:'-.3px'}}>$0 <span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/mo</span></div>
                   <div style={{fontSize:11,color:'var(--text-3)',marginTop:2}}>No card required</div>
                 </div>
-                <button type="button" onClick={() => window.location.href='/checkout'} style={{background:'#f59e0b',color:'#fff',padding:'9px 20px',borderRadius:10,fontSize:13,fontWeight:700,border:'none',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Upgrade to Pro — $20/mo</button>
+                <button type="button" onClick={() => window.location.href='/checkout'} style={{background:'#f59e0b',color:'#fff',padding:'9px 20px',borderRadius:10,fontSize:13,fontWeight:700,border:'none',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Upgrade to Pro</button>
               </div>
             </div>
           )}
