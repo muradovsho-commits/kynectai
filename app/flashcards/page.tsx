@@ -338,14 +338,12 @@ export default function FlashcardsPage() {
                       {card.difficulty && <span className={`flash-tag flash-tag-diff-${card.difficulty.toLowerCase()}`}>{card.difficulty}</span>}
                     </div>
                     <div className="flash-question">{card.q}</div>
-                    {card.firm && (
-                      <div className="flash-firm-row">
-                        <span className="flash-firm-tag">
-                          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-                          Reported in an interview
-                        </span>
-                      </div>
-                    )}
+                    <div className="flash-firm-row">
+                      <span className="flash-firm-tag">
+                        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                        Reported in an interview
+                      </span>
+                    </div>
 
                     {/* ── PRACTICE MODE ── */}
                     {mode === 'practice' && (
@@ -459,7 +457,7 @@ export default function FlashcardsPage() {
                           </div>
                           <div className="flash-grid-q">{c.q}</div>
                           <div className="flash-grid-bottom">
-                            {c.firm && <span className="flash-grid-firm">Reported in an interview</span>}
+                            <span className="flash-grid-firm">Reported in an interview</span>
                             <span className="flash-grid-hint">Click to reveal →</span>
                           </div>
                         </div>
