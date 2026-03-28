@@ -22,7 +22,6 @@ const ROLES = [
   "Investment Banking Analyst","Investment Banking Associate","Vice President (IB)","Director (IB)","Managing Director (IB)",
   "Private Equity Analyst","Private Equity Associate","Vice President (PE)","Principal (PE)","Partner (PE)","Managing Partner",
   "Analyst (HF)","Associate (HF)","Portfolio Manager","Senior Portfolio Manager","Research Analyst","Macro Analyst","Risk Analyst",
-  "Quantitative Analyst","Quantitative Researcher","Quantitative Trader","Quantitative Developer","Algorithmic Trader","Systematic Trader",
   "Venture Capital Analyst","Venture Capital Associate","Vice President (VC)","Principal (VC)","Partner (VC)","General Partner",
   "Sales Analyst","Sales Associate","Trader","Junior Trader","Senior Trader","Structurer","Derivatives Analyst",
   "Equity Research Analyst","Equity Research Associate","Senior Analyst (ER)","Director of Research",
@@ -36,7 +35,7 @@ const ROLES = [
 ];
 
 const VERTICALS = [
-  "Investment Banking","Private Equity","Hedge Fund","Quantitative Research / Quant Trading",
+  "Investment Banking","Private Equity","Hedge Fund",
   "Venture Capital","Growth Equity","Sales & Trading","Equity Research","Asset Management",
   "Consulting","Accounting / Audit / Tax","Corporate Finance / FP&A","Corporate Development","Real Estate","Credit / Debt",
   "Restructuring","Family Office","Endowment / Pension",

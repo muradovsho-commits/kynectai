@@ -59,7 +59,7 @@ export default function InterviewPrepPage() {
         <div style={{marginBottom:"28px"}}>
           <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Markets & Technicals</div>
           <div className="module-grid" style={{marginBottom:"16px"}}>{MODULES.filter(m => ['st_markets','st_technicals'].includes(m.id)).map(m => (<div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>{ICONS[m.id]}<div className="module-name">{m.title}</div></div>))}</div>
-          <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Quant & Behavioral</div>
+          <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Analytical & Behavioral</div>
           <div className="module-grid" style={{marginBottom:"16px"}}>{MODULES.filter(m => ['st_quant','st_behavioral'].includes(m.id)).map(m => (<div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>{ICONS[m.id]}<div className="module-name">{m.title}</div></div>))}</div>
         </div>
         {activeModule === '' ? (

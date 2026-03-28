@@ -10,7 +10,6 @@ const TRACKS = [
   'Investment Banking',
   'Consulting',
   'Private Equity',
-  'Quant Finance',
   'Asset & Wealth Mgmt',
   'Audit & Accounting',
 ];
@@ -61,14 +60,6 @@ const TRACK_FEATURES: Record<string, Feature[]> = {
     { icon: ICONS.layers, title: 'Case study prep', desc: 'Investment memos & presentations', prompt: 'Walk me through how to approach a PE case study / investment memo.' },
     { icon: ICONS.file, title: 'Resume & deal sheet', desc: 'Position for on-cycle recruiting', prompt: 'Review my PE resume and deal sheet for [megafund/MM/growth] targeting.' },
   ],
-  'Quant Finance': [
-    { icon: ICONS.mail, title: 'Cold email feedback', desc: 'Outreach to quant researchers & PMs', prompt: 'Review my cold email to a quant professional:\n\n[paste your email here]' },
-    { icon: ICONS.chat, title: 'Behavioral story prep', desc: 'Why quant? Technical background', prompt: 'Help me craft my "Why quant?" answer. My background is in [math/CS/physics].' },
-    { icon: ICONS.code, title: 'Brainteaser & math drill', desc: 'Probability, stats, mental math', prompt: 'Give me a quant drill. Probability, expected value, and brainteasers with explanations.' },
-    { icon: ICONS.users, title: 'Coffee chat prep', desc: 'Technical questions for quant pros', prompt: 'I have a coffee chat with a [quant researcher/PM] at [firm]. What questions show depth?' },
-    { icon: ICONS.clock, title: 'Offer & timeline', desc: 'HF, prop shops, market makers', prompt: 'I have a quant offer from [firm] and am interviewing at [others]. How should I handle this?' },
-    { icon: ICONS.file, title: 'Resume & projects', desc: 'Research, coding, quant skills', prompt: 'Review my quant resume. Help me showcase research and coding projects for [target firms].' },
-  ],
   'Asset & Wealth Mgmt': [
     { icon: ICONS.mail, title: 'Cold email feedback', desc: 'Outreach to PMs & wealth advisors', prompt: 'Review my cold email to an AM/WM professional:\n\n[paste your email here]' },
     { icon: ICONS.chat, title: 'Behavioral story prep', desc: 'Why AM? Client-focused narrative', prompt: 'Help me craft my "Why asset management?" answer for [firm].' },
@@ -91,7 +82,6 @@ const TRACK_SUBS: Record<string, string> = {
   'Investment Banking': 'Focusing on bulge bracket M&A preparation and technical modeling excellence.',
   'Consulting': 'Sharpening your case frameworks, behavioral stories, and firm-specific strategy.',
   'Private Equity': 'Building deal fluency, LBO mastery, and on-cycle readiness.',
-  'Quant Finance': 'Developing probability intuition, coding depth, and analytical precision.',
   'Asset & Wealth Mgmt': 'Crafting stock pitches, market views, and client-focused narratives.',
   'Audit & Accounting': 'Mastering technical accounting, audit standards, and Big 4 positioning.',
 };

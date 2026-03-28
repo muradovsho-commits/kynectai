@@ -25,7 +25,7 @@ const MODULES: { id: string; title: string; sub: string; sections: Section[] }[]
   { id: 'cons_structure', title: 'Framework Building', sub: 'Issue trees, building blocks, prioritization', sections: CONS_STRUCTURE_SECTIONS },
   { id: 'cons_case_flow', title: 'Case Fundamentals', sub: 'Case flow, clarifying questions, synthesis', sections: CONS_CASE_FLOW_SECTIONS },
   { id: 'cons_case_types', title: 'Core Case Types', sub: 'Profitability, market entry, M&A, growth, pricing', sections: CONS_CASE_TYPES_SECTIONS },
-  { id: 'cons_quant', title: 'Quant & Mental Math', sub: 'Breakeven, market sizing, exhibit reading', sections: CONS_QUANT_SECTIONS },
+  { id: 'cons_quant', title: 'Math & Mental Math', sub: 'Breakeven, market sizing, exhibit reading', sections: CONS_QUANT_SECTIONS },
   { id: 'cons_intuition', title: 'Business Intuition', sub: 'Industry patterns, trade-offs, commercial judgment', sections: CONS_INTUITION_SECTIONS },
   { id: 'cons_fit', title: 'PEI & Fit Interviews', sub: 'Tell me about yourself, STAR, story bank', sections: CONS_FIT_SECTIONS },
   { id: 'cons_advanced', title: 'Advanced Techniques', sub: 'Hypothesis trees, second-order thinking, brainstorming', sections: CONS_ADVANCED_SECTIONS },

@@ -35,15 +35,6 @@ const GUIDES = [
     icon: <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>,
   },
   {
-    id: 'quant',
-    title: 'Quant Research',
-    desc: 'Mathematics and algorithmic strategy. A deep dive into stochastic calculus, probability, and C++ for high-frequency trading environments.',
-    modules: 5,
-    href: '/quant-interview-prep',
-    iconClass: 'icon-quant',
-    icon: <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
-  },
-  {
     id: 'accounting',
     title: 'Accounting & Audit',
     desc: 'Three-statement mastery, GAAP vs IFRS, audit procedures, and the technical questions Big 4 firms ask in every round.',
@@ -173,7 +164,7 @@ export default function LearnPage() {
           </div>
           <div className="learn-quiz-content">
             <div className="learn-quiz-title">Career Roadmaps</div>
-            <div className="learn-quiz-desc">Not sure which path is right? Explore IB, PE, consulting, accounting, quant finance, and more. Learn what each role does, what they pay, and how to break in.</div>
+            <div className="learn-quiz-desc">Not sure which path is right? Explore IB, PE, consulting, accounting, asset management, and more. Learn what each role does, what they pay, and how to break in.</div>
           </div>
           <Link href="/recruiting-manual" className="learn-quiz-btn">Explore Paths <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></Link>
         </div>

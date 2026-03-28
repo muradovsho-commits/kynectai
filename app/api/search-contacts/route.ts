@@ -135,7 +135,6 @@ const VERTICAL_TO_TITLES: Record<string, string[]> = {
   "real estate": ["real estate analyst", "acquisitions analyst", "real estate associate"],
   "credit": ["credit analyst", "credit associate", "leveraged finance analyst"],
   "restructuring": ["restructuring analyst", "restructuring associate"],
-  "quantitative finance": ["quantitative analyst", "quant researcher", "quantitative developer"],
   "fintech": ["software engineer", "product manager", "data scientist"],
   "risk management": ["risk analyst", "risk manager", "market risk analyst"],
   "compliance": ["compliance analyst", "compliance officer", "regulatory analyst"],

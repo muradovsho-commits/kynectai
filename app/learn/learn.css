@@ -111,7 +111,6 @@
 .learn-card-icon.icon-ib   { background: #eff6ff; color: #2563eb; }
 .learn-card-icon.icon-pe   { background: #f0fdf4; color: #16a34a; }
 .learn-card-icon.icon-consulting { background: #faf5ff; color: #7c3aed; }
-.learn-card-icon.icon-quant { background: #f5f5f4; color: #57534e; }
 .learn-card-icon.icon-accounting { background: #fef3c7; color: #b45309; }
 .learn-card-icon.icon-am   { background: #ecfeff; color: #0891b2; }
 .learn-card-icon.icon-roadmaps { background: #fce4ec; color: #c62828; }
@@ -119,7 +118,6 @@
 [data-theme="dark"] .learn-card-icon.icon-ib   { background: #1e3a5f; color: #60a5fa; }
 [data-theme="dark"] .learn-card-icon.icon-pe   { background: #14332a; color: #4ade80; }
 [data-theme="dark"] .learn-card-icon.icon-consulting { background: #2e1065; color: #a78bfa; }
-[data-theme="dark"] .learn-card-icon.icon-quant { background: #292524; color: #a8a29e; }
 [data-theme="dark"] .learn-card-icon.icon-accounting { background: #451a03; color: #fbbf24; }
 [data-theme="dark"] .learn-card-icon.icon-am   { background: #164e63; color: #22d3ee; }
 [data-theme="dark"] .learn-card-icon.icon-roadmaps { background: #4a1520; color: #f87171; }

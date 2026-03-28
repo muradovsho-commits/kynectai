@@ -12,7 +12,7 @@ const questions = [
       { text: "Fast-paced, high pressure, long hours, deal-driven", career: "ib" },
       { text: "Deep analytical research with a focus on operational improvements", career: "pe" },
       { text: "Client-facing, framing ambiguous problems, frequent travel", career: "consulting" },
-      { text: "Highly independent, mathematics-focused, quiet environment", career: "quant" },
+      { text: "Highly independent, research-focused, analytical environment", career: "am" },
       { text: "Structured, rules-based, predictable hours", career: "accounting" },
       { text: "Market-focused, research-oriented, analyzing broad trends", career: "am" },
     ]
@@ -24,7 +24,7 @@ const questions = [
       { text: "Building complex financial models for mergers and acquisitions", career: "ib" },
       { text: "Evaluating companies to buy, improve, and sell for a profit", career: "pe" },
       { text: "Advising a CEO on how to enter a new market or cut costs", career: "consulting" },
-      { text: "Developing algorithms to predict short-term stock price movements", career: "quant" },
+      { text: "Analyzing market trends and building investment theses on public companies", career: "am" },
       { text: "Ensuring financial statements are accurate and comply with regulations", career: "accounting" },
       { text: "Analyzing macro trends to manage an investment portfolio", career: "am" },
     ]
@@ -36,7 +36,7 @@ const questions = [
       { text: "Financial modeling and endurance", career: "ib" },
       { text: "Deep financial analysis and strategic diligence", career: "pe" },
       { text: "Structuring ambiguous problems and communicating clearly", career: "consulting" },
-      { text: "Advanced mathematics, statistics, and programming", career: "quant" },
+      { text: "Deep analytical reasoning, financial modeling, and data interpretation", career: "am" },
       { text: "Attention to detail and understanding financial reporting rules", career: "accounting" },
       { text: "Investment research and thesis generation", career: "am" },
     ]
@@ -48,7 +48,7 @@ const questions = [
       { text: "Use it to pitch a story or justify a transaction", career: "ib" },
       { text: "Use it to find hidden value and assess downside risk", career: "pe" },
       { text: "Use it to uncover operational inefficiencies and opportunities", career: "consulting" },
-      { text: "Use it to build predictive models and backtest trading strategies", career: "quant" },
+      { text: "Use it to evaluate investment opportunities and build portfolio models", career: "am" },
       { text: "Ensure it is perfectly reconciled and historically accurate", career: "accounting" },
       { text: "Use it to forecast long-term earnings and value public companies", career: "am" },
     ]
@@ -60,7 +60,7 @@ const questions = [
       { text: "Advise on the biggest corporate transactions in the world", career: "ib" },
       { text: "Own & operate businesses to generate outsized returns", career: "pe" },
       { text: "Become a C-suite executive or start your own company", career: "consulting" },
-      { text: "Build automated trading systems that generate alpha consistently", career: "quant" },
+      { text: "Manage portfolios and generate long-term risk-adjusted returns", career: "am" },
       { text: "Become a CFO or Partner at a professional services firm", career: "accounting" },
       { text: "Manage a multi-billion dollar fund", career: "am" },
     ]
@@ -89,13 +89,6 @@ const CAREER_DATA: Record<string, { title: string; desc: string; href: string; i
     iconClass: 'icon-consulting',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
   },
-  quant: {
-    title: "Quant Research",
-    desc: "Quantitative Research is your ideal path! You have highly analytical skills, love programming and advanced mathematics, and want to build sophisticated models to conquer financial markets.",
-    href: "/quant-interview-prep",
-    iconClass: 'icon-quant',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-  },
   accounting: {
     title: "Accounting & Audit",
     desc: "Accounting & Audit suits your detailed and structured mindset! You excel at ensuring accuracy, understanding complex financial regulations, and providing a foundation of trust for business operations.",
@@ -119,7 +112,6 @@ export default function QuizPage() {
     ib: 0,
     pe: 0,
     consulting: 0,
-    quant: 0,
     accounting: 0,
     am: 0
   });
@@ -212,7 +204,7 @@ export default function QuizPage() {
                     </svg>
                   </Link>
                   <button className="quiz-secondary-btn" onClick={() => {
-                    setScores({ib: 0, pe: 0, consulting: 0, quant: 0, accounting: 0, am: 0});
+                    setScores({ib: 0, pe: 0, consulting: 0, accounting: 0, am: 0});
                     setCurrentQuestionIndex(0);
                     setShowResult(false);
                     setTopCareer(null);

@@ -7,7 +7,6 @@ import './flashcards.css';
 import { IB_FLASHCARDS, Flashcard } from './ib-flashcard-data';
 import { PE_FLASHCARDS } from './pe-flashcard-data';
 import { CONSULTING_FLASHCARDS } from './consulting-flashcard-data';
-import { QUANT_FLASHCARDS } from './quant-flashcard-data';
 import { ACCT_FLASHCARDS } from './acct-flashcard-data';
 import { AM_FLASHCARDS } from './am-flashcard-data';
 import { ST_FLASHCARDS } from './st-flashcard-data';
@@ -21,7 +20,6 @@ const TRACKS: Track[] = [
   {id:'ib',title:'Investment Banking',desc:'Accounting, DCF, M&A, LBO, and behavioral questions reported across bulge brackets, elite boutiques, and middle market banks.',cards:IB_FLASHCARDS.length,iconClass:'icon-ib',icon:<svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>},
   {id:'pe',title:'Private Equity',desc:'LBO mechanics, fund economics, deal process, and operational value creation from mega-funds to middle market sponsors.',cards:PE_FLASHCARDS.length,iconClass:'icon-pe',icon:<svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>},
   {id:'consulting',title:'Consulting',desc:'Case frameworks, market sizing, profitability, mental math, and MBB behavioral prep.',cards:CONSULTING_FLASHCARDS.length,iconClass:'icon-consulting',icon:<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>},
-  {id:'quant',title:'Quant Research',desc:'Probability, statistics, derivatives pricing, brainteasers, and coding from top quant trading firms.',cards:QUANT_FLASHCARDS.length,iconClass:'icon-quant',icon:<svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>},
   {id:'accounting',title:'Accounting & Audit',desc:'Journal entries, audit assertions, financial statements, and Big 4 behavioral prep.',cards:ACCT_FLASHCARDS.length,iconClass:'icon-accounting',icon:<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15L11 17L15 13"/></svg>},
   {id:'am',title:'Asset Management',desc:'Stock pitches, portfolio construction, macro, valuation, and buy-side behavioral.',cards:AM_FLASHCARDS.length,iconClass:'icon-am',icon:<svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>},
   {id:'st',title:'Sales & Trading',desc:'Market structure, fixed income, options Greeks, trade ideas, and macro positioning.',cards:ST_FLASHCARDS.length,iconClass:'icon-st',icon:<svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>},
@@ -30,7 +28,7 @@ const TRACKS: Track[] = [
   {id:'vc',title:'Venture Capital',desc:'Term sheets, SaaS metrics, cap tables, fund economics, and startup evaluation.',cards:VC_FLASHCARDS.length,iconClass:'icon-vc',icon:<svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>},
   {id:'rx',title:'Restructuring',desc:'Chapter 11, priority of claims, fulcrum security, DIP financing, and distressed valuation.',cards:RX_FLASHCARDS.length,iconClass:'icon-rx',icon:<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>},
 ];
-const CARD_MAP: Record<string, Flashcard[]> = {ib:IB_FLASHCARDS,pe:PE_FLASHCARDS,consulting:CONSULTING_FLASHCARDS,quant:QUANT_FLASHCARDS,accounting:ACCT_FLASHCARDS,am:AM_FLASHCARDS,st:ST_FLASHCARDS,er:ER_FLASHCARDS,re:RE_FLASHCARDS,vc:VC_FLASHCARDS,rx:RX_FLASHCARDS};
+const CARD_MAP: Record<string, Flashcard[]> = {ib:IB_FLASHCARDS,pe:PE_FLASHCARDS,consulting:CONSULTING_FLASHCARDS,accounting:ACCT_FLASHCARDS,am:AM_FLASHCARDS,st:ST_FLASHCARDS,er:ER_FLASHCARDS,re:RE_FLASHCARDS,vc:VC_FLASHCARDS,rx:RX_FLASHCARDS};
 
 const ARROW_R = <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>;
 const ARROW_L = <svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>;
@@ -46,8 +44,6 @@ const INSIGHTS: Record<string, { why: string; shows: string; top1: string }> = {
   Behavioral: { why: "Culture fit matters as much as technical skill. You'll spend 80+ hours/week with your team.", shows: "Are you self-aware? Can you handle pressure? Will you be someone people want on their deal team at 2 AM?", top1: "Top candidates give specific, structured stories that reveal character — not rehearsed corporate-speak." },
   Frameworks: { why: "Structured thinking is the core consulting skill. Frameworks give you a starting point for any problem.", shows: "Can you break down ambiguous problems into clear, actionable components without being told how?", top1: "The best candidates customize frameworks to the specific case rather than mechanically applying a template." },
   "Market Sizing": { why: "Market sizing tests your ability to structure problems and make reasonable assumptions under pressure.", shows: "Interviewers care about your process and logic, not whether you get the exact number.", top1: "Top candidates state assumptions explicitly, do clean mental math, and sanity-check their answer at the end." },
-  Probability: { why: "Probability and expected value are the foundation of quantitative thinking in trading and research.", shows: "Can you reason about uncertainty rigorously? This separates quant candidates from everyone else.", top1: "Elite candidates identify the key insight quickly, set up clean equations, and verify edge cases." },
-  Derivatives: { why: "Options pricing connects probability theory to real markets. It's the intellectual core of quant finance.", shows: "Do you understand the Greeks intuitively, not just their formulas? Can you explain why, not just what?", top1: "Top candidates discuss Greeks in terms of trading P&L, not textbook definitions. They think about hedging costs and real markets." },
   Audit: { why: "Audit develops professional judgment, skepticism, and deep accounting knowledge — the foundation of accounting careers.", shows: "Do you understand why we audit, not just how? Can you connect assertions to procedures?", top1: "The best candidates show professional skepticism while being practical about materiality and risk-based approaches." },
 };
 function getInsight(category: string) {
