@@ -27,7 +27,7 @@ function initials(f: string, l: string) { return ((f || '')[0] || '').toUpperCas
 function fmtDate(ts: number | null) { if (!ts) return '—'; return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
 function daysSince(ts: number | null) { if (!ts) return null; return Math.floor((Date.now() - ts) / 864e5); }
 
-type Contact = { id: string; fname: string; lname: string; firm: string; role: string; status: string; angle: string; notes: string; quality: string; createdAt: number; lastContact: number | null; };
+type Contact = { id: string; fname: string; lname: string; firm: string; role: string; status: string; angle: string; notes: string; quality: string; createdAt: number; lastContact: number | null; sentAt: number | null; lastFollowUpAt: number | null; };
 export default function OutreachTrackerPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [isDark, setIsDark] = useState(false);
@@ -105,7 +105,14 @@ export default function OutreachTrackerPage() {
   }
 
   function quickMove(id: string, status: string) {
-    const updated = contacts.map(c => c.id === id ? { ...c, status, lastContact: Date.now() } : c);
+    const now = Date.now();
+    const updated = contacts.map(c => {
+      if (c.id !== id) return c;
+      const patch: Partial<Contact> = { status, lastContact: now };
+      if (status === 'sent' && !c.sentAt) patch.sentAt = now;
+      if (['fu1','fu2','fu3'].includes(status)) patch.lastFollowUpAt = now;
+      return { ...c, ...patch };
+    });
     setContacts(updated); persist(updated);
     showToast('Updated to ' + STATUSES[status]?.label);
   }
@@ -115,8 +122,11 @@ export default function OutreachTrackerPage() {
     setDrawerNotes(c.notes || '');
     setDrawerQuality(c.quality || '');
     setDrawerStatus(c.status);
-    const showDate = ['spoken', 'stay'].includes(c.status);
-    if (showDate && c.lastContact) {
+    if (c.status === 'sent' && c.sentAt) {
+      setDrawerDate(new Date(c.sentAt).toISOString().split('T')[0]);
+    } else if (['fu1','fu2','fu3'].includes(c.status) && c.lastFollowUpAt) {
+      setDrawerDate(new Date(c.lastFollowUpAt).toISOString().split('T')[0]);
+    } else if (['spoken','stay'].includes(c.status) && c.lastContact) {
       setDrawerDate(new Date(c.lastContact).toISOString().split('T')[0]);
     } else { setDrawerDate(''); }
     setDrawerOpen(true);
@@ -127,12 +137,21 @@ export default function OutreachTrackerPage() {
     const updated = contacts.map(c => {
       if (c.id !== drawerContact.id) return c;
       let lastContact = c.lastContact;
-      if (drawerDate && ['spoken', 'stay'].includes(drawerStatus)) {
-        lastContact = new Date(drawerDate).getTime();
-      } else if (!['spoken', 'stay'].includes(drawerStatus)) {
-        lastContact = Date.now();
+      let sentAt = c.sentAt || null;
+      let lastFollowUpAt = c.lastFollowUpAt || null;
+      if (drawerDate) {
+        const dateTs = new Date(drawerDate).getTime();
+        if (drawerStatus === 'sent') { sentAt = dateTs; lastContact = dateTs; }
+        else if (['fu1','fu2','fu3'].includes(drawerStatus)) { lastFollowUpAt = dateTs; lastContact = dateTs; }
+        else if (['spoken','stay'].includes(drawerStatus)) { lastContact = dateTs; }
+      } else {
+        const now = Date.now();
+        if (drawerStatus === 'sent' && !sentAt) { sentAt = now; lastContact = now; }
+        else if (['fu1','fu2','fu3'].includes(drawerStatus)) { lastFollowUpAt = now; lastContact = now; }
+        else if (['spoken','stay'].includes(drawerStatus)) { lastContact = now; }
+        else if (drawerStatus !== 'drafted') { lastContact = now; }
       }
-      return { ...c, notes: drawerNotes, quality: drawerQuality, status: drawerStatus, lastContact };
+      return { ...c, notes: drawerNotes, quality: drawerQuality, status: drawerStatus, lastContact, sentAt, lastFollowUpAt };
     });
     setContacts(updated); persist(updated);
     setDrawerOpen(false); showToast('Saved');
@@ -149,10 +168,13 @@ export default function OutreachTrackerPage() {
   function saveAdd() {
     if (!aFname.trim()) return;
     const name = aFname.trim();
+    const now = Date.now();
     const c: Contact = {
-      id: Date.now().toString(), fname: aFname.trim(), lname: aLname.trim(),
+      id: now.toString(), fname: aFname.trim(), lname: aLname.trim(),
       firm: aFirm.trim(), role: aRole.trim(), status: aStatus, angle: aAngle,
-      notes: aNotes.trim(), quality: '', createdAt: Date.now(), lastContact: null,
+      notes: aNotes.trim(), quality: '', createdAt: now, lastContact: null,
+      sentAt: aStatus === 'sent' ? now : null,
+      lastFollowUpAt: ['fu1','fu2','fu3'].includes(aStatus) ? now : null,
     };
     const updated = [...contacts, c];
     setContacts(updated); persist(updated);
@@ -167,6 +189,12 @@ export default function OutreachTrackerPage() {
     if (q && !(c.fname + ' ' + c.lname + ' ' + c.firm).toLowerCase().includes(q)) return false;
     if (activeFilter === 'all') return true;
     if (activeFilter === 'followup') return ['fu1', 'fu2', 'fu3'].includes(c.status);
+    if (activeFilter === 'needsfu') {
+      if (c.status === 'sent') { const d = daysSince(c.sentAt || c.lastContact); return d !== null && d >= 3; }
+      if (['fu1','fu2','fu3'].includes(c.status)) { const d = daysSince(c.lastFollowUpAt || c.lastContact); return d !== null && d >= 5; }
+      if (c.status === 'drafted') { const d = daysSince(c.createdAt); return d !== null && d >= 5; }
+      return false;
+    }
     if (activeFilter === 'spoken') return c.status === 'spoken';
     if (activeFilter === 'stay') return c.status === 'stay';
     if (activeFilter === 'noresp') return c.status === 'noresp';
@@ -182,7 +210,8 @@ export default function OutreachTrackerPage() {
   const spoken = contacts.filter(c => ['spoken', 'stay'].includes(c.status)).length;
   const rate = sent > 0 ? Math.round(spoken / sent * 100) + '%' : '—';
 
-  const showDateField = ['spoken', 'stay'].includes(drawerStatus);
+  const showDateField = ['sent','fu1','fu2','fu3','spoken', 'stay'].includes(drawerStatus);
+  const dateFieldLabel = drawerStatus === 'sent' ? 'Date sent' : ['fu1','fu2','fu3'].includes(drawerStatus) ? 'Date of last follow-up' : 'Date spoken';
 
   const css = `
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -311,7 +340,7 @@ export default function OutreachTrackerPage() {
             <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 1 }}>Filter:</span>
             {[
               { key: 'all', label: 'All' }, { key: 'drafted', label: 'Drafted' }, { key: 'sent', label: 'Sent' },
-              { key: 'followup', label: 'Following Up' }, { key: 'spoken', label: 'Spoken With' },
+              { key: 'followup', label: 'Following Up' }, { key: 'needsfu', label: 'Needs Follow Up' }, { key: 'spoken', label: 'Spoken With' },
               { key: 'stay', label: 'Stay in Touch' }, { key: 'noresp', label: 'No Response' }, { key: 'ghosted', label: 'Ghosted Me' },
             ].map(f => (
               <button key={f.key} onClick={() => setActiveFilter(f.key)} style={{ padding: '5px 12px', borderRadius: 100, border: '1.5px solid', borderColor: activeFilter === f.key ? 'var(--text)' : 'var(--border-2)', background: activeFilter === f.key ? 'var(--text)' : 'var(--surface)', color: activeFilter === f.key ? 'var(--surface)' : 'var(--text-2)', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Sora, sans-serif', transition: 'all .15s' }}>
@@ -342,10 +371,29 @@ export default function OutreachTrackerPage() {
                     <button onClick={() => setModalOpen(true)} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif' }}>+ Add Contact</button>
                   </td></tr>
                 ) : filtered.map(c => {
-                  const days = daysSince(c.lastContact);
-                  const isSpoken = ['spoken', 'stay'].includes(c.status);
-                  const daysStr = days === null ? '—' : isSpoken ? days + ' days since call' : days + ' days ago';
-                  const daysCls = days === null ? 'var(--text-3)' : isSpoken ? (days > 60 ? '#dc2626' : days > 30 ? '#d97706' : '#16a34a') : (days > 14 ? '#dc2626' : days > 7 ? '#d97706' : '#16a34a');
+                  const daysSent = daysSince(c.sentAt);
+                  const daysFU = daysSince(c.lastFollowUpAt);
+                  const daysLC = daysSince(c.lastContact);
+                  let daysStr = '—';
+                  let daysCls = 'var(--text-3)';
+                  if (c.status === 'drafted') {
+                    const d = daysSince(c.createdAt);
+                    daysStr = d !== null ? `drafted ${d}d ago` : '—';
+                    daysCls = d !== null && d > 7 ? '#d97706' : d !== null && d > 14 ? '#dc2626' : 'var(--text-3)';
+                  } else if (c.status === 'sent') {
+                    daysStr = daysSent !== null ? `sent ${daysSent}d ago` : '—';
+                    daysCls = daysSent !== null ? (daysSent > 7 ? '#dc2626' : daysSent > 3 ? '#d97706' : '#16a34a') : 'var(--text-3)';
+                  } else if (['fu1','fu2','fu3'].includes(c.status)) {
+                    daysStr = daysFU !== null ? `followed up ${daysFU}d ago` : daysSent !== null ? `sent ${daysSent}d ago` : '—';
+                    const d = daysFU ?? daysSent;
+                    daysCls = d !== null ? (d > 10 ? '#dc2626' : d > 5 ? '#d97706' : '#16a34a') : 'var(--text-3)';
+                  } else if (['spoken','stay'].includes(c.status)) {
+                    daysStr = daysLC !== null ? `spoke ${daysLC}d ago` : '—';
+                    daysCls = daysLC !== null ? (daysLC > 60 ? '#dc2626' : daysLC > 30 ? '#d97706' : '#16a34a') : 'var(--text-3)';
+                  } else if (c.status === 'noresp' || c.status === 'ghosted') {
+                    daysStr = daysLC !== null ? `${daysLC}d no reply` : '—';
+                    daysCls = '#dc2626';
+                  }
                   const st = STATUSES[c.status] || { label: c.status, cls: 'b-drafted' };
                   const color = colorFor(c.fname + c.lname);
                   return (
@@ -466,9 +514,9 @@ export default function OutreachTrackerPage() {
             </div>
             {showDateField && (
               <div>
-                <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'var(--text-3)', marginBottom: 8 }}>Date spoken</div>
+                <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'var(--text-3)', marginBottom: 8 }}>{dateFieldLabel}</div>
                 <input type="date" value={drawerDate} onChange={e => setDrawerDate(e.target.value)} style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none' }} />
-                <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 5 }}>Used to calculate time since last conversation</div>
+                <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 5 }}>Used to calculate days since last action</div>
               </div>
             )}
             <div>
