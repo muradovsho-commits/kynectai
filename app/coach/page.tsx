@@ -8,10 +8,15 @@ import './coach.css';
 
 const TRACKS = [
   'Investment Banking',
-  'Consulting',
   'Private Equity',
-  'Asset & Wealth Mgmt',
-  'Audit & Accounting',
+  'Consulting',
+  'Asset Management',
+  'Accounting & Audit',
+  'Equity Research',
+  'Sales & Trading',
+  'Venture Capital',
+  'Real Estate',
+  'Restructuring',
 ];
 
 const ICONS = {
@@ -44,14 +49,6 @@ const TRACK_FEATURES: Record<string, Feature[]> = {
     { icon: ICONS.clock, title: 'Offer & timeline', desc: 'Superday timelines & offers', prompt: 'I need help navigating my IB offer timeline. I have [offer details] and need to communicate with [other banks].' },
     { icon: ICONS.file, title: 'Resume & deal list', desc: 'Polish for banking applications', prompt: 'Review my investment banking resume and deal list. Give me specific feedback for [target banks].' },
   ],
-  'Consulting': [
-    { icon: ICONS.mail, title: 'Cold email feedback', desc: 'Outreach to MBB consultants', prompt: 'Review my cold email to a consultant and give me specific, line-by-line edits:\n\n[paste your email here]' },
-    { icon: ICONS.chat, title: 'Behavioral story prep', desc: 'Why consulting? Leadership stories', prompt: 'Help me craft my "Why consulting?" answer. I go to [school], I\'ve done [experience], and I\'m targeting [firm].' },
-    { icon: ICONS.target, title: 'Case interview drill', desc: 'Frameworks, sizing, profitability', prompt: 'Give me a consulting case interview drill. Start with a market sizing question, then a profitability case.' },
-    { icon: ICONS.users, title: 'Coffee chat prep', desc: 'Smart questions for consultants', prompt: 'I have a coffee chat with a [title] at [consulting firm]. What consulting-specific questions should I ask?' },
-    { icon: ICONS.clock, title: 'Offer & timeline', desc: 'MBB, Big 4, boutique deadlines', prompt: 'I have a consulting offer from [firm] and am waiting on [other firms]. What\'s my strategy?' },
-    { icon: ICONS.file, title: 'Resume review', desc: 'Impact-driven consulting bullets', prompt: 'Review my consulting resume. Help me rewrite bullets to emphasize impact and leadership for [target firms].' },
-  ],
   'Private Equity': [
     { icon: ICONS.mail, title: 'Cold email feedback', desc: 'Outreach to PE associates & principals', prompt: 'Review my cold email to someone at a PE fund and give me specific edits:\n\n[paste your email here]' },
     { icon: ICONS.chat, title: 'Behavioral story prep', desc: 'Why PE? Deal walk-through', prompt: 'Help me craft my "Why PE?" answer. I\'m coming from [bank/role] and targeting [fund type].' },
@@ -60,30 +57,83 @@ const TRACK_FEATURES: Record<string, Feature[]> = {
     { icon: ICONS.layers, title: 'Case study prep', desc: 'Investment memos & presentations', prompt: 'Walk me through how to approach a PE case study / investment memo.' },
     { icon: ICONS.file, title: 'Resume & deal sheet', desc: 'Position for on-cycle recruiting', prompt: 'Review my PE resume and deal sheet for [megafund/MM/growth] targeting.' },
   ],
-  'Asset & Wealth Mgmt': [
-    { icon: ICONS.mail, title: 'Cold email feedback', desc: 'Outreach to PMs & wealth advisors', prompt: 'Review my cold email to an AM/WM professional:\n\n[paste your email here]' },
-    { icon: ICONS.chat, title: 'Behavioral story prep', desc: 'Why AM? Client-focused narrative', prompt: 'Help me craft my "Why asset management?" answer for [firm].' },
-    { icon: ICONS.dollar, title: 'Stock pitch & technical drill', desc: 'Pitch structure, market knowledge', prompt: 'Help me build a stock pitch for an AM interview. Walk me through the framework.' },
+  'Consulting': [
+    { icon: ICONS.mail, title: 'Cold email feedback', desc: 'Outreach to MBB consultants', prompt: 'Review my cold email to a consultant and give me specific, line-by-line edits:\n\n[paste your email here]' },
+    { icon: ICONS.chat, title: 'Behavioral story prep', desc: 'Why consulting? Leadership stories', prompt: 'Help me craft my "Why consulting?" answer. I go to [school], I\'ve done [experience], and I\'m targeting [firm].' },
+    { icon: ICONS.target, title: 'Case interview drill', desc: 'Frameworks, sizing, profitability', prompt: 'Give me a consulting case interview drill. Start with a market sizing question, then a profitability case.' },
+    { icon: ICONS.users, title: 'Coffee chat prep', desc: 'Smart questions for consultants', prompt: 'I have a coffee chat with a [title] at [consulting firm]. What consulting-specific questions should I ask?' },
+    { icon: ICONS.clock, title: 'Offer & timeline', desc: 'MBB, Big 4, boutique deadlines', prompt: 'I have a consulting offer from [firm] and am waiting on [other firms]. What\'s my strategy?' },
+    { icon: ICONS.file, title: 'Resume review', desc: 'Impact-driven consulting bullets', prompt: 'Review my consulting resume. Help me rewrite bullets to emphasize impact and leadership for [target firms].' },
+  ],
+  'Asset Management': [
+    { icon: ICONS.mail, title: 'Cold email feedback', desc: 'Outreach to PMs & analysts', prompt: 'Review my cold email to an asset management professional:\n\n[paste your email here]' },
+    { icon: ICONS.chat, title: 'Behavioral story prep', desc: 'Why AM? Investment philosophy', prompt: 'Help me craft my "Why asset management?" answer for [firm].' },
+    { icon: ICONS.dollar, title: 'Stock pitch drill', desc: 'Pitch structure, variant perception', prompt: 'Help me build a stock pitch for an AM interview. Walk me through the framework and critique my thesis.' },
+    { icon: ICONS.chart, title: 'Technical drill', desc: 'Valuation, macro, portfolio theory', prompt: 'Give me an AM technical drill covering valuation methodologies, macro concepts, and portfolio construction.' },
     { icon: ICONS.users, title: 'Coffee chat prep', desc: 'Questions about strategy & AUM', prompt: 'I have a coffee chat with a [PM/analyst] at [AM firm]. What should I ask?' },
-    { icon: ICONS.clock, title: 'Offer & timeline', desc: 'Navigate AM recruiting cycles', prompt: 'Help me with my AM offer situation and timeline strategy.' },
     { icon: ICONS.file, title: 'Resume review', desc: 'Highlight research & analysis', prompt: 'Review my AM resume. Help me position my experience for [target firms].' },
   ],
-  'Audit & Accounting': [
+  'Accounting & Audit': [
     { icon: ICONS.mail, title: 'Cold email feedback', desc: 'Outreach to Big 4 professionals', prompt: 'Review my cold email to an accounting professional:\n\n[paste your email here]' },
     { icon: ICONS.chat, title: 'Behavioral story prep', desc: 'Why audit? Why this firm?', prompt: 'Help me craft my "Why accounting/audit?" answer for [firm].' },
-    { icon: ICONS.shield, title: 'Technical drill', desc: 'Accounting standards & audit concepts', prompt: 'Give me an accounting technical drill. Ask me questions on GAAP, audit procedures, and financial statements.' },
+    { icon: ICONS.shield, title: 'Technical drill', desc: 'GAAP, audit procedures, standards', prompt: 'Give me an accounting technical drill. Ask me questions on GAAP, audit procedures, and financial statements.' },
     { icon: ICONS.users, title: 'Coffee chat prep', desc: 'Questions for Big 4 professionals', prompt: 'I have a coffee chat with someone at [Big 4 firm]. What should I ask about their practice?' },
     { icon: ICONS.clock, title: 'Offer & timeline', desc: 'Big 4 vs mid-tier decisions', prompt: 'Help me decide between offers from [firms] and navigate the timeline.' },
     { icon: ICONS.file, title: 'Resume review', desc: 'CPA track & internship experience', prompt: 'Review my accounting resume for [Big 4/mid-tier] applications.' },
+  ],
+  'Equity Research': [
+    { icon: ICONS.mail, title: 'Cold email feedback', desc: 'Outreach to research analysts', prompt: 'Review my cold email to an equity research analyst:\n\n[paste your email here]' },
+    { icon: ICONS.chat, title: 'Behavioral story prep', desc: 'Why ER? What sector?', prompt: 'Help me craft my "Why equity research?" answer. I want to cover [sector] because [reason].' },
+    { icon: ICONS.dollar, title: 'Stock pitch drill', desc: 'Long/short with catalysts & risks', prompt: 'Help me refine my stock pitch for an ER interview. Critique my thesis, catalysts, valuation, and risks.' },
+    { icon: ICONS.chart, title: 'Technical drill', desc: 'EPS, P/E, modeling, comps', prompt: 'Give me an ER technical drill. Ask me about EPS forecasting, valuation multiples, and financial modeling.' },
+    { icon: ICONS.search, title: 'Sector deep-dive', desc: 'Industry analysis & trends', prompt: 'Help me prepare a deep sector analysis for [industry]. Key companies, trends, and what drives value.' },
+    { icon: ICONS.file, title: 'Writing sample review', desc: 'Research report structure', prompt: 'Review my sample equity research report and give me feedback on thesis quality, structure, and writing.' },
+  ],
+  'Sales & Trading': [
+    { icon: ICONS.mail, title: 'Cold email feedback', desc: 'Outreach to S&T professionals', prompt: 'Review my cold email to someone on a trading desk:\n\n[paste your email here]' },
+    { icon: ICONS.chat, title: 'Behavioral story prep', desc: 'Why S&T? Trading vs sales?', prompt: 'Help me craft my "Why sales & trading?" answer. I want to be on the [sales/trading/structuring] side because [reason].' },
+    { icon: ICONS.chart, title: 'Market knowledge quiz', desc: 'Indices, rates, FX, commodities', prompt: 'Quiz me on current market levels and recent moves. Test my knowledge of equities, rates, FX, and commodities.' },
+    { icon: ICONS.target, title: 'Probability & brainteaser drill', desc: 'Expected value, mental math', prompt: 'Give me S&T probability questions and brainteasers. Test my mental math speed and Bayesian thinking.' },
+    { icon: ICONS.dollar, title: 'Trade idea prep', desc: 'Thesis, catalyst, risk framework', prompt: 'Help me structure a trade idea for my S&T interview. I want to pitch [long/short] on [asset] because [thesis].' },
+    { icon: ICONS.file, title: 'Resume review', desc: 'Position for trading desks', prompt: 'Review my S&T resume. Help me highlight quantitative skills and market experience for [target desk].' },
+  ],
+  'Venture Capital': [
+    { icon: ICONS.mail, title: 'Cold email feedback', desc: 'Outreach to VC investors', prompt: 'Review my cold email to a VC associate or partner:\n\n[paste your email here]' },
+    { icon: ICONS.chat, title: 'Behavioral story prep', desc: 'Why VC? Sector thesis', prompt: 'Help me craft my "Why venture capital?" answer. I\'m excited about [sector] because [thesis].' },
+    { icon: ICONS.search, title: 'Company deep-dive prep', desc: 'Startup analysis & metrics', prompt: 'Help me prepare a deep-dive on [company/startup] for a VC interview. Evaluate their product, metrics, team, and market.' },
+    { icon: ICONS.layers, title: 'Pitch deck evaluation', desc: 'Would you invest? Framework', prompt: 'Walk me through how to evaluate a startup pitch deck. What do I look for in each section?' },
+    { icon: ICONS.dollar, title: 'Fund math & deal terms', desc: 'Ownership, dilution, term sheets', prompt: 'Quiz me on VC fund economics, ownership math, and term sheet concepts like liquidation preference and anti-dilution.' },
+    { icon: ICONS.file, title: 'Resume & memo review', desc: 'Investment memo writing', prompt: 'Review my VC resume and investment memo. Give me feedback on thesis clarity and analytical depth.' },
+  ],
+  'Real Estate': [
+    { icon: ICONS.mail, title: 'Cold email feedback', desc: 'Outreach to REPE professionals', prompt: 'Review my cold email to a real estate PE professional:\n\n[paste your email here]' },
+    { icon: ICONS.chat, title: 'Behavioral story prep', desc: 'Why RE? Why REPE?', prompt: 'Help me craft my "Why real estate?" answer for [REPE/REIT/development] roles.' },
+    { icon: ICONS.chart, title: 'Technical drill', desc: 'Cap rates, NOI, DSCR, waterfalls', prompt: 'Give me a real estate technical drill. Ask me about cap rates, pro formas, waterfall distributions, and deal metrics.' },
+    { icon: ICONS.building, title: 'Deal walkthrough prep', desc: 'Property acquisition analysis', prompt: 'Walk me through how to evaluate an apartment building acquisition. I need to practice the full deal walkthrough.' },
+    { icon: ICONS.dollar, title: 'Investment idea prep', desc: 'Market, property type, returns', prompt: 'Help me develop a real estate investment idea with specific numbers — market, property type, cap rate, target IRR.' },
+    { icon: ICONS.file, title: 'Resume review', desc: 'Position for REPE roles', prompt: 'Review my real estate resume for [REPE/REIT/brokerage] applications.' },
+  ],
+  'Restructuring': [
+    { icon: ICONS.mail, title: 'Cold email feedback', desc: 'Outreach to RX bankers', prompt: 'Review my cold email to a restructuring banker:\n\n[paste your email here]' },
+    { icon: ICONS.chat, title: 'Behavioral story prep', desc: 'Why RX? Why not M&A?', prompt: 'Help me craft my "Why restructuring?" answer and explain why I prefer RX over M&A.' },
+    { icon: ICONS.chart, title: 'Technical drill', desc: 'Chapter 11, claims, credit analysis', prompt: 'Give me a restructuring technical drill. Ask me about Chapter 11, priority of claims, fulcrum security, DIP financing, and credit metrics.' },
+    { icon: ICONS.layers, title: 'Case study prep', desc: 'Distressed situations & bankruptcy', prompt: 'Walk me through a restructuring case study. Give me a distressed company and ask me to analyze the capital structure and propose a solution.' },
+    { icon: ICONS.shield, title: 'Distressed situations review', desc: 'Notable bankruptcies & outcomes', prompt: 'Quiz me on notable restructuring cases like Lehman, Hertz, J.Crew, and GM. Test my knowledge of what happened and why.' },
+    { icon: ICONS.file, title: 'Resume review', desc: 'Position for RX groups', prompt: 'Review my resume for restructuring group applications at [target firms].' },
   ],
 };
 
 const TRACK_SUBS: Record<string, string> = {
   'Investment Banking': 'Focusing on bulge bracket M&A preparation and technical modeling excellence.',
-  'Consulting': 'Sharpening your case frameworks, behavioral stories, and firm-specific strategy.',
   'Private Equity': 'Building deal fluency, LBO mastery, and on-cycle readiness.',
-  'Asset & Wealth Mgmt': 'Crafting stock pitches, market views, and client-focused narratives.',
-  'Audit & Accounting': 'Mastering technical accounting, audit standards, and Big 4 positioning.',
+  'Consulting': 'Sharpening your case frameworks, behavioral stories, and firm-specific strategy.',
+  'Asset Management': 'Crafting stock pitches, market views, and investment-driven narratives.',
+  'Accounting & Audit': 'Mastering technical accounting, audit standards, and Big 4 positioning.',
+  'Equity Research': 'Building sector expertise, EPS models, and differentiated stock pitches.',
+  'Sales & Trading': 'Sharpening market awareness, mental math, and trade idea delivery.',
+  'Venture Capital': 'Developing sector theses, startup evaluation skills, and fund-level thinking.',
+  'Real Estate': 'Mastering pro forma modeling, cap rates, and REPE deal analysis.',
+  'Restructuring': 'Building distressed analysis skills, bankruptcy fluency, and credit expertise.',
 };
 
 const QUOTES = [
