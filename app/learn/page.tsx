@@ -65,7 +65,7 @@ const GUIDES = [
     id: 'er',
     title: 'Equity Research',
     desc: 'Financial modeling, EPS forecasting, and the art of the stock pitch. Learn to think like a sell-side analyst covering public companies.',
-    modules: 4,
+    modules: 5,
     href: '/er-interview-prep',
     iconClass: 'icon-er',
     icon: <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>,
