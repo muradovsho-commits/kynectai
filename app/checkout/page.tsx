@@ -174,7 +174,6 @@ export default function CheckoutPage() {
                 "Performance Dashboard — track mastery & weak areas",
                 "Micro-Learning Insights — top 1% answer tips",
                 "Hit Rate Intel — see what angles get replies",
-                "Resume & cover letter reviews",
                 "Priority support & early feature access",
               ].map((f, i) => (
                 <div key={i} style={{ display: "flex", gap: 8, alignItems: "center" }}>
