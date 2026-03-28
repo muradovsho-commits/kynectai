@@ -9,6 +9,11 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as emailSync from "../emailSync.js";
+import type * as feedback from "../feedback.js";
+import type * as jobBoard from "../jobBoard.js";
+import type * as marketPosts from "../marketPosts.js";
+import type * as reminders from "../reminders.js";
 import type * as users from "../users.js";
 import type * as waitlist from "../waitlist.js";
 
@@ -20,6 +25,11 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  emailSync: typeof emailSync;
+  feedback: typeof feedback;
+  jobBoard: typeof jobBoard;
+  marketPosts: typeof marketPosts;
+  reminders: typeof reminders;
   users: typeof users;
   waitlist: typeof waitlist;
 }>;

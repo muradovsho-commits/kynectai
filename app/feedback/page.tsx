@@ -2,6 +2,8 @@
 import Sidebar from "../components/Sidebar";
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import '../contact-finder/contact-finder.css';
 
 const TYPES = [
@@ -14,11 +16,13 @@ type LocalEntry = { id: string; type: string; message: string; date: string };
 
 export default function FeedbackPage() {
   const router = useRouter();
+  const submitFeedback = useMutation(api.feedback.submit);
   const [type, setType] = useState('feature');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [history, setHistory] = useState<LocalEntry[]>([]);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -32,10 +36,13 @@ export default function FeedbackPage() {
   const handleSubmit = async () => {
     if (!message.trim() || sending) return;
     setSending(true);
+    setError('');
 
     let userName = '';
     let userEmail = '';
+    let userId = '';
     try {
+      userId = localStorage.getItem('offerbell_user_id') || '';
       const raw = localStorage.getItem('offerbell_onboarding_profile');
       if (raw) {
         const p = JSON.parse(raw);
@@ -44,24 +51,28 @@ export default function FeedbackPage() {
       }
     } catch {}
 
-    // Send to our API which emails the team
     try {
-      await fetch('/api/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, message: message.trim(), userName, userEmail }),
+      await submitFeedback({
+        userId: userId || undefined,
+        userName: userName || undefined,
+        userEmail: userEmail || undefined,
+        type,
+        message: message.trim(),
       });
-    } catch {}
 
-    // Always save locally regardless of API success
-    const entry: LocalEntry = { id: Date.now().toString(), type, message: message.trim(), date: new Date().toISOString().slice(0, 10) };
-    const updated = [entry, ...history];
-    setHistory(updated);
-    localStorage.setItem('offerbell_feedback_history', JSON.stringify(updated));
-    setMessage('');
-    setSubmitted(true);
+      const entry: LocalEntry = { id: Date.now().toString(), type, message: message.trim(), date: new Date().toISOString().slice(0, 10) };
+      const updated = [entry, ...history];
+      setHistory(updated);
+      localStorage.setItem('offerbell_feedback_history', JSON.stringify(updated));
+      setMessage('');
+      setSubmitted(true);
+      setTimeout(() => setSubmitted(false), 4000);
+    } catch (err: any) {
+      console.error('Feedback error:', err);
+      setError('Something went wrong. Please try again.');
+    }
+
     setSending(false);
-    setTimeout(() => setSubmitted(false), 4000);
   };
 
   const typeLabel = TYPES.find(t => t.id === type)?.label || '';
@@ -105,7 +116,9 @@ export default function FeedbackPage() {
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '14px' }}>
               <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>
-                {submitted ? <span style={{ color: '#16a34a', fontWeight: 600 }}>Submitted -- thank you for your feedback.</span> : `Submitting as: ${typeLabel}`}
+                {submitted ? <span style={{ color: '#16a34a', fontWeight: 600 }}>Submitted -- thank you for your feedback.</span>
+                : error ? <span style={{ color: '#ef4444', fontWeight: 600 }}>{error}</span>
+                : `Submitting as: ${typeLabel}`}
               </div>
               <button onClick={handleSubmit} disabled={!message.trim() || sending} style={{
                 padding: '10px 24px', borderRadius: '10px', border: 'none', fontSize: '13px', fontWeight: 700, cursor: message.trim() && !sending ? 'pointer' : 'default', fontFamily: "'Sora', sans-serif",
