@@ -94,7 +94,7 @@ export default function CheckoutPage() {
   // Checkout with plan toggle
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, animation: "checkoutIn 0.4s ease both" }}>
-      <div style={{ width: "100%", maxWidth: 900, display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 48, alignItems: "start" }}>
+      <div className="checkout-layout" style={{ width: "100%", maxWidth: 900, display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 48, alignItems: "start" }}>
 
         {/* LEFT - Plan Selection */}
         <div>

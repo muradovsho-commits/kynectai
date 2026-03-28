@@ -368,6 +368,29 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
   footer{padding:48px 20px 28px;}
   .footer-grid{grid-template-columns:1fr;}
   .jobs-strip-inner{flex-direction:column;padding:20px;}
+  .comp-intro,.comp-table-header,.comp-row,.comp-total,.comp-bottom-labels{font-size:11px;}
+}
+@media(max-width:600px){
+  html,body{overflow-x:hidden;}
+  .hero-tagline{font-size:40px;line-height:1.1;}
+  .hero-sub{font-size:14px;}
+  .features-bento{grid-template-columns:1fr;}
+  .f-card-1,.f-card-2,.f-card-3,.f-card-4,.f-card-5,.f-card-6,.f-card-7,.f-card-8,.f-card-9{grid-column:span 1;}
+  .comp-intro{grid-template-columns:1fr;gap:12px;}
+  .comp-intro>div:first-child{display:none;}
+  .comp-table-header,.comp-row,.comp-total{grid-template-columns:2fr 1fr 1fr 1fr;font-size:10px;}
+  .comp-table-header>div,.comp-row>div,.comp-total>div{padding:10px 8px;}
+  .comp-bottom-labels{grid-template-columns:1fr 1fr 1fr;font-size:9px;}
+  .comp-bottom-labels>div:first-child{display:none;}
+  .cr-feat{font-size:11px !important;}
+  .section-title{font-size:28px;}
+  .pricing-grid{max-width:100%;}
+  .career-card{padding:24px 20px 20px;}
+  .career-tags{gap:4px;}
+  .career-tag{font-size:9px;padding:3px 8px;}
+  .cta-band{padding:36px 24px;}
+  .testimonial-track{gap:16px;}
+  .t-card{min-width:280px;padding:24px 20px;}
 }
 </style>
 </head>
