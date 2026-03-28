@@ -63,7 +63,7 @@ export default function SignupPage() {
     <div style={{ minHeight: "100vh", display: "flex", background: "#0a0a0a" }}>
       <div style={{ width: 420, background: "#0a0a0a", color: "#fff", padding: "48px 40px", display: "flex", flexDirection: "column", justifyContent: "space-between", flexShrink: 0 }}>
         <div>
-          <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, letterSpacing: "-.5px", marginBottom: 64 }}>OfferBell<em style={{ fontStyle: "italic" }}>.</em></div>
+          <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, letterSpacing: "-.5px", marginBottom: 64 }}><a href="/" style={{ color: "#fff", textDecoration: "none" }}>OfferBell<em style={{ fontStyle: "italic" }}>.</em></a></div>
           <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 38, lineHeight: 1.15, letterSpacing: "-1px", marginBottom: 16 }}>Start your recruiting <em style={{ fontStyle: "italic" }}>journey.</em></div>
           <div style={{ fontSize: 14, color: "rgba(255,255,255,.45)", lineHeight: 1.7, marginBottom: 40 }}>Join thousands of finance students using OfferBell to land offers at top firms.</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -143,6 +143,11 @@ export default function SignupPage() {
           <div style={{ textAlign: "center", fontSize: 13, color: "#6b6860" }}>
             Already have an account?{" "}
             <a href="/signin" style={{ color: "#0a0a0a", fontWeight: 700, textDecoration: "none" }}>Sign in</a>
+          </div>
+          <div style={{ textAlign: "center", marginTop: 12 }}>
+            <a href="/" style={{ fontSize: 12, color: "#9e9b96", textDecoration: "none", fontWeight: 500 }}>
+              ← Back to home
+            </a>
           </div>
         </div>
       </div>

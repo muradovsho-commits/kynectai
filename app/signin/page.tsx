@@ -95,7 +95,7 @@ export default function SigninPage() {
       <div style={{ width: 420, background: "#0a0a0a", color: "#fff", padding: "48px 40px", display: "flex", flexDirection: "column", justifyContent: "space-between", flexShrink: 0 }}>
         <div>
           <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, letterSpacing: "-.5px", marginBottom: 64 }}>
-            OfferBell<em style={{ fontStyle: "italic" }}>.</em>
+            <a href="/" style={{ color: "#fff", textDecoration: "none" }}>OfferBell<em style={{ fontStyle: "italic" }}>.</em></a>
           </div>
           <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 38, lineHeight: 1.15, letterSpacing: "-1px", marginBottom: 16 }}>
             Welcome <em style={{ fontStyle: "italic" }}>back.</em>
@@ -213,6 +213,11 @@ export default function SigninPage() {
             Don&apos;t have an account?{" "}
             <a href="/signup" style={{ color: "#0a0a0a", fontWeight: 700, textDecoration: "none" }}>
               Sign up
+            </a>
+          </div>
+          <div style={{ textAlign: "center", marginTop: 12 }}>
+            <a href="/" style={{ fontSize: 12, color: "#9e9b96", textDecoration: "none", fontWeight: 500 }}>
+              ← Back to home
             </a>
           </div>
         </div>
