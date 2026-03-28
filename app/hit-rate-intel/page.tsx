@@ -240,24 +240,74 @@ export default function HitRateIntelPage() {
   const visibleFirms = (ALL_FIRMS as any[]).filter((f:any) => selectedFirms.has(f.name));
   const colorMap: Record<string,string> = { green:'#16a34a', amber:'#d97706', red:'#dc2626' };
 
-  const angles = [
-    { key:'alumni', name:'Alumni', desc:'Same school, club, or recruiting process', rate:68, msgs:'2,800+', replies:'1,900+', avgDays:1.4, tier:'top' },
-    { key:'interest', name:'Shared Interest', desc:'Common topic, research, or career focus', rate:54, msgs:'1,600+', replies:'870+', avgDays:2.1, tier:'mid' },
-    { key:'deal', name:'Deal Reference', desc:'Reference a specific transaction they worked on', rate:41, msgs:'2,100+', replies:'860+', avgDays:2.8, tier:'mid' },
-    { key:'mutual', name:'Mutual Connection', desc:'Someone referred you to them directly', rate:37, msgs:'980+', replies:'360+', avgDays:1.9, tier:'mid' },
-    { key:'career', name:'Career Path', desc:'Following their trajectory into the firm', rate:32, msgs:'1,400+', replies:'460+', avgDays:3.2, tier:'low' },
-    { key:'cold', name:'Cold / No Connection', desc:'No prior connection or shared context', rate:8, msgs:'3,400+', replies:'270+', avgDays:4.6, tier:'low' },
-  ];
+  const anglesData: Record<string, typeof anglesBase> = {
+    '30d': [
+      { key:'alumni', name:'Alumni', desc:'Same school, club, or recruiting process', rate:68, msgs:'2,800+', replies:'1,900+', avgDays:1.4, tier:'top' },
+      { key:'interest', name:'Shared Interest', desc:'Common topic, research, or career focus', rate:54, msgs:'1,600+', replies:'870+', avgDays:2.1, tier:'mid' },
+      { key:'deal', name:'Deal Reference', desc:'Reference a specific transaction they worked on', rate:41, msgs:'2,100+', replies:'860+', avgDays:2.8, tier:'mid' },
+      { key:'mutual', name:'Mutual Connection', desc:'Someone referred you to them directly', rate:37, msgs:'980+', replies:'360+', avgDays:1.9, tier:'mid' },
+      { key:'career', name:'Career Path', desc:'Following their trajectory into the firm', rate:32, msgs:'1,400+', replies:'460+', avgDays:3.2, tier:'low' },
+      { key:'cold', name:'Cold / No Connection', desc:'No prior connection or shared context', rate:8, msgs:'3,400+', replies:'270+', avgDays:4.6, tier:'low' },
+    ],
+    '90d': [
+      { key:'alumni', name:'Alumni', desc:'Same school, club, or recruiting process', rate:64, msgs:'7,400+', replies:'4,700+', avgDays:1.6, tier:'top' },
+      { key:'interest', name:'Shared Interest', desc:'Common topic, research, or career focus', rate:51, msgs:'4,200+', replies:'2,100+', avgDays:2.3, tier:'mid' },
+      { key:'deal', name:'Deal Reference', desc:'Reference a specific transaction they worked on', rate:38, msgs:'5,600+', replies:'2,100+', avgDays:3.1, tier:'mid' },
+      { key:'mutual', name:'Mutual Connection', desc:'Someone referred you to them directly', rate:35, msgs:'2,500+', replies:'880+', avgDays:2.2, tier:'mid' },
+      { key:'career', name:'Career Path', desc:'Following their trajectory into the firm', rate:29, msgs:'3,700+', replies:'1,070+', avgDays:3.5, tier:'low' },
+      { key:'cold', name:'Cold / No Connection', desc:'No prior connection or shared context', rate:7, msgs:'8,900+', replies:'620+', avgDays:5.1, tier:'low' },
+    ],
+    'All time': [
+      { key:'alumni', name:'Alumni', desc:'Same school, club, or recruiting process', rate:61, msgs:'18,200+', replies:'11,100+', avgDays:1.7, tier:'top' },
+      { key:'interest', name:'Shared Interest', desc:'Common topic, research, or career focus', rate:48, msgs:'10,400+', replies:'4,990+', avgDays:2.5, tier:'mid' },
+      { key:'deal', name:'Deal Reference', desc:'Reference a specific transaction they worked on', rate:36, msgs:'13,800+', replies:'4,960+', avgDays:3.3, tier:'mid' },
+      { key:'mutual', name:'Mutual Connection', desc:'Someone referred you to them directly', rate:33, msgs:'6,100+', replies:'2,010+', avgDays:2.4, tier:'mid' },
+      { key:'career', name:'Career Path', desc:'Following their trajectory into the firm', rate:27, msgs:'9,200+', replies:'2,480+', avgDays:3.7, tier:'low' },
+      { key:'cold', name:'Cold / No Connection', desc:'No prior connection or shared context', rate:6, msgs:'21,500+', replies:'1,290+', avgDays:5.4, tier:'low' },
+    ],
+  };
+  type AngleEntry = { key: string; name: string; desc: string; rate: number; msgs: string; replies: string; avgDays: number; tier: string };
+  const anglesBase: AngleEntry[] = [];
+  void anglesBase;
+  const angles = anglesData[activeTab] || anglesData['30d'];
 
-  const days = [
-    { label:'Mon', rate:28, h:38, color:'var(--border-2)', highlight:false },
-    { label:'Tue', rate:61, h:58, color:'#16a34a', highlight:true },
-    { label:'Wed', rate:58, h:54, color:'#16a34a', highlight:true },
-    { label:'Thu', rate:44, h:52, color:'#d97706', highlight:false },
-    { label:'Fri', rate:31, h:38, color:'var(--border-2)', highlight:false },
-    { label:'Sat', rate:9, h:10, color:'var(--border-2)', highlight:false },
-    { label:'Sun', rate:12, h:14, color:'var(--border-2)', highlight:false },
-  ];
+  const platformAvg: Record<string, { rate: string; msgs: string }> = {
+    '30d': { rate: '34%', msgs: '10,000+' },
+    '90d': { rate: '31%', msgs: '28,600+' },
+    'All time': { rate: '29%', msgs: '68,400+' },
+  };
+  const currentPlatform = platformAvg[activeTab] || platformAvg['30d'];
+
+  const daysData: Record<string, { label: string; rate: number; h: number; color: string; highlight: boolean }[]> = {
+    '30d': [
+      { label:'Mon', rate:28, h:38, color:'var(--border-2)', highlight:false },
+      { label:'Tue', rate:61, h:58, color:'#16a34a', highlight:true },
+      { label:'Wed', rate:58, h:54, color:'#16a34a', highlight:true },
+      { label:'Thu', rate:44, h:52, color:'#d97706', highlight:false },
+      { label:'Fri', rate:31, h:38, color:'var(--border-2)', highlight:false },
+      { label:'Sat', rate:9, h:10, color:'var(--border-2)', highlight:false },
+      { label:'Sun', rate:12, h:14, color:'var(--border-2)', highlight:false },
+    ],
+    '90d': [
+      { label:'Mon', rate:31, h:40, color:'var(--border-2)', highlight:false },
+      { label:'Tue', rate:56, h:54, color:'#16a34a', highlight:true },
+      { label:'Wed', rate:53, h:52, color:'#16a34a', highlight:true },
+      { label:'Thu', rate:40, h:46, color:'#d97706', highlight:false },
+      { label:'Fri', rate:27, h:34, color:'var(--border-2)', highlight:false },
+      { label:'Sat', rate:11, h:12, color:'var(--border-2)', highlight:false },
+      { label:'Sun', rate:14, h:16, color:'var(--border-2)', highlight:false },
+    ],
+    'All time': [
+      { label:'Mon', rate:29, h:38, color:'var(--border-2)', highlight:false },
+      { label:'Tue', rate:52, h:50, color:'#16a34a', highlight:true },
+      { label:'Wed', rate:49, h:48, color:'#16a34a', highlight:true },
+      { label:'Thu', rate:37, h:42, color:'#d97706', highlight:false },
+      { label:'Fri', rate:24, h:30, color:'var(--border-2)', highlight:false },
+      { label:'Sat', rate:10, h:11, color:'var(--border-2)', highlight:false },
+      { label:'Sun', rate:13, h:15, color:'var(--border-2)', highlight:false },
+    ],
+  };
+  const days = daysData[activeTab] || daysData['30d'];
 
   const tips = [
     { title:'What the data says', body:<>The alumni angle outperforms cold outreach by <strong>8.5x</strong>. Finding a genuine shared connection before reaching out — even a shared career interest — doubles your reply rate vs. cold.</> },
@@ -274,7 +324,7 @@ export default function HitRateIntelPage() {
 
       <main className="main" style={{padding:'32px 36px'}}>
         <div style={{fontFamily:"'Instrument Serif',serif",fontSize:28,letterSpacing:'-.5px',color:'var(--text)',marginBottom:3}}>Hit Rate <em style={{fontStyle:'italic'}}>Intelligence</em></div>
-        <div style={{fontSize:13,color:'var(--text-3)',marginBottom:6}}>Platform-wide reply rate data from 10,000+ outreach messages sent through OfferBell.</div>
+        <div style={{fontSize:13,color:'var(--text-3)',marginBottom:6}}>Platform-wide reply rate data from {currentPlatform.msgs} outreach messages sent through OfferBell.</div>
         <div style={{display:'inline-flex',alignItems:'center',gap:5,background:'#fef3c7',border:'1.5px solid #fde68a',borderRadius:100,padding:'4px 12px',fontSize:11,fontWeight:700,color:'#92400e',marginBottom:12}}>Pro Feature — Live Data</div>
 
         <div style={{display:'flex',alignItems:'flex-start',gap:8,background:'var(--surface-2)',border:'1.5px solid var(--border)',borderRadius:10,padding:'12px 16px',marginBottom:24,fontSize:11,color:'var(--text-3)',lineHeight:1.6,maxWidth:700}}>
@@ -284,7 +334,7 @@ export default function HitRateIntelPage() {
 
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:24}}>
           {[
-            { label:'Platform Avg Reply Rate', value:'34%', sub:'across all angles & firms', color:'var(--text)' },
+            { label:'Platform Avg Reply Rate', value:currentPlatform.rate, sub:`across all angles & firms`, color:'var(--text)' },
             { label:'Your Best Angle', value:yourAngle, sub:yourAngleSub, color:'var(--text)', italic:true },
             { label:'Your Messages Sent', value:yourSent, sub:yourSentSub, color:'var(--text)' },
             { label:'Your Reply Rate', value:yourRate, sub:yourRateSub, color:yourRateColor },
