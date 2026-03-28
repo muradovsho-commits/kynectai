@@ -53,6 +53,15 @@ const GUIDES = [
     icon: <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>,
   },
   {
+    id: 'ge',
+    title: 'Growth Equity',
+    desc: 'Minority investing in high-growth companies. SaaS metrics, deal structuring, investment memos, and how GE differs from PE and VC.',
+    modules: 4,
+    href: '/ge-interview-prep',
+    iconClass: 'icon-ge',
+    icon: <svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>,
+  },
+  {
     id: 'st',
     title: 'Sales & Trading',
     desc: 'Market fundamentals, mental math, probability, trading games, and how to deliver a compelling trade idea under pressure.',
