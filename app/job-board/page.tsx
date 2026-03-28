@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
 
@@ -24,6 +26,8 @@ export default function JobBoardPage() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [alreadySubscribed, setAlreadySubscribed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const subscribeMutation = useMutation((api as any).jobBoard?.subscribe);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -36,12 +40,21 @@ export default function JobBoardPage() {
     } catch {}
   }, [router]);
 
-  const handleSubmit = () => {
-    if (!email.trim()) return;
+  const handleSubmit = async () => {
+    if (!email.trim() || submitting) return;
+    setSubmitting(true);
+    try {
+      if (subscribeMutation) {
+        await subscribeMutation({ email: email.trim() });
+      }
+    } catch (err) {
+      console.error('Job board subscribe error:', err);
+    }
     localStorage.setItem('offerbell_job_board_subscribed', 'true');
-    localStorage.setItem('offerbell_job_board_email', email);
+    localStorage.setItem('offerbell_job_board_email', email.trim());
     setSubmitted(true);
     setAlreadySubscribed(true);
+    setSubmitting(false);
   };
 
   return (
@@ -107,14 +120,14 @@ export default function JobBoardPage() {
               </div>
 
               {/* Submit */}
-              <button onClick={handleSubmit} disabled={!email.trim()} type="button" style={{
+              <button onClick={handleSubmit} disabled={!email.trim() || submitting} type="button" style={{
                 width: '100%', padding: 14, borderRadius: 10, border: 'none',
-                background: email.trim() ? 'var(--text)' : 'var(--border)',
-                color: email.trim() ? 'var(--surface)' : 'var(--text-3)',
-                fontSize: 14, fontWeight: 700, cursor: email.trim() ? 'pointer' : 'default',
+                background: email.trim() && !submitting ? 'var(--text)' : 'var(--border)',
+                color: email.trim() && !submitting ? 'var(--surface)' : 'var(--text-3)',
+                fontSize: 14, fontWeight: 700, cursor: email.trim() && !submitting ? 'pointer' : 'default',
                 fontFamily: "'Sora', sans-serif", transition: 'all 0.12s',
               }}>
-                Subscribe to weekly jobs
+                {submitting ? 'Subscribing...' : 'Subscribe to weekly jobs'}
               </button>
 
               <div style={{ textAlign: 'center', marginTop: 12, fontSize: 11, color: 'var(--text-3)' }}>

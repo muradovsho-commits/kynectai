@@ -94,6 +94,12 @@ export default defineSchema({
     .index("by_userId", ["userId"])
     .index("by_userId_dismissed", ["userId", "dismissed"]),
 
+  jobBoardSubscribers: defineTable({
+    email: v.string(),
+    createdAt: v.number(),
+    active: v.optional(v.boolean()),
+  }).index("by_email", ["email"]),
+
   marketPosts: defineTable({
     userId: v.id("users"),
     content: v.string(),
