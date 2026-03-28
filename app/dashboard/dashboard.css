@@ -294,6 +294,9 @@ body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text
   .dash-progress-stats { grid-template-columns: repeat(2, 1fr); gap: 20px; }
   .dash-progress-header { flex-direction: column; gap: 4px; align-items: flex-start; }
 }
+@media (max-width: 768px) {
+  .dash-main { margin-left: 0 !important; padding: 60px 16px 40px !important; }
+}
 
 /* ── Upgrade Toast ── */
 .dash-upgrade-toast {

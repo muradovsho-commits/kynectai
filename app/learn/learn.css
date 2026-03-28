@@ -388,3 +388,8 @@
   .learn-feature-img { width: 100%; height: 180px; }
   .learn-hero-title { font-size: 32px; }
 }
+
+@media (max-width: 768px) {
+  .learn-main { margin-left: 0 !important; }
+  .learn-container { padding: 60px 16px 40px !important; }
+}

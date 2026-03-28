@@ -249,3 +249,7 @@
 
 @media (max-width: 900px) { .flash-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 600px) { .flash-grid { grid-template-columns: 1fr; } .flash-grid-card-wrap { height: 260px; } }
+
+@media (max-width: 768px) {
+  .flash-main { margin-left: 0 !important; }
+}

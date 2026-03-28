@@ -426,9 +426,11 @@ body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text
 .sidebar-top-row { display: contents; }
 
 @media (max-width: 768px) {
+  /* Force sidebar width variable to 0 */
+  :root { --sidebar-w: 0px !important; }
+
   /* Sidebar becomes a slide-over */
-  :root, [data-theme="light"], [data-theme="dark"] { --sidebar-w: 0px; }
-  .sidebar { width: 272px; left: -280px; transition: left 0.25s ease, background 0.3s; z-index: 100; box-shadow: none; }
+  .sidebar { width: 272px !important; left: -280px; transition: left 0.25s ease, background 0.3s; z-index: 100; box-shadow: none; position: fixed !important; }
   .sidebar.mobile-open { left: 0; box-shadow: 8px 0 30px rgba(0,0,0,0.15); }
   .mobile-hamburger { display: flex; }
   .mobile-close { display: block; }
@@ -436,82 +438,102 @@ body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text
   .sidebar-top-row { display: flex; align-items: center; justify-content: space-between; padding: 0; }
   .sidebar-top-row .sidebar-logo { border-bottom: none; flex: 1; }
 
-  /* Main content takes full width */
-  .main, .flash-main, [style*="margin-left: var(--sidebar-w)"], [style*="margin-left:var(--sidebar-w)"] { margin-left: 0 !important; }
-
-  /* Dashboard */
-  .dash-main { padding: 60px 16px 40px !important; }
-  .dash-greeting { font-size: 26px !important; }
-  .dash-sub { font-size: 12px !important; }
-  .dash-progress-stats { grid-template-columns: 1fr 1fr !important; }
-  .dash-today-grid { grid-template-columns: 1fr !important; }
-
-  /* General content padding */
-  .main { padding: 60px 16px 40px !important; }
-
-  /* Flash main */
+  /* ── CORE: Every content area gets margin-left: 0 ── */
+  .main { margin-left: 0 !important; padding: 60px 16px 40px !important; }
   .flash-main { margin-left: 0 !important; }
+  .dash-main { margin-left: 0 !important; padding: 60px 16px 40px !important; }
+  .learn-main { margin-left: 0 !important; }
+  .coach-main { margin-left: 0 !important; }
+  .quiz-main { margin-left: 0 !important; padding: 60px 16px 40px !important; }
+  /* Catch-all: any main/section direct child of .app */
+  .app > main, .app > div > main { margin-left: 0 !important; }
+  /* Inline style override — this targets the actual rendered style attribute */
+  main[style] { margin-left: 0 !important; }
+
+  /* ── Dashboard ── */
+  .dash-greeting { font-size: 24px !important; }
+  .dash-sub { font-size: 12px !important; }
+  .dash-progress-card { overflow-x: auto; }
+  .dash-progress-stats { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  .dash-today-grid { grid-template-columns: 1fr !important; }
+  .dash-action-card { min-width: 0 !important; }
+  .dash-tip-card { padding: 20px 16px !important; }
+
+  /* ── Flashcards ── */
   .flash-landing { padding: 60px 16px 40px !important; }
   .flash-drill { padding: 60px 16px 40px !important; max-width: 100% !important; }
-  .flash-landing-title { font-size: 28px !important; }
+  .flash-landing-title { font-size: 26px !important; }
+  .flash-landing-sub { font-size: 13px !important; }
+  .flash-landing-stats { gap: 16px !important; }
   .flash-track-grid { grid-template-columns: 1fr !important; }
-  .flash-drill-head { flex-direction: column !important; gap: 12px !important; }
+  .flash-drill-head { flex-direction: column !important; gap: 10px !important; }
+  .flash-drill-title { font-size: 22px !important; }
   .flash-mode-toggle { width: 100% !important; }
   .flash-mode-btn { flex: 1 !important; justify-content: center !important; font-size: 11px !important; padding: 6px 8px !important; }
-  .flash-filter-bar { flex-wrap: wrap !important; }
-  .flash-card-single { padding: 18px 16px 14px !important; }
-  .flash-question { font-size: 15px !important; }
+  .flash-filter-bar { flex-wrap: wrap !important; gap: 6px !important; }
+  .flash-card-single { padding: 18px 14px 14px !important; }
+  .flash-question { font-size: 14px !important; }
+  .flash-answer { font-size: 13px !important; }
   .flash-grid { grid-template-columns: 1fr !important; }
-  .flash-nav-row { gap: 8px !important; }
+  .flash-grid-card-wrap { height: 240px !important; }
+  .flash-nav-row { gap: 6px !important; }
+  .flash-nav-btn { padding: 6px 10px !important; font-size: 11px !important; }
   .flash-keyboard-hint { display: none !important; }
   .perf-panel { display: none !important; }
+  .flash-drill-layout { flex-direction: column !important; }
+  .flash-view-toggle { display: none !important; }
+  .flash-insight-panel { padding: 14px !important; }
+  .flash-interview-input textarea { font-size: 14px !important; }
 
-  /* Outreach tracker */
-  .tracker-stats { grid-template-columns: 1fr 1fr !important; }
+  /* ── Learn hub ── */
+  .learn-container { padding: 60px 16px 40px !important; }
+  .learn-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .learn-title { font-size: 26px !important; }
 
-  /* Hit rate intel */
-  .hit-stats-grid { grid-template-columns: 1fr 1fr !important; }
-  .hit-angles-grid { grid-template-columns: 1fr !important; }
+  /* ── Quiz ── */
+  .quiz-container { padding: 20px 0 !important; max-width: 100% !important; }
+  .quiz-card { padding: 24px 16px !important; }
+  .quiz-question { font-size: 18px !important; }
+  .quiz-option-btn { font-size: 13px !important; padding: 12px 14px !important; }
+  .quiz-result-card { padding: 24px 16px !important; }
 
-  /* Tables — horizontal scroll */
-  table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+  /* ── Coach ── */
+  .coach-container, .coach-main { padding: 60px 12px 20px !important; }
 
-  /* Learn hub */
-  .learn-grid { grid-template-columns: 1fr !important; }
+  /* ── Interview prep / Recruiting manual ── */
+  .prep-main, .manual-main { margin-left: 0 !important; }
 
-  /* Pro modal */
-  .pro-modal { padding: 28px 20px !important; max-width: 360px !important; }
+  /* ── Outreach tracker ── */
+  .tracker-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 700px; }
 
-  /* General grid overrides for inline styles */
-  [style*="gridTemplateColumns: repeat(3"] { grid-template-columns: 1fr !important; }
-  [style*="gridTemplateColumns: repeat(4"] { grid-template-columns: 1fr 1fr !important; }
-  [style*="gridTemplateColumns: 1.1fr 0.9fr"] { grid-template-columns: 1fr !important; }
-  [style*="grid-template-columns:repeat(3"] { grid-template-columns: 1fr !important; }
-  [style*="grid-template-columns:repeat(4"] { grid-template-columns: 1fr 1fr !important; }
-  [style*="grid-template-columns:1fr 1fr 1fr 1fr"] { grid-template-columns: 1fr 1fr !important; }
+  /* ── Hit rate intel ── */
+  .hit-rate-main { margin-left: 0 !important; }
 
-  /* Coach page */
-  .coach-container { padding: 60px 12px 20px !important; }
+  /* ── Job board ── */
+  .job-board-main { margin-left: 0 !important; }
 
-  /* Interview prep pages */
-  .prep-container { padding: 60px 16px 40px !important; }
+  /* ── Tables — horizontal scroll ── */
+  .table-wrap, .tracker-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-  /* Recruiting manual */
-  .manual-container { padding: 60px 16px 40px !important; }
+  /* ── Pro modal ── */
+  .pro-modal-overlay { padding: 12px !important; }
+  .pro-modal { padding: 24px 18px !important; max-width: 100% !important; }
 
-  /* Font sizes */
-  [style*="fontSize:28"] { font-size: 22px !important; }
-  [style*="fontSize: 28"] { font-size: 22px !important; }
-  [style*="fontSize:36"] { font-size: 26px !important; }
-  [style*="fontSize: 36"] { font-size: 26px !important; }
+  /* ── Checkout ── */
+  .checkout-grid { grid-template-columns: 1fr !important; }
 
-  /* Checkout page */
-  [style*="gridTemplateColumns: '1.1fr"] { grid-template-columns: 1fr !important; }
+  /* ── My Account ── */
+  .account-main { margin-left: 0 !important; }
+
+  /* ── General: force all grids with inline styles to collapse ── */
+  .app div[style*="grid"] { max-width: 100vw; overflow-x: hidden; }
 }
 
-/* Small phones */
+/* Extra small phones */
 @media (max-width: 400px) {
-  .flash-landing-stats { flex-direction: column !important; gap: 12px !important; }
+  .flash-landing-stats { flex-direction: column !important; gap: 10px !important; }
   .flash-stat-num { font-size: 20px !important; }
   .dash-progress-stats { grid-template-columns: 1fr !important; }
+  .dash-greeting { font-size: 20px !important; }
 }

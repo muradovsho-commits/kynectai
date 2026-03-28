@@ -60,7 +60,7 @@ export default function JobBoardPage() {
   return (
     <div className="app">
       <Sidebar activePage="job-board" />
-      <main style={{ marginLeft: 'var(--sidebar-w)', flex: 1, minHeight: '100vh', background: 'var(--bg)' }}>
+      <main className="main" style={{ flex: 1, minHeight: '100vh', background: 'var(--bg)' }}>
         <div style={{ maxWidth: 720, margin: '0 auto', padding: '48px 40px 80px' }}>
 
           {/* Header */}
