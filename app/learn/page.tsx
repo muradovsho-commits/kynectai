@@ -164,7 +164,7 @@ export default function LearnPage() {
           </div>
           <div className="learn-quiz-content">
             <div className="learn-quiz-title">Career Roadmaps</div>
-            <div className="learn-quiz-desc">Not sure which path is right? Explore IB, PE, consulting, accounting, asset management, and more. Learn what each role does, what they pay, and how to break in.</div>
+            <div className="learn-quiz-desc">Not sure which path is right? Explore 10+ career tracks — IB, PE, consulting, S&T, equity research, asset management, accounting, venture capital, real estate, restructuring, and more.</div>
           </div>
           <Link href="/recruiting-manual" className="learn-quiz-btn">Explore Paths <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></Link>
         </div>
@@ -205,13 +205,7 @@ export default function LearnPage() {
 
         {/* Footer */}
         <div className="learn-footer">
-          <div className="learn-footer-copy">© 2026 OfferBell Professional. All rights reserved.</div>
-          <div className="learn-footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Cookie Policy</a>
-            <a href="#">Support</a>
-          </div>
+          <div className="learn-footer-copy">&copy; 2026 OfferBell. All rights reserved.</div>
         </div>
       </main>
 
