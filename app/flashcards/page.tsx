@@ -143,10 +143,12 @@ export default function FlashcardsPage() {
   const [shuffleKey, setShuffleKey] = useState(0);
   // Pro features
   const [mode, setMode] = useState<'practice' | 'interview'>('practice');
+  const [viewMode, setViewMode] = useState<'single' | 'grid'>('single');
   const [showProModal, setShowProModal] = useState(false);
   const [userInput, setUserInput] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
   const [aiHistory, setAiHistory] = useState<{ role: string; content: string; score?: Score }[]>([]);
+  const [gridFlipped, setGridFlipped] = useState<Record<number, boolean>>({});
   const [showInsight, setShowInsight] = useState(false);
   // Performance
   const [perf, setPerf] = useState<PerfData>({ seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} });
@@ -306,16 +308,27 @@ export default function FlashcardsPage() {
 
             {/* Filter bar */}
             <div className="flash-filter-bar">
-              <Dropdown label="Topic" value={filterCat} options={categories} onChange={v => { setFilterCat(v); setIdx(0); resetCardState(); }} />
-              <Dropdown label="Difficulty" value={filterDiff} options={['All','Easy','Medium','Hard']} onChange={v => { setFilterDiff(v); setIdx(0); resetCardState(); }} />
+              <Dropdown label="Topic" value={filterCat} options={categories} onChange={v => { setFilterCat(v); setIdx(0); resetCardState(); setGridFlipped({}); }} />
+              <Dropdown label="Difficulty" value={filterDiff} options={['All','Easy','Medium','Hard']} onChange={v => { setFilterDiff(v); setIdx(0); resetCardState(); setGridFlipped({}); }} />
               <div className="flash-filter-spacer" />
-              <button className="flash-shuffle" onClick={() => { setShuffleKey(p => p + 1); setIdx(0); resetCardState(); }} type="button">
+              {/* View toggle */}
+              <div className="flash-view-toggle">
+                <button className={`flash-view-btn${viewMode === 'single' ? ' active' : ''}`} onClick={() => setViewMode('single')} type="button" title="Single card view">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                </button>
+                <button className={`flash-view-btn${viewMode === 'grid' ? ' active' : ''}`} onClick={() => setViewMode('grid')} type="button" title="Grid view">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                </button>
+              </div>
+              <button className="flash-shuffle" onClick={() => { setShuffleKey(p => p + 1); setIdx(0); resetCardState(); setGridFlipped({}); }} type="button">
                 <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
                 Shuffle
               </button>
             </div>
 
-            {/* Card */}
+            {/* ═══ SINGLE CARD VIEW ═══ */}
+            {viewMode === 'single' && (
+            <>
             {card ? (
               <>
                 <div className="flash-card-container">
@@ -341,7 +354,6 @@ export default function FlashcardsPage() {
                           {showAnswer ? 'Hide Answer' : 'Show Answer'}
                         </button>
                         {showAnswer && <div className="flash-answer">{card.a}</div>}
-                        {/* Micro-learning (Pro) */}
                         {showAnswer && isPro && insight && (
                           <>
                             {!showInsight ? (
@@ -377,7 +389,6 @@ export default function FlashcardsPage() {
                         {aiHistory.length === 0 && (
                           <div className="flash-interview-prompt">Answer as you would in a real interview. The AI interviewer will evaluate your response and push deeper.</div>
                         )}
-                        {/* Chat messages */}
                         {aiHistory.map((msg, i) => (
                           <div key={i} className={`flash-chat-msg ${msg.role}`}>
                             <div className="flash-chat-label">{msg.role === 'user' ? 'You' : '✦ Interviewer'}</div>
@@ -401,7 +412,6 @@ export default function FlashcardsPage() {
                         ))}
                         {aiLoading && <div className="flash-chat-msg assistant"><div className="flash-chat-label">✦ Interviewer</div><div className="flash-chat-text flash-typing">Evaluating<span className="dot-1">.</span><span className="dot-2">.</span><span className="dot-3">.</span></div></div>}
                         <div ref={chatEndRef} />
-                        {/* Input */}
                         <div className="flash-interview-input">
                           <textarea ref={inputRef} value={userInput} onChange={e => setUserInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitAnswer(); }}} placeholder="Type your answer as you would in a real interview..." rows={3} />
                           <button onClick={submitAnswer} disabled={!userInput.trim() || aiLoading} type="button">
@@ -429,6 +439,44 @@ export default function FlashcardsPage() {
               </>
             ) : (
               <div className="flash-card-container"><div className="flash-card-single" style={{ alignItems: 'center', justifyContent: 'center', minHeight: 180 }}><div style={{ color: 'var(--text-3)', fontSize: 14 }}>No questions match the current filters.</div></div></div>
+            )}
+            </>
+            )}
+
+            {/* ═══ GRID VIEW ═══ */}
+            {viewMode === 'grid' && (
+              <>
+                <div className="flash-grid-counter">{filtered.length} questions</div>
+                <div className="flash-grid">
+                  {filtered.map((c, i) => (
+                    <div key={`${shuffleKey}-${i}`} className="flash-grid-card-wrap" onClick={() => setGridFlipped(p => ({ ...p, [i]: !p[i] }))}>
+                      <div className={`flash-grid-card${gridFlipped[i] ? ' flipped' : ''}`}>
+                        {/* Front */}
+                        <div className="flash-grid-front">
+                          <div className="flash-card-tags" style={{marginBottom:10}}>
+                            <span className="flash-tag flash-tag-cat">{c.category}</span>
+                            {c.difficulty && <span className={`flash-tag flash-tag-diff-${c.difficulty.toLowerCase()}`}>{c.difficulty}</span>}
+                          </div>
+                          <div className="flash-grid-q">{c.q}</div>
+                          <div className="flash-grid-bottom">
+                            {c.firm && <span className="flash-grid-firm">{c.firm}</span>}
+                            <span className="flash-grid-hint">Click to reveal →</span>
+                          </div>
+                        </div>
+                        {/* Back */}
+                        <div className="flash-grid-back">
+                          <div className="flash-grid-back-label">ANSWER</div>
+                          <div className="flash-grid-a">{c.a}</div>
+                          <div className="flash-grid-hint" style={{color:'#7c3aed'}}>Click to flip back</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {filtered.length === 0 && (
+                  <div className="flash-card-container"><div className="flash-card-single" style={{ alignItems: 'center', justifyContent: 'center', minHeight: 180 }}><div style={{ color: 'var(--text-3)', fontSize: 14 }}>No questions match the current filters.</div></div></div>
+                )}
+              </>
             )}
           </div>
 
