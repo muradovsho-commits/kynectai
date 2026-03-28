@@ -290,12 +290,23 @@ body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .dash-main { padding: 20px 16px 40px; }
+  .dash-topbar { flex-direction: column; gap: 14px; align-items: flex-start; }
+  .dash-profile-btn { width: 100%; justify-content: center; }
   .dash-action-grid { grid-template-columns: 1fr; }
-  .dash-progress-stats { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .dash-progress-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
   .dash-progress-header { flex-direction: column; gap: 4px; align-items: flex-start; }
 }
 @media (max-width: 768px) {
   .dash-main { margin-left: 0 !important; padding: 60px 16px 40px !important; }
+  .dash-topbar { margin-bottom: 24px; padding-bottom: 20px; }
+  .dash-greeting { font-size: 26px; }
+  .dash-today-card, .dash-action-card, .dash-progress-card, .dash-insight-card, .dash-tip-card { padding: 22px 18px; }
+  .dash-progress-stats { grid-template-columns: 1fr; gap: 14px; }
+  .dash-upgrade-toast { top: 12px; left: 12px; right: 12px; transform: none; white-space: normal; border-radius: 16px; padding: 14px 16px; }
+}
+@media (max-width: 480px) {
+  .dash-main { padding: 58px 12px 28px !important; }
+  .dash-greeting { font-size: 22px; }
 }
 
 /* ── Upgrade Toast ── */
