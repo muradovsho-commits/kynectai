@@ -67,7 +67,7 @@ export default function SignupPage() {
           <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 38, lineHeight: 1.15, letterSpacing: "-1px", marginBottom: 16 }}>Start your recruiting <em style={{ fontStyle: "italic" }}>journey.</em></div>
           <div style={{ fontSize: 14, color: "rgba(255,255,255,.45)", lineHeight: 1.7, marginBottom: 40 }}>Join thousands of finance students using OfferBell to land offers at top firms.</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            {["AI-powered outreach that gets replies", "Track every networking conversation", "Interview prep for IB, PE, consulting & more", "Mentorship from students who broke in"].map((t, i) => (
+            {["AI-powered outreach that gets replies", "Track every networking conversation", "Interview prep for IB, PE, consulting & more", "Give Back Initiative — mentorship coming soon"].map((t, i) => (
               <div key={i} style={{ display: "flex", gap: 10, alignItems: "center", fontSize: 13, color: "rgba(255,255,255,.55)" }}>
                 <svg width="16" height="16" fill="none" stroke="#16a34a" strokeWidth="2" viewBox="0 0 24 24" style={{ flexShrink: 0 }}><polyline points="20 6 9 17 4 12"/></svg>
                 {t}

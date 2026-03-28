@@ -357,7 +357,7 @@ export default function OnboardingPage() {
                     { on: true, text: "Job Board" },
                     { on: true, text: "Career Roadmaps Guide" },
                     { on: false, text: "AI Coach" },
-                    { on: true, text: "Mentorship Program (Apply for Free)" },
+                    { on: true, text: "Mentorship Program (Coming Soon)", badge: "SOON" },
                     { on: false, text: "Hit Rate Intel" },
                   ].map((item, i) => (
                     <div key={i} style={{ display: "flex", gap: 10, alignItems: "center" }}>
@@ -404,7 +404,7 @@ export default function OnboardingPage() {
                     { text: "Unlimited outreach messages", bold: true },
                     { text: "Contact Finder \u2014 unlimited", bold: true, badge: "SOON" },
                     { text: "AI Coach \u2014 personal recruiting advisor", bold: true },
-                    { text: "Mentorship Program (Apply for Free)", bold: false },
+                    { text: "Mentorship Program (Coming Soon)", bold: false },
                     { text: "Hit Rate Intel \u2014 see what angles work", bold: true },
                     { text: "Outreach Tracker", bold: false },
                     { text: "Job Board", bold: false },
