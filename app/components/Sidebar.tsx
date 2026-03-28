@@ -49,7 +49,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
             <svg width="7" height="7" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
           </div>}
         </div>
-        <div><div style={{fontSize:13,fontWeight:600,color:'var(--text)'}}>{displayName}</div><div style={{fontSize:11,color: userPlan === 'pro' ? '#16a34a' : 'var(--text-3)',fontWeight: userPlan === 'pro' ? 600 : 400}}>{userPlan === 'pro' ? '✦ Pro plan' : 'Free plan'}</div></div>
+        <div><div style={{fontSize:13,fontWeight:600,color:'var(--text)'}}>{displayName}</div><div style={{fontSize:11,color: userPlan === 'pro' ? '#16a34a' : 'var(--text-3)',fontWeight: userPlan === 'pro' ? 600 : 400}}>{userPlan === 'pro' ? 'Pro plan' : 'Free plan'}</div></div>
       </div>
       <nav className="nav">
         <div className="nav-group">
@@ -67,7 +67,6 @@ export default function Sidebar({ activePage }: SidebarProps) {
           <span className="nav-group-label">Intelligence</span>
           <Link className={cls('hit-rate-intel')} href="/hit-rate-intel"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Hit Rate Intel<span className="nav-pill pill-pro">Pro</span></Link>
           <Link className={cls('coach')} href="/coach"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Coach<span className="nav-pill pill-pro">Pro</span></Link>
-          <Link className={cls('goal-planner')} href="/goal-planner"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>Goal Planner</Link>
         </div>
         <div className="nav-group">
           <span className="nav-group-label">Learn</span>

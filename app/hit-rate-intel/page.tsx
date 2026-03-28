@@ -406,7 +406,7 @@ export default function HitRateIntelPage() {
                       <span style={{width:10,height:10,borderRadius:3,background:f.color,display:'inline-block',flexShrink:0}}/>
                       {f.name}
                     </span>
-                    {selectedFirms.has(f.name)&&<span>✓</span>}
+                    {selectedFirms.has(f.name)&&<span></span>}
                   </button>
                 ))}
               </div>

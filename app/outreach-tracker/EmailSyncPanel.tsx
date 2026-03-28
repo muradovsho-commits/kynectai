@@ -244,7 +244,7 @@ export default function EmailSyncPanel({ onContactsUpdated }: { onContactsUpdate
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                       <span style={{ fontSize: 11, fontWeight: 600, color: p.acct.status === 'expired' ? '#dc2626' : '#16a34a' }}>
-                        {p.acct.status === 'expired' ? '⚠ Token expired' : `✓ Synced ${fmtAgo(p.acct.lastSyncedAt)}`}
+                        {p.acct.status === 'expired' ? ' Token expired' : ` Synced ${fmtAgo(p.acct.lastSyncedAt)}`}
                       </span>
                       <button onClick={e => { e.stopPropagation(); disconnect(p.key); }} type="button" style={{ fontSize: 11, color: 'var(--text-3)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>Disconnect</button>
                     </div>

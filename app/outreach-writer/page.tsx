@@ -254,9 +254,9 @@ Rules:
             </div>
             <div style={{ display: 'flex', gap: 16, marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
               {[
-                { icon: '✓', text: 'Works in Gmail & Outlook Web' },
-                { icon: '✓', text: 'Generate outreach right in your inbox' },
-                { icon: '✓', text: 'Insert into reply with one click' },
+                { icon: '•', text: 'Works in Gmail & Outlook Web' },
+                { icon: '•', text: 'Generate outreach right in your inbox' },
+                { icon: '•', text: 'Insert into reply with one click' },
               ].map((f: {icon: string; text: string}) => (
                 <div key={f.text} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span style={{ fontSize: 11, fontWeight: 700, color: '#16a34a' }}>{f.icon}</span>
@@ -272,7 +272,7 @@ Rules:
               <div key={n} style={{display:'flex',alignItems:'center',flex:i<2?1:'initial'}}>
                 <div style={{display:'flex',alignItems:'center',gap:8}}>
                   <div style={{width:28,height:28,borderRadius:'50%',border:`1.5px solid ${step===n?'var(--text)':step>n?'var(--border-2)':'var(--border-2)'}`,background:step===n?'var(--text)':step>n?'var(--surface-2)':'var(--surface)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:step===n?'var(--surface)':'var(--text-3)',flexShrink:0}}>
-                    {step>n?'✓':n}
+                    {step>n?'':n}
                   </div>
                   <span style={{fontSize:12,fontWeight:600,color:step===n?'var(--text)':'var(--text-3)',whiteSpace:'nowrap'}}>{['Contact','Angle','Generate'][n-1]}</span>
                 </div>

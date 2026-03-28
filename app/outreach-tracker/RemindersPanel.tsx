@@ -70,7 +70,7 @@ export default function RemindersPanel({ contacts, onOpenContact }: { contacts: 
         {visible.slice(0, 5).map(r => (
           <div key={r.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderRadius: 10, background: '#fef3c7', border: '1px solid #fde68a' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 0 }}>
-              <span style={{ fontSize: 16, flexShrink: 0 }}>🔔</span>
+              <span style={{ fontSize: 16, flexShrink: 0 }}></span>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#92400e', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.message}</div>
             </div>
             <div style={{ display: 'flex', gap: 6, flexShrink: 0, marginLeft: 12 }}>

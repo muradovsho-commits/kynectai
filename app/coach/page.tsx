@@ -167,7 +167,7 @@ export default function CoachPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setMessages(prev => [...prev, { role: 'assistant', content: '⚠️ ' + (data.error || 'Coach is temporarily unavailable.'), time: Date.now() }]);
+        setMessages(prev => [...prev, { role: 'assistant', content: ' ' + (data.error || 'Coach is temporarily unavailable.'), time: Date.now() }]);
       } else {
         setMessages(prev => [...prev, { role: 'assistant', content: data.text || 'Something went wrong.', time: Date.now() }]);
       }

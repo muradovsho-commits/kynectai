@@ -74,7 +74,7 @@ export default function CheckoutPage() {
     return (
       <div style={S.page}>
         <div style={S.card}>
-          <div style={S.checkmark}>✓</div>
+          <div style={S.checkmark}></div>
           <div style={S.heading}>You&apos;re on <em>Pro</em></div>
           <div style={S.sub}>You have full access to all OfferBell features including unlimited outreach messages, Contact Finder, AI Coach, and more.</div>
           <div style={S.infoBox}>

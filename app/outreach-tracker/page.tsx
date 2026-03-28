@@ -298,9 +298,9 @@ export default function OutreachTrackerPage() {
             </div>
             <div style={{ display: 'flex', gap: 16, marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
               {[
-                { icon: '✓', text: 'Works in Gmail & Outlook Web' },
-                { icon: '✓', text: 'Add contacts with one click' },
-                { icon: '✓', text: 'AI-powered outreach writer' },
+                { icon: '•', text: 'Works in Gmail & Outlook Web' },
+                { icon: '•', text: 'Add contacts with one click' },
+                { icon: '•', text: 'AI-powered outreach writer' },
               ].map(f => (
                 <div key={f.text} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span style={{ fontSize: 11, fontWeight: 700, color: '#16a34a' }}>{f.icon}</span>

@@ -76,13 +76,13 @@ function ProModal({ onClose }: { onClose: () => void }) {
     <div className="pro-modal-overlay" onClick={onClose}>
       <div className="pro-modal" onClick={e => e.stopPropagation()}>
         <button className="pro-modal-close" onClick={onClose}>×</button>
-        <div className="pro-modal-icon">✦</div>
+        <div className="pro-modal-icon"></div>
         <div className="pro-modal-title">Upgrade to Pro</div>
         <div className="pro-modal-desc">Unlock AI Interview Mode, Performance Dashboard, and Micro-Learning Insights to prep like the top 1%.</div>
         <div className="pro-modal-features">
-          <div className="pro-modal-feat"><span className="pro-feat-icon">🎯</span><div><strong>AI Interview Mode</strong><br/>Live mock interviews with follow-up questions and real-time scoring</div></div>
-          <div className="pro-modal-feat"><span className="pro-feat-icon">📊</span><div><strong>Performance Dashboard</strong><br/>Track mastery, find weak areas, get interview readiness scores</div></div>
-          <div className="pro-modal-feat"><span className="pro-feat-icon">💡</span><div><strong>Micro-Learning Insights</strong><br/>&ldquo;Why this matters&rdquo; and &ldquo;How to answer like a top 1% candidate&rdquo;</div></div>
+          <div className="pro-modal-feat"><span className="pro-feat-icon"></span><div><strong>AI Interview Mode</strong><br/>Live mock interviews with follow-up questions and real-time scoring</div></div>
+          <div className="pro-modal-feat"><span className="pro-feat-icon"></span><div><strong>Performance Dashboard</strong><br/>Track mastery, find weak areas, get interview readiness scores</div></div>
+          <div className="pro-modal-feat"><span className="pro-feat-icon"></span><div><strong>Micro-Learning Insights</strong><br/>&ldquo;Why this matters&rdquo; and &ldquo;How to answer like a top 1% candidate&rdquo;</div></div>
         </div>
         <button className="pro-modal-btn" onClick={() => router.push('/my-account')}>View Pro Plans</button>
       </div>
@@ -391,13 +391,13 @@ export default function FlashcardsPage() {
                         )}
                         {aiHistory.map((msg, i) => (
                           <div key={i} className={`flash-chat-msg ${msg.role}`}>
-                            <div className="flash-chat-label">{msg.role === 'user' ? 'You' : '✦ Interviewer'}</div>
+                            <div className="flash-chat-label">{msg.role === 'user' ? 'You' : ' Interviewer'}</div>
                             <div className="flash-chat-text">{msg.content}</div>
                             {msg.score && (
                               <div className={`flash-score-card verdict-${msg.score.verdict}`}>
                                 <div className="flash-score-header">
                                   <span className={`flash-verdict-badge ${msg.score.verdict}`}>
-                                    {msg.score.verdict === 'pass' ? '✓ Pass' : msg.score.verdict === 'partial' ? '~ Partial' : '✗ Fail'}
+                                    {msg.score.verdict === 'pass' ? ' Pass' : msg.score.verdict === 'partial' ? '~ Partial' : ' Fail'}
                                   </span>
                                 </div>
                                 <div className="flash-score-bars">
@@ -405,12 +405,12 @@ export default function FlashcardsPage() {
                                   <div className="flash-score-row"><span>Depth</span><div className="flash-score-track"><div className="flash-score-fill" style={{ width: `${msg.score.depth * 10}%` }} /></div><span>{msg.score.depth}/10</span></div>
                                   <div className="flash-score-row"><span>Clarity</span><div className="flash-score-track"><div className="flash-score-fill" style={{ width: `${msg.score.clarity * 10}%` }} /></div><span>{msg.score.clarity}/10</span></div>
                                 </div>
-                                {msg.score.tip && <div className="flash-score-tip">💡 {msg.score.tip}</div>}
+                                {msg.score.tip && <div className="flash-score-tip"> {msg.score.tip}</div>}
                               </div>
                             )}
                           </div>
                         ))}
-                        {aiLoading && <div className="flash-chat-msg assistant"><div className="flash-chat-label">✦ Interviewer</div><div className="flash-chat-text flash-typing">Evaluating<span className="dot-1">.</span><span className="dot-2">.</span><span className="dot-3">.</span></div></div>}
+                        {aiLoading && <div className="flash-chat-msg assistant"><div className="flash-chat-label"> Interviewer</div><div className="flash-chat-text flash-typing">Evaluating<span className="dot-1">.</span><span className="dot-2">.</span><span className="dot-3">.</span></div></div>}
                         <div ref={chatEndRef} />
                         <div className="flash-interview-input">
                           <textarea ref={inputRef} value={userInput} onChange={e => setUserInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitAnswer(); }}} placeholder="Type your answer as you would in a real interview..." rows={3} />

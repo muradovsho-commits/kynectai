@@ -93,7 +93,7 @@ function AddContactInner() {
       }}>
         {status === 'saving' && (
           <>
-            <div style={{ fontSize: 36, marginBottom: 12 }}>⏳</div>
+            <div style={{ fontSize: 36, marginBottom: 12 }}></div>
             <div style={{ fontSize: 17, fontWeight: 700, color: '#1e293b' }}>Adding contact...</div>
           </>
         )}
