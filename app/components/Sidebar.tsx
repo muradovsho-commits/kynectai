@@ -61,12 +61,14 @@ export default function Sidebar({ activePage }: SidebarProps) {
           <Link className={cls('contact-finder')} href="/contact-finder"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Contact Finder<span className="nav-pill pill-pro">Soon</span></Link>
           <Link className={cls('outreach-writer')} href="/outreach-writer"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Outreach Writer{userPlan !== 'pro' && <span className="nav-pill pill-count">{Math.max(0, 5 - messagesSent)} left</span>}</Link>
           <Link className={cls('outreach-tracker')} href="/outreach-tracker"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Outreach Tracker</Link>
+          <Link className={cls('offer-pipeline')} href="/offer-pipeline"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Offer Pipeline</Link>
           <Link className={cls('job-board')} href="/job-board"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>Job Board</Link>
         </div>
         <div className="nav-group">
           <span className="nav-group-label">Intelligence</span>
           <Link className={cls('hit-rate-intel')} href="/hit-rate-intel"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Hit Rate Intel<span className="nav-pill pill-pro">Pro</span></Link>
           <Link className={cls('coach')} href="/coach"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Coach<span className="nav-pill pill-pro">Pro</span></Link>
+          <Link className={cls('goal-planner')} href="/goal-planner"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>Goal Planner</Link>
         </div>
         <div className="nav-group">
           <span className="nav-group-label">Learn</span>
