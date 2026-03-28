@@ -7,18 +7,23 @@ import { useRouter } from 'next/navigation';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/interview-prep.css';
 
-import { RE_FUNDAMENTALS_SECTIONS, RE_MODELING_SECTIONS, RE_BEHAVIORAL_SECTIONS } from './re-data';
+import { RE_FUNDAMENTALS_SECTIONS } from './re-fundamentals-data';
+import { RE_MODELING_SECTIONS } from './re-modeling-data';
+import { RE_TECHNICALS_SECTIONS } from './re-technicals-data';
+import { RE_BEHAVIORAL_SECTIONS } from './re-behavioral-data';
 
 type Section = { title: string; content: string };
 
 const MODULES: { id: string; title: string; sub: string; sections: Section[] }[] = [
   { id: 're_fund', title: 'RE Fundamentals', sub: 'NOI, cap rates, property types, REPE vs REITs', sections: RE_FUNDAMENTALS_SECTIONS },
-  { id: 're_model', title: 'Modeling & Metrics', sub: 'Pro formas, DSCR, LTV, waterfall structures', sections: RE_MODELING_SECTIONS },
-  { id: 're_beh', title: 'RE Behavioral', sub: 'Why real estate, market knowledge, deal ideas', sections: RE_BEHAVIORAL_SECTIONS },
+  { id: 're_model', title: 'Pro Forma Modeling', sub: 'Pro formas, DSCR, LTV, waterfall, financing', sections: RE_MODELING_SECTIONS },
+  { id: 're_tech', title: 'Technical Questions', sub: 'Cap rate deep dive, FFO, market knowledge', sections: RE_TECHNICALS_SECTIONS },
+  { id: 're_beh', title: 'Behavioral & Practice', sub: 'Why RE, investment ideas, study plan', sections: RE_BEHAVIORAL_SECTIONS },
 ];
 
 const ICONS: Record<string, React.ReactElement> = {
   re_fund: <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>,
+  re_tech: <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
   re_beh: <svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="3"/></svg>,
   re_model: <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
 };
@@ -56,7 +61,7 @@ export default function InterviewPrepPage() {
         </div>
         <div style={{marginBottom:"28px"}}>
           <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Fundamentals & Modeling</div>
-          <div className="module-grid" style={{marginBottom:"16px"}}>{MODULES.filter(m => ['re_fund','re_model'].includes(m.id)).map(m => (<div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>{ICONS[m.id]}<div className="module-name">{m.title}</div></div>))}</div>
+          <div className="module-grid" style={{marginBottom:"16px"}}>{MODULES.filter(m => ['re_fund','re_model','re_tech'].includes(m.id)).map(m => (<div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>{ICONS[m.id]}<div className="module-name">{m.title}</div></div>))}</div>
           <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Behavioral & Fit</div>
         </div>
         {activeModule === '' ? (

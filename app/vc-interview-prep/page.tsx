@@ -7,18 +7,23 @@ import { useRouter } from 'next/navigation';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/interview-prep.css';
 
-import { VC_FUNDAMENTALS_SECTIONS, VC_EVALUATION_SECTIONS, VC_BEHAVIORAL_SECTIONS } from './vc-data';
+import { VC_FUNDAMENTALS_SECTIONS } from './vc-fundamentals-data';
+import { VC_EVALUATION_SECTIONS } from './vc-evaluation-data';
+import { VC_TECHNICALS_SECTIONS } from './vc-technicals-data';
+import { VC_BEHAVIORAL_SECTIONS } from './vc-behavioral-data';
 
 type Section = { title: string; content: string };
 
 const MODULES: { id: string; title: string; sub: string; sections: Section[] }[] = [
   { id: 'vc_fund', title: 'VC Fundamentals', sub: 'Fund economics, power law, stages, great investments', sections: VC_FUNDAMENTALS_SECTIONS },
   { id: 'vc_eval', title: 'Startup Evaluation', sub: 'Pitch decks, SaaS metrics, valuation', sections: VC_EVALUATION_SECTIONS },
+  { id: 'vc_tech', title: 'VC Technicals', sub: 'Fund math, deal terms, market sizing, company pitches', sections: VC_TECHNICALS_SECTIONS },
   { id: 'vc_beh', title: 'VC Behavioral', sub: 'Why VC, sector thesis, company deep-dives', sections: VC_BEHAVIORAL_SECTIONS },
 ];
 
 const ICONS: Record<string, React.ReactElement> = {
   vc_fund: <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>,
+  vc_tech: <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
   vc_beh: <svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="3"/></svg>,
   vc_eval: <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
 };
@@ -56,7 +61,7 @@ export default function InterviewPrepPage() {
         </div>
         <div style={{marginBottom:"28px"}}>
           <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Fundamentals & Evaluation</div>
-          <div className="module-grid" style={{marginBottom:"16px"}}>{MODULES.filter(m => ['vc_fund','vc_eval'].includes(m.id)).map(m => (<div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>{ICONS[m.id]}<div className="module-name">{m.title}</div></div>))}</div>
+          <div className="module-grid" style={{marginBottom:"16px"}}>{MODULES.filter(m => ['vc_fund','vc_eval','vc_tech'].includes(m.id)).map(m => (<div key={m.id} className={'module-card' + (activeModule === m.id ? ' active' : '')} onClick={() => { setActiveModule(m.id); setActiveSection(0); setOpenItems({}); }}>{ICONS[m.id]}<div className="module-name">{m.title}</div></div>))}</div>
           <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Behavioral & Fit</div>
         </div>
         {activeModule === '' ? (

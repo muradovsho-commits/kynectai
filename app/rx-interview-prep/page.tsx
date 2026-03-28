@@ -7,7 +7,9 @@ import { useRouter } from 'next/navigation';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/interview-prep.css';
 
-import { RX_FUNDAMENTALS_SECTIONS, RX_TECHNICALS_SECTIONS, RX_BEHAVIORAL_SECTIONS } from './rx-data';
+import { RX_FUNDAMENTALS_SECTIONS } from './rx-fundamentals-data';
+import { RX_TECHNICALS_SECTIONS } from './rx-technicals-data';
+import { RX_BEHAVIORAL_SECTIONS } from './rx-behavioral-data';
 
 type Section = { title: string; content: string };
 
