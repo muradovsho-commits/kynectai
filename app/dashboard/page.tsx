@@ -175,7 +175,7 @@ export default function DashboardPage() {
 
         {/* ── Today Card ── */}
         <div className="dash-today-card">
-          <div className="dash-today-label">Today on Kynect</div>
+          <div className="dash-today-label">Today on OfferBell</div>
           <h1 className="dash-today-title">Do just one thing to move recruiting forward.</h1>
           <p className="dash-today-desc">
             Pick one path, complete it, then come back tomorrow. You can always access everything else from the sidebar.
