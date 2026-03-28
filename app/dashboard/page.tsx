@@ -55,6 +55,8 @@ export default function DashboardPage() {
   const [userName, setUserName] = useState({ first: "", last: "" });
   const [messagesSent, setMessagesSent] = useState(0);
   const [pipelineCount, setPipelineCount] = useState(0);
+  const [searchesUsed, setSearchesUsed] = useState(0);
+  const [flashcardsDrilled, setFlashcardsDrilled] = useState(0);
   const [upgradeToast, setUpgradeToast] = useState("");
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
@@ -131,6 +133,11 @@ export default function DashboardPage() {
       const t = localStorage.getItem("offerbell_tracker_v3");
       if (t) setPipelineCount(JSON.parse(t).length);
     } catch {}
+    try { setSearchesUsed(parseInt(localStorage.getItem("offerbell_searches_used") || "0", 10)); } catch {}
+    try {
+      const perf = localStorage.getItem("offerbell_flash_perf");
+      if (perf) { const p = JSON.parse(perf); setFlashcardsDrilled(p.seen || 0); }
+    } catch {}
   }, []);
 
   // Upgrade toast
@@ -200,20 +207,20 @@ export default function DashboardPage() {
           </div>
           <div className="dash-progress-stats">
             <div>
-              <div className="dash-stat-label">Contacts</div>
+              <div className="dash-stat-label">Contacts tracked</div>
               <div className="dash-stat-value">{pipelineCount}</div>
             </div>
             <div>
-              <div className="dash-stat-label">Messages this month</div>
+              <div className="dash-stat-label">Messages sent</div>
               <div className="dash-stat-value">{messagesSent}</div>
             </div>
             <div>
-              <div className="dash-stat-label">Conversations</div>
-              <div className="dash-stat-value">0</div>
+              <div className="dash-stat-label">Contact searches</div>
+              <div className="dash-stat-value">{searchesUsed}</div>
             </div>
             <div>
-              <div className="dash-stat-label">Interviews</div>
-              <div className="dash-stat-value">0</div>
+              <div className="dash-stat-label">Flashcards drilled</div>
+              <div className="dash-stat-value">{flashcardsDrilled}</div>
             </div>
           </div>
         </div>
