@@ -27,8 +27,8 @@ const MODULES: { id: string; title: string; sub: string; sections: Section[] }[]
   { id: 'lbo', title: 'Leveraged Buyouts', sub: 'LBO mechanics, IRR drivers, good candidates', sections: LBO_SECTIONS },
   { id: 'core', title: 'Modeling & Interview Mastery', sub: 'Financial modeling, 6-week plan, appendices', sections: CORE_SECTIONS },
   { id: 'behavioral', title: 'Behavioral & Storytelling', sub: 'TMAY, Why IB?, stories, fit interviews', sections: BEHAVIORAL_SECTIONS },
-  { id: 'markets', title: 'Technical Question Bank', sub: '500 interview flashcards with strong answers', sections: MARKETS_SECTIONS },
-  { id: 'quiz', title: 'Technicals Test', sub: '30 multiple choice questions', sections: [] },
+  { id: 'markets', title: 'Technical Question Bank', sub: '20 interview questions with strong & weak answers', sections: MARKETS_SECTIONS },
+  { id: 'quiz', title: 'Technical Practice', sub: '500 flashcards with answers', sections: [] },
 ];
 
 const ICONS: Record<string, React.ReactElement> = {
@@ -48,8 +48,7 @@ export default function InterviewPrepPage() {
   const [activeModule, setActiveModule] = useState('');
   const [activeSection, setActiveSection] = useState(0);
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
-  const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
-  const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [revealedAnswers, setRevealedAnswers] = useState<Record<number, boolean>>({});
   const [quizFilter, setQuizFilter] = useState('all');
 
   const [_userName, _setUserName] = useState({ first: '', last: '' });
@@ -187,56 +186,37 @@ export default function InterviewPrepPage() {
           {activeModule === 'quiz' ? (
             <div>
               <div style={{display:"flex",gap:"6px",flexWrap:"wrap",marginBottom:"20px"}}>
-                {['all','Core Concepts','Accounting','EV & Valuation','DCF Analysis','M&A Models','LBO Models'].map(cat => (
-                  <button key={cat} onClick={() => {setQuizFilter(cat);setQuizAnswers({});setQuizSubmitted(false);}} style={{padding:"6px 14px",borderRadius:"100px",border:"1.5px solid "+(quizFilter===cat?"var(--text)":"var(--border)"),background:quizFilter===cat?"var(--text)":"var(--surface)",color:quizFilter===cat?"var(--surface)":"var(--text-2)",fontSize:"12px",fontWeight:600,cursor:"pointer",fontFamily:"'Sora',sans-serif"}}>{cat==='all'?'All Topics':cat}</button>
+                {['all','Accounting & Financial Statements','Valuation & DCF','M&A Concepts & Merger Models','LBO & Financial Sponsors','Capital Markets & Macro','Behavioral & Fit - IB Focused'].map(cat => (
+                  <button key={cat} onClick={() => {setQuizFilter(cat);setRevealedAnswers({});}} style={{padding:"6px 14px",borderRadius:"100px",border:"1.5px solid "+(quizFilter===cat?"var(--text)":"var(--border)"),background:quizFilter===cat?"var(--text)":"var(--surface)",color:quizFilter===cat?"var(--surface)":"var(--text-2)",fontSize:"12px",fontWeight:600,cursor:"pointer",fontFamily:"'Sora',sans-serif"}}>{cat==='all'?'All Topics':cat}</button>
                 ))}
               </div>
               {(quizFilter==='all'?QUIZ_QUESTIONS:QUIZ_QUESTIONS.filter(q=>q.category===quizFilter)).map((q,qi) => {
-                const answered = quizAnswers[q.id] !== undefined;
-                const isCorrect = quizAnswers[q.id] === q.correct;
+                const isRevealed = revealedAnswers[q.id] === true;
                 return (
-                  <div key={q.id} style={{background:"var(--surface)",border:"1.5px solid "+(quizSubmitted?(isCorrect?"#22c55e":answered?"#ef4444":"var(--border)"):"var(--border)"),borderRadius:"12px",padding:"18px 20px",marginBottom:"10px"}}>
+                  <div key={q.id} style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"12px",padding:"18px 20px",marginBottom:"10px"}}>
                     <div style={{display:"flex",gap:"10px",marginBottom:"12px"}}>
-                      <div style={{width:"28px",height:"28px",borderRadius:"50%",background:quizSubmitted?(isCorrect?"#22c55e":answered?"#ef4444":"var(--surface-2)"):"var(--surface-2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"12px",fontWeight:700,color:quizSubmitted&&(isCorrect||answered)?"#fff":"var(--text-2)",flexShrink:0}}>{qi+1}</div>
+                      <div style={{width:"28px",height:"28px",borderRadius:"50%",background:"var(--surface-2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"12px",fontWeight:700,color:"var(--text-2)",flexShrink:0}}>{qi+1}</div>
                       <div>
                         <div style={{fontSize:"11px",fontWeight:600,color:"var(--text-3)",marginBottom:"4px"}}>{q.category}</div>
                         <div style={{fontSize:"14px",fontWeight:600,color:"var(--text)",lineHeight:1.5}}>{q.question}</div>
                       </div>
                     </div>
-                    <div style={{display:"grid",gap:"8px",paddingLeft:"38px"}}>
-                      {q.options.map((opt,oi) => {
-                        const sel = quizAnswers[q.id]===oi;
-                        const corr = oi===q.correct;
-                        let bg="var(--surface-2)",brd="var(--border)",col="var(--text)";
-                        if(quizSubmitted&&corr){bg="rgba(34,197,94,0.1)";brd="#22c55e";col="#16a34a";}
-                        else if(quizSubmitted&&sel&&!corr){bg="rgba(239,68,68,0.1)";brd="#ef4444";col="#dc2626";}
-                        else if(sel){bg="var(--text)";brd="var(--text)";col="var(--surface)";}
-                        return (
-                          <div key={oi} onClick={()=>{if(!quizSubmitted)setQuizAnswers(p=>({...p,[q.id]:oi}));}} style={{padding:"10px 14px",borderRadius:"8px",border:"1.5px solid "+brd,background:bg,color:col,fontSize:"13px",cursor:quizSubmitted?"default":"pointer",fontWeight:sel?600:400,transition:"all 0.15s"}}>
-                            <span style={{fontWeight:700,marginRight:"8px"}}>{String.fromCharCode(65+oi)}.</span>{opt}
-                          </div>
-                        );
-                      })}
+                    <div style={{paddingLeft:"38px"}}>
+                      <button onClick={()=>setRevealedAnswers(p=>({...p,[q.id]:!isRevealed}))} style={{padding:"8px 14px",borderRadius:"8px",border:"1.5px solid var(--border)",background:"var(--surface-2)",color:"var(--text)",fontSize:"12px",fontWeight:600,cursor:"pointer",fontFamily:"'Sora',sans-serif",marginBottom:isRevealed?"10px":"0"}}>{isRevealed?'Hide Answer':'Reveal Answer'}</button>
+                      {isRevealed && (
+                        <div style={{fontSize:"13px",color:"var(--text-2)",lineHeight:1.6,background:"var(--surface-2)",padding:"12px 14px",borderRadius:"8px"}}>
+                          <strong style={{color:"var(--text)"}}>Strong answer:</strong> {q.answer}
+                        </div>
+                      )}
                     </div>
-                    {quizSubmitted&&answered&&(
-                      <div style={{marginTop:"12px",paddingLeft:"38px",fontSize:"13px",color:"var(--text-2)",lineHeight:1.6,background:"var(--surface-2)",padding:"12px 14px",borderRadius:"8px"}}>
-                        <strong style={{color:isCorrect?"#16a34a":"#dc2626"}}>{isCorrect?"Correct":"Incorrect"}.</strong> {q.explanation}
-                      </div>
-                    )}
                   </div>
                 );
               })}
               <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:"16px",marginTop:"20px"}}>
-                {!quizSubmitted?(
-                  <button onClick={()=>setQuizSubmitted(true)} style={{padding:"12px 32px",borderRadius:"10px",border:"none",background:"#6366f1",color:"#fff",fontSize:"14px",fontWeight:700,cursor:"pointer",fontFamily:"'Sora',sans-serif"}}>Submit Answers</button>
-                ):(
-                  <>
-                    <div style={{fontSize:"18px",fontWeight:700,color:"var(--text)"}}>
-                      Score: {(()=>{const qs=quizFilter==='all'?QUIZ_QUESTIONS:QUIZ_QUESTIONS.filter(q=>q.category===quizFilter);const c=qs.filter(q=>quizAnswers[q.id]===q.correct).length;return c+"/"+qs.length+" ("+Math.round(c/qs.length*100)+"%)"})()}
-                    </div>
-                    <button onClick={()=>{setQuizAnswers({});setQuizSubmitted(false);}} style={{padding:"10px 24px",borderRadius:"10px",border:"1.5px solid var(--border)",background:"var(--surface)",color:"var(--text)",fontSize:"13px",fontWeight:600,cursor:"pointer",fontFamily:"'Sora',sans-serif"}}>Retake</button>
-                  </>
-                )}
+                <div style={{fontSize:"14px",fontWeight:700,color:"var(--text)"}}>
+                  {(()=>{const qs=quizFilter==='all'?QUIZ_QUESTIONS:QUIZ_QUESTIONS.filter(q=>q.category===quizFilter);return qs.length+" flashcards";})()}
+                </div>
+                <button onClick={()=>setRevealedAnswers({})} style={{padding:"10px 24px",borderRadius:"10px",border:"1.5px solid var(--border)",background:"var(--surface)",color:"var(--text)",fontSize:"13px",fontWeight:600,cursor:"pointer",fontFamily:"'Sora',sans-serif"}}>Reset Reveals</button>
               </div>
             </div>
           ) : sections.map((s, i) => {
