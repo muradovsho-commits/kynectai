@@ -76,6 +76,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
         <div className="nav-group">
           <span className="nav-group-label">Account</span>
           <Link className={cls('my-account')} href="/my-account"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Account</Link>
+          <Link className={cls('feedback')} href="/feedback"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8"/><path d="M8 14h4"/></svg>Feedback</Link>
         </div>
       </nav>
       <div className="theme-toggle-row">
