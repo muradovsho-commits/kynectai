@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import { api } from "../../convex/_generated/api";
+import MobileGate from "../components/MobileGate";
 
-export default function SignupPage() {
+function SignupContent() {
   const router = useRouter();
   const signUp = useMutation((api as any).auth?.signUp);
 
@@ -153,4 +154,8 @@ export default function SignupPage() {
       </div>
     </div>
   );
+}
+
+export default function SignupPage() {
+  return <MobileGate><SignupContent /></MobileGate>;
 }

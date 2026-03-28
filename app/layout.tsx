@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "./convex-client-provider";
@@ -12,11 +12,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-};
 
 export const metadata: Metadata = {
   title: "OfferBell — Land Your Dream Finance Offer",
