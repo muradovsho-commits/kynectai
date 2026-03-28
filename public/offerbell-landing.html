@@ -485,7 +485,7 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
     <div>
       <div class="section-label">What you get</div>
       <h2 class="section-title">Every tool you need,<br><em>nothing you don't</em></h2>
-      <p class="section-sub">Nine features built for students recruiting across IB, PE, consulting, accounting, quant, and more — from career discovery to signed offer.</p>
+      <p class="section-sub">Nine features built for students recruiting across IB, PE, consulting, accounting, and more — from career discovery to signed offer.</p>
     </div>
     <div class="network-box">
       <canvas id="network-canvas"></canvas>
@@ -891,7 +891,7 @@ function type(){const p=phrases[pi];if(!di){tel.textContent=p.slice(0,++ci);if(c
 type();
 
 // ── Hero role typing ──
-const roles=["investment banking","private equity","consulting","accounting & audit","quant finance","growth equity"];
+const roles=["investment banking","private equity","consulting","accounting & audit","asset management","growth equity"];
 let ri=0,rc=0,rd=false;
 const rel=document.getElementById('hero-type');
 function typeRole(){const r=roles[ri];if(!rd){rel.textContent=r.slice(0,++rc);if(rc===r.length){rd=true;setTimeout(typeRole,1600);return;}}else{rel.textContent=r.slice(0,--rc);if(rc===0){rd=false;ri=(ri+1)%roles.length;}}setTimeout(typeRole,rd?45:80);}

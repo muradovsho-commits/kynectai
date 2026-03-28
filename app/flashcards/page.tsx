@@ -309,7 +309,7 @@ export default function FlashcardsPage() {
             {/* Filter bar */}
             <div className="flash-filter-bar">
               <Dropdown label="Topic" value={filterCat} options={categories} onChange={v => { setFilterCat(v); setIdx(0); resetCardState(); setGridFlipped({}); }} />
-              <Dropdown label="Difficulty" value={filterDiff} options={['All','Easy','Medium','Hard']} onChange={v => { setFilterDiff(v); setIdx(0); resetCardState(); setGridFlipped({}); }} />
+              <Dropdown label="Difficulty" value={filterDiff} options={['All','Intermediate','Advanced']} onChange={v => { setFilterDiff(v); setIdx(0); resetCardState(); setGridFlipped({}); }} />
               <div className="flash-filter-spacer" />
               {/* View toggle */}
               <div className="flash-view-toggle">
@@ -342,7 +342,7 @@ export default function FlashcardsPage() {
                       <div className="flash-firm-row">
                         <span className="flash-firm-tag">
                           <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-                          Reported in {card.firm} interview
+                          Reported in an interview
                         </span>
                       </div>
                     )}
@@ -459,7 +459,7 @@ export default function FlashcardsPage() {
                           </div>
                           <div className="flash-grid-q">{c.q}</div>
                           <div className="flash-grid-bottom">
-                            {c.firm && <span className="flash-grid-firm">{c.firm}</span>}
+                            {c.firm && <span className="flash-grid-firm">Reported in an interview</span>}
                             <span className="flash-grid-hint">Click to reveal →</span>
                           </div>
                         </div>
