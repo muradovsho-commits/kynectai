@@ -144,8 +144,8 @@ export default function CheckoutPage() {
                 <div style={{ fontSize: 17, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>OfferBell Pro</div>
                 <div style={{ fontSize: 12, color: "var(--text-3)" }}>
                   {billingCycle === 'annual'
-                    ? 'Billed annually — cancel anytime'
-                    : 'Monthly subscription — cancel anytime'
+                    ? 'Pay $199 today — renews annually. Cancel anytime.'
+                    : 'Pay $20 today — auto-renews monthly until canceled.'
                   }
                 </div>
               </div>
@@ -245,7 +245,7 @@ export default function CheckoutPage() {
                 Redirecting to Stripe...
               </>
             ) : (
-              billingCycle === 'annual' ? "Subscribe — $199/year" : "Subscribe — $20/mo"
+              billingCycle === 'annual' ? "Pay $199 — Annual Plan" : "Pay $20/mo — Monthly Plan"
             )}
           </button>
 

@@ -30,7 +30,6 @@ export default function MyAccountPage() {
   const [school, setSchool] = useState('');
   const [year, setYear] = useState('');
   const [targetRole, setTargetRole] = useState('');
-  const [notifs, setNotifs] = useState({ usage: true, jobs: true, followup: false, updates: true });
   const [barsAnimated, setBarsAnimated] = useState(false);
   const [searchesUsed, setSearchesUsed] = useState(0);
   const [messagesUsed, setMessagesUsed] = useState(0);
@@ -302,30 +301,6 @@ export default function MyAccountPage() {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Notifications */}
-        <div style={{marginBottom:28}}>
-          <div style={{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:14,display:'flex',alignItems:'center',gap:8}}>Notifications<div style={{flex:1,height:1,background:'var(--border)'}}/></div>
-          <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,overflow:'hidden'}}>
-            {([
-              {key:'usage',label:'Usage reminders',sub:"Get notified when you're running low on searches or messages"},
-              {key:'jobs',label:'New job listings',sub:'Weekly digest of new finance roles matching your target'},
-              {key:'followup',label:'Follow-up reminders',sub:"Remind me when a contact hasn't heard from me in 7+ days"},
-              {key:'updates',label:'Platform updates',sub:'New features, tips, and product announcements'},
-            ] as {key:keyof typeof notifs,label:string,sub:string}[]).map((n,i)=>(
-              <div key={n.key} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'14px 18px',borderBottom:i<3?'1px solid var(--border)':'none'}}>
-                <div>
-                  <div style={{fontSize:13,fontWeight:600,color:'var(--text)',marginBottom:2}}>{n.label}</div>
-                  <div style={{fontSize:11,color:'var(--text-3)'}}>{n.sub}</div>
-                </div>
-                <button onClick={()=>{setNotifs(p=>({...p,[n.key]:!p[n.key]}));mark();}} type="button"
-                  style={{width:36,height:20,borderRadius:100,background:notifs[n.key]?'var(--text)':'var(--border-2)',cursor:'pointer',position:'relative',border:'none',transition:'background .2s',flexShrink:0}}>
-                  <div style={{width:14,height:14,borderRadius:'50%',background:'var(--surface)',position:'absolute',top:3,left:notifs[n.key]?19:3,transition:'left .2s',boxShadow:'0 1px 3px rgba(0,0,0,.15)'}}/>
-                </button>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Support */}
