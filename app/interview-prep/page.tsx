@@ -27,7 +27,7 @@ const MODULES: { id: string; title: string; sub: string; sections: Section[] }[]
   { id: 'lbo', title: 'Leveraged Buyouts', sub: 'LBO mechanics, IRR drivers, good candidates', sections: LBO_SECTIONS },
   { id: 'core', title: 'Modeling & Interview Mastery', sub: 'Financial modeling, 6-week plan, appendices', sections: CORE_SECTIONS },
   { id: 'behavioral', title: 'Behavioral & Storytelling', sub: 'TMAY, Why IB?, stories, fit interviews', sections: BEHAVIORAL_SECTIONS },
-  { id: 'markets', title: 'Technical Question Bank', sub: '20 interview questions with strong & weak answers', sections: MARKETS_SECTIONS },
+  { id: 'markets', title: 'Technical Question Bank', sub: '500 interview flashcards with strong answers', sections: MARKETS_SECTIONS },
   { id: 'quiz', title: 'Technicals Test', sub: '30 multiple choice questions', sections: [] },
 ];
 
