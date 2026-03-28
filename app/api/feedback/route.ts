@@ -1,45 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL || "";
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { type, message, userName, userEmail } = body;
+    const { type, message, userName, userEmail, userId } = body;
 
     if (!message || !type) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    const typeLabels: Record<string, string> = {
-      feature: "Feature Request",
-      bug: "Bug Report",
-      feedback: "General Feedback",
-    };
+    // Store in Convex database
+    if (CONVEX_URL) {
+      const convexApiUrl = CONVEX_URL.replace(/\.cloud$/, ".convex.cloud")
+        .replace(/\/$/, "");
+      
+      const mutationUrl = `${convexApiUrl}/api/mutation`;
 
-    // Try sending via Resend if API key exists
-    if (process.env.RESEND_API_KEY) {
-      try {
-        await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-            "Content-Type": "application/json",
+      await fetch(mutationUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          path: "feedback:submit",
+          args: {
+            userId: userId || undefined,
+            userName: userName || undefined,
+            userEmail: userEmail || undefined,
+            type,
+            message,
           },
-          body: JSON.stringify({
-            from: "OfferBell Feedback <onboarding@resend.dev>",
-            to: ["kynectedofficial@gmail.com"],
-            subject: `[${typeLabels[type] || type}] New feedback from ${userName || "Anonymous"}`,
-            html: `
-              <h2>${typeLabels[type] || type}</h2>
-              <p><strong>From:</strong> ${userName || "Anonymous"} ${userEmail ? `(${userEmail})` : ""}</p>
-              <p><strong>Date:</strong> ${new Date().toISOString().slice(0, 10)}</p>
-              <hr />
-              <p>${message.replace(/\n/g, "<br/>")}</p>
-            `,
-          }),
-        });
-      } catch (emailErr) {
-        console.error("Resend email failed:", emailErr);
-      }
+        }),
+      });
     }
 
     return NextResponse.json({ success: true });

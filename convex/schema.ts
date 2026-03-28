@@ -114,4 +114,13 @@ export default defineSchema({
   })
     .index("by_createdAt", ["createdAt"])
     .index("by_userId", ["userId"]),
+
+  feedback: defineTable({
+    userId: v.optional(v.string()),
+    userName: v.optional(v.string()),
+    userEmail: v.optional(v.string()),
+    type: v.string(),
+    message: v.string(),
+    createdAt: v.number(),
+  }).index("by_createdAt", ["createdAt"]),
 });

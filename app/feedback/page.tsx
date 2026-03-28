@@ -54,11 +54,13 @@ export default function FeedbackPage() {
         }
       } catch {}
 
-      await fetch('/api/feedback', {
+      const userId = localStorage.getItem('offerbell_user_id') || '';
+      const res = await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, message: message.trim(), userName, userEmail }),
+        body: JSON.stringify({ type, message: message.trim(), userName, userEmail, userId }),
       });
+      if (!res.ok) throw new Error('Failed');
     } catch {}
 
     const updated = [entry, ...history];
