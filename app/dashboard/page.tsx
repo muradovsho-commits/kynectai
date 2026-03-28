@@ -149,7 +149,7 @@ export default function DashboardPage() {
   const displayFirst = userName.first || "there";
   const greeting = (() => {
     const h = new Date().getHours();
-    return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
+    return "Good day";
   })();
 
   return (
@@ -161,7 +161,7 @@ export default function DashboardPage() {
         <div className="dash-topbar">
           <div>
             <div className="dash-greeting-sub">Recruiting season is in full swing.</div>
-            <div className="dash-greeting">{greeting}, <em>{displayFirst}</em> 👋</div>
+            <div className="dash-greeting">{greeting}, <em>{displayFirst}</em></div>
           </div>
           <Link className="dash-profile-btn" href="/my-account">View profile</Link>
         </div>
