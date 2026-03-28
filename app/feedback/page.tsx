@@ -122,7 +122,8 @@ export default function FeedbackPage() {
               </div>
               <button onClick={handleSubmit} disabled={!message.trim() || sending} style={{
                 padding: '10px 24px', borderRadius: '10px', border: 'none', fontSize: '13px', fontWeight: 700, cursor: message.trim() && !sending ? 'pointer' : 'default', fontFamily: "'Sora', sans-serif",
-                background: message.trim() && !sending ? 'var(--accent)' : 'var(--border)', color: message.trim() && !sending ? '#fff' : 'var(--text-3)',
+                background: message.trim() && !sending ? '#111' : 'var(--border)', color: message.trim() && !sending ? '#fff' : 'var(--text-3)',
+                boxShadow: message.trim() && !sending ? '0 2px 8px rgba(0,0,0,0.15)' : 'none',
               }}>
                 {sending ? 'Sending...' : 'Submit Feedback'}
               </button>
