@@ -311,7 +311,7 @@ export default function MyAccountPage() {
               <div style={{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:3}}>Need help?</div>
               <div style={{fontSize:12,color:'var(--text-3)'}}>Reach out to our team for questions, feedback, or partnership inquiries.</div>
             </div>
-            <a href="mailto:offerbell@gmail.com" style={{background:'var(--surface)',color:'var(--text)',padding:'8px 16px',borderRadius:9,fontSize:12,fontWeight:700,border:'1.5px solid var(--border-2)',cursor:'pointer',fontFamily:"'Sora',sans-serif",whiteSpace:'nowrap',textDecoration:'none'}}>offerbell@gmail.com</a>
+            <a href="mailto:kynectedofficial@gmail.com" style={{background:'var(--surface)',color:'var(--text)',padding:'8px 16px',borderRadius:9,fontSize:12,fontWeight:700,border:'1.5px solid var(--border-2)',cursor:'pointer',fontFamily:"'Sora',sans-serif",whiteSpace:'nowrap',textDecoration:'none'}}>kynectedofficial@gmail.com</a>
           </div>
         </div>
 

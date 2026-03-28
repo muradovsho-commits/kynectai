@@ -105,7 +105,7 @@ export default function SigninPage() {
           </div>
         </div>
         <div style={{ fontSize: 12, color: "rgba(255,255,255,.2)" }}>
-          kynectofficial@gmail.com
+          kynectedofficial@gmail.com
         </div>
       </div>
 

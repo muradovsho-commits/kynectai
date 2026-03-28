@@ -83,7 +83,7 @@ export default function CheckoutPage() {
             <div style={{...S.infoRow, marginBottom: 0}}><span style={S.infoLabel}>Status</span><span style={{...S.infoVal, color: '#16a34a'}}>Active</span></div>
           </div>
           <div style={{ fontSize: 12, color: "var(--text-3)", marginBottom: 24, lineHeight: 1.6 }}>
-            To cancel or update your payment method, manage your subscription through Stripe by contacting us at kynectofficial@gmail.com.
+            To cancel or update your payment method, manage your subscription through Stripe by contacting us at kynectedofficial@gmail.com.
           </div>
           <button onClick={() => router.push("/dashboard")} style={S.btn}>Back to Dashboard</button>
         </div>

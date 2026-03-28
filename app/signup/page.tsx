@@ -75,7 +75,7 @@ export default function SignupPage() {
             ))}
           </div>
         </div>
-        <div style={{ fontSize: 12, color: "rgba(255,255,255,.2)" }}>kynectofficial@gmail.com</div>
+        <div style={{ fontSize: 12, color: "rgba(255,255,255,.2)" }}>kynectedofficial@gmail.com</div>
       </div>
 
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", background: "#f8f8f7", padding: 40 }}>
