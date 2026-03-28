@@ -59,10 +59,6 @@ export default function DashboardPage() {
   const [flashcardsDrilled, setFlashcardsDrilled] = useState(0);
   const [upgradeToast, setUpgradeToast] = useState("");
   const [showTutorial, setShowTutorial] = useState(false);
-  const [streak, setStreak] = useState(0);
-  const [todayActions, setTodayActions] = useState(0);
-  const [pipelineOffers, setPipelineOffers] = useState(0);
-  const [pipelineCounts, setPipelineCounts] = useState({ outreach: 0, coffee_chat: 0, interview: 0 });
   const [tutorialStep, setTutorialStep] = useState(0);
   const [tipIdx] = useState(() => {
     const now = new Date();
@@ -90,25 +86,6 @@ export default function DashboardPage() {
           targetRoles: [], recruitYear: "", targetFirms: [], email: signupEmail, plan: "free"
         }));
       }
-    } catch {}
-    // Load streak data
-    try {
-      const activity = JSON.parse(localStorage.getItem('offerbell_activity') || '{}');
-      const today = new Date().toISOString().slice(0,10);
-      setTodayActions(activity[today] || 0);
-      let s = 0; const d = new Date();
-      while (true) { const k = d.toISOString().slice(0,10); if (activity[k] && activity[k] > 0) { s++; d.setDate(d.getDate()-1); } else break; }
-      setStreak(s);
-    } catch {}
-    // Load pipeline data
-    try {
-      const pipeline = JSON.parse(localStorage.getItem('offerbell_pipeline') || '[]');
-      setPipelineOffers(pipeline.filter((i: any) => i.stage === 'offer').length);
-      setPipelineCounts({
-        outreach: pipeline.filter((i: any) => i.stage === 'outreach').length,
-        coffee_chat: pipeline.filter((i: any) => i.stage === 'coffee_chat').length,
-        interview: pipeline.filter((i: any) => i.stage === 'interview').length,
-      });
     } catch {}
   }, [router]);
 
@@ -246,44 +223,6 @@ export default function DashboardPage() {
               <div className="dash-stat-value">{flashcardsDrilled}</div>
             </div>
           </div>
-        </div>
-
-        {/* ── Activity Streak & Pipeline Summary ── */}
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'16px',marginBottom:'20px'}}>
-          <div className="dash-tip-card" style={{marginBottom:0}}>
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-              <div>
-                <div className="dash-tip-label" style={{marginBottom:'4px'}}>Activity Streak</div>
-                <div style={{fontSize:'36px',fontWeight:700,color: streak > 0 ? '#f59e0b' : 'var(--text-3)',fontFamily:"'Instrument Serif', serif",lineHeight:1}}>
-                  {streak > 0 ? `🔥 ${streak}` : '0'}
-                </div>
-                <div style={{fontSize:'12px',color:'var(--text-3)',marginTop:'4px'}}>{streak > 0 ? `${streak} day${streak !== 1 ? 's' : ''} in a row` : 'Complete a task to start your streak'}</div>
-              </div>
-              <div style={{textAlign:'right'}}>
-                <div style={{fontSize:'11px',color:'var(--text-3)',fontWeight:600,textTransform:'uppercase'}}>Today</div>
-                <div style={{fontSize:'20px',fontWeight:700,color:'var(--text)',fontFamily:"'Instrument Serif', serif"}}>{todayActions}</div>
-                <div style={{fontSize:'11px',color:'var(--text-3)'}}>actions</div>
-              </div>
-            </div>
-          </div>
-          <a href="/offer-pipeline" style={{textDecoration:'none'}}>
-            <div className="dash-tip-card" style={{marginBottom:0,cursor:'pointer',transition:'border-color 0.15s'}}>
-              <div className="dash-tip-label" style={{marginBottom:'4px'}}>Offer Pipeline</div>
-              <div style={{display:'flex',alignItems:'center',gap:'16px'}}>
-                <div style={{textAlign:'center'}}>
-                  <div style={{fontSize:'28px',fontWeight:700,color: pipelineOffers > 0 ? '#16a34a' : 'var(--text-3)',fontFamily:"'Instrument Serif', serif",lineHeight:1}}>
-                    {pipelineOffers > 0 ? '🔔' : '—'} {pipelineOffers}
-                  </div>
-                  <div style={{fontSize:'11px',color:'var(--text-3)',marginTop:'4px'}}>offer{pipelineOffers !== 1 ? 's' : ''}</div>
-                </div>
-                <div style={{flex:1,display:'flex',gap:'12px'}}>
-                  <div style={{textAlign:'center'}}><div style={{fontSize:'16px',fontWeight:700,color:'var(--text)'}}>{pipelineCounts.outreach}</div><div style={{fontSize:'10px',color:'var(--text-3)'}}>Outreach</div></div>
-                  <div style={{textAlign:'center'}}><div style={{fontSize:'16px',fontWeight:700,color:'var(--text)'}}>{pipelineCounts.coffee_chat}</div><div style={{fontSize:'10px',color:'var(--text-3)'}}>Chats</div></div>
-                  <div style={{textAlign:'center'}}><div style={{fontSize:'16px',fontWeight:700,color:'var(--text)'}}>{pipelineCounts.interview}</div><div style={{fontSize:'10px',color:'var(--text-3)'}}>Interviews</div></div>
-                </div>
-              </div>
-            </div>
-          </a>
         </div>
 
         {/* ── Tip of the Week ── */}
