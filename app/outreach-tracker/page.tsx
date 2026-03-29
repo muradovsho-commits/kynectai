@@ -545,6 +545,7 @@ export default function OutreachTrackerPage() {
                 <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 5 }}>Used to calculate days since last action</div>
               </div>
             )}
+            {['spoken', 'stay'].includes(drawerStatus) && (
             <div>
               <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'var(--text-3)', marginBottom: 8 }}>Conversation quality</div>
               <div style={{ display: 'flex', gap: 6 }}>
@@ -555,6 +556,7 @@ export default function OutreachTrackerPage() {
                 ))}
               </div>
             </div>
+            )}
             <div>
               <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'var(--text-3)', marginBottom: 8 }}>Notes</div>
               <textarea value={drawerNotes} onChange={e => setDrawerNotes(e.target.value)} placeholder="What did you discuss? Who did they mention? Any follow-up items?" style={{ width: '100%', padding: '10px 12px', border: '1.5px solid var(--border-2)', borderRadius: 9, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none', resize: 'none', minHeight: 100, lineHeight: 1.6 }} />
