@@ -143,9 +143,11 @@ export default function OutreachTrackerPage() {
       let lastContact = c.lastContact;
       let sentAt = c.sentAt || null;
       let lastFollowUpAt = c.lastFollowUpAt || null;
+      let createdAt = c.createdAt;
       if (drawerDate) {
         const dateTs = new Date(drawerDate).getTime();
-        if (drawerStatus === 'sent') { sentAt = dateTs; lastContact = dateTs; }
+        if (drawerStatus === 'drafted') { createdAt = dateTs; }
+        else if (drawerStatus === 'sent') { sentAt = dateTs; lastContact = dateTs; }
         else if (['fu1','fu2','fu3'].includes(drawerStatus)) { lastFollowUpAt = dateTs; lastContact = dateTs; }
         else { lastContact = dateTs; }
       } else {
@@ -154,7 +156,7 @@ export default function OutreachTrackerPage() {
         else if (['fu1','fu2','fu3'].includes(drawerStatus)) { lastFollowUpAt = now; lastContact = now; }
         else if (drawerStatus !== 'drafted') { lastContact = now; }
       }
-      return { ...c, notes: drawerNotes, quality: drawerQuality, status: drawerStatus, lastContact, sentAt, lastFollowUpAt, linkedin: drawerLinkedin.trim() };
+      return { ...c, notes: drawerNotes, quality: drawerQuality, status: drawerStatus, lastContact, sentAt, lastFollowUpAt, linkedin: drawerLinkedin.trim(), createdAt };
     });
     setContacts(updated); persist(updated);
     setDrawerOpen(false); showToast('Saved');
