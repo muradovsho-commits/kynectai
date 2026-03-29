@@ -15,7 +15,6 @@ const STATUSES: Record<string, { label: string; cls: string }> = {
   spoken: { label: 'Spoken With', cls: 'b-spoken' },
   stay: { label: 'Staying in Touch', cls: 'b-stay' },
   noresp: { label: 'No Response', cls: 'b-noresp' },
-  ghosted: { label: 'Ghosted Me', cls: 'b-ghosted' },
 };
 
 const COLORS = ['#6366f1','#0ea5e9','#10b981','#f59e0b','#ec4899','#8b5cf6','#ef4444','#14b8a6','#f97316','#06b6d4'];
@@ -203,7 +202,7 @@ export default function OutreachTrackerPage() {
     if (activeFilter === 'spoken') return c.status === 'spoken';
     if (activeFilter === 'stay') return c.status === 'stay';
     if (activeFilter === 'noresp') return c.status === 'noresp';
-    if (activeFilter === 'ghosted') return c.status === 'ghosted';
+    if (activeFilter === 'noresp') return c.status === 'noresp';
     if (activeFilter === 'drafted') return c.status === 'drafted';
     if (activeFilter === 'sent') return c.status === 'sent';
     return true;
@@ -221,7 +220,6 @@ export default function OutreachTrackerPage() {
     : ['fu1','fu2','fu3'].includes(drawerStatus) ? 'Date of last follow-up'
     : ['spoken','stay'].includes(drawerStatus) ? 'Date spoken'
     : drawerStatus === 'noresp' ? 'Date of last outreach'
-    : drawerStatus === 'ghosted' ? 'Date of last message'
     : 'Date';
 
   const css = `
@@ -352,7 +350,7 @@ export default function OutreachTrackerPage() {
             {[
               { key: 'all', label: 'All' }, { key: 'drafted', label: 'Drafted' }, { key: 'sent', label: 'Sent' },
               { key: 'followup', label: 'Following Up' }, { key: 'needsfu', label: 'Needs Follow Up' }, { key: 'spoken', label: 'Spoken With' },
-              { key: 'stay', label: 'Stay in Touch' }, { key: 'noresp', label: 'No Response' }, { key: 'ghosted', label: 'Ghosted Me' },
+              { key: 'stay', label: 'Stay in Touch' }, { key: 'noresp', label: 'No Response' },
             ].map(f => (
               <button key={f.key} onClick={() => setActiveFilter(f.key)} style={{ padding: '5px 12px', borderRadius: 100, border: '1.5px solid', borderColor: activeFilter === f.key ? 'var(--text)' : 'var(--border-2)', background: activeFilter === f.key ? 'var(--text)' : 'var(--surface)', color: activeFilter === f.key ? 'var(--surface)' : 'var(--text-2)', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Sora, sans-serif', transition: 'all .15s' }}>
                 {f.label}
@@ -401,7 +399,7 @@ export default function OutreachTrackerPage() {
                   } else if (['spoken','stay'].includes(c.status)) {
                     daysStr = daysLC !== null ? `spoke ${daysLC}d ago` : '—';
                     daysCls = daysLC !== null ? (daysLC > 60 ? '#dc2626' : daysLC > 30 ? '#d97706' : '#16a34a') : 'var(--text-3)';
-                  } else if (c.status === 'noresp' || c.status === 'ghosted') {
+                  } else if (c.status === 'noresp') {
                     daysStr = daysLC !== null ? `${daysLC}d no reply` : '—';
                     daysCls = '#dc2626';
                   }
