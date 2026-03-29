@@ -27,7 +27,7 @@ function initials(f: string, l: string) { return ((f || '')[0] || '').toUpperCas
 function fmtDate(ts: number | null) { if (!ts) return '—'; return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
 function daysSince(ts: number | null) { if (!ts) return null; return Math.floor((Date.now() - ts) / 864e5); }
 
-type Contact = { id: string; fname: string; lname: string; firm: string; role: string; status: string; angle: string; notes: string; quality: string; createdAt: number; lastContact: number | null; sentAt: number | null; lastFollowUpAt: number | null; };
+type Contact = { id: string; fname: string; lname: string; firm: string; role: string; status: string; angle: string; notes: string; quality: string; createdAt: number; lastContact: number | null; sentAt: number | null; lastFollowUpAt: number | null; linkedin: string; };
 export default function OutreachTrackerPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [isDark, setIsDark] = useState(false);
@@ -62,6 +62,7 @@ export default function OutreachTrackerPage() {
   const [drawerContact, setDrawerContact] = useState<Contact | null>(null);
   const [drawerNotes, setDrawerNotes] = useState('');
   const [drawerQuality, setDrawerQuality] = useState('');
+  const [drawerLinkedin, setDrawerLinkedin] = useState('');
   const [drawerStatus, setDrawerStatus] = useState('');
   const [drawerDate, setDrawerDate] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
@@ -72,6 +73,7 @@ export default function OutreachTrackerPage() {
   const [aStatus, setAStatus] = useState('drafted');
   const [aAngle, setAAngle] = useState('');
   const [aNotes, setANotes] = useState('');
+  const [aLinkedin, setALinkedin] = useState('');
   const [toast, setToast] = useState('');
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -79,7 +81,7 @@ export default function OutreachTrackerPage() {
     const saved = localStorage.getItem('offerbell_tracker_v3');
     if (saved) {
       const parsed = JSON.parse(saved);
-      setContacts(parsed);
+      setContacts(parsed.map((c: any) => ({ ...c, linkedin: c.linkedin || '' })));
     } else if (!localStorage.getItem('offerbell_tracker_seeded')) {
       setContacts(SAMPLE_CONTACTS);
       localStorage.setItem('offerbell_tracker_v3', JSON.stringify(SAMPLE_CONTACTS));
@@ -122,12 +124,15 @@ export default function OutreachTrackerPage() {
     setDrawerNotes(c.notes || '');
     setDrawerQuality(c.quality || '');
     setDrawerStatus(c.status);
+    setDrawerLinkedin(c.linkedin || '');
     if (c.status === 'sent' && c.sentAt) {
       setDrawerDate(new Date(c.sentAt).toISOString().split('T')[0]);
     } else if (['fu1','fu2','fu3'].includes(c.status) && c.lastFollowUpAt) {
       setDrawerDate(new Date(c.lastFollowUpAt).toISOString().split('T')[0]);
-    } else if (['spoken','stay'].includes(c.status) && c.lastContact) {
+    } else if (c.lastContact) {
       setDrawerDate(new Date(c.lastContact).toISOString().split('T')[0]);
+    } else if (c.status === 'drafted' && c.createdAt) {
+      setDrawerDate(new Date(c.createdAt).toISOString().split('T')[0]);
     } else { setDrawerDate(''); }
     setDrawerOpen(true);
   }
@@ -143,15 +148,14 @@ export default function OutreachTrackerPage() {
         const dateTs = new Date(drawerDate).getTime();
         if (drawerStatus === 'sent') { sentAt = dateTs; lastContact = dateTs; }
         else if (['fu1','fu2','fu3'].includes(drawerStatus)) { lastFollowUpAt = dateTs; lastContact = dateTs; }
-        else if (['spoken','stay'].includes(drawerStatus)) { lastContact = dateTs; }
+        else { lastContact = dateTs; }
       } else {
         const now = Date.now();
         if (drawerStatus === 'sent' && !sentAt) { sentAt = now; lastContact = now; }
         else if (['fu1','fu2','fu3'].includes(drawerStatus)) { lastFollowUpAt = now; lastContact = now; }
-        else if (['spoken','stay'].includes(drawerStatus)) { lastContact = now; }
         else if (drawerStatus !== 'drafted') { lastContact = now; }
       }
-      return { ...c, notes: drawerNotes, quality: drawerQuality, status: drawerStatus, lastContact, sentAt, lastFollowUpAt };
+      return { ...c, notes: drawerNotes, quality: drawerQuality, status: drawerStatus, lastContact, sentAt, lastFollowUpAt, linkedin: drawerLinkedin.trim() };
     });
     setContacts(updated); persist(updated);
     setDrawerOpen(false); showToast('Saved');
@@ -175,10 +179,11 @@ export default function OutreachTrackerPage() {
       notes: aNotes.trim(), quality: '', createdAt: now, lastContact: null,
       sentAt: aStatus === 'sent' ? now : null,
       lastFollowUpAt: ['fu1','fu2','fu3'].includes(aStatus) ? now : null,
+      linkedin: aLinkedin.trim(),
     };
     const updated = [...contacts, c];
     setContacts(updated); persist(updated);
-    setModalOpen(false); setAFname(''); setALname(''); setAFirm(''); setARole(''); setAStatus('drafted'); setAAngle(''); setANotes('');
+    setModalOpen(false); setAFname(''); setALname(''); setAFirm(''); setARole(''); setAStatus('drafted'); setAAngle(''); setANotes(''); setALinkedin('');
     showToast(name + ' added');
   }
 
@@ -210,8 +215,14 @@ export default function OutreachTrackerPage() {
   const spoken = contacts.filter(c => ['spoken', 'stay'].includes(c.status)).length;
   const rate = sent > 0 ? Math.round(spoken / sent * 100) + '%' : '—';
 
-  const showDateField = ['sent','fu1','fu2','fu3','spoken', 'stay'].includes(drawerStatus);
-  const dateFieldLabel = drawerStatus === 'sent' ? 'Date sent' : ['fu1','fu2','fu3'].includes(drawerStatus) ? 'Date of last follow-up' : 'Date spoken';
+  const showDateField = true;
+  const dateFieldLabel = drawerStatus === 'drafted' ? 'Date drafted'
+    : drawerStatus === 'sent' ? 'Date sent'
+    : ['fu1','fu2','fu3'].includes(drawerStatus) ? 'Date of last follow-up'
+    : ['spoken','stay'].includes(drawerStatus) ? 'Date spoken'
+    : drawerStatus === 'noresp' ? 'Date of last outreach'
+    : drawerStatus === 'ghosted' ? 'Date of last message'
+    : 'Date';
 
   const css = `
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -358,14 +369,14 @@ export default function OutreachTrackerPage() {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ background: '#1a1a19' }}>
-                  {['Name', 'Firm & Role', 'Status', 'Angle', 'Date Added', 'Days Since Contact', 'Quality', 'Notes'].map(h => (
-                    <th key={h} style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'rgba(255,255,255,.6)', padding: '11px 14px', textAlign: 'left', whiteSpace: 'nowrap', borderRight: '1px solid rgba(255,255,255,.07)' }}>{h}</th>
+                  {['Name', 'Firm & Role', 'Status', 'Angle', 'LinkedIn', 'Date Added', 'Days Since Contact', 'Quality', 'Notes', ''].map(h => (
+                    <th key={h} style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'rgba(255,255,255,.6)', padding: '11px 14px', textAlign: 'left', whiteSpace: 'nowrap', borderRight: h !== '' ? '1px solid rgba(255,255,255,.07)' : 'none' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={8} style={{ padding: '60px 20px', textAlign: 'center' }}>
+                  <tr><td colSpan={10} style={{ padding: '60px 20px', textAlign: 'center' }}>
                     <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 20, fontStyle: 'italic', color: 'var(--text)', marginBottom: 8 }}>No contacts here yet</div>
                     <div style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 20 }}>Add your first contact to start tracking.</div>
                     <button onClick={() => setModalOpen(true)} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif' }}>+ Add Contact</button>
@@ -418,6 +429,12 @@ export default function OutreachTrackerPage() {
                       <td style={{ padding: '11px 14px' }}>
                         {c.angle ? <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 4, background: 'var(--surface-2)', color: 'var(--text-3)' }}>{c.angle}</span> : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>—</span>}
                       </td>
+                      <td style={{ padding: '11px 14px' }}>
+                        {c.linkedin ? <a href={c.linkedin.startsWith('http') ? c.linkedin : 'https://' + c.linkedin} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 600, color: '#0a66c2', textDecoration: 'none' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
+                          Profile
+                        </a> : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>—</span>}
+                      </td>
                       <td style={{ padding: '11px 14px', fontSize: 12, color: 'var(--text-3)', whiteSpace: 'nowrap' }}>{fmtDate(c.createdAt)}</td>
                       <td style={{ padding: '11px 14px', fontSize: 12, fontWeight: 700, color: daysCls, whiteSpace: 'nowrap' }}>{daysStr}</td>
                       <td style={{ padding: '11px 14px' }}>
@@ -428,6 +445,13 @@ export default function OutreachTrackerPage() {
                       </td>
                       <td style={{ padding: '11px 14px', fontSize: 12, color: 'var(--text-2)', maxWidth: 260, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {c.notes || <span style={{ color: 'var(--text-3)' }}>No notes</span>}
+                      </td>
+                      <td style={{ padding: '11px 8px', textAlign: 'center' }}>
+                        <button onClick={e => { e.stopPropagation(); if (confirm('Remove ' + c.fname + ' ' + c.lname + '?')) { const updated = contacts.filter(x => x.id !== c.id); setContacts(updated); persist(updated); showToast('Removed'); } }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-3)', padding: 4, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Delete contact"
+                          onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')}
+                          onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-3)')}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
                       </td>
                     </tr>
                   );
@@ -478,6 +502,10 @@ export default function OutreachTrackerPage() {
               <div>
                 <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--text)', marginBottom: 5 }}>Notes <span style={{ fontWeight: 400, color: 'var(--text-3)' }}>(optional)</span></label>
                 <textarea value={aNotes} onChange={e => setANotes(e.target.value)} placeholder="What did you talk about? Any follow-up items?" style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none', resize: 'vertical', minHeight: 70, lineHeight: 1.5 }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--text)', marginBottom: 5 }}>LinkedIn URL <span style={{ fontWeight: 400, color: 'var(--text-3)' }}>(optional)</span></label>
+                <input value={aLinkedin} onChange={e => setALinkedin(e.target.value)} placeholder="linkedin.com/in/name" style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none' }} />
               </div>
             </div>
             <div style={{ padding: '14px 22px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
@@ -532,6 +560,10 @@ export default function OutreachTrackerPage() {
             <div>
               <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'var(--text-3)', marginBottom: 8 }}>Notes</div>
               <textarea value={drawerNotes} onChange={e => setDrawerNotes(e.target.value)} placeholder="What did you discuss? Who did they mention? Any follow-up items?" style={{ width: '100%', padding: '10px 12px', border: '1.5px solid var(--border-2)', borderRadius: 9, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none', resize: 'none', minHeight: 100, lineHeight: 1.6 }} />
+            </div>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'var(--text-3)', marginBottom: 8 }}>LinkedIn</div>
+              <input value={drawerLinkedin} onChange={e => setDrawerLinkedin(e.target.value)} placeholder="linkedin.com/in/name" style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none' }} />
             </div>
             <button onClick={saveDrawer} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 9, padding: 10, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif', width: '100%' }}>Save</button>
             <button onClick={deleteContact} style={{ background: 'none', border: '1.5px solid #fecaca', color: '#dc2626', borderRadius: 9, padding: 9, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif', width: '100%' }}>Remove from tracker</button>
