@@ -28,9 +28,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Gemini API key not configured. Add GEMINI_API_KEY to Vercel env vars." }, { status: 500, headers: corsHeaders });
     }
 
+    // Truncate conversation history to prevent exceeding token limits
+    // Keep system + last 10 messages, trim any single message over 3000 chars
+    const trimmedMessages = messages.slice(-10).map((m) => ({
+      ...m,
+      content: m.content.length > 3000 ? m.content.slice(0, 3000) + "\n\n[Message trimmed for length — paste shorter sections for better feedback]" : m.content,
+    }));
+
     // Build Gemini request
     // Convert chat messages to Gemini format
-    const geminiContents = messages.map((m) => ({
+    const geminiContents = trimmedMessages.map((m) => ({
       role: m.role === "assistant" ? "model" : "user",
       parts: [{ text: m.content }],
     }));
@@ -100,7 +107,7 @@ The user is currently on the "${track || "Investment Banking"}" recruiting track
 
     // All models failed
     return NextResponse.json(
-      { error: "Coach is temporarily unavailable. All Gemini models failed. Check your GEMINI_API_KEY in Vercel." },
+      { error: "Coach is temporarily unavailable. Please try again in a moment, or try sending a shorter message." },
       { status: 502, headers: corsHeaders }
     );
   } catch (error) {

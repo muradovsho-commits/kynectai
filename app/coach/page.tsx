@@ -175,6 +175,22 @@ export default function CoachPage() {
   const [userName, setUserName] = useState({ first: '', last: '' });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const text = reader.result as string;
+      const trimmed = text.slice(0, 3000);
+      const msg = `Here is my resume:\n\n${trimmed}\n\nPlease review it and give me specific, actionable feedback for ${activeTrack} recruiting.`;
+      setInputVal(msg);
+      setTimeout(() => textareaRef.current?.focus(), 100);
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
   const [quoteIdx] = useState(() => Math.floor(Math.random() * QUOTES.length));
 
   useEffect(() => {
@@ -367,6 +383,10 @@ export default function CoachPage() {
                 <div className="coach-context-label">Context: {activeTrack} — {activeFeature}</div>
               )}
               <div className="coach-input-box">
+                <input type="file" ref={fileInputRef} accept=".txt,.pdf,.doc,.docx" onChange={handleResumeUpload} style={{ display: 'none' }} />
+                <button className="coach-upload-btn" onClick={() => fileInputRef.current?.click()} type="button" title="Upload resume" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-3)', padding: '6px', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                </button>
                 <textarea
                   ref={textareaRef}
                   className="coach-chat-input"
@@ -380,7 +400,7 @@ export default function CoachPage() {
                   {isLoading ? <div className="coach-spinner" /> : <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                 </button>
               </div>
-              <div className="coach-input-footer">The Coach is optimizing your professional trajectory.</div>
+              <div className="coach-input-footer">Attach your resume with the clip icon, or type your question below.</div>
             </div>
           </div>
         </div>
