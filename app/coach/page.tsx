@@ -177,20 +177,73 @@ export default function CoachPage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const text = reader.result as string;
-      const trimmed = text.slice(0, 3000);
-      const msg = `Here is my resume:\n\n${trimmed}\n\nPlease review it and give me specific, actionable feedback for ${activeTrack} recruiting.`;
-      setInputVal(msg);
-      setTimeout(() => textareaRef.current?.focus(), 100);
-    };
-    reader.readAsText(file);
     e.target.value = '';
+
+    if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+      try {
+        // Load pdf.js if not already loaded
+        if (!(window as any).pdfjsLib) {
+          await new Promise<void>((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs';
+            script.type = 'module';
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error('Failed to load PDF parser'));
+            document.head.appendChild(script);
+          });
+          // Fallback: use the global build instead
+        }
+
+        // Use FileReader to get array buffer, then parse with a simple approach
+        const arrayBuf = await file.arrayBuffer();
+        // Extract text from PDF binary using a basic decoder
+        const bytes = new Uint8Array(arrayBuf);
+        let text = '';
+        // Look for text streams in the PDF
+        const decoder = new TextDecoder('utf-8', { fatal: false });
+        const raw = decoder.decode(bytes);
+        // Extract text between BT (begin text) and ET (end text) markers, or parenthesized strings
+        const textMatches = raw.match(/\(([^)]{2,})\)/g);
+        if (textMatches) {
+          text = textMatches
+            .map(m => m.slice(1, -1))
+            .filter(t => /[a-zA-Z]{2,}/.test(t) && t.length < 200)
+            .join(' ')
+            .replace(/\\n/g, '\n')
+            .replace(/\s+/g, ' ')
+            .trim();
+        }
+
+        const trimmed = text.slice(0, 3000);
+        if (!trimmed || trimmed.length < 50) {
+          setInputVal(`I tried to upload my resume PDF but the text couldn't be fully extracted.\n\nPlease paste your resume text below and I'll review it for ${activeTrack} recruiting:\n\n[Paste your resume here]`);
+        } else {
+          setInputVal(`Here is my resume:\n\n${trimmed}\n\nPlease review it and give me specific, actionable feedback for ${activeTrack} recruiting.`);
+        }
+      } catch (err) {
+        console.error('PDF parse error:', err);
+        setInputVal(`I tried to upload my resume PDF but the text couldn't be extracted.\n\nPlease paste your resume text below and I'll review it for ${activeTrack} recruiting:\n\n[Paste your resume here]`);
+      }
+    } else {
+      // Plain text files
+      const reader = new FileReader();
+      reader.onload = () => {
+        const text = (reader.result as string).trim().slice(0, 3000);
+        if (!text || text.length < 20) {
+          setInputVal(`The file couldn't be read properly.\n\nPlease paste your resume text below and I'll review it for ${activeTrack} recruiting:\n\n[Paste your resume here]`);
+        } else {
+          setInputVal(`Here is my resume:\n\n${text}\n\nPlease review it and give me specific, actionable feedback for ${activeTrack} recruiting.`);
+        }
+      };
+      reader.readAsText(file);
+    }
+    setTimeout(() => textareaRef.current?.focus(), 200);
   };
+
+  const isResumeFeature = activeFeature?.toLowerCase().includes('resume') || false;
   const [quoteIdx] = useState(() => Math.floor(Math.random() * QUOTES.length));
 
   useEffect(() => {
@@ -383,10 +436,12 @@ export default function CoachPage() {
                 <div className="coach-context-label">Context: {activeTrack} — {activeFeature}</div>
               )}
               <div className="coach-input-box">
-                <input type="file" ref={fileInputRef} accept=".txt,.pdf,.doc,.docx" onChange={handleResumeUpload} style={{ display: 'none' }} />
-                <button className="coach-upload-btn" onClick={() => fileInputRef.current?.click()} type="button" title="Upload resume" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-3)', padding: '6px', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                <input type="file" ref={fileInputRef} accept=".txt,.pdf" onChange={handleResumeUpload} style={{ display: 'none' }} />
+                {isResumeFeature && (
+                <button className="coach-upload-btn" onClick={() => fileInputRef.current?.click()} type="button" title="Upload resume (PDF or TXT)" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-3)', padding: '6px', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
                 </button>
+                )}
                 <textarea
                   ref={textareaRef}
                   className="coach-chat-input"
@@ -400,7 +455,7 @@ export default function CoachPage() {
                   {isLoading ? <div className="coach-spinner" /> : <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                 </button>
               </div>
-              <div className="coach-input-footer">Attach your resume with the clip icon, or type your question below.</div>
+              <div className="coach-input-footer">{isResumeFeature ? 'Upload your resume with the clip icon, or paste the text directly.' : 'Ask anything about your recruiting process.'}</div>
             </div>
           </div>
         </div>
