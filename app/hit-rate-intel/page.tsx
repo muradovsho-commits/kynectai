@@ -324,7 +324,7 @@ export default function HitRateIntelPage() {
 
       <main className="main" style={{padding:'32px 36px'}}>
         <div style={{fontFamily:"'Instrument Serif',serif",fontSize:28,letterSpacing:'-.5px',color:'var(--text)',marginBottom:3}}>Hit Rate <em style={{fontStyle:'italic'}}>Intelligence</em></div>
-        <div style={{fontSize:13,color:'var(--text-3)',marginBottom:6}}>Platform-wide reply rate data from {currentPlatform.msgs} outreach messages sent through OfferBell.</div>
+        <div style={{fontSize:13,color:'var(--text-3)',marginBottom:6}}>Platform-wide reply rate data based on outreach sent through OfferBell.</div>
         <div style={{display:'inline-flex',alignItems:'center',gap:5,background:'#fef3c7',border:'1.5px solid #fde68a',borderRadius:100,padding:'4px 12px',fontSize:11,fontWeight:700,color:'#92400e',marginBottom:12}}>Pro Feature — Live Data</div>
 
         <div style={{display:'flex',alignItems:'flex-start',gap:8,background:'var(--surface-2)',border:'1.5px solid var(--border)',borderRadius:10,padding:'12px 16px',marginBottom:24,fontSize:11,color:'var(--text-3)',lineHeight:1.6,maxWidth:700}}>
@@ -376,9 +376,7 @@ export default function HitRateIntelPage() {
                 <div style={{height:'100%',borderRadius:3,width:barsAnimated?`${a.rate}%`:'0%',transition:'width 1.2s cubic-bezier(.4,0,.2,1)',background:a.tier==='top'?'#16a34a':a.tier==='mid'?'#d97706':'var(--border-2)'}}/>
               </div>
               <div style={{display:'flex',gap:16}}>
-                <div style={{fontSize:11,color:'var(--text-3)'}}><strong style={{color:'var(--text)'}}>{a.msgs}</strong> messages</div>
-                <div style={{fontSize:11,color:'var(--text-3)'}}><strong style={{color:'var(--text)'}}>{a.replies}</strong> replies</div>
-                <div style={{fontSize:11,color:'var(--text-3)'}}>Avg: <strong style={{color:'var(--text)'}}>{a.avgDays}d</strong></div>
+                <div style={{fontSize:11,color:'var(--text-3)'}}>Avg reply: <strong style={{color:'var(--text)'}}>{a.avgDays}d</strong></div>
               </div>
             </div>
           ))}
