@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>OfferBell — AI Networking for Finance Students</title>
+<title>OfferBell — Recruiting Simulator for High-Performing Students</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
@@ -56,6 +56,11 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
 .proof-av{width:26px;height:26px;border-radius:50%;border:2px solid var(--white);margin-left:-6px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;}
 .proof-av:first-child{margin-left:0;}
 .hero-proof-text{font-size:12px;color:var(--g600);}
+.hero-modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:22px;max-width:560px;}
+.hero-mode{background:var(--g50);border:1px solid var(--g200);border-radius:12px;padding:10px 12px;transition:transform 0.18s,box-shadow 0.18s,border-color 0.18s;}
+.hero-mode:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,0.07);border-color:#c9c6c0;}
+.hero-mode-label{font-size:10px;font-weight:700;letter-spacing:0.7px;color:var(--g400);text-transform:uppercase;}
+.hero-mode-value{font-size:12px;font-weight:700;margin-top:4px;}
 
 /* Hero demo window */
 .hero-right{animation:fadeUp 0.6s 0.12s ease both;}
@@ -85,6 +90,29 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
 .compose-title{font-size:11px;font-weight:700;}
 .compose-badge{font-size:9px;font-weight:700;background:var(--g100);color:var(--g600);padding:2px 6px;border-radius:4px;}
 .compose-msg{background:var(--g50);border:1px solid var(--g200);border-radius:8px;padding:9px 12px;font-size:10px;color:var(--g600);line-height:1.6;min-height:48px;}
+
+/* ── SYSTEMS + PROCESS ── */
+.systems-overview{padding:8px 48px 64px;max-width:1280px;margin:0 auto;}
+.systems-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.system-card{background:var(--white);border:1px solid var(--g200);border-radius:18px;padding:26px 24px;position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s,border-color 0.2s;}
+.system-card:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(0,0,0,0.08);border-color:#c9c6c0;}
+.system-tag{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--g400);margin-bottom:10px;}
+.system-title{font-family:'Instrument Serif',serif;font-size:30px;line-height:1.05;letter-spacing:-0.6px;margin-bottom:10px;}
+.system-copy{font-size:13px;color:var(--g600);line-height:1.6;}
+.system-points{list-style:none;margin-top:14px;display:grid;gap:8px;}
+.system-points li{font-size:12px;font-weight:600;display:flex;align-items:flex-start;gap:8px;}
+.system-points li::before{content:'•';color:var(--black);}
+.process-flow{padding:0 48px 72px;}
+.process-shell{max-width:1200px;margin:0 auto;background:var(--g50);border:1px solid var(--g200);border-radius:18px;padding:26px 24px;}
+.process-head{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:18px;flex-wrap:wrap;}
+.process-head h3{font-family:'Instrument Serif',serif;font-size:32px;letter-spacing:-0.7px;}
+.process-head p{font-size:13px;color:var(--g600);}
+.process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.process-step{background:var(--white);border:1px solid var(--g200);border-radius:12px;padding:14px 12px;min-height:98px;transition:all 0.2s;}
+.process-step:hover{border-color:var(--black);transform:translateY(-2px);}
+.process-step-num{font-size:10px;font-weight:700;color:var(--g400);letter-spacing:1px;text-transform:uppercase;margin-bottom:7px;}
+.process-step-title{font-size:14px;font-weight:700;margin-bottom:4px;}
+.process-step-copy{font-size:12px;color:var(--g600);line-height:1.45;}
 
 /* ── PROBLEMS ── */
 .problems{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--g200);border-bottom:1px solid var(--g200);}
@@ -351,6 +379,11 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
   .nav-links{display:none;}
   .hero{grid-template-columns:1fr;padding:88px 20px 60px;gap:36px;}
   .hero-right{order:-1;}
+  .hero-modes{grid-template-columns:1fr;}
+  .systems-overview{padding:0 20px 48px;}
+  .systems-grid{grid-template-columns:1fr;}
+  .process-flow{padding:0 20px 56px;}
+  .process-steps{grid-template-columns:1fr 1fr;}
   .problems{grid-template-columns:1fr;}
   .problem-item{border-right:none;border-bottom:1px solid var(--g200);}
   .features-section{padding:64px 20px;}
@@ -374,6 +407,7 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
   html,body{overflow-x:hidden;}
   .hero-tagline{font-size:40px;line-height:1.1;}
   .hero-sub{font-size:14px;}
+  .process-steps{grid-template-columns:1fr;}
   .features-bento{grid-template-columns:1fr;}
   .f-card-1,.f-card-2,.f-card-3,.f-card-4,.f-card-5,.f-card-6,.f-card-7,.f-card-8,.f-card-9{grid-column:span 1;}
   .comp-intro{grid-template-columns:1fr;gap:12px;}
@@ -398,22 +432,23 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 
 <!-- ANNOUNCEMENT BANNER -->
 <a href="/signup" class="announcement-banner">
-  OfferBell is live — AI-powered outreach, interview prep, and career tools. Get started free &rarr;
+  OfferBell is live — the recruiting simulator for outreach, interviews, and pipeline execution. Enter now &rarr;
 </a>
 
 <!-- NAV -->
 <nav id="nav">
   <a href="#" class="nav-logo">OfferBell<em>.</em></a>
   <div class="nav-links">
-    <a href="#features">Features</a>
+    <a href="#systems">Systems</a>
+    <a href="#features">Simulator Modules</a>
+    <a href="#process">Process</a>
     <a href="#proof">Testimonials</a>
     <a href="#pricing">Pricing</a>
-    <a href="#careers">Careers</a>
     <a href="#faq">FAQ</a>
   </div>
   <div class="nav-actions">
     <a href="/signin" class="nav-signin">Sign in</a>
-    <a href="/signup" class="nav-cta">Get Started</a>
+    <a href="/signup" class="nav-cta">Enter Recruiting Mode</a>
   </div>
 </nav>
 
@@ -421,13 +456,13 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 <section style="padding-top:64px;background:var(--white);">
   <div class="hero">
     <div>
-      <div class="hero-badge">AI-powered · Your all-in-one recruiting hub</div>
-      <h1>Stop Guessing.<br><em>Start Landing</em> Interviews.</h1>
-      <p class="hero-sub">Career roadmaps, AI-personalized outreach, a live job board, and elite interview prep — OfferBell gives you everything you need to land your dream role in IB, PE, consulting, accounting, and beyond.</p>
+      <div class="hero-badge">Recruiting simulator · Live execution environment</div>
+      <h1>Stop preparing for recruiting.<br><em>Start doing it.</em></h1>
+      <p class="hero-sub">OfferBell is where recruiting actually happens — simulate outreach, run interview reps under pressure, track your pipeline, and perform like a top candidate.</p>
       <div class="hero-typing-row">Targeting: <strong id="hero-type"></strong><span class="demo-cursor"></span></div>
       <div class="hero-btns">
-        <a href="/signup" class="btn-primary">Start for Free</a>
-        <a href="#features" class="btn-secondary">See How It Works</a>
+        <a href="/signup" class="btn-primary">Enter Recruiting Mode</a>
+        <a href="#systems" class="btn-secondary">Explore the System</a>
       </div>
       <p class="hero-reassure">Takes 30 seconds. No credit card required.</p>
       <div class="hero-proof">
@@ -437,7 +472,21 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
           <div class="proof-av" style="background:linear-gradient(135deg,#22c55e,#16a34a)">M</div>
           <div class="proof-av" style="background:linear-gradient(135deg,#ec4899,#f43f5e)">A</div>
         </div>
-        <span class="hero-proof-text">Used by students recruiting at Goldman, JPMorgan, Blackstone & more</span>
+        <span class="hero-proof-text">Most students read guides. Top candidates train under pressure.</span>
+      </div>
+      <div class="hero-modes">
+        <div class="hero-mode">
+          <div class="hero-mode-label">Pipeline</div>
+          <div class="hero-mode-value">Command Center</div>
+        </div>
+        <div class="hero-mode">
+          <div class="hero-mode-label">Interviews</div>
+          <div class="hero-mode-value">War Room</div>
+        </div>
+        <div class="hero-mode">
+          <div class="hero-mode-label">Execution</div>
+          <div class="hero-mode-value">Engine</div>
+        </div>
       </div>
     </div>
     <div class="hero-right">
@@ -478,9 +527,76 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
   </div>
 </section>
 
+<section class="systems-overview" id="systems">
+  <div class="section-label">Three immersive systems</div>
+  <div class="systems-grid">
+    <article class="system-card reveal">
+      <div class="system-tag">System 01</div>
+      <h3 class="system-title">Pipeline Command Center</h3>
+      <p class="system-copy">Execute personalized outreach, monitor replies, and run your contact flow like an operator — not a passive applicant.</p>
+      <ul class="system-points">
+        <li>AI-personalized outreach generation</li>
+        <li>Outreach pipeline tracker + follow-ups</li>
+        <li>Reply-rate intelligence for angle selection</li>
+      </ul>
+    </article>
+    <article class="system-card reveal reveal-d1">
+      <div class="system-tag">System 02</div>
+      <h3 class="system-title">Interview War Room</h3>
+      <p class="system-copy">Train in high-pressure reps with coaching, mock simulations, and technical drills that sharpen performance when stakes are high.</p>
+      <ul class="system-points">
+        <li>AI Coach for real-time interview feedback</li>
+        <li>Technical flashcards and rapid recall reps</li>
+        <li>Mock-interview style simulation workflows</li>
+      </ul>
+    </article>
+    <article class="system-card reveal reveal-d2">
+      <div class="system-tag">System 03</div>
+      <h3 class="system-title">Execution Engine</h3>
+      <p class="system-copy">Translate ambition into weekly execution with role-specific roadmaps, recruiting manuals, and opportunity flow.</p>
+      <ul class="system-points">
+        <li>Career roadmaps with role clarity</li>
+        <li>Recruiting manuals for each track</li>
+        <li>Weekly opportunity digest</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<section class="process-flow" id="process">
+  <div class="process-shell reveal">
+    <div class="process-head">
+      <h3>Where recruiting actually happens.</h3>
+      <p>Train through the full cycle — from first touch to final interview.</p>
+    </div>
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="process-step-num">Step 1</div>
+        <div class="process-step-title">Build your pipeline</div>
+        <div class="process-step-copy">Prioritize firms, surface contacts, and set your weekly targets.</div>
+      </div>
+      <div class="process-step">
+        <div class="process-step-num">Step 2</div>
+        <div class="process-step-title">Execute outreach</div>
+        <div class="process-step-copy">Launch personalized messages and adapt using live reply intelligence.</div>
+      </div>
+      <div class="process-step">
+        <div class="process-step-num">Step 3</div>
+        <div class="process-step-title">Train under pressure</div>
+        <div class="process-step-copy">Run interview simulations and flashcard rounds until responses are automatic.</div>
+      </div>
+      <div class="process-step">
+        <div class="process-step-num">Step 4</div>
+        <div class="process-step-title">Track your performance</div>
+        <div class="process-step-copy">Measure conversion by stage and tighten execution every week.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- PROBLEMS -->
 <hr style="border:0;height:1px;background:linear-gradient(90deg, transparent, var(--g200) 15%, var(--g200) 85%, transparent);margin: 0 0 48px 0;width:100%;">
-<div style="width:100%;margin:0 0 32px;padding:0 48px;font-family:'Instrument Serif',serif;font-size:clamp(34px,4vw,50px);line-height:1.1;letter-spacing:-1px;color:var(--black);"><em>Old</em> ways of recruiting.</div>
+<div style="width:100%;margin:0 0 32px;padding:0 48px;font-family:'Instrument Serif',serif;font-size:clamp(34px,4vw,50px);line-height:1.1;letter-spacing:-1px;color:var(--black);">Why most candidates <em>stall out</em>.</div>
 <div class="problems">
   <div class="problem-item">
     <div class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
@@ -503,12 +619,12 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 
 <!-- FEATURES -->
 <section class="features-section" id="features" style="padding-top: 40px;">
-  <div style="width:100%;font-family:'Instrument Serif',serif;font-size:clamp(34px,4vw,50px);line-height:1.1;letter-spacing:-1px;color:var(--black);margin-bottom:16px;"><em>Our</em> way of recruiting.</div>
+  <div style="width:100%;font-family:'Instrument Serif',serif;font-size:clamp(34px,4vw,50px);line-height:1.1;letter-spacing:-1px;color:var(--black);margin-bottom:16px;">The OfferBell <em>recruiting simulator</em>.</div>
   <div class="features-header reveal">
     <div>
-      <div class="section-label">What you get</div>
-      <h2 class="section-title">Every tool you need,<br><em>nothing you don't</em></h2>
-      <p class="section-sub">Nine features built for students recruiting across IB, PE, consulting, accounting, and more — from career discovery to signed offer.</p>
+      <div class="section-label">Simulator modules</div>
+      <h2 class="section-title">Command center systems for<br><em>real recruiting execution</em></h2>
+      <p class="section-sub">A high-conviction stack for outreach, interview pressure training, and weekly performance tracking — built for candidates who compete.</p>
     </div>
     <div class="network-box">
       <canvas id="network-canvas"></canvas>
@@ -520,8 +636,8 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 
     <!-- 01 Contact Finder -->
     <div class="f-card f-card-1 reveal" id="fc1">
-      <div class="f-num">01 — Contact Finder <span style="background:#6366f1;color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;margin-left:8px;letter-spacing:0.5px">COMING SOON</span></div>
-      <div class="f-title">Find anyone<br>at any firm.</div>
+      <div class="f-num">Pipeline Command Center · Contact Finder <span style="background:#6366f1;color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;margin-left:8px;letter-spacing:0.5px">COMING SOON</span></div>
+      <div class="f-title">Run contact sourcing<br>at scale.</div>
       <div class="f-desc">Search by firm, role, school, or location. Get verified emails and LinkedIn profiles in seconds — no manual digging. Launching soon with 200K+ professionals across finance, consulting, and accounting.</div>
       <div class="contact-anim">
         <div class="contact-row" id="cr1"><div><div class="cr-name">Emily Zhang</div><div class="cr-role">IB Analyst · Goldman Sachs · New York</div></div><div class="cr-tags"><span class="mbadge mb-li">LinkedIn</span><span class="mbadge mb-em">Email</span><span class="mbadge mb-v">✓ Verified</span></div></div>
@@ -533,8 +649,8 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 
     <!-- 02 AI Outreach Writer -->
     <div class="f-card f-card-2 reveal" id="fc2" style="display:flex;flex-direction:column;">
-      <div class="f-num">02 — AI Outreach Writer</div>
-      <div class="f-title">Messages that<br><em>actually land.</em></div>
+      <div class="f-num">Pipeline Command Center · Outreach Writer</div>
+      <div class="f-title">Execute messages that<br><em>actually convert.</em></div>
       <div class="f-desc">Pick an angle, get a personalized message. Tailored to the contact and your own profile — never generic.</div>
       <div class="angle-tabs">
         <div class="angle-tab active" onclick="switchAngle(this,'alumni')">Alumni</div>
@@ -547,8 +663,8 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 
     <!-- 03 Reply Rate Intelligence -->
     <div class="f-card f-card-3 reveal reveal-d1" id="fc3">
-      <div class="f-num">03 — Reply Rate Intelligence</div>
-      <div class="f-title">Write what works.<br><em>Not what feels right.</em></div>
+      <div class="f-num">Pipeline Command Center · Reply Intel</div>
+      <div class="f-title">Operate with data.<br><em>Not guesses.</em></div>
       <div class="f-desc">OfferBell tracks which angles get replies across the entire platform. Every time a user marks an outreach as replied, the data gets sharper for everyone.</div>
       <div class="rate-anim">
         <div class="rate-row"><div class="rate-label">Alumni angle</div><div class="rate-bar-bg"><div class="rate-bar" id="rb1" data-target="68"></div></div><div class="rate-pct">68%</div></div>
@@ -562,8 +678,8 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 
     <!-- 04 Outreach Pipeline -->
     <div class="f-card f-card-4 reveal" id="fc4">
-      <div class="f-num">04 — Outreach Pipeline</div>
-      <div class="f-title">Your full<br><em>pipeline,</em><br>one board.</div>
+      <div class="f-num">Pipeline Command Center · Pipeline Tracker</div>
+      <div class="f-title">Control your<br><em>pipeline,</em><br>one board.</div>
       <div class="f-desc">Drag-and-drop Kanban. Track every contact from drafted to coffee chat.</div>
       <div class="pipeline-anim">
         <div class="pipe-col">
@@ -584,8 +700,8 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 
     <!-- 05 Weekly Opportunities -->
     <div class="f-card f-card-5 reveal reveal-d1" id="fc5">
-      <div class="f-num">05 — Weekly Opportunities</div>
-      <div class="f-title">Curated roles.<br><em>In your</em><br>inbox.</div>
+      <div class="f-num">Execution Engine · Opportunity Digest</div>
+      <div class="f-title">Weekly roles.<br><em>Ready for</em><br>execution.</div>
       <div class="f-desc">Every week, we send you a curated digest of real finance opportunities — IB, PE, consulting, S&T, and more — so you never miss a deadline.</div>
       <div class="jobs-anim">
         <div class="job-row" id="jr1"><div><div class="job-title">Summer Analyst — IB</div><div class="job-firm">Goldman Sachs · New York</div></div><div class="job-deadline">Apply by Jan 15</div></div>
@@ -596,8 +712,8 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 
     <!-- 06 Coach -->
     <div class="f-card f-card-6 reveal reveal-d2" id="fc6">
-      <div class="f-num">06 — AI Conversation Coach</div>
-      <div class="f-title">They replied.<br><em>Now what?</em></div>
+      <div class="f-num">Interview War Room · AI Coach</div>
+      <div class="f-title">Pressure response:<br><em>make the next move.</em></div>
       <div class="f-desc">Paste any reply and get precise coaching on your next move.</div>
       <div class="coach-anim">
         <div class="coach-label">Their reply</div>
@@ -610,8 +726,8 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
     <!-- 07 Finance Careers Guide -->
     <div class="f-card f-card-7 reveal" id="fc7" style="display:flex;flex-direction:column;justify-content:space-between;">
       <div>
-        <div class="f-num">07 — Career Roadmaps</div>
-        <div class="f-title">Find your<br><em>perfect fit.</em></div>
+        <div class="f-num">Execution Engine · Career Roadmaps</div>
+        <div class="f-title">Pick your lane.<br><em>Execute the plan.</em></div>
         <div class="f-desc">Deep-dive roadmaps for every major finance and professional services career — what they pay, what the work is like, firm tiers, and exactly how to break in.</div>
       </div>
       <div class="career-tags" style="margin-top:20px;">
@@ -632,8 +748,8 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
     <!-- 08 Preparatory Guides -->
     <div class="f-card f-card-8 reveal reveal-d1" id="fc8" style="display:flex;flex-direction:column;justify-content:space-between;">
       <div>
-        <div class="f-num">08 — Preparatory Guides</div>
-        <div class="f-title">Interview ready,<br><em>from day one.</em></div>
+        <div class="f-num">Interview War Room · Recruiting Manuals</div>
+        <div class="f-title">Train faster.<br><em>Perform under pressure.</em></div>
         <div class="f-desc">Full interview prep manuals for IB, PE, consulting, S&T, equity research, asset management, accounting, venture capital, real estate, and restructuring. Technical deep-dives, behavioral frameworks, and practice drills.</div>
       </div>
       <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--g600);font-weight:600;">
