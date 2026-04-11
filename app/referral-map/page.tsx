@@ -5,11 +5,16 @@ import { useRouter } from 'next/navigation';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
 import './referral-map.css';
+import { US_STATES } from './us-states';
 
 type Contact = {
+  id: string;
+  name: string;
+  firm: string;
   role: string;
   referredBy: string; // 'you' or contact id
   note: string;
+  state?: string;
   chainLabel?: string; // user-defined label for chains rooted at this contact
   addedAt: number;
 };
@@ -26,12 +31,11 @@ function load(): Contact[] {
     const r = localStorage.getItem(SK);
     if (r) {
       const parsed = JSON.parse(r);
-      return parsed.map((c: any) => ({ id: c.id, name: c.name, firm: c.firm || '', role: c.role || '', referredBy: c.referredBy || 'you', note: c.note || '', chainLabel: c.chainLabel || undefined, addedAt: c.addedAt || Date.now() }));
+      return parsed.map((c: any) => ({ ...c, state: c.state || undefined }));
     }
-    const v2 = localStorage.getItem('offerbell_referral_nodes_v2');
-    if (v2) {
-      const old = JSON.parse(v2) as any[];
-      return old.filter(n => n.id !== 'you').map(n => ({ id: n.id, name: n.name, firm: n.firm || '', role: n.role || '', referredBy: n.referredBy === 'you' ? 'you' : n.referredBy, note: n.note || '', addedAt: Date.now() }));
+    const v3 = localStorage.getItem('offerbell_referral_nodes_v3');
+    if (v3) {
+      return JSON.parse(v3).map((c: any) => ({ ...c, state: undefined }));
     }
   } catch {}
   return [];
@@ -41,197 +45,187 @@ function save(c: Contact[]) { localStorage.setItem(SK, JSON.stringify(c)); }
 // ═══ NETWORK GRAPH COMPONENT ═══
 function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = '' }: { contacts: Contact[]; selectedId: string | null; onSelect: (id: string | null) => void; expanded: boolean; searchQuery?: string }) {
   const svgRef = useRef<SVGSVGElement>(null);
-  const [dims, setDims] = useState({ w: 800, h: 340 });
+  
+  // Use a fixed 1000x600 coordinate system for the elegant US Map layout
+  const w = 1000;
+  const h = 600;
 
-  useEffect(() => {
-    const el = svgRef.current?.parentElement;
-    if (!el) return;
-    const measure = () => {
-      const { width, height } = el.getBoundingClientRect();
-      setDims({ w: width, h: expanded ? Math.max(height, 500) : 340 });
-    };
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    measure();
-    return () => ro.disconnect();
-  }, [expanded]);
+  // Unassigned Hub (for contacts with no state)
+  const UNASSIGNED_POS = { x: 880, y: 550 };
+  const YOU_POS = { x: 500, y: 550 }; // Anchor 'you' at the bottom center below the map
 
-  // Layout: "You" in center, direct contacts in ring 1, their referrals in ring 2
-  const cx = dims.w / 2;
-  const cy = dims.h / 2;
-
-  const directs = contacts.filter(c => c.referredBy === 'you');
-  const getRefs = (id: string) => contacts.filter(c => c.referredBy === id);
-
-  type NodePos = { id: string; x: number; y: number; name: string; label: string; firm: string; depth: number; color: string };
-  const nodes: NodePos[] = [];
-  const edges: { sourceId: string; targetId: string; x1: number; y1: number; x2: number; y2: number }[] = [];
-
-  // You node
-  nodes.push({ id: 'you', x: cx, y: cy, name: 'You', label: 'You', firm: '', depth: 0, color: '#10b981' });
-
-  // Ring 1 - direct contacts
-  const maxR = Math.min(dims.w, dims.h) * 0.4;
-  const r1 = expanded ? Math.min(maxR * 0.5, 220) : Math.min(dims.w * 0.3, 140);
-  directs.forEach((c, i) => {
-    const angle = (i / Math.max(directs.length, 1)) * Math.PI * 2 - Math.PI / 2;
-    const x = cx + Math.cos(angle) * r1;
-    const y = cy + Math.sin(angle) * r1;
-    const label = c.chainLabel || c.name.split(' ')[0];
-    nodes.push({ id: c.id, x, y, name: c.name, label, firm: c.firm, depth: 1, color: getColor(c.name) });
-    edges.push({ sourceId: 'you', targetId: c.id, x1: cx, y1: cy, x2: x, y2: y });
-
-    // Ring 2 - referrals of this contact
-    const refs = getRefs(c.id);
-    const r2 = r1 + (expanded ? Math.min(maxR * 0.35, 150) : Math.min(dims.w * 0.18, 90));
-    refs.forEach((ref, j) => {
-      const spread = refs.length > 1 ? 0.4 : 0;
-      const refAngle = angle + (j - (refs.length - 1) / 2) * spread;
-      const rx = cx + Math.cos(refAngle) * r2;
-      const ry = cy + Math.sin(refAngle) * r2;
-      nodes.push({ id: ref.id, x: rx, y: ry, name: ref.name, label: ref.name.split(" ")[0], firm: ref.firm, depth: 2, color: getColor(ref.name) });
-      edges.push({ sourceId: c.id, targetId: ref.id, x1: x, y1: y, x2: rx, y2: ry });
-
-      // Ring 3
-      const refs3 = getRefs(ref.id);
-      const r3 = r2 + (expanded ? Math.min(maxR * 0.25, 120) : Math.min(dims.w * 0.12, 60));
-      refs3.forEach((ref3, k) => {
-        const a3 = refAngle + (k - (refs3.length - 1) / 2) * 0.3;
-        const r3x = cx + Math.cos(a3) * r3;
-        const r3y = cy + Math.sin(a3) * r3;
-        nodes.push({ id: ref3.id, x: r3x, y: r3y, name: ref3.name, label: ref3.name.split(" ")[0], firm: ref3.firm, depth: 3, color: getColor(ref3.name) });
-        edges.push({ sourceId: ref.id, targetId: ref3.id, x1: rx, y1: ry, x2: r3x, y2: r3y });
-      });
-    });
+  // Distribute contacts by state
+  const stateAgg: Record<string, Contact[]> = {};
+  contacts.forEach(c => {
+    const st = c.state && US_STATES[c.state as keyof typeof US_STATES] ? c.state : 'UNASSIGNED';
+    if (!stateAgg[st]) stateAgg[st] = [];
+    stateAgg[st].push(c);
   });
 
-  const nodeRadius = (d: number) => d === 0 ? 28 : d === 1 ? 22 : 16;
+  // Calculate nodes to render (one per state + unassigned + you)
+  const nodes = [];
+  const edges: { sourceId: string; targetId: string; x1: number; y1: number; x2: number; y2: number; count: number }[] = [];
 
-  const matchSet = new Set<string>();
-  if (searchQuery) {
-    matchSet.add('you');
-    
-    // Find all direct matches
-    const directMatches = nodes.filter(n => n.id !== 'you' && (n.name.toLowerCase().includes(searchQuery) || n.firm.toLowerCase().includes(searchQuery)));
-    
-    // Trace back paths to 'You'
-    const getParent = (id: string) => {
-      const e = edges.find(edge => edge.targetId === id);
-      return e ? e.sourceId : null;
-    };
+  // "You" node
+  nodes.push({ id: 'you', x: YOU_POS.x, y: YOU_POS.y, label: 'You', color: '#10b981', r: 24, count: 1 });
 
-    directMatches.forEach(m => {
-      let curr: string | null = m.id;
-      while (curr) {
-        matchSet.add(curr);
-        curr = getParent(curr);
+  // State nodes
+  Object.keys(stateAgg).forEach(st => {
+    if (st === 'UNASSIGNED') {
+      nodes.push({ id: 'UNASSIGNED', x: UNASSIGNED_POS.x, y: UNASSIGNED_POS.y, label: 'Unmapped', color: '#4b5563', r: 18, count: stateAgg[st].length });
+    } else {
+      const sPos = US_STATES[st as keyof typeof US_STATES];
+      nodes.push({ id: st, x: sPos.x, y: sPos.y, label: st, color: '#3b82f6', r: Math.min(30, 12 + stateAgg[st].length * 2), count: stateAgg[st].length });
+    }
+  });
+
+  // Determine which contacts fall into search
+  const query = searchQuery.toLowerCase();
+  const searchMatches = new Set<string>();
+  if (query) {
+    contacts.forEach(c => {
+      if (c.name.toLowerCase().includes(query) || c.firm.toLowerCase().includes(query)) {
+        searchMatches.add(c.id);
+        if (c.state && US_STATES[c.state as keyof typeof US_STATES]) searchMatches.add(c.state);
+        else searchMatches.add('UNASSIGNED');
       }
-    });
-
-    // Also include children of matches so sub-chains aren't fully hidden
-    const getChildren = (id: string): string[] => {
-      const children = edges.filter(e => e.sourceId === id).map(e => e.targetId);
-      return children.concat(...children.map(getChildren));
-    };
-    directMatches.forEach(m => {
-      getChildren(m.id).forEach(c => matchSet.add(c));
     });
   }
 
+  // Calculate Edges (Referrals)
+  const getPos = (c: Contact | 'you') => {
+    if (c === 'you') return YOU_POS;
+    if (c.state && US_STATES[c.state as keyof typeof US_STATES]) return US_STATES[c.state as keyof typeof US_STATES];
+    return UNASSIGNED_POS;
+  };
+
+  contacts.forEach(c => {
+    const targetPos = getPos(c);
+    const targetGroupId = c.state && US_STATES[c.state as keyof typeof US_STATES] ? c.state : 'UNASSIGNED';
+    
+    let sourcePos = YOU_POS;
+    let sourceGroupId = 'you';
+
+    if (c.referredBy !== 'you') {
+      const parent = contacts.find(x => x.id === c.referredBy);
+      if (parent) {
+        sourcePos = getPos(parent);
+        sourceGroupId = parent.state && US_STATES[parent.state as keyof typeof US_STATES] ? parent.state : 'UNASSIGNED';
+      }
+    }
+
+    if (sourceGroupId !== targetGroupId) {
+      // Find existing edge to increment count, or add new
+      const ex = edges.find(e => e.sourceId === sourceGroupId && e.targetId === targetGroupId);
+      if (ex) {
+        ex.count++;
+      } else {
+        edges.push({ sourceId: sourceGroupId, targetId: targetGroupId, x1: sourcePos.x, y1: sourcePos.y, x2: targetPos.x, y2: targetPos.y, count: 1 });
+      }
+    }
+  });
+  
+  // Create an aesthetic background mesh by connecting nearby states
+  const meshLines: { x1: number; y1: number; x2: number; y2: number }[] = [];
+  const stateKeys = Object.keys(US_STATES) as (keyof typeof US_STATES)[];
+  stateKeys.forEach(s1 => {
+    const p1 = US_STATES[s1];
+    // Find closest 2-3 states
+    const dists = stateKeys.filter(s => s !== s1).map(s => {
+      const p2 = US_STATES[s];
+      return { p2, d: Math.hypot(p1.x - p2.x, p1.y - p2.y) };
+    }).sort((a, b) => a.d - b.d).slice(0, 3);
+    dists.forEach(d => {
+      meshLines.push({ x1: p1.x, y1: p1.y, x2: d.p2.x, y2: d.p2.y });
+    });
+  });
+
   return (
-    <svg ref={svgRef} viewBox={`0 0 ${dims.w} ${dims.h}`} style={{ width: '100%', height: expanded ? '100%' : dims.h, display: 'block', zIndex: 1, position: 'relative' }}>
-      <defs>
-        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="6" result="blur" />
-        </filter>
-        <filter id="glow-strong" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="12" result="blur" />
-          <feComponentTransfer in="blur" result="glow">
-            <feFuncA type="linear" slope="1.5" />
-          </feComponentTransfer>
-          <feMerge>
-            <feMergeNode in="glow" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        <filter id="node-shadow" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="0" dy="8" stdDeviation="6" floodColor="#000" floodOpacity="0.6" />
-        </filter>
-        <radialGradient id="3d-sphere" cx="35%" cy="30%" r="70%">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
-          <stop offset="25%" stopColor="#ffffff" stopOpacity="0.2" />
-          <stop offset="60%" stopColor="#ffffff" stopOpacity="0" />
-          <stop offset="100%" stopColor="#000000" stopOpacity="0.6" />
-        </radialGradient>
-      </defs>
+    <div style={{ width: '100%', height: expanded ? '100%' : '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', perspective: '1200px', overflow: 'hidden' }}>
+      <svg ref={svgRef} viewBox={`0 0 ${w} ${h}`} style={{ width: '100%', height: '100%', transform: 'rotateX(40deg) rotateZ(-5deg) scale(1.1)', transformStyle: 'preserve-3d', filter: 'drop-shadow(0 40px 30px rgba(0,0,0,0.5))' }}>
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="8" result="blur" />
+          </filter>
+          <filter id="glow-strong" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="12" result="blur" />
+            <feComponentTransfer in="blur" result="glow">
+              <feFuncA type="linear" slope="1.5" />
+            </feComponentTransfer>
+            <feMerge>
+              <feMergeNode in="glow" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
 
-      {/* Edges */}
-      {edges.map((e, i) => {
-        const isMatchPath = searchQuery && matchSet.has(e.sourceId) && matchSet.has(e.targetId);
-        const dimEdge = searchQuery && !isMatchPath;
-        return (
-          <g key={`e${i}`}>
-            <line 
-              x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} 
-              stroke={isMatchPath ? "#ffffff" : "rgba(255,255,255,0.15)"} 
-              strokeWidth={isMatchPath ? "3" : "1.5"} 
-              opacity={dimEdge ? 0.05 : 1} 
-              style={{ transition: 'all 0.3s' }} 
-            />
-            {isMatchPath && (
-              <line 
-                x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} 
-                stroke="#ffffff" strokeWidth="8" opacity="0.4" 
-                style={{ filter: 'url(#glow)', pointerEvents: 'none' }} 
+        {/* Base Mesh Map connecting all US States lightly */}
+        {meshLines.map((l, i) => (
+          <line key={`m${i}`} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+        ))}
+
+        {/* Unpopulated States */}
+        {stateKeys.map(s => {
+          if (nodes.find(n => n.id === s)) return null; // Drawn as active node
+          const p = US_STATES[s];
+          return <circle key={`e-${s}`} cx={p.x} cy={p.y} r={3} fill="rgba(255,255,255,0.15)" />;
+        })}
+
+        {/* Active Edges (Referral Arcs) */}
+        {edges.map((e, i) => {
+          // Quadratic bezier curve arc (rising up)
+          const cx = (e.x1 + e.x2) / 2;
+          const cy = (e.y1 + e.y2) / 2 - 100; // Arc upwards
+          
+          const isMatchPath = query && (searchMatches.has(e.sourceId) || searchMatches.has(e.targetId));
+          const dimEdge = query && !isMatchPath;
+          
+          return (
+            <g key={`e${i}`}>
+              <path 
+                d={`M ${e.x1} ${e.y1} Q ${cx} ${cy} ${e.x2} ${e.y2}`}
+                fill="none"
+                stroke={isMatchPath ? "#ffffff" : "rgba(59, 130, 246, 0.4)"} 
+                strokeWidth={isMatchPath ? "3" : Math.min(e.count + 1, 6)} 
+                opacity={dimEdge ? 0.05 : 1}
+                strokeDasharray="4 4"
+                style={{ transition: 'all 0.3s' }}
               />
-            )}
-          </g>
-        );
-      })}
-      
-      {/* Nodes */}
-      {nodes.map(n => {
-        const r = nodeRadius(n.depth);
-        const isSelected = selectedId === n.id;
-        const isYou = n.id === 'you';
-        const isMatch = !searchQuery || matchSet.has(n.id);
-        const opacity = isMatch ? 1 : 0.05;
-        const scale = isSelected ? 1.15 : 1;
+              {isMatchPath && (
+                <path 
+                  d={`M ${e.x1} ${e.y1} Q ${cx} ${cy} ${e.x2} ${e.y2}`}
+                  fill="none" stroke="#ffffff" strokeWidth="6" opacity="0.6" style={{ filter: 'url(#glow-strong)' }}
+                />
+              )}
+            </g>
+          );
+        })}
 
-        return (
-          <g key={n.id} style={{ cursor: isYou ? 'default' : 'pointer', transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', transformOrigin: `${n.x}px ${n.y}px`, transform: `scale(${scale})`, opacity }} onClick={() => !isYou && onSelect(isSelected ? null : n.id)}>
-            {/* Ambient Background Glow matching node color */}
-            {isMatch && (
-              <circle cx={n.x} cy={n.y} r={r + 8} fill={n.color} opacity={isSelected ? "0.6" : "0.3"} style={{ filter: isSelected ? 'url(#glow-strong)' : 'url(#glow)', pointerEvents: 'none', transition: 'all 0.3s' }} />
-            )}
-            
-            {/* Selection indicator ring */}
-            {isSelected && <circle cx={n.x} cy={n.y} r={r + 10} fill="none" stroke="#fff" strokeWidth="2" opacity="0.8" />}
-            
-            {/* The Solid Base Sphere */}
-            <circle cx={n.x} cy={n.y} r={r} fill={n.color} style={{ filter: 'url(#node-shadow)' }} />
-            
-            {/* 3D Glassy Lighting Overlay */}
-            <circle cx={n.x} cy={n.y} r={r} fill="url(#3d-sphere)" style={{ pointerEvents: 'none' }} />
-            
-            {/* Crisp Rim Light */}
-            <circle cx={n.x} cy={n.y} r={r - 1} fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" style={{ pointerEvents: 'none' }} />
-            
-            {/* Initials Text */}
-            <text x={n.x} y={n.y + 1} textAnchor="middle" dominantBaseline="central" fill="#ffffff" fontSize={r > 16 ? 13 : 10} fontWeight="800" fontFamily="'Sora', sans-serif" style={{ pointerEvents: 'none', textShadow: '0 2px 4px rgba(0,0,0,0.6)' }}>
-              {isYou ? 'You' : getInitials(n.name)}
-            </text>
-            
-            {/* Label Base */}
-            {((expanded && n.depth <= 2) || (!expanded && n.depth <= 1)) && !isYou && (
-              <text x={n.x} y={n.y + r + 18} textAnchor="middle" fill="#9ca3af" fontSize="11" fontWeight="700" fontFamily="'Sora', sans-serif" style={{ pointerEvents: 'none', transition: 'opacity 0.2s', opacity: isMatch ? 1 : 0, textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
-                {n.label.length > 14 ? n.label.slice(0, 12) + '..' : n.label}
+        {/* Active Nodes */}
+        {nodes.map((n, i) => {
+          const isSelected = selectedId && (
+            (n.id === 'you') || 
+            (stateAgg[n.id]?.some(c => c.id === selectedId || c.chainLabel === selectedId))
+          );
+          const isMatch = !query || searchMatches.has(n.id);
+          const opacity = isMatch ? 1 : 0.2;
+          const isYou = n.id === 'you';
+
+          return (
+            <g key={n.id} style={{ cursor: isYou ? 'default' : 'pointer', transition: 'all 0.4s', opacity, transformOrigin: `${n.x}px ${n.y}px`, transform: isSelected ? 'scale(1.2) translateY(-10px)' : 'none' }}>
+              {isMatch && <circle cx={n.x} cy={n.y} r={n.r + 6} fill={n.color} opacity="0.3" style={{ filter: 'url(#glow)' }} />}
+              <circle cx={n.x} cy={n.y} r={n.r} fill={n.color} />
+              <text x={n.x} y={n.y} textAnchor="middle" dominantBaseline="central" fill="#fff" fontSize={n.r > 16 ? 12 : 9} fontWeight="800" fontFamily="'Sora', sans-serif">
+                {isYou ? 'You' : n.count}
               </text>
-            )}
-          </g>
-        );
-      })}
-    </svg>
+              <text x={n.x} y={n.y + n.r + 14} textAnchor="middle" fill="#9ca3af" fontSize="12" fontWeight="700" fontFamily="'Sora', sans-serif" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
+                {n.label}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
   );
 }
 
@@ -284,7 +278,7 @@ export default function ReferralMapPage() {
   const saveForm = () => {
     if (!form.name?.trim()) return;
     const id = form.id || `r_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
-    const contact: Contact = { id, name: form.name!.trim(), firm: form.firm || '', role: form.role || '', referredBy: form.referredBy || 'you', note: form.note || '', chainLabel: form.chainLabel || undefined, addedAt: form.addedAt || Date.now() };
+    const contact: Contact = { id, name: form.name!.trim(), firm: form.firm || '', role: form.role || '', referredBy: form.referredBy || 'you', note: form.note || '', state: form.state || undefined, chainLabel: form.chainLabel || undefined, addedAt: form.addedAt || Date.now() };
     setContacts(prev => { const idx = prev.findIndex(c => c.id === id); if (idx >= 0) { const next = [...prev]; next[idx] = contact; return next; } return [...prev, contact]; });
     setModal(null); setForm({});
   };
@@ -308,7 +302,7 @@ export default function ReferralMapPage() {
           <div className="rm-node-dot" style={{ background: getColor(c.name) }} />
           <div className="rm-node-info">
             <div className="rm-node-name">{c.name}</div>
-            <div className="rm-node-detail">{c.firm}{c.role ? ` — ${c.role}` : ''}{c.note ? ` | ${c.note}` : ''}</div>
+            <div className="rm-node-detail">{c.firm}{c.role ? ` — ${c.role}` : ''}{c.state ? ` • ${c.state}` : ''}{c.note ? ` | ${c.note}` : ''}</div>
           </div>
           <span style={{ fontSize: 10, color: 'var(--text-3)' }}>Edit</span>
         </div>
@@ -549,6 +543,13 @@ export default function ReferralMapPage() {
             <div className="rm-input-row">
               <div className="rm-field" style={{ flex: 1 }}><label className="rm-label">Firm</label><input className="rm-input" value={form.firm || ''} onChange={e => setForm(p => ({ ...p, firm: e.target.value }))} placeholder="e.g. Goldman Sachs" /></div>
               <div className="rm-field" style={{ flex: 1 }}><label className="rm-label">Role</label><input className="rm-input" value={form.role || ''} onChange={e => setForm(p => ({ ...p, role: e.target.value }))} placeholder="e.g. VP, TMT" /></div>
+            </div>
+            <div className="rm-field">
+              <label className="rm-label">Location (State)</label>
+              <select className="rm-input" value={form.state || ''} onChange={e => setForm(p => ({ ...p, state: e.target.value }))} style={{ cursor: 'pointer' }}>
+                <option value="">-- Unmapped / No location --</option>
+                {Object.entries(US_STATES).map(([code, st]) => (<option key={code} value={code}>{st.name} ({code})</option>))}
+              </select>
             </div>
             <div className="rm-field">
               <label className="rm-label">Who referred you to this person?</label>
