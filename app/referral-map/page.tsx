@@ -43,184 +43,186 @@ function load(): Contact[] {
 function save(c: Contact[]) { localStorage.setItem(SK, JSON.stringify(c)); }
 
 // ═══ NETWORK GRAPH COMPONENT ═══
-function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = '' }: { contacts: Contact[]; selectedId: string | null; onSelect: (id: string | null) => void; expanded: boolean; searchQuery?: string }) {
-  const svgRef = useRef<SVGSVGElement>(null);
-  
-  // Use a fixed 1000x600 coordinate system for the elegant US Map layout
+function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = '', userState }: { contacts: Contact[]; selectedId: string | null; onSelect: (id: string | null) => void; expanded: boolean; searchQuery?: string; userState: string | null }) {
   const w = 1000;
   const h = 600;
 
-  // Unassigned Hub (for contacts with no state)
+  // Unassigned Hub (for contacts without state)
   const UNASSIGNED_POS = { x: 880, y: 550 };
-  const YOU_POS = { x: 500, y: 550 }; // Anchor 'you' at the bottom center below the map
+  const YOU_POS = userState && US_STATES[userState as keyof typeof US_STATES] ? US_STATES[userState as keyof typeof US_STATES] : { x: 500, y: 550 };
 
-  // Distribute contacts by state
-  const stateAgg: Record<string, Contact[]> = {};
-  contacts.forEach(c => {
-    const st = c.state && US_STATES[c.state as keyof typeof US_STATES] ? c.state : 'UNASSIGNED';
-    if (!stateAgg[st]) stateAgg[st] = [];
-    stateAgg[st].push(c);
-  });
-
-  // Calculate nodes to render (one per state + unassigned + you)
-  const nodes = [];
-  const edges: { sourceId: string; targetId: string; x1: number; y1: number; x2: number; y2: number; count: number }[] = [];
-
-  // "You" node
-  nodes.push({ id: 'you', x: YOU_POS.x, y: YOU_POS.y, label: 'You', color: '#10b981', r: 24, count: 1 });
-
-  // State nodes
-  Object.keys(stateAgg).forEach(st => {
-    if (st === 'UNASSIGNED') {
-      nodes.push({ id: 'UNASSIGNED', x: UNASSIGNED_POS.x, y: UNASSIGNED_POS.y, label: 'Unmapped', color: '#4b5563', r: 18, count: stateAgg[st].length });
-    } else {
-      const sPos = US_STATES[st as keyof typeof US_STATES];
-      nodes.push({ id: st, x: sPos.x, y: sPos.y, label: st, color: '#3b82f6', r: Math.min(30, 12 + stateAgg[st].length * 2), count: stateAgg[st].length });
-    }
-  });
-
-  // Determine which contacts fall into search
+  // Calculate Matches
   const query = searchQuery.toLowerCase();
-  const searchMatches = new Set<string>();
+  const matchSet = new Set<string>();
   if (query) {
     contacts.forEach(c => {
-      if (c.name.toLowerCase().includes(query) || c.firm.toLowerCase().includes(query)) {
-        searchMatches.add(c.id);
-        if (c.state && US_STATES[c.state as keyof typeof US_STATES]) searchMatches.add(c.state);
-        else searchMatches.add('UNASSIGNED');
-      }
+      if (c.name.toLowerCase().includes(query) || c.firm.toLowerCase().includes(query)) matchSet.add(c.id);
+    });
+    // Trace back all chains for matches
+    const getParent = (id: string): string | null => { const ct = contacts.find(x => x.id === id); return ct ? ct.referredBy : null; };
+    const getChildren = (id: string): string[] => { const children = contacts.filter(x => x.referredBy === id).map(x => x.id); return children.concat(...children.map(getChildren)); };
+    const matchesArray = Array.from(matchSet);
+    matchesArray.forEach(m => {
+      let curr: string | null = m;
+      while (curr && curr !== 'you') { matchSet.add(curr); curr = getParent(curr); }
+      matchSet.add('you');
+      getChildren(m).forEach(c => matchSet.add(c));
     });
   }
 
-  // Calculate Edges (Referrals)
-  const getPos = (c: Contact | 'you') => {
-    if (c === 'you') return YOU_POS;
-    if (c.state && US_STATES[c.state as keyof typeof US_STATES]) return US_STATES[c.state as keyof typeof US_STATES];
-    return UNASSIGNED_POS;
-  };
+  // Calculate Node Positions (Cluster by state)
+  type NodePos = { id: string; x: number; y: number; name: string; firm: string; color: string; r: number; isMatch: boolean; isYou: boolean; isSelected: boolean };
+  const nodes: NodePos[] = [];
+  const edges: { sourceX: number; sourceY: number; targetX: number; targetY: number; targetId: string; sourceId: string; isMatchPath: boolean }[] = [];
+
+  const stateCounts: Record<string, number> = {};
+  const getStateCenter = (st?: string) => st && US_STATES[st as keyof typeof US_STATES] ? US_STATES[st as keyof typeof US_STATES] : UNASSIGNED_POS;
+
+  // Place You
+  const youMatch = !query || matchSet.has('you');
+  const youSelected = selectedId === 'you';
+  nodes.push({ id: 'you', x: YOU_POS.x, y: YOU_POS.y, name: 'You', firm: '', color: '#10b981', r: 24, isMatch: youMatch, isYou: true, isSelected: youSelected });
+  
+  if (userState) stateCounts[userState] = 1;
 
   contacts.forEach(c => {
-    const targetPos = getPos(c);
-    const targetGroupId = c.state && US_STATES[c.state as keyof typeof US_STATES] ? c.state : 'UNASSIGNED';
+    const stGroup = c.state && US_STATES[c.state as keyof typeof US_STATES] ? c.state : 'UNASSIGNED';
+    const center = getStateCenter(stGroup);
     
-    let sourcePos = YOU_POS;
-    let sourceGroupId = 'you';
+    const count = stateCounts[stGroup] || 0;
+    stateCounts[stGroup] = count + 1;
 
-    if (c.referredBy !== 'you') {
-      const parent = contacts.find(x => x.id === c.referredBy);
-      if (parent) {
-        sourcePos = getPos(parent);
-        sourceGroupId = parent.state && US_STATES[parent.state as keyof typeof US_STATES] ? parent.state : 'UNASSIGNED';
-      }
+    let nx = center.x;
+    let ny = center.y;
+    
+    // Offset slightly if multiple nodes are in the same state (Fibonacci spiral or simple circle)
+    if (count > 0) {
+      const angle = (count * 137.5) * (Math.PI / 180);
+      const rad = 20 + count * 6;
+      nx = center.x + Math.cos(angle) * rad;
+      ny = center.y + Math.sin(angle) * rad;
     }
 
-    if (sourceGroupId !== targetGroupId) {
-      // Find existing edge to increment count, or add new
-      const ex = edges.find(e => e.sourceId === sourceGroupId && e.targetId === targetGroupId);
-      if (ex) {
-        ex.count++;
-      } else {
-        edges.push({ sourceId: sourceGroupId, targetId: targetGroupId, x1: sourcePos.x, y1: sourcePos.y, x2: targetPos.x, y2: targetPos.y, count: 1 });
-      }
-    }
+    const isMatch = !query || matchSet.has(c.id);
+    const isSelected = selectedId === c.id || c.chainLabel === selectedId;
+
+    nodes.push({ id: c.id, x: nx, y: ny, name: c.name, firm: c.firm, color: getColor(c.name), r: 16, isMatch, isYou: false, isSelected });
   });
-  
-  // Create an aesthetic background mesh by connecting nearby states
+
+  // Calculate edges between individual nodes
+  contacts.forEach(c => {
+    const targetNode = nodes.find(n => n.id === c.id);
+    if (!targetNode) return;
+    const sourceNode = nodes.find(n => n.id === c.referredBy) || nodes.find(n => n.id === 'you');
+    if (!sourceNode) return;
+    
+    edges.push({
+      sourceId: sourceNode.id,
+      targetId: targetNode.id,
+      sourceX: sourceNode.x,
+      sourceY: sourceNode.y,
+      targetX: targetNode.x,
+      targetY: targetNode.y,
+      isMatchPath: query ? (matchSet.has(sourceNode.id) && matchSet.has(targetNode.id)) : false
+    });
+  });
+
+  // Mesh map lines
   const meshLines: { x1: number; y1: number; x2: number; y2: number }[] = [];
   const stateKeys = Object.keys(US_STATES) as (keyof typeof US_STATES)[];
   stateKeys.forEach(s1 => {
     const p1 = US_STATES[s1];
-    // Find closest 2-3 states
-    const dists = stateKeys.filter(s => s !== s1).map(s => {
-      const p2 = US_STATES[s];
-      return { p2, d: Math.hypot(p1.x - p2.x, p1.y - p2.y) };
-    }).sort((a, b) => a.d - b.d).slice(0, 3);
-    dists.forEach(d => {
-      meshLines.push({ x1: p1.x, y1: p1.y, x2: d.p2.x, y2: d.p2.y });
-    });
+    const dists = stateKeys.filter(s => s !== s1).map(s => ({ p2: US_STATES[s], d: Math.hypot(p1.x - p2.x, p1.y - p2.y) })).sort((a, b) => a.d - b.d).slice(0, 3);
+    dists.forEach(d => meshLines.push({ x1: p1.x, y1: p1.y, x2: d.p2.x, y2: d.p2.y }));
   });
 
+  // Render
   return (
     <div style={{ width: '100%', height: expanded ? '100%' : '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', perspective: '1200px', overflow: 'hidden' }}>
-      <svg ref={svgRef} viewBox={`0 0 ${w} ${h}`} style={{ width: '100%', height: '100%', transform: 'rotateX(40deg) rotateZ(-5deg) scale(1.1)', transformStyle: 'preserve-3d', filter: 'drop-shadow(0 40px 30px rgba(0,0,0,0.5))' }}>
+      <svg viewBox={`0 0 ${w} ${h}`} style={{ width: '100%', height: '100%', transform: 'rotateX(40deg) rotateZ(-5deg) scale(1.1)', transformStyle: 'preserve-3d', filter: 'drop-shadow(0 40px 30px rgba(0,0,0,0.5))' }}>
         <defs>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="8" result="blur" />
+            <feGaussianBlur stdDeviation="6" result="blur" />
           </filter>
           <filter id="glow-strong" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="12" result="blur" />
             <feComponentTransfer in="blur" result="glow">
               <feFuncA type="linear" slope="1.5" />
             </feComponentTransfer>
-            <feMerge>
-              <feMergeNode in="glow" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
+            <feMerge><feMergeNode in="glow" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
+          <radialGradient id="3d-sphere" cx="35%" cy="30%" r="70%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
+            <stop offset="25%" stopColor="#ffffff" stopOpacity="0.2" />
+            <stop offset="60%" stopColor="#ffffff" stopOpacity="0" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0.6" />
+          </radialGradient>
         </defs>
 
-        {/* Base Mesh Map connecting all US States lightly */}
+        {/* Mesh Map */}
         {meshLines.map((l, i) => (
           <line key={`m${i}`} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
         ))}
-
-        {/* Unpopulated States */}
         {stateKeys.map(s => {
-          if (nodes.find(n => n.id === s)) return null; // Drawn as active node
           const p = US_STATES[s];
           return <circle key={`e-${s}`} cx={p.x} cy={p.y} r={3} fill="rgba(255,255,255,0.15)" />;
         })}
 
-        {/* Active Edges (Referral Arcs) */}
+        {/* Dynamic Flight-Path Edges */}
         {edges.map((e, i) => {
-          // Quadratic bezier curve arc (rising up)
-          const cx = (e.x1 + e.x2) / 2;
-          const cy = (e.y1 + e.y2) / 2 - 100; // Arc upwards
+          // If nodes are in exactly same place, draw small loop, else flight path
+          const isSameLoc = Math.hypot(e.sourceX - e.targetX, e.sourceY - e.targetY) < 1;
+          const cx = (e.sourceX + e.targetX) / 2;
+          let cy = (e.sourceY + e.targetY) / 2 - 80;
+          if (isSameLoc) cy -= 40;
           
-          const isMatchPath = query && (searchMatches.has(e.sourceId) || searchMatches.has(e.targetId));
-          const dimEdge = query && !isMatchPath;
-          
+          const dimEdge = query && !e.isMatchPath;
+
           return (
             <g key={`e${i}`}>
               <path 
-                d={`M ${e.x1} ${e.y1} Q ${cx} ${cy} ${e.x2} ${e.y2}`}
+                d={isSameLoc ? `M ${e.sourceX} ${e.sourceY} Q ${e.sourceX + 40} ${cy} ${e.targetX} ${e.targetY}` : `M ${e.sourceX} ${e.sourceY} Q ${cx} ${cy} ${e.targetX} ${e.targetY}`}
                 fill="none"
-                stroke={isMatchPath ? "#ffffff" : "rgba(59, 130, 246, 0.4)"} 
-                strokeWidth={isMatchPath ? "3" : Math.min(e.count + 1, 6)} 
+                stroke={e.isMatchPath ? "#ffffff" : "rgba(255,255,255,0.15)"} 
+                strokeWidth={e.isMatchPath ? "3" : "1.5"} 
                 opacity={dimEdge ? 0.05 : 1}
                 strokeDasharray="4 4"
                 style={{ transition: 'all 0.3s' }}
               />
-              {isMatchPath && (
+              {e.isMatchPath && (
                 <path 
-                  d={`M ${e.x1} ${e.y1} Q ${cx} ${cy} ${e.x2} ${e.y2}`}
-                  fill="none" stroke="#ffffff" strokeWidth="6" opacity="0.6" style={{ filter: 'url(#glow-strong)' }}
+                  d={isSameLoc ? `M ${e.sourceX} ${e.sourceY} Q ${e.sourceX + 40} ${cy} ${e.targetX} ${e.targetY}` : `M ${e.sourceX} ${e.sourceY} Q ${cx} ${cy} ${e.targetX} ${e.targetY}`}
+                  fill="none" stroke="#ffffff" strokeWidth="8" opacity="0.4" style={{ filter: 'url(#glow)', pointerEvents: 'none' }}
                 />
               )}
             </g>
           );
         })}
 
-        {/* Active Nodes */}
-        {nodes.map((n, i) => {
-          const isSelected = selectedId && (
-            (n.id === 'you') || 
-            (stateAgg[n.id]?.some(c => c.id === selectedId || c.chainLabel === selectedId))
-          );
-          const isMatch = !query || searchMatches.has(n.id);
-          const opacity = isMatch ? 1 : 0.2;
-          const isYou = n.id === 'you';
+        {/* Individual Nodes */}
+        {nodes.map(n => {
+          const opacity = n.isMatch ? 1 : 0.05;
+          const scale = n.isSelected ? 1.2 : 1;
 
           return (
-            <g key={n.id} style={{ cursor: isYou ? 'default' : 'pointer', transition: 'all 0.4s', opacity, transformOrigin: `${n.x}px ${n.y}px`, transform: isSelected ? 'scale(1.2) translateY(-10px)' : 'none' }}>
-              {isMatch && <circle cx={n.x} cy={n.y} r={n.r + 6} fill={n.color} opacity="0.3" style={{ filter: 'url(#glow)' }} />}
+            <g key={n.id} style={{ cursor: n.isYou ? 'default' : 'pointer', transition: 'all 0.4s', opacity, transformOrigin: `${n.x}px ${n.y}px`, transform: `scale(${scale})` }} onClick={() => !n.isYou && onSelect(n.isSelected ? null : n.id)}>
+              {/* Glow */}
+              {n.isMatch && <circle cx={n.x} cy={n.y} r={n.r + 6} fill={n.color} opacity={n.isSelected ? "0.6" : "0.3"} style={{ filter: n.isSelected ? 'url(#glow-strong)' : 'url(#glow)', pointerEvents: 'none' }} />}
+              {n.isSelected && <circle cx={n.x} cy={n.y} r={n.r + 10} fill="none" stroke="#fff" strokeWidth="2" opacity="0.8" />}
+              
+              {/* Base */}
               <circle cx={n.x} cy={n.y} r={n.r} fill={n.color} />
-              <text x={n.x} y={n.y} textAnchor="middle" dominantBaseline="central" fill="#fff" fontSize={n.r > 16 ? 12 : 9} fontWeight="800" fontFamily="'Sora', sans-serif">
-                {isYou ? 'You' : n.count}
+              <circle cx={n.x} cy={n.y} r={n.r} fill="url(#3d-sphere)" style={{ pointerEvents: 'none' }} />
+              <circle cx={n.x} cy={n.y} r={n.r - 1} fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1" style={{ pointerEvents: 'none' }} />
+              
+              <text x={n.x} y={n.y + 1} textAnchor="middle" dominantBaseline="central" fill="#fff" fontSize={n.r > 16 ? 12 : 9} fontWeight="800" fontFamily="'Sora', sans-serif">
+                {n.isYou ? 'You' : getInitials(n.name)}
               </text>
-              <text x={n.x} y={n.y + n.r + 14} textAnchor="middle" fill="#9ca3af" fontSize="12" fontWeight="700" fontFamily="'Sora', sans-serif" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
-                {n.label}
-              </text>
+              {((expanded && n.isSelected) || n.isMatch) && !n.isYou && (
+                <text x={n.x} y={n.y + n.r + 14} textAnchor="middle" fill="#9ca3af" fontSize="11" fontWeight="700" fontFamily="'Sora', sans-serif" style={{ pointerEvents: 'none', textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
+                  {n.name.split(' ')[0]}
+                </text>
+              )}
             </g>
           );
         })}
@@ -234,16 +236,19 @@ export default function ReferralMapPage() {
   const router = useRouter();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [modal, setModal] = useState<'add' | 'edit' | 'import' | null>(null);
+  const [userState, setUserState] = useState<string | null>(null);
   const [form, setForm] = useState<Partial<Contact>>({});
   const [selectedChain, setSelectedChain] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [impList, setImpList] = useState<{ fname: string; lname: string; firm: string; role: string; sel: boolean }[]>([]);
   const [showHelp, setShowHelp] = useState(false);
   const [graphExpanded, setGraphExpanded] = useState(false);
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
     setContacts(load());
+    setUserState(localStorage.getItem('offerbell_user_state'));
     const t = localStorage.getItem('offerbell-theme');
     if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
   }, [router]);
@@ -316,14 +321,31 @@ export default function ReferralMapPage() {
       <Sidebar activePage="referral-map" />
       <main className="main rm-main">
         <div className="rm-wrap">
-          <div className="rm-header">
+          <div className="rm-header" style={{ position: 'relative' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <div className="rm-title">Referral <em>Map</em></div>
               <button onClick={() => setShowHelp(true)} style={{ width: 24, height: 24, borderRadius: '50%', border: '1.5px solid var(--border)', background: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0, marginTop: 4 }} type="button" title="How to use">
                 <svg width="12" height="12" fill="none" stroke="var(--text-3)" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="var(--text-3)"/></svg>
               </button>
             </div>
-            <div className="rm-sub">Visualize your network. Select a chain below the graph to explore referral connections.</div>
+            <div className="rm-sub">Visualize your network. Add your central location and trace chains state by state.</div>
+            <div style={{ position: 'absolute', top: 0, right: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-2)' }}>Your Location:</label>
+              <select 
+                className="rm-input" 
+                style={{ padding: '6px 10px', fontSize: 13, height: 'auto', minHeight: 0 }}
+                value={userState || ''} 
+                onChange={e => {
+                  const val = e.target.value;
+                  setUserState(val || null);
+                  if (val) localStorage.setItem('offerbell_user_state', val);
+                  else localStorage.removeItem('offerbell_user_state');
+                }}
+              >
+                <option value="">Unassigned</option>
+                {Object.entries(US_STATES).map(([code, st]) => (<option key={code} value={code}>{st.name}</option>))}
+              </select>
+            </div>
           </div>
 
           {/* Actions */}
@@ -403,7 +425,7 @@ export default function ReferralMapPage() {
                 <svg width="14" height="14" fill="none" stroke="#fff" strokeWidth="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
               </button>
               
-              <NetworkGraph contacts={contacts} selectedId={selectedChain} expanded={false} searchQuery={q} onSelect={(id) => {
+              <NetworkGraph contacts={contacts} selectedId={selectedChain} expanded={false} searchQuery={q} userState={userState} onSelect={(id) => {
                 if (!id) { setSelectedChain(null); return; }
                 const findRoot = (contactId: string): string => {
                   const c = contacts.find(x => x.id === contactId);
@@ -625,7 +647,7 @@ export default function ReferralMapPage() {
                 <div className="rm-graph-grid">
                   <div className="rm-graph-grid-inner" />
                 </div>
-                <NetworkGraph contacts={contacts} selectedId={selectedChain} expanded={true} searchQuery={q} onSelect={(id) => {
+                <NetworkGraph contacts={contacts} selectedId={selectedChain} expanded={true} searchQuery={q} userState={userState} onSelect={(id) => {
                   if (!id) { setSelectedChain(null); return; }
                   const findRoot = (contactId: string): string => {
                     const c = contacts.find(x => x.id === contactId);
