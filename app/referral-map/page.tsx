@@ -60,11 +60,17 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
     });
     // Trace back all chains for matches
     const getParent = (id: string): string | null => { const ct = contacts.find(x => x.id === id); return ct ? ct.referredBy : null; };
-    const getChildren = (id: string): string[] => { const children = contacts.filter(x => x.referredBy === id).map(x => x.id); return children.concat(...children.map(getChildren)); };
+    const getChildren = (id: string, visited = new Set<string>()): string[] => { 
+      if (visited.has(id)) return [];
+      visited.add(id);
+      const children = contacts.filter(x => x.referredBy === id).map(x => x.id); 
+      return children.concat(...children.map(c => getChildren(c, visited))); 
+    };
     const matchesArray = Array.from(matchSet);
     matchesArray.forEach(m => {
       let curr: string | null = m;
-      while (curr && curr !== 'you') { matchSet.add(curr); curr = getParent(curr); }
+      const v = new Set<string>();
+      while (curr && curr !== 'you' && !v.has(curr)) { v.add(curr); matchSet.add(curr); curr = getParent(curr); }
       matchSet.add('you');
       getChildren(m).forEach(c => matchSet.add(c));
     });
@@ -132,7 +138,10 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
   const stateKeys = Object.keys(US_STATES) as (keyof typeof US_STATES)[];
   stateKeys.forEach(s1 => {
     const p1 = US_STATES[s1];
-    const dists = stateKeys.filter(s => s !== s1).map(s => ({ p2: US_STATES[s], d: Math.hypot(p1.x - p2.x, p1.y - p2.y) })).sort((a, b) => a.d - b.d).slice(0, 3);
+    const dists = stateKeys.filter(s => s !== s1).map(s => {
+      const p2 = US_STATES[s];
+      return { p2, d: Math.hypot(p1.x - p2.x, p1.y - p2.y) };
+    }).sort((a, b) => a.d - b.d).slice(0, 3);
     dists.forEach(d => meshLines.push({ x1: p1.x, y1: p1.y, x2: d.p2.x, y2: d.p2.y }));
   });
 
@@ -256,7 +265,12 @@ export default function ReferralMapPage() {
   useEffect(() => { if (contacts.length > 0) save(contacts); }, [contacts]);
 
   const getReferrals = (id: string): Contact[] => contacts.filter(c => c.referredBy === id);
-  const getChainSize = (id: string): number => { const refs = getReferrals(id); return refs.length + refs.reduce((s, r) => s + getChainSize(r.id), 0); };
+  const getChainSize = (id: string, visited = new Set<string>()): number => {
+    if (visited.has(id)) return 0;
+    visited.add(id);
+    const refs = getReferrals(id); 
+    return refs.length + refs.reduce((s, r) => s + getChainSize(r.id, visited), 0); 
+  };
 
   const directContacts = contacts.filter(c => c.referredBy === 'you');
   const totalContacts = contacts.length;
