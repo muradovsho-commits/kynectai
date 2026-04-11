@@ -745,31 +745,35 @@ export default function ReferralMapPage() {
                   setSelectedChain(findRoot(id));
                 }} />
 
+                {/* Floating Chain - Always mounted to prevent GPU compositing flash on backdrop-filter inject */}
                 {(() => {
                   const selectedContact = selectedChain ? contacts.find(c => c.id === selectedChain) || null : null;
                   const selectedRefs = selectedContact ? getReferrals(selectedContact.id) : [];
                   
-                  if (!selectedContact) return null;
                   return (
-                    <div className="rm-floating-chain" style={{ position: 'absolute', top: 24, right: 24, width: 340, background: 'var(--overlay-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--border)', borderRadius: 16, padding: '20px', boxShadow: '0 12px 40px rgba(0,0,0,0.4)', zIndex: 10, display: 'flex', flexDirection: 'column', gap: 16, maxHeight: 'calc(100% - 48px)', overflowY: 'auto' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingBottom: 16, borderBottom: '1px solid var(--border)' }}>
-                        <div className="rm-node-dot" style={{ background: getColor(selectedContact.name), width: 32, height: 32, borderRadius: '50%', color: '#fff', fontSize: 13, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                           {getInitials(selectedContact.name)}
-                        </div>
-                        <div style={{ flex: 1 }}>
-                           <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>{selectedContact.chainLabel || `${selectedContact.name}'s Chain`}</div>
-                           <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 2 }}>{selectedContact.firm} &middot; {getChainSize(selectedContact.id)} ref</div>
-                        </div>
-                      </div>
-                      
-                      {selectedRefs.length > 0 ? (
-                        <div className="rm-chain-tree" style={{ margin: 0, paddingLeft: 8 }}>
-                          <div className="rm-chain-line">
-                            {selectedRefs.map(r => renderNode(r))}
+                    <div className="rm-floating-chain" style={{ position: 'absolute', top: 24, right: 24, width: 340, background: 'var(--overlay-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--border)', borderRadius: 16, padding: '20px', boxShadow: '0 12px 40px rgba(0,0,0,0.4)', zIndex: 10, display: 'flex', flexDirection: 'column', gap: 16, maxHeight: 'calc(100% - 48px)', overflowY: 'auto', opacity: selectedContact ? 1 : 0, pointerEvents: selectedContact ? 'auto' : 'none', transition: 'opacity 0.2s', transform: 'translateZ(0)' }}>
+                      {selectedContact && (
+                        <>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingBottom: 16, borderBottom: '1px solid var(--border)' }}>
+                            <div className="rm-node-dot" style={{ background: getColor(selectedContact.name), width: 32, height: 32, borderRadius: '50%', color: '#fff', fontSize: 13, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                               {getInitials(selectedContact.name)}
+                            </div>
+                            <div style={{ flex: 1 }}>
+                               <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>{selectedContact.chainLabel || `${selectedContact.name}'s Chain`}</div>
+                               <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 2 }}>{selectedContact.firm} &middot; {getChainSize(selectedContact.id)} ref</div>
+                            </div>
                           </div>
-                        </div>
-                      ) : (
-                        <div style={{ color: 'var(--text-3)', fontSize: 13, textAlign: 'center', padding: '12px 0' }}>No further referrals.</div>
+                          
+                          {selectedRefs.length > 0 ? (
+                            <div className="rm-chain-tree" style={{ margin: 0, paddingLeft: 8 }}>
+                              <div className="rm-chain-line">
+                                {selectedRefs.map(r => renderNode(r))}
+                              </div>
+                            </div>
+                          ) : (
+                            <div style={{ color: 'var(--text-3)', fontSize: 13, textAlign: 'center', padding: '12px 0' }}>No further referrals.</div>
+                          )}
+                        </>
                       )}
                     </div>
                   );
