@@ -67,18 +67,36 @@
 
 /* ═══ NETWORK GRAPH ═══ */
 .rm-graph-container {
-  background-color: #0b0c10;
+  background-color: #f7f8f9;
   border: 1.5px solid var(--border);
   border-radius: 20px;
   overflow: hidden;
   margin-bottom: 24px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.1), inset 0 0 100px rgba(0,0,0,0.8);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.05), inset 0 0 60px rgba(0,0,0,0.05);
   position: relative;
+  /* Light Mode Variables */
+  --map-stroke: rgba(0, 0, 0, 0.08);
+  --map-fill: rgba(0, 0, 0, 0.02);
+  --node-glow: rgba(0, 0, 0, 0.1);
+  --edge-stroke: rgba(0, 0, 0, 0.15);
+  --edge-match: #111827;
+  --state-bubble: rgba(0, 0, 0, 0.15);
+  --text-match: #111827;
+  --overlay-bg: rgba(255, 255, 255, 0.85);
 }
 [data-theme="dark"] .rm-graph-container {
   background-color: #050508;
   border-color: rgba(255,255,255,0.08);
   box-shadow: 0 12px 40px rgba(0,0,0,0.4), inset 0 0 120px rgba(0,0,0,1);
+  /* Dark Mode Variables */
+  --map-stroke: rgba(255, 255, 255, 0.1);
+  --map-fill: rgba(8, 15, 30, 0.4);
+  --node-glow: rgba(255, 255, 255, 0.15);
+  --edge-stroke: rgba(255, 255, 255, 0.15);
+  --edge-match: #ffffff;
+  --state-bubble: rgba(255, 255, 255, 0.15);
+  --text-match: #ffffff;
+  --overlay-bg: rgba(10, 15, 25, 0.85);
 }
 
 .rm-graph-grid {

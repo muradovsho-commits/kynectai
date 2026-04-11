@@ -230,7 +230,7 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
         </defs>
 
         {/* Real USA Map Outline Backdrop */}
-        <g stroke="rgba(255, 255, 255, 0.1)" strokeWidth="1" fill="rgba(8, 15, 30, 0.4)">
+        <g stroke="var(--map-stroke)" strokeWidth="1" fill="var(--map-fill)">
           {Object.entries(US_PATHS).map(([abbr, st]) => (
             <path key={abbr} d={st.dimensions} id={abbr} opacity={focusedState && focusedState !== abbr ? 0.2 : 1} style={{ transition: 'opacity 0.4s' }} />
           ))}
@@ -238,7 +238,7 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
 
         {stateKeys.map(s => {
           const p = US_STATES[s];
-          return <circle key={`e-${s}`} cx={p.x} cy={p.y} r={3} fill="rgba(255,255,255,0.15)" opacity={focusedState && focusedState !== s ? 0.2 : 1} />;
+          return <circle key={`e-${s}`} cx={p.x} cy={p.y} r={3} fill="var(--state-bubble)" opacity={focusedState && focusedState !== s ? 0.2 : 1} style={{ transition: 'opacity 0.4s' }} />;
         })}
 
         {/* Dynamic Flight-Path Edges */}
@@ -252,11 +252,11 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
           if (e.dimEdge && !e.isMatchPath) dimEdge = true; // Outside state edges dimmed unless matched
 
           return (
-            <g key={`e${i}`}>
+            <g key={`e-${e.sourceId}-${e.targetId}-${i}`}>
               <path 
                 d={isSameLoc ? `M ${e.sourceX} ${e.sourceY} Q ${e.sourceX + 40} ${cy} ${e.targetX} ${e.targetY}` : `M ${e.sourceX} ${e.sourceY} Q ${cx} ${cy} ${e.targetX} ${e.targetY}`}
                 fill="none"
-                stroke={e.isMatchPath ? "#ffffff" : "rgba(255,255,255,0.15)"} 
+                stroke={e.isMatchPath ? "var(--edge-match)" : "var(--edge-stroke)"} 
                 strokeWidth={e.isMatchPath ? "3" : Math.min(e.count + 0.5, 4).toString()} 
                 opacity={dimEdge ? 0.1 : 1}
                 strokeDasharray="4 4"
@@ -265,7 +265,7 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
               {e.isMatchPath && (
                 <path 
                   d={isSameLoc ? `M ${e.sourceX} ${e.sourceY} Q ${e.sourceX + 40} ${cy} ${e.targetX} ${e.targetY}` : `M ${e.sourceX} ${e.sourceY} Q ${cx} ${cy} ${e.targetX} ${e.targetY}`}
-                  fill="none" stroke="#ffffff" strokeWidth="8" opacity="0.4" style={{ filter: 'url(#glow)', pointerEvents: 'none' }}
+                  fill="none" stroke="var(--edge-match)" strokeWidth="8" opacity="0.4" style={{ filter: 'url(#glow)', pointerEvents: 'none' }}
                 />
               )}
             </g>
@@ -285,19 +285,19 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
                  else onSelect(n.isSelected ? null : n.id);
                }}>
               
-              {n.isMatch && <circle cx={n.x} cy={n.y} r={n.r + 6} fill={n.color} opacity={n.isSelected ? "0.6" : "0.3"} style={{ filter: n.isSelected ? 'url(#glow-strong)' : 'url(#glow)', pointerEvents: 'none' }} />}
-              {n.isSelected && <circle cx={n.x} cy={n.y} r={n.r + 10} fill="none" stroke="#fff" strokeWidth="2" opacity="0.8" />}
+              {n.isMatch && <circle cx={n.x} cy={n.y} r={n.r + 6} fill={n.color} opacity={n.isSelected ? "0.6" : "0.3"} style={{ filter: n.isSelected ? 'url(#glow-strong)' : 'url(#glow)', pointerEvents: 'none', transition: 'all 0.3s' }} />}
+              {n.isSelected && <circle cx={n.x} cy={n.y} r={n.r + 10} fill="none" stroke="var(--text-match)" strokeWidth="2" opacity="0.8" style={{ transition: 'all 0.3s' }} />}
               
               <circle cx={n.x} cy={n.y} r={n.r} fill={n.color} />
               <circle cx={n.x} cy={n.y} r={n.r} fill="url(#3d-sphere)" style={{ pointerEvents: 'none' }} />
-              <circle cx={n.x} cy={n.y} r={n.r - 1} fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1" style={{ pointerEvents: 'none' }} />
+              <circle cx={n.x} cy={n.y} r={n.r - 1} fill="none" stroke="var(--node-glow)" strokeWidth="1" style={{ pointerEvents: 'none' }} />
               
               <text x={n.x} y={n.y + 1} textAnchor="middle" dominantBaseline="central" fill="#fff" fontSize={n.r > 16 ? 12 : 9} fontWeight="800" fontFamily="'Sora', sans-serif">
                 {n.isYou ? 'You' : (n.isStateBubble ? stateCounts[n.id] : getInitials(n.name))}
               </text>
               
               {((expanded && (n.isSelected || n.isStateBubble)) || n.isStateBubble) && !n.isYou && (
-                <text x={n.x} y={n.y + n.r + 14} textAnchor="middle" fill="#9ca3af" fontSize={n.isStateBubble ? "12" : "11"} fontWeight="700" fontFamily="'Sora', sans-serif" style={{ pointerEvents: 'none', textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
+                <text x={n.x} y={n.y + n.r + 14} textAnchor="middle" fill="var(--text-3)" fontSize={n.isStateBubble ? "12" : "11"} fontWeight="700" fontFamily="'Sora', sans-serif" style={{ pointerEvents: 'none' }}>
                   {n.isStateBubble ? n.name : n.name.split(' ')[0]}
                 </text>
               )}
@@ -751,9 +751,9 @@ export default function ReferralMapPage() {
                   
                   if (!selectedContact) return null;
                   return (
-                    <div className="rm-floating-chain" style={{ position: 'absolute', top: 24, right: 24, width: 340, background: 'rgba(10, 15, 25, 0.85)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 16, padding: '20px', boxShadow: '0 12px 40px rgba(0,0,0,0.6)', zIndex: 10, display: 'flex', flexDirection: 'column', gap: 16, maxHeight: 'calc(100% - 48px)', overflowY: 'auto', animation: 'rm-slide-in 0.2s ease' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                        <div className="rm-node-dot" style={{ background: getColor(selectedContact.name), width: 32, height: 32, borderRadius: '50%', color: '#fff', fontSize: 13, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="rm-floating-chain" style={{ position: 'absolute', top: 24, right: 24, width: 340, background: 'var(--overlay-bg)', backdropFilter: 'blur(24px)', border: '1px solid var(--border)', borderRadius: 16, padding: '20px', boxShadow: '0 12px 40px rgba(0,0,0,0.4)', zIndex: 10, display: 'flex', flexDirection: 'column', gap: 16, maxHeight: 'calc(100% - 48px)', overflowY: 'auto' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingBottom: 16, borderBottom: '1px solid var(--border)' }}>
+                        <div className="rm-node-dot" style={{ background: getColor(selectedContact.name), width: 32, height: 32, borderRadius: '50%', color: '#fff', fontSize: 13, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                            {getInitials(selectedContact.name)}
                         </div>
                         <div style={{ flex: 1 }}>
