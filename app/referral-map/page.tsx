@@ -6,6 +6,7 @@ import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
 import './referral-map.css';
 import { US_STATES } from './us-states';
+import { US_PATHS } from './us-paths';
 
 type Contact = {
   id: string;
@@ -133,22 +134,12 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
     });
   });
 
-  // Mesh map lines
-  const meshLines: { x1: number; y1: number; x2: number; y2: number }[] = [];
   const stateKeys = Object.keys(US_STATES) as (keyof typeof US_STATES)[];
-  stateKeys.forEach(s1 => {
-    const p1 = US_STATES[s1];
-    const dists = stateKeys.filter(s => s !== s1).map(s => {
-      const p2 = US_STATES[s];
-      return { p2, d: Math.hypot(p1.x - p2.x, p1.y - p2.y) };
-    }).sort((a, b) => a.d - b.d).slice(0, 3);
-    dists.forEach(d => meshLines.push({ x1: p1.x, y1: p1.y, x2: d.p2.x, y2: d.p2.y }));
-  });
-
+  
   // Render
   return (
     <div style={{ width: '100%', height: expanded ? '100%' : '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', perspective: '1200px', overflow: 'hidden' }}>
-      <svg viewBox={`0 0 ${w} ${h}`} style={{ width: '100%', height: '100%', transform: 'rotateX(40deg) rotateZ(-5deg) scale(1.1)', transformStyle: 'preserve-3d', filter: 'drop-shadow(0 40px 30px rgba(0,0,0,0.5))' }}>
+      <svg viewBox="0 0 978 595" style={{ width: '100%', height: '100%', transform: 'rotateX(40deg) rotateZ(-5deg) scale(1.1)', transformStyle: 'preserve-3d', filter: 'drop-shadow(0 40px 30px rgba(0,0,0,0.5))' }}>
         <defs>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="6" result="blur" />
@@ -168,10 +159,13 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
           </radialGradient>
         </defs>
 
-        {/* Mesh Map */}
-        {meshLines.map((l, i) => (
-          <line key={`m${i}`} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
-        ))}
+        {/* Real USA Map Outline Backdrop */}
+        <g stroke="rgba(255, 255, 255, 0.1)" strokeWidth="1" fill="rgba(8, 15, 30, 0.4)">
+          {Object.entries(US_PATHS).map(([abbr, st]) => (
+            <path key={abbr} d={st.dimensions} id={abbr} />
+          ))}
+        </g>
+
         {stateKeys.map(s => {
           const p = US_STATES[s];
           return <circle key={`e-${s}`} cx={p.x} cy={p.y} r={3} fill="rgba(255,255,255,0.15)" />;
@@ -335,7 +329,7 @@ export default function ReferralMapPage() {
       <Sidebar activePage="referral-map" />
       <main className="main rm-main">
         <div className="rm-wrap">
-          <div className="rm-header" style={{ position: 'relative' }}>
+          <div className="rm-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <div className="rm-title">Referral <em>Map</em></div>
               <button onClick={() => setShowHelp(true)} style={{ width: 24, height: 24, borderRadius: '50%', border: '1.5px solid var(--border)', background: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0, marginTop: 4 }} type="button" title="How to use">
@@ -343,23 +337,28 @@ export default function ReferralMapPage() {
               </button>
             </div>
             <div className="rm-sub">Visualize your network. Add your central location and trace chains state by state.</div>
-            <div style={{ position: 'absolute', top: 0, right: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-2)' }}>Your Location:</label>
-              <select 
-                className="rm-input" 
-                style={{ padding: '6px 10px', fontSize: 13, height: 'auto', minHeight: 0 }}
-                value={userState || ''} 
-                onChange={e => {
-                  const val = e.target.value;
-                  setUserState(val || null);
-                  if (val) localStorage.setItem('offerbell_user_state', val);
-                  else localStorage.removeItem('offerbell_user_state');
-                }}
-              >
-                <option value="">Unassigned</option>
-                {Object.entries(US_STATES).map(([code, st]) => (<option key={code} value={code}>{st.name}</option>))}
-              </select>
+          </div>
+
+          {/* USER LOCATION CARD */}
+          <div style={{ background: 'var(--surface-2)', border: '1.5px solid var(--border)', borderRadius: 12, padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}>
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>Set Your Home Location</div>
+              <div style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 4 }}>Anchor yourself on the map to visualize how your real-world referrals extend across the country.</div>
             </div>
+            <select 
+              className="rm-input" 
+              style={{ width: 240, padding: '12px 16px', fontSize: 14, fontWeight: 600, background: 'var(--surface)', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
+              value={userState || ''} 
+              onChange={e => {
+                const val = e.target.value;
+                setUserState(val || null);
+                if (val) localStorage.setItem('offerbell_user_state', val);
+                else localStorage.removeItem('offerbell_user_state');
+              }}
+            >
+              <option value="">-- Unassigned --</option>
+              {Object.entries(US_STATES).map(([code, st]) => (<option key={code} value={code}>{st.name}</option>))}
+            </select>
           </div>
 
           {/* Actions */}
