@@ -1,0 +1,243 @@
+.profile-app * {
+  box-sizing: border-box;
+}
+
+.profile-card {
+  width: min(980px, 100%);
+  margin: 0 auto 14px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  transition:
+    background 0.25s,
+    border-color 0.25s;
+}
+
+.profile-main {
+  padding-bottom: 40px;
+}
+
+.profile-kicker {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-3);
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.profile-card {
+  padding: 20px;
+}
+
+.profile-card-priority {
+  background: var(--inv-bg);
+  border-color: var(--inv-border);
+}
+
+.profile-card-priority .profile-card-head h2,
+.profile-card-priority .profile-card-head p,
+.profile-card-priority .profile-kicker {
+  color: var(--inv-text);
+}
+
+.profile-card-priority .profile-card-head p {
+  color: var(--inv-text-2);
+}
+
+.profile-score {
+  text-align: right;
+}
+
+.profile-score strong {
+  display: block;
+  font-family: "Instrument Serif", serif;
+  font-size: 36px;
+  line-height: 1;
+  letter-spacing: -1px;
+  color: var(--inv-text);
+}
+
+.profile-score span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: var(--inv-text-2);
+  font-weight: 700;
+}
+
+.profile-metrics {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.profile-metric {
+  border: 1px solid var(--inv-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  display: grid;
+  gap: 4px;
+}
+
+[data-theme="dark"] .profile-metric {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.profile-metric-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  font-weight: 700;
+  color: var(--inv-text-2);
+}
+
+.profile-metric-value {
+  font-size: 13px;
+  color: var(--inv-text);
+  font-weight: 700;
+}
+
+.profile-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.profile-card-head h2 {
+  margin: 0;
+  font-size: 22px;
+  color: var(--text);
+}
+
+.profile-card-head p {
+  margin: 6px 0 0;
+  color: var(--text-3);
+  font-size: 13px;
+}
+
+.profile-line {
+  color: var(--text-2);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.profile-stack {
+  display: grid;
+  gap: 8px;
+}
+
+.profile-edit-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.profile-edit-grid.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.profile-edit-grid label {
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-3);
+}
+
+.profile-edit-grid input,
+.profile-edit-grid select,
+.profile-input-row input {
+  width: 100%;
+  border: 1.5px solid var(--border-2);
+  border-radius: 9px;
+  padding: 11px 12px;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--surface);
+}
+
+.profile-edit-grid input:focus,
+.profile-edit-grid select:focus,
+.profile-input-row input:focus {
+  outline: none;
+  border-color: var(--text);
+}
+
+.profile-actions-row {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip,
+.chip-toggle,
+.chip-remove {
+  border: 1px solid var(--border-2);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 10px;
+}
+
+.chip-toggle,
+.chip-remove {
+  cursor: pointer;
+}
+
+.chip-toggle.selected {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--surface);
+}
+
+.profile-field-label {
+  margin: 0 0 10px;
+  color: var(--text-3);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.profile-input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.profile-alert {
+  width: min(980px, 100%);
+  margin: 0 auto 14px;
+  border: 1px solid #d6a3a3;
+  background: #fdecec;
+  color: #8a2020;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+@media (max-width: 760px) {
+  .profile-edit-grid.two {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-score {
+    text-align: left;
+  }
+}

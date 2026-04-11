@@ -1,0 +1,136 @@
+/* ═══════════════════════════════════════════════════════════
+   AM GUIDE THEME — Forest green editorial palette
+   Fonts: Lora + Crimson Pro + Fira Code
+   Colors: #0a2818 nav, #1b5e3b accent, #f4f2ed bg
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Crimson+Pro:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+.am-theme {
+  --g-bg: #f4f2ed;
+  --g-text: #1d1d1d;
+  --g-text-2: #4e4e4e;
+  --g-accent: #1b5e3b;
+  --g-accent-dark: #0d3d24;
+  --g-accent-bg: #e6f0ea;
+  --g-border: #c2cec7;
+  --g-card-bg: #ffffff;
+  --g-heading: #0a2818;
+  --g-nav-bg: #0a2818;
+  --g-nav-text: #b8d0c2;
+  --g-highlight: #f5f0e0;
+  --g-blue: #1a3d6b;
+  --g-blue-bg: #e8eef6;
+  --g-formula-bg: #edf3f0;
+  --g-red: #7a1f1f;
+  --g-red-bg: #fce8e8;
+  --g-gold: #6b5a1a;
+  --g-gold-bg: #f7f3e5;
+}
+[data-theme="dark"] .am-theme {
+  --g-bg: #10150f;
+  --g-text: #d6e0d8;
+  --g-text-2: #96a89c;
+  --g-accent: #4aad6e;
+  --g-accent-dark: #6ecf90;
+  --g-accent-bg: #122818;
+  --g-border: #283830;
+  --g-card-bg: #151c17;
+  --g-heading: #c8e0d0;
+  --g-nav-bg: #0c1810;
+  --g-nav-text: #7aa088;
+  --g-highlight: #201c0f;
+  --g-blue: #6b9dd4;
+  --g-blue-bg: #0f1a28;
+  --g-formula-bg: #121e18;
+  --g-red: #d45050;
+  --g-red-bg: #2a1010;
+  --g-gold: #c4b060;
+  --g-gold-bg: #1c1a0f;
+}
+
+.am-theme.ib-guide-main { background: var(--g-bg) !important; }
+.am-theme .ib-back-link { color: var(--g-text-2); font-family: 'Crimson Pro', Georgia, serif; }
+.am-theme .ib-back-link:hover { color: var(--g-accent); }
+
+/* Nav */
+.am-theme .ib-module-nav { background: var(--g-nav-bg); border-bottom: 2px solid var(--g-accent); }
+.am-theme .ib-nav-tab { font-family: 'Fira Code', monospace; font-size: 11px; color: var(--g-nav-text); border-right: 1px solid rgba(255,255,255,0.06); }
+.am-theme .ib-nav-tab:hover, .am-theme .ib-nav-tab.active { background: var(--g-accent); color: #fff; }
+.am-theme .ib-nav-divider { background: rgba(255,255,255,0.1); }
+
+/* Hero */
+.am-theme .ib-hero { background: linear-gradient(155deg, #0a2818 0%, #1b5e3b 45%, #2a7d50 100%); color: #fff; position: relative; overflow: hidden; }
+.am-theme .ib-hero::before { content: ''; position: absolute; top: -30%; right: -15%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 55%); border-radius: 50%; pointer-events: none; }
+.am-theme .ib-hero h1 { font-family: 'Lora', serif; font-weight: 700; position: relative; }
+.am-theme .ib-hero-sub { font-family: 'Crimson Pro', Georgia, serif; font-weight: 300; position: relative; }
+
+/* TOC */
+.am-theme .ib-toc, .am-theme .ib-section-toc { background: var(--g-card-bg); border: 1px solid var(--g-border); }
+.am-theme .ib-toc h4, .am-theme .ib-section-toc h4 { font-family: 'Lora', serif; color: var(--g-heading); }
+.am-theme .ib-toc li, .am-theme .ib-section-toc li { color: var(--g-text-2); }
+.am-theme .ib-toc-link { font-family: 'Crimson Pro', Georgia, serif; color: var(--g-accent-dark); }
+
+/* How to use */
+.am-theme .ib-how-to-use { background: var(--g-accent-bg); border-left: 4px solid var(--g-accent); font-family: 'Crimson Pro', Georgia, serif; }
+.am-theme .ib-how-to-use h4 { font-family: 'Lora', serif; color: var(--g-heading); }
+.am-theme .ib-how-to-use p { color: var(--g-text-2); }
+.am-theme .ib-how-to-use strong { color: var(--g-accent-dark); }
+
+/* Module cards */
+.am-theme .ib-module-card { background: var(--g-nav-bg); color: #fff; }
+.am-theme .ib-module-card::before { background: radial-gradient(circle, rgba(27,94,59,0.3) 0%, transparent 65%); }
+.am-theme .ib-module-card-num { font-family: 'Fira Code', monospace; }
+.am-theme .ib-module-card-title { font-family: 'Lora', serif; }
+.am-theme .ib-module-card-sub { font-family: 'Crimson Pro', Georgia, serif; }
+.am-theme .ib-module-card-meta { font-family: 'Fira Code', monospace; }
+
+/* Module header */
+.am-theme .ib-module-header-card { background: var(--g-nav-bg); }
+.am-theme .ib-module-header-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--g-accent), transparent); }
+.am-theme .ib-module-header-card::before { background: radial-gradient(circle, rgba(27,94,59,0.3) 0%, transparent 65%); }
+.am-theme .ib-mh-num { font-family: 'Fira Code', monospace; }
+.am-theme .ib-module-header-card h2 { font-family: 'Lora', serif; }
+.am-theme .ib-module-header-card p { font-family: 'Crimson Pro', serif; }
+
+/* Section content */
+.am-theme .ib-section > h3 { font-family: 'Lora', serif; color: var(--g-heading); border-bottom: 1px solid var(--g-border); }
+.am-theme .ib-section-body { font-family: 'Crimson Pro', Georgia, serif; color: var(--g-text); line-height: 1.78; }
+.am-theme .ib-section-body p { font-size: 14px; }
+.am-theme .ib-section-body strong { color: var(--g-heading); }
+.am-theme .ib-section-body em { color: var(--g-text-2); }
+.am-theme .ib-section-body a { color: var(--g-accent-dark); }
+.am-theme .ib-section-body h4 { font-family: 'Lora', serif; color: var(--g-accent-dark); font-weight: 700; }
+.am-theme .ib-section-body h5 { font-family: 'Crimson Pro', serif; color: var(--g-text); font-weight: 700; }
+
+/* Content boxes */
+.am-theme .ib-section-body .key-concept { background: var(--g-accent-bg); border-left: 4px solid var(--g-accent); }
+.am-theme .ib-section-body .key-concept strong { color: var(--g-accent-dark); }
+.am-theme .ib-section-body .formula-box { background: var(--g-formula-bg); border: 1px solid #b0cabc; font-family: 'Fira Code', monospace; color: var(--g-accent-dark); line-height: 1.9; }
+[data-theme="dark"] .am-theme .ib-section-body .formula-box { border-color: var(--g-border); }
+.am-theme .ib-section-body .warning-box { background: var(--g-highlight); border-left: 4px solid var(--g-gold); }
+.am-theme .ib-section-body .framework-box { background: var(--g-blue-bg); border: 1px solid #a8bdd6; }
+.am-theme .ib-section-body .framework-box .fw-label { font-family: 'Fira Code', monospace; color: var(--g-blue); }
+.am-theme .ib-section-body .example-box { background: var(--g-card-bg); border: 1px solid var(--g-border); }
+.am-theme .ib-section-body .example-box .example-label { font-family: 'Fira Code', monospace; color: var(--g-accent-dark); }
+.am-theme .ib-section-body .interview-q { background: var(--g-card-bg); border: 1px solid var(--g-border); }
+.am-theme .ib-section-body .interview-q .q-label { font-family: 'Fira Code', monospace; color: var(--g-accent); }
+.am-theme .ib-section-body .interview-q .question { color: var(--g-heading); font-weight: 700; }
+.am-theme .ib-section-body .interview-q .answer { color: var(--g-text-2); }
+.am-theme .ib-section-body .takeaway-box { background: linear-gradient(135deg, #1b5e3b 0%, #0d3d24 100%); }
+.am-theme .ib-section-body .takeaway-box strong { color: #8ee4af; }
+.am-theme .ib-section-body .pitch-box { background: var(--g-gold-bg); border: 1px solid #c9bc82; }
+.am-theme .ib-section-body .pitch-box .pitch-label { font-family: 'Fira Code', monospace; color: var(--g-gold); }
+.am-theme .ib-section-body .comparison-table th { background: var(--g-nav-bg); font-family: 'Lora', serif; font-weight: 700; }
+.am-theme .ib-section-body .comparison-table td { border-bottom: 1px solid var(--g-border); }
+.am-theme .ib-section-body .comparison-table tr:nth-child(even) td { background: var(--g-accent-bg); }
+.am-theme .ib-section-body .toc-section { background: var(--g-card-bg); border: 1px solid var(--g-border); }
+.am-theme .ib-section-body .toc-section li { color: var(--g-text-2); }
+.am-theme .ib-section-body .toc-section a { color: var(--g-accent-dark); }
+.am-theme .ib-section-body .qa-q { color: var(--g-heading); }
+.am-theme .ib-section-body .qa-a { color: var(--g-text-2); }
+
+/* Bottom nav */
+.am-theme .ib-bottom-nav { border-top: 1px solid var(--g-border); }
+.am-theme .ib-bottom-nav-btn { font-family: 'Lora', serif; color: var(--g-text-2); border: 1px solid var(--g-border); }
+.am-theme .ib-bottom-nav-btn:hover { border-color: var(--g-accent); color: var(--g-accent); }

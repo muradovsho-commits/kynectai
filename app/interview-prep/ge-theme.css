@@ -1,0 +1,136 @@
+/* ═══════════════════════════════════════════════════════════
+   GE GUIDE THEME — Indigo/violet modern palette
+   Fonts: Sora + Literata + IBM Plex Mono
+   Colors: #1e1b4b nav, #4338ca accent, #f2f4f8 bg
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Literata:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+.ge-theme {
+  --g-bg: #f2f4f8;
+  --g-text: #1a1c20;
+  --g-text-2: #484c54;
+  --g-accent: #4338ca;
+  --g-accent-dark: #312e81;
+  --g-accent-bg: #eef0ff;
+  --g-border: #c4c8d4;
+  --g-card-bg: #fff;
+  --g-heading: #1e1b4b;
+  --g-nav-bg: #1e1b4b;
+  --g-nav-text: #c7c4f0;
+  --g-highlight: #fef9e7;
+  --g-green: #166534;
+  --g-green-bg: #dcfce7;
+  --g-blue: #1e40af;
+  --g-blue-bg: #dbeafe;
+  --g-formula-bg: #eef2ff;
+  --g-gold: #854d0e;
+  --g-gold-bg: #fef3c7;
+  --g-red: #991b1b;
+  --g-red-bg: #fee2e2;
+  --g-teal: #115e59;
+  --g-teal-bg: #ccfbf1;
+}
+[data-theme="dark"] .ge-theme {
+  --g-bg: #0f1014;
+  --g-text: #d8dae0;
+  --g-text-2: #9498a4;
+  --g-accent: #818cf8;
+  --g-accent-dark: #a5b4fc;
+  --g-accent-bg: #1c1a38;
+  --g-border: #2e3040;
+  --g-card-bg: #16171e;
+  --g-heading: #c7c4f0;
+  --g-nav-bg: #12101e;
+  --g-nav-text: #8884c0;
+  --g-highlight: #201c0f;
+  --g-green: #4ade80;
+  --g-green-bg: #0a2014;
+  --g-blue: #60a5fa;
+  --g-blue-bg: #0f1a2e;
+  --g-formula-bg: #14162a;
+  --g-gold: #fbbf24;
+  --g-gold-bg: #1c180a;
+  --g-red: #f87171;
+  --g-red-bg: #2a1010;
+  --g-teal: #2dd4bf;
+  --g-teal-bg: #0a201c;
+}
+
+.ge-theme.ib-guide-main { background: var(--g-bg) !important; }
+.ge-theme .ib-back-link { color: var(--g-text-2); font-family: 'Literata', Georgia, serif; }
+.ge-theme .ib-back-link:hover { color: var(--g-accent); }
+
+.ge-theme .ib-module-nav { background: var(--g-nav-bg); border-bottom: 2px solid var(--g-accent); }
+.ge-theme .ib-nav-tab { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--g-nav-text); border-right: 1px solid rgba(255,255,255,0.06); }
+.ge-theme .ib-nav-tab:hover, .ge-theme .ib-nav-tab.active { background: var(--g-accent); color: #fff; }
+.ge-theme .ib-nav-divider { background: rgba(255,255,255,0.1); }
+
+.ge-theme .ib-hero { background: linear-gradient(155deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%); color: #fff; position: relative; overflow: hidden; }
+.ge-theme .ib-hero::before { content: ''; position: absolute; top: -30%; right: -15%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 55%); border-radius: 50%; pointer-events: none; }
+.ge-theme .ib-hero h1 { font-family: 'Sora', sans-serif; font-weight: 700; letter-spacing: -0.02em; position: relative; }
+.ge-theme .ib-hero-sub { font-family: 'Literata', Georgia, serif; font-weight: 300; position: relative; }
+
+.ge-theme .ib-toc, .ge-theme .ib-section-toc { background: var(--g-card-bg); border: 1px solid var(--g-border); border-radius: 6px; }
+.ge-theme .ib-toc h4, .ge-theme .ib-section-toc h4 { font-family: 'Sora', sans-serif; color: var(--g-heading); }
+.ge-theme .ib-toc li, .ge-theme .ib-section-toc li { color: var(--g-text-2); }
+.ge-theme .ib-toc-link { font-family: 'Literata', Georgia, serif; color: var(--g-accent); }
+
+.ge-theme .ib-how-to-use { background: var(--g-accent-bg); border-left: 4px solid var(--g-accent); font-family: 'Literata', Georgia, serif; border-radius: 0 6px 6px 0; }
+.ge-theme .ib-how-to-use h4 { font-family: 'Sora', sans-serif; color: var(--g-heading); }
+.ge-theme .ib-how-to-use p { color: var(--g-text-2); }
+.ge-theme .ib-how-to-use strong { color: var(--g-accent-dark); }
+
+.ge-theme .ib-module-card { background: var(--g-nav-bg); color: #fff; border-radius: 6px; }
+.ge-theme .ib-module-card::before { background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 65%); }
+.ge-theme .ib-module-card-num { font-family: 'IBM Plex Mono', monospace; }
+.ge-theme .ib-module-card-title { font-family: 'Sora', sans-serif; }
+.ge-theme .ib-module-card-sub { font-family: 'Literata', Georgia, serif; }
+.ge-theme .ib-module-card-meta { font-family: 'IBM Plex Mono', monospace; }
+
+.ge-theme .ib-module-header-card { background: var(--g-nav-bg); border-radius: 6px; }
+.ge-theme .ib-module-header-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #6366f1, var(--g-accent), transparent); }
+.ge-theme .ib-module-header-card::before { background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 65%); }
+.ge-theme .ib-mh-num { font-family: 'IBM Plex Mono', monospace; }
+.ge-theme .ib-module-header-card h2 { font-family: 'Sora', sans-serif; }
+.ge-theme .ib-module-header-card p { font-family: 'Literata', serif; }
+
+.ge-theme .ib-section > h3 { font-family: 'Sora', sans-serif; color: var(--g-heading); border-bottom: 1px solid var(--g-border); }
+.ge-theme .ib-section-body { font-family: 'Literata', Georgia, serif; color: var(--g-text); line-height: 1.8; }
+.ge-theme .ib-section-body p { font-size: 14px; }
+.ge-theme .ib-section-body strong { color: var(--g-heading); }
+.ge-theme .ib-section-body em { color: var(--g-text-2); }
+.ge-theme .ib-section-body a { color: var(--g-accent); }
+.ge-theme .ib-section-body h4 { font-family: 'Sora', sans-serif; color: var(--g-accent-dark); font-weight: 600; }
+.ge-theme .ib-section-body h5 { font-family: 'Literata', serif; color: var(--g-text); font-weight: 700; }
+
+.ge-theme .ib-section-body .key-concept { background: var(--g-accent-bg); border-left: 4px solid var(--g-accent); border-radius: 0 6px 6px 0; }
+.ge-theme .ib-section-body .key-concept strong { color: var(--g-accent-dark); }
+.ge-theme .ib-section-body .formula-box { background: var(--g-formula-bg); border: 1px solid #b8c0e0; font-family: 'IBM Plex Mono', monospace; color: var(--g-accent-dark); line-height: 1.9; border-radius: 6px; }
+[data-theme="dark"] .ge-theme .ib-section-body .formula-box { border-color: var(--g-border); }
+.ge-theme .ib-section-body .warning-box { background: var(--g-highlight); border-left: 4px solid var(--g-gold); border-radius: 0 6px 6px 0; }
+.ge-theme .ib-section-body .framework-box { background: var(--g-blue-bg); border: 1px solid #93c5fd; border-radius: 6px; }
+.ge-theme .ib-section-body .framework-box .fw-label { font-family: 'IBM Plex Mono', monospace; color: var(--g-blue); }
+.ge-theme .ib-section-body .example-box { background: var(--g-card-bg); border: 1px solid var(--g-border); border-radius: 6px; }
+.ge-theme .ib-section-body .example-box .example-label { font-family: 'IBM Plex Mono', monospace; color: var(--g-accent-dark); }
+.ge-theme .ib-section-body .interview-q { background: var(--g-card-bg); border: 1px solid var(--g-border); border-radius: 6px; }
+.ge-theme .ib-section-body .interview-q .q-label { font-family: 'IBM Plex Mono', monospace; color: var(--g-accent); }
+.ge-theme .ib-section-body .interview-q .question { color: var(--g-heading); font-weight: 700; }
+.ge-theme .ib-section-body .interview-q .answer { color: var(--g-text-2); }
+.ge-theme .ib-section-body .takeaway-box { background: linear-gradient(135deg, #166534 0%, #0f3d22 100%); border-radius: 6px; }
+.ge-theme .ib-section-body .takeaway-box strong { color: #86efac; }
+.ge-theme .ib-section-body .comparison-table { border-radius: 6px; overflow: hidden; }
+.ge-theme .ib-section-body .comparison-table th { background: var(--g-nav-bg); font-family: 'Sora', sans-serif; font-weight: 600; }
+.ge-theme .ib-section-body .comparison-table td { border-bottom: 1px solid var(--g-border); }
+.ge-theme .ib-section-body .comparison-table tr:nth-child(even) td { background: var(--g-accent-bg); }
+.ge-theme .ib-section-body .toc-section { background: var(--g-card-bg); border: 1px solid var(--g-border); border-radius: 6px; }
+.ge-theme .ib-section-body .toc-section li { color: var(--g-text-2); }
+.ge-theme .ib-section-body .toc-section a { color: var(--g-accent); }
+.ge-theme .ib-section-body .pitch-box { background: var(--g-gold-bg); border: 1px solid #fbbf24; border-radius: 6px; }
+.ge-theme .ib-section-body .pitch-box .pitch-label { font-family: 'IBM Plex Mono', monospace; color: var(--g-gold); }
+.ge-theme .ib-section-body .qa-q { color: var(--g-heading); }
+.ge-theme .ib-section-body .qa-a { color: var(--g-text-2); }
+
+.ge-theme .ib-bottom-nav { border-top: 1px solid var(--g-border); }
+.ge-theme .ib-bottom-nav-btn { font-family: 'Sora', sans-serif; color: var(--g-text-2); border: 1px solid var(--g-border); border-radius: 6px; }
+.ge-theme .ib-bottom-nav-btn:hover { border-color: var(--g-accent); color: var(--g-accent); }

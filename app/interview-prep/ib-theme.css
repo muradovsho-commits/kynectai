@@ -1,0 +1,138 @@
+/* ═══════════════════════════════════════════════════════════
+   IB GUIDE THEME — Warm brown editorial palette
+   Fonts: Playfair Display + Source Serif 4 + JetBrains Mono
+   Colors: #2c1810 nav, #8b2500 accent, #faf8f5 bg
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Source+Serif+4:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── Tokens ── */
+.ib-theme {
+  --g-bg: #faf8f5;
+  --g-text: #1a1a1a;
+  --g-text-2: #4a4a4a;
+  --g-accent: #8b2500;
+  --g-accent-light: #c4550a;
+  --g-accent-bg: #f5ede6;
+  --g-border: #d4c5b4;
+  --g-card-bg: #fff;
+  --g-heading: #2c1810;
+  --g-nav-bg: #2c1810;
+  --g-nav-text: #e8ddd0;
+  --g-highlight: #fff3cd;
+  --g-green: #2d6a4f;
+  --g-blue: #1d3557;
+  --g-formula-bg: #eef2f7;
+}
+[data-theme="dark"] .ib-theme {
+  --g-bg: #14120f;
+  --g-text: #e8e0d6;
+  --g-text-2: #b0a89e;
+  --g-accent: #d4714a;
+  --g-accent-light: #e8946e;
+  --g-accent-bg: #2a2018;
+  --g-border: #3a332a;
+  --g-card-bg: #1e1b17;
+  --g-heading: #f0e6d8;
+  --g-nav-bg: #1c1915;
+  --g-nav-text: #c8bfb2;
+  --g-highlight: #2a2410;
+  --g-green: #5cad87;
+  --g-blue: #6b8db5;
+  --g-formula-bg: #1c2028;
+}
+
+/* ── Apply ── */
+.ib-theme.ib-guide-main { background: var(--g-bg) !important; }
+.ib-theme .ib-back-link { color: var(--g-text-2); font-family: 'Source Serif 4', Georgia, serif; }
+.ib-theme .ib-back-link:hover { color: var(--g-accent); }
+
+/* Nav */
+.ib-theme .ib-module-nav { background: var(--g-nav-bg); border-bottom: 3px solid var(--g-accent); }
+.ib-theme .ib-nav-tab { font-family: 'Playfair Display', serif; color: var(--g-nav-text); border-right: 1px solid rgba(255,255,255,0.08); }
+.ib-theme .ib-nav-tab:hover, .ib-theme .ib-nav-tab.active { background: var(--g-accent); color: #fff; }
+.ib-theme .ib-nav-divider { background: rgba(255,255,255,0.15); }
+
+/* Hero */
+.ib-theme .ib-hero { background: linear-gradient(135deg, var(--g-nav-bg) 0%, #4a2c1a 50%, var(--g-accent) 100%); color: #fff; }
+.ib-theme .ib-hero h1 { font-family: 'Playfair Display', serif; }
+.ib-theme .ib-hero-sub { font-family: 'Source Serif 4', Georgia, serif; }
+
+/* TOC */
+.ib-theme .ib-toc, .ib-theme .ib-section-toc { background: var(--g-card-bg); border: 1px solid var(--g-border); }
+.ib-theme .ib-toc h4, .ib-theme .ib-section-toc h4 { font-family: 'Playfair Display', serif; color: var(--g-heading); }
+.ib-theme .ib-toc li, .ib-theme .ib-section-toc li { color: var(--g-text-2); }
+.ib-theme .ib-toc-link { font-family: 'Source Serif 4', Georgia, serif; color: var(--g-accent); }
+
+/* How to use */
+.ib-theme .ib-how-to-use { background: var(--g-accent-bg); border-left: 4px solid var(--g-accent); font-family: 'Source Serif 4', Georgia, serif; }
+.ib-theme .ib-how-to-use h4 { font-family: 'Playfair Display', serif; color: var(--g-heading); }
+.ib-theme .ib-how-to-use p { color: var(--g-text-2); }
+.ib-theme .ib-how-to-use strong { color: var(--g-accent); }
+
+/* Module cards */
+.ib-theme .ib-module-card { background: var(--g-nav-bg); color: #fff; }
+.ib-theme .ib-module-card::before { background: radial-gradient(circle, rgba(139,37,0,0.35) 0%, transparent 70%); }
+.ib-theme .ib-module-card-num, .ib-theme .ib-module-card-meta { font-family: 'Playfair Display', serif; }
+.ib-theme .ib-module-card-title { font-family: 'Playfair Display', serif; }
+.ib-theme .ib-module-card-sub { font-family: 'Source Serif 4', Georgia, serif; }
+
+/* Module header */
+.ib-theme .ib-module-header-card { background: var(--g-nav-bg); }
+.ib-theme .ib-module-header-card::before { background: radial-gradient(circle, rgba(139,37,0,0.4) 0%, transparent 70%); }
+.ib-theme .ib-mh-num { font-family: 'Playfair Display', serif; }
+.ib-theme .ib-module-header-card h2 { font-family: 'Playfair Display', serif; }
+.ib-theme .ib-module-header-card p { font-family: 'Source Serif 4', Georgia, serif; }
+.ib-theme .ib-mh-summary { background: linear-gradient(135deg, #1b4332 0%, var(--g-green) 100%); }
+.ib-theme .ib-mh-summary::before { background: radial-gradient(circle, rgba(45,106,79,0.4) 0%, transparent 70%); }
+
+/* Section content */
+.ib-theme .ib-section > h3 { font-family: 'Playfair Display', serif; color: var(--g-heading); border-bottom: 2px solid var(--g-border); }
+.ib-theme .ib-section-body { font-family: 'Source Serif 4', Georgia, serif; color: var(--g-text); }
+.ib-theme .ib-section-body strong { color: var(--g-heading); }
+.ib-theme .ib-section-body em { color: var(--g-text-2); }
+.ib-theme .ib-section-body a { color: var(--g-accent); }
+.ib-theme .ib-section-body h4 { font-family: 'Playfair Display', serif; color: var(--g-accent); }
+.ib-theme .ib-section-body h5 { font-family: 'Playfair Display', serif; color: var(--g-text); }
+
+/* Content boxes */
+.ib-theme .ib-section-body .key-concept { background: var(--g-accent-bg); border-left: 4px solid var(--g-accent); }
+.ib-theme .ib-section-body .key-concept strong { color: var(--g-accent); }
+.ib-theme .ib-section-body .formula-box { background: var(--g-formula-bg); border: 1px solid #c5d3e3; font-family: 'JetBrains Mono', monospace; color: var(--g-blue); }
+[data-theme="dark"] .ib-theme .ib-section-body .formula-box { border-color: var(--g-border); }
+.ib-theme .ib-section-body .warning-box { background: var(--g-highlight); border-left: 4px solid #e6a817; }
+.ib-theme .ib-section-body .example-box { background: var(--g-card-bg); border: 1px solid var(--g-border); }
+.ib-theme .ib-section-body .example-box .example-label { font-family: 'Playfair Display', serif; color: var(--g-accent); }
+.ib-theme .ib-section-body .interview-q { background: var(--g-card-bg); border: 1px solid var(--g-border); }
+.ib-theme .ib-section-body .interview-q .q-label { font-family: 'JetBrains Mono', monospace; color: var(--g-accent); }
+.ib-theme .ib-section-body .interview-q .question { color: var(--g-heading); }
+.ib-theme .ib-section-body .interview-q .answer { color: var(--g-text-2); }
+.ib-theme .ib-section-body .takeaway-box { background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%); }
+.ib-theme .ib-section-body .takeaway-box strong { color: #a7f3d0; }
+.ib-theme .ib-section-body .comparison-table th { background: var(--g-nav-bg); font-family: 'Playfair Display', serif; }
+.ib-theme .ib-section-body .comparison-table td { border-bottom: 1px solid var(--g-border); }
+.ib-theme .ib-section-body .comparison-table tr:nth-child(even) td { background: var(--g-accent-bg); }
+.ib-theme .ib-section-body .toc-section { background: var(--g-card-bg); border: 1px solid var(--g-border); }
+.ib-theme .ib-section-body .toc-section li { color: var(--g-text-2); }
+.ib-theme .ib-section-body .toc-section a { color: var(--g-accent); }
+.ib-theme .ib-section-body .qa-q { color: var(--g-heading); }
+.ib-theme .ib-section-body .qa-a { color: var(--g-text-2); }
+
+/* Bottom nav */
+.ib-theme .ib-bottom-nav { border-top: 2px solid var(--g-border); }
+.ib-theme .ib-bottom-nav-btn { font-family: 'Playfair Display', serif; color: var(--g-text-2); border: 1px solid var(--g-border); }
+.ib-theme .ib-bottom-nav-btn:hover { border-color: var(--g-accent); color: var(--g-accent); }
+
+/* Quiz */
+.ib-theme .ib-quiz-filter { font-family: 'Source Serif 4', Georgia, serif; border: 1px solid var(--g-border); background: var(--g-card-bg); color: var(--g-text-2); }
+.ib-theme .ib-quiz-filter:hover { border-color: var(--g-accent); color: var(--g-accent); }
+.ib-theme .ib-quiz-filter.active { background: var(--g-nav-bg); color: #fff; border-color: var(--g-nav-bg); }
+.ib-theme .ib-quiz-card { background: var(--g-card-bg); border: 1px solid var(--g-border); }
+.ib-theme .ib-quiz-card-num { background: var(--g-nav-bg); color: #fff; font-family: 'Playfair Display', serif; }
+.ib-theme .ib-quiz-card-cat { font-family: 'JetBrains Mono', monospace; color: var(--g-accent); }
+.ib-theme .ib-quiz-card-q { font-family: 'Source Serif 4', Georgia, serif; color: var(--g-heading); }
+.ib-theme .ib-quiz-reveal { font-family: 'Playfair Display', serif; border: 1px solid var(--g-border); background: var(--g-accent-bg); color: var(--g-accent); }
+.ib-theme .ib-quiz-reveal:hover { background: var(--g-accent); color: #fff; }
+.ib-theme .ib-quiz-card-a { font-family: 'Source Serif 4', Georgia, serif; color: var(--g-text-2); border-top: 1px solid var(--g-border); }
+.ib-theme .ib-quiz-footer { font-family: 'Source Serif 4', Georgia, serif; color: var(--g-text-2); }
+.ib-theme .ib-quiz-new-set { font-family: 'Playfair Display', serif; background: var(--g-nav-bg); }

@@ -1,0 +1,355 @@
+/* OfferBell Chrome Extension Styles — Black/Monochrome Theme */
+
+/* ── Button Group ── */
+
+.offerbell-btn-group {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  margin-left: 8px;
+  position: relative;
+  z-index: 999;
+}
+
+.offerbell-btn-group.offerbell-floating {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 999998;
+  margin-left: 0;
+}
+
+/* ── Toolbar Buttons ── */
+
+.offerbell-add-btn,
+.offerbell-write-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #0c0c0c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  user-select: none;
+  white-space: nowrap;
+  vertical-align: middle;
+  line-height: 1;
+  position: relative;
+  z-index: 999;
+  pointer-events: auto;
+}
+
+.offerbell-write-btn {
+  background: #fff;
+  color: #0c0c0c;
+  border: 1.5px solid #dddcda;
+}
+
+.offerbell-add-btn:hover {
+  background: #1a1a19;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+.offerbell-write-btn:hover {
+  background: #f5f4f2;
+  border-color: #0c0c0c;
+  transform: translateY(-1px);
+}
+
+.offerbell-add-btn:active,
+.offerbell-write-btn:active {
+  transform: translateY(0);
+}
+
+/* ── Overlay & Popup ── */
+
+.offerbell-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  animation: obFadeIn 0.15s ease;
+}
+
+@keyframes obFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.offerbell-popup {
+  background: #fff;
+  border-radius: 16px;
+  width: 420px;
+  max-width: 90vw;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: obSlideUp 0.2s ease;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.offerbell-popup-wide {
+  width: 520px;
+}
+
+@keyframes obSlideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.offerbell-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #ebebea;
+}
+
+.offerbell-popup-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0c0c0c;
+}
+
+.offerbell-popup-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #9b9997;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.offerbell-popup-close:hover {
+  color: #0c0c0c;
+}
+
+.offerbell-popup-body {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.offerbell-field-row {
+  display: flex;
+  gap: 10px;
+}
+
+.offerbell-field-row .offerbell-field {
+  flex: 1;
+}
+
+.offerbell-field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #636160;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.offerbell-field input,
+.offerbell-field select,
+.offerbell-field textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1.5px solid #dddcda;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #0c0c0c;
+  background: #fafaf9;
+  outline: none;
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.offerbell-field input:focus,
+.offerbell-field select:focus,
+.offerbell-field textarea:focus {
+  border-color: #0c0c0c;
+  background: #fff;
+}
+
+.offerbell-field textarea {
+  resize: vertical;
+  min-height: 48px;
+}
+
+.offerbell-popup-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px 16px;
+  border-top: 1px solid #ebebea;
+}
+
+.offerbell-btn-cancel {
+  padding: 8px 16px;
+  background: #f5f4f2;
+  color: #636160;
+  border: 1.5px solid #dddcda;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.offerbell-btn-cancel:hover {
+  background: #ebebea;
+}
+
+.offerbell-btn-primary {
+  padding: 8px 20px;
+  background: #0c0c0c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.offerbell-btn-primary:hover {
+  background: #1a1a19;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Success State ── */
+
+.offerbell-popup-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 32px 20px;
+  text-align: center;
+}
+
+.offerbell-popup-success div {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0c0c0c;
+}
+
+.offerbell-popup-success a {
+  font-size: 13px;
+  color: #0c0c0c;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.offerbell-popup-success a:hover {
+  opacity: 0.7;
+}
+
+/* ── Outreach Writer Specific ── */
+
+.ob-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #9b9997;
+  margin-bottom: 2px;
+}
+
+.ob-angle-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+
+.ob-angle-option {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1.5px solid #ebebea;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: all 0.12s ease;
+}
+
+.ob-angle-option strong {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0c0c0c;
+}
+
+.ob-angle-option span {
+  font-size: 10px;
+  color: #9b9997;
+  line-height: 1.3;
+}
+
+.ob-angle-option:hover {
+  border-color: #0c0c0c;
+}
+
+.ob-angle-option.ob-angle-active {
+  background: #0c0c0c;
+  border-color: #0c0c0c;
+}
+
+.ob-angle-option.ob-angle-active strong {
+  color: #fff;
+}
+
+.ob-angle-option.ob-angle-active span {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ob-tone-row {
+  display: flex;
+  gap: 6px;
+}
+
+.ob-tone-option {
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1.5px solid #dddcda;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  color: #636160;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.12s ease;
+}
+
+.ob-tone-option:hover {
+  border-color: #0c0c0c;
+}
+
+.ob-tone-option.ob-tone-active {
+  background: #0c0c0c;
+  border-color: #0c0c0c;
+  color: #fff;
+}
