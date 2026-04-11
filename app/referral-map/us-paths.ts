@@ -249,5 +249,4 @@ export const US_PATHS: Record<string, { dimensions: string, abbreviation: string
       "abbreviation": "WY",
       "name": "Wyoming"
     }
-  };     
 };
