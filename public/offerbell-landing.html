@@ -121,6 +121,8 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
 .f-card-5{min-height:320px;}
 .f-card-6{min-height:300px;}
 .f-card-7{min-height:280px;grid-column:span 2;}
+.f-card-8{min-height:340px;}
+.f-card-9{min-height:340px;}
 
 /* contact rows */
 .contact-anim{margin-top:24px;}
@@ -352,7 +354,7 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
   .features-section{padding:64px 20px;}
   .features-header{grid-template-columns:1fr;}
   .features-bento{grid-template-columns:1fr 1fr;}
-  .f-card-1,.f-card-2,.f-card-4,.f-card-5,.f-card-6,.f-card-7,.f-card-8{grid-column:span 1;}
+  .f-card-1,.f-card-2,.f-card-4,.f-card-5,.f-card-6,.f-card-7,.f-card-8,.f-card-9{grid-column:span 1;}
   .pricing-section{padding:64px 20px;}
   .pricing-grid{grid-template-columns:1fr;max-width:420px;}
   .faq-section{padding:64px 20px;}
@@ -371,7 +373,7 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
   .hero-tagline{font-size:40px;line-height:1.1;}
   .hero-sub{font-size:14px;}
   .features-bento{grid-template-columns:1fr;}
-  .f-card-1,.f-card-2,.f-card-4,.f-card-5,.f-card-6,.f-card-7,.f-card-8{grid-column:span 1;}
+  .f-card-1,.f-card-2,.f-card-4,.f-card-5,.f-card-6,.f-card-7,.f-card-8,.f-card-9{grid-column:span 1;}
   .comp-intro{grid-template-columns:1fr;gap:12px;}
   .comp-intro>div:first-child{display:none;}
   .comp-table-header,.comp-row,.comp-total{grid-template-columns:2fr 1fr 1fr 1fr;font-size:10px;}
@@ -660,66 +662,103 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
       </div>
     </div>
 
-    <!-- 04 Practice Tools -->
+    <!-- 04 Flashcards + Interview Mode -->
     <div class="f-card f-card-4 reveal" id="fc4">
-      <div class="f-num">04 — Practice Tools</div>
+      <div class="f-num">04 — Flashcards &amp; AI Interview Mode</div>
       <div class="f-title">Drill until it's<br><em>muscle memory.</em></div>
-      <div class="f-desc">Flashcards, concept drills, live AI mock interviews, and diagnostic reviews — the four ways you actually get technically sharp before sitting in front of an interviewer.</div>
-      <div class="jobs-anim">
-        <div class="job-row" id="jr1">
-          <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
-            <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#2c1810,#8b2500);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <svg width="14" height="14" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            </div>
-            <div style="min-width:0;">
-              <div class="job-title">Interview Flashcards</div>
-              <div class="job-firm">1,200+ questions across 11 tracks</div>
-            </div>
+      <div class="f-desc">1,200+ technical flashcards across 11 career tracks, plus AI Interview Mode — speak your answer out loud and get scored live on accuracy, depth, and clarity with real follow-up questions, just like the real thing.</div>
+      <div class="contact-anim" style="margin-top:20px;">
+        <div class="contact-row">
+          <div>
+            <div class="cr-name">Practice Mode</div>
+            <div class="cr-role">Flip cards, self-score, shuffle by topic or difficulty</div>
           </div>
-          <div class="job-deadline" style="background:#dcfce7;color:#166534;">New</div>
+          <div class="cr-tags"><span class="mbadge mb-v">11 tracks</span></div>
         </div>
-        <div class="job-row" id="jr2">
-          <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
-            <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#0f2440,#2b5f8a);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <svg width="14" height="14" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8"/></svg>
-            </div>
-            <div style="min-width:0;">
-              <div class="job-title">AI Interview Mode</div>
-              <div class="job-firm">Speak your answer · get scored 1-10</div>
-            </div>
+        <div class="contact-row">
+          <div>
+            <div class="cr-name">Interview Mode — voice scored</div>
+            <div class="cr-role">Speak your answer · AI evaluates 1–10 with follow-ups</div>
           </div>
-          <div class="job-deadline" style="background:#fef3c7;color:#92400e;">Pro</div>
+          <div class="cr-tags"><span class="mbadge mb-v">Pro</span></div>
         </div>
-        <div class="job-row" id="jr3">
-          <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
-            <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#1a1206,#b8860b);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <svg width="14" height="14" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-            </div>
-            <div style="min-width:0;">
-              <div class="job-title">Concept Drills</div>
-              <div class="job-firm">Rapid-fire practice on weak spots</div>
-            </div>
+        <div class="contact-row">
+          <div>
+            <div class="cr-name">Review History</div>
+            <div class="cr-role">Every answer logged · filter pass / partial / missed · retry</div>
           </div>
-          <div class="job-deadline" style="background:#e0e7ff;color:#3730a3;">Adaptive</div>
-        </div>
-        <div class="job-row" id="jr4">
-          <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
-            <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#2a0e0e,#6b1d1d);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <svg width="14" height="14" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            </div>
-            <div style="min-width:0;">
-              <div class="job-title">Diagnostic Review</div>
-              <div class="job-firm">Find your gaps before interview day</div>
-            </div>
-          </div>
-          <div class="job-deadline" style="background:#f1f5f9;color:#475569;">20 min</div>
+          <div class="cr-tags"><span class="mbadge mb-v">Tracked</span></div>
         </div>
       </div>
     </div>
 
-    <!-- 06 Coach -->
+    <!-- 05 Concept Drills -->
+    <div class="f-card f-card-8 reveal" id="fc-drills">
+      <div class="f-num">05 — Concept Drills</div>
+      <div class="f-title">Rapid-fire<br><em>repetition.</em></div>
+      <div class="f-desc">Short, timed drills that hammer one concept at a time until it's second nature. Targets your weak spots based on how you answer — so you're not wasting time on what you already know.</div>
+      <div class="contact-anim" style="margin-top:20px;">
+        <div class="contact-row">
+          <div>
+            <div class="cr-name">Accretion / Dilution</div>
+            <div class="cr-role">12 questions · 4 min · adaptive difficulty</div>
+          </div>
+          <div class="cr-tags"><span class="mbadge mb-v">Sharp</span></div>
+        </div>
+        <div class="contact-row">
+          <div>
+            <div class="cr-name">LBO Mechanics</div>
+            <div class="cr-role">8 questions · 3 min · unlocked after basics</div>
+          </div>
+          <div class="cr-tags"><span class="mbadge mb-v">Next</span></div>
+        </div>
+        <div class="contact-row">
+          <div>
+            <div class="cr-name">DCF Sensitivity</div>
+            <div class="cr-role">10 questions · 5 min · in progress</div>
+          </div>
+          <div class="cr-tags"><span class="mbadge mb-v">70%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 06 Diagnostic Review -->
+    <div class="f-card f-card-9 reveal reveal-d1" id="fc-diag">
+      <div class="f-num">06 — Diagnostic Review</div>
+      <div class="f-title">Know exactly<br><em>where you stand.</em></div>
+      <div class="f-desc">A 20-minute assessment that pinpoints which technicals you've mastered, which need work, and where to focus next. Get a clear readiness score — and a prioritized path — before you walk into any interview.</div>
+      <div class="contact-anim" style="margin-top:20px;">
+        <div style="background:#0f172a;color:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;">
+          <div style="font-size:10px;font-weight:700;color:#cbd5e1;letter-spacing:0.6px;margin-bottom:4px;">OVERALL READINESS</div>
+          <div style="display:flex;align-items:baseline;gap:8px;"><div style="font-size:28px;font-weight:800;letter-spacing:-1px;">74%</div><div style="font-size:11px;color:#94a3b8;">ready for first-round interviews</div></div>
+        </div>
+        <div class="contact-row">
+          <div>
+            <div class="cr-name">Accounting · Strong</div>
+            <div class="cr-role">9/10 · ready</div>
+          </div>
+          <div class="cr-tags"><span class="mbadge mb-v" style="background:#dcfce7;color:#166534;">Strong</span></div>
+        </div>
+        <div class="contact-row">
+          <div>
+            <div class="cr-name">Valuation · Needs work</div>
+            <div class="cr-role">5/10 · focus here next</div>
+          </div>
+          <div class="cr-tags"><span class="mbadge mb-v" style="background:#fef3c7;color:#92400e;">Focus</span></div>
+        </div>
+        <div class="contact-row">
+          <div>
+            <div class="cr-name">M&amp;A / LBO · Gap</div>
+            <div class="cr-role">3/10 · start here</div>
+          </div>
+          <div class="cr-tags"><span class="mbadge mb-v" style="background:#fee2e2;color:#991b1b;">Gap</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 07 Coach -->
     <div class="f-card f-card-5 reveal reveal-d1" id="fc5">
-      <div class="f-num">05 — AI Conversation Coach</div>
+      <div class="f-num">07 — AI Conversation Coach</div>
       <div class="f-title">They replied.<br><em>Now what?</em></div>
       <div class="f-desc">Paste any reply and get precise coaching on your next move.</div>
       <div class="coach-anim">
@@ -730,10 +769,10 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
       </div>
     </div>
 
-    <!-- 07 Finance Careers Guide -->
+    <!-- 08 Finance Careers Guide -->
     <div class="f-card f-card-6 reveal reveal-d2" id="fc6" style="display:flex;flex-direction:column;justify-content:space-between;">
       <div>
-        <div class="f-num">06 — Career Roadmaps</div>
+        <div class="f-num">08 — Career Roadmaps</div>
         <div class="f-title">Find your<br><em>perfect fit.</em></div>
         <div class="f-desc">Deep-dive roadmaps for every major finance and professional services career — what they pay, what the work is like, firm tiers, and exactly how to break in.</div>
       </div>
@@ -752,10 +791,10 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
       </div>
     </div>
 
-    <!-- 08 Preparatory Guides -->
+    <!-- 09 Preparatory Guides -->
     <div class="f-card f-card-7 reveal" id="fc7" style="display:flex;flex-direction:column;justify-content:space-between;">
       <div>
-        <div class="f-num">07 — Preparatory Guides</div>
+        <div class="f-num">09 — Preparatory Guides</div>
         <div class="f-title">Interview ready,<br><em>from day one.</em></div>
         <div class="f-desc">Full interview prep manuals for IB, PE, consulting, S&T, equity research, asset management, accounting, venture capital, real estate, and restructuring. Technical deep-dives, behavioral frameworks, and practice drills.</div>
       </div>
