@@ -150,10 +150,71 @@ export default function FlashcardsPage() {
   const [aiHistory, setAiHistory] = useState<{ role: string; content: string; score?: Score }[]>([]);
   const [gridFlipped, setGridFlipped] = useState<Record<number, boolean>>({});
   const [showInsight, setShowInsight] = useState(false);
+  // Voice recording
+  const [isRecording, setIsRecording] = useState(false);
+  const [voiceSupported, setVoiceSupported] = useState(false);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+  const recognitionRef = useRef<any>(null);
+  const baseInputRef = useRef<string>(''); // text before current recording session
   // Performance
   const [perf, setPerf] = useState<PerfData>({ seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} });
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Detect Web Speech API support
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    setVoiceSupported(!!SR);
+  }, []);
+
+  // Cleanup recognition on unmount or mode switch
+  useEffect(() => {
+    return () => { try { recognitionRef.current?.stop(); } catch {} };
+  }, []);
+
+  const toggleRecording = () => {
+    setVoiceError(null);
+    if (isRecording) {
+      try { recognitionRef.current?.stop(); } catch {}
+      return;
+    }
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) { setVoiceError('Your browser does not support voice recording. Try Chrome or Edge.'); return; }
+    const rec = new SR();
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.lang = 'en-US';
+    baseInputRef.current = userInput ? userInput.trimEnd() + ' ' : '';
+    rec.onresult = (event: any) => {
+      let interim = '';
+      let final = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const t = event.results[i][0].transcript;
+        if (event.results[i].isFinal) final += t + ' ';
+        else interim += t;
+      }
+      if (final) baseInputRef.current += final;
+      setUserInput(baseInputRef.current + interim);
+    };
+    rec.onerror = (event: any) => {
+      const err = event.error || 'unknown';
+      if (err === 'not-allowed' || err === 'service-not-allowed') setVoiceError('Microphone access denied. Enable it in your browser settings.');
+      else if (err === 'no-speech') setVoiceError('No speech detected. Try again and speak clearly.');
+      else if (err === 'aborted') { /* silent - user-initiated stop */ }
+      else setVoiceError(`Voice error: ${err}`);
+      setIsRecording(false);
+    };
+    rec.onend = () => { setIsRecording(false); };
+    try {
+      rec.start();
+      recognitionRef.current = rec;
+      setIsRecording(true);
+    } catch (e: any) {
+      setVoiceError('Could not start recording. Please try again.');
+      setIsRecording(false);
+    }
+  };
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -178,7 +239,11 @@ export default function FlashcardsPage() {
 
   const card = filtered[idx] || null;
 
-  const resetCardState = useCallback(() => { setShowAnswer(false); setAiHistory([]); setUserInput(''); setShowInsight(false); }, []);
+  const resetCardState = useCallback(() => {
+    setShowAnswer(false); setAiHistory([]); setUserInput(''); setShowInsight(false);
+    if (isRecording) { try { recognitionRef.current?.stop(); } catch {} }
+    setVoiceError(null);
+  }, [isRecording]);
   const goNext = useCallback(() => { if (idx < filtered.length - 1) { setIdx(idx + 1); resetCardState(); } }, [idx, filtered.length, resetCardState]);
   const goPrev = useCallback(() => { if (idx > 0) { setIdx(idx - 1); resetCardState(); } }, [idx, resetCardState]);
 
@@ -204,6 +269,7 @@ export default function FlashcardsPage() {
   // AI Interview submit
   const submitAnswer = async () => {
     if (!card || !userInput.trim() || aiLoading) return;
+    if (isRecording) { try { recognitionRef.current?.stop(); } catch {} }
     const answer = userInput.trim();
     setUserInput('');
     const newHistory = [...aiHistory, { role: 'user', content: answer }];
@@ -441,12 +507,57 @@ export default function FlashcardsPage() {
                         ))}
                         {aiLoading && <div className="flash-chat-msg assistant"><div className="flash-chat-label"> Interviewer</div><div className="flash-chat-text flash-typing">Evaluating<span className="dot-1">.</span><span className="dot-2">.</span><span className="dot-3">.</span></div></div>}
                         <div ref={chatEndRef} />
+                        {voiceError && (
+                          <div style={{ fontSize: 11, color: '#dc2626', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, padding: '8px 12px', margin: '8px 0', display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            {voiceError}
+                          </div>
+                        )}
+                        {isRecording && (
+                          <div style={{ fontSize: 11, color: '#dc2626', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8, padding: '6px 4px' }}>
+                            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#dc2626', animation: 'flash-rec-pulse 1.1s ease-in-out infinite' }} />
+                            Recording... speak your answer, then tap the mic again to stop
+                          </div>
+                        )}
                         <div className="flash-interview-input">
-                          <textarea ref={inputRef} value={userInput} onChange={e => setUserInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitAnswer(); }}} placeholder="Type your answer as you would in a real interview..." rows={3} />
+                          <textarea
+                            ref={inputRef}
+                            value={userInput}
+                            onChange={e => setUserInput(e.target.value)}
+                            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitAnswer(); }}}
+                            placeholder={voiceSupported ? 'Tap the mic to speak your answer, or type it here...' : 'Type your answer as you would in a real interview...'}
+                            rows={3}
+                          />
+                          {voiceSupported && (
+                            <button
+                              onClick={toggleRecording}
+                              disabled={aiLoading}
+                              type="button"
+                              title={isRecording ? 'Stop recording' : 'Record your answer'}
+                              style={{
+                                background: isRecording ? '#dc2626' : 'var(--surface-2)',
+                                border: `1.5px solid ${isRecording ? '#dc2626' : 'var(--border)'}`,
+                                color: isRecording ? '#fff' : 'var(--text-2)',
+                                transition: 'all 0.15s',
+                              }}
+                            >
+                              {isRecording ? (
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+                              ) : (
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                              )}
+                            </button>
+                          )}
                           <button onClick={submitAnswer} disabled={!userInput.trim() || aiLoading} type="button">
                             <svg viewBox="0 0 24 24" width="18" height="18"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                           </button>
                         </div>
+                        <style jsx>{`
+                          @keyframes flash-rec-pulse {
+                            0%, 100% { opacity: 1; transform: scale(1); }
+                            50% { opacity: 0.4; transform: scale(1.3); }
+                          }
+                        `}</style>
                       </div>
                     )}
                   </div>
