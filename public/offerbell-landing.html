@@ -184,6 +184,88 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
 
 /* coach */
 .coach-anim{margin-top:16px;}
+
+/* ── Flashcard + mic demo (04) ── */
+.flash-demo{margin-top:20px;display:flex;flex-direction:column;gap:12px;}
+.flash-card-3d{position:relative;width:100%;height:150px;perspective:1200px;cursor:pointer;}
+.flash-card-3d .flash-side{position:absolute;inset:0;border-radius:12px;padding:14px 16px;backface-visibility:hidden;transition:transform 0.8s cubic-bezier(0.4,0,0.2,1);box-shadow:0 2px 14px rgba(15,23,42,0.06);display:flex;flex-direction:column;justify-content:space-between;}
+.flash-front{background:#fff;border:1px solid var(--g200);}
+.flash-back{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;transform:rotateY(180deg);border:1px solid #1e293b;}
+.flash-card-3d.flipped .flash-front{transform:rotateY(-180deg);}
+.flash-card-3d.flipped .flash-back{transform:rotateY(0);}
+.flash-side-label{font-size:10px;font-weight:700;color:var(--g500);letter-spacing:0.6px;text-transform:uppercase;}
+.flash-back .flash-side-label{color:#86efac;}
+.flash-side-text{font-family:'Instrument Serif',serif;font-size:19px;line-height:1.25;color:var(--black);letter-spacing:-0.3px;flex:1;display:flex;align-items:center;}
+.flash-back .flash-side-text{color:#fff;font-family:'Sora',sans-serif;font-size:12px;font-weight:500;align-items:flex-start;padding-top:4px;}
+.flash-hint{font-size:10px;color:var(--g400);font-weight:600;}
+.flash-score-row{display:flex;gap:8px;margin-top:6px;}
+.flash-score-item{flex:1;}
+.flash-score-bar{height:4px;background:rgba(255,255,255,0.15);border-radius:3px;overflow:hidden;margin-bottom:3px;}
+.flash-score-fill{height:100%;background:#34d399;border-radius:3px;transition:width 1s cubic-bezier(0.4,0,0.2,1) 0.5s;width:0 !important;}
+.flash-card-3d.flipped .flash-score-fill{width:var(--w,0) !important;}
+.flash-score-lbl{font-size:9px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:0.3px;}
+/* Mic row */
+.flash-mic-row{background:var(--white);border:1px solid var(--g200);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;}
+.flash-mic-pulse{position:relative;width:34px;height:34px;flex-shrink:0;}
+.flash-mic-core{position:absolute;inset:0;background:#dc2626;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:3;box-shadow:0 0 0 0 rgba(220,38,38,0.4);}
+.flash-mic-ring{position:absolute;inset:0;border-radius:50%;background:#dc2626;opacity:0.35;}
+.flash-mic-ring-1{animation:flash-mic-ring 2s ease-out infinite;}
+.flash-mic-ring-2{animation:flash-mic-ring 2s ease-out infinite 0.75s;}
+@keyframes flash-mic-ring{0%{transform:scale(1);opacity:0.35;}100%{transform:scale(2.2);opacity:0;}}
+.flash-mic-title{font-size:11px;font-weight:700;color:var(--black);letter-spacing:-0.1px;margin-bottom:4px;}
+.flash-mic-wave{display:flex;align-items:flex-end;gap:2px;height:18px;}
+.flash-mic-wave span{width:2.5px;background:#dc2626;border-radius:2px;height:var(--h);animation:flash-wave 0.9s ease-in-out infinite;}
+.flash-mic-wave span:nth-child(2n){animation-delay:0.1s;}
+.flash-mic-wave span:nth-child(3n){animation-delay:0.2s;background:#f87171;}
+.flash-mic-wave span:nth-child(5n){animation-delay:0.3s;}
+.flash-mic-wave span:nth-child(7n){animation-delay:0.45s;background:#ef4444;}
+@keyframes flash-wave{0%,100%{transform:scaleY(0.4);}50%{transform:scaleY(1);}}
+
+/* ── Drill stage (05) ── */
+.drill-stage{margin-top:20px;background:linear-gradient(165deg,#fafbff,#f3f5f9);border:1px solid var(--g200);border-radius:14px;padding:16px;}
+.drill-stage-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.drill-topic{font-size:10px;font-weight:700;color:var(--g500);letter-spacing:0.5px;text-transform:uppercase;}
+.drill-timer{font-family:'JetBrains Mono','Courier New',monospace;font-size:12px;font-weight:700;color:var(--black);background:#fff;border:1px solid var(--g200);padding:2px 8px;border-radius:6px;}
+.drill-progress{height:3px;background:var(--g200);border-radius:3px;overflow:hidden;margin-bottom:14px;}
+.drill-progress-fill{height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:3px;width:0;transition:width 0.9s ease 0.3s;}
+.reveal.visible .drill-progress-fill{width:70%;}
+.drill-q{font-size:13px;line-height:1.45;color:var(--black);font-weight:500;margin-bottom:12px;}
+.drill-choices{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.drill-choice{font-size:11px;font-weight:600;color:var(--g600);background:#fff;border:1.5px solid var(--g200);padding:9px 12px;border-radius:8px;transition:all 0.25s;display:flex;justify-content:space-between;align-items:center;}
+.drill-choice-correct{border-color:#16a34a;background:#f0fdf4;color:#166534;opacity:0;animation:drill-pop 0.5s ease 1.2s forwards;}
+.drill-tick{font-size:14px;font-weight:800;color:#16a34a;}
+@keyframes drill-pop{0%{opacity:0;transform:scale(0.95);}60%{transform:scale(1.03);}100%{opacity:1;transform:scale(1);}}
+.drill-streak{display:flex;align-items:center;gap:5px;}
+.drill-streak-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.streak-hit{background:#16a34a;}
+.streak-miss{background:var(--g200);}
+.streak-next{background:#fff;border:1.5px dashed #6366f1;animation:streak-pulse 1.5s ease-in-out infinite;}
+@keyframes streak-pulse{0%,100%{opacity:0.5;transform:scale(1);}50%{opacity:1;transform:scale(1.15);}}
+.drill-streak-lbl{font-size:10px;font-weight:700;color:var(--g500);margin-left:6px;letter-spacing:0.3px;}
+
+/* ── Diagnostic (06) ── */
+.diag-stage{margin-top:20px;}
+.diag-dial-wrap{position:relative;width:120px;height:120px;margin:0 auto 16px;}
+.diag-dial{width:100%;height:100%;}
+.diag-dial-prog{transition:stroke-dashoffset 1.4s cubic-bezier(0.4,0,0.2,1) 0.3s;}
+.reveal.visible .diag-dial-prog{stroke-dashoffset:79;}
+.diag-dial-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.diag-dial-val{font-size:28px;font-weight:800;color:var(--black);letter-spacing:-1px;line-height:1;}
+.diag-dial-val span{font-size:14px;font-weight:700;color:var(--g500);margin-left:1px;}
+.diag-dial-lbl{font-size:10px;font-weight:700;color:var(--g500);letter-spacing:0.6px;text-transform:uppercase;margin-top:2px;}
+.diag-bars{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.diag-bar-row{font-size:11px;}
+.diag-bar-lbl{display:flex;justify-content:space-between;margin-bottom:4px;font-weight:600;color:var(--g600);}
+.diag-bar-val{font-weight:800;}
+.diag-bar-track{height:6px;background:var(--g100);border-radius:4px;overflow:hidden;}
+.diag-bar-fill{height:100%;width:0;border-radius:4px;transition:width 1.1s cubic-bezier(0.4,0,0.2,1) 0.4s;}
+.reveal.visible .diag-bar-fill[data-w="90"]{width:90%;}
+.reveal.visible .diag-bar-fill[data-w="50"]{width:50%;}
+.reveal.visible .diag-bar-fill[data-w="30"]{width:30%;}
+.reveal.visible .diag-bar-fill[data-w="80"]{width:80%;}
+.diag-focus{background:#0f172a;color:#fff;border-radius:10px;padding:10px 14px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.diag-focus strong{font-weight:800;}
+.diag-focus-icon{font-size:15px;font-weight:800;color:#60a5fa;}
 .coach-label{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--g400);margin-bottom:4px;}
 .coach-msg{border-radius:9px;padding:9px 11px;font-size:10px;line-height:1.6;margin-bottom:7px;}
 .coach-msg.them{background:var(--g100);color:var(--g600);border-bottom-left-radius:2px;}
@@ -666,28 +748,40 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
     <div class="f-card f-card-4 reveal" id="fc4">
       <div class="f-num">04 — Flashcards &amp; AI Interview Mode</div>
       <div class="f-title">Drill until it's<br><em>muscle memory.</em></div>
-      <div class="f-desc">1,200+ technical flashcards across 11 career tracks, plus AI Interview Mode — speak your answer out loud and get scored live on accuracy, depth, and clarity with real follow-up questions, just like the real thing.</div>
-      <div class="contact-anim" style="margin-top:20px;">
-        <div class="contact-row">
-          <div>
-            <div class="cr-name">Practice Mode</div>
-            <div class="cr-role">Flip cards, self-score, shuffle by topic or difficulty</div>
+      <div class="f-desc">1,200+ technical flashcards across 11 career tracks, plus AI Interview Mode — speak your answer and get scored live on accuracy, depth, and clarity with real follow-up questions.</div>
+      <div class="flash-demo">
+        <!-- Animated flashcard -->
+        <div class="flash-card-3d" id="flash-demo-card">
+          <div class="flash-side flash-front">
+            <div class="flash-side-label">Question · Valuation</div>
+            <div class="flash-side-text">Walk me through a DCF.</div>
+            <div class="flash-hint">Tap to flip</div>
           </div>
-          <div class="cr-tags"><span class="mbadge mb-v">11 tracks</span></div>
+          <div class="flash-side flash-back">
+            <div class="flash-side-label" style="color:#16a34a;">Score · 8 / 10 Pass</div>
+            <div class="flash-side-text" style="font-size:12px;font-weight:500;line-height:1.45;">Project unlevered FCF, discount by WACC, add a terminal value — good structure, push deeper on WACC build.</div>
+            <div class="flash-score-row">
+              <div class="flash-score-item"><div class="flash-score-bar"><div class="flash-score-fill" style="--w:80%;"></div></div><div class="flash-score-lbl">Accuracy 8</div></div>
+              <div class="flash-score-item"><div class="flash-score-bar"><div class="flash-score-fill" style="--w:70%;"></div></div><div class="flash-score-lbl">Depth 7</div></div>
+              <div class="flash-score-item"><div class="flash-score-bar"><div class="flash-score-fill" style="--w:90%;"></div></div><div class="flash-score-lbl">Clarity 9</div></div>
+            </div>
+          </div>
         </div>
-        <div class="contact-row">
-          <div>
-            <div class="cr-name">Interview Mode — voice scored</div>
-            <div class="cr-role">Speak your answer · AI evaluates 1–10 with follow-ups</div>
+        <!-- Mic capture pill -->
+        <div class="flash-mic-row">
+          <div class="flash-mic-pulse">
+            <div class="flash-mic-ring flash-mic-ring-1"></div>
+            <div class="flash-mic-ring flash-mic-ring-2"></div>
+            <div class="flash-mic-core">
+              <svg width="14" height="14" fill="none" stroke="#fff" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8"/></svg>
+            </div>
           </div>
-          <div class="cr-tags"><span class="mbadge mb-v">Pro</span></div>
-        </div>
-        <div class="contact-row">
-          <div>
-            <div class="cr-name">Review History</div>
-            <div class="cr-role">Every answer logged · filter pass / partial / missed · retry</div>
+          <div class="flash-mic-text">
+            <div class="flash-mic-title">Recording · speak naturally</div>
+            <div class="flash-mic-wave">
+              <span style="--h:30%"></span><span style="--h:60%"></span><span style="--h:45%"></span><span style="--h:80%"></span><span style="--h:55%"></span><span style="--h:90%"></span><span style="--h:40%"></span><span style="--h:70%"></span><span style="--h:35%"></span><span style="--h:65%"></span><span style="--h:50%"></span><span style="--h:85%"></span><span style="--h:45%"></span>
+            </div>
           </div>
-          <div class="cr-tags"><span class="mbadge mb-v">Tracked</span></div>
         </div>
       </div>
     </div>
@@ -696,28 +790,29 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
     <div class="f-card f-card-8 reveal" id="fc-drills">
       <div class="f-num">05 — Concept Drills</div>
       <div class="f-title">Rapid-fire<br><em>repetition.</em></div>
-      <div class="f-desc">Short, timed drills that hammer one concept at a time until it's second nature. Targets your weak spots based on how you answer — so you're not wasting time on what you already know.</div>
-      <div class="contact-anim" style="margin-top:20px;">
-        <div class="contact-row">
-          <div>
-            <div class="cr-name">Accretion / Dilution</div>
-            <div class="cr-role">12 questions · 4 min · adaptive difficulty</div>
-          </div>
-          <div class="cr-tags"><span class="mbadge mb-v">Sharp</span></div>
+      <div class="f-desc">Short, timed drills that hammer one concept at a time until it's second nature. Targets your weak spots — so you're not wasting time on what you already know.</div>
+      <div class="drill-stage">
+        <div class="drill-stage-top">
+          <div class="drill-topic">LBO Mechanics · Question 7 of 10</div>
+          <div class="drill-timer">0:23</div>
         </div>
-        <div class="contact-row">
-          <div>
-            <div class="cr-name">LBO Mechanics</div>
-            <div class="cr-role">8 questions · 3 min · unlocked after basics</div>
-          </div>
-          <div class="cr-tags"><span class="mbadge mb-v">Next</span></div>
+        <div class="drill-progress"><div class="drill-progress-fill" id="drill-progress"></div></div>
+        <div class="drill-q">If sponsor equity falls from 40% to 30% of the purchase price, what happens to IRR (assuming same exit multiple)?</div>
+        <div class="drill-choices">
+          <div class="drill-choice">A — Decreases</div>
+          <div class="drill-choice drill-choice-correct">B — Increases <span class="drill-tick">✓</span></div>
+          <div class="drill-choice">C — Stays the same</div>
         </div>
-        <div class="contact-row">
-          <div>
-            <div class="cr-name">DCF Sensitivity</div>
-            <div class="cr-role">10 questions · 5 min · in progress</div>
-          </div>
-          <div class="cr-tags"><span class="mbadge mb-v">70%</span></div>
+        <div class="drill-streak">
+          <span class="drill-streak-dot streak-hit"></span>
+          <span class="drill-streak-dot streak-hit"></span>
+          <span class="drill-streak-dot streak-hit"></span>
+          <span class="drill-streak-dot streak-miss"></span>
+          <span class="drill-streak-dot streak-hit"></span>
+          <span class="drill-streak-dot streak-hit"></span>
+          <span class="drill-streak-dot streak-hit"></span>
+          <span class="drill-streak-dot streak-next"></span>
+          <span class="drill-streak-lbl">7-question streak</span>
         </div>
       </div>
     </div>
@@ -726,32 +821,41 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
     <div class="f-card f-card-9 reveal reveal-d1" id="fc-diag">
       <div class="f-num">06 — Diagnostic Review</div>
       <div class="f-title">Know exactly<br><em>where you stand.</em></div>
-      <div class="f-desc">A 20-minute assessment that pinpoints which technicals you've mastered, which need work, and where to focus next. Get a clear readiness score — and a prioritized path — before you walk into any interview.</div>
-      <div class="contact-anim" style="margin-top:20px;">
-        <div style="background:#0f172a;color:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;">
-          <div style="font-size:10px;font-weight:700;color:#cbd5e1;letter-spacing:0.6px;margin-bottom:4px;">OVERALL READINESS</div>
-          <div style="display:flex;align-items:baseline;gap:8px;"><div style="font-size:28px;font-weight:800;letter-spacing:-1px;">74%</div><div style="font-size:11px;color:#94a3b8;">ready for first-round interviews</div></div>
-        </div>
-        <div class="contact-row">
-          <div>
-            <div class="cr-name">Accounting · Strong</div>
-            <div class="cr-role">9/10 · ready</div>
+      <div class="f-desc">A 20-minute assessment that pinpoints which technicals you've mastered, where to focus next, and gives you a clear readiness score before any interview.</div>
+      <div class="diag-stage">
+        <!-- Readiness dial -->
+        <div class="diag-dial-wrap">
+          <svg class="diag-dial" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="48" fill="none" stroke="#e2e8f0" stroke-width="9"/>
+            <circle class="diag-dial-prog" cx="60" cy="60" r="48" fill="none" stroke="#0f172a" stroke-width="9" stroke-linecap="round" stroke-dasharray="302" stroke-dashoffset="302" transform="rotate(-90 60 60)"/>
+          </svg>
+          <div class="diag-dial-center">
+            <div class="diag-dial-val">74<span>%</span></div>
+            <div class="diag-dial-lbl">ready</div>
           </div>
-          <div class="cr-tags"><span class="mbadge mb-v" style="background:#dcfce7;color:#166534;">Strong</span></div>
         </div>
-        <div class="contact-row">
-          <div>
-            <div class="cr-name">Valuation · Needs work</div>
-            <div class="cr-role">5/10 · focus here next</div>
+        <!-- Breakdown bars -->
+        <div class="diag-bars">
+          <div class="diag-bar-row">
+            <div class="diag-bar-lbl"><span>Accounting</span><span class="diag-bar-val" style="color:#16a34a;">9/10</span></div>
+            <div class="diag-bar-track"><div class="diag-bar-fill" data-w="90" style="background:#16a34a;"></div></div>
           </div>
-          <div class="cr-tags"><span class="mbadge mb-v" style="background:#fef3c7;color:#92400e;">Focus</span></div>
+          <div class="diag-bar-row">
+            <div class="diag-bar-lbl"><span>Valuation</span><span class="diag-bar-val" style="color:#d97706;">5/10</span></div>
+            <div class="diag-bar-track"><div class="diag-bar-fill" data-w="50" style="background:#d97706;"></div></div>
+          </div>
+          <div class="diag-bar-row">
+            <div class="diag-bar-lbl"><span>M&amp;A / LBO</span><span class="diag-bar-val" style="color:#dc2626;">3/10</span></div>
+            <div class="diag-bar-track"><div class="diag-bar-fill" data-w="30" style="background:#dc2626;"></div></div>
+          </div>
+          <div class="diag-bar-row">
+            <div class="diag-bar-lbl"><span>Behavioral</span><span class="diag-bar-val" style="color:#16a34a;">8/10</span></div>
+            <div class="diag-bar-track"><div class="diag-bar-fill" data-w="80" style="background:#16a34a;"></div></div>
+          </div>
         </div>
-        <div class="contact-row">
-          <div>
-            <div class="cr-name">M&amp;A / LBO · Gap</div>
-            <div class="cr-role">3/10 · start here</div>
-          </div>
-          <div class="cr-tags"><span class="mbadge mb-v" style="background:#fee2e2;color:#991b1b;">Gap</span></div>
+        <div class="diag-focus">
+          <span class="diag-focus-icon">→</span>
+          <span>Focus next: <strong>M&amp;A / LBO</strong></span>
         </div>
       </div>
     </div>
@@ -1103,6 +1207,40 @@ function typeMessage(text){const box=document.getElementById('msg-box');box.inne
 function switchAngle(tab,key){document.querySelectorAll('.angle-tab').forEach(t=>t.classList.remove('active'));tab.classList.add('active');typeMessage(messages[key]);}
 const o3obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)typeMessage(messages.alumni);}),{threshold:0.3});
 const fc3=document.getElementById('fc3');if(fc3)o3obs.observe(fc3);
+
+// ── Card 4: flashcard auto-flip ──
+const flashDemoCard=document.getElementById('flash-demo-card');
+if(flashDemoCard){
+  let hasPlayed=false;
+  const flashObs=new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting&&!hasPlayed){
+      hasPlayed=true;
+      setTimeout(()=>flashDemoCard.classList.add('flipped'),1800);
+    }
+  }),{threshold:0.4});
+  flashObs.observe(flashDemoCard);
+  flashDemoCard.addEventListener('click',()=>flashDemoCard.classList.toggle('flipped'));
+}
+
+// ── Card 5: drill timer countdown ──
+const drillStage=document.querySelector('.drill-stage');
+if(drillStage){
+  const timerEl=drillStage.querySelector('.drill-timer');
+  let drillPlayed=false;
+  const drillObs=new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting&&!drillPlayed){
+      drillPlayed=true;
+      let secs=23;
+      const tick=setInterval(()=>{
+        secs--;
+        if(secs<0){clearInterval(tick);return;}
+        timerEl.textContent='0:'+(secs<10?'0':'')+secs;
+        if(secs<=10)timerEl.style.color='#dc2626';
+      },900);
+    }
+  }),{threshold:0.4});
+  drillObs.observe(drillStage);
+}
 
 // ── Card 4: rate bars ──
 const r4obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)['rb1','rb2','rb3','rb4','rb5'].forEach(id=>{const el=document.getElementById(id);if(el)setTimeout(()=>el.style.width=el.dataset.target+'%',200)});}),{threshold:0.3});
