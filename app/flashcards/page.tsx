@@ -15,6 +15,20 @@ import { ER_FLASHCARDS, RE_FLASHCARDS, VC_FLASHCARDS, RX_FLASHCARDS } from './ot
 type Track = { id: string; title: string; desc: string; cards: number; iconClass: string; icon: React.ReactNode };
 type Score = { accuracy: number; depth: number; clarity: number; verdict: string; tip: string };
 type PerfData = { seen: number; pass: number; partial: number; fail: number; byCat: Record<string, { seen: number; pass: number }> };
+type ReviewEntry = {
+  id: string;
+  track: string;
+  trackTitle: string;
+  cardQ: string;
+  cardA: string;
+  category: string;
+  difficulty: string;
+  userAnswer: string;
+  feedback: string;
+  score?: Score;
+  verdict: string;
+  at: number;
+};
 
 const TRACKS: Track[] = [
   {id:'ib',title:'Investment Banking',desc:'Accounting, DCF, M&A, LBO, and behavioral questions reported across bulge brackets, elite boutiques, and middle market banks.',cards:IB_FLASHCARDS.length,iconClass:'icon-ib',icon:<svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>},
@@ -158,6 +172,10 @@ export default function FlashcardsPage() {
   const baseInputRef = useRef<string>(''); // text before current recording session
   // Performance
   const [perf, setPerf] = useState<PerfData>({ seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} });
+  // Review log (per-attempt history)
+  const [reviewLog, setReviewLog] = useState<ReviewEntry[]>([]);
+  const [showReview, setShowReview] = useState(false);
+  const [reviewFilter, setReviewFilter] = useState<'all' | 'pass' | 'partial' | 'fail'>('all');
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -223,6 +241,8 @@ export default function FlashcardsPage() {
     import('../lib/plan').then(({ isUserPro }) => { setIsPro(isUserPro()); });
     const saved = localStorage.getItem('offerbell_flash_perf');
     if (saved) try { setPerf(JSON.parse(saved)); } catch { /* */ }
+    const savedReview = localStorage.getItem('offerbell_flash_review');
+    if (savedReview) try { setReviewLog(JSON.parse(savedReview)); } catch { /* */ }
   }, [router]);
 
   const savePerf = useCallback((p: PerfData) => { setPerf(p); localStorage.setItem('offerbell_flash_perf', JSON.stringify(p)); }, []);
@@ -303,6 +323,27 @@ export default function FlashcardsPage() {
           np.byCat[cat].seen++;
           if (verdict === 'pass') np.byCat[cat].pass++;
           savePerf(np);
+          // Append to review log
+          const reviewEntry: ReviewEntry = {
+            id: `rv_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+            track: activeTrack || '',
+            trackTitle: TRACKS.find(t => t.id === activeTrack)?.title || '',
+            cardQ: card.q,
+            cardA: card.a,
+            category: cat,
+            difficulty: (card as any).difficulty || '',
+            userAnswer: answer,
+            feedback: data.feedback,
+            score: data.score,
+            verdict,
+            at: Date.now(),
+          };
+          const freshReviewRaw = localStorage.getItem('offerbell_flash_review');
+          const freshReview: ReviewEntry[] = freshReviewRaw ? JSON.parse(freshReviewRaw) : [];
+          // Prepend newest first, cap at 200 entries
+          const nextLog = [reviewEntry, ...freshReview].slice(0, 200);
+          setReviewLog(nextLog);
+          localStorage.setItem('offerbell_flash_review', JSON.stringify(nextLog));
         }
         setAiHistory([...newHistory, entry]);
       }
@@ -405,6 +446,23 @@ export default function FlashcardsPage() {
                 <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
                 Shuffle
               </button>
+              {mode === 'interview' && isPro && (
+                <button
+                  className="flash-shuffle"
+                  onClick={() => setShowReview(true)}
+                  type="button"
+                  title="Review your past answers"
+                  style={{ position: 'relative' }}
+                >
+                  <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 10 9 10"/></svg>
+                  Review
+                  {reviewLog.filter(r => !activeTrack || r.track === activeTrack).length > 0 && (
+                    <span style={{ marginLeft: 6, background: 'var(--text)', color: 'var(--surface)', fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 10, minWidth: 18, textAlign: 'center' }}>
+                      {reviewLog.filter(r => !activeTrack || r.track === activeTrack).length}
+                    </span>
+                  )}
+                </button>
+              )}
             </div>
 
             {/* ═══ SINGLE CARD VIEW ═══ */}
@@ -642,6 +700,142 @@ export default function FlashcardsPage() {
         </div>
       </main>
       {showProModal && <ProModal onClose={() => setShowProModal(false)} />}
+      {showReview && (
+        <div onClick={() => setShowReview(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 250, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 20, width: '100%', maxWidth: 760, maxHeight: '86vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 24px 60px rgba(0,0,0,0.2)' }}>
+            {/* Header */}
+            <div style={{ padding: '22px 26px 18px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+              <div>
+                <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: 'var(--text)', letterSpacing: '-0.5px' }}>Review <em style={{ fontStyle: 'italic' }}>History</em></div>
+                <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4 }}>Go back to any question you&apos;ve answered. See what the interviewer said and retry if you want another shot.</div>
+              </div>
+              <button onClick={() => setShowReview(false)} type="button" style={{ width: 32, height: 32, borderRadius: 8, border: '1.5px solid var(--border)', background: 'var(--surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+
+            {/* Filter chips */}
+            {(() => {
+              const tlog = reviewLog.filter(r => !activeTrack || r.track === activeTrack);
+              const cpass = tlog.filter(r => r.verdict === 'pass').length;
+              const cpart = tlog.filter(r => r.verdict === 'partial').length;
+              const cfail = tlog.filter(r => r.verdict === 'fail').length;
+              const visible = reviewFilter === 'all' ? tlog : tlog.filter(r => r.verdict === reviewFilter);
+              const chip = (key: typeof reviewFilter, label: string, count: number, color: string) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setReviewFilter(key)}
+                  style={{
+                    padding: '7px 14px', borderRadius: 999, border: `1.5px solid ${reviewFilter === key ? color : 'var(--border)'}`,
+                    background: reviewFilter === key ? color : 'var(--surface-2)', color: reviewFilter === key ? '#fff' : 'var(--text-2)',
+                    fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: "'Sora', sans-serif", display: 'inline-flex', alignItems: 'center', gap: 6, transition: 'all 0.15s'
+                  }}
+                >
+                  {label}
+                  <span style={{ background: reviewFilter === key ? 'rgba(255,255,255,0.25)' : 'var(--surface)', color: reviewFilter === key ? '#fff' : 'var(--text-3)', padding: '1px 7px', borderRadius: 999, fontSize: 10, fontWeight: 800 }}>{count}</span>
+                </button>
+              );
+              return (
+                <>
+                  <div style={{ padding: '14px 26px 12px', display: 'flex', gap: 6, flexWrap: 'wrap', borderBottom: '1px solid var(--border)' }}>
+                    {chip('all', 'All', tlog.length, '#111827')}
+                    {chip('pass', 'Passed', cpass, '#16a34a')}
+                    {chip('partial', 'Partial', cpart, '#d97706')}
+                    {chip('fail', 'Missed', cfail, '#dc2626')}
+                    <div style={{ flex: 1 }} />
+                    {tlog.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!confirm('Clear your review history? This cannot be undone.')) return;
+                          const others = reviewLog.filter(r => activeTrack && r.track !== activeTrack);
+                          setReviewLog(others);
+                          localStorage.setItem('offerbell_flash_review', JSON.stringify(others));
+                        }}
+                        style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-3)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+                      >
+                        Clear history
+                      </button>
+                    )}
+                  </div>
+
+                  {/* List */}
+                  <div style={{ flex: 1, overflowY: 'auto', padding: '14px 20px 20px' }}>
+                    {visible.length === 0 && (
+                      <div style={{ textAlign: 'center', padding: '50px 20px', color: 'var(--text-3)', fontSize: 13 }}>
+                        {tlog.length === 0 ? 'No answers recorded yet. Answer a question in Interview Mode to start building your review history.' : 'No questions match this filter.'}
+                      </div>
+                    )}
+                    {visible.map((r) => {
+                      const vColor = r.verdict === 'pass' ? '#16a34a' : r.verdict === 'partial' ? '#d97706' : '#dc2626';
+                      const vLabel = r.verdict === 'pass' ? 'Passed' : r.verdict === 'partial' ? 'Partial' : 'Missed';
+                      const when = new Date(r.at);
+                      const ago = (() => {
+                        const s = (Date.now() - r.at) / 1000;
+                        if (s < 60) return 'just now';
+                        if (s < 3600) return `${Math.floor(s/60)}m ago`;
+                        if (s < 86400) return `${Math.floor(s/3600)}h ago`;
+                        return `${when.toLocaleDateString()}`;
+                      })();
+                      return (
+                        <div key={r.id} style={{ background: 'var(--surface-2)', border: '1.5px solid var(--border)', borderRadius: 12, padding: '14px 16px', marginBottom: 10 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: 10, fontWeight: 800, color: '#fff', background: vColor, padding: '3px 8px', borderRadius: 6, letterSpacing: 0.3, textTransform: 'uppercase' }}>{vLabel}</span>
+                            {r.score && (
+                              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-2)' }}>
+                                {r.score.accuracy}/10 accuracy · {r.score.depth}/10 depth · {r.score.clarity}/10 clarity
+                              </span>
+                            )}
+                            <span style={{ fontSize: 11, color: 'var(--text-3)' }}>· {r.category || '—'}</span>
+                            <div style={{ flex: 1 }} />
+                            <span style={{ fontSize: 11, color: 'var(--text-3)' }}>{ago}</span>
+                          </div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 8, lineHeight: 1.45 }}>{r.cardQ}</div>
+                          <details style={{ marginBottom: 8 }}>
+                            <summary style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-3)', cursor: 'pointer', padding: '4px 0' }}>Your answer</summary>
+                            <div style={{ fontSize: 12, color: 'var(--text-2)', lineHeight: 1.6, padding: '6px 10px', background: 'var(--surface)', borderRadius: 8, marginTop: 4, whiteSpace: 'pre-wrap' }}>{r.userAnswer}</div>
+                          </details>
+                          <details>
+                            <summary style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-3)', cursor: 'pointer', padding: '4px 0' }}>Interviewer feedback{r.score?.tip ? ' + tip' : ''}</summary>
+                            <div style={{ fontSize: 12, color: 'var(--text-2)', lineHeight: 1.6, padding: '6px 10px', background: 'var(--surface)', borderRadius: 8, marginTop: 4, whiteSpace: 'pre-wrap' }}>
+                              {r.feedback}
+                              {r.score?.tip && (<><br/><br/><strong style={{ color: 'var(--text)' }}>Tip:</strong> {r.score.tip}</>)}
+                            </div>
+                          </details>
+                          <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                // Jump to that card: switch track if needed, reset filters, find index
+                                if (r.track && r.track !== activeTrack) {
+                                  setActiveTrack(r.track);
+                                }
+                                setFilterCat('All'); setFilterDiff('All'); setShuffleKey(0);
+                                setShowReview(false);
+                                // Defer index set until filtered recalculates
+                                setTimeout(() => {
+                                  const list = CARD_MAP[r.track] || [];
+                                  const foundIdx = list.findIndex((c: any) => c.q === r.cardQ);
+                                  if (foundIdx >= 0) { setIdx(foundIdx); resetCardState(); }
+                                }, 50);
+                              }}
+                              style={{ fontSize: 12, fontWeight: 600, padding: '7px 14px', borderRadius: 8, border: 'none', background: 'var(--text)', color: 'var(--surface)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                            >
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 10 9 10"/></svg>
+                              Retry this question
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
