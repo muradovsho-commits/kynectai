@@ -286,6 +286,25 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
 .diag-focus{background:#0f172a;color:#fff;border-radius:10px;padding:10px 14px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:8px;}
 .diag-focus strong{font-weight:800;}
 .diag-focus-icon{font-size:15px;font-weight:800;color:#60a5fa;}
+
+/* ── Roadmap card (08) ── */
+.roadmap-stage{margin-top:18px;display:flex;flex-direction:column;gap:10px;}
+.roadmap-preview{position:relative;background:var(--white);border:1px solid var(--g200);border-radius:14px;padding:16px;overflow:hidden;transition:all 0.5s cubic-bezier(0.4,0,0.2,1);}
+.roadmap-accent{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#8b2500,#c97c42);transition:background 0.5s ease;}
+.roadmap-top{display:flex;align-items:center;gap:12px;padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid var(--g100);}
+.roadmap-badge{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2c1810,#8b2500);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:-0.3px;transition:all 0.5s ease;box-shadow:0 4px 12px rgba(139,37,0,0.2);}
+.roadmap-top-text{flex:1;min-width:0;transition:opacity 0.3s;}
+.roadmap-track-name{font-family:'Instrument Serif',serif;font-size:18px;color:var(--black);letter-spacing:-0.4px;line-height:1.15;}
+.roadmap-track-sub{font-size:10px;color:var(--g500);margin-top:3px;font-weight:600;letter-spacing:0.1px;}
+.roadmap-chevron{color:var(--g400);flex-shrink:0;}
+.roadmap-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;transition:opacity 0.3s;}
+.roadmap-stat{min-width:0;}
+.roadmap-stat-lbl{font-size:9px;font-weight:700;color:var(--g500);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:3px;}
+.roadmap-stat-val{font-size:12px;font-weight:700;color:var(--black);letter-spacing:-0.2px;line-height:1.3;}
+/* Rail */
+.roadmap-rail{display:flex;flex-wrap:wrap;gap:4px;}
+.roadmap-pill{font-size:9px;font-weight:700;color:var(--g500);background:transparent;border:1px solid var(--g200);padding:3px 9px;border-radius:100px;transition:all 0.35s ease;letter-spacing:0.2px;}
+.roadmap-pill.active{background:var(--black);color:#fff;border-color:var(--black);transform:scale(1.04);}
 .coach-label{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--g400);margin-bottom:4px;}
 .coach-msg{border-radius:9px;padding:9px 11px;font-size:10px;line-height:1.6;margin-bottom:7px;}
 .coach-msg.them{background:var(--g100);color:var(--g600);border-bottom-left-radius:2px;}
@@ -923,24 +942,53 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
     </div>
 
     <!-- 08 Finance Careers Guide -->
-    <div class="f-card f-card-6 reveal reveal-d2" id="fc6" style="display:flex;flex-direction:column;justify-content:space-between;">
-      <div>
-        <div class="f-num">08 — Career Roadmaps</div>
-        <div class="f-title">Find your<br><em>perfect fit.</em></div>
-        <div class="f-desc">Deep-dive roadmaps for every major finance and professional services career — what they pay, what the work is like, firm tiers, and exactly how to break in.</div>
-      </div>
-      <div class="career-tags" style="margin-top:20px;">
-        <span class="career-tag" style="background:#f3f4f6;color:var(--black)">Investment Banking</span>
-        <span class="career-tag" style="background:#f3f4f6;color:var(--black)">Private Equity</span>
-        <span class="career-tag" style="background:#f3f4f6;color:var(--black)">Consulting</span>
-        <span class="career-tag" style="background:#f3f4f6;color:var(--black)">Sales & Trading</span>
-        <span class="career-tag" style="background:#f3f4f6;color:var(--black)">Equity Research</span>
-        <span class="career-tag" style="background:#f3f4f6;color:var(--black)">Asset Management</span>
-        <span class="career-tag" style="background:#f3f4f6;color:var(--black)">Accounting & Audit</span>
-        <span class="career-tag" style="background:#f3f4f6;color:var(--black)">Venture Capital</span>
-        <span class="career-tag" style="background:#f3f4f6;color:var(--black)">Real Estate</span>
-        <span class="career-tag" style="background:#f3f4f6;color:var(--black)">Restructuring</span>
-        <span class="career-tag" style="background:#f3f4f6;color:var(--black)">Growth Equity</span>
+    <div class="f-card f-card-6 reveal reveal-d2" id="fc6">
+      <div class="f-num">08 — Career Roadmaps</div>
+      <div class="f-title">Find your<br><em>perfect fit.</em></div>
+      <div class="f-desc">Deep-dive roadmaps for every major finance and professional services career — what they pay, what the work is like, firm tiers, and exactly how to break in.</div>
+      <!-- Rotating track preview -->
+      <div class="roadmap-stage">
+        <div class="roadmap-preview" id="roadmap-preview">
+          <div class="roadmap-accent" id="roadmap-accent"></div>
+          <div class="roadmap-top">
+            <div class="roadmap-badge" id="roadmap-badge">IB</div>
+            <div class="roadmap-top-text">
+              <div class="roadmap-track-name" id="roadmap-name">Investment Banking</div>
+              <div class="roadmap-track-sub" id="roadmap-sub">Analyst → Associate → VP → MD</div>
+            </div>
+            <div class="roadmap-chevron">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          <div class="roadmap-stats">
+            <div class="roadmap-stat">
+              <div class="roadmap-stat-lbl">Analyst comp</div>
+              <div class="roadmap-stat-val" id="roadmap-comp">$175K</div>
+            </div>
+            <div class="roadmap-stat">
+              <div class="roadmap-stat-lbl">Top firms</div>
+              <div class="roadmap-stat-val" id="roadmap-firms">GS · MS · JPM</div>
+            </div>
+            <div class="roadmap-stat">
+              <div class="roadmap-stat-lbl">Exit paths</div>
+              <div class="roadmap-stat-val" id="roadmap-exits">PE · HF · Corp Dev</div>
+            </div>
+          </div>
+        </div>
+        <!-- Track rail below -->
+        <div class="roadmap-rail">
+          <span class="roadmap-pill active">IB</span>
+          <span class="roadmap-pill">PE</span>
+          <span class="roadmap-pill">Consulting</span>
+          <span class="roadmap-pill">S&amp;T</span>
+          <span class="roadmap-pill">ER</span>
+          <span class="roadmap-pill">AM</span>
+          <span class="roadmap-pill">VC</span>
+          <span class="roadmap-pill">RE</span>
+          <span class="roadmap-pill">RX</span>
+          <span class="roadmap-pill">GE</span>
+          <span class="roadmap-pill">Audit</span>
+        </div>
       </div>
     </div>
 
@@ -1376,6 +1424,67 @@ if(coachCard){
     }
   }),{threshold:0.3});
   coachObs.observe(coachCard);
+}
+
+// ── Card 8: Career Roadmaps rotating preview ──
+const roadmapTracks=[
+  {abbr:'IB',pillIdx:0,name:'Investment Banking',path:'Analyst → Associate → VP → MD',comp:'$175K',firms:'GS · MS · JPM',exits:'PE · HF · Corp Dev',grad:'linear-gradient(135deg,#2c1810,#8b2500)',accent:'linear-gradient(90deg,#8b2500,#c97c42)'},
+  {abbr:'PE',pillIdx:1,name:'Private Equity',path:'Associate → Sr Associate → VP → Principal → Partner',comp:'$275K+',firms:'Blackstone · KKR · Apollo',exits:'Partner · Startup · HF',grad:'linear-gradient(135deg,#0f2440,#2b5f8a)',accent:'linear-gradient(90deg,#1e40af,#60a5fa)'},
+  {abbr:'MBB',pillIdx:2,name:'Consulting',path:'BA → Associate → EM → Principal → Partner',comp:'$112K',firms:'McKinsey · BCG · Bain',exits:'Tech PM · Startup · PE',grad:'linear-gradient(135deg,#1a1206,#b8860b)',accent:'linear-gradient(90deg,#b8860b,#fbbf24)'},
+  {abbr:'S&T',pillIdx:3,name:'Sales & Trading',path:'Analyst → Associate → VP → Director → MD',comp:'$150K',firms:'GS · JPM · Citadel Sec',exits:'Hedge Fund · Quant · Buy-side',grad:'linear-gradient(135deg,#0d1117,#58a6ff)',accent:'linear-gradient(90deg,#0969da,#58a6ff)'},
+  {abbr:'ER',pillIdx:4,name:'Equity Research',path:'Associate → Sr Associate → VP → MD / Analyst',comp:'$145K',firms:'MS · GS · JPM · Boutiques',exits:'Hedge Fund · Long-only · AM',grad:'linear-gradient(135deg,#24292f,#0969da)',accent:'linear-gradient(90deg,#0969da,#58a6ff)'},
+  {abbr:'AM',pillIdx:5,name:'Asset Management',path:'Analyst → Associate → PM → Sr PM → CIO',comp:'$140K',firms:'BlackRock · Fidelity · T. Rowe',exits:'Hedge Fund · Boutique · PM',grad:'linear-gradient(135deg,#0a2818,#1b5e3b)',accent:'linear-gradient(90deg,#1b5e3b,#22c55e)'},
+  {abbr:'VC',pillIdx:6,name:'Venture Capital',path:'Analyst → Associate → Principal → Partner',comp:'$150K + carry',firms:'Sequoia · a16z · Benchmark',exits:'Founder · GP · Angel · Operator',grad:'linear-gradient(135deg,#18181b,#7c3aed)',accent:'linear-gradient(90deg,#7c3aed,#a78bfa)'},
+  {abbr:'RE',pillIdx:7,name:'Real Estate',path:'Analyst → Associate → VP → Director → MD',comp:'$135K',firms:'Blackstone RE · Starwood · Brookfield',exits:'Dev Co · Family Office · REPE',grad:'linear-gradient(135deg,#2d1f0e,#7c5c2e)',accent:'linear-gradient(90deg,#7c5c2e,#d97706)'},
+  {abbr:'RX',pillIdx:8,name:'Restructuring',path:'Analyst → Associate → VP → MD',comp:'$190K',firms:'PJT · Houlihan · Lazard · Moelis',exits:'Distressed HF · Special Sits PE',grad:'linear-gradient(135deg,#2a0e0e,#6b1d1d)',accent:'linear-gradient(90deg,#6b1d1d,#dc2626)'},
+  {abbr:'GE',pillIdx:9,name:'Growth Equity',path:'Associate → Sr Associate → VP → Principal → Partner',comp:'$200K+',firms:'Insight · General Atlantic · TA',exits:'Partner · Operator · VC',grad:'linear-gradient(135deg,#1e1b4b,#4338ca)',accent:'linear-gradient(90deg,#4338ca,#818cf8)'},
+  {abbr:'AUD',pillIdx:10,name:'Accounting & Audit',path:'Staff → Senior → Manager → Sr Mgr → Partner',comp:'$75K',firms:'Deloitte · PwC · EY · KPMG',exits:'Corp Finance · FP&A · CFO track',grad:'linear-gradient(135deg,#0f2744,#1a3d6b)',accent:'linear-gradient(90deg,#1a3d6b,#3b82f6)'}
+];
+const roadmapPreview=document.getElementById('roadmap-preview');
+const roadmapAccent=document.getElementById('roadmap-accent');
+const roadmapBadge=document.getElementById('roadmap-badge');
+const roadmapName=document.getElementById('roadmap-name');
+const roadmapSub=document.getElementById('roadmap-sub');
+const roadmapComp=document.getElementById('roadmap-comp');
+const roadmapFirms=document.getElementById('roadmap-firms');
+const roadmapExits=document.getElementById('roadmap-exits');
+const roadmapPills=document.querySelectorAll('.roadmap-pill');
+const roadmapCard=document.getElementById('fc6');
+let roadmapIdx=0;
+function roadmapPlay(i){
+  const t=roadmapTracks[i];
+  if(!t||!roadmapPreview)return;
+  // Update active pill
+  roadmapPills.forEach((p,pi)=>p.classList.toggle('active',pi===t.pillIdx));
+  // Fade content
+  const textEls=[roadmapBadge,roadmapName,roadmapSub,roadmapComp,roadmapFirms,roadmapExits];
+  textEls.forEach(el=>{if(el)el.style.opacity='0';});
+  setTimeout(()=>{
+    roadmapAccent.style.background=t.accent;
+    roadmapBadge.style.background=t.grad;
+    roadmapBadge.textContent=t.abbr;
+    roadmapName.textContent=t.name;
+    roadmapSub.textContent=t.path;
+    roadmapComp.textContent=t.comp;
+    roadmapFirms.textContent=t.firms;
+    roadmapExits.textContent=t.exits;
+    textEls.forEach(el=>{if(el)el.style.opacity='1';});
+  },300);
+}
+if(roadmapCard){
+  // Transition smoothly
+  [roadmapBadge,roadmapName,roadmapSub,roadmapComp,roadmapFirms,roadmapExits].forEach(el=>{if(el)el.style.transition='opacity 0.25s ease';});
+  let roadmapStarted=false;
+  const roadmapObs=new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting&&!roadmapStarted){
+      roadmapStarted=true;
+      setInterval(()=>{
+        roadmapIdx=(roadmapIdx+1)%roadmapTracks.length;
+        roadmapPlay(roadmapIdx);
+      },3200);
+    }
+  }),{threshold:0.3});
+  roadmapObs.observe(roadmapCard);
 }
 
 // ── Card 4: rate bars ──
