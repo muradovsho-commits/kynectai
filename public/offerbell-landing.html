@@ -441,30 +441,57 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
           <div class="demo-dot" style="background:#ff5f57"></div>
           <div class="demo-dot" style="background:#febc2e"></div>
           <div class="demo-dot" style="background:#28c840"></div>
-          <span class="demo-url">offerbell.app/search</span>
+          <span class="demo-url">offerbell.app/referral-map</span>
         </div>
         <div class="demo-search">
-          <svg class="demo-search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <svg class="demo-search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="5" cy="6" r="3"/><circle cx="19" cy="6" r="3"/><circle cx="12" cy="18" r="3"/><path d="M5 9v3a4 4 0 0 0 4 4h2"/><path d="M19 9v3a4 4 0 0 1-4 4h-2"/></svg>
           <span class="demo-typing-text" id="typing-text"></span><span class="demo-cursor"></span>
         </div>
-        <div class="demo-results">
-          <div class="demo-result">
-            <div><div class="res-name">James Chen</div><div class="res-meta">IB Analyst · Goldman Sachs · New York · ✓ Verified</div></div>
-            <div class="res-tags"><span class="rtag rtag-li">LinkedIn</span><span class="rtag rtag-em">Email</span></div>
-          </div>
-          <div class="demo-result">
-            <div><div class="res-name">Sarah Park</div><div class="res-meta">Associate · William Blair · Chicago · ✓ Verified</div></div>
-            <div class="res-tags"><span class="rtag rtag-li">LinkedIn</span><span class="rtag rtag-em">Email</span></div>
-          </div>
-          <div class="demo-result">
-            <div><div class="res-name">Marcus Williams</div><div class="res-meta">PE Associate · Insight Partners · NYC · ✓ Verified</div></div>
-            <div class="res-tags"><span class="rtag rtag-li">LinkedIn</span><span class="rtag rtag-em">Email</span></div>
+        <div class="demo-results" style="padding:20px 24px;background:#fafbfc;position:relative;min-height:210px;">
+          <svg viewBox="0 0 480 200" style="width:100%;height:200px;display:block;">
+            <defs>
+              <radialGradient id="youGrad" cx="50%" cy="50%"><stop offset="0%" stop-color="#fff" stop-opacity="0.9"/><stop offset="45%" stop-color="#34d399"/><stop offset="100%" stop-color="#10b981"/></radialGradient>
+              <radialGradient id="blueGrad" cx="50%" cy="50%"><stop offset="0%" stop-color="#fff" stop-opacity="0.85"/><stop offset="45%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#3b82f6"/></radialGradient>
+              <radialGradient id="purpGrad" cx="50%" cy="50%"><stop offset="0%" stop-color="#fff" stop-opacity="0.85"/><stop offset="45%" stop-color="#c084fc"/><stop offset="100%" stop-color="#a855f7"/></radialGradient>
+            </defs>
+            <line x1="240" y1="100" x2="120" y2="60" stroke="#cbd5e1" stroke-width="1.2"/>
+            <line x1="240" y1="100" x2="130" y2="150" stroke="#cbd5e1" stroke-width="1.2"/>
+            <line x1="240" y1="100" x2="360" y2="65" stroke="#cbd5e1" stroke-width="1.2"/>
+            <line x1="240" y1="100" x2="370" y2="155" stroke="#cbd5e1" stroke-width="1.2"/>
+            <line x1="360" y1="65" x2="435" y2="40" stroke="#cbd5e1" stroke-width="1.2"/>
+            <line x1="360" y1="65" x2="445" y2="95" stroke="#cbd5e1" stroke-width="1.2"/>
+            <line x1="130" y1="150" x2="50" y2="175" stroke="#cbd5e1" stroke-width="1.2"/>
+            <circle cx="240" cy="100" r="22" fill="url(#youGrad)"/>
+            <text x="240" y="104" text-anchor="middle" fill="#fff" font-size="10" font-weight="800" font-family="'Sora',sans-serif">YOU</text>
+            <circle cx="120" cy="60" r="14" fill="url(#blueGrad)"/>
+            <text x="120" y="64" text-anchor="middle" fill="#fff" font-size="9" font-weight="800" font-family="'Sora',sans-serif">JC</text>
+            <text x="120" y="88" text-anchor="middle" fill="#475569" font-size="9" font-weight="600" font-family="'Sora',sans-serif">James</text>
+            <circle cx="130" cy="150" r="14" fill="url(#blueGrad)"/>
+            <text x="130" y="154" text-anchor="middle" fill="#fff" font-size="9" font-weight="800" font-family="'Sora',sans-serif">SP</text>
+            <text x="130" y="178" text-anchor="middle" fill="#475569" font-size="9" font-weight="600" font-family="'Sora',sans-serif">Sarah</text>
+            <circle cx="360" cy="65" r="14" fill="url(#blueGrad)"/>
+            <text x="360" y="69" text-anchor="middle" fill="#fff" font-size="9" font-weight="800" font-family="'Sora',sans-serif">MW</text>
+            <text x="360" y="93" text-anchor="middle" fill="#475569" font-size="9" font-weight="600" font-family="'Sora',sans-serif">Marcus</text>
+            <circle cx="370" cy="155" r="14" fill="url(#blueGrad)"/>
+            <text x="370" y="159" text-anchor="middle" fill="#fff" font-size="9" font-weight="800" font-family="'Sora',sans-serif">EL</text>
+            <text x="370" y="183" text-anchor="middle" fill="#475569" font-size="9" font-weight="600" font-family="'Sora',sans-serif">Emily</text>
+            <circle cx="435" cy="40" r="11" fill="url(#purpGrad)"/>
+            <text x="435" y="44" text-anchor="middle" fill="#fff" font-size="8" font-weight="800" font-family="'Sora',sans-serif">DK</text>
+            <circle cx="445" cy="95" r="11" fill="url(#purpGrad)"/>
+            <text x="445" y="99" text-anchor="middle" fill="#fff" font-size="8" font-weight="800" font-family="'Sora',sans-serif">RT</text>
+            <circle cx="50" cy="175" r="11" fill="url(#purpGrad)"/>
+            <text x="50" y="179" text-anchor="middle" fill="#fff" font-size="8" font-weight="800" font-family="'Sora',sans-serif">LN</text>
+          </svg>
+          <div style="position:absolute;top:12px;left:12px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:6px 10px;font-size:10px;color:#64748b;display:flex;flex-direction:column;gap:3px;font-family:'Sora',sans-serif;">
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:7px;height:7px;border-radius:50%;background:#10b981;"></div>You</div>
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:7px;height:7px;border-radius:50%;background:#3b82f6;"></div>Direct</div>
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:7px;height:7px;border-radius:50%;background:#a855f7;"></div>Referred</div>
           </div>
         </div>
         <div class="demo-compose">
           <div class="compose-head">
-            <div class="compose-title">Write outreach with AI</div>
-            <div class="compose-badge">Alumni angle</div>
+            <div class="compose-title">Track referral chains</div>
+            <div class="compose-badge">7 contacts · 7 chains</div>
           </div>
           <div class="compose-msg" id="hero-compose-msg"></div>
         </div>
@@ -894,7 +921,7 @@ const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersect
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
 // ── Hero typing (search bar) ──
-const phrases=["Goldman Sachs IB analysts","Blackstone PE associates","Insight Partners growth investors","William Blair investment bankers"];
+const phrases=["James referred me to Sarah","Marcus → Emily (Blackstone)","Sarah → David → Goldman MD","Visualize your network"];
 let pi=0,ci=0,di=false;
 const tel=document.getElementById('typing-text');
 function type(){const p=phrases[pi];if(!di){tel.textContent=p.slice(0,++ci);if(ci===p.length){di=true;setTimeout(type,1800);return;}}else{tel.textContent=p.slice(0,--ci);if(ci===0){di=false;pi=(pi+1)%phrases.length;}}setTimeout(type,di?42:72);}
@@ -908,7 +935,7 @@ function typeRole(){const r=roles[ri];if(!rd){rel.textContent=r.slice(0,++rc);if
 typeRole();
 
 // ── Hero compose msg ──
-const hcMsg="Hi Emily — I'm a junior at NYU Stern also targeting IB. I noticed we both went through the Investment Banking Club and you navigated Goldman's process last year. Would love to hear about your experience and any advice for someone on a similar path.";
+const hcMsg="Every person you meet unlocks a new branch. James introduced you to Marcus. Marcus introduced you to Emily at Blackstone. See every chain, every warm intro, every path to the firms you want - all mapped in 3D.";
 let hcI=0;const hcEl=document.getElementById('hero-compose-msg');
 function typeHC(){if(hcI<=hcMsg.length){hcEl.innerHTML=hcMsg.slice(0,hcI++)+'<span class="demo-cursor"></span>';setTimeout(typeHC,22);}}
 setTimeout(typeHC,1400);
