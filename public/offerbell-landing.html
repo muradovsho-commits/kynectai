@@ -185,6 +185,26 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
 /* coach */
 .coach-anim{margin-top:16px;}
 
+/* ── Coach card rebuild (07) ── */
+.coach-caps{display:flex;flex-wrap:wrap;gap:5px;margin-top:18px;margin-bottom:14px;}
+.coach-cap{font-size:10px;font-weight:600;color:var(--g600);background:var(--white);border:1px solid var(--g200);padding:5px 10px;border-radius:100px;transition:all 0.35s ease;}
+.coach-cap.active{background:var(--black);color:var(--white);border-color:var(--black);transform:scale(1.03);}
+.coach-chat-stage{background:linear-gradient(165deg,#fafbff,#f3f5f9);border:1px solid var(--g200);border-radius:14px;padding:14px;}
+.coach-chat-head{display:flex;align-items:center;gap:10px;padding-bottom:11px;margin-bottom:11px;border-bottom:1px solid var(--g200);}
+.coach-avatar{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#1e1b4b,#7c3aed);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(124,58,237,0.25);}
+.coach-head-name{font-size:12px;font-weight:700;color:var(--black);letter-spacing:-0.1px;}
+.coach-head-name span{color:#7c3aed;transition:color 0.3s;}
+.coach-head-sub{font-size:10px;color:var(--g500);margin-top:1px;display:flex;align-items:center;gap:5px;}
+.coach-head-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,0.15);animation:coach-head-pulse 2s ease-in-out infinite;}
+@keyframes coach-head-pulse{0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,0.15);}50%{box-shadow:0 0 0 5px rgba(34,197,94,0.05);}}
+.coach-chat-body{display:flex;flex-direction:column;gap:8px;}
+.coach-bubble{font-size:11px;line-height:1.5;padding:9px 12px;border-radius:12px;max-width:92%;}
+.coach-bubble-user{background:var(--g100);color:var(--black);border-bottom-right-radius:3px;align-self:flex-end;font-weight:500;}
+.coach-bubble-ai{background:var(--black);color:rgba(255,255,255,0.92);border-bottom-left-radius:3px;align-self:flex-start;}
+.coach-ai-label{font-size:9px;font-weight:800;color:#a78bfa;letter-spacing:0.6px;margin-bottom:4px;text-transform:uppercase;}
+.coach-ai-body{min-height:40px;}
+.coach-cursor{display:inline-block;width:2px;height:11px;background:#a78bfa;vertical-align:middle;margin-left:2px;animation:blink 1s infinite;}
+
 /* ── Flashcard + mic demo (04) ── */
 .flash-demo{margin-top:20px;display:flex;flex-direction:column;gap:12px;}
 .flash-card-3d{position:relative;width:100%;height:150px;perspective:1200px;cursor:pointer;}
@@ -862,14 +882,43 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 
     <!-- 07 Coach -->
     <div class="f-card f-card-5 reveal reveal-d1" id="fc5">
-      <div class="f-num">07 — AI Conversation Coach</div>
-      <div class="f-title">They replied.<br><em>Now what?</em></div>
-      <div class="f-desc">Paste any reply and get precise coaching on your next move.</div>
-      <div class="coach-anim">
-        <div class="coach-label">Their reply</div>
-        <div class="coach-msg them">"Thanks for reaching out! Happy to connect — what did you want to discuss?"</div>
-        <div class="coach-label" style="margin-top:8px">OfferBell recommends</div>
-        <div class="coach-msg offerbell" id="coach-text"></div>
+      <div class="f-num">07 — AI Coach</div>
+      <div class="f-title">Your personal<br><em>cheat code.</em></div>
+      <div class="f-desc">Cold email line-edits, behavioral story shaping, technical drills, LBO walkthroughs, case prep, stock pitches, coffee chat strategy, resume feedback, offer decisions. One assistant. Every scenario.</div>
+      <!-- Capability chips -->
+      <div class="coach-caps">
+        <div class="coach-cap active">Cold email rewrites</div>
+        <div class="coach-cap">Behavioral stories</div>
+        <div class="coach-cap">Technical drills</div>
+        <div class="coach-cap">Stock pitches</div>
+        <div class="coach-cap">Case frameworks</div>
+        <div class="coach-cap">LBO walkthroughs</div>
+        <div class="coach-cap">Coffee chat prep</div>
+        <div class="coach-cap">Offer strategy</div>
+        <div class="coach-cap">Resume review</div>
+      </div>
+      <!-- Chat stage -->
+      <div class="coach-chat-stage">
+        <div class="coach-chat-head">
+          <div class="coach-avatar">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <div class="coach-head-text">
+            <div class="coach-head-name">Coach · <span id="coach-track">Investment Banking</span></div>
+            <div class="coach-head-sub"><span class="coach-head-dot"></span>Tailored to your career track</div>
+          </div>
+        </div>
+        <div class="coach-chat-body">
+          <!-- User msg -->
+          <div class="coach-bubble coach-bubble-user" id="coach-q">
+            I have a coffee chat with a GS MD tomorrow — what questions should I ask?
+          </div>
+          <!-- AI response -->
+          <div class="coach-bubble coach-bubble-ai" id="coach-a">
+            <div class="coach-ai-label">Coach</div>
+            <div class="coach-ai-body" id="coach-a-body"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1242,6 +1291,93 @@ if(drillStage){
   drillObs.observe(drillStage);
 }
 
+// ── Card 7: Coach rotating scenarios ──
+const coachScenarios=[
+  {
+    cap:0, track:"Investment Banking",
+    q:"I have a coffee chat with a GS MD tomorrow — what questions should I ask?",
+    a:"Skip \"tell me about your day.\" Ask about a deal they've worked on recently — read their group's recent tombstones first. Then ask how they think about coverage vs product groups right now given the M&A environment. Ends the chat with \"what's one thing you'd do differently if you were starting over?\" — every senior banker has an answer."
+  },
+  {
+    cap:2, track:"Private Equity",
+    q:"Give me an LBO paper test.",
+    a:"100% equity buyout at 10x EBITDA. EBITDA is $50M, growing 5% annually. Exit at 10x in Year 5, 60% debt financing at 6% rate, tax rate 25%. What's the sponsor IRR? Start with sources and uses — I'll walk you through each step and flag mistakes as you go."
+  },
+  {
+    cap:1, track:"Consulting",
+    q:"My \"Why McKinsey?\" answer feels generic. Help me fix it.",
+    a:"Generic because you're leading with prestige. Flip it: open with a specific McKinsey project that shaped your interest (search their \"Our Insights\" page). Then connect it to a skill you're building and a problem you want to solve. Three sentences max. Paste what you have and I'll rewrite it line by line."
+  },
+  {
+    cap:3, track:"Equity Research",
+    q:"Critique my Tesla long pitch — 12-month price target $280.",
+    a:"Thesis needs a clearer variant perception. What does the Street get wrong? If it's margin expansion from energy storage, say that in sentence one. Your catalysts need to be dated (Q2 earnings, Cybertruck ramp). Weakest part is risk framing — add a specific bear case with a probability-weighted downside. I'll grade each section 1-10."
+  },
+  {
+    cap:0, track:"Venture Capital",
+    q:"How do I cold email a partner at a16z without sounding like every other student?",
+    a:"Don't pitch yourself. Pitch a thesis. Open with a specific portfolio company and one non-obvious observation about their market. Then ask one sharp question their team would actually debate internally. Sign off with \"happy to share my writeup if useful.\" I'll draft three variants for you."
+  },
+  {
+    cap:5, track:"Restructuring",
+    q:"Walk me through how I'd approach a distressed retailer case.",
+    a:"Start with the fulcrum security — who gets wiped out, who negotiates? Frame it as: (1) liquidity runway, (2) covenant headroom, (3) out-of-court vs Chapter 11 math, (4) recovery waterfall by tranche. I'll give you J.Crew, Toys R Us, and Neiman as practice reps — you pick which to work first."
+  }
+];
+const coachQ=document.getElementById('coach-q');
+const coachABody=document.getElementById('coach-a-body');
+const coachTrack=document.getElementById('coach-track');
+const coachCaps=document.querySelectorAll('.coach-cap');
+const coachCard=document.getElementById('fc5');
+let coachIdx=0, coachTypeTimer=null, coachCycleTimer=null;
+function coachType(text, i=0){
+  if(!coachABody)return;
+  if(i<=text.length){
+    coachABody.innerHTML=text.slice(0,i)+'<span class="coach-cursor"></span>';
+    coachTypeTimer=setTimeout(()=>coachType(text,i+1),14);
+  } else {
+    coachABody.innerHTML=text;
+  }
+}
+function coachPlay(i){
+  const s=coachScenarios[i];
+  if(!s)return;
+  // Update chip
+  coachCaps.forEach((c,ci)=>c.classList.toggle('active',ci===s.cap));
+  // Swap with slight fade
+  if(coachQ&&coachABody&&coachTrack){
+    coachQ.style.opacity='0';
+    coachABody.style.opacity='0';
+    coachTrack.style.opacity='0';
+    setTimeout(()=>{
+      coachTrack.textContent=s.track;
+      coachQ.textContent=s.q;
+      coachQ.style.opacity='1';
+      coachTrack.style.opacity='1';
+      coachABody.innerHTML='<span class="coach-cursor"></span>';
+      coachABody.style.opacity='1';
+      setTimeout(()=>coachType(s.a),700);
+    },350);
+  }
+}
+if(coachCard){
+  // Opacity transitions
+  [coachQ,coachABody,coachTrack].forEach(el=>{if(el)el.style.transition='opacity 0.3s ease';});
+  let coachStarted=false;
+  const coachObs=new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting&&!coachStarted){
+      coachStarted=true;
+      coachPlay(0);
+      coachCycleTimer=setInterval(()=>{
+        clearTimeout(coachTypeTimer);
+        coachIdx=(coachIdx+1)%coachScenarios.length;
+        coachPlay(coachIdx);
+      },7500);
+    }
+  }),{threshold:0.3});
+  coachObs.observe(coachCard);
+}
+
 // ── Card 4: rate bars ──
 const r4obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)['rb1','rb2','rb3','rb4','rb5'].forEach(id=>{const el=document.getElementById(id);if(el)setTimeout(()=>el.style.width=el.dataset.target+'%',200)});}),{threshold:0.3});
 const fc4=document.getElementById('fc4');if(fc4)r4obs.observe(fc4);
@@ -1249,13 +1385,6 @@ const fc4=document.getElementById('fc4');if(fc4)r4obs.observe(fc4);
 // ── Card 6: job rows ──
 const j6obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)['jr1','jr2','jr3'].forEach((id,i)=>setTimeout(()=>{const el=document.getElementById(id);if(el)el.classList.add('show');},i*180));}),{threshold:0.2});
 const fc6=document.getElementById('fc6');if(fc6)j6obs.observe(fc6);
-
-// ── Card 7: coach typing ──
-const coachText="Lead with one specific deal or project they worked on. Ask about the day-to-day, not comp. Keep it under 3 sentences. Save any referral ask for the second conversation.";
-let coachIdx=0;const coachEl=document.getElementById('coach-text');
-function typeCoach(){if(coachIdx<=coachText.length){coachEl.textContent=coachText.slice(0,coachIdx++);setTimeout(typeCoach,18);}}
-const c7obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting&&coachIdx===0)typeCoach();}),{threshold:0.3});
-const fc7=document.getElementById('fc7');if(fc7)c7obs.observe(fc7);
 
 // ── Network canvas ──
 (function(){
