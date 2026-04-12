@@ -108,7 +108,7 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
          const ct = contacts.find(c => c.id === id);
          return ct ? getContactState(ct) === st : false;
       });
-      nodes.push({ id: st, x: center.x, y: center.y, name: st === 'UNASSIGNED' ? 'Unmapped' : st, firm: '', color: '#3b82f6', r: Math.min(32, 14 + stateCounts[st] * 2.5), isMatch, isYou: false, isSelected: false, isStateBubble: true });
+      nodes.push({ id: st, x: center.x, y: center.y, name: st === 'UNASSIGNED' ? 'Unmapped' : st, firm: '', color: st === 'UNASSIGNED' ? '#6b7280' : '#3b82f6', r: Math.min(28, 16 + stateCounts[st] * 2), isMatch, isYou: false, isSelected: false, isStateBubble: true });
     });
 
     contacts.forEach(c => {
@@ -198,14 +198,14 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
   
   // Render
   return (
-    <div style={{ width: '100%', height: expanded ? '100%' : '400px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', perspective: '1200px', overflow: 'hidden' }}>
-      
+    <div style={{ width: '100%', height: expanded ? '100%' : '480px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+
       {focusedState && (
-        <button 
+        <button
           onClick={() => setFocusedState(null)}
-          style={{ position: 'absolute', top: 16, left: 16, zIndex: 10, padding: '8px 16px', borderRadius: 8, border: '1.5px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.6)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; }}
+          style={{ position: 'absolute', top: 16, left: 16, zIndex: 10, padding: '8px 14px', borderRadius: 8, border: '1.5px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.2s', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text)'; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; }}
           type="button"
         >
           <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -213,98 +213,183 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
         </button>
       )}
 
-      <svg viewBox="0 0 978 595" style={{ width: '100%', height: '100%', transform: 'rotateX(40deg) rotateZ(-5deg) scale(1.1)', transformStyle: 'preserve-3d', filter: 'drop-shadow(0 40px 30px rgba(0,0,0,0.5))' }}>
+      {/* Focused state title */}
+      {focusedState && (
+        <div style={{ position: 'absolute', top: 18, left: '50%', transform: 'translateX(-50%)', zIndex: 10, fontSize: 14, fontWeight: 700, color: 'var(--text)', letterSpacing: 0.5, background: 'var(--surface)', padding: '6px 14px', borderRadius: 8, border: '1.5px solid var(--border)' }}>
+          {US_PATHS[focusedState as keyof typeof US_PATHS]?.name || focusedState}
+          <span style={{ color: 'var(--text-3)', fontWeight: 500, marginLeft: 8 }}>{stateCounts[focusedState] || 0} contact{(stateCounts[focusedState] || 0) !== 1 ? 's' : ''}</span>
+        </div>
+      )}
+
+      <svg viewBox="0 0 978 595" style={{ width: '100%', height: '100%' }} preserveAspectRatio="xMidYMid meet">
         <defs>
-          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="6" result="blur" />
+          <filter id="rm-node-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
-          <filter id="glow-strong" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="12" result="blur" />
-            <feComponentTransfer in="blur" result="glow"><feFuncA type="linear" slope="1.5" /></feComponentTransfer>
-            <feMerge><feMergeNode in="glow" /><feMergeNode in="SourceGraphic" /></feMerge>
+          <filter id="rm-strong-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="10" result="blur" />
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
-          <radialGradient id="3d-sphere" cx="35%" cy="30%" r="70%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" /><stop offset="25%" stopColor="#ffffff" stopOpacity="0.2" />
-            <stop offset="60%" stopColor="#ffffff" stopOpacity="0" /><stop offset="100%" stopColor="#000000" stopOpacity="0.6" />
+          <radialGradient id="rm-node-shine" cx="35%" cy="30%" r="70%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.6" />
+            <stop offset="30%" stopColor="#ffffff" stopOpacity="0.15" />
+            <stop offset="70%" stopColor="#ffffff" stopOpacity="0" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0.35" />
           </radialGradient>
         </defs>
 
-        {/* Real USA Map Outline Backdrop */}
-        <g stroke="var(--map-stroke)" strokeWidth="1" fill="var(--map-fill)">
-          {Object.entries(US_PATHS).map(([abbr, st]) => (
-            <path key={abbr} d={st.dimensions} id={abbr} opacity={focusedState && focusedState !== abbr ? 0.2 : 1} style={{ transition: 'opacity 0.4s' }} />
-          ))}
+        {/* US STATE PATHS - with overlay for states that have contacts */}
+        <g>
+          {Object.entries(US_PATHS).map(([abbr, st]) => {
+            const hasContacts = (stateCounts[abbr] || 0) > 0 && abbr !== userState;
+            const isUserLoc = abbr === userState;
+            const isFocused = focusedState === abbr;
+            const isDimmed = focusedState && focusedState !== abbr;
+            const opacity = isDimmed ? 0.15 : 1;
+
+            // Fill: user's state = green tint, states with contacts = blue tint, otherwise neutral
+            let fill = 'var(--map-fill)';
+            if (isUserLoc) fill = 'rgba(16, 185, 129, 0.15)';
+            else if (hasContacts) fill = 'rgba(59, 130, 246, 0.12)';
+            if (isFocused) fill = 'rgba(59, 130, 246, 0.25)';
+
+            return (
+              <path
+                key={abbr}
+                d={st.dimensions}
+                fill={fill}
+                stroke="var(--map-stroke)"
+                strokeWidth={isFocused ? 1.5 : 0.8}
+                opacity={opacity}
+                style={{ transition: 'all 0.4s ease', cursor: hasContacts || isUserLoc ? 'pointer' : 'default' }}
+                onClick={() => { if (hasContacts && !focusedState) setFocusedState(abbr); }}
+              />
+            );
+          })}
         </g>
 
-        {stateKeys.map(s => {
-          const p = US_STATES[s];
-          return <circle key={`e-${s}`} cx={p.x} cy={p.y} r={3} fill="var(--state-bubble)" opacity={focusedState && focusedState !== s ? 0.2 : 1} style={{ transition: 'opacity 0.4s' }} />;
-        })}
-
-        {/* Dynamic Flight-Path Edges */}
-        {edges.map((e, i) => {
-          const isSameLoc = Math.hypot(e.sourceX - e.targetX, e.sourceY - e.targetY) < 1;
-          const cx = (e.sourceX + e.targetX) / 2;
-          let cy = (e.sourceY + e.targetY) / 2 - 80;
-          if (isSameLoc) cy -= 40;
-          
-          let dimEdge = query && !e.isMatchPath ? true : false;
-          if (e.dimEdge && !e.isMatchPath) dimEdge = true; // Outside state edges dimmed unless matched
+        {/* Edges between state centroids (top-level view only) */}
+        {!focusedState && edges.map((e, i) => {
+          const dx = e.targetX - e.sourceX;
+          const dy = e.targetY - e.sourceY;
+          const dist = Math.hypot(dx, dy);
+          const curveAmt = Math.min(dist * 0.25, 90);
+          const mx = (e.sourceX + e.targetX) / 2;
+          const my = (e.sourceY + e.targetY) / 2 - curveAmt;
+          const isMatchPath = e.isMatchPath;
+          const dimEdge = query && !isMatchPath;
 
           return (
-            <g key={`e-${e.sourceId}-${e.targetId}-${i}`}>
-              <path 
-                d={isSameLoc ? `M ${e.sourceX} ${e.sourceY} Q ${e.sourceX + 40} ${cy} ${e.targetX} ${e.targetY}` : `M ${e.sourceX} ${e.sourceY} Q ${cx} ${cy} ${e.targetX} ${e.targetY}`}
-                fill="none"
-                stroke={e.isMatchPath ? "var(--edge-match)" : "var(--edge-stroke)"} 
-                strokeWidth={e.isMatchPath ? "3" : Math.min(e.count + 0.5, 4).toString()} 
-                opacity={dimEdge ? 0.1 : 1}
-                strokeDasharray="4 4"
-                style={{ transition: 'all 0.3s' }}
-              />
-              {e.isMatchPath && (
-                <path 
-                  d={isSameLoc ? `M ${e.sourceX} ${e.sourceY} Q ${e.sourceX + 40} ${cy} ${e.targetX} ${e.targetY}` : `M ${e.sourceX} ${e.sourceY} Q ${cx} ${cy} ${e.targetX} ${e.targetY}`}
-                  fill="none" stroke="var(--edge-match)" strokeWidth="8" opacity="0.4" style={{ filter: 'url(#glow)', pointerEvents: 'none' }}
+            <g key={`e-${i}`} opacity={dimEdge ? 0.15 : 1} style={{ transition: 'opacity 0.3s' }}>
+              {isMatchPath && (
+                <path
+                  d={`M ${e.sourceX} ${e.sourceY} Q ${mx} ${my} ${e.targetX} ${e.targetY}`}
+                  fill="none" stroke="var(--edge-match)" strokeWidth="6" opacity="0.3"
+                  style={{ filter: 'url(#rm-node-glow)', pointerEvents: 'none' }}
                 />
               )}
+              <path
+                d={`M ${e.sourceX} ${e.sourceY} Q ${mx} ${my} ${e.targetX} ${e.targetY}`}
+                fill="none"
+                stroke={isMatchPath ? 'var(--edge-match)' : 'var(--edge-stroke)'}
+                strokeWidth={isMatchPath ? 2.2 : 1.5}
+                strokeDasharray={isMatchPath ? 'none' : '3 4'}
+                style={{ transition: 'all 0.3s' }}
+              />
             </g>
           );
         })}
 
-        {/* Individual Nodes or State Bubbles */}
+        {/* Nodes */}
         {nodes.map(n => {
-          const opacity = n.isMatch ? 1 : 0.1;
-          const scale = n.isSelected ? 1.2 : 1;
+          const opacity = n.isMatch ? 1 : 0.18;
+          const scale = n.isSelected ? 1.18 : 1;
+          const isYou = n.isYou;
+          const isState = n.isStateBubble;
 
           return (
-            <g key={n.id} style={{ cursor: n.isYou ? 'default' : 'pointer', transition: 'all 0.4s', opacity, transformOrigin: `${n.x}px ${n.y}px`, transform: `scale(${scale})` }} 
-               onClick={() => {
-                 if (n.isYou) return;
-                 if (n.isStateBubble) setFocusedState(n.id);
-                 else onSelect(n.isSelected ? null : n.id);
-               }}>
-              
-              {n.isMatch && <circle cx={n.x} cy={n.y} r={n.r + 6} fill={n.color} opacity={n.isSelected ? "0.6" : "0.3"} style={{ filter: n.isSelected ? 'url(#glow-strong)' : 'url(#glow)', pointerEvents: 'none', transition: 'all 0.3s' }} />}
-              {n.isSelected && <circle cx={n.x} cy={n.y} r={n.r + 10} fill="none" stroke="var(--text-match)" strokeWidth="2" opacity="0.8" style={{ transition: 'all 0.3s' }} />}
-              
+            <g
+              key={n.id}
+              style={{
+                cursor: isYou ? 'default' : 'pointer',
+                transition: 'opacity 0.4s, transform 0.25s',
+                opacity,
+                transformOrigin: `${n.x}px ${n.y}px`,
+                transform: `scale(${scale})`
+              }}
+              onClick={() => {
+                if (isYou) return;
+                if (isState) setFocusedState(n.id);
+                else onSelect(n.isSelected ? null : n.id);
+              }}
+            >
+              {/* Pulse ring for "you" */}
+              {isYou && (
+                <>
+                  <circle cx={n.x} cy={n.y} r={n.r + 10} fill="none" stroke={n.color} strokeWidth="2" opacity="0.4" style={{ animation: 'rm-pulse 2.4s ease-out infinite', transformOrigin: `${n.x}px ${n.y}px` }} />
+                  <circle cx={n.x} cy={n.y} r={n.r + 14} fill="none" stroke={n.color} strokeWidth="1.5" opacity="0.2" style={{ animation: 'rm-pulse 2.4s ease-out infinite 0.6s', transformOrigin: `${n.x}px ${n.y}px` }} />
+                </>
+              )}
+
+              {/* Glow behind node */}
+              {(n.isSelected || n.isMatch) && (
+                <circle
+                  cx={n.x} cy={n.y}
+                  r={n.r + (n.isSelected ? 8 : 4)}
+                  fill={n.color}
+                  opacity={n.isSelected ? 0.5 : 0.2}
+                  style={{ filter: n.isSelected ? 'url(#rm-strong-glow)' : 'url(#rm-node-glow)', pointerEvents: 'none', transition: 'all 0.3s' }}
+                />
+              )}
+
+              {/* Selection ring */}
+              {n.isSelected && (
+                <circle cx={n.x} cy={n.y} r={n.r + 6} fill="none" stroke={n.color} strokeWidth="2" opacity="0.85" />
+              )}
+
+              {/* Main node */}
               <circle cx={n.x} cy={n.y} r={n.r} fill={n.color} />
-              <circle cx={n.x} cy={n.y} r={n.r} fill="url(#3d-sphere)" style={{ pointerEvents: 'none' }} />
-              <circle cx={n.x} cy={n.y} r={n.r - 1} fill="none" stroke="var(--node-glow)" strokeWidth="1" style={{ pointerEvents: 'none' }} />
-              
-              <text x={n.x} y={n.y + 1} textAnchor="middle" dominantBaseline="central" fill="#fff" fontSize={n.r > 16 ? 12 : 9} fontWeight="800" fontFamily="'Sora', sans-serif">
-                {n.isYou ? 'You' : (n.isStateBubble ? stateCounts[n.id] : getInitials(n.name))}
+              <circle cx={n.x} cy={n.y} r={n.r} fill="url(#rm-node-shine)" style={{ pointerEvents: 'none' }} />
+
+              {/* Count/initials */}
+              <text
+                x={n.x} y={n.y + 1}
+                textAnchor="middle" dominantBaseline="central"
+                fill="#fff"
+                fontSize={n.r > 20 ? 13 : n.r > 14 ? 11 : 9}
+                fontWeight="800" fontFamily="'Sora', sans-serif"
+                style={{ pointerEvents: 'none', letterSpacing: '-0.3px' }}
+              >
+                {isYou ? 'You' : (isState ? stateCounts[n.id] : getInitials(n.name))}
               </text>
-              
-              {((expanded && (n.isSelected || n.isStateBubble)) || n.isStateBubble) && !n.isYou && (
-                <text x={n.x} y={n.y + n.r + 14} textAnchor="middle" fill="var(--text-3)" fontSize={n.isStateBubble ? "12" : "11"} fontWeight="700" fontFamily="'Sora', sans-serif" style={{ pointerEvents: 'none' }}>
-                  {n.isStateBubble ? n.name : n.name.split(' ')[0]}
+
+              {/* Label under state bubbles and selected nodes */}
+              {((expanded && (n.isSelected || isState)) || isState) && !isYou && (
+                <text
+                  x={n.x} y={n.y + n.r + 14}
+                  textAnchor="middle"
+                  fill="var(--text-2)"
+                  fontSize={isState ? 11 : 10}
+                  fontWeight="700"
+                  fontFamily="'Sora', sans-serif"
+                  style={{ pointerEvents: 'none' }}
+                >
+                  {isState ? (n.id === 'UNASSIGNED' ? 'Unmapped' : n.id) : n.name.split(' ')[0]}
                 </text>
               )}
             </g>
           );
         })}
       </svg>
+
+      {/* Inline animation styles */}
+      <style jsx>{`
+        @keyframes rm-pulse {
+          0% { transform: scale(1); opacity: 0.5; }
+          100% { transform: scale(1.8); opacity: 0; }
+        }
+      `}</style>
     </div>
   );
 }
@@ -414,28 +499,6 @@ export default function ReferralMapPage() {
             <div className="rm-sub">Visualize your network. Add your central location and trace chains state by state.</div>
           </div>
 
-          {/* USER LOCATION CARD */}
-          <div style={{ background: 'var(--surface-2)', border: '1.5px solid var(--border)', borderRadius: 12, padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}>
-            <div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>Set Your Home Location</div>
-              <div style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 4 }}>Anchor yourself on the map to visualize how your real-world referrals extend across the country.</div>
-            </div>
-            <select 
-              className="rm-input" 
-              style={{ width: 240, padding: '12px 16px', fontSize: 14, fontWeight: 600, background: 'var(--surface)', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
-              value={userState || ''} 
-              onChange={e => {
-                const val = e.target.value;
-                setUserState(val || null);
-                if (val) localStorage.setItem('offerbell_user_state', val);
-                else localStorage.removeItem('offerbell_user_state');
-              }}
-            >
-              <option value="">-- Unassigned --</option>
-              {Object.entries(US_STATES).map(([code, st]) => (<option key={code} value={code}>{st.name}</option>))}
-            </select>
-          </div>
-
           {/* Actions */}
           <div className="rm-actions">
             <button className="rm-btn-primary" onClick={() => openAdd()} type="button">
@@ -497,22 +560,17 @@ export default function ReferralMapPage() {
           {/* ═══ NETWORK GRAPH ═══ */}
           {totalContacts > 0 && (
             <div className="rm-graph-container">
-              {/* Added 3D CSS Grid Layer representing depth */}
-              <div className="rm-graph-grid">
-                <div className="rm-graph-grid-inner" />
-              </div>
-              
               <button
                 onClick={() => setGraphExpanded(true)}
-                style={{ position: 'absolute', top: 12, right: 12, zIndex: 10, width: 32, height: 32, borderRadius: 8, border: '1.5px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.8)'; e.currentTarget.style.background = 'rgba(0,0,0,0.8)'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.background = 'rgba(0,0,0,0.5)'; }}
+                style={{ position: 'absolute', top: 12, right: 12, zIndex: 10, width: 34, height: 34, borderRadius: 8, border: '1.5px solid var(--border)', background: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.15s', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; }}
                 type="button"
                 title="Expand map"
               >
-                <svg width="14" height="14" fill="none" stroke="#fff" strokeWidth="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                <svg width="14" height="14" fill="none" stroke="var(--text-2)" strokeWidth="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
               </button>
-              
+
               <NetworkGraph contacts={contacts} selectedId={selectedChain} expanded={false} searchQuery={q} userState={userState} onSelect={(id) => {
                 if (!id) { setSelectedChain(null); return; }
                 const findRoot = (contactId: string): string => {
@@ -522,6 +580,30 @@ export default function ReferralMapPage() {
                 };
                 setSelectedChain(findRoot(id));
               }} />
+
+              {/* Home-base prompt overlay */}
+              <div className="rm-home-prompt">
+                <span className="rm-home-prompt-label">{userState ? 'Home base:' : 'Set home base:'}</span>
+                <select
+                  value={userState || ''}
+                  onChange={e => {
+                    const val = e.target.value;
+                    setUserState(val || null);
+                    if (val) localStorage.setItem('offerbell_user_state', val);
+                    else localStorage.removeItem('offerbell_user_state');
+                  }}
+                >
+                  <option value="">-- pick state --</option>
+                  {Object.entries(US_STATES).map(([code, st]) => (<option key={code} value={code}>{st.name}</option>))}
+                </select>
+              </div>
+
+              {/* Legend */}
+              <div className="rm-legend">
+                <div className="rm-legend-row"><div className="rm-legend-dot" style={{ background: '#10b981' }}/>You</div>
+                <div className="rm-legend-row"><div className="rm-legend-dot" style={{ background: '#3b82f6' }}/>State with contacts</div>
+                <div className="rm-legend-row"><div className="rm-legend-dot" style={{ background: '#6b7280' }}/>Unmapped</div>
+              </div>
             </div>
           )}
 
