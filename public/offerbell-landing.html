@@ -223,6 +223,18 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
 .f-card-7{min-height:280px;grid-column:span 2;}
 .f-card-8{min-height:340px;}
 .f-card-9{min-height:340px;}
+.f-card-coach{min-height:340px;}
+
+/* ── Referral Map card (04) ── */
+.ref-stage{margin-top:18px;background:linear-gradient(165deg,#fafbff,#f3f5f9);border:1px solid var(--g200);border-radius:14px;padding:14px 14px 12px;}
+.ref-map{width:100%;height:auto;display:block;border-radius:10px;background:#fff;padding:6px;box-shadow:0 1px 2px rgba(0,0,0,0.03) inset;margin-bottom:12px;}
+.ref-chain-row{display:flex;flex-direction:column;gap:6px;}
+.ref-chain-item{display:flex;align-items:center;gap:10px;padding:7px 10px;background:#fff;border:1px solid var(--g200);border-radius:9px;}
+.ref-chain-avatar{width:24px;height:24px;border-radius:50%;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ref-chain-name{font-size:11px;font-weight:700;color:var(--black);letter-spacing:-0.1px;}
+.ref-chain-name span{color:var(--g400);font-weight:500;margin:0 3px;}
+.ref-chain-name em{font-style:normal;color:#8b2500;font-weight:800;}
+.ref-chain-meta{font-size:10px;color:var(--g500);margin-top:2px;font-weight:500;}
 
 /* contact rows */
 .contact-anim{margin-top:24px;}
@@ -307,39 +319,25 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
 
 /* ── Flashcard + mic demo (04) ── */
 .flash-demo{margin-top:20px;display:flex;flex-direction:column;gap:12px;}
-.flash-card-3d{position:relative;width:100%;height:150px;perspective:1200px;cursor:pointer;}
-.flash-card-3d .flash-side{position:absolute;inset:0;border-radius:12px;padding:14px 16px;backface-visibility:hidden;transition:transform 0.8s cubic-bezier(0.4,0,0.2,1);box-shadow:0 2px 14px rgba(15,23,42,0.06);display:flex;flex-direction:column;justify-content:space-between;}
-.flash-front{background:#fff;border:1px solid var(--g200);}
-.flash-back{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;transform:rotateY(180deg);border:1px solid #1e293b;}
-.flash-card-3d.flipped .flash-front{transform:rotateY(-180deg);}
-.flash-card-3d.flipped .flash-back{transform:rotateY(0);}
+/* Static flashcard */
+.flash-card-static{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:16px 18px;box-shadow:0 2px 14px rgba(15,23,42,0.06);display:flex;flex-direction:column;gap:10px;}
 .flash-side-label{font-size:10px;font-weight:700;color:var(--g500);letter-spacing:0.6px;text-transform:uppercase;}
-.flash-back .flash-side-label{color:#86efac;}
-.flash-side-text{font-family:'Instrument Serif',serif;font-size:19px;line-height:1.25;color:var(--black);letter-spacing:-0.3px;flex:1;display:flex;align-items:center;}
-.flash-back .flash-side-text{color:#fff;font-family:'Sora',sans-serif;font-size:12px;font-weight:500;align-items:flex-start;padding-top:4px;}
-.flash-hint{font-size:10px;color:var(--g400);font-weight:600;}
-.flash-score-row{display:flex;gap:8px;margin-top:6px;}
-.flash-score-item{flex:1;}
-.flash-score-bar{height:4px;background:rgba(255,255,255,0.15);border-radius:3px;overflow:hidden;margin-bottom:3px;}
-.flash-score-fill{height:100%;background:#34d399;border-radius:3px;transition:width 1s cubic-bezier(0.4,0,0.2,1) 0.5s;width:0 !important;}
-.flash-card-3d.flipped .flash-score-fill{width:var(--w,0) !important;}
-.flash-score-lbl{font-size:9px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:0.3px;}
-/* Mic row */
-.flash-mic-row{background:var(--white);border:1px solid var(--g200);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;}
-.flash-mic-pulse{position:relative;width:34px;height:34px;flex-shrink:0;}
-.flash-mic-core{position:absolute;inset:0;background:#dc2626;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:3;box-shadow:0 0 0 0 rgba(220,38,38,0.4);}
-.flash-mic-ring{position:absolute;inset:0;border-radius:50%;background:#dc2626;opacity:0.35;}
-.flash-mic-ring-1{animation:flash-mic-ring 2s ease-out infinite;}
-.flash-mic-ring-2{animation:flash-mic-ring 2s ease-out infinite 0.75s;}
-@keyframes flash-mic-ring{0%{transform:scale(1);opacity:0.35;}100%{transform:scale(2.2);opacity:0;}}
+.flash-card-body{display:flex;flex-direction:column;gap:12px;}
+.flash-q-text{font-family:'Instrument Serif',serif;font-size:20px;line-height:1.3;color:var(--black);letter-spacing:-0.3px;}
+.flash-q-meta{display:flex;gap:14px;flex-wrap:wrap;}
+.flash-q-meta-item{font-size:10.5px;font-weight:600;color:var(--g500);display:flex;align-items:center;gap:6px;}
+.flash-q-dot{width:6px;height:6px;border-radius:50%;background:#16a34a;}
+/* Voice indicator pill (calm, neutral) */
+.flash-mic-row{background:var(--white);border:1px solid var(--g200);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:12px;}
+.flash-mic-icon{width:32px;height:32px;border-radius:9px;background:var(--g100);color:var(--black);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .flash-mic-title{font-size:11px;font-weight:700;color:var(--black);letter-spacing:-0.1px;margin-bottom:4px;}
-.flash-mic-wave{display:flex;align-items:flex-end;gap:2px;height:18px;}
-.flash-mic-wave span{width:2.5px;background:#dc2626;border-radius:2px;height:var(--h);animation:flash-wave 0.9s ease-in-out infinite;}
-.flash-mic-wave span:nth-child(2n){animation-delay:0.1s;}
-.flash-mic-wave span:nth-child(3n){animation-delay:0.2s;background:#f87171;}
-.flash-mic-wave span:nth-child(5n){animation-delay:0.3s;}
-.flash-mic-wave span:nth-child(7n){animation-delay:0.45s;background:#ef4444;}
-@keyframes flash-wave{0%,100%{transform:scaleY(0.4);}50%{transform:scaleY(1);}}
+.flash-mic-wave{display:flex;align-items:flex-end;gap:2px;height:16px;}
+.flash-mic-wave span{width:2.5px;background:var(--g400);border-radius:2px;height:var(--h);animation:flash-wave 1.2s ease-in-out infinite;}
+.flash-mic-wave span:nth-child(2n){animation-delay:0.15s;}
+.flash-mic-wave span:nth-child(3n){animation-delay:0.3s;background:var(--g500);}
+.flash-mic-wave span:nth-child(5n){animation-delay:0.45s;}
+.flash-mic-wave span:nth-child(7n){animation-delay:0.6s;background:var(--black);}
+@keyframes flash-wave{0%,100%{transform:scaleY(0.5);}50%{transform:scaleY(1);}}
 
 /* ── Drill stage (05) ── */
 .drill-stage{margin-top:20px;background:linear-gradient(165deg,#fafbff,#f3f5f9);border:1px solid var(--g200);border-radius:14px;padding:16px;}
@@ -388,23 +386,6 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
 .diag-focus-icon{font-size:15px;font-weight:800;color:#60a5fa;}
 
 /* ── Roadmap card (08) ── */
-.roadmap-stage{margin-top:18px;display:flex;flex-direction:column;gap:10px;}
-.roadmap-preview{position:relative;background:var(--white);border:1px solid var(--g200);border-radius:14px;padding:16px;overflow:hidden;transition:all 0.5s cubic-bezier(0.4,0,0.2,1);}
-.roadmap-accent{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#8b2500,#c97c42);transition:background 0.5s ease;}
-.roadmap-top{display:flex;align-items:center;gap:12px;padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid var(--g100);}
-.roadmap-badge{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2c1810,#8b2500);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:-0.3px;transition:all 0.5s ease;box-shadow:0 4px 12px rgba(139,37,0,0.2);}
-.roadmap-top-text{flex:1;min-width:0;transition:opacity 0.3s;}
-.roadmap-track-name{font-family:'Instrument Serif',serif;font-size:18px;color:var(--black);letter-spacing:-0.4px;line-height:1.15;}
-.roadmap-track-sub{font-size:10px;color:var(--g500);margin-top:3px;font-weight:600;letter-spacing:0.1px;}
-.roadmap-chevron{color:var(--g400);flex-shrink:0;}
-.roadmap-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;transition:opacity 0.3s;}
-.roadmap-stat{min-width:0;}
-.roadmap-stat-lbl{font-size:9px;font-weight:700;color:var(--g500);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:3px;}
-.roadmap-stat-val{font-size:12px;font-weight:700;color:var(--black);letter-spacing:-0.2px;line-height:1.3;}
-/* Rail */
-.roadmap-rail{display:flex;flex-wrap:wrap;gap:4px;}
-.roadmap-pill{font-size:9px;font-weight:700;color:var(--g500);background:transparent;border:1px solid var(--g200);padding:3px 9px;border-radius:100px;transition:all 0.35s ease;letter-spacing:0.2px;}
-.roadmap-pill.active{background:var(--black);color:#fff;border-color:var(--black);transform:scale(1.04);}
 .coach-label{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--g400);margin-bottom:4px;}
 .coach-msg{border-radius:9px;padding:9px 11px;font-size:10px;line-height:1.6;margin-bottom:7px;}
 .coach-msg.them{background:var(--g100);color:var(--g600);border-bottom-left-radius:2px;}
@@ -575,7 +556,7 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
   .features-section{padding:64px 20px;}
   .features-header{grid-template-columns:1fr;}
   .features-bento{grid-template-columns:1fr 1fr;}
-  .f-card-1,.f-card-2,.f-card-4,.f-card-5,.f-card-6,.f-card-7,.f-card-8,.f-card-9{grid-column:span 1;}
+  .f-card-1,.f-card-2,.f-card-3,.f-card-4,.f-card-5,.f-card-6,.f-card-7,.f-card-8,.f-card-9,.f-card-coach{grid-column:span 1;}
   .pricing-section{padding:64px 20px;}
   .pricing-grid{grid-template-columns:1fr;max-width:420px;}
   .faq-section{padding:64px 20px;}
@@ -594,7 +575,7 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
   .hero-tagline{font-size:40px;line-height:1.1;}
   .hero-sub{font-size:14px;}
   .features-bento{grid-template-columns:1fr;}
-  .f-card-1,.f-card-2,.f-card-4,.f-card-5,.f-card-6,.f-card-7,.f-card-8,.f-card-9{grid-column:span 1;}
+  .f-card-1,.f-card-2,.f-card-3,.f-card-4,.f-card-5,.f-card-6,.f-card-7,.f-card-8,.f-card-9,.f-card-coach{grid-column:span 1;}
   .comp-intro{grid-template-columns:1fr;gap:12px;}
   .comp-intro>div:first-child{display:none;}
   .comp-table-header,.comp-row,.comp-total{grid-template-columns:2fr 1fr 1fr 1fr;font-size:10px;}
@@ -820,42 +801,110 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
       </div>
     </div>
 
-    <!-- 04 Flashcards + Interview Mode -->
-    <div class="f-card f-card-4 reveal" id="fc4">
-      <div class="f-num">04 — Flashcards &amp; AI Interview Mode</div>
-      <div class="f-title">Drill until it's<br><em>muscle memory.</em></div>
-      <div class="f-desc">1,200+ technical flashcards across 11 career tracks, plus AI Interview Mode — speak your answer and get scored live on accuracy, depth, and clarity with real follow-up questions.</div>
-      <div class="flash-demo">
-        <!-- Animated flashcard -->
-        <div class="flash-card-3d" id="flash-demo-card">
-          <div class="flash-side flash-front">
-            <div class="flash-side-label">Question · Valuation</div>
-            <div class="flash-side-text">Walk me through a DCF.</div>
-            <div class="flash-hint">Tap to flip</div>
+    <!-- 04 Referral Map -->
+    <div class="f-card f-card-4 reveal" id="fc-ref">
+      <div class="f-num">04 — Referral Map</div>
+      <div class="f-title">See every<br><em>warm intro.</em></div>
+      <div class="f-desc">A live US map of everyone who's referred you, everyone you've referred into, and every chain that connects them. Know who opened which door, from which city, through whom.</div>
+      <div class="ref-stage">
+        <svg class="ref-map" viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg">
+          <!-- abstract US silhouette (simplified) -->
+          <path d="M 30,80 Q 28,60 45,55 L 70,40 L 95,35 L 130,28 L 170,26 L 210,30 L 245,38 L 275,50 L 290,68 L 292,88 L 280,108 L 270,124 L 250,138 L 215,145 L 180,146 L 145,148 L 115,144 L 85,138 L 60,125 L 42,112 Q 30,100 30,80 Z" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+          <!-- Florida -->
+          <path d="M 250,138 L 258,152 L 262,160 L 258,158 L 252,150 Z" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+          <!-- Texas curve -->
+          <path d="M 140,125 L 145,148 L 160,150 L 170,145 L 168,130 Z" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" opacity="0.6"/>
+
+          <!-- Curved referral arcs -->
+          <path d="M 155,98 Q 200,60 240,85" stroke="#8b5cf6" stroke-width="1.3" fill="none" stroke-dasharray="3 4" opacity="0.7">
+            <animate attributeName="stroke-dashoffset" from="0" to="-14" dur="1.6s" repeatCount="indefinite"/>
+          </path>
+          <path d="M 155,98 Q 130,130 95,125" stroke="#3b82f6" stroke-width="1.3" fill="none" stroke-dasharray="3 4" opacity="0.7">
+            <animate attributeName="stroke-dashoffset" from="0" to="-14" dur="1.8s" repeatCount="indefinite"/>
+          </path>
+          <path d="M 155,98 Q 180,120 200,130" stroke="#ec4899" stroke-width="1.3" fill="none" stroke-dasharray="3 4" opacity="0.7">
+            <animate attributeName="stroke-dashoffset" from="0" to="-14" dur="2s" repeatCount="indefinite"/>
+          </path>
+          <path d="M 240,85 Q 265,65 275,55" stroke="#8b5cf6" stroke-width="1" fill="none" stroke-dasharray="2 3" opacity="0.5"/>
+          <path d="M 200,130 Q 230,140 245,144" stroke="#ec4899" stroke-width="1" fill="none" stroke-dasharray="2 3" opacity="0.5"/>
+
+          <!-- You node (center, Midwest-ish) -->
+          <circle cx="155" cy="98" r="8" fill="#0f172a"/>
+          <circle cx="155" cy="98" r="8" fill="none" stroke="#0f172a" stroke-width="1.5" opacity="0.3">
+            <animate attributeName="r" from="8" to="18" dur="2.2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" from="0.35" to="0" dur="2.2s" repeatCount="indefinite"/>
+          </circle>
+          <text x="155" y="101" text-anchor="middle" font-size="7" font-weight="800" fill="#fff" font-family="'Sora',sans-serif">YOU</text>
+
+          <!-- NY contact -->
+          <circle cx="240" cy="85" r="5.5" fill="#8b5cf6"/>
+          <circle cx="240" cy="85" r="5.5" fill="none" stroke="#8b5cf6" stroke-width="1" opacity="0.4">
+            <animate attributeName="r" from="5.5" to="11" dur="2.6s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" from="0.4" to="0" dur="2.6s" repeatCount="indefinite"/>
+          </circle>
+          <!-- SF contact -->
+          <circle cx="95" cy="125" r="5.5" fill="#3b82f6"/>
+          <!-- Chicago contact -->
+          <circle cx="200" cy="130" r="5.5" fill="#ec4899"/>
+          <!-- 2nd-degree: Boston (referred through NY) -->
+          <circle cx="275" cy="55" r="4" fill="#a78bfa" opacity="0.85"/>
+          <!-- 2nd-degree: Miami (referred through Chicago) -->
+          <circle cx="245" cy="144" r="4" fill="#f472b6" opacity="0.85"/>
+
+          <!-- City labels (pinned) -->
+          <g font-family="'Sora',sans-serif" font-size="6.5" fill="#475569" font-weight="700">
+            <text x="240" y="76">NYC · Marcus</text>
+            <text x="95" y="117">SF · Emily</text>
+            <text x="200" y="122">CHI · Sarah</text>
+          </g>
+        </svg>
+
+        <!-- Chain readout below map -->
+        <div class="ref-chain-row">
+          <div class="ref-chain-item">
+            <div class="ref-chain-avatar" style="background:#8b5cf6;">M</div>
+            <div>
+              <div class="ref-chain-name">Marcus <span>→</span> David <span>→</span> <em>You</em></div>
+              <div class="ref-chain-meta">2 warm intros · Goldman NYC</div>
+            </div>
           </div>
-          <div class="flash-side flash-back">
-            <div class="flash-side-label" style="color:#16a34a;">Score · 8 / 10 Pass</div>
-            <div class="flash-side-text" style="font-size:12px;font-weight:500;line-height:1.45;">Project unlevered FCF, discount by WACC, add a terminal value — good structure, push deeper on WACC build.</div>
-            <div class="flash-score-row">
-              <div class="flash-score-item"><div class="flash-score-bar"><div class="flash-score-fill" style="--w:80%;"></div></div><div class="flash-score-lbl">Accuracy 8</div></div>
-              <div class="flash-score-item"><div class="flash-score-bar"><div class="flash-score-fill" style="--w:70%;"></div></div><div class="flash-score-lbl">Depth 7</div></div>
-              <div class="flash-score-item"><div class="flash-score-bar"><div class="flash-score-fill" style="--w:90%;"></div></div><div class="flash-score-lbl">Clarity 9</div></div>
+          <div class="ref-chain-item">
+            <div class="ref-chain-avatar" style="background:#3b82f6;">E</div>
+            <div>
+              <div class="ref-chain-name">Emily <span>→</span> <em>You</em></div>
+              <div class="ref-chain-meta">Direct · Stripe SF</div>
             </div>
           </div>
         </div>
-        <!-- Mic capture pill -->
-        <div class="flash-mic-row">
-          <div class="flash-mic-pulse">
-            <div class="flash-mic-ring flash-mic-ring-1"></div>
-            <div class="flash-mic-ring flash-mic-ring-2"></div>
-            <div class="flash-mic-core">
-              <svg width="14" height="14" fill="none" stroke="#fff" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8"/></svg>
+      </div>
+    </div>
+
+    <!-- 05 Flashcards + Interview Mode -->
+    <div class="f-card f-card-5 reveal" id="fc4">
+      <div class="f-num">05 — Flashcards &amp; AI Interview Mode</div>
+      <div class="f-title">Drill until it's<br><em>muscle memory.</em></div>
+      <div class="f-desc">1,200+ technical flashcards across 11 career tracks, plus AI Interview Mode — speak your answer and get scored live on accuracy, depth, and clarity with real follow-up questions.</div>
+      <div class="flash-demo">
+        <!-- Static flashcard -->
+        <div class="flash-card-static">
+          <div class="flash-side-label">Question · Valuation · Advanced</div>
+          <div class="flash-card-body">
+            <div class="flash-q-text">Walk me through a DCF — and how would your WACC change if the risk-free rate rose 200 bps?</div>
+            <div class="flash-q-meta">
+              <span class="flash-q-meta-item"><span class="flash-q-dot"></span>Asked at 14 firms</span>
+              <span class="flash-q-meta-item">Avg response · 2 min</span>
             </div>
           </div>
+        </div>
+        <!-- Voice indicator pill -->
+        <div class="flash-mic-row">
+          <div class="flash-mic-icon">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 11a7 7 0 0 1-14 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+          </div>
           <div class="flash-mic-text">
-            <div class="flash-mic-title">Recording · speak naturally</div>
+            <div class="flash-mic-title">Speak your answer — AI listens and scores</div>
             <div class="flash-mic-wave">
-              <span style="--h:30%"></span><span style="--h:60%"></span><span style="--h:45%"></span><span style="--h:80%"></span><span style="--h:55%"></span><span style="--h:90%"></span><span style="--h:40%"></span><span style="--h:70%"></span><span style="--h:35%"></span><span style="--h:65%"></span><span style="--h:50%"></span><span style="--h:85%"></span><span style="--h:45%"></span>
+              <span style="--h:35%"></span><span style="--h:60%"></span><span style="--h:45%"></span><span style="--h:75%"></span><span style="--h:55%"></span><span style="--h:85%"></span><span style="--h:40%"></span><span style="--h:65%"></span><span style="--h:35%"></span><span style="--h:70%"></span><span style="--h:50%"></span><span style="--h:80%"></span><span style="--h:45%"></span>
             </div>
           </div>
         </div>
@@ -864,7 +913,7 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 
     <!-- 05 Concept Drills -->
     <div class="f-card f-card-8 reveal" id="fc-drills">
-      <div class="f-num">05 — Concept Drills</div>
+      <div class="f-num">06 — Concept Drills</div>
       <div class="f-title">Rapid-fire<br><em>repetition.</em></div>
       <div class="f-desc">Short, timed drills that hammer one concept at a time until it's second nature. Targets your weak spots — so you're not wasting time on what you already know.</div>
       <div class="drill-stage">
@@ -895,7 +944,7 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 
     <!-- 06 Diagnostic Review -->
     <div class="f-card f-card-9 reveal reveal-d1" id="fc-diag">
-      <div class="f-num">06 — Diagnostic Review</div>
+      <div class="f-num">07 — Diagnostic Review</div>
       <div class="f-title">Know exactly<br><em>where you stand.</em></div>
       <div class="f-desc">A 20-minute assessment that pinpoints which technicals you've mastered, where to focus next, and gives you a clear readiness score before any interview.</div>
       <div class="diag-stage">
@@ -937,8 +986,8 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
     </div>
 
     <!-- 07 Coach -->
-    <div class="f-card f-card-5 reveal reveal-d1" id="fc5">
-      <div class="f-num">07 — AI Coach</div>
+    <div class="f-card f-card-coach reveal reveal-d1" id="fc5">
+      <div class="f-num">08 — AI Coach</div>
       <div class="f-title">Your personal<br><em>cheat code.</em></div>
       <div class="f-desc">Cold email line-edits, behavioral story shaping, technical drills, LBO walkthroughs, case prep, stock pitches, coffee chat strategy, resume feedback, offer decisions. One assistant. Every scenario.</div>
       <!-- Capability chips -->
@@ -974,57 +1023,6 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
             <div class="coach-ai-label">Coach</div>
             <div class="coach-ai-body" id="coach-a-body"></div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 08 Finance Careers Guide -->
-    <div class="f-card f-card-6 reveal reveal-d2" id="fc6">
-      <div class="f-num">08 — Career Roadmaps</div>
-      <div class="f-title">Find your<br><em>perfect fit.</em></div>
-      <div class="f-desc">Deep-dive roadmaps for every major finance and professional services career — what they pay, what the work is like, firm tiers, and exactly how to break in.</div>
-      <!-- Rotating track preview -->
-      <div class="roadmap-stage">
-        <div class="roadmap-preview" id="roadmap-preview">
-          <div class="roadmap-accent" id="roadmap-accent"></div>
-          <div class="roadmap-top">
-            <div class="roadmap-badge" id="roadmap-badge">IB</div>
-            <div class="roadmap-top-text">
-              <div class="roadmap-track-name" id="roadmap-name">Investment Banking</div>
-              <div class="roadmap-track-sub" id="roadmap-sub">Analyst → Associate → VP → MD</div>
-            </div>
-            <div class="roadmap-chevron">
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-          </div>
-          <div class="roadmap-stats">
-            <div class="roadmap-stat">
-              <div class="roadmap-stat-lbl">Analyst comp</div>
-              <div class="roadmap-stat-val" id="roadmap-comp">$175K</div>
-            </div>
-            <div class="roadmap-stat">
-              <div class="roadmap-stat-lbl">Top firms</div>
-              <div class="roadmap-stat-val" id="roadmap-firms">GS · MS · JPM</div>
-            </div>
-            <div class="roadmap-stat">
-              <div class="roadmap-stat-lbl">Exit paths</div>
-              <div class="roadmap-stat-val" id="roadmap-exits">PE · HF · Corp Dev</div>
-            </div>
-          </div>
-        </div>
-        <!-- Track rail below -->
-        <div class="roadmap-rail">
-          <span class="roadmap-pill active">IB</span>
-          <span class="roadmap-pill">PE</span>
-          <span class="roadmap-pill">Consulting</span>
-          <span class="roadmap-pill">S&amp;T</span>
-          <span class="roadmap-pill">ER</span>
-          <span class="roadmap-pill">AM</span>
-          <span class="roadmap-pill">VC</span>
-          <span class="roadmap-pill">RE</span>
-          <span class="roadmap-pill">RX</span>
-          <span class="roadmap-pill">GE</span>
-          <span class="roadmap-pill">Audit</span>
         </div>
       </div>
     </div>
@@ -1179,7 +1177,7 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
       <div class="pricing-divider"></div>
       <div class="pricing-feature">5 outreach messages total</div>
       <div class="pricing-feature">Interview Prep Guides — all 11 career tracks</div>
-      <div class="pricing-feature">Career Roadmaps — 12 finance career paths</div>
+      <div class="pricing-feature">Referral Map — visualize your network geographically</div>
       <div class="pricing-feature">Outreach Tracker — full pipeline access</div>
       <div class="pricing-feature">Concept Drills &amp; Diagnostic Review</div>
       <div class="pricing-feature">Technical Interview Flashcards</div>
@@ -1342,20 +1340,6 @@ function switchAngle(tab,key){document.querySelectorAll('.angle-tab').forEach(t=
 const o3obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)typeMessage(messages.alumni);}),{threshold:0.3});
 const fc3=document.getElementById('fc3');if(fc3)o3obs.observe(fc3);
 
-// ── Card 4: flashcard auto-flip ──
-const flashDemoCard=document.getElementById('flash-demo-card');
-if(flashDemoCard){
-  let hasPlayed=false;
-  const flashObs=new IntersectionObserver(entries=>entries.forEach(e=>{
-    if(e.isIntersecting&&!hasPlayed){
-      hasPlayed=true;
-      setTimeout(()=>flashDemoCard.classList.add('flipped'),1800);
-    }
-  }),{threshold:0.4});
-  flashObs.observe(flashDemoCard);
-  flashDemoCard.addEventListener('click',()=>flashDemoCard.classList.toggle('flipped'));
-}
-
 // ── Card 5: drill timer countdown ──
 const drillStage=document.querySelector('.drill-stage');
 if(drillStage){
@@ -1461,67 +1445,6 @@ if(coachCard){
     }
   }),{threshold:0.3});
   coachObs.observe(coachCard);
-}
-
-// ── Card 8: Career Roadmaps rotating preview ──
-const roadmapTracks=[
-  {abbr:'IB',pillIdx:0,name:'Investment Banking',path:'Analyst → Associate → VP → MD',comp:'$175K',firms:'GS · MS · JPM',exits:'PE · HF · Corp Dev',grad:'linear-gradient(135deg,#2c1810,#8b2500)',accent:'linear-gradient(90deg,#8b2500,#c97c42)'},
-  {abbr:'PE',pillIdx:1,name:'Private Equity',path:'Associate → Sr Associate → VP → Principal → Partner',comp:'$275K+',firms:'Blackstone · KKR · Apollo',exits:'Partner · Startup · HF',grad:'linear-gradient(135deg,#0f2440,#2b5f8a)',accent:'linear-gradient(90deg,#1e40af,#60a5fa)'},
-  {abbr:'MBB',pillIdx:2,name:'Consulting',path:'BA → Associate → EM → Principal → Partner',comp:'$112K',firms:'McKinsey · BCG · Bain',exits:'Tech PM · Startup · PE',grad:'linear-gradient(135deg,#1a1206,#b8860b)',accent:'linear-gradient(90deg,#b8860b,#fbbf24)'},
-  {abbr:'S&T',pillIdx:3,name:'Sales & Trading',path:'Analyst → Associate → VP → Director → MD',comp:'$150K',firms:'GS · JPM · Citadel Sec',exits:'Hedge Fund · Quant · Buy-side',grad:'linear-gradient(135deg,#0d1117,#58a6ff)',accent:'linear-gradient(90deg,#0969da,#58a6ff)'},
-  {abbr:'ER',pillIdx:4,name:'Equity Research',path:'Associate → Sr Associate → VP → MD / Analyst',comp:'$145K',firms:'MS · GS · JPM · Boutiques',exits:'Hedge Fund · Long-only · AM',grad:'linear-gradient(135deg,#24292f,#0969da)',accent:'linear-gradient(90deg,#0969da,#58a6ff)'},
-  {abbr:'AM',pillIdx:5,name:'Asset Management',path:'Analyst → Associate → PM → Sr PM → CIO',comp:'$140K',firms:'BlackRock · Fidelity · T. Rowe',exits:'Hedge Fund · Boutique · PM',grad:'linear-gradient(135deg,#0a2818,#1b5e3b)',accent:'linear-gradient(90deg,#1b5e3b,#22c55e)'},
-  {abbr:'VC',pillIdx:6,name:'Venture Capital',path:'Analyst → Associate → Principal → Partner',comp:'$150K + carry',firms:'Sequoia · a16z · Benchmark',exits:'Founder · GP · Angel · Operator',grad:'linear-gradient(135deg,#18181b,#7c3aed)',accent:'linear-gradient(90deg,#7c3aed,#a78bfa)'},
-  {abbr:'RE',pillIdx:7,name:'Real Estate',path:'Analyst → Associate → VP → Director → MD',comp:'$135K',firms:'Blackstone RE · Starwood · Brookfield',exits:'Dev Co · Family Office · REPE',grad:'linear-gradient(135deg,#2d1f0e,#7c5c2e)',accent:'linear-gradient(90deg,#7c5c2e,#d97706)'},
-  {abbr:'RX',pillIdx:8,name:'Restructuring',path:'Analyst → Associate → VP → MD',comp:'$190K',firms:'PJT · Houlihan · Lazard · Moelis',exits:'Distressed HF · Special Sits PE',grad:'linear-gradient(135deg,#2a0e0e,#6b1d1d)',accent:'linear-gradient(90deg,#6b1d1d,#dc2626)'},
-  {abbr:'GE',pillIdx:9,name:'Growth Equity',path:'Associate → Sr Associate → VP → Principal → Partner',comp:'$200K+',firms:'Insight · General Atlantic · TA',exits:'Partner · Operator · VC',grad:'linear-gradient(135deg,#1e1b4b,#4338ca)',accent:'linear-gradient(90deg,#4338ca,#818cf8)'},
-  {abbr:'AUD',pillIdx:10,name:'Accounting & Audit',path:'Staff → Senior → Manager → Sr Mgr → Partner',comp:'$75K',firms:'Deloitte · PwC · EY · KPMG',exits:'Corp Finance · FP&A · CFO track',grad:'linear-gradient(135deg,#0f2744,#1a3d6b)',accent:'linear-gradient(90deg,#1a3d6b,#3b82f6)'}
-];
-const roadmapPreview=document.getElementById('roadmap-preview');
-const roadmapAccent=document.getElementById('roadmap-accent');
-const roadmapBadge=document.getElementById('roadmap-badge');
-const roadmapName=document.getElementById('roadmap-name');
-const roadmapSub=document.getElementById('roadmap-sub');
-const roadmapComp=document.getElementById('roadmap-comp');
-const roadmapFirms=document.getElementById('roadmap-firms');
-const roadmapExits=document.getElementById('roadmap-exits');
-const roadmapPills=document.querySelectorAll('.roadmap-pill');
-const roadmapCard=document.getElementById('fc6');
-let roadmapIdx=0;
-function roadmapPlay(i){
-  const t=roadmapTracks[i];
-  if(!t||!roadmapPreview)return;
-  // Update active pill
-  roadmapPills.forEach((p,pi)=>p.classList.toggle('active',pi===t.pillIdx));
-  // Fade content
-  const textEls=[roadmapBadge,roadmapName,roadmapSub,roadmapComp,roadmapFirms,roadmapExits];
-  textEls.forEach(el=>{if(el)el.style.opacity='0';});
-  setTimeout(()=>{
-    roadmapAccent.style.background=t.accent;
-    roadmapBadge.style.background=t.grad;
-    roadmapBadge.textContent=t.abbr;
-    roadmapName.textContent=t.name;
-    roadmapSub.textContent=t.path;
-    roadmapComp.textContent=t.comp;
-    roadmapFirms.textContent=t.firms;
-    roadmapExits.textContent=t.exits;
-    textEls.forEach(el=>{if(el)el.style.opacity='1';});
-  },300);
-}
-if(roadmapCard){
-  // Transition smoothly
-  [roadmapBadge,roadmapName,roadmapSub,roadmapComp,roadmapFirms,roadmapExits].forEach(el=>{if(el)el.style.transition='opacity 0.25s ease';});
-  let roadmapStarted=false;
-  const roadmapObs=new IntersectionObserver(entries=>entries.forEach(e=>{
-    if(e.isIntersecting&&!roadmapStarted){
-      roadmapStarted=true;
-      setInterval(()=>{
-        roadmapIdx=(roadmapIdx+1)%roadmapTracks.length;
-        roadmapPlay(roadmapIdx);
-      },3200);
-    }
-  }),{threshold:0.3});
-  roadmapObs.observe(roadmapCard);
 }
 
 // ── Card 4: rate bars ──
