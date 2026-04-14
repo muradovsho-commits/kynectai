@@ -67,14 +67,14 @@ export const CONS_MINDSET_SECTIONS = [
   },
   {
     title: `1.5 The Three Layers of Excellence`,
-    content: `<p><strong>Layer 1: Mechanics</strong> — Case flow, issue trees, math, chart reading, and recommendation structure.</p>
-<p><strong>Layer 2: Judgment</strong> — Prioritization, sense of what matters commercially, and the ability to distinguish signal from noise.</p>
-<p><strong>Layer 3: Presence</strong> — Voice, confidence, composure, and clarity. Many candidates know enough to solve the case but fail to appear client-ready.</p>
+    content: `<p><strong>Layer 1: Mechanics</strong> - Case flow, issue trees, math, chart reading, and recommendation structure.</p>
+<p><strong>Layer 2: Judgment</strong> - Prioritization, sense of what matters commercially, and the ability to distinguish signal from noise.</p>
+<p><strong>Layer 3: Presence</strong> - Voice, confidence, composure, and clarity. Many candidates know enough to solve the case but fail to appear client-ready.</p>
 <p>A top 1% candidate is strong in all three.</p>`
   },
   {
     title: `1.6 Hypothesis-Driven Thinking`,
-    content: `<p>Consultants rarely explore every path equally. They form an initial view, test it, and update. A hypothesis is not a guess — it is a <strong>reasoned provisional view</strong>.</p>
+    content: `<p>Consultants rarely explore every path equally. They form an initial view, test it, and update. A hypothesis is not a guess - it is a <strong>reasoned provisional view</strong>.</p>
 <h4>Example:</h4>
 <p>Client profits are down. Initial hypothesis: revenue decline is more likely than cost inflation because the industry recently became more competitive. Next step: break profits into revenue and cost, then test which side explains the drop.</p>
 <h4>How to say it aloud:</h4>
@@ -131,9 +131,9 @@ export const CONS_MINDSET_SECTIONS = [
 </ol>
 <p><strong>Practice components separately:</strong> Drill issue trees separately. Drill mental math separately. Drill synthesis separately. Drill fit stories separately. Only then combine in mock interviews.</p>
 <h4>Drills:</h4>
-<p><strong>Drill 1 — Clarify the objective.</strong> State the objective in one sentence for: "A retail bank's profits are down." / "A beverage company is considering entering energy drinks." / "A PE firm is considering acquiring a software company."</p>
-<p><strong>Drill 2 — First-principles decomposition.</strong> Break each into fundamental drivers: Profit, Revenue, Market share, ROI.</p>
-<p><strong>Drill 3 — Hypothesis statement.</strong> For each problem, state one initial hypothesis and how you would test it.</p>
+<p><strong>Drill 1 - Clarify the objective.</strong> State the objective in one sentence for: "A retail bank's profits are down." / "A beverage company is considering entering energy drinks." / "A PE firm is considering acquiring a software company."</p>
+<p><strong>Drill 2 - First-principles decomposition.</strong> Break each into fundamental drivers: Profit, Revenue, Market share, ROI.</p>
+<p><strong>Drill 3 - Hypothesis statement.</strong> For each problem, state one initial hypothesis and how you would test it.</p>
 <h4>Self-evaluation checklist:</h4>
 <ul>
 <li>Did I identify the exact objective?</li>

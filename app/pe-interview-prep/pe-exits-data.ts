@@ -11,15 +11,15 @@ export const PE_EXITS_SECTIONS = [
 
 <h4>Secondary Buyout (Sponsor-to-Sponsor Sale)</h4>
 
-<p>Selling to another PE firm. This has become the most common exit route, accounting for roughly 40–50% of all PE exits. The new PE buyer brings fresh capital, a new value creation plan, and a different perspective on the company's potential.</p>
+<p>Selling to another PE firm. This has become the most common exit route, accounting for roughly 40-50% of all PE exits. The new PE buyer brings fresh capital, a new value creation plan, and a different perspective on the company's potential.</p>
 
 <p>Advantages: large pool of potential buyers (every PE firm is a potential acquirer); PE buyers can move quickly and are comfortable with leveraged structures; and the process is highly standardized. Disadvantages: PE buyers demand a return for themselves, so they typically pay less than strategic buyers; the market may perceive a secondary sale as a sign that the "easy" value has already been extracted; and leverage capacity may be limited if the company is already highly leveraged.</p>
 
 <h4>Initial Public Offering (IPO)</h4>
 
-<p>Taking the portfolio company public by listing its shares on a stock exchange. The PE firm sells a portion of its shares in the IPO and then sells the remainder over subsequent months or years (subject to lock-up periods, typically 90–180 days).</p>
+<p>Taking the portfolio company public by listing its shares on a stock exchange. The PE firm sells a portion of its shares in the IPO and then sells the remainder over subsequent months or years (subject to lock-up periods, typically 90-180 days).</p>
 
-<p>Advantages: IPOs can achieve the highest valuations if market conditions are favorable; the company gains access to public capital markets for future growth; and the PE firm can time its secondary sales to maximize proceeds. Disadvantages: IPO windows are unpredictable and can close suddenly (during market downturns, IPOs may be impossible); the PE firm's exit is not immediate (it may take 12–24 months to fully exit); the company takes on the cost and regulatory burden of being public (SOX compliance, quarterly reporting, SEC scrutiny); and IPOs require the company to have a strong growth story that appeals to public equity investors.</p>
+<p>Advantages: IPOs can achieve the highest valuations if market conditions are favorable; the company gains access to public capital markets for future growth; and the PE firm can time its secondary sales to maximize proceeds. Disadvantages: IPO windows are unpredictable and can close suddenly (during market downturns, IPOs may be impossible); the PE firm's exit is not immediate (it may take 12-24 months to fully exit); the company takes on the cost and regulatory burden of being public (SOX compliance, quarterly reporting, SEC scrutiny); and IPOs require the company to have a strong growth story that appeals to public equity investors.</p>
 
 <h4>Dividend Recapitalization</h4>
 
@@ -45,7 +45,7 @@ Net MOIC = after management fees and carried interest
 IRR = the annualized rate of return that sets NPV of all cash flows to zero
 </div>
 
-<p>IRR incorporates the time value of money, making it the industry-standard return metric. A 25% net IRR is considered excellent; 15–20% is respectable; below 15% is disappointing for a buyout fund. IRR's weakness: it can be gamed through timing. A quick flip (buy and sell in 18 months at a 1.5x MOIC) produces a high IRR (~33%) but limited actual dollar profit. PE firms sometimes do quick deals early in a fund's life to boost the fund's IRR for fundraising purposes.</p>
+<p>IRR incorporates the time value of money, making it the industry-standard return metric. A 25% net IRR is considered excellent; 15-20% is respectable; below 15% is disappointing for a buyout fund. IRR's weakness: it can be gamed through timing. A quick flip (buy and sell in 18 months at a 1.5x MOIC) produces a high IRR (~33%) but limited actual dollar profit. PE firms sometimes do quick deals early in a fund's life to boost the fund's IRR for fundraising purposes.</p>
 
 <h4>DPI (Distributions to Paid-In Capital)</h4>
 
@@ -53,7 +53,7 @@ IRR = the annualized rate of return that sets NPV of all cash flows to zero
 DPI = Total Distributions to LPs / Total Capital Called from LPs
 </div>
 
-<p>DPI measures how much actual cash has been returned to LPs relative to what they've contributed. A DPI of 1.0x means LPs have received back their entire investment; above 1.0x means they've received a profit. DPI is the most "real" metric because it counts only cash that LPs have actually received&mdash;unrealized gains (from portfolio companies still held) don't count. A fund with a high MOIC but low DPI hasn't yet returned much actual money.</p>
+<p>DPI measures how much actual cash has been returned to LPs relative to what they've contributed. A DPI of 1.0x means LPs have received back their entire investment; above 1.0x means they've received a profit. DPI is the most "real" metric because it counts only cash that LPs have actually received-unrealized gains (from portfolio companies still held) don't count. A fund with a high MOIC but low DPI hasn't yet returned much actual money.</p>
 
 <h4>TVPI (Total Value to Paid-In Capital)</h4>
 
@@ -65,7 +65,7 @@ TVPI = (Total Distributions + Remaining Portfolio Value) / Total Capital Called
 
 <h4>The J-Curve</h4>
 
-<p>In the early years of a fund, the return metrics appear deeply negative. Capital is being called for acquisitions and fees, but no exits have occurred yet, so DPI is near zero. Unrealized values may even be marked down initially because of transaction-related fees and write-downs. As the portfolio matures and exits begin, returns swing positive and grow rapidly. This pattern&mdash;negative early returns followed by strongly positive later returns&mdash;is called the "J-curve" because of the shape it produces when plotted over time.</p>`,
+<p>In the early years of a fund, the return metrics appear deeply negative. Capital is being called for acquisitions and fees, but no exits have occurred yet, so DPI is near zero. Unrealized values may even be marked down initially because of transaction-related fees and write-downs. As the portfolio matures and exits begin, returns swing positive and grow rapidly. This pattern-negative early returns followed by strongly positive later returns-is called the "J-curve" because of the shape it produces when plotted over time.</p>`,
   },
   {
     title: 'Benchmarking and Quartile Performance',
@@ -73,9 +73,9 @@ TVPI = (Total Distributions + Remaining Portfolio Value) / Total Capital Called
 
 <p><strong>Top Quartile (1st):</strong> The top 25% of funds. These consistently produce net IRRs above 20% and MOICs above 2.5x. Institutional LPs prioritize access to top-quartile managers.</p>
 
-<p><strong>Second Quartile:</strong> Net IRRs of roughly 13–20% and MOICs of 1.8–2.5x. Solid performance that justifies the illiquidity premium over public markets.</p>
+<p><strong>Second Quartile:</strong> Net IRRs of roughly 13-20% and MOICs of 1.8-2.5x. Solid performance that justifies the illiquidity premium over public markets.</p>
 
-<p><strong>Third Quartile:</strong> Net IRRs of roughly 8–13% and MOICs of 1.3–1.8x. Mediocre performance that may not justify the fees, illiquidity, and complexity of PE investing.</p>
+<p><strong>Third Quartile:</strong> Net IRRs of roughly 8-13% and MOICs of 1.3-1.8x. Mediocre performance that may not justify the fees, illiquidity, and complexity of PE investing.</p>
 
 <p><strong>Bottom Quartile (4th):</strong> Net IRRs below 8% and MOICs below 1.3x. These funds have failed to deliver returns that justify the PE model. Some may produce losses (MOIC below 1.0x).</p>
 

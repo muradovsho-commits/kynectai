@@ -1,15 +1,15 @@
 export const PE_LBO_MODELING_SECTIONS = [
   {
     title: 'The Paper LBO',
-    content: `<p>The paper LBO (or "back of the envelope" LBO) is a simplified version done mentally or on a single sheet of paper, often in interviews or early-stage deal screening. The purpose is to quickly determine if a deal can generate target returns under reasonable assumptions. You should be able to do one in 5–10 minutes.</p>
+    content: `<p>The paper LBO (or "back of the envelope" LBO) is a simplified version done mentally or on a single sheet of paper, often in interviews or early-stage deal screening. The purpose is to quickly determine if a deal can generate target returns under reasonable assumptions. You should be able to do one in 5-10 minutes.</p>
 
 <h4>Paper LBO Framework</h4>
 
 <p><strong>Step 1: Calculate the Purchase Price.</strong> Start with EBITDA and multiply by the entry multiple.</p>
 
-<p><strong>Step 2: Determine the Capital Structure.</strong> Apply a leverage multiple (e.g., 5.0x Debt/EBITDA) to calculate total Debt. Equity = Purchase Price − Debt. Add transaction fees to the Equity check (simplify by assuming fees are ~3–5% of the purchase price, funded with additional Equity).</p>
+<p><strong>Step 2: Determine the Capital Structure.</strong> Apply a leverage multiple (e.g., 5.0x Debt/EBITDA) to calculate total Debt. Equity = Purchase Price − Debt. Add transaction fees to the Equity check (simplify by assuming fees are ~3-5% of the purchase price, funded with additional Equity).</p>
 
-<p><strong>Step 3: Project EBITDA Growth.</strong> Apply a growth rate for each year of the holding period. Keep it simple&mdash;a constant rate or a step-down from higher initial growth to lower terminal growth.</p>
+<p><strong>Step 3: Project EBITDA Growth.</strong> Apply a growth rate for each year of the holding period. Keep it simple-a constant rate or a step-down from higher initial growth to lower terminal growth.</p>
 
 <p><strong>Step 4: Estimate Annual Free Cash Flow.</strong> EBITDA − Interest − Taxes − CapEx ± ΔWC. Use simplifying assumptions: Interest ≈ average Debt balance × blended interest rate. Taxes ≈ (EBITDA − D&A − Interest) × Tax Rate. CapEx ≈ a fixed percentage of revenue or EBITDA. Assume D&A ≈ CapEx for simplicity (which means the Balance Sheet is roughly in steady state).</p>
 
@@ -50,7 +50,7 @@ export const PE_LBO_MODELING_SECTIONS = [
 
 <h4>3. Purchase Price Allocation (PPA)</h4>
 
-<p>Allocate the purchase premium above book value. Write existing assets up to fair value. Create new intangible assets (customer relationships, technology, trade names&mdash;each with a specified useful life and amortization schedule). The remaining excess is Goodwill. Calculate the Deferred Tax Liability created by the asset write-ups (book basis increases but tax basis may not, depending on deal structure).</p>
+<p>Allocate the purchase premium above book value. Write existing assets up to fair value. Create new intangible assets (customer relationships, technology, trade names-each with a specified useful life and amortization schedule). The remaining excess is Goodwill. Calculate the Deferred Tax Liability created by the asset write-ups (book basis increases but tax basis may not, depending on deal structure).</p>
 
 <h4>4. Opening Balance Sheet</h4>
 
@@ -94,13 +94,13 @@ IRR = the rate r such that: Σ [Cash Flow_t / (1+r)^t] = 0<br>
 
 <h4>PIK Interest</h4>
 
-<p>Payment-in-Kind interest accrues but isn't paid in cash&mdash;it's added to the Debt principal. PIK interest increases the Debt balance over time, which means more total Debt to repay at exit. However, it preserves cash flow in the near term. Model PIK by increasing the Debt tranche's balance each period by the PIK interest amount.</p>
+<p>Payment-in-Kind interest accrues but isn't paid in cash-it's added to the Debt principal. PIK interest increases the Debt balance over time, which means more total Debt to repay at exit. However, it preserves cash flow in the near term. Model PIK by increasing the Debt tranche's balance each period by the PIK interest amount.</p>
 
 <h4>Management Option Pool (MOP)</h4>
 
-<p>PE firms typically set aside 10–20% of the post-deal Equity for management incentive plans (options, profits interests, or co-invest). This dilutes the PE firm's ownership but aligns management incentives. In the returns calculation, you must account for the MOP's dilutive effect on the sponsor's equity proceeds at exit.</p>
+<p>PE firms typically set aside 10-20% of the post-deal Equity for management incentive plans (options, profits interests, or co-invest). This dilutes the PE firm's ownership but aligns management incentives. In the returns calculation, you must account for the MOP's dilutive effect on the sponsor's equity proceeds at exit.</p>
 
-<p>The MOP usually vests over the holding period (time vesting) and may also have performance-based vesting tied to MOIC or IRR thresholds. A common structure: 50% time-vesting (ratably over 4–5 years), 50% performance-vesting (triggered at 2.0x MOIC or 20% IRR).</p>
+<p>The MOP usually vests over the holding period (time vesting) and may also have performance-based vesting tied to MOIC or IRR thresholds. A common structure: 50% time-vesting (ratably over 4-5 years), 50% performance-vesting (triggered at 2.0x MOIC or 20% IRR).</p>
 
 <h4>Transaction and Financing Fees</h4>
 
@@ -108,7 +108,7 @@ IRR = the rate r such that: Σ [Cash Flow_t / (1+r)^t] = 0<br>
 
 <h4>Section 338(h)(10) and Tax Considerations</h4>
 
-<p>The deal structure (Asset Purchase vs. Stock Purchase vs. 338(h)(10) election) affects the tax treatment of the purchase price allocation. In an Asset Purchase or 338(h)(10) deal, the buyer can amortize Goodwill and other intangibles for tax purposes (typically over 15 years in the U.S.), creating cash tax savings that increase Free Cash Flow. In a Stock Purchase, these items are not tax-deductible, resulting in lower FCF. The tax benefit of a 338(h)(10) election can be worth 5–15% of the purchase price.</p>`,
+<p>The deal structure (Asset Purchase vs. Stock Purchase vs. 338(h)(10) election) affects the tax treatment of the purchase price allocation. In an Asset Purchase or 338(h)(10) deal, the buyer can amortize Goodwill and other intangibles for tax purposes (typically over 15 years in the U.S.), creating cash tax savings that increase Free Cash Flow. In a Stock Purchase, these items are not tax-deductible, resulting in lower FCF. The tax benefit of a 338(h)(10) election can be worth 5-15% of the purchase price.</p>`,
   },
   {
     title: 'Sensitivity Analysis',
@@ -116,13 +116,13 @@ IRR = the rate r such that: Σ [Cash Flow_t / (1+r)^t] = 0<br>
 
 <table class="comparison-table">
 <tr><th>Variable</th><th>Why It Matters</th><th>Typical Range to Test</th></tr>
-<tr><td>Entry Multiple</td><td>Directly affects purchase price and Equity check</td><td>±1.0–2.0x around base case</td></tr>
-<tr><td>Exit Multiple</td><td>Biggest single driver of exit proceeds</td><td>±1.0–2.0x around entry multiple</td></tr>
-<tr><td>EBITDA Growth Rate</td><td>Determines exit EBITDA and FCF for Debt paydown</td><td>±2–5% around base case</td></tr>
-<tr><td>Leverage Level</td><td>Affects Equity check and IRR amplification</td><td>4.0x–6.5x EBITDA</td></tr>
-<tr><td>Interest Rate</td><td>Higher rates reduce FCF for Debt repayment</td><td>±100–200 bps</td></tr>
-<tr><td>Holding Period</td><td>Longer hold = lower IRR (even if higher MOIC)</td><td>3–7 years</td></tr>
-<tr><td>CapEx as % of Revenue</td><td>Affects FCF available for Debt paydown</td><td>±1–3% around base case</td></tr>
+<tr><td>Entry Multiple</td><td>Directly affects purchase price and Equity check</td><td>±1.0-2.0x around base case</td></tr>
+<tr><td>Exit Multiple</td><td>Biggest single driver of exit proceeds</td><td>±1.0-2.0x around entry multiple</td></tr>
+<tr><td>EBITDA Growth Rate</td><td>Determines exit EBITDA and FCF for Debt paydown</td><td>±2-5% around base case</td></tr>
+<tr><td>Leverage Level</td><td>Affects Equity check and IRR amplification</td><td>4.0x-6.5x EBITDA</td></tr>
+<tr><td>Interest Rate</td><td>Higher rates reduce FCF for Debt repayment</td><td>±100-200 bps</td></tr>
+<tr><td>Holding Period</td><td>Longer hold = lower IRR (even if higher MOIC)</td><td>3-7 years</td></tr>
+<tr><td>CapEx as % of Revenue</td><td>Affects FCF available for Debt paydown</td><td>±1-3% around base case</td></tr>
 </table>
 
 <p>Present sensitivities as two-way data tables (e.g., IRR as a function of Exit Multiple and EBITDA Growth) to show how assumptions interact.</p>`,

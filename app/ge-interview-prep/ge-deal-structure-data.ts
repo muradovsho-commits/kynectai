@@ -1,7 +1,7 @@
 export const GE_DEAL_STRUCTURE_SECTIONS = [
   {
     title: 'Types of Securities',
-    content: `<p>Growth equity investments are typically made through <strong>preferred stock</strong>&mdash;a class of equity that sits above common stock in the capital structure and carries specific rights and preferences. The most important structural features:</p>
+    content: `<p>Growth equity investments are typically made through <strong>preferred stock</strong>-a class of equity that sits above common stock in the capital structure and carries specific rights and preferences. The most important structural features:</p>
 
 <h4>Liquidation Preference</h4>
 
@@ -12,14 +12,14 @@ export const GE_DEAL_STRUCTURE_SECTIONS = [
 <div class="example-box">
 <div class="example-label">Liquidation Preference Example</div>
 <p>An investor puts in $50M for 25% of a company (implying a $200M post-money valuation) with 1x non-participating preferred.</p>
-<p><strong>Scenario A &mdash; Company sells for $100M:</strong> Preference: $50M to the investor, $50M to common (the founder and employees). The investor's 25% conversion value would only be $25M (25% of $100M), so the preference ($50M) is better. The investor takes the preference. <strong>Investor gets: $50M (1.0x return).</strong></p>
-<p><strong>Scenario B &mdash; Company sells for $400M:</strong> Preference: $50M to the investor, $350M to common. But the investor's conversion value is $100M (25% of $400M), which exceeds the $50M preference. The investor converts to common. <strong>Investor gets: $100M (2.0x return).</strong></p>
+<p><strong>Scenario A - Company sells for $100M:</strong> Preference: $50M to the investor, $50M to common (the founder and employees). The investor's 25% conversion value would only be $25M (25% of $100M), so the preference ($50M) is better. The investor takes the preference. <strong>Investor gets: $50M (1.0x return).</strong></p>
+<p><strong>Scenario B - Company sells for $400M:</strong> Preference: $50M to the investor, $350M to common. But the investor's conversion value is $100M (25% of $400M), which exceeds the $50M preference. The investor converts to common. <strong>Investor gets: $100M (2.0x return).</strong></p>
 <p>Non-participating preferred acts as downside protection (you get your money back in a bad scenario) with full upside participation (you convert and share proportionally in a good scenario).</p>
 </div>
 
 <h4>Anti-Dilution Protection</h4>
 
-<p>Protects the investor if the company raises a future round at a lower valuation (a "down round"). <strong>Full ratchet</strong> adjusts the investor's conversion price to exactly the new, lower price&mdash;very punitive to founders and other existing shareholders. <strong>Weighted average</strong> (more common) adjusts the conversion price based on a formula that accounts for how much capital is raised at the lower price relative to total shares outstanding. Weighted average is the standard in GE deals.</p>
+<p>Protects the investor if the company raises a future round at a lower valuation (a "down round"). <strong>Full ratchet</strong> adjusts the investor's conversion price to exactly the new, lower price-very punitive to founders and other existing shareholders. <strong>Weighted average</strong> (more common) adjusts the conversion price based on a formula that accounts for how much capital is raised at the lower price relative to total shares outstanding. Weighted average is the standard in GE deals.</p>
 
 <h4>Board Representation</h4>
 
@@ -41,6 +41,6 @@ export const GE_DEAL_STRUCTURE_SECTIONS = [
     title: 'Valuation Mechanics',
     content: `<p>Growth equity valuations are typically expressed as a <strong>pre-money valuation</strong> (the company's value before the investment) and <strong>post-money valuation</strong> (pre-money + the investment amount). If a GE firm invests $50M at a $200M post-money valuation, the pre-money is $150M, and the investor owns $50M / $200M = 25%.</p>
 
-<p>Valuation multiples for GE companies are usually based on <strong>revenue</strong> (since most are pre-profit or barely profitable). Common ranges for high-quality software companies: 8&ndash;20x forward ARR for companies growing 30&ndash;60%, with exceptional companies (80%+ growth, 120%+ NRR) commanding 20&ndash;40x+ in strong markets. Non-software growth companies are typically valued at 3&ndash;10x forward revenue depending on growth, margins, and sector.</p>`,
+<p>Valuation multiples for GE companies are usually based on <strong>revenue</strong> (since most are pre-profit or barely profitable). Common ranges for high-quality software companies: 8-20x forward ARR for companies growing 30-60%, with exceptional companies (80%+ growth, 120%+ NRR) commanding 20-40x+ in strong markets. Non-software growth companies are typically valued at 3-10x forward revenue depending on growth, margins, and sector.</p>`,
   },
 ];

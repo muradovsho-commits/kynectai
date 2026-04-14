@@ -70,7 +70,7 @@ export const CONS_MASTERY_SECTIONS = [
 <li>Fit story quality</li>
 <li>Executive presence</li>
 </ul>
-<p>Scores of 4–5 across categories indicate strong interview readiness.</p>
+<p>Scores of 4-5 across categories indicate strong interview readiness.</p>
 <h4>Appendix A: Core Phrases Strong Candidates Use</h4>
 <ul>
 <li>"To answer this question, I'd like to break it into…"</li>

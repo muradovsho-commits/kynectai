@@ -15,9 +15,9 @@ export const RX_WATERFALL_SECTIONS = [
   },
   {
     title: 'Where Would Each Tranche Trade?',
-    content: `<p>Distressed debt doesn't trade at par&mdash;it trades at a discount reflecting the expected recovery. In the example above, you'd expect the Secured TL to trade near par (perhaps 98&ndash;100, since it's fully covered), the Senior Unsecured Notes to trade around 75 (reflecting 75% recovery), and the Subordinated Notes to trade near zero.</p>
+    content: `<p>Distressed debt doesn't trade at par-it trades at a discount reflecting the expected recovery. In the example above, you'd expect the Secured TL to trade near par (perhaps 98-100, since it's fully covered), the Senior Unsecured Notes to trade around 75 (reflecting 75% recovery), and the Subordinated Notes to trade near zero.</p>
 
-<p>However, there's nuance. Before a filing actually occurs, <strong>optionality</strong> affects trading prices. The Senior Unsecured Notes might trade slightly above 75 because there's some probability (however small) that the company turns things around, EBITDA improves, and recoveries end up being higher. The Sub Notes might trade at 5&ndash;10 cents even with a zero recovery scenario because of the outside chance of a positive surprise. Even equity retains some non-zero value pre-filing for the same reason.</p>
+<p>However, there's nuance. Before a filing actually occurs, <strong>optionality</strong> affects trading prices. The Senior Unsecured Notes might trade slightly above 75 because there's some probability (however small) that the company turns things around, EBITDA improves, and recoveries end up being higher. The Sub Notes might trade at 5-10 cents even with a zero recovery scenario because of the outside chance of a positive surprise. Even equity retains some non-zero value pre-filing for the same reason.</p>
 
 <p>Conversely, debt can sometimes trade <em>below</em> its theoretical recovery value due to forced selling (institutional investors dumping downgraded bonds), illiquidity (wide bid-ask spreads in distressed markets), and disagreement over the correct EV estimate.</p>`,
   },

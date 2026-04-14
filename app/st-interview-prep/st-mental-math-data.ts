@@ -62,7 +62,7 @@ export const ST_MENTAL_MATH_SECTIONS = [
 <div class="math-drill">
 <div class="math-label">Expected Value Problem</div>
 <div class="math-q">I offer you a game: roll a fair die. If you roll a 6, I pay you $30. If you roll anything else, you pay me $6. Would you play?</div>
-<div class="math-a">Expected value = (1/6 × $30) + (5/6 × −$6) = $5.00 − $5.00 = <strong>$0.00</strong>. The game is fair&mdash;zero expected value. You could argue either way: risk-neutral players are indifferent, but risk-averse players might decline because the variance is high ($30 upside vs. $6 downside, repeated). If the payout were $36 instead of $30, EV = $6 − $5 = +$1, and you should play.</div>
+<div class="math-a">Expected value = (1/6 × $30) + (5/6 × −$6) = $5.00 − $5.00 = <strong>$0.00</strong>. The game is fair-zero expected value. You could argue either way: risk-neutral players are indifferent, but risk-averse players might decline because the variance is high ($30 upside vs. $6 downside, repeated). If the payout were $36 instead of $30, EV = $6 − $5 = +$1, and you should play.</div>
 </div>`,
   },
 ];

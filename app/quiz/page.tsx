@@ -29,8 +29,8 @@ const questions: Q[] = [
     options: [
       { text: "Reading an annual report or earnings transcript", w: { er: 4, am: 3, ib: 1 } },
       { text: "Catching up on the news and forming opinions on what's happening in the world", w: { st: 3, am: 2, consulting: 1 } },
-      { text: "Organizing something — spreadsheets, plans, your apartment", w: { accounting: 4, ib: 1, re: 1 } },
-      { text: "Talking to people — networking, catching up, building relationships", w: { consulting: 3, ib: 2, vc: 2 } },
+      { text: "Organizing something - spreadsheets, plans, your apartment", w: { accounting: 4, ib: 1, re: 1 } },
+      { text: "Talking to people - networking, catching up, building relationships", w: { consulting: 3, ib: 2, vc: 2 } },
     ]
   },
   {
@@ -39,7 +39,7 @@ const questions: Q[] = [
       { text: "Break it into a clear framework before doing anything else", w: { consulting: 4, accounting: 2 } },
       { text: "Build a model or run the numbers to figure out the answer", w: { ib: 3, pe: 2, am: 1, er: 1 } },
       { text: "Call someone who's dealt with it before and get their take", w: { vc: 2, consulting: 2, ib: 1, re: 1 } },
-      { text: "Trust your gut and move quickly — you'll adjust as you go", w: { st: 4, vc: 2 } },
+      { text: "Trust your gut and move quickly - you'll adjust as you go", w: { st: 4, vc: 2 } },
     ]
   },
   {
@@ -48,7 +48,7 @@ const questions: Q[] = [
       { text: "Math and logic puzzles", w: { st: 3, am: 2, accounting: 2, ib: 1 } },
       { text: "Writing and persuasion", w: { consulting: 3, er: 3, vc: 1 } },
       { text: "History, economics, or political science", w: { am: 2, consulting: 2, rx: 1, pe: 1 } },
-      { text: "Science — testing hypotheses with experiments", w: { er: 2, pe: 2, vc: 2, am: 1 } },
+      { text: "Science - testing hypotheses with experiments", w: { er: 2, pe: 2, vc: 2, am: 1 } },
     ]
   },
   {
@@ -63,7 +63,7 @@ const questions: Q[] = [
   {
     question: "How do you feel about ambiguity?",
     options: [
-      { text: "I love it — the less defined the problem, the more interesting it is", w: { consulting: 3, vc: 3, rx: 2 } },
+      { text: "I love it - the less defined the problem, the more interesting it is", w: { consulting: 3, vc: 3, rx: 2 } },
       { text: "I can handle it but I prefer clear data to work with", w: { am: 2, er: 2, pe: 2, ib: 1 } },
       { text: "I like structured problems with clear right and wrong answers", w: { accounting: 4, st: 1 } },
       { text: "Ambiguity is fine as long as I can act quickly and iterate", w: { st: 3, vc: 2, re: 1 } },
@@ -73,7 +73,7 @@ const questions: Q[] = [
     question: "Pick the headline that would make you stop scrolling:",
     options: [
       { text: "\"$45B Mega-Merger Reshapes the Industry\"", w: { ib: 4, rx: 1, pe: 1 } },
-      { text: "\"This Under-the-Radar Stock Is Up 300% — Here's Why\"", w: { am: 3, er: 3, st: 1 } },
+      { text: "\"This Under-the-Radar Stock Is Up 300% - Here's Why\"", w: { am: 3, er: 3, st: 1 } },
       { text: "\"How a First-Time Founder Built a $2B Company in 3 Years\"", w: { vc: 4, consulting: 1 } },
       { text: "\"New Accounting Rules Could Cost Banks Billions\"", w: { accounting: 3, rx: 2, ib: 1 } },
     ]
@@ -99,7 +99,7 @@ const questions: Q[] = [
   {
     question: "How do you feel about public speaking?",
     options: [
-      { text: "I love it — I'm at my best presenting to a room", w: { consulting: 4, st: 1, ib: 1 } },
+      { text: "I love it - I'm at my best presenting to a room", w: { consulting: 4, st: 1, ib: 1 } },
       { text: "I'd rather let my written work speak for itself", w: { er: 3, am: 2, accounting: 2 } },
       { text: "I'm comfortable one-on-one but not in front of large groups", w: { pe: 2, vc: 2, re: 2, ib: 1 } },
       { text: "I prefer fast back-and-forth conversations over formal presentations", w: { st: 3, vc: 2, rx: 1 } },
@@ -120,7 +120,7 @@ const questions: Q[] = [
       { text: "Markets, macro trends, and what's moving prices", w: { st: 3, am: 3, er: 1 } },
       { text: "How companies are built, run, and improved", w: { pe: 3, consulting: 2, vc: 1 } },
       { text: "Deals, transactions, and the business of M&A", w: { ib: 4, rx: 2 } },
-      { text: "Real assets — property, infrastructure, tangible things", w: { re: 4, pe: 1 } },
+      { text: "Real assets - property, infrastructure, tangible things", w: { re: 4, pe: 1 } },
     ]
   },
   {
@@ -145,8 +145,8 @@ const questions: Q[] = [
     question: "What's your attention span like?",
     options: [
       { text: "I can deep-dive on one topic for hours without getting bored", w: { er: 4, am: 2, pe: 1 } },
-      { text: "I like variety — switching between projects and topics keeps me sharp", w: { consulting: 3, ib: 2, vc: 1 } },
-      { text: "I'm laser-focused in short bursts — I work best under tight deadlines", w: { st: 3, ib: 2, rx: 1 } },
+      { text: "I like variety - switching between projects and topics keeps me sharp", w: { consulting: 3, ib: 2, vc: 1 } },
+      { text: "I'm laser-focused in short bursts - I work best under tight deadlines", w: { st: 3, ib: 2, rx: 1 } },
       { text: "I enjoy methodical, process-driven work that requires precision", w: { accounting: 4, re: 1 } },
     ]
   },
@@ -176,7 +176,7 @@ export default function QuizPage() {
 
   const resetQuiz = () => { setScores(Object.fromEntries(ALL_KEYS.map(k => [k, 0]))); setCurrentQ(0); setShowResult(false); };
 
-  // Compute relative strengths — normalize against the top score so the #1 career is always 100%
+  // Compute relative strengths - normalize against the top score so the #1 career is always 100%
   const maxScore = Math.max(...Object.values(scores), 1);
   const sorted = ALL_KEYS.map(k => ({ key: k, score: scores[k], strength: Math.round((scores[k] / maxScore) * 100) })).sort((a, b) => b.score - a.score);
   const topCareer = sorted[0];
@@ -187,7 +187,7 @@ export default function QuizPage() {
 
   const DESCS: Record<string, string> = {
     ib: 'You thrive under pressure, love deal execution, and want to work on headline transactions.',
-    pe: 'You want to invest in and improve businesses — ownership, diligence, and value creation.',
+    pe: 'You want to invest in and improve businesses - ownership, diligence, and value creation.',
     vc: 'You\'re drawn to innovation, founders, and the startup ecosystem.',
     consulting: 'You love solving ambiguous problems, working across industries, and advising leadership.',
     am: 'You\'re passionate about markets, building conviction, and managing capital.',

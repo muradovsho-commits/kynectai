@@ -1,7 +1,7 @@
 export const GE_EXITS_SECTIONS = [
   {
     title: 'Exit Channels',
-    content: `<p><strong>IPO:</strong> The company goes public. The GE firm typically sells a portion of its shares at IPO and the remainder over subsequent months (subject to lock-up periods). IPOs can produce the highest valuations in strong markets but are unpredictable&mdash;the IPO window can close suddenly during market volatility.</p>
+    content: `<p><strong>IPO:</strong> The company goes public. The GE firm typically sells a portion of its shares at IPO and the remainder over subsequent months (subject to lock-up periods). IPOs can produce the highest valuations in strong markets but are unpredictable-the IPO window can close suddenly during market volatility.</p>
 
 <p><strong>Strategic Acquisition (M&A):</strong> A larger company acquires the portfolio company. Strategic buyers often pay premium multiples because they can realize synergies. This is a clean exit (all shares are sold at once) but requires a willing buyer at an acceptable price.</p>
 
@@ -15,7 +15,7 @@ export const GE_EXITS_SECTIONS = [
 
 <p><strong>Revenue growth (the dominant driver):</strong> If a company grows ARR from $40M to $200M over 5 years (a 38% CAGR), the equity value likely grows by a comparable magnitude even without any multiple expansion. Revenue growth is the engine of GE returns.</p>
 
-<p><strong>Margin expansion:</strong> As the company scales, operating leverage kicks in: S&M and G&A grow slower than revenue, pushing margins from negative to breakeven to positive. A company valued at 15x revenue might also be valued at 40x EBITDA once it reaches 35%+ margins&mdash;both multiples might be "fair" but they produce different absolute valuations depending on when you measure.</p>
+<p><strong>Margin expansion:</strong> As the company scales, operating leverage kicks in: S&M and G&A grow slower than revenue, pushing margins from negative to breakeven to positive. A company valued at 15x revenue might also be valued at 40x EBITDA once it reaches 35%+ margins-both multiples might be "fair" but they produce different absolute valuations depending on when you measure.</p>
 
 <p><strong>Multiple expansion:</strong> If the market re-rates the company's multiple upward (due to improved growth quality, profitability, or favorable market conditions), the return amplifies. However, multiple expansion can also work against you: a company valued at 20x ARR at entry might only command 10x ARR at exit if growth decelerates or the market environment shifts.</p>
 

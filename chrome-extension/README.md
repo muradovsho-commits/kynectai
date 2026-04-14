@@ -8,15 +8,15 @@ Add contacts from Gmail directly to your OfferBell Outreach Tracker with one cli
 2. Enable **Developer mode** (toggle in the top-right)
 3. Click **Load unpacked**
 4. Select the `chrome-extension` folder from this project
-5. The extension is now active — go to Gmail!
+5. The extension is now active - go to Gmail!
 
 ## How It Works
 
 1. Open any email in Gmail
 2. You'll see an **"Add to OfferBell"** button (purple) in the email toolbar area
-3. Click it — a popup appears pre-filled with the sender's name, email, and inferred company
+3. Click it - a popup appears pre-filled with the sender's name, email, and inferred company
 4. Edit any fields, set the contact status, add notes
-5. Click **Add Contact** — it opens a small OfferBell page that saves the contact to your tracker
+5. Click **Add Contact** - it opens a small OfferBell page that saves the contact to your tracker
 6. Go to your Outreach Tracker to see the new contact
 
 ## What Gets Extracted

@@ -23,9 +23,9 @@ Debt / Total Capital = Debt / (Debt + Equity)<br>
 FCF / Debt = measure of deleveraging capacity
 </div>
 
-<p><strong>Investment Grade (IG)</strong> bonds are rated BBB−/Baa3 or higher by the rating agencies (S&P, Moody's, Fitch). These companies have strong balance sheets, stable cash flows, and low default risk. IG bonds offer lower yields but greater safety. Typical leverage: 1.0–3.5x Debt/EBITDA.</p>
+<p><strong>Investment Grade (IG)</strong> bonds are rated BBB−/Baa3 or higher by the rating agencies (S&P, Moody's, Fitch). These companies have strong balance sheets, stable cash flows, and low default risk. IG bonds offer lower yields but greater safety. Typical leverage: 1.0-3.5x Debt/EBITDA.</p>
 
-<p><strong>High Yield (HY)</strong> bonds are rated BB+/Ba1 or lower. These are riskier companies with higher leverage, less stable cash flows, or weaker competitive positions. HY bonds offer higher yields to compensate for higher default risk. Typical leverage: 3.5–7.0x+ Debt/EBITDA. Historical default rates for HY bonds average ~3–5% annually, spiking to 10–15% during recessions.</p>
+<p><strong>High Yield (HY)</strong> bonds are rated BB+/Ba1 or lower. These are riskier companies with higher leverage, less stable cash flows, or weaker competitive positions. HY bonds offer higher yields to compensate for higher default risk. Typical leverage: 3.5-7.0x+ Debt/EBITDA. Historical default rates for HY bonds average ~3-5% annually, spiking to 10-15% during recessions.</p>
 
 <h4>The Credit Analysis Framework</h4>
 
@@ -35,7 +35,7 @@ FCF / Debt = measure of deleveraging capacity
 
 <p><strong>Cash flow sustainability:</strong> Can the company sustain its current cash flow generation? Is EBITDA growing or declining? How sensitive is it to economic cycles? What's the maintenance CapEx requirement?</p>
 
-<p><strong>Recovery analysis:</strong> If the company defaults, how much will bondholders recover? Senior secured bonds typically recover 60–80 cents on the dollar; unsecured bonds recover 30–50 cents; subordinated bonds may recover 10–20 cents. Recovery depends on the company's asset base, the capital structure's seniority, and the specific nature of the distress.</p>`,
+<p><strong>Recovery analysis:</strong> If the company defaults, how much will bondholders recover? Senior secured bonds typically recover 60-80 cents on the dollar; unsecured bonds recover 30-50 cents; subordinated bonds may recover 10-20 cents. Recovery depends on the company's asset base, the capital structure's seniority, and the specific nature of the distress.</p>`,
   },
   {
     title: 'The Yield Curve and Term Structure',

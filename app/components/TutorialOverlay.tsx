@@ -212,7 +212,7 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
       transition: 'opacity .3s',
       opacity: animating ? 0 : 1,
     }}>
-      {/* Single full-screen dim overlay — blocks all clicks */}
+      {/* Single full-screen dim overlay - blocks all clicks */}
       <div style={{ position:'fixed', inset:0, background: isLast ? 'rgba(0,0,0,0.75)' : 'rgba(0,0,0,0.65)' }} />
 
       {/* Card */}

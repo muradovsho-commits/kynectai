@@ -9,7 +9,7 @@ export const AM_VALUATION_SECTIONS = [
 
 <p><strong>Reverse DCF:</strong> Instead of projecting cash flows to derive a value, start with the current stock price and work backward to determine what assumptions the market is implicitly making. If the stock is at $50, what growth rate and margins does the market expect? If those expectations are too low (or too high) based on your research, that's the basis for an investment thesis.</p>
 
-<p><strong>Sensitivity to terminal assumptions:</strong> The Terminal Value often represents 60–80% of total DCF value. This means small changes to the terminal growth rate or exit multiple can swing the output dramatically. A thoughtful buy-side analyst always stress-tests terminal assumptions and avoids anchoring to a single estimate.</p>`,
+<p><strong>Sensitivity to terminal assumptions:</strong> The Terminal Value often represents 60-80% of total DCF value. This means small changes to the terminal growth rate or exit multiple can swing the output dramatically. A thoughtful buy-side analyst always stress-tests terminal assumptions and avoids anchoring to a single estimate.</p>`,
   },
   {
     title: 'Relative Valuation: Multiples',
@@ -17,7 +17,7 @@ export const AM_VALUATION_SECTIONS = [
 
 <p><strong>P/E (Price / Earnings):</strong> The most widely quoted multiple. Simple and intuitive but distorted by capital structure (leverage), tax rates, and one-time items. Best used for mature, profitable companies with stable capital structures. Forward P/E (using next year's estimated earnings) is more useful than trailing P/E.</p>
 
-<p><strong>EV/EBITDA:</strong> Neutralizes differences in capital structure, tax jurisdiction, and depreciation policy. The workhorse multiple for most sectors. Typical ranges: 6–8x for mature industrials, 10–15x for healthy consumer businesses, 15–25x for high-growth tech.</p>
+<p><strong>EV/EBITDA:</strong> Neutralizes differences in capital structure, tax jurisdiction, and depreciation policy. The workhorse multiple for most sectors. Typical ranges: 6-8x for mature industrials, 10-15x for healthy consumer businesses, 15-25x for high-growth tech.</p>
 
 <p><strong>EV/Revenue:</strong> Useful for unprofitable or early-stage companies where earnings-based multiples are meaningless. Also useful for comparing companies with very different margin profiles (but you should understand <em>why</em> the margins differ).</p>
 
@@ -29,15 +29,15 @@ export const AM_VALUATION_SECTIONS = [
 
 <h4>Relative Valuation Pitfalls</h4>
 
-<p><strong>The "cheap on multiples" trap:</strong> A stock trading at 8x earnings when peers trade at 14x might not be cheap&mdash;it might deserve the discount because of slower growth, worse management, higher leverage, or a deteriorating competitive position. Always ask <em>why</em> the multiple is low before calling something undervalued.</p>
+<p><strong>The "cheap on multiples" trap:</strong> A stock trading at 8x earnings when peers trade at 14x might not be cheap-it might deserve the discount because of slower growth, worse management, higher leverage, or a deteriorating competitive position. Always ask <em>why</em> the multiple is low before calling something undervalued.</p>
 
-<p><strong>Sector vs. historical comparison:</strong> Comparing a tech company's EV/EBITDA to an industrial company's is meaningless. Compare within sectors, and also compare a company's current multiple to its own historical range. If it's historically traded at 12–16x EBITDA and is now at 10x, that could indicate a buying opportunity&mdash;or a structural deterioration.</p>`,
+<p><strong>Sector vs. historical comparison:</strong> Comparing a tech company's EV/EBITDA to an industrial company's is meaningless. Compare within sectors, and also compare a company's current multiple to its own historical range. If it's historically traded at 12-16x EBITDA and is now at 10x, that could indicate a buying opportunity-or a structural deterioration.</p>`,
   },
   {
     title: 'Sum-of-the-Parts (SOTP) Valuation',
-    content: `<p>For diversified companies (conglomerates, holding companies), a SOTP analysis values each business segment separately and adds them up, then subtracts corporate overhead and net debt. This is particularly useful when the market is assigning a "conglomerate discount"&mdash;valuing the whole company at less than the sum of its parts.</p>
+    content: `<p>For diversified companies (conglomerates, holding companies), a SOTP analysis values each business segment separately and adds them up, then subtracts corporate overhead and net debt. This is particularly useful when the market is assigning a "conglomerate discount"-valuing the whole company at less than the sum of its parts.</p>
 
-<p>SOTP can reveal hidden value. A conglomerate with a fast-growing tech division and a slow-growing industrial division might be valued at an "average" multiple, but if you value each division at its appropriate sector multiple, the tech division alone could be worth more than the current stock price&mdash;meaning you're getting the industrial division for free.</p>`,
+<p>SOTP can reveal hidden value. A conglomerate with a fast-growing tech division and a slow-growing industrial division might be valued at an "average" multiple, but if you value each division at its appropriate sector multiple, the tech division alone could be worth more than the current stock price-meaning you're getting the industrial division for free.</p>`,
   },
   {
     title: 'Dividend Discount Model (DDM)',

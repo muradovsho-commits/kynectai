@@ -7,7 +7,7 @@ export const PE_RETURNS_SECTIONS = [
 <p>LPs (pension funds, endowments) demand a certain <strong>IRR</strong> (usually 15-20%). However, PE partners get paid their "Carry" (20% cut of profits) based on total dollars generated (<strong>MOIC</strong>).</p>
 <h4>The Interview Test</h4>
 <p><strong>"Would you rather have a 30% IRR / 1.5x MOIC, or 15% IRR / 3.0x MOIC?"</strong></p>
-<p>"It depends on the time horizon. A 30% IRR / 1.5x MOIC means a quick flip — only 0.5x in profit, then you need to find a new deal. Most PE partners prefer the 15% IRR / 3.0x MOIC because it puts massively more absolute profit dollars in their pocket."</p>`
+<p>"It depends on the time horizon. A 30% IRR / 1.5x MOIC means a quick flip - only 0.5x in profit, then you need to find a new deal. Most PE partners prefer the 15% IRR / 3.0x MOIC because it puts massively more absolute profit dollars in their pocket."</p>`
   },
   {
     title: `7.2 The Dividend Recapitalization (The IRR Supercharger)`,

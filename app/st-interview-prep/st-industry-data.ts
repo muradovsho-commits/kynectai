@@ -1,7 +1,7 @@
 export const ST_INDUSTRY_SECTIONS = [
   {
     title: 'What Is Sales &amp; Trading?',
-    content: `<p>Sales &amp; Trading (S&amp;T) is the division of an investment bank that <strong>facilitates the buying and selling of financial instruments</strong> for institutional clients&mdash;mutual funds, hedge funds, pension funds, insurance companies, sovereign wealth funds, and corporations. Unlike investment banking (which advises on transactions), S&amp;T executes transactions in the markets, manages the bank's own risk, and generates revenue from the bid-ask spread, commissions, and proprietary positioning.</p>
+    content: `<p>Sales &amp; Trading (S&amp;T) is the division of an investment bank that <strong>facilitates the buying and selling of financial instruments</strong> for institutional clients-mutual funds, hedge funds, pension funds, insurance companies, sovereign wealth funds, and corporations. Unlike investment banking (which advises on transactions), S&amp;T executes transactions in the markets, manages the bank's own risk, and generates revenue from the bid-ask spread, commissions, and proprietary positioning.</p>
 
 <p>The business operates at the intersection of speed, risk, and market knowledge. When a pension fund needs to sell $500 million of US Treasuries, or a hedge fund wants to establish a $200 million short position in European banks, they call the S&amp;T desk. The desk provides a price, executes the trade, and manages the resulting risk.</p>`,
   },
@@ -25,7 +25,7 @@ export const ST_INDUSTRY_SECTIONS = [
   },
   {
     title: 'How S&amp;T Makes Money',
-    content: `<p><strong>Bid-ask spread:</strong> The bank buys at the bid price and sells at the ask (offer) price. The spread is revenue. In liquid markets (US Treasuries, large-cap equities), spreads are razor-thin (fractions of a cent). In illiquid markets (distressed debt, emerging market corporates, structured products), spreads can be 1&ndash;5+ points.</p>
+    content: `<p><strong>Bid-ask spread:</strong> The bank buys at the bid price and sells at the ask (offer) price. The spread is revenue. In liquid markets (US Treasuries, large-cap equities), spreads are razor-thin (fractions of a cent). In illiquid markets (distressed debt, emerging market corporates, structured products), spreads can be 1-5+ points.</p>
 
 <p><strong>Commissions:</strong> For agency trades (where the bank executes on behalf of the client without taking principal risk), the bank earns a commission. This is common in cash equities.</p>
 
@@ -40,8 +40,8 @@ export const ST_INDUSTRY_SECTIONS = [
 <tr><td>Time Horizon</td><td>Seconds to weeks (sometimes months)</td><td>Months to years per deal</td></tr>
 <tr><td>Revenue Model</td><td>Daily P&amp;L from trading, spreads, commissions</td><td>Fees upon deal completion</td></tr>
 <tr><td>Key Skill</td><td>Real-time risk management, market intuition, quick decision-making</td><td>Analytical modeling, client relationships, deal execution</td></tr>
-<tr><td>Work Style</td><td>Market hours (6:30 AM&ndash;5:30 PM typically), intense during open</td><td>Long hours (9 AM&ndash;midnight+), project-driven</td></tr>
-<tr><td>P&amp;L Visibility</td><td>Immediate&mdash;you see your P&amp;L every day</td><td>Periodic&mdash;tied to deal closings</td></tr>
+<tr><td>Work Style</td><td>Market hours (6:30 AM-5:30 PM typically), intense during open</td><td>Long hours (9 AM-midnight+), project-driven</td></tr>
+<tr><td>P&amp;L Visibility</td><td>Immediate-you see your P&amp;L every day</td><td>Periodic-tied to deal closings</td></tr>
 <tr><td>Personality Fit</td><td>Quick thinkers, comfortable with ambiguity and real-time pressure</td><td>Detail-oriented, structured, long attention span</td></tr>
 </table>`,
   },

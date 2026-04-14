@@ -24,7 +24,7 @@ NOI = Gross Potential Rent<br>
 Value = NOI / Cap Rate
 </div>
 
-<p>The <strong>cap rate</strong> is the expected unlevered return on the property&mdash;the yield an all-cash buyer would earn. It reflects the risk of the property's cash flows: lower cap rates indicate lower risk (and higher prices), while higher cap rates indicate higher risk (and lower prices).</p>
+<p>The <strong>cap rate</strong> is the expected unlevered return on the property-the yield an all-cash buyer would earn. It reflects the risk of the property's cash flows: lower cap rates indicate lower risk (and higher prices), while higher cap rates indicate higher risk (and lower prices).</p>
 
 <div class="example-box">
 <div class="example-label">Cap Rate Valuation</div>
@@ -44,7 +44,7 @@ Value = NOI / Cap Rate
 
 <h4>3. Replacement Cost Approach</h4>
 
-<p>Estimate value based on what it would cost to build an equivalent property from scratch today: land value + hard costs (construction) + soft costs (architecture, engineering, permits, legal) + developer profit. This sets a theoretical ceiling on value&mdash;if existing properties trade significantly above replacement cost, developers will build new supply, eventually pushing prices down. If they trade below replacement cost, new construction stops, eventually reducing supply and pushing prices up.</p>`,
+<p>Estimate value based on what it would cost to build an equivalent property from scratch today: land value + hard costs (construction) + soft costs (architecture, engineering, permits, legal) + developer profit. This sets a theoretical ceiling on value-if existing properties trade significantly above replacement cost, developers will build new supply, eventually pushing prices down. If they trade below replacement cost, new construction stops, eventually reducing supply and pushing prices up.</p>`,
   },
   {
     title: 'Key Valuation Metrics',

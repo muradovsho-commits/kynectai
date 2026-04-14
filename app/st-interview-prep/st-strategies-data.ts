@@ -9,7 +9,7 @@ export const ST_STRATEGIES_SECTIONS = [
     title: 'Relative Value Trading',
     content: `<p>Relative value strategies profit from pricing discrepancies between related instruments. Examples: buying a corporate bond and shorting the CDS if the bond is cheap relative to the CDS (the "basis trade"), going long one maturity on the yield curve and short another to profit from a change in curve shape, or buying one company's bonds and shorting another's if you believe the spread between them is mispriced.</p>
 
-<p>Relative value trades are generally lower risk than directional trades because both legs move together&mdash;you're betting on the <em>difference</em>, not the absolute level. But they carry basis risk (the risk that the relationship between the two instruments breaks down).</p>`,
+<p>Relative value trades are generally lower risk than directional trades because both legs move together-you're betting on the <em>difference</em>, not the absolute level. But they carry basis risk (the risk that the relationship between the two instruments breaks down).</p>`,
   },
   {
     title: 'Flow Trading',

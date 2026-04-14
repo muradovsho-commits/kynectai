@@ -1,7 +1,7 @@
-// Accounting & Audit Mastery Manual — Modules 1-3
+// Accounting & Audit Mastery Manual - Modules 1-3
 export const ACCT_TECH_SECTIONS = [
   {
-    title: '1.1–1.3 What Accounting Is, Language of Business, Objective of Reporting',
+    title: '1.1-1.3 What Accounting Is, Language of Business, Objective of Reporting',
     content: `<h3>1.1 What Accounting Actually Is</h3>
 <p>Accounting is the structured process of identifying, measuring, recording, classifying, summarizing, and communicating economic activity.</p>
 <p><strong>Why it exists:</strong> Businesses constantly create transactions: selling products, paying employees, borrowing money, buying equipment, collecting cash, promising performance in the future. Stakeholders need a reliable framework for converting that messy activity into useful information. Those stakeholders include: management, investors, lenders, regulators, auditors, tax authorities, employees.</p>
@@ -19,7 +19,7 @@ export const ACCT_TECH_SECTIONS = [
 <p><strong>Interview insight:</strong> Strong candidates know accounting is not about memorizing arbitrary treatment. It is about supporting decision-useful information under a standard framework.</p>`,
   },
   {
-    title: '1.4–1.6 Accrual vs Cash Accounting, The Accounting Equation, Debits & Credits',
+    title: '1.4-1.6 Accrual vs Cash Accounting, The Accounting Equation, Debits & Credits',
     content: `<h3>1.4 Accrual Accounting vs Cash Accounting</h3>
 <p><strong>Cash accounting:</strong> Records transactions when cash is received or paid.</p>
 <p><strong>Accrual accounting:</strong> Records revenue when earned and expenses when incurred, regardless of cash timing.</p>
@@ -40,7 +40,7 @@ export const ACCT_TECH_SECTIONS = [
 <p><strong>Common mistake:</strong> Students often memorize the rules but cannot explain why expenses are debit-balance. The deeper reason is that expenses reduce retained earnings / equity.</p>`,
   },
   {
-    title: '1.7–1.10 Journal Entries, Adjusting Entries, Closing Process, Accountant\'s Mindset + Module 1 Practice',
+    title: '1.7-1.10 Journal Entries, Adjusting Entries, Closing Process, Accountant\'s Mindset + Module 1 Practice',
     content: `<h3>1.7 Journal Entries and the Flow of Information</h3>
 <p><strong>Journal entry:</strong> The first formal record of a transaction.</p>
 <p><strong>General ledger:</strong> The collection of all accounts and balances.</p>
@@ -66,12 +66,12 @@ export const ACCT_TECH_SECTIONS = [
 
 <h3>Module 1 Practice Drills</h3>
 <p><strong>Explain-out-loud drills:</strong> What is the purpose of accounting? Why is accrual accounting preferred for financial reporting? What do debits and credits actually accomplish? Why are adjusting entries necessary?</p>
-<p><strong>Transaction drills — For each, identify accounts and whether debited or credited:</strong></p>
+<p><strong>Transaction drills - For each, identify accounts and whether debited or credited:</strong></p>
 <ol><li>Borrow cash from a bank</li><li>Purchase equipment with cash</li><li>Earn revenue on account</li><li>Pay rent in advance</li><li>Accrue unpaid wages</li></ol>
 <p><strong>Self-test checklist:</strong> Did I explain the economics, not just the rule? Did I think about timing and measurement separately? Can I connect the transaction to the accounting equation?</p>`,
   },
   {
-    title: '2.1–2.4 Income Statement, Balance Sheet, Cash Flows, Equity Statement',
+    title: '2.1-2.4 Income Statement, Balance Sheet, Cash Flows, Equity Statement',
     content: `<h3>2.1 Why the Financial Statements Matter</h3>
 <p>The financial statements are the final output of the accounting system. They translate thousands or millions of transactions into a structured picture of: performance, position, liquidity, obligations, capital.</p>
 <p>For accounting interviews, you must understand what each statement does. For audit interviews, you must understand where each statement is vulnerable to error or manipulation.</p>
@@ -95,7 +95,7 @@ export const ACCT_TECH_SECTIONS = [
 <p><strong>Risk areas:</strong> classification between operating / investing / financing, non-cash transactions omitted from disclosure, manipulation through working capital timing.</p>`,
   },
   {
-    title: '2.5–2.9 Equity Statement, Notes, Linkages, Ratios, Earnings Quality + Module 2 Practice',
+    title: '2.5-2.9 Equity Statement, Notes, Linkages, Ratios, Earnings Quality + Module 2 Practice',
     content: `<h3>2.5 Statement of Changes in Equity</h3>
 <p>Explains the movement in equity accounts over the period. It ties together: net income, dividends, share issuances / repurchases, OCI items.</p>
 
@@ -122,7 +122,7 @@ export const ACCT_TECH_SECTIONS = [
 <p><strong>Self-test checklist:</strong> Can I explain not just what each statement is, but what users learn from it? Can I identify likely high-risk balances and estimates?</p>`,
   },
   {
-    title: '3.1–3.8 Accounting Mechanics: Revenue, Collections, Inventory, Prepaids, Accruals, Deferred Revenue, Depreciation, Bad Debt',
+    title: '3.1-3.8 Accounting Mechanics: Revenue, Collections, Inventory, Prepaids, Accruals, Deferred Revenue, Depreciation, Bad Debt',
     content: `<h3>3.1 Why Mechanics Matter</h3>
 <p>Many candidates can discuss accounting conceptually but struggle once a real transaction appears. Interviewers use mechanics questions to test whether you can translate economics into accounting entries and statement impacts.</p>
 
@@ -164,7 +164,7 @@ export const ACCT_TECH_SECTIONS = [
 <p>Cash receipt is not always revenue recognition.</p>`,
   },
   {
-    title: '3.9–3.13 Depreciation, Bad Debt, Debt, Common 3-Statement Scenarios, Mistakes + Module 3 Practice',
+    title: '3.9-3.13 Depreciation, Bad Debt, Debt, Common 3-Statement Scenarios, Mistakes + Module 3 Practice',
     content: `<h3>3.9 Depreciation</h3>
 <p>Equipment costing $12,000 with 5-year life, straight-line, no salvage. Annual depreciation: 12,000 / 5 = 2,400.</p>
 <p><strong>Entry:</strong> Dr Depreciation Expense 2,400 / Cr Accumulated Depreciation 2,400</p>
@@ -191,6 +191,6 @@ export const ACCT_TECH_SECTIONS = [
 
 <h3>Module 3 Practice Drills</h3>
 <p><strong>Journal entry drills:</strong> 1) purchase equipment with a note payable, 2) collect cash in advance from customer, 3) recognize monthly rent expense from prepaid rent, 4) accrue utilities at month-end, 5) write off an uncollectible receivable, 6) record inventory shrinkage.</p>
-<p><strong>Statement flow drills — Explain 3-statement impact of:</strong> 1) depreciation increase, 2) inventory purchase for cash, 3) wage accrual, 4) debt issuance, 5) dividend declaration and payment.</p>`,
+<p><strong>Statement flow drills - Explain 3-statement impact of:</strong> 1) depreciation increase, 2) inventory purchase for cash, 3) wage accrual, 4) debt issuance, 5) dividend declaration and payment.</p>`,
   },
 ];

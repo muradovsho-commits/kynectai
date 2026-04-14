@@ -32,10 +32,10 @@ function SigninContent() {
         const previousUser = window.localStorage.getItem("offerbell_user_id");
         let shouldClear = false;
         if (previousUser && previousUser !== id) {
-          // Different user ID — definitely clear
+          // Different user ID - definitely clear
           shouldClear = true;
         } else if (!previousUser) {
-          // No user ID (signed out) — check if leftover profile belongs to someone else
+          // No user ID (signed out) - check if leftover profile belongs to someone else
           try {
             const raw = window.localStorage.getItem("offerbell_onboarding_profile");
             if (raw) {
@@ -77,7 +77,7 @@ function SigninContent() {
           }
         } catch {}
       }
-      // Send all users to dashboard — tutorial handles first-time setup
+      // Send all users to dashboard - tutorial handles first-time setup
       // Sync to Chrome extension if installed
       try {
         if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
@@ -96,7 +96,7 @@ function SigninContent() {
         window.localStorage.removeItem("offerbell_needs_onboarding");
         router.push("/dashboard");
       } else {
-        // Existing user — create default profile if missing and go to dashboard
+        // Existing user - create default profile if missing and go to dashboard
         if (typeof window !== "undefined" && !window.localStorage.getItem("offerbell_onboarding_profile")) {
           const nm = result?.name || "";
           const pts = nm.split(" ");

@@ -42,12 +42,12 @@ export const CONS_CASE_FLOW_SECTIONS = [
 <ul>
 <li>"Can you tell me about the company?"</li>
 <li>"What framework should I use?"</li>
-<li>"Do we know competitors?" — before you have even structured the problem</li>
+<li>"Do we know competitors?" - before you have even structured the problem</li>
 </ul>`
   },
   {
     title: `3.4 Taking Time to Think`,
-    content: `<p>You are allowed to pause. Strong candidates do not rush into messy speech. They take 20–60 seconds to think, then deliver a clean structure.</p>
+    content: `<p>You are allowed to pause. Strong candidates do not rush into messy speech. They take 20-60 seconds to think, then deliver a clean structure.</p>
 <p>Say: <em>"I'd like to take a moment to structure my thoughts."</em></p>
 <p>Use the pause to build a clear roadmap.</p>`
   },
@@ -73,7 +73,7 @@ export const CONS_CASE_FLOW_SECTIONS = [
     content: `<p>A strong final recommendation has four parts:</p>
 <ol>
 <li><strong>Answer first</strong></li>
-<li><strong>Support with 2–3 key reasons</strong></li>
+<li><strong>Support with 2-3 key reasons</strong></li>
 <li><strong>Mention risks or caveats</strong></li>
 <li><strong>Propose next steps</strong></li>
 </ol>
@@ -106,9 +106,9 @@ export const CONS_CASE_FLOW_SECTIONS = [
 <p><strong>Bain:</strong> Often collaborative and practical. Strong focus on results orientation and commercial judgment.</p>
 <p><strong>BCG:</strong> Can be creative and less formulaic. May reward original thinking and strategic insight.</p>
 <h4>Practice Drills:</h4>
-<p><strong>Drill 1 — Clarifying questions.</strong> Write 3 high-value clarifying questions for: "A telecom company's profits have declined." / "A luxury brand is considering launching a lower-priced line."</p>
-<p><strong>Drill 2 — Interim synthesis.</strong> After each piece of hypothetical data, summarize what it means in 20 seconds.</p>
-<p><strong>Drill 3 — Final recommendation.</strong> Give a final recommendation using the 4-part structure for three sample cases.</p>
+<p><strong>Drill 1 - Clarifying questions.</strong> Write 3 high-value clarifying questions for: "A telecom company's profits have declined." / "A luxury brand is considering launching a lower-priced line."</p>
+<p><strong>Drill 2 - Interim synthesis.</strong> After each piece of hypothetical data, summarize what it means in 20 seconds.</p>
+<p><strong>Drill 3 - Final recommendation.</strong> Give a final recommendation using the 4-part structure for three sample cases.</p>
 <h4>Self-evaluation checklist:</h4>
 <ul>
 <li>Did I ask sharp clarifying questions?</li>

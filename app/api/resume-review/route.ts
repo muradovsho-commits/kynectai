@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 TASK: Review the candidate's resume and provide detailed, actionable feedback.
 
 RULES:
-- Be direct and specific — no generic advice
+- Be direct and specific - no generic advice
 - Reference specific bullets, experiences, or sections from the resume
 - Judge the resume against ${targetTrack || "finance"} recruiting standards
 - Consider both content AND formatting/presentation based on the text
@@ -74,7 +74,7 @@ RESPOND IN THIS EXACT JSON FORMAT (no markdown, no backticks, just raw JSON):
     { "original": "<original bullet from resume>", "improved": "<your rewritten version>" },
     { "original": "<another bullet>", "improved": "<your rewritten version>" }
   ],
-  "interviewReadiness": "<1-2 sentences on how well this resume would perform in a ${targetTrack || "finance"} interview setting — would it generate good talking points?>"
+  "interviewReadiness": "<1-2 sentences on how well this resume would perform in a ${targetTrack || "finance"} interview setting - would it generate good talking points?>"
 }`;
 
     const messages = [

@@ -8,7 +8,7 @@ export const PE_PITCH_SECTIONS = [
 <h4>2. The LBO Angle (Why does this work for PE?)</h4>
 <p><em>"It is a perfect LBO candidate because of its cash flow profile. It has 40% EBITDA margins, practically zero CapEx, and negative net working capital because customers pay annual subscriptions upfront. This allows us to comfortably service 5.0x debt."</em></p>
 <h4>3. The Value Creation Plan (How do we make our 2.5x MOIC?)</h4>
-<p><em>"The public markets are penalizing them for slow top-line growth, currently trading at 9x EBITDA. We take it private, replace the legacy sales team, and use the free cash flow to execute a roll-up strategy — buying smaller, mom-and-pop software vendors at 5x multiples, blending down our overall entry multiple."</em></p>
+<p><em>"The public markets are penalizing them for slow top-line growth, currently trading at 9x EBITDA. We take it private, replace the legacy sales team, and use the free cash flow to execute a roll-up strategy - buying smaller, mom-and-pop software vendors at 5x multiples, blending down our overall entry multiple."</em></p>
 <h4>4. The Key Risks & Mitigants (Show you think like a skeptic)</h4>
 <p><em>"The primary risk is regulatory change in the trucking industry that makes their core compliance module obsolete. We mitigate this by heavily diligencing their product roadmap to ensure they are pivoting toward predictive maintenance software as well."</em></p>`
   },

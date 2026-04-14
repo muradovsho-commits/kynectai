@@ -1,7 +1,7 @@
-// Asset Management Mastery Manual — Modules 8-10 + Appendices
+// Asset Management Mastery Manual - Modules 8-10 + Appendices
 export const AM_BEHAVIORAL_SECTIONS = [
   {
-    title: '8.1–8.5 Fixed Income for AM, Credit, Duration, Liability-Driven, Multi-Asset',
+    title: '8.1-8.5 Fixed Income for AM, Credit, Duration, Liability-Driven, Multi-Asset',
     content: `<h3>8.1 Why This Module Matters</h3>
 <p>Asset management is broader than stock picking. Many firms manage fixed income, balanced portfolios, target-date products, liability-driven mandates, or multi-asset solutions. An elite candidate should understand how institutional portfolios think across asset classes.</p>
 
@@ -22,7 +22,7 @@ export const AM_BEHAVIORAL_SECTIONS = [
 <p><strong>Why this matters:</strong> A portfolio that looks attractive on a standalone basis may be wrong for a liability-sensitive institution.</p>`,
   },
   {
-    title: '8.6–8.10 Multi-Asset, Income, Risk Parity, Constraints, Cross-Asset Literacy + Module 8 Practice',
+    title: '8.6-8.10 Multi-Asset, Income, Risk Parity, Constraints, Cross-Asset Literacy + Module 8 Practice',
     content: `<h3>8.6 Multi-Asset Allocation</h3>
 <p>Multi-asset portfolios blend: equities, fixed income, real assets, alternatives, cash.</p>
 <p><strong>Objective:</strong> Achieve better risk-adjusted outcomes than a single-asset portfolio under client constraints.</p>
@@ -45,10 +45,10 @@ export const AM_BEHAVIORAL_SECTIONS = [
 
 <h3>Module 8 Practice Drills</h3>
 <p><strong>Explain-out-loud drills:</strong> Why does duration matter? How is credit analysis different from equity analysis? What is liability-driven investing? Why might a high-yielding asset be risky rather than attractive?</p>
-<p><strong>Cross-asset drill — Choose one macro scenario and explain how you would think about:</strong> 1) equities, 2) government bonds, 3) credit, 4) cash, 5) portfolio allocation implications.</p>`,
+<p><strong>Cross-asset drill - Choose one macro scenario and explain how you would think about:</strong> 1) equities, 2) government bonds, 3) credit, 4) cash, 5) portfolio allocation implications.</p>`,
   },
   {
-    title: '9.1–9.5 Performance: Absolute vs Relative, Alpha/Beta, Sharpe/IR, Attribution',
+    title: '9.1-9.5 Performance: Absolute vs Relative, Alpha/Beta, Sharpe/IR, Attribution',
     content: `<h3>9.1 Why Performance Measurement Matters</h3>
 <p>Asset management is accountable. It is not enough to "like your process." Results and risk-adjusted results matter.</p>
 <p><strong>Key question:</strong> How do we know whether a manager is actually adding value?</p>
@@ -75,7 +75,7 @@ export const AM_BEHAVIORAL_SECTIONS = [
 <p><strong>Why this matters:</strong> A manager should know not only whether the portfolio outperformed, but why.</p>`,
   },
   {
-    title: '9.6–9.10 Costs, Client Communication, Underperformance, Active Share + Module 9 Practice',
+    title: '9.6-9.10 Costs, Client Communication, Underperformance, Active Share + Module 9 Practice',
     content: `<h3>9.6 Turnover, Costs, and Implementation</h3>
 <p>Gross returns are not the same as net returns.</p>
 <p><strong>Important hidden drags:</strong> commissions, spreads, market impact, taxes where relevant, unnecessary turnover.</p>
@@ -101,9 +101,9 @@ export const AM_BEHAVIORAL_SECTIONS = [
 <p><strong>Explain-out-loud drills:</strong> What is alpha? What is the difference between Sharpe ratio and information ratio? Why does attribution matter? How should a manager talk to clients after underperformance?</p>`,
   },
   {
-    title: '10.1–10.5 Why AM, Stock Pitch, Short Pitch, Market View, Portfolio Building',
+    title: '10.1-10.5 Why AM, Stock Pitch, Short Pitch, Market View, Portfolio Building',
     content: `<h3>10.1 Core "Why Asset Management?" Question</h3>
-<p><strong>Strong answer:</strong> "I'm drawn to asset management because it combines business analysis, valuation, market psychology, and decision-making under uncertainty. What appeals to me most is the idea of turning research into actual capital allocation decisions and being accountable for outcomes over time. I also like that strong investing requires both independent thinking and discipline — not just finding good businesses, but understanding what is priced in, managing risk, and staying rational when markets are volatile."</p>
+<p><strong>Strong answer:</strong> "I'm drawn to asset management because it combines business analysis, valuation, market psychology, and decision-making under uncertainty. What appeals to me most is the idea of turning research into actual capital allocation decisions and being accountable for outcomes over time. I also like that strong investing requires both independent thinking and discipline - not just finding good businesses, but understanding what is priced in, managing risk, and staying rational when markets are volatile."</p>
 
 <h3>10.2 "Walk Me Through a Stock You Like"</h3>
 <p><strong>Strong structure:</strong> 1) recommendation, 2) business overview, 3) why market is wrong, 4) valuation, 5) catalysts, 6) risks.</p>
@@ -121,7 +121,7 @@ export const AM_BEHAVIORAL_SECTIONS = [
 <p><strong>Strong answer structure:</strong> 1) start with mandate and benchmark, 2) define objective and risk budget, 3) build around best ideas with diversification discipline, 4) size positions based on conviction and risk contribution, 5) monitor factor and liquidity exposures, 6) define sell discipline.</p>`,
   },
   {
-    title: '10.6–10.12 Changed Mind, Cheap Stocks, Risk, Behavioral, Final Mastery + Appendices',
+    title: '10.6-10.12 Changed Mind, Cheap Stocks, Risk, Behavioral, Final Mastery + Appendices',
     content: `<h3>10.6 "Tell Me About a Time You Changed Your Mind"</h3>
 <p>This is especially good for asset management because good investors revise views.</p>
 <p><strong>What firms want:</strong> humility, learning ability, evidence-based adaptation, no ego attachment to ideas.</p>

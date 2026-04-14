@@ -1,6 +1,6 @@
 /**
  * Check if user currently has Pro access.
- * Simple check — cancellation is instant, no delayed expiry.
+ * Simple check - cancellation is instant, no delayed expiry.
  */
 export function isUserPro(): boolean {
   if (typeof window === 'undefined') return false;

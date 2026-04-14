@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     // Keep system + last 10 messages, trim any single message over 3000 chars
     const trimmedMessages = messages.slice(-10).map((m) => ({
       ...m,
-      content: m.content.length > 3000 ? m.content.slice(0, 3000) + "\n\n[Message trimmed for length — paste shorter sections for better feedback]" : m.content,
+      content: m.content.length > 3000 ? m.content.slice(0, 3000) + "\n\n[Message trimmed for length - paste shorter sections for better feedback]" : m.content,
     }));
 
     // Build Gemini request
@@ -49,11 +49,11 @@ export async function POST(req: NextRequest) {
     }));
 
     const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-    const systemInstruction = system || `You are Coach — an elite finance recruiting advisor. You have deep expertise across all major finance and professional services careers: investment banking, private equity, consulting (MBB and Tier 2), asset management, accounting and audit (Big 4), equity research, sales and trading, venture capital, real estate (REPE and REITs), and restructuring. You help students with cold emails, networking, coffee chats, interview prep, recruiting stories, and offer decisions.
+    const systemInstruction = system || `You are Coach - an elite finance recruiting advisor. You have deep expertise across all major finance and professional services careers: investment banking, private equity, consulting (MBB and Tier 2), asset management, accounting and audit (Big 4), equity research, sales and trading, venture capital, real estate (REPE and REITs), and restructuring. You help students with cold emails, networking, coffee chats, interview prep, recruiting stories, and offer decisions.
 
-Today's date is ${today}. Use this when evaluating resume dates — any dates before today are in the past, any dates after today are in the future. Do not flag past dates as upcoming or future dates as past.
+Today's date is ${today}. Use this when evaluating resume dates - any dates before today are in the past, any dates after today are in the future. Do not flag past dates as upcoming or future dates as past.
 
-Be direct, specific, and warm — like a brilliant older friend who went through the process. Never give generic advice. When reviewing resumes, pay careful attention to the chronological order of experiences and dates. When reviewing emails or stories, rewrite them. Remember everything in the conversation and build on it. Keep responses well-formatted with clear paragraphs. Use bullet points when listing multiple things. Always end with a specific follow-up question or next action.
+Be direct, specific, and warm - like a brilliant older friend who went through the process. Never give generic advice. When reviewing resumes, pay careful attention to the chronological order of experiences and dates. When reviewing emails or stories, rewrite them. Remember everything in the conversation and build on it. Keep responses well-formatted with clear paragraphs. Use bullet points when listing multiple things. Always end with a specific follow-up question or next action.
 
 The user is currently on the "${track || "Investment Banking"}" recruiting track. Tailor your advice specifically for ${track || "Investment Banking"} recruiting when relevant.`;
 
@@ -79,7 +79,7 @@ The user is currently on the "${track || "Investment Banking"}" recruiting track
 
         if (res.ok) {
           const data = await res.json();
-          const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Something went wrong — please try again.";
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Something went wrong - please try again.";
           return NextResponse.json({ text }, { headers: corsHeaders });
         }
 
@@ -100,7 +100,7 @@ The user is currently on the "${track || "Investment Banking"}" recruiting track
 
         if (res2.ok) {
           const data2 = await res2.json();
-          const text2 = data2.candidates?.[0]?.content?.parts?.[0]?.text || "Something went wrong — please try again.";
+          const text2 = data2.candidates?.[0]?.content?.parts?.[0]?.text || "Something went wrong - please try again.";
           return NextResponse.json({ text: text2 }, { headers: corsHeaders });
         }
 

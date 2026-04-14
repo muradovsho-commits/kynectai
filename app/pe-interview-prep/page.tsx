@@ -136,7 +136,7 @@ export default function PEInterviewPrepPage() {
               <div className="ib-how-to-use">
                 <h4>How to Use This Guide</h4>
                 <p><strong>Foundations First:</strong> Whether you are in college or lateral recruiting from IB, start with The PE Industry and Fund Structure. You need to understand <em>why</em> PE exists before you touch Excel.</p>
-                <p><strong>Deep Immersion (Modeling):</strong> Spend 3–4 days learning the LBO Modeling module. This forms the crux of paper LBO mental math and timed modeling tests.</p>
+                <p><strong>Deep Immersion (Modeling):</strong> Spend 3-4 days learning the LBO Modeling module. This forms the crux of paper LBO mental math and timed modeling tests.</p>
                 <p><strong>Interview Prep:</strong> The final module covers the exact questions, case formats, and common mistakes to avoid. Work through it after mastering the technical content.</p>
               </div>
 

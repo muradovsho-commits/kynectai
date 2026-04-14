@@ -14,9 +14,9 @@ export const VC_TERM_SHEETS_SECTIONS = [
 <div class="example-box">
 <div class="example-label">Liquidation Preference in Action</div>
 <p>VC invests $10M for 20% ownership (1x non-participating preferred).</p>
-<p><strong>Scenario A — Company sells for $30M:</strong> Preference: $10M. Conversion value: 20% × $30M = $6M. Investor takes the preference ($10M), not conversion. Founders get $20M. <strong>Investor return: 1.0x.</strong></p>
-<p><strong>Scenario B — Company sells for $80M:</strong> Preference: $10M. Conversion value: 20% × $80M = $16M. Investor converts (takes $16M). Founders get $64M. <strong>Investor return: 1.6x.</strong></p>
-<p><strong>Scenario C — Company sells for $200M:</strong> Conversion value: 20% × $200M = $40M. Investor converts. <strong>Investor return: 4.0x.</strong></p>
+<p><strong>Scenario A - Company sells for $30M:</strong> Preference: $10M. Conversion value: 20% × $30M = $6M. Investor takes the preference ($10M), not conversion. Founders get $20M. <strong>Investor return: 1.0x.</strong></p>
+<p><strong>Scenario B - Company sells for $80M:</strong> Preference: $10M. Conversion value: 20% × $80M = $16M. Investor converts (takes $16M). Founders get $64M. <strong>Investor return: 1.6x.</strong></p>
+<p><strong>Scenario C - Company sells for $200M:</strong> Conversion value: 20% × $200M = $40M. Investor converts. <strong>Investor return: 4.0x.</strong></p>
 <p>The liquidation preference protects the downside (Scenario A) while conversion preserves full upside participation (Scenarios B and C).</p>
 </div>
 
@@ -28,7 +28,7 @@ export const VC_TERM_SHEETS_SECTIONS = [
     title: 'Governance Terms',
     content: `<h4>Board Composition</h4>
 
-<p>Term sheets specify the board structure. A common early-stage configuration: 2 founder seats, 1 investor seat, and 0&ndash;1 independent seats. As the company raises more rounds, investor board seats may increase. Board control matters enormously in contentious situations (firing the CEO, approving a sale, authorizing a new financing).</p>
+<p>Term sheets specify the board structure. A common early-stage configuration: 2 founder seats, 1 investor seat, and 0-1 independent seats. As the company raises more rounds, investor board seats may increase. Board control matters enormously in contentious situations (firing the CEO, approving a sale, authorizing a new financing).</p>
 
 <h4>Protective Provisions</h4>
 
@@ -40,7 +40,7 @@ export const VC_TERM_SHEETS_SECTIONS = [
 
 <h4>Pro-Rata Rights</h4>
 
-<p>The right to invest in future rounds to maintain ownership percentage. Critically important in VC because the power law means you want to maximize your stake in winners. If you own 15% after Series A and the company raises a Series B, pro-rata rights let you invest enough to maintain 15%&mdash;preventing dilution in your best investment.</p>
+<p>The right to invest in future rounds to maintain ownership percentage. Critically important in VC because the power law means you want to maximize your stake in winners. If you own 15% after Series A and the company raises a Series B, pro-rata rights let you invest enough to maintain 15%-preventing dilution in your best investment.</p>
 
 <h4>Drag-Along Rights</h4>
 

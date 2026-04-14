@@ -1,7 +1,7 @@
 export const CONS_MARKETSIZING_SECTIONS = [
   {
     title: 'Why Market Sizing Matters',
-    content: `<p>Market sizing tests your ability to structure an ambiguous problem, make reasonable assumptions, and perform quick arithmetic&mdash;all under pressure. These are core consulting skills. In practice, market sizing is a fundamental input to virtually every strategic question: Is this market big enough to enter? How much revenue could we capture? What's the total addressable market for our new product?</p>`,
+    content: `<p>Market sizing tests your ability to structure an ambiguous problem, make reasonable assumptions, and perform quick arithmetic-all under pressure. These are core consulting skills. In practice, market sizing is a fundamental input to virtually every strategic question: Is this market big enough to enter? How much revenue could we capture? What's the total addressable market for our new product?</p>`,
   },
   {
     title: 'Two Approaches',
@@ -27,7 +27,7 @@ export const CONS_MARKETSIZING_SECTIONS = [
 
 <p><strong>Step 2: Choose your approach.</strong> Top-down works well when you know the total market and need to estimate a segment. Bottom-up works well when you can build from unit economics. Often, using both and triangulating gives the most confidence.</p>
 
-<p><strong>Step 3: Identify the key drivers.</strong> What are the 3–5 variables that determine the answer? Write them out before you start calculating. This helps you stay organized and makes it easier for the interviewer to follow your logic.</p>
+<p><strong>Step 3: Identify the key drivers.</strong> What are the 3-5 variables that determine the answer? Write them out before you start calculating. This helps you stay organized and makes it easier for the interviewer to follow your logic.</p>
 
 <p><strong>Step 4: Make explicit assumptions.</strong> State each assumption clearly and explain your reasoning. "I'll assume 38% of households have dogs. I recall seeing a statistic that roughly 65 million US households have at least one pet, and about 50 million of those are dogs." If you're uncertain, give a range and use the midpoint.</p>
 
@@ -38,7 +38,7 @@ export const CONS_MARKETSIZING_SECTIONS = [
 <div class="example-box">
 <div class="example-label">Market Sizing: Dry Cleaning in Chicago</div>
 <p><strong>Prompt:</strong> "How many dry cleaning stores are there in Chicago?"</p>
-<p><strong>Approach:</strong> Bottom-up from demand. Chicago metro population: ~9.5 million. Not everyone uses dry cleaning; it's primarily used by working professionals. Estimate ~30% of the population dry cleans regularly (~2.85M people). Average visits per person per year: maybe 10 visits. Average spend per visit: ~$25. Total market: 2.85M × 10 × $25 = ~$712M. Average dry cleaner revenue: a typical small dry cleaner might generate $300–500K/year. Using $400K: $712M / $400K ≈ <strong>~1,780 dry cleaning stores.</strong></p>
+<p><strong>Approach:</strong> Bottom-up from demand. Chicago metro population: ~9.5 million. Not everyone uses dry cleaning; it's primarily used by working professionals. Estimate ~30% of the population dry cleans regularly (~2.85M people). Average visits per person per year: maybe 10 visits. Average spend per visit: ~$25. Total market: 2.85M × 10 × $25 = ~$712M. Average dry cleaner revenue: a typical small dry cleaner might generate $300-500K/year. Using $400K: $712M / $400K ≈ <strong>~1,780 dry cleaning stores.</strong></p>
 <p><strong>Sanity check:</strong> Chicago has roughly 2,700 square miles in the metro area. At 1,780 stores, that's about 1 store per 1.5 square miles, or roughly one per dense neighborhood. That feels reasonable for a major urban area.</p>
 </div>`,
   },
@@ -48,7 +48,7 @@ export const CONS_MARKETSIZING_SECTIONS = [
 
 <p><strong>Using unreasonable penetration rates.</strong> Assuming 80% of adults buy premium organic matcha is absurd. Ground your penetration estimates in what you know about consumer behavior.</p>
 
-<p><strong>Not segmenting.</strong> "The average American" doesn't exist. Urban vs. rural, age cohorts, income levels&mdash;segmenting improves accuracy and demonstrates sophistication.</p>
+<p><strong>Not segmenting.</strong> "The average American" doesn't exist. Urban vs. rural, age cohorts, income levels-segmenting improves accuracy and demonstrates sophistication.</p>
 
 <p><strong>Mental math errors.</strong> The fastest way to lose credibility. Practice multiplication and division with large numbers. Round to make it manageable, but don't round so much that you change orders of magnitude.</p>`,
   },

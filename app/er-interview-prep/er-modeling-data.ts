@@ -7,7 +7,7 @@ export const ER_MODELING_SECTIONS = [
 
 <p><strong>Quarterly projections:</strong> ER models project quarterly (not just annual) because the analyst must publish estimates for each quarterly earnings report. The quarterly model must capture seasonality (Q4 is the strongest quarter for most enterprise software companies; Q1 is weakest for consumer discretionary) and one-time items.</p>
 
-<p><strong>Longer history, shorter projection period:</strong> ER models typically include 5&ndash;10 years of historical data (to identify trends and cyclical patterns) and 2&ndash;3 years of detailed projections. Banking models may have less history but longer projection periods (5&ndash;10 years for a DCF).</p>
+<p><strong>Longer history, shorter projection period:</strong> ER models typically include 5-10 years of historical data (to identify trends and cyclical patterns) and 2-3 years of detailed projections. Banking models may have less history but longer projection periods (5-10 years for a DCF).</p>
 
 <p><strong>EPS and per-share focus:</strong> The ultimate output of an ER model is EPS (earnings per share), which is the metric that drives stock prices in the near term. The model must track the share count carefully (dilution from options, RSUs, convertibles; reduction from buybacks) because EPS = Net Income / Diluted Shares.</p>`,
   },
@@ -42,7 +42,7 @@ export const ER_MODELING_SECTIONS = [
 
 <h4>Step 3: Below-the-Line Items</h4>
 
-<p>Interest expense (based on the debt schedule), interest income (on the cash balance), other income/expense (one-time items, FX gains/losses), and taxes (effective tax rate, adjusted for discrete items). Tax rate modeling is more important than it sounds: a 2-percentage-point change in the effective tax rate can swing EPS by 3&ndash;5%.</p>
+<p>Interest expense (based on the debt schedule), interest income (on the cash balance), other income/expense (one-time items, FX gains/losses), and taxes (effective tax rate, adjusted for discrete items). Tax rate modeling is more important than it sounds: a 2-percentage-point change in the effective tax rate can swing EPS by 3-5%.</p>
 
 <h4>Step 4: EPS Calculation</h4>
 
@@ -58,9 +58,9 @@ Diluted EPS = (Net Income − Preferred Dividends) / Diluted Shares Outstanding
   },
   {
     title: 'Consensus Estimates and Variant Perception',
-    content: `<p>After building your model, compare your estimates to the <strong>consensus</strong>&mdash;the average of all sell-side analysts' estimates, compiled by data providers like FactSet, Bloomberg, or Visible Alpha. Where do you differ from consensus, and why?</p>
+    content: `<p>After building your model, compare your estimates to the <strong>consensus</strong>-the average of all sell-side analysts' estimates, compiled by data providers like FactSet, Bloomberg, or Visible Alpha. Where do you differ from consensus, and why?</p>
 
-<p>If your revenue estimate is 3% above consensus, you need to articulate exactly what you see that others don't. This is your <strong>variant perception</strong>&mdash;the specific insight that differentiates your research. It could be driven by: a channel check revealing stronger demand than management guided, a pricing trend that consensus models are underestimating, a new product launch whose contribution is being underappreciated, or a cost trend (e.g., raw material deflation) that will boost margins more than expected.</p>
+<p>If your revenue estimate is 3% above consensus, you need to articulate exactly what you see that others don't. This is your <strong>variant perception</strong>-the specific insight that differentiates your research. It could be driven by: a channel check revealing stronger demand than management guided, a pricing trend that consensus models are underestimating, a new product launch whose contribution is being underappreciated, or a cost trend (e.g., raw material deflation) that will boost margins more than expected.</p>
 
 <p>Without a variant perception, your research adds no value. If your estimates and thesis are identical to consensus, there's no reason for a buy-side analyst to read your report or call you.</p>`,
   },

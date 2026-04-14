@@ -24,7 +24,7 @@ const SAMPLE_CONTACTS: any[] = [];
 
 function colorFor(n: string) { let h = 0; for (const c of n) h = c.charCodeAt(0) + ((h << 5) - h); return COLORS[Math.abs(h) % COLORS.length]; }
 function initials(f: string, l: string) { return ((f || '')[0] || '').toUpperCase() + ((l || '')[0] || '').toUpperCase(); }
-function fmtDate(ts: number | null) { if (!ts) return '—'; return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
+function fmtDate(ts: number | null) { if (!ts) return '-'; return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
 function daysSince(ts: number | null) { if (!ts) return null; return Math.floor((Date.now() - ts) / 864e5); }
 
 type Contact = { id: string; fname: string; lname: string; firm: string; role: string; status: string; angle: string; notes: string; quality: string; createdAt: number; lastContact: number | null; sentAt: number | null; lastFollowUpAt: number | null; linkedin: string; scheduledAt: number | null; };
@@ -223,7 +223,7 @@ export default function OutreachTrackerPage() {
   const sent = contacts.filter(c => c.status !== 'drafted').length;
   const fu = contacts.filter(c => ['fu1', 'fu2', 'fu3'].includes(c.status)).length;
   const spoken = contacts.filter(c => ['spoken', 'stay'].includes(c.status)).length;
-  const rate = sent > 0 ? Math.round(spoken / sent * 100) + '%' : '—';
+  const rate = sent > 0 ? Math.round(spoken / sent * 100) + '%' : '-';
 
   const showDateField = true;
   const dateFieldLabel = drawerStatus === 'drafted' ? 'Date drafted'
@@ -367,24 +367,24 @@ export default function OutreachTrackerPage() {
                   const daysSent = daysSince(c.sentAt);
                   const daysFU = daysSince(c.lastFollowUpAt);
                   const daysLC = daysSince(c.lastContact);
-                  let daysStr = '—';
+                  let daysStr = '-';
                   let daysCls = 'var(--text-3)';
                   if (c.status === 'drafted') {
                     const d = daysSince(c.createdAt);
-                    daysStr = d !== null ? `drafted ${d}d ago` : '—';
+                    daysStr = d !== null ? `drafted ${d}d ago` : '-';
                     daysCls = d !== null && d > 7 ? '#d97706' : d !== null && d > 14 ? '#dc2626' : 'var(--text-3)';
                   } else if (c.status === 'sent') {
-                    daysStr = daysSent !== null ? `sent ${daysSent}d ago` : '—';
+                    daysStr = daysSent !== null ? `sent ${daysSent}d ago` : '-';
                     daysCls = daysSent !== null ? (daysSent > 7 ? '#dc2626' : daysSent > 3 ? '#d97706' : '#16a34a') : 'var(--text-3)';
                   } else if (['fu1','fu2','fu3'].includes(c.status)) {
-                    daysStr = daysFU !== null ? `followed up ${daysFU}d ago` : daysSent !== null ? `sent ${daysSent}d ago` : '—';
+                    daysStr = daysFU !== null ? `followed up ${daysFU}d ago` : daysSent !== null ? `sent ${daysSent}d ago` : '-';
                     const d = daysFU ?? daysSent;
                     daysCls = d !== null ? (d > 10 ? '#dc2626' : d > 5 ? '#d97706' : '#16a34a') : 'var(--text-3)';
                   } else if (['spoken','stay'].includes(c.status)) {
-                    daysStr = daysLC !== null ? `spoke ${daysLC}d ago` : '—';
+                    daysStr = daysLC !== null ? `spoke ${daysLC}d ago` : '-';
                     daysCls = daysLC !== null ? (daysLC > 60 ? '#dc2626' : daysLC > 30 ? '#d97706' : '#16a34a') : 'var(--text-3)';
                   } else if (c.status === 'noresp') {
-                    daysStr = daysLC !== null ? `${daysLC}d no reply` : '—';
+                    daysStr = daysLC !== null ? `${daysLC}d no reply` : '-';
                     daysCls = '#dc2626';
                   }
                   const st = STATUSES[c.status] || { label: c.status, cls: 'b-drafted' };
@@ -400,7 +400,7 @@ export default function OutreachTrackerPage() {
                         </div>
                       </td>
                       <td style={{ padding: '11px 14px' }}>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{c.firm || '—'}</div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{c.firm || '-'}</div>
                         <div style={{ fontSize: 12, color: 'var(--text-2)' }}>{c.role}</div>
                       </td>
                       <td style={{ padding: '11px 14px' }}>
@@ -414,13 +414,13 @@ export default function OutreachTrackerPage() {
                         </div>
                       </td>
                       <td style={{ padding: '11px 14px' }}>
-                        {c.angle ? <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 4, background: 'var(--surface-2)', color: 'var(--text-3)' }}>{c.angle}</span> : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>—</span>}
+                        {c.angle ? <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 4, background: 'var(--surface-2)', color: 'var(--text-3)' }}>{c.angle}</span> : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>-</span>}
                       </td>
                       <td style={{ padding: '11px 14px' }}>
                         {c.linkedin ? <a href={c.linkedin.startsWith('http') ? c.linkedin : 'https://' + c.linkedin} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 600, color: '#0a66c2', textDecoration: 'none' }}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
                           Profile
-                        </a> : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>—</span>}
+                        </a> : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>-</span>}
                       </td>
                       <td style={{ padding: '11px 14px', fontSize: 12, color: 'var(--text-3)', whiteSpace: 'nowrap' }}>{fmtDate(c.createdAt)}</td>
                       <td style={{ padding: '11px 14px', fontSize: 12, fontWeight: 700, color: daysCls, whiteSpace: 'nowrap' }}>{daysStr}</td>
@@ -428,7 +428,7 @@ export default function OutreachTrackerPage() {
                         {c.quality === 'great' ? <span style={{ color: '#16a34a', fontWeight: 700, fontSize: 12 }}>Great</span>
                           : c.quality === 'ok' ? <span style={{ color: '#d97706', fontWeight: 700, fontSize: 12 }}>OK</span>
                           : c.quality === 'cold' ? <span style={{ color: '#dc2626', fontWeight: 700, fontSize: 12 }}>Cold</span>
-                          : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>—</span>}
+                          : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>-</span>}
                       </td>
                       <td style={{ padding: '11px 14px', fontSize: 12, color: 'var(--text-2)', maxWidth: 260, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {c.notes || <span style={{ color: 'var(--text-3)' }}>No notes</span>}
@@ -481,7 +481,7 @@ export default function OutreachTrackerPage() {
                 <div>
                   <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--text)', marginBottom: 5 }}>Angle</label>
                   <select value={aAngle} onChange={e => setAAngle(e.target.value)} style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none' }}>
-                    <option value="">—</option>
+                    <option value="">-</option>
                     {['Alumni','Deal Reference','Shared Interest','Mutual Connection','Career Path','Cold'].map(a => <option key={a}>{a}</option>)}
                   </select>
                 </div>

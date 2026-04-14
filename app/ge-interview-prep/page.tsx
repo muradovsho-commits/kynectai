@@ -102,8 +102,8 @@ export default function GEInterviewPrepPage() {
 
               <div className="ib-how-to-use">
                 <h4>How to Use This Guide</h4>
-                <p><strong>Foundations:</strong> Start with Modules 1–3 to understand the GE landscape, investment criteria, and the SaaS metrics that drive most GE investing.</p>
-                <p><strong>Deal mechanics:</strong> Modules 4–8 cover the full deal lifecycle from sourcing through exit, including term sheets, modeling, and value creation.</p>
+                <p><strong>Foundations:</strong> Start with Modules 1-3 to understand the GE landscape, investment criteria, and the SaaS metrics that drive most GE investing.</p>
+                <p><strong>Deal mechanics:</strong> Modules 4-8 cover the full deal lifecycle from sourcing through exit, including term sheets, modeling, and value creation.</p>
                 <p><strong>Interview prep:</strong> Module 10 covers the exact questions, pitch format, and common mistakes in GE interviews.</p>
               </div>
 

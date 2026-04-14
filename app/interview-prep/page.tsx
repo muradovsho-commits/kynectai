@@ -163,9 +163,9 @@ export default function InterviewPrepPage() {
               {/* How to Use */}
               <div className="ib-how-to-use">
                 <h4>How to Use This Guide</h4>
-                <p><strong>2+ weeks:</strong> Go through each module in order. Spend 1–2 days per module, understanding concepts before memorizing answers.</p>
+                <p><strong>2+ weeks:</strong> Go through each module in order. Spend 1-2 days per module, understanding concepts before memorizing answers.</p>
                 <p><strong>1 week:</strong> Focus on Core Concepts, Accounting, and DCF Analysis - these cover 80% of technical questions. Then Behavioral.</p>
-                <p><strong>1–2 days:</strong> Go straight to Interview Questions at the bottom of each module. Focus on Accounting and DCF, then Behavioral.</p>
+                <p><strong>1-2 days:</strong> Go straight to Interview Questions at the bottom of each module. Focus on Accounting and DCF, then Behavioral.</p>
               </div>
 
               {/* Module Cards */}

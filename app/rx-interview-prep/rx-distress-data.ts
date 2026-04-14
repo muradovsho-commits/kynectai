@@ -7,9 +7,9 @@ export const RX_DISTRESS_SECTIONS = [
 
 <p><strong>Secular industry decline:</strong> The company's business model becomes obsolete. Brick-and-mortar retail facing e-commerce disruption, print media losing to digital, legacy energy companies facing the transition to renewables. No amount of financial engineering can fix a business that customers no longer want.</p>
 
-<p><strong>Macroeconomic downturn:</strong> A recession compresses revenue across the economy, particularly for cyclical industries (airlines, hospitality, discretionary consumer goods). Companies with moderate leverage in good times suddenly find themselves critically overleveraged when EBITDA drops 30&ndash;40%.</p>
+<p><strong>Macroeconomic downturn:</strong> A recession compresses revenue across the economy, particularly for cyclical industries (airlines, hospitality, discretionary consumer goods). Companies with moderate leverage in good times suddenly find themselves critically overleveraged when EBITDA drops 30-40%.</p>
 
-<p><strong>Failed acquisition or capital project:</strong> A company makes a large strategic bet&mdash;an acquisition or major capital investment&mdash;that fails to deliver the expected returns, leaving the company with massive debt and underperforming assets.</p>
+<p><strong>Failed acquisition or capital project:</strong> A company makes a large strategic bet-an acquisition or major capital investment-that fails to deliver the expected returns, leaving the company with massive debt and underperforming assets.</p>
 
 <p><strong>Litigation and regulatory risk:</strong> A single massive legal judgment, product liability claim, or regulatory change can create liabilities that overwhelm the balance sheet. Environmental remediation costs, opioid litigation settlements, and class-action lawsuits are common examples.</p>
 
@@ -18,7 +18,7 @@ export const RX_DISTRESS_SECTIONS = [
   {
     title: 'Signs of Distress',
     content: `<div class="key-concept">
-<strong>How RX bankers identify distressed companies:</strong> Limited liquidity (low cash, restricted revolver capacity). High leverage ratios (Debt/EBITDA above 6&ndash;7x, especially at the secured level). Declining EBITDA or negative free cash flow. Upcoming "maturity walls" (large debt maturities that likely can't be refinanced). Secondary trading prices well below par (bonds trading at 60&ndash;80 signals stress; below 50 signals severe distress). Credit downgrades into CCC territory or below. Covenant breaches or waivers. Distressed hedge funds accumulating positions in the capital structure.
+<strong>How RX bankers identify distressed companies:</strong> Limited liquidity (low cash, restricted revolver capacity). High leverage ratios (Debt/EBITDA above 6-7x, especially at the secured level). Declining EBITDA or negative free cash flow. Upcoming "maturity walls" (large debt maturities that likely can't be refinanced). Secondary trading prices well below par (bonds trading at 60-80 signals stress; below 50 signals severe distress). Credit downgrades into CCC territory or below. Covenant breaches or waivers. Distressed hedge funds accumulating positions in the capital structure.
 </div>`,
   },
   {
@@ -35,15 +35,15 @@ export const RX_DISTRESS_SECTIONS = [
 <tr><td>6 (Lowest)</td><td>Equity (Common Stock)</td><td>Residual claim; gets whatever's left; typically wiped out in severe distress</td></tr>
 </table>
 
-<p>The <strong>Absolute Priority Rule (APR)</strong> dictates that in bankruptcy, each class must be paid in full before the next class receives anything. In practice, junior classes sometimes receive a small recovery (a "tip") even when senior classes aren't fully covered&mdash;this happens through negotiation, often to secure junior classes' votes on a plan of reorganization.</p>
+<p>The <strong>Absolute Priority Rule (APR)</strong> dictates that in bankruptcy, each class must be paid in full before the next class receives anything. In practice, junior classes sometimes receive a small recovery (a "tip") even when senior classes aren't fully covered-this happens through negotiation, often to secure junior classes' votes on a plan of reorganization.</p>
 
 <h4>Secured vs. Unsecured</h4>
 
-<p>Secured debt is backed by specific collateral (assets pledged to the lender). If the company defaults, secured creditors can seize and liquidate the collateral. Unsecured debt has only a general claim against the company&mdash;no specific assets backing it. If a secured creditor's claim exceeds the value of its collateral, the excess becomes an unsecured claim (called a "deficiency claim").</p>
+<p>Secured debt is backed by specific collateral (assets pledged to the lender). If the company defaults, secured creditors can seize and liquidate the collateral. Unsecured debt has only a general claim against the company-no specific assets backing it. If a secured creditor's claim exceeds the value of its collateral, the excess becomes an unsecured claim (called a "deficiency claim").</p>
 
 <h4>Key Debt Instruments</h4>
 
-<p><strong>Revolving Credit Facility (Revolver):</strong> Functions like a corporate credit card&mdash;the company can draw it down and repay it as needed, up to the commitment amount. Typically secured by liquid assets (accounts receivable, inventory). The borrowing base (the value of eligible collateral) determines how much can actually be drawn. Revolvers are the most senior instrument in the capital structure.</p>
+<p><strong>Revolving Credit Facility (Revolver):</strong> Functions like a corporate credit card-the company can draw it down and repay it as needed, up to the commitment amount. Typically secured by liquid assets (accounts receivable, inventory). The borrowing base (the value of eligible collateral) determines how much can actually be drawn. Revolvers are the most senior instrument in the capital structure.</p>
 
 <p><strong>Term Loans (TLA, TLB, TLC):</strong> Fixed-amount loans with defined repayment schedules. Term Loan A (TLA) typically amortizes (mandatory principal payments each quarter). Term Loan B (TLB) has minimal amortization (1% per year) with a bullet maturity. TLBs are the workhorse of leveraged finance. Term loans carry floating interest rates (typically SOFR + a spread).</p>
 

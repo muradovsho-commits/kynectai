@@ -19,6 +19,6 @@ export const GE_VALUE_CREATION_SECTIONS = [
     title: 'Board Governance',
     content: `<p>The GE investor's primary governance mechanism is the board of directors. Effective board participation involves: reviewing monthly/quarterly financials and KPIs, approving annual budgets and strategic plans, evaluating and approving major capital decisions (acquisitions, new products, geographic expansion), participating in CEO performance reviews and succession planning, and monitoring risks (customer concentration, competitive threats, regulatory changes).</p>
 
-<p>The goal is to be a <strong>constructive partner, not a micromanager</strong>. The best GE board members add value by asking the right questions, sharing relevant pattern recognition from other portfolio companies, and connecting the company with resources&mdash;not by dictating operational decisions.</p>`,
+<p>The goal is to be a <strong>constructive partner, not a micromanager</strong>. The best GE board members add value by asking the right questions, sharing relevant pattern recognition from other portfolio companies, and connecting the company with resources-not by dictating operational decisions.</p>`,
   },
 ];

@@ -1,4 +1,4 @@
-// Investment Banking Technical Mastery Manual — Module 9: Behavioral & Storytelling
+// Investment Banking Technical Mastery Manual - Module 9: Behavioral & Storytelling
 export const BEHAVIORAL_SECTIONS = [
   {
     title: '9.1 Why Behavioral Matters in Banking',
@@ -21,7 +21,7 @@ export const BEHAVIORAL_SECTIONS = [
 <p><strong>Stronger answer:</strong> "I'm drawn to investment banking because it sits at the intersection of valuation, strategy, and execution. I like work that is analytically demanding and high stakes, and I've found through past experiences that I'm most engaged when I'm working on problems with real business consequences under tight deadlines. Banking also offers the chance to build an unusually strong foundation in corporate finance and transactions early in my career."</p>`,
   },
   {
-    title: '9.4–9.5 Why Our Firm & Resume Walkthrough',
+    title: '9.4-9.5 Why Our Firm & Resume Walkthrough',
     content: `<h3>9.4 Why Our Firm</h3>
 <p>This answer should include: the platform or franchise, the culture, group-specific reasons if relevant, evidence you have done real homework.</p>
 <p>Avoid generic praise.</p>
@@ -32,7 +32,7 @@ export const BEHAVIORAL_SECTIONS = [
 <p><strong>What bankers want:</strong> A candidate who looks intentional, self-aware, and upward-trending.</p>`,
   },
   {
-    title: '9.6–9.8 Leadership Stories, Failure/Weakness, Behavior Under Pressure',
+    title: '9.6-9.8 Leadership Stories, Failure/Weakness, Behavior Under Pressure',
     content: `<h3>9.6 Leadership Stories</h3>
 <p>Even though banking is not consulting, leadership still matters.</p>
 <p><strong>Use stories that show:</strong> ownership, initiative, reliability under pressure, influence without authority, persistence.</p>
@@ -47,7 +47,7 @@ export const BEHAVIORAL_SECTIONS = [
 <p><strong>Good stories often involve:</strong> tough deadlines, competing demands, limited information, execution pressure, team coordination.</p>`,
   },
   {
-    title: '9.9–9.10 Behavioral Story Bank & How to Sound Strong + Module 9 Practice',
+    title: '9.9-9.10 Behavioral Story Bank & How to Sound Strong + Module 9 Practice',
     content: `<h3>9.9 Behavioral Story Bank</h3>
 <p><strong>Prepare stories for:</strong> leadership, teamwork, conflict, failure, success, working under pressure, persuading someone, attention to detail, ethical judgment.</p>
 <p><strong>For each story, know:</strong> setup, challenge, your role, actions, result, lesson.</p>
@@ -60,7 +60,7 @@ export const BEHAVIORAL_SECTIONS = [
 <p><strong>Prepare and practice:</strong></p>
 <ol><li>Tell me about yourself</li><li>Why investment banking?</li><li>Why our firm?</li><li>Walk me through your resume</li><li>Tell me about a time you worked under pressure</li><li>Tell me about a failure</li><li>Tell me about a conflict</li></ol>
 <p><strong>Explain-out-loud exercise:</strong> Record yourself giving your "Why banking?" answer three times and refine it for: specificity, credibility, energy, concision.</p>
-<p><strong>Self-testing framework — For every behavioral answer, ask:</strong></p>
+<p><strong>Self-testing framework - For every behavioral answer, ask:</strong></p>
 <ol><li>Is it specific?</li><li>Is my role clear?</li><li>Is there real difficulty or stakes?</li><li>Do I show what I learned?</li><li>Does it connect to the job?</li></ol>`,
   },
 ];

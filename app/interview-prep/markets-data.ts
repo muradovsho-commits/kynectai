@@ -1,26 +1,26 @@
-// Investment Banking Interview Prep — Market Awareness Module
+// Investment Banking Interview Prep - Market Awareness Module
 export const MARKETS_SECTIONS = [
   {
     title: '8.1 Why Market Awareness Matters',
-    content: `<p>Every investment banking interview — from superday to final round — will test whether you follow markets. Senior bankers expect you to have a view on rates, equity markets, credit conditions, and sector trends. This isn't about memorizing data points. It's about demonstrating that you think like someone who belongs on a deal team.</p>
+    content: `<p>Every investment banking interview - from superday to final round - will test whether you follow markets. Senior bankers expect you to have a view on rates, equity markets, credit conditions, and sector trends. This isn't about memorizing data points. It's about demonstrating that you think like someone who belongs on a deal team.</p>
 
 <h3>What Interviewers Are Really Testing</h3>
 <p>When a banker asks "What's going on in the markets?" they're evaluating three things:</p>
 <ul>
 <li><strong>Intellectual curiosity:</strong> Do you genuinely follow this space, or are you cramming for the interview?</li>
 <li><strong>Analytical thinking:</strong> Can you connect macro events to deal activity, sector performance, and client impact?</li>
-<li><strong>Communication:</strong> Can you articulate a view clearly and concisely — the way you'd brief an MD before a client call?</li>
+<li><strong>Communication:</strong> Can you articulate a view clearly and concisely - the way you'd brief an MD before a client call?</li>
 </ul>
 
 <h3>How to Build a Daily Habit</h3>
-<p>Spend 15–20 minutes every morning scanning these sources:</p>
+<p>Spend 15-20 minutes every morning scanning these sources:</p>
 <ul>
-<li><strong>Bloomberg or WSJ:</strong> Front page and markets section — know what moved overnight and why</li>
+<li><strong>Bloomberg or WSJ:</strong> Front page and markets section - know what moved overnight and why</li>
 <li><strong>Financial Times:</strong> Global perspective, especially useful for cross-border deal context</li>
 <li><strong>Dealogic or Bloomberg Deal Tracker:</strong> Recent M&A and capital markets activity</li>
 <li><strong>Fed/ECB statements:</strong> When rate decisions happen, know the outcome and market reaction</li>
 </ul>
-<p>The goal is not to read everything. It's to have 2–3 informed talking points ready at any time.</p>`
+<p>The goal is not to read everything. It's to have 2-3 informed talking points ready at any time.</p>`
   },
   {
     title: '8.2 Interest Rates & Monetary Policy',
@@ -40,20 +40,20 @@ export const MARKETS_SECTIONS = [
 <p><strong>Real vs Nominal Rates:</strong> Real rate = nominal rate minus inflation expectations. Real rates drive actual cost of capital. Negative real rates subsidize borrowing.</p>
 
 <h3>How to Discuss Rates in an Interview</h3>
-<p><strong>Good framework:</strong> "The Fed is currently [hawkish/dovish/on hold] with the funds rate at [X%]. The market is pricing in [Y] cuts/hikes over the next 12 months based on futures. This matters for banking because [connect to deal activity — e.g., 'higher-for-longer rates are compressing LBO returns and widening bid-ask spreads in M&A auctions']."</p>
-<div class="info-box tip"><div class="info-box-label">Interview Tip</div>Never say "I don't follow rates" — it signals you don't understand the core driver of capital markets. Know the current fed funds rate, the direction of the last 2–3 meetings, and the market's forward expectation.</div>`
+<p><strong>Good framework:</strong> "The Fed is currently [hawkish/dovish/on hold] with the funds rate at [X%]. The market is pricing in [Y] cuts/hikes over the next 12 months based on futures. This matters for banking because [connect to deal activity - e.g., 'higher-for-longer rates are compressing LBO returns and widening bid-ask spreads in M&A auctions']."</p>
+<div class="info-box tip"><div class="info-box-label">Interview Tip</div>Never say "I don't follow rates" - it signals you don't understand the core driver of capital markets. Know the current fed funds rate, the direction of the last 2-3 meetings, and the market's forward expectation.</div>`
   },
   {
     title: '8.3 Equity Markets & Sector Trends',
     content: `<h3>What You Need to Know About Equities</h3>
-<p>You should be able to discuss where the major indices are (S&P 500, Nasdaq, Dow), what's driving performance, and which sectors are outperforming or underperforming — and why.</p>
+<p>You should be able to discuss where the major indices are (S&P 500, Nasdaq, Dow), what's driving performance, and which sectors are outperforming or underperforming - and why.</p>
 
 <h3>Key Metrics to Track</h3>
 <ul>
 <li><strong>S&P 500 level and YTD performance:</strong> Know the approximate level and whether we're near highs, in correction, or in a bear market.</li>
 <li><strong>Sector rotation:</strong> When rates rise, value/financials tend to outperform while growth/tech underperforms. Know the current dynamic.</li>
 <li><strong>VIX (Volatility Index):</strong> Below 15 = calm markets. 15-20 = normal. 20-30 = elevated anxiety. Above 30 = crisis-level fear. Know the approximate current level.</li>
-<li><strong>P/E multiples:</strong> Know whether the S&P is trading above or below its historical average (~16-17x trailing). Understand why — is it earnings growth or multiple expansion?</li>
+<li><strong>P/E multiples:</strong> Know whether the S&P is trading above or below its historical average (~16-17x trailing). Understand why - is it earnings growth or multiple expansion?</li>
 </ul>
 
 <h3>Sector Knowledge by Banking Group</h3>
@@ -67,7 +67,7 @@ export const MARKETS_SECTIONS = [
 <li><strong>Industrials:</strong> Reshoring/nearshoring, infrastructure spending, supply chain normalization, defense budgets.</li>
 </ul>
 
-<div class="info-box tip"><div class="info-box-label">Interview Tip</div>If asked "What sector are you most interested in?", pick one you genuinely follow. Then be ready to discuss 2–3 recent deals in that sector, the key valuation metrics used, and one current trend affecting deal activity.</div>`
+<div class="info-box tip"><div class="info-box-label">Interview Tip</div>If asked "What sector are you most interested in?", pick one you genuinely follow. Then be ready to discuss 2-3 recent deals in that sector, the key valuation metrics used, and one current trend affecting deal activity.</div>`
   },
   {
     title: '8.4 Credit Markets & Spreads',
@@ -78,7 +78,7 @@ export const MARKETS_SECTIONS = [
 <p><strong>Credit Spread:</strong> The yield premium investors demand above risk-free Treasuries to hold corporate debt. Investment grade spreads: typically 80-200bps. High yield spreads: typically 300-600bps. Wider = more risk perceived.</p>
 <p><strong>Investment Grade vs High Yield:</strong> IG = BBB- or above (S&P) / Baa3 or above (Moody's). HY = below that threshold. Fallen angels = companies downgraded from IG to HY.</p>
 <p><strong>Leveraged Loans:</strong> Floating-rate secured debt used in LBOs. Held by CLOs and institutional investors. Cov-lite structures (incurrence-only covenants) became dominant pre-2022.</p>
-<p><strong>CLOs (Collateralized Loan Obligations):</strong> Vehicles that buy leveraged loans and issue tranches of securities. Major buyers of leveraged loan market — their demand directly affects LBO financing availability.</p>
+<p><strong>CLOs (Collateralized Loan Obligations):</strong> Vehicles that buy leveraged loans and issue tranches of securities. Major buyers of leveraged loan market - their demand directly affects LBO financing availability.</p>
 
 <h3>Reading Credit Market Signals</h3>
 <ul>
@@ -105,7 +105,7 @@ export const MARKETS_SECTIONS = [
 </ul>
 
 <h3>Current M&A Themes to Know</h3>
-<p>Be prepared to discuss 2–3 of these themes depending on the current environment:</p>
+<p>Be prepared to discuss 2-3 of these themes depending on the current environment:</p>
 <ul>
 <li>Strategic vs financial buyer dynamics in current rate environment</li>
 <li>Impact of antitrust enforcement on large-cap horizontal deals</li>
@@ -119,12 +119,12 @@ export const MARKETS_SECTIONS = [
 <p>When asked about a recent transaction, structure your answer:</p>
 <ol>
 <li><strong>What:</strong> Buyer, target, price, multiple, premium paid</li>
-<li><strong>Why:</strong> Strategic rationale — what does the buyer gain?</li>
+<li><strong>Why:</strong> Strategic rationale - what does the buyer gain?</li>
 <li><strong>How:</strong> Cash vs stock, financing, any regulatory conditions</li>
 <li><strong>Your view:</strong> Does the deal make sense? What are the risks?</li>
 </ol>
 
-<div class="info-box tip"><div class="info-box-label">Interview Tip</div>Have 2–3 deals ready to discuss. At least one should be in the group you're interviewing with. Know the numbers (price, multiple, premium) and have a genuine opinion on whether the deal creates value. Bankers can tell instantly if you've just read the headline.</div>`
+<div class="info-box tip"><div class="info-box-label">Interview Tip</div>Have 2-3 deals ready to discuss. At least one should be in the group you're interviewing with. Know the numbers (price, multiple, premium) and have a genuine opinion on whether the deal creates value. Bankers can tell instantly if you've just read the headline.</div>`
   },
   {
     title: '8.6 Macro Indicators & Economic Data',
@@ -146,7 +146,7 @@ export const MARKETS_SECTIONS = [
 </ul>
 
 <h3>Connecting Macro to Banking</h3>
-<p>The strongest candidates don't just know the data — they connect it to deal implications:</p>
+<p>The strongest candidates don't just know the data - they connect it to deal implications:</p>
 <ul>
 <li>"Strong employment and GDP growth are keeping corporate confidence high, which supports strategic M&A activity even as rates remain elevated."</li>
 <li>"Persistent inflation above target means the Fed is unlikely to cut aggressively, which keeps financing costs high and continues to pressure leveraged deal returns."</li>
@@ -188,6 +188,6 @@ export const MARKETS_SECTIONS = [
 <p><strong>Q: "What's your view on the markets right now?"</strong></p>
 <p><strong>Strong answer framework:</strong> Start with the macro setup (rates, growth, inflation). Then discuss what that means for deal activity. Reference a specific sector or deal. End with a risk or catalyst you're watching. Keep it under 90 seconds.</p>
 
-<div class="info-box tip"><div class="info-box-label">Practice This</div>Before every interview, write out a 60-second "markets overview" in your own words. Update it daily. By interview day, it should feel natural — not rehearsed. The best candidates sound like they're having a conversation about markets they genuinely follow, not reciting a script.</div>`
+<div class="info-box tip"><div class="info-box-label">Practice This</div>Before every interview, write out a 60-second "markets overview" in your own words. Update it daily. By interview day, it should feel natural - not rehearsed. The best candidates sound like they're having a conversation about markets they genuinely follow, not reciting a script.</div>`
   },
 ];

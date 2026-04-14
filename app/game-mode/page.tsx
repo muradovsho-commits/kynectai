@@ -148,7 +148,7 @@ export default function GameModePage() {
         <div className="gm-menu">
           <div className="gm-badge">⚡ Game Mode</div>
           <h1 className="gm-title">How well do you <em>really</em> know it?</h1>
-          <p className="gm-sub">Pick a track. Beat the clock. Every correct answer earns points — build streaks for bonus multipliers. Questions are randomized every round.</p>
+          <p className="gm-sub">Pick a track. Beat the clock. Every correct answer earns points - build streaks for bonus multipliers. Questions are randomized every round.</p>
 
           <div className="gm-config">
             <div className="gm-field">
@@ -230,7 +230,7 @@ export default function GameModePage() {
 
             {revealed && selected === q?.correct && (
               <div className="gm-feedback correct-fb">
-                Correct!{streak >= 2 ? ` 🔥 ${streak} streak — +${Math.min(streak, 5) * 5} bonus` : ''} <span>+{10 + (streak >= 2 ? Math.min(streak, 5) * 5 : 0)}</span>
+                Correct!{streak >= 2 ? ` 🔥 ${streak} streak - +${Math.min(streak, 5) * 5} bonus` : ''} <span>+{10 + (streak >= 2 ? Math.min(streak, 5) * 5 : 0)}</span>
               </div>
             )}
             {revealed && selected !== q?.correct && (

@@ -20,8 +20,8 @@ export const CONS_STRUCTURE_SECTIONS = [
 <li>Prioritized</li>
 </ol>
 <h4>Example objective: "Should our client launch a new premium yogurt product?"</h4>
-<p><strong>Weak:</strong> "I'd like to look at market, competition, customers, finances, and risks." — Generic and underdeveloped.</p>
-<p><strong>Strong:</strong> "To determine whether the client should launch, I'd assess four areas: first, market attractiveness — category growth, consumer demand, and willingness to pay; second, the economics — expected pricing, volume, costs, and profitability; third, the client's ability to win — brand strength, distribution, and operational capability; fourth, key risks — competitive response, cannibalization, and execution complexity."</p>
+<p><strong>Weak:</strong> "I'd like to look at market, competition, customers, finances, and risks." - Generic and underdeveloped.</p>
+<p><strong>Strong:</strong> "To determine whether the client should launch, I'd assess four areas: first, market attractiveness - category growth, consumer demand, and willingness to pay; second, the economics - expected pricing, volume, costs, and profitability; third, the client's ability to win - brand strength, distribution, and operational capability; fourth, key risks - competitive response, cannibalization, and execution complexity."</p>
 <p>That answer is better because it maps directly to the decision.</p>`
   },
   {
@@ -64,7 +64,7 @@ Volume → Number of customers x Purchase frequency / units per customer</p>
   {
     title: `2.6 Prioritization: The Missing Skill`,
     content: `<p>Many candidates can produce a decent structure. Far fewer can prioritize. The interviewer is not only asking "Can you list the possible causes?" They are asking "Do you know where to look first?"</p>
-<h4>How to prioritize — use clues from:</h4>
+<h4>How to prioritize - use clues from:</h4>
 <ul>
 <li>Recent industry events</li>
 <li>Information in the prompt</li>
@@ -80,7 +80,7 @@ Volume → Number of customers x Purchase frequency / units per customer</p>
     content: `<p>A strong framework delivery sounds like this:</p>
 <ol>
 <li>Briefly anchor to the objective</li>
-<li>Lay out 3–5 buckets</li>
+<li>Lay out 3-5 buckets</li>
 <li>Define each bucket in one sentence</li>
 <li>State where you would begin</li>
 </ol>
@@ -105,9 +105,9 @@ Volume → Number of customers x Purchase frequency / units per customer</p>
   },
   {
     title: `2.10 Practice Drills`,
-    content: `<p><strong>Drill 1 — Build a structure from scratch</strong> for: a streaming platform considering entering sports broadcasting; a regional grocery chain facing declining profits; a pharmaceutical company evaluating acquisition of a biotech startup.</p>
-<p><strong>Drill 2 — Improve weak frameworks.</strong> Take a generic framework and rewrite it into a tailored one.</p>
-<p><strong>Drill 3 — Prioritization language.</strong> For each structure, practice saying where you would start and why.</p>
+    content: `<p><strong>Drill 1 - Build a structure from scratch</strong> for: a streaming platform considering entering sports broadcasting; a regional grocery chain facing declining profits; a pharmaceutical company evaluating acquisition of a biotech startup.</p>
+<p><strong>Drill 2 - Improve weak frameworks.</strong> Take a generic framework and rewrite it into a tailored one.</p>
+<p><strong>Drill 3 - Prioritization language.</strong> For each structure, practice saying where you would start and why.</p>
 <h4>Speak-out-loud exercise:</h4>
 <p>Give yourself 90 seconds to structure this case aloud: <em>"Our client is a mid-sized apparel retailer whose sales have declined over the last year. The CEO wants to know what is happening and what to do about it."</em></p>
 <h4>Self-evaluation checklist:</h4>

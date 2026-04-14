@@ -1,7 +1,7 @@
 export const ER_WRITING_SECTIONS = [
   {
     title: 'The Fundamental Problem',
-    content: `<p>A typical institutional investor receives 50&ndash;100+ research reports per day. They read maybe 5&ndash;10. Your report must earn its place by being immediately useful. This means: <strong>lead with the conclusion</strong> (don't bury the thesis on page 8), <strong>be concise</strong> (if you can say it in one page, don't use three), and <strong>make the action clear</strong> (what should the reader do with this information?).</p>`,
+    content: `<p>A typical institutional investor receives 50-100+ research reports per day. They read maybe 5-10. Your report must earn its place by being immediately useful. This means: <strong>lead with the conclusion</strong> (don't bury the thesis on page 8), <strong>be concise</strong> (if you can say it in one page, don't use three), and <strong>make the action clear</strong> (what should the reader do with this information?).</p>`,
   },
   {
     title: 'Writing Principles for ER',

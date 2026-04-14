@@ -102,9 +102,9 @@ export default function ERInterviewPrepPage() {
 
               <div className="ib-how-to-use">
                 <h4>How to Use This Guide</h4>
-                <p><strong>Foundations:</strong> Modules 1–4 cover the ER industry, research process, modeling, and valuation - the core analytical toolkit.</p>
-                <p><strong>The craft:</strong> Modules 5–8 cover initiating coverage, sector expertise, research writing, and the earnings cycle.</p>
-                <p><strong>Interview prep:</strong> Modules 9–10 cover the stock pitch (centerpiece of ER interviews) and technical questions.</p>
+                <p><strong>Foundations:</strong> Modules 1-4 cover the ER industry, research process, modeling, and valuation - the core analytical toolkit.</p>
+                <p><strong>The craft:</strong> Modules 5-8 cover initiating coverage, sector expertise, research writing, and the earnings cycle.</p>
+                <p><strong>Interview prep:</strong> Modules 9-10 cover the stock pitch (centerpiece of ER interviews) and technical questions.</p>
               </div>
 
               <div className="ib-module-cards">

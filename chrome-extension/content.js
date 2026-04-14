@@ -1,4 +1,4 @@
-// OfferBell Chrome Extension — Gmail + Outlook Web Content Script
+// OfferBell Chrome Extension - Gmail + Outlook Web Content Script
 // Injects "Add to OfferBell" + "Write Outreach" buttons when viewing an email
 
 const OFFERBELL_URL = 'https://offerbell.org';
@@ -593,7 +593,7 @@ const observer = new MutationObserver(() => {
 });
 observer.observe(document.body, { childList: true, subtree: true });
 setTimeout(injectButton, 1500);
-// Outlook is a SPA that doesn't change URL — poll for button presence
+// Outlook is a SPA that doesn't change URL - poll for button presence
 if (isOutlook()) {
   setTimeout(injectButton, 3000);
   setTimeout(injectButton, 5000);

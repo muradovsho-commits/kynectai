@@ -102,8 +102,8 @@ export default function AccountingInterviewPrepPage() {
 
               <div className="ib-how-to-use">
                 <h4>How to Use This Guide</h4>
-                <p><strong>Foundations:</strong> Modules 1–4 cover the accounting fundamentals - statements, revenue recognition, and the balance sheet. Essential for any accounting role.</p>
-                <p><strong>Audit track:</strong> Modules 5–8 cover the full audit process, internal controls, evidence procedures, and professional ethics.</p>
+                <p><strong>Foundations:</strong> Modules 1-4 cover the accounting fundamentals - statements, revenue recognition, and the balance sheet. Essential for any accounting role.</p>
+                <p><strong>Audit track:</strong> Modules 5-8 cover the full audit process, internal controls, evidence procedures, and professional ethics.</p>
                 <p><strong>Interview ready:</strong> Module 9 covers specialized topics, and Module 10 has the exact questions and case formats Big 4 firms use.</p>
               </div>
 

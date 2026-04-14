@@ -70,9 +70,9 @@ export default function VCInterviewPrepPage() {
               </ol></div>
               <div className="ib-how-to-use">
                 <h4>How to Use This Guide</h4>
-                <p><strong>Foundations:</strong> Modules 1–3 cover the VC industry, fund economics, and how deals are sourced and evaluated.</p>
-                <p><strong>Technical depth:</strong> Modules 4–7 cover term sheets, cap tables, portfolio management, and startup metrics.</p>
-                <p><strong>Interview ready:</strong> Modules 8–10 cover sector expertise, exits/returns, and the exact interview questions and formats.</p>
+                <p><strong>Foundations:</strong> Modules 1-3 cover the VC industry, fund economics, and how deals are sourced and evaluated.</p>
+                <p><strong>Technical depth:</strong> Modules 4-7 cover term sheets, cap tables, portfolio management, and startup metrics.</p>
+                <p><strong>Interview ready:</strong> Modules 8-10 cover sector expertise, exits/returns, and the exact interview questions and formats.</p>
               </div>
               <div className="ib-module-cards">
                 {MODULES.map(m => (<button key={m.id} className="ib-module-card" onClick={() => setActiveModule(m.id)}>

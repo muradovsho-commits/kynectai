@@ -1,7 +1,7 @@
 export const LBO_SECTIONS = [
   {
     title: 'What Is a Leveraged Buyout?',
-    content: `<p>A leveraged buyout is an acquisition funded primarily with borrowed money. A private equity (PE) firm typically puts up 30–50% of the purchase price as Equity (from its investment fund) and borrows the remaining 50–70% as Debt. The PE firm then operates the acquired company for 3–7 years, uses the company's own cash flow to repay the Debt, and eventually sells the company&mdash;ideally at a higher price than it paid.</p>
+    content: `<p>A leveraged buyout is an acquisition funded primarily with borrowed money. A private equity (PE) firm typically puts up 30-50% of the purchase price as Equity (from its investment fund) and borrows the remaining 50-70% as Debt. The PE firm then operates the acquired company for 3-7 years, uses the company's own cash flow to repay the Debt, and eventually sells the company-ideally at a higher price than it paid.</p>
 
 <p>The strategy is analogous to buying a rental property with a mortgage. You put down a fraction of the purchase price, rent the property out to cover mortgage payments, and sell it later. If the property appreciates, your return on the down payment is far higher than if you'd paid all cash, because leverage amplifies equity returns.</p>
 
@@ -9,7 +9,7 @@ export const LBO_SECTIONS = [
 
 <p><strong>1. Debt Paydown (Deleveraging):</strong> As the company generates free cash flow and uses it to repay Debt, the Equity value grows even if the company's total value stays flat. This is the most predictable and reliable return source.</p>
 
-<p><strong>2. EBITDA Growth / Operational Improvement:</strong> If the PE firm can grow the company's earnings&mdash;through revenue growth, cost reduction, working capital optimization, or strategic repositioning&mdash;the company's value at exit will be higher. This requires active management and operational expertise.</p>
+<p><strong>2. EBITDA Growth / Operational Improvement:</strong> If the PE firm can grow the company's earnings-through revenue growth, cost reduction, working capital optimization, or strategic repositioning-the company's value at exit will be higher. This requires active management and operational expertise.</p>
 
 <p><strong>3. Multiple Expansion:</strong> If the PE firm buys at 7x EBITDA and sells at 9x EBITDA (because the company is now larger, more profitable, or in a more favorable market environment), the higher exit multiple significantly boosts returns. This is the least controllable factor because multiples depend on broader market conditions.</p>
 
@@ -37,7 +37,7 @@ export const LBO_SECTIONS = [
 
 <p><strong>Improvement opportunities:</strong> The PE firm needs levers to pull: cost reduction, margin improvement, revenue growth, or strategic repositioning. A perfectly optimized company offers less upside.</p>
 
-<p><strong>Clear exit path:</strong> The PE firm must be able to sell the company in 3–7 years, either to a strategic buyer, another PE firm, or via an IPO.</p>
+<p><strong>Clear exit path:</strong> The PE firm must be able to sell the company in 3-7 years, either to a strategic buyer, another PE firm, or via an IPO.</p>
 
 <p><strong>Reasonable price:</strong> The purchase multiple must be low enough to allow attractive returns at realistic assumptions. Overpaying kills LBO returns regardless of operational improvements.</p>`,
   },
@@ -45,11 +45,11 @@ export const LBO_SECTIONS = [
     title: 'Building an LBO Model',
     content: `<h4>Step 1: Purchase Price</h4>
 
-<p>Start with the company's EBITDA and apply a purchase multiple. If EBITDA = $120M and the purchase multiple is 8x, Enterprise Value Purchase Price = $960M. Add transaction fees (typically 2–4% of the purchase price) to determine total Uses.</p>
+<p>Start with the company's EBITDA and apply a purchase multiple. If EBITDA = $120M and the purchase multiple is 8x, Enterprise Value Purchase Price = $960M. Add transaction fees (typically 2-4% of the purchase price) to determine total Uses.</p>
 
 <h4>Step 2: Sources &amp; Uses</h4>
 
-<p>Determine how the purchase is funded. Total Debt capacity depends on the company's leverage capacity (typically 4–6x EBITDA for the total Debt package) and the availability of different Debt tranches.</p>
+<p>Determine how the purchase is funded. Total Debt capacity depends on the company's leverage capacity (typically 4-6x EBITDA for the total Debt package) and the availability of different Debt tranches.</p>
 
 <table class="comparison-table">
 <tr>
@@ -60,20 +60,20 @@ export const LBO_SECTIONS = [
 </tr>
 <tr>
   <td>Senior Secured (Revolver + Term Loans)</td>
-  <td>2.5–4.0x EBITDA</td>
-  <td>Lowest (base rate + 2–4%)</td>
+  <td>2.5-4.0x EBITDA</td>
+  <td>Lowest (base rate + 2-4%)</td>
   <td>First claim on assets; mandatory quarterly/annual amortization</td>
 </tr>
 <tr>
   <td>Second Lien / Unsecured Senior</td>
-  <td>0.5–1.5x EBITDA</td>
-  <td>Higher (base rate + 5–8%)</td>
+  <td>0.5-1.5x EBITDA</td>
+  <td>Higher (base rate + 5-8%)</td>
   <td>Subordinate to senior secured; usually bullet maturity (no amortization)</td>
 </tr>
 <tr>
   <td>Mezzanine / Subordinated Notes</td>
-  <td>0.5–1.5x EBITDA</td>
-  <td>Highest (12–18%, may include PIK)</td>
+  <td>0.5-1.5x EBITDA</td>
+  <td>Highest (12-18%, may include PIK)</td>
   <td>Lowest priority; may include equity warrants or PIK interest</td>
 </tr>
 </table>
@@ -98,15 +98,15 @@ IRR ≈ MOIC^(1/Holding Period) − 1<br>
 <small>(simplified; actual IRR accounts for interim cash flows like dividends)</small>
 </div>
 
-<p>PE firms typically target a <strong>2.0–3.0x MOIC</strong> and a <strong>20–25% IRR</strong>. The quick math: the "Rule of 72" says to double your money (2.0x MOIC), you need an IRR of roughly 72 ÷ years. For 5 years, that's ~14.4%. To triple your money (3.0x), you need roughly 115 ÷ 5 ≈ 23%.</p>`,
+<p>PE firms typically target a <strong>2.0-3.0x MOIC</strong> and a <strong>20-25% IRR</strong>. The quick math: the "Rule of 72" says to double your money (2.0x MOIC), you need an IRR of roughly 72 ÷ years. For 5 years, that's ~14.4%. To triple your money (3.0x), you need roughly 115 ÷ 5 ≈ 23%.</p>`,
   },
   {
     title: 'LBO Model Uses Beyond PE',
-    content: `<p><strong>Floor Valuation:</strong> An LBO analysis tells you the maximum price a financial buyer would pay while hitting target returns. Since PE firms demand high returns (20%+), LBO valuations typically produce the lowest implied values among valuation methodologies. This makes LBO value a useful "floor"&mdash;if a company's stock price is below its LBO value, it may be undervalued.</p>
+    content: `<p><strong>Floor Valuation:</strong> An LBO analysis tells you the maximum price a financial buyer would pay while hitting target returns. Since PE firms demand high returns (20%+), LBO valuations typically produce the lowest implied values among valuation methodologies. This makes LBO value a useful "floor"-if a company's stock price is below its LBO value, it may be undervalued.</p>
 
 <p><strong>Capacity Analysis:</strong> LBO models help assess how much Debt a company can reasonably support. Stress-test different leverage levels against projected cash flows to determine the maximum Debt load before financial distress becomes likely.</p>
 
-<p><strong>Negotiation Tool:</strong> In competitive M&A processes, understanding each party's LBO math helps bankers advise on pricing. If a PE buyer can achieve 20% IRR at $50/share but not at $55/share, you know $50–$55 is the ceiling for that buyer.</p>`,
+<p><strong>Negotiation Tool:</strong> In competitive M&A processes, understanding each party's LBO math helps bankers advise on pricing. If a PE buyer can achieve 20% IRR at $50/share but not at $55/share, you know $50-$55 is the ceiling for that buyer.</p>`,
   },
   {
     title: 'Advanced LBO Topics',
@@ -123,7 +123,7 @@ IRR ≈ MOIC^(1/Holding Period) − 1<br>
     content: `<div class="interview-q">
 <div class="q-label">Question 1</div>
 <div class="question">Walk me through a leveraged buyout.</div>
-<div class="answer">A PE firm acquires a company using a combination of Equity (its own fund's capital) and Debt (bank loans, bonds, mezzanine). The Equity contribution is typically 30–50% of the purchase price. The PE firm runs the company for 3–7 years, implements operational improvements to grow EBITDA, and uses the company's free cash flow to repay Debt. At the end, the firm sells the company through a strategic sale, secondary buyout, or IPO. Returns come from Debt paydown, EBITDA growth, and potentially multiple expansion. Success is measured by MOIC (money-on-money multiple) and IRR (annualized return).</div>
+<div class="answer">A PE firm acquires a company using a combination of Equity (its own fund's capital) and Debt (bank loans, bonds, mezzanine). The Equity contribution is typically 30-50% of the purchase price. The PE firm runs the company for 3-7 years, implements operational improvements to grow EBITDA, and uses the company's free cash flow to repay Debt. At the end, the firm sells the company through a strategic sale, secondary buyout, or IPO. Returns come from Debt paydown, EBITDA growth, and potentially multiple expansion. Success is measured by MOIC (money-on-money multiple) and IRR (annualized return).</div>
 </div>
 
 <div class="interview-q">
@@ -153,19 +153,19 @@ IRR ≈ MOIC^(1/Holding Period) − 1<br>
 <div class="interview-q">
 <div class="q-label">Question 6</div>
 <div class="question">How do you use an LBO model as a valuation tool?</div>
-<div class="answer">The LBO model tells you the maximum price a PE firm would pay while achieving target returns (typically 20–25% IRR). This represents a "floor" valuation because PE firms require high returns and won't overpay. If a company's LBO-implied value per share exceeds its current stock price, it suggests the stock may be undervalued&mdash;a PE firm could buy it at a premium and still generate attractive returns. LBO values typically produce the lowest valuations among standard methodologies.</div>
+<div class="answer">The LBO model tells you the maximum price a PE firm would pay while achieving target returns (typically 20-25% IRR). This represents a "floor" valuation because PE firms require high returns and won't overpay. If a company's LBO-implied value per share exceeds its current stock price, it suggests the stock may be undervalued-a PE firm could buy it at a premium and still generate attractive returns. LBO values typically produce the lowest valuations among standard methodologies.</div>
 </div>
 
 <div class="interview-q">
 <div class="q-label">Question 7</div>
 <div class="question">What happens to the IRR if you increase leverage (more Debt, less Equity)?</div>
-<div class="answer">If the deal is successful, higher leverage increases IRR because the PE firm invests less Equity, so the same absolute dollar gain represents a higher percentage return. However, higher leverage also means higher Interest Expense (reducing FCF for Debt repayment), a smaller margin of safety (the company is more likely to default if performance slips), and potentially higher interest rates (lenders charge more as leverage increases). There's also a practical ceiling&mdash;lenders typically won't go above 5–7x total Debt/EBITDA.</div>
+<div class="answer">If the deal is successful, higher leverage increases IRR because the PE firm invests less Equity, so the same absolute dollar gain represents a higher percentage return. However, higher leverage also means higher Interest Expense (reducing FCF for Debt repayment), a smaller margin of safety (the company is more likely to default if performance slips), and potentially higher interest rates (lenders charge more as leverage increases). There's also a practical ceiling-lenders typically won't go above 5-7x total Debt/EBITDA.</div>
 </div>
 
 <div class="interview-q">
 <div class="q-label">Question 8</div>
 <div class="question">What are the three main sources of returns in an LBO, and which is most reliable?</div>
-<div class="answer">The three sources are: (1) Debt paydown&mdash;as FCF repays Debt, the value "transfers" from Debt holders to Equity holders. This is the most reliable because it depends primarily on the company maintaining its cash flow, not on market conditions. (2) EBITDA growth&mdash;operational improvements, cost cuts, or revenue growth that increase earnings. Moderately reliable, depending on the PE firm's execution capability. (3) Multiple expansion&mdash;selling at a higher multiple than the purchase multiple. This is the least reliable because multiples depend on market conditions, investor sentiment, and industry trends that the PE firm can't control.</div>
+<div class="answer">The three sources are: (1) Debt paydown-as FCF repays Debt, the value "transfers" from Debt holders to Equity holders. This is the most reliable because it depends primarily on the company maintaining its cash flow, not on market conditions. (2) EBITDA growth-operational improvements, cost cuts, or revenue growth that increase earnings. Moderately reliable, depending on the PE firm's execution capability. (3) Multiple expansion-selling at a higher multiple than the purchase multiple. This is the least reliable because multiples depend on market conditions, investor sentiment, and industry trends that the PE firm can't control.</div>
 </div>`,
   },
 ];

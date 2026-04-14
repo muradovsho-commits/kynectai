@@ -13,7 +13,7 @@ export const VC_SOURCING_SECTIONS = [
 
 <h4>1. Team</h4>
 
-<p>At the earliest stages, the team is the investment. The product will change, the market will evolve, and the strategy will pivot&mdash;but the founding team's ability to navigate all of that is what determines success. VCs evaluate: <strong>Founder-market fit</strong> (does this team have a unique insight or unfair advantage in this specific market? A former Stripe engineer building fintech infrastructure has founder-market fit; a former management consultant building fintech infrastructure does not), <strong>technical depth</strong> (can the team actually build what they're proposing?), <strong>resilience and adaptability</strong> (startups are brutal; will this team persevere through the inevitable crises?), <strong>ability to recruit</strong> (can the founders attract world-class engineers, designers, and operators?), and <strong>coachability</strong> (will they listen to feedback, or are they rigidly attached to their initial idea?).</p>
+<p>At the earliest stages, the team is the investment. The product will change, the market will evolve, and the strategy will pivot-but the founding team's ability to navigate all of that is what determines success. VCs evaluate: <strong>Founder-market fit</strong> (does this team have a unique insight or unfair advantage in this specific market? A former Stripe engineer building fintech infrastructure has founder-market fit; a former management consultant building fintech infrastructure does not), <strong>technical depth</strong> (can the team actually build what they're proposing?), <strong>resilience and adaptability</strong> (startups are brutal; will this team persevere through the inevitable crises?), <strong>ability to recruit</strong> (can the founders attract world-class engineers, designers, and operators?), and <strong>coachability</strong> (will they listen to feedback, or are they rigidly attached to their initial idea?).</p>
 
 <h4>2. Market</h4>
 
@@ -23,11 +23,11 @@ export const VC_SOURCING_SECTIONS = [
 
 <h4>3. Product</h4>
 
-<p>What problem does the product solve? How acute is the pain? Is the product a "vitamin" (nice to have) or a "painkiller" (need to have)? At seed stage, the product may be incomplete&mdash;VCs evaluate the vision, the prototype, early user feedback, and the team's ability to iterate quickly. At Series A, the product should have demonstrated traction with a meaningful cohort of users or customers.</p>
+<p>What problem does the product solve? How acute is the pain? Is the product a "vitamin" (nice to have) or a "painkiller" (need to have)? At seed stage, the product may be incomplete-VCs evaluate the vision, the prototype, early user feedback, and the team's ability to iterate quickly. At Series A, the product should have demonstrated traction with a meaningful cohort of users or customers.</p>
 
 <h4>4. Traction</h4>
 
-<p>Evidence that the product is working. At each stage, the bar is different: at seed, it might be hundreds of beta users with strong engagement. At Series A, it's repeatable customer acquisition and measurable product-market fit. At Series B, it's revenue in the millions with clear growth trajectory. Traction is the antidote to storytelling&mdash;it provides objective evidence that the market wants what the company is building.</p>
+<p>Evidence that the product is working. At each stage, the bar is different: at seed, it might be hundreds of beta users with strong engagement. At Series A, it's repeatable customer acquisition and measurable product-market fit. At Series B, it's revenue in the millions with clear growth trajectory. Traction is the antidote to storytelling-it provides objective evidence that the market wants what the company is building.</p>
 
 <h4>5. Business Model and Unit Economics</h4>
 
@@ -35,6 +35,6 @@ export const VC_SOURCING_SECTIONS = [
 
 <h4>6. Competitive Landscape</h4>
 
-<p>Who else is building in this space? What's the startup's unfair advantage? A common mistake is claiming "we have no competition"&mdash;that's either false (competitors always exist, even if they're indirect substitutes) or alarming (maybe there's no competition because the market doesn't exist). The best startups have competition but possess a clear, defensible edge: superior technology, unique data, network effects, or a distribution advantage that competitors can't easily replicate.</p>`,
+<p>Who else is building in this space? What's the startup's unfair advantage? A common mistake is claiming "we have no competition"-that's either false (competitors always exist, even if they're indirect substitutes) or alarming (maybe there's no competition because the market doesn't exist). The best startups have competition but possess a clear, defensible edge: superior technology, unique data, network effects, or a distribution advantage that competitors can't easily replicate.</p>`,
   },
 ];

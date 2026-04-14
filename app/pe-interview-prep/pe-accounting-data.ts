@@ -4,9 +4,9 @@ export const PE_ACCOUNTING_SECTIONS = [
     content: `<p>Modern business operates on <strong>Accrual Accounting</strong> (US GAAP / IFRS). The core principle is the <strong>matching principle</strong>: revenues are recognized when earned, and expenses when incurred, regardless of when cash changes hands.</p>
 <p><strong>How PE thinks about it:</strong> Private Equity investors view Net Income as an accounting fiction. We care about <strong>Free Cash Flow (FCF)</strong>. You cannot pay a lender with "recognized revenue." You can only pay them with cold, hard cash.</p>
 <h4>Building Intuition: The Supply Chain Reality Check</h4>
-<p>Imagine a manufacturer. You buy raw materials, pay logistics and labor. Your cash is gone — sitting on the warehouse floor as boxes. Under accrual accounting, you haven't recognized an expense yet. The expense is trapped on the Balance Sheet as <strong>Inventory</strong>.</p>
+<p>Imagine a manufacturer. You buy raw materials, pay logistics and labor. Your cash is gone - sitting on the warehouse floor as boxes. Under accrual accounting, you haven't recognized an expense yet. The expense is trapped on the Balance Sheet as <strong>Inventory</strong>.</p>
 <p>Now you sell that inventory on "Net 90" terms. Under accrual accounting, you instantly recognize massive Revenue and Net Income. But as a PE investor looking at the bank account, you have <strong>zero cash</strong> to pay this month's interest expense because the cash is trapped in <strong>Accounts Receivable</strong>.</p>
-<p>This dynamic — the delay between economic reality and cash reality — is why we must master the three financial statements.</p>`
+<p>This dynamic - the delay between economic reality and cash reality - is why we must master the three financial statements.</p>`
   },
   {
     title: `1.2 The Three Statements & Their Linkages`,

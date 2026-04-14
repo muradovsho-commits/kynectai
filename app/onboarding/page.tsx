@@ -405,7 +405,7 @@ export default function OnboardingPage() {
                     { text: "Mentorship Program (Coming Soon)", bold: false },
                     { text: "Outreach Tracker", bold: false },
                     { text: "Career Roadmaps Guide", bold: false },
-                    { text: "Interview Prep — all industries", bold: false },
+                    { text: "Interview Prep - all industries", bold: false },
                     { text: "Everything in Starter included", bold: false },
                   ].map((item, i) => (
                     <div key={i} style={{ display: "flex", gap: 10, alignItems: "center" }}>

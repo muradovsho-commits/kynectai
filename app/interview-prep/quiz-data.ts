@@ -492,7 +492,7 @@ Why should we hire you over other highly qualified candidates from target school
 What do you know about the recent deal activity in our group's coverage universe?
 Pick a recent M&A transaction and walk me through the strategic rationale.
 Choose a company you follow; how would you value it and what is your investment thesis?
-Pitch me a stock in 2–3 minutes, focusing on key drivers and valuation.
+Pitch me a stock in 2-3 minutes, focusing on key drivers and valuation.
 Tell me about a time you changed your mind after seeing new information.
 Describe a situation where you worked with someone who did not pull their weight.
 How would you respond if you made a mistake in a client deliverable that was just sent out?

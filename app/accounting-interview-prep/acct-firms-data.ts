@@ -1,11 +1,11 @@
-// Accounting & Audit Mastery Manual — Module 8 (Audit in Practice) + Module 9 (Question Bank)
+// Accounting & Audit Mastery Manual - Module 8 (Audit in Practice) + Module 9 (Question Bank)
 export const ACCT_FIRMS_SECTIONS = [
   {
-    title: '8.1–8.2 Revenue Cycle & Inventory in Practice',
+    title: '8.1-8.2 Revenue Cycle & Inventory in Practice',
     content: `<h3>8.1 Revenue Cycle in Practice</h3>
 <p><strong>Typical process:</strong> order → approval → shipment / service delivery → invoicing → recording → collection.</p>
 <p><strong>Key risks:</strong> fictitious sales, bill-and-hold / premature recognition, cut-off errors, side agreements, returns not reserved properly, manual journal entry overrides.</p>
-<p><strong>Strong interview answer — If asked how you would audit revenue, a top candidate says:</strong></p>
+<p><strong>Strong interview answer - If asked how you would audit revenue, a top candidate says:</strong></p>
 <ul><li>identify the revenue process and assertions at risk</li><li>understand contract terms and recognition method</li><li>test controls if relevant</li><li>perform cut-off testing</li><li>vouch sales to supporting docs</li><li>assess receivable collectibility and returns</li><li>use analytical procedures to identify anomalies</li></ul>
 
 <h3>8.2 Inventory in Practice</h3>
@@ -13,7 +13,7 @@ export const ACCT_FIRMS_SECTIONS = [
 <p><strong>Procedures:</strong> attend physical count, test count accuracy, inspect aging and obsolescence, test standard / actual cost build-up, inspect purchases and sales around year-end.</p>`,
   },
   {
-    title: '8.3–8.4 Payroll & Fixed Assets in Practice',
+    title: '8.3-8.4 Payroll & Fixed Assets in Practice',
     content: `<h3>8.3 Payroll in Practice</h3>
 <p><strong>Risks:</strong> ghost employees, incorrect pay rates, unrecorded accruals, bonus estimate errors, payroll tax errors.</p>
 <p><strong>Procedures:</strong> test employee master data changes, reconcile payroll registers to GL, inspect authorization of rates, recompute accruals, analytical review of payroll trends.</p>
@@ -23,7 +23,7 @@ export const ACCT_FIRMS_SECTIONS = [
 <p><strong>Procedures:</strong> inspect additions support, test capitalization policy compliance, inspect disposals, recalculate depreciation, inspect impairment triggers.</p>`,
   },
   {
-    title: '8.5–8.6 Estimates/Fair Value & Going Concern/Completion + Module 8 Practice',
+    title: '8.5-8.6 Estimates/Fair Value & Going Concern/Completion + Module 8 Practice',
     content: `<h3>8.5 Estimates and Fair Value in Practice</h3>
 <p><strong>Why difficult:</strong> Models and assumptions often drive the number.</p>
 <p><strong>Procedures may include:</strong> test underlying data, evaluate reasonableness of assumptions, compare prior estimates to actual outcomes, involve specialists if needed, perform sensitivity analysis.</p>
@@ -35,11 +35,11 @@ export const ACCT_FIRMS_SECTIONS = [
 
 <h3>Module 8 Practice Drills</h3>
 <p><strong>Explain-out-loud drills:</strong> How would you audit revenue? How would you audit inventory? Why is payroll usually considered a different risk profile than revenue? What is going concern and why does it matter?</p>
-<p><strong>Scenario drills — For each, identify key risks and procedures:</strong></p>
+<p><strong>Scenario drills - For each, identify key risks and procedures:</strong></p>
 <ol><li>retailer with high year-end sales spike</li><li>manufacturer with aging inventory</li><li>startup with deferred revenue and long contracts</li><li>company with major goodwill balance and declining performance</li></ol>`,
   },
   {
-    title: '9.1 Core Accounting Interview Questions (Q1–Q5)',
+    title: '9.1 Core Accounting Interview Questions (Q1-Q5)',
     content: `<h3>Question 1: Walk me through the three primary financial statements.</h3>
 <p><strong>Strong answer:</strong> "The income statement shows performance over a period by reporting revenue, expenses, and net income. The balance sheet shows the company's financial position at a point in time through assets, liabilities, and equity. The cash flow statement explains how cash changed during the period by separating operating, investing, and financing activity. The statements link because net income flows into retained earnings on the balance sheet and is the starting point for operating cash flow under the indirect method, while the ending cash balance from the cash flow statement ties to the balance sheet."</p>
 <p><strong>What interviewers are testing:</strong> Foundational accounting fluency and clarity.</p>
@@ -59,7 +59,7 @@ export const ACCT_FIRMS_SECTIONS = [
 <p><strong>Strong answer:</strong> "Working capital generally refers to current operating assets minus current operating liabilities. It reflects how much cash is tied up in day-to-day operations. Increases in working capital often consume cash, while decreases can release cash, depending on the specific components."</p>`,
   },
   {
-    title: '9.2 Audit Interview Questions (Q6–Q12)',
+    title: '9.2 Audit Interview Questions (Q6-Q12)',
     content: `<h3>Question 6: What is the purpose of an audit?</h3>
 <p><strong>Strong answer:</strong> "The purpose of an audit is to provide independent reasonable assurance that the financial statements are free of material misstatement, whether caused by error or fraud, and to express an opinion on whether they are presented fairly in accordance with the applicable reporting framework."</p>
 <p><strong>Weak answer:</strong> "To make sure the numbers are correct."</p>
@@ -83,7 +83,7 @@ export const ACCT_FIRMS_SECTIONS = [
 <p><strong>Strong answer:</strong> "Professional skepticism means maintaining a questioning mind and critically assessing audit evidence rather than accepting representations at face value. It does not mean assuming management is dishonest, but it does mean remaining alert to conditions that may indicate misstatement."</p>`,
   },
   {
-    title: '9.3–9.4 Scenario & Behavioral Questions (Q13–Q17) + Module 9 Practice',
+    title: '9.3-9.4 Scenario & Behavioral Questions (Q13-Q17) + Module 9 Practice',
     content: `<h3>Question 13: If inventory increased significantly at year-end, what concerns might you have?</h3>
 <p><strong>Strong answer:</strong> "I would want to understand whether the increase reflects genuine business activity or whether there are risks around existence, obsolete stock, or cut-off. I would also consider whether inventory growth is consistent with sales trends and whether there may be overproduction or excess stock that creates valuation risk."</p>
 
@@ -100,7 +100,7 @@ export const ACCT_FIRMS_SECTIONS = [
 <p><strong>Strong answer structure:</strong> 1) Context, 2) How you identified the inconsistency, 3) What steps you took to verify it, 4) What the impact was, 5) What it showed about your attention to detail.</p>
 
 <h3>Module 9 Practice Drills</h3>
-<p><strong>Technical drills — Practice each question in:</strong> 1) one sentence, 2) 30 seconds, 3) 90 seconds with nuance.</p>
+<p><strong>Technical drills - Practice each question in:</strong> 1) one sentence, 2) 30 seconds, 3) 90 seconds with nuance.</p>
 <p><strong>Self-test checklist:</strong> Did I define the concept clearly? Did I explain why it matters? Did I mention a risk or judgment area where appropriate? Did I sound like I understand the professional context?</p>`,
   },
 ];

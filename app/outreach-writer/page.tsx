@@ -243,7 +243,7 @@ Rules:
           <div style={{fontSize:13,color:'var(--text-3)',marginBottom:10}}>Three steps to a personalized cold email that gets replies.</div>
           <div style={{display:'inline-flex',alignItems:'center',gap:6,background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:100,padding:'5px 14px',fontSize:12,fontWeight:600,color:'var(--text-2)',marginBottom:28}}>
             <span style={{width:6,height:6,borderRadius:'50%',background:'#22c55e',flexShrink:0,display:'inline-block'}}></span>
-            {userPlan === "pro" ? "Unlimited messages — Pro plan" : `${Math.max(0, 3 - messagesSent)} messages remaining`}
+            {userPlan === "pro" ? "Unlimited messages - Pro plan" : `${Math.max(0, 3 - messagesSent)} messages remaining`}
           </div>
 
           {/* Chrome Extension Banner */}
@@ -255,7 +255,7 @@ Rules:
                 </div>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>OfferBell Chrome Extension</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.5 }}>Write and send outreach emails directly from Gmail &amp; Outlook — without leaving your inbox.</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.5 }}>Write and send outreach emails directly from Gmail &amp; Outlook - without leaving your inbox.</div>
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>

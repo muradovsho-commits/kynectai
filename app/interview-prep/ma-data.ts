@@ -1,7 +1,7 @@
 export const MA_SECTIONS = [
   {
     title: 'Why Companies Acquire Other Companies',
-    content: `<p>An acquisition is a shortcut. Building a new product line from scratch might take five years and $200 million in R&D spending. Acquiring a company that already has that product line might cost $500 million upfront, but the buyer gets it <em>now</em>&mdash;with existing customers, proven technology, and trained employees. If the acquired business generates $70 million in annual cash flow, the buyer might conclude that paying $500M today is cheaper than spending $200M over five years <em>and</em> foregoing the $70M in annual cash flow during the build period.</p>
+    content: `<p>An acquisition is a shortcut. Building a new product line from scratch might take five years and $200 million in R&D spending. Acquiring a company that already has that product line might cost $500 million upfront, but the buyer gets it <em>now</em>-with existing customers, proven technology, and trained employees. If the acquired business generates $70 million in annual cash flow, the buyer might conclude that paying $500M today is cheaper than spending $200M over five years <em>and</em> foregoing the $70M in annual cash flow during the build period.</p>
 
 <p>From a financial theory perspective, an acquisition makes sense when the buyer expects the IRR on the deal to exceed its WACC, or equivalently, when the target's asking price is below its intrinsic value to the buyer (including synergies).</p>
 
@@ -47,7 +47,7 @@ export const MA_SECTIONS = [
 
 <p><strong>Revenue synergies</strong> arise from cross-selling products to each other's customer bases, entering new geographic markets, or combining distribution channels. These are far more speculative and frequently fail to materialize at projected levels.</p>
 
-<p>In modeling, synergies are phased in over 2–3 years (they don't materialize instantly) and offset by <strong>integration costs</strong> (severance, systems migration, facility consolidation). The net benefit is what matters for the accretion/dilution calculation.</p>`,
+<p>In modeling, synergies are phased in over 2-3 years (they don't materialize instantly) and offset by <strong>integration costs</strong> (severance, systems migration, facility consolidation). The net benefit is what matters for the accretion/dilution calculation.</p>`,
   },
   {
     title: 'Deal Structures',
@@ -55,7 +55,7 @@ export const MA_SECTIONS = [
   },
   {
     title: 'Other Ways to Evaluate Deals',
-    content: `<p>Accretion/dilution is the most common framework, but it's not the only one&mdash;or even the best one in many situations.</p>
+    content: `<p>Accretion/dilution is the most common framework, but it's not the only one-or even the best one in many situations.</p>
 
 <p><strong>IRR Analysis:</strong> Estimate the buyer's IRR from buying the target, running it for several years, and potentially selling it. Compare to the buyer's WACC. This is more theoretically rigorous than accretion/dilution but requires more assumptions (especially about exit timing and price).</p>
 
@@ -86,19 +86,19 @@ export const MA_SECTIONS = [
 <div class="interview-q">
 <div class="q-label">Question 3</div>
 <div class="question">What is Goodwill, and when is it created?</div>
-<div class="answer">Goodwill is the excess of the purchase price over the fair market value of the target's identifiable net assets. It arises in M&A when a buyer pays a premium for things that don't appear as discrete assets on the Balance Sheet&mdash;established brand reputation, assembled workforce, expected synergies, and competitive market position. Goodwill is not amortized; it sits on the Balance Sheet and is tested annually for impairment. If the acquired business loses value, Goodwill is written down through a non-cash charge on the Income Statement.</div>
+<div class="answer">Goodwill is the excess of the purchase price over the fair market value of the target's identifiable net assets. It arises in M&A when a buyer pays a premium for things that don't appear as discrete assets on the Balance Sheet-established brand reputation, assembled workforce, expected synergies, and competitive market position. Goodwill is not amortized; it sits on the Balance Sheet and is tested annually for impairment. If the acquired business loses value, Goodwill is written down through a non-cash charge on the Income Statement.</div>
 </div>
 
 <div class="interview-q">
 <div class="q-label">Question 4</div>
 <div class="question">Can a deal be accretive but still be a bad idea?</div>
-<div class="answer">Yes. Accretion can be manufactured&mdash;for example, by funding a deal with very cheap Debt, any target with a P/E below 1/(After-Tax Cost of Debt) will appear accretive. But that doesn't mean the acquisition creates long-term value. The buyer may have overpaid (resulting in future Goodwill impairments), the cultures may clash, key employees may leave, or the strategic rationale may be flawed. A deal that's dilutive in Year 1 but creates strong long-term value (e.g., acquiring a high-growth platform) might be a far better decision.</div>
+<div class="answer">Yes. Accretion can be manufactured-for example, by funding a deal with very cheap Debt, any target with a P/E below 1/(After-Tax Cost of Debt) will appear accretive. But that doesn't mean the acquisition creates long-term value. The buyer may have overpaid (resulting in future Goodwill impairments), the cultures may clash, key employees may leave, or the strategic rationale may be flawed. A deal that's dilutive in Year 1 but creates strong long-term value (e.g., acquiring a high-growth platform) might be a far better decision.</div>
 </div>
 
 <div class="interview-q">
 <div class="q-label">Question 5</div>
 <div class="question">What's the difference between Equity Purchase Price and Enterprise Purchase Price?</div>
-<div class="answer">Equity Purchase Price is what the target's shareholders receive&mdash;the offer price per share times shares outstanding. Enterprise Purchase Price is the total cost of acquiring the operating business: Equity Purchase Price plus the target's Debt (which the buyer assumes or must repay) minus the target's Cash (which the buyer receives). Enterprise Purchase Price represents the full economic cost of the transaction.</div>
+<div class="answer">Equity Purchase Price is what the target's shareholders receive-the offer price per share times shares outstanding. Enterprise Purchase Price is the total cost of acquiring the operating business: Equity Purchase Price plus the target's Debt (which the buyer assumes or must repay) minus the target's Cash (which the buyer receives). Enterprise Purchase Price represents the full economic cost of the transaction.</div>
 </div>
 
 <div class="interview-q">
@@ -110,7 +110,7 @@ export const MA_SECTIONS = [
 <div class="interview-q">
 <div class="q-label">Question 7</div>
 <div class="question">What are the differences between Stock Purchases and Asset Purchases?</div>
-<div class="answer">In a Stock Purchase, the buyer acquires all the target's shares and gets everything&mdash;all assets, liabilities, and off-balance-sheet items. In an Asset Purchase, the buyer selects specific assets and liabilities. Buyers typically prefer Asset Purchases because they can cherry-pick what they want and the asset write-ups are tax-deductible (reducing future cash taxes). Sellers prefer Stock Purchases because they pay lower taxes (only on the purchase price, not on individual asset gains) and transfer all liabilities to the buyer. Asset Purchases are more common for smaller private company deals and divestitures.</div>
+<div class="answer">In a Stock Purchase, the buyer acquires all the target's shares and gets everything-all assets, liabilities, and off-balance-sheet items. In an Asset Purchase, the buyer selects specific assets and liabilities. Buyers typically prefer Asset Purchases because they can cherry-pick what they want and the asset write-ups are tax-deductible (reducing future cash taxes). Sellers prefer Stock Purchases because they pay lower taxes (only on the purchase price, not on individual asset gains) and transfer all liabilities to the buyer. Asset Purchases are more common for smaller private company deals and divestitures.</div>
 </div>`,
   },
 ];

@@ -30,7 +30,7 @@ export default function RemindersPanel({ contacts, onOpenContact }: { contacts: 
           contactName: `${c.fname} ${c.lname}`.trim(),
           contactFirm: c.firm || '',
           contactId: c.id,
-          message: `Follow up with ${c.fname}${c.firm ? ` (${c.firm})` : ''} – last contacted ${days} days ago`,
+          message: `Follow up with ${c.fname}${c.firm ? ` (${c.firm})` : ''} - last contacted ${days} days ago`,
         });
       }
     }

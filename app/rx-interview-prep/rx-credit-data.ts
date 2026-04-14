@@ -27,6 +27,6 @@ Estimated YTM = (C + (FV − P) / n) / ((FV + P) / 2)<br>
 
 <h4>Key Relationships</h4>
 
-<p>When a bond's price falls, its YTM rises (and vice versa)&mdash;this is the fundamental inverse relationship between bond prices and yields. For a given price, shorter maturities produce higher YTMs (the price appreciation is compressed into fewer years). For a given maturity, lower prices produce higher YTMs. Increasing the coupon frequency (from annual to semi-annual to quarterly) slightly decreases YTM because the investor receives cash sooner.</p>`,
+<p>When a bond's price falls, its YTM rises (and vice versa)-this is the fundamental inverse relationship between bond prices and yields. For a given price, shorter maturities produce higher YTMs (the price appreciation is compressed into fewer years). For a given maturity, lower prices produce higher YTMs. Increasing the coupon frequency (from annual to semi-annual to quarterly) slightly decreases YTM because the investor receives cash sooner.</p>`,
   },
 ];

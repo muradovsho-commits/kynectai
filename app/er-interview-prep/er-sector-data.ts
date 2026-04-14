@@ -9,7 +9,7 @@ export const ER_SECTOR_SECTIONS = [
     title: 'Frameworks for Industry Analysis',
     content: `<h4>Industry Life Cycle</h4>
 
-<p>Where is the industry in its evolution? <strong>Emerging</strong> (fast growth, many competitors, low profitability, uncertain standards&mdash;e.g., autonomous vehicles). <strong>Growth</strong> (rapid adoption, consolidation beginning, improving margins&mdash;e.g., cloud computing in the 2010s). <strong>Mature</strong> (stable growth, consolidated market, high margins, cash flow generation&mdash;e.g., consumer staples). <strong>Decline</strong> (shrinking TAM, excess capacity, margin compression&mdash;e.g., traditional print media). The industry's position determines which metrics matter most and what multiple the market is willing to pay.</p>
+<p>Where is the industry in its evolution? <strong>Emerging</strong> (fast growth, many competitors, low profitability, uncertain standards-e.g., autonomous vehicles). <strong>Growth</strong> (rapid adoption, consolidation beginning, improving margins-e.g., cloud computing in the 2010s). <strong>Mature</strong> (stable growth, consolidated market, high margins, cash flow generation-e.g., consumer staples). <strong>Decline</strong> (shrinking TAM, excess capacity, margin compression-e.g., traditional print media). The industry's position determines which metrics matter most and what multiple the market is willing to pay.</p>
 
 <h4>Competitive Dynamics</h4>
 
@@ -21,9 +21,9 @@ export const ER_SECTOR_SECTIONS = [
   },
   {
     title: 'Building an Industry Mosaic',
-    content: `<p>The best analysts maintain an "industry mosaic"&mdash;a continuously updated mental model of their sector built from diverse information sources:</p>
+    content: `<p>The best analysts maintain an "industry mosaic"-a continuously updated mental model of their sector built from diverse information sources:</p>
 
-<p><strong>Company filings and earnings calls</strong> (primary data from every covered company and key privates). <strong>Industry data</strong> (trade associations, government statistics, proprietary datasets). <strong>Expert calls</strong> (former executives, channel partners, customers, suppliers). <strong>Conference attendance</strong> (industry conferences, trade shows, investor days). <strong>Competitor monitoring</strong> (tracking new product launches, pricing changes, strategic moves). <strong>Academic and trade publications</strong> (understanding the technology or regulatory changes that will reshape the industry in 3&ndash;5 years).</p>
+<p><strong>Company filings and earnings calls</strong> (primary data from every covered company and key privates). <strong>Industry data</strong> (trade associations, government statistics, proprietary datasets). <strong>Expert calls</strong> (former executives, channel partners, customers, suppliers). <strong>Conference attendance</strong> (industry conferences, trade shows, investor days). <strong>Competitor monitoring</strong> (tracking new product launches, pricing changes, strategic moves). <strong>Academic and trade publications</strong> (understanding the technology or regulatory changes that will reshape the industry in 3-5 years).</p>
 
 <p>Each data point is a single piece of a mosaic. Individually, they're noisy and inconclusive. Together, they form a picture of where the industry is headed that no single source can provide.</p>`,
   },

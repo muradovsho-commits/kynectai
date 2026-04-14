@@ -1,7 +1,7 @@
 export const PE_ADVANCED_SECTIONS = [
   {
     title: `9.1 The "Melting Ice Cube": Declining Revenue LBOs`,
-    content: `<p>Most candidates are taught an LBO requires a stable or growing business. If asked "Would you ever LBO a company with declining revenues?" — 95% say no. <strong>They are wrong.</strong></p>
+    content: `<p>Most candidates are taught an LBO requires a stable or growing business. If asked "Would you ever LBO a company with declining revenues?" - 95% say no. <strong>They are wrong.</strong></p>
 <p>Think of a legacy software product (like mainframe database management). No new customers, revenue dropping 3%/year. But existing customers cannot switch, so they keep paying maintenance fees. Zero R&D, zero sales staff, zero CapEx.</p>
 <h4>The Math</h4>
 <ul>
@@ -17,7 +17,7 @@ export const PE_ADVANCED_SECTIONS = [
     content: `<p>When you sign an LOI for $500M, that is <strong>not the actual final wire amount</strong>.</p>
 <p>A business needs a baseline NWC (inventory, cash, AR) to function on Day 1. The seller cannot strip the shelves bare and demand full price.</p>
 <h4>The Mechanics: "The Peg"</h4>
-<p>During diligence, the PE firm and seller negotiate a <strong>"Target Net Working Capital"</strong> — usually the historical 12-month average. Say the Peg is $20M.</p>
+<p>During diligence, the PE firm and seller negotiate a <strong>"Target Net Working Capital"</strong> - usually the historical 12-month average. Say the Peg is $20M.</p>
 <ul>
 <li><strong>Seller over-delivered (Actual NWC = $25M):</strong> PE firm pays $505M.</li>
 <li><strong>Seller stripped the business (Actual NWC = $12M):</strong> PE firm pays $492M.</li>
@@ -30,7 +30,7 @@ export const PE_ADVANCED_SECTIONS = [
 <p><strong>The Elite Response:</strong></p>
 <ol>
 <li><strong>Fund Lifecycles:</strong> KKR might be at the end of their 10-year fund life and forced to liquidate to return capital to LPs, even if the business still has room to grow.</li>
-<li><strong>Size & Cost of Capital:</strong> A middle-market firm might grow a business from $10M to $40M EBITDA — too large for their fund. A mega-fund can step in with lower cost of capital and take it from $40M to $100M EBITDA.</li>
+<li><strong>Size & Cost of Capital:</strong> A middle-market firm might grow a business from $10M to $40M EBITDA - too large for their fund. A mega-fund can step in with lower cost of capital and take it from $40M to $100M EBITDA.</li>
 <li><strong>Different Theses:</strong> The first sponsor focused on cost-cutting (margin expansion). The second buys with a thesis focused on international expansion or vertical integration with another portfolio company.</li>
 </ol>`
   },

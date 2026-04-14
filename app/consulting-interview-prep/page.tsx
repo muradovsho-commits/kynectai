@@ -132,8 +132,8 @@ export default function ConsultingInterviewPrepPage() {
 
               <div className="ib-how-to-use">
                 <h4>How to Use This Guide</h4>
-                <p><strong>New to consulting:</strong> Start with Modules 1–3 to understand the industry, frameworks, and case interview mechanics before diving into specific case types.</p>
-                <p><strong>Case practice:</strong> Modules 4–8 cover every major case type with frameworks, examples, and walkthroughs. Work through them systematically.</p>
+                <p><strong>New to consulting:</strong> Start with Modules 1-3 to understand the industry, frameworks, and case interview mechanics before diving into specific case types.</p>
+                <p><strong>Case practice:</strong> Modules 4-8 cover every major case type with frameworks, examples, and walkthroughs. Work through them systematically.</p>
                 <p><strong>Interview ready:</strong> Module 9 covers behavioral prep, and Module 10 provides full practice cases to simulate real interview conditions.</p>
               </div>
 

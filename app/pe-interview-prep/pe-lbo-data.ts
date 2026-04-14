@@ -5,7 +5,7 @@ export const PE_LBO_SECTIONS = [
 <h4>The Uses (Where the money goes)</h4>
 <ol>
 <li><strong>Purchase Equity:</strong> The cost to buy out existing shareholders (Equity Value + Control Premium).</li>
-<li><strong>Refinance Existing Debt:</strong> Deals are "Cash-Free, Debt-Free" — you pay off old debt.</li>
+<li><strong>Refinance Existing Debt:</strong> Deals are "Cash-Free, Debt-Free" - you pay off old debt.</li>
 <li><strong>Transaction Fees:</strong> IB, legal, and accounting fees (usually 1-2% of deal size).</li>
 <li><strong>Financing Fees:</strong> Fees paid to banks to secure the new debt.</li>
 </ol>
@@ -41,7 +41,7 @@ export const PE_LBO_SECTIONS = [
 <li>Subtract Mandatory Interest on all debt tranches.</li>
 <li>Subtract Mandatory Principal Amortization (e.g., 10% of TLA).</li>
 <li>= <strong>Cash Flow Available for Debt Repayment (CFADS)</strong>.</li>
-<li>If CFADS is positive, initiate the <strong>"Cash Sweep"</strong> — aggressively pay down the most senior debt first (Revolver → TLA → TLB). Cannot prepay Mezzanine early without severe penalties.</li>
+<li>If CFADS is positive, initiate the <strong>"Cash Sweep"</strong> - aggressively pay down the most senior debt first (Revolver → TLA → TLB). Cannot prepay Mezzanine early without severe penalties.</li>
 </ol>`
   },
   {

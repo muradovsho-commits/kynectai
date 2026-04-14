@@ -8,7 +8,7 @@ export const PE_DEBT_SECTIONS = [
   {
     title: `6.2 Deep Dive: The Full Capital Stack`,
     content: `<h4>1. The Revolving Credit Facility (Revolver)</h4>
-<p>A corporate credit card used strictly for working capital shortfalls. Consider a business managing complex supply chains — their working capital needs fluctuate wildly depending on the performance cycle and seasonal inventory returns. We put a massive Revolver in place to ensure they never miss a payroll or a debt payment during a cash-poor month.</p>
+<p>A corporate credit card used strictly for working capital shortfalls. Consider a business managing complex supply chains - their working capital needs fluctuate wildly depending on the performance cycle and seasonal inventory returns. We put a massive Revolver in place to ensure they never miss a payroll or a debt payment during a cash-poor month.</p>
 <p>Cost: SOFR + ~200-300 bps.</p>
 <h4>2. Senior Secured Debt (TLA & TLB)</h4>
 <p><strong>Term Loan A:</strong> From traditional banks. Heavy amortization (5-10% principal/year). Banks want money back quickly.</p>

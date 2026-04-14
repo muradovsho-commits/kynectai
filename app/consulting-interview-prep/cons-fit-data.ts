@@ -85,7 +85,7 @@ export const CONS_FIT_SECTIONS = [
   },
   {
     title: `7.9 Creating a Fit Story Bank`,
-    content: `<p>Prepare <strong>6–8 stories</strong> that can flex across multiple questions:</p>
+    content: `<p>Prepare <strong>6-8 stories</strong> that can flex across multiple questions:</p>
 <p>Leadership, conflict, failure, teamwork, initiative, persuasion, ethical judgment, achievement under pressure.</p>
 <p>For each story, write:</p>
 <ul>

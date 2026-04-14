@@ -475,7 +475,7 @@ export default function ReferralMapPage() {
           <div className="rm-node-dot" style={{ background: getColor(c.name) }} />
           <div className="rm-node-info">
             <div className="rm-node-name">{c.name}</div>
-            <div className="rm-node-detail">{c.firm}{c.role ? ` — ${c.role}` : ''}{c.state ? ` • ${c.state}` : ''}{c.note ? ` | ${c.note}` : ''}</div>
+            <div className="rm-node-detail">{c.firm}{c.role ? ` - ${c.role}` : ''}{c.state ? ` • ${c.state}` : ''}{c.note ? ` | ${c.note}` : ''}</div>
           </div>
           <span style={{ fontSize: 10, color: 'var(--text-3)' }}>Edit</span>
         </div>
@@ -536,7 +536,7 @@ export default function ReferralMapPage() {
                     <div className="rm-node-dot" style={{ width: 14, height: 14, borderRadius: '50%', background: getColor(c.name), flexShrink: 0, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }} />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div className="rm-node-name" style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{c.name}</div>
-                      <div className="rm-node-detail" style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 2 }}>{c.firm}{c.role ? ` — ${c.role}` : ''}</div>
+                      <div className="rm-node-detail" style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 2 }}>{c.firm}{c.role ? ` - ${c.role}` : ''}</div>
                     </div>
                     <svg width="16" height="16" fill="none" stroke="var(--text-3)" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                   </div>
@@ -683,7 +683,7 @@ export default function ReferralMapPage() {
                               }
                             }}
                           />
-                          <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>{selectedContact.firm}{selectedContact.role ? ` — ${selectedContact.role}` : ''} {selectedRefs.length > 0 ? `| ${getChainSize(selectedContact.id)} referral${getChainSize(selectedContact.id) !== 1 ? 's' : ''}` : ''}</div>
+                          <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>{selectedContact.firm}{selectedContact.role ? ` - ${selectedContact.role}` : ''} {selectedRefs.length > 0 ? `| ${getChainSize(selectedContact.id)} referral${getChainSize(selectedContact.id) !== 1 ? 's' : ''}` : ''}</div>
                         </div>
                         <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
                           <button className="rm-btn-secondary" style={{ fontSize: 11, padding: '5px 12px' }} onClick={() => openEdit(selectedContact)} type="button">Edit</button>
@@ -777,7 +777,7 @@ export default function ReferralMapPage() {
                 {impList.map((c, i) => (
                   <div key={i} onClick={() => setImpList(l => l.map((x, j) => j === i ? { ...x, sel: !x.sel } : x))} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 8, border: `1.5px solid ${c.sel ? 'var(--text)' : 'var(--border)'}`, background: c.sel ? 'var(--surface-2)' : 'transparent', cursor: 'pointer' }}>
                     <div style={{ width: 18, height: 18, borderRadius: 4, border: `2px solid ${c.sel ? 'var(--text)' : 'var(--border)'}`, background: c.sel ? 'var(--text)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{c.sel && <svg width="12" height="12" fill="none" stroke="var(--surface)" strokeWidth="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>}</div>
-                    <div><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{c.fname} {c.lname}</div><div style={{ fontSize: 11, color: 'var(--text-3)' }}>{c.firm}{c.role ? ` — ${c.role}` : ''}</div></div>
+                    <div><div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{c.fname} {c.lname}</div><div style={{ fontSize: 11, color: 'var(--text-3)' }}>{c.firm}{c.role ? ` - ${c.role}` : ''}</div></div>
                   </div>
                 ))}
               </div>

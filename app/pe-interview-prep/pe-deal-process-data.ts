@@ -25,7 +25,7 @@ export const PE_DEAL_PROCESS_SECTIONS = [
   },
   {
     title: 'Due Diligence',
-    content: `<p>Once a deal passes initial screening, the PE firm conducts extensive due diligence&mdash;a systematic investigation of every material aspect of the business. Due diligence is the single most important risk management tool in PE. The goal is not just to verify the seller's claims, but to develop an independent, bottom-up view of the business's value and risks.</p>
+    content: `<p>Once a deal passes initial screening, the PE firm conducts extensive due diligence-a systematic investigation of every material aspect of the business. Due diligence is the single most important risk management tool in PE. The goal is not just to verify the seller's claims, but to develop an independent, bottom-up view of the business's value and risks.</p>
 
 <h4>Financial Due Diligence</h4>
 
@@ -33,7 +33,7 @@ export const PE_DEAL_PROCESS_SECTIONS = [
 
 <p><strong>Quality of Earnings (QoE):</strong> The most critical deliverable. The QoE analysis adjusts the company's reported EBITDA to arrive at a "normalized" or "adjusted" EBITDA that reflects the true, recurring, cash earning power of the business. Common adjustments include: removing one-time items (legal settlements, restructuring costs), normalizing owner compensation (privately held companies often pay their owners above-market salaries), adjusting for non-recurring revenue or expenses, identifying aggressive accounting treatments, and adjusting for run-rate effects of recent changes (new contracts, price increases, cost savings).</p>
 
-<p><strong>Working Capital Analysis:</strong> Determine the "normal" level of net working capital required to run the business. This is critical for setting the working capital peg in the purchase agreement&mdash;the target level at which the buyer receives a dollar-for-dollar adjustment if actual working capital at closing differs from the peg.</p>
+<p><strong>Working Capital Analysis:</strong> Determine the "normal" level of net working capital required to run the business. This is critical for setting the working capital peg in the purchase agreement-the target level at which the buyer receives a dollar-for-dollar adjustment if actual working capital at closing differs from the peg.</p>
 
 <p><strong>CapEx Analysis:</strong> Separate maintenance CapEx (required to sustain current operations) from growth CapEx (discretionary spending to expand). The distinction matters because maintenance CapEx is a real cost that reduces Free Cash Flow available for Debt service.</p>
 
@@ -64,12 +64,12 @@ export const PE_DEAL_PROCESS_SECTIONS = [
 <p>Perhaps the most important and most difficult piece of due diligence. PE firms spend significant time evaluating the CEO, CFO, and other senior leaders. Will the current management team execute the value creation plan? Are there gaps that need to be filled? Is the CEO coachable, or will they resist changes? Management meetings, reference checks, and psychometric assessments are all common tools.</p>
 
 <div class="pro-tip">
-Many PE professionals say the management team is the single most important factor in any investment decision. A strong team can execute a mediocre strategy; a weak team can squander a brilliant one. If you're unsure about the management team, that's usually a reason to pass&mdash;not a problem to solve post-close.
+Many PE professionals say the management team is the single most important factor in any investment decision. A strong team can execute a mediocre strategy; a weak team can squander a brilliant one. If you're unsure about the management team, that's usually a reason to pass-not a problem to solve post-close.
 </div>`,
   },
   {
     title: 'The Investment Committee Process',
-    content: `<p>Before committing to an acquisition, the deal team must present to the firm's <strong>Investment Committee (IC)</strong>&mdash;typically composed of the firm's senior partners. The IC memo is a comprehensive document covering: the investment thesis (why this deal), business overview, industry analysis, financial analysis (including the LBO model), value creation plan, risk factors and mitigants, deal terms, and the recommended decision.</p>
+    content: `<p>Before committing to an acquisition, the deal team must present to the firm's <strong>Investment Committee (IC)</strong>-typically composed of the firm's senior partners. The IC memo is a comprehensive document covering: the investment thesis (why this deal), business overview, industry analysis, financial analysis (including the LBO model), value creation plan, risk factors and mitigants, deal terms, and the recommended decision.</p>
 
 <p>Most firms have multiple IC "gates." An initial IC meeting approves submitting an Indication of Interest (IOI) or Letter of Intent (LOI). A final IC meeting approves signing the definitive purchase agreement. Between these gates, the deal team conducts progressively deeper due diligence.</p>`,
   },
@@ -81,12 +81,12 @@ Many PE professionals say the management team is the single most important facto
 
 <p><strong>Representations and Warranties:</strong> Statements by the seller about the condition of the business (accuracy of financial statements, ownership of assets, absence of undisclosed liabilities). These survive closing and provide the buyer with recourse if they turn out to be false.</p>
 
-<p><strong>Indemnification:</strong> The seller's obligation to compensate the buyer for losses arising from breaches of reps and warranties or other specified risks. Often subject to a "basket" (minimum threshold before claims can be made) and a "cap" (maximum total indemnification, usually 10–20% of the purchase price).</p>
+<p><strong>Indemnification:</strong> The seller's obligation to compensate the buyer for losses arising from breaches of reps and warranties or other specified risks. Often subject to a "basket" (minimum threshold before claims can be made) and a "cap" (maximum total indemnification, usually 10-20% of the purchase price).</p>
 
-<p><strong>Escrow / Holdback:</strong> A portion of the purchase price (typically 5–15%) held in escrow for 12–24 months to fund potential indemnification claims.</p>
+<p><strong>Escrow / Holdback:</strong> A portion of the purchase price (typically 5-15%) held in escrow for 12-24 months to fund potential indemnification claims.</p>
 
 <p><strong>Earn-Out:</strong> A portion of the purchase price contingent on the company achieving specified performance targets post-closing. Common when buyer and seller disagree on the company's future performance. Earn-outs are a source of frequent disputes and should be structured carefully.</p>
 
-<p><strong>Management Rollover:</strong> The percentage of the management team's proceeds that must be reinvested in the new PE-owned company. Typically 25–50% of the CEO's and CFO's net proceeds. This ensures alignment but requires careful tax structuring.</p>`,
+<p><strong>Management Rollover:</strong> The percentage of the management team's proceeds that must be reinvested in the new PE-owned company. Typically 25-50% of the CEO's and CFO's net proceeds. This ensures alignment but requires careful tax structuring.</p>`,
   },
 ];

@@ -20,7 +20,7 @@ Monthly Burn = Monthly Operating Expenses − Monthly Revenue<br>
 Runway (months) = Cash Balance / Monthly Burn
 </div>
 
-<p>Runway tells you how long the company can survive before it needs to raise more money or become profitable. Startups should maintain 12&ndash;18 months of runway at all times. Below 6 months is a crisis. Burn rate is the most closely monitored metric at the earliest stages because <strong>running out of cash is the most common cause of startup death.</strong></p>
+<p>Runway tells you how long the company can survive before it needs to raise more money or become profitable. Startups should maintain 12-18 months of runway at all times. Below 6 months is a crisis. Burn rate is the most closely monitored metric at the earliest stages because <strong>running out of cash is the most common cause of startup death.</strong></p>
 
 <h4>The Burn Multiple</h4>
 
@@ -28,12 +28,12 @@ Runway (months) = Cash Balance / Monthly Burn
 Burn Multiple = Net Burn / Net New ARR
 </div>
 
-<p>Created by David Sacks, the burn multiple measures how efficiently a company converts cash burn into revenue growth. A burn multiple below 1.5x is excellent (you're spending less than $1.50 to generate $1 of new ARR). Between 1.5&ndash;2.5x is acceptable for early-stage companies. Above 3x raises serious questions about capital efficiency.</p>
+<p>Created by David Sacks, the burn multiple measures how efficiently a company converts cash burn into revenue growth. A burn multiple below 1.5x is excellent (you're spending less than $1.50 to generate $1 of new ARR). Between 1.5-2.5x is acceptable for early-stage companies. Above 3x raises serious questions about capital efficiency.</p>
 
 <h4>Cohort Analysis and Retention</h4>
 
-<p>The single most revealing analysis for any startup. Track each monthly or quarterly cohort of customers: how many remain after 1 month, 3 months, 6 months, 12 months? A retention curve that flattens (stops declining) indicates product-market fit&mdash;the customers who stay are genuinely engaged. A retention curve that continues declining suggests the product isn't sticky enough.</p>
+<p>The single most revealing analysis for any startup. Track each monthly or quarterly cohort of customers: how many remain after 1 month, 3 months, 6 months, 12 months? A retention curve that flattens (stops declining) indicates product-market fit-the customers who stay are genuinely engaged. A retention curve that continues declining suggests the product isn't sticky enough.</p>
 
-<p>For SaaS: logo retention (% of customers retained) and dollar retention (% of revenue retained, including expansion). Dollar retention above 100% means existing customers are spending more over time&mdash;the holy grail of SaaS economics.</p>`,
+<p>For SaaS: logo retention (% of customers retained) and dollar retention (% of revenue retained, including expansion). Dollar retention above 100% means existing customers are spending more over time-the holy grail of SaaS economics.</p>`,
   },
 ];

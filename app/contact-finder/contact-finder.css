@@ -416,11 +416,11 @@ body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   MOBILE RESPONSIVE — all mobile styles below this line
+   MOBILE RESPONSIVE - all mobile styles below this line
    Only affects screens < 768px. Desktop layout is untouched.
    ═══════════════════════════════════════════════════════════════ */
 
-/* Mobile hamburger button — hidden on desktop */
+/* Mobile hamburger button - hidden on desktop */
 .mobile-hamburger { display: none; position: fixed; top: 14px; left: 14px; z-index: 50; width: 40px; height: 40px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 .mobile-close { display: none; background: none; border: none; color: var(--text-3); cursor: pointer; padding: 4px; }
 .mobile-overlay { display: none; }
@@ -448,7 +448,7 @@ body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text
   .quiz-main { margin-left: 0 !important; padding: 60px 16px 40px !important; }
   /* Catch-all: any main/section direct child of .app */
   .app > main, .app > div > main { margin-left: 0 !important; }
-  /* Inline style override — this targets the actual rendered style attribute */
+  /* Inline style override - this targets the actual rendered style attribute */
   main[style] { margin-left: 0 !important; }
 
   /* ── Dashboard ── */
@@ -514,7 +514,7 @@ body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text
   /* ── Job board ── */
   .job-board-main { margin-left: 0 !important; }
 
-  /* ── Tables — horizontal scroll ── */
+  /* ── Tables - horizontal scroll ── */
   .table-wrap, .tracker-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
   /* ── Pro modal ── */

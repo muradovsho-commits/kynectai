@@ -1,7 +1,7 @@
-// Asset Management Mastery Manual — Modules 3-4
+// Asset Management Mastery Manual - Modules 3-4
 export const AM_MARKETS_SECTIONS = [
   {
-    title: '3.1–3.4 Fundamental Analysis: Business Models, Industry, Revenue Drivers',
+    title: '3.1-3.4 Fundamental Analysis: Business Models, Industry, Revenue Drivers',
     content: `<h3>3.1 Why Fundamental Analysis Matters</h3>
 <p>Fundamental analysis is the process of understanding a business well enough to estimate its future economics and compare those economics to the current price of the security.</p>
 <p><strong>What strong investors want to understand:</strong> what the company does, how it makes money, what drives revenue and margins, whether it has a durable competitive advantage, what management is doing with capital, what the range of future outcomes may be.</p>
@@ -19,7 +19,7 @@ export const AM_MARKETS_SECTIONS = [
 <p><strong>A strong candidate says:</strong> "Revenue growth is coming from price and mix rather than unit growth, which may be more sustainable if pricing power is durable."</p>`,
   },
   {
-    title: '3.5–3.8 Margins, Returns on Capital, Balance Sheet, Cash Flow',
+    title: '3.5-3.8 Margins, Returns on Capital, Balance Sheet, Cash Flow',
     content: `<h3>3.5 Margins and Cost Structure</h3>
 <p><strong>Types of margins:</strong> gross margin, EBITDA margin, operating margin, net margin, free cash flow margin.</p>
 <p><strong>Why margins matter:</strong> Margins reveal: pricing power, scale benefits, input sensitivity, operating leverage, quality of growth.</p>
@@ -39,7 +39,7 @@ export const AM_MARKETS_SECTIONS = [
 <p><strong>Earnings vs cash flow:</strong> A company can show strong accounting earnings but weak cash conversion if: receivables rise sharply, inventory builds, capex is heavy, adjustments are aggressive.</p>`,
   },
   {
-    title: '3.9–3.10 Management/Capital Allocation, Red Flags + Module 3 Practice',
+    title: '3.9-3.10 Management/Capital Allocation, Red Flags + Module 3 Practice',
     content: `<h3>3.9 Management and Capital Allocation</h3>
 <p><strong>Why management matters:</strong> Management influences: strategic direction, execution quality, cost discipline, M&amp;A decisions, balance sheet policy, dividends and buybacks, reinvestment discipline.</p>
 <p><strong>Good capital allocation questions:</strong> Does management invest in high-return opportunities? Do they buy back stock at sensible prices? Are acquisitions disciplined or empire-building? Are incentives aligned with shareholders?</p>
@@ -49,10 +49,10 @@ export const AM_MARKETS_SECTIONS = [
 
 <h3>Module 3 Practice Drills</h3>
 <p><strong>Explain-out-loud drills:</strong> How do you analyze a business model? Why do returns on capital matter? What does good cash conversion mean? What makes management a good capital allocator?</p>
-<p><strong>Company drill — Pick a public company and explain:</strong> 1) how it makes money, 2) what its key revenue drivers are, 3) what its main risks are, 4) whether the balance sheet is supportive or risky, 5) one reason the stock might be mispriced.</p>`,
+<p><strong>Company drill - Pick a public company and explain:</strong> 1) how it makes money, 2) what its key revenue drivers are, 3) what its main risks are, 4) whether the balance sheet is supportive or risky, 5) one reason the stock might be mispriced.</p>`,
   },
   {
-    title: '4.1–4.5 Valuation: Intrinsic vs Relative, Methods, DCF, Multiples',
+    title: '4.1-4.5 Valuation: Intrinsic vs Relative, Methods, DCF, Multiples',
     content: `<h3>4.1 Why Valuation Matters in Asset Management</h3>
 <p>Valuation is the bridge between business quality and investment attractiveness. A fantastic business can be a poor investment if purchased at too high a valuation. A lower-quality business can generate strong returns if bought well below conservative intrinsic value.</p>
 <p><strong>First-principles truth:</strong> Price matters.</p>
@@ -75,7 +75,7 @@ export const AM_MARKETS_SECTIONS = [
 <p><strong>Risks of multiples:</strong> they can hide capital intensity, ignore balance-sheet risk, be distorted by cyclical earnings, compare businesses that look similar but are fundamentally different.</p>`,
   },
   {
-    title: '4.6–4.10 Expectations, Margin of Safety, Duration, Sector Nuance, Valuation Limits + Module 4 Practice',
+    title: '4.6-4.10 Expectations, Margin of Safety, Duration, Sector Nuance, Valuation Limits + Module 4 Practice',
     content: `<h3>4.6 Valuation Through the Lens of Expectations</h3>
 <p>A strong investor asks: What growth is implied by the current multiple? What margin stability is implied? What return on capital is the market assuming? How much downside is embedded if the thesis goes wrong?</p>
 <p><strong>Interview insight:</strong> The best candidates can reverse-engineer expectations, not just apply formulas.</p>
@@ -99,6 +99,6 @@ export const AM_MARKETS_SECTIONS = [
 
 <h3>Module 4 Practice Drills</h3>
 <p><strong>Explain-out-loud drills:</strong> Why is valuation central to investing? What is the difference between intrinsic and relative value? What is margin of safety? Why can a cheap stock still be dangerous?</p>
-<p><strong>Valuation drill — Choose a company and discuss:</strong> 1) what metric you would value it on, 2) why that metric is appropriate, 3) what assumptions matter most, 4) what the market may be pricing in.</p>`,
+<p><strong>Valuation drill - Choose a company and discuss:</strong> 1) what metric you would value it on, 2) why that metric is appropriate, 3) what assumptions matter most, 4) what the market may be pricing in.</p>`,
   },
 ];

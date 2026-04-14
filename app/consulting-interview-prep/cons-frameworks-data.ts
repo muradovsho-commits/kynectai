@@ -5,7 +5,7 @@ export const CONS_FRAMEWORKS_SECTIONS = [
 
 <p>For example, if a retailer's profits have declined 15% over two years, a consultant might hypothesize: "The profit decline is driven primarily by margin compression from increased promotional activity, not by a decline in overall foot traffic." The team then conducts targeted analyses: comparing promotional intensity over time, analyzing margin by product category, and benchmarking promotional spending against competitors. If the data supports the hypothesis, the team develops recommendations around pricing discipline. If it doesn't, the hypothesis is revised and new analyses are run.</p>
 
-<p>The hypothesis-driven approach is powerful because it focuses effort on the analyses that will actually change the recommendation. Instead of building a comprehensive database of everything about the client's business (which could take months), you identify the 3–5 key questions that determine the answer and concentrate resources there.</p>`,
+<p>The hypothesis-driven approach is powerful because it focuses effort on the analyses that will actually change the recommendation. Instead of building a comprehensive database of everything about the client's business (which could take months), you identify the 3-5 key questions that determine the answer and concentrate resources there.</p>`,
   },
   {
     title: 'MECE: The Foundation of Structure',
@@ -38,16 +38,16 @@ export const CONS_FRAMEWORKS_SECTIONS = [
     title: 'The Pyramid Principle',
     content: `<p>Developed by Barbara Minto at McKinsey, the <strong>Pyramid Principle</strong> is the standard for structuring communication in consulting. The core idea: <strong>start with the answer</strong>, then provide the supporting arguments, then provide the supporting data for each argument. This is the opposite of how most people naturally communicate (building up to a conclusion). In consulting, the audience is busy executives who want the bottom line first and the details only if they need them.</p>
 
-<p>A presentation built on the Pyramid Principle has three levels. The <strong>governing thought</strong> is the single, overarching recommendation at the top (e.g., "The company should exit the European market and reinvest in North America"). The <strong>key line items</strong> are the 3–4 main arguments supporting the recommendation (e.g., "European margins are structurally below cost of capital," "North American growth opportunities are significantly larger," "Management attention is being diluted"). The <strong>supporting evidence</strong> is the data, analysis, and logic that prove each key line item.</p>`,
+<p>A presentation built on the Pyramid Principle has three levels. The <strong>governing thought</strong> is the single, overarching recommendation at the top (e.g., "The company should exit the European market and reinvest in North America"). The <strong>key line items</strong> are the 3-4 main arguments supporting the recommendation (e.g., "European margins are structurally below cost of capital," "North American growth opportunities are significantly larger," "Management attention is being diluted"). The <strong>supporting evidence</strong> is the data, analysis, and logic that prove each key line item.</p>`,
   },
   {
     title: '80/20 Thinking',
     content: `<p>The Pareto Principle (80/20 rule) is deeply embedded in consulting culture. The insight: roughly 80% of the impact comes from 20% of the causes. In practice, this means:</p>
 
-<p><strong>Focus on what matters most.</strong> If a company has 15 product lines, it's likely that 3–4 of them drive the majority of profits (or losses). Analyze those first; the others can wait.</p>
+<p><strong>Focus on what matters most.</strong> If a company has 15 product lines, it's likely that 3-4 of them drive the majority of profits (or losses). Analyze those first; the others can wait.</p>
 
 <p><strong>Don't pursue perfect data.</strong> Getting from 80% accuracy to 95% accuracy often takes 5x the effort. In consulting, the 80% answer delivered this week is far more valuable than the 95% answer delivered next month.</p>
 
-<p><strong>Prioritize ruthlessly.</strong> At any given time, there are dozens of analyses you could run. The skill is identifying the 2–3 that will actually change the recommendation and ignoring the rest.</p>`,
+<p><strong>Prioritize ruthlessly.</strong> At any given time, there are dozens of analyses you could run. The skill is identifying the 2-3 that will actually change the recommendation and ignoring the rest.</p>`,
   },
 ];

@@ -30,7 +30,7 @@ export const PE_VALUATION_SECTIONS = [
     title: `3.3 Trading Comps & Precedent Transactions`,
     content: `<h4>Trading Comparables (Public Comps)</h4>
 <p>Valuing a target based on trading multiples of similar public companies. We almost exclusively use <strong>EV / EBITDA</strong>.</p>
-<p><strong>Why EV/EBITDA?</strong> P/E is skewed by capital structure and tax regimes. EV/EBITDA looks at core operational value independent of financing — critical for PE because we're going to change the capital structure anyway.</p>
+<p><strong>Why EV/EBITDA?</strong> P/E is skewed by capital structure and tax regimes. EV/EBITDA looks at core operational value independent of financing - critical for PE because we're going to change the capital structure anyway.</p>
 <h4>Precedent Transactions (Acquisition Comps)</h4>
 <p>What buyers have historically paid to acquire similar companies. Precedents almost always yield <strong>higher valuations</strong> than Trading Comps because the purchase price includes a <strong>Control Premium</strong> (usually 20-30%) and assumed synergies.</p>`
   },

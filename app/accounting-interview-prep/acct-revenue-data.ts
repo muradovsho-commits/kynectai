@@ -5,11 +5,11 @@ export const ACCT_REVENUE_SECTIONS = [
 
 <div class="framework-box">
 <div class="fw-label">The Five Steps of ASC 606</div>
-<p><strong>Step 1 &mdash; Identify the contract(s) with a customer.</strong> A contract must be approved, have commercial substance, and create enforceable rights and obligations. Contracts may be written, verbal, or implied by customary business practices.</p>
-<p><strong>Step 2 &mdash; Identify the performance obligations.</strong> A performance obligation is a promise to transfer a distinct good or service. "Distinct" means the customer can benefit from it on its own or with readily available resources. Bundled products and services may need to be separated into multiple performance obligations.</p>
-<p><strong>Step 3 &mdash; Determine the transaction price.</strong> This is the amount the company expects to receive. It includes variable consideration (estimated rebates, discounts, returns) subject to a constraint: only include variable amounts if it's highly probable a significant revenue reversal won't occur.</p>
-<p><strong>Step 4 &mdash; Allocate the transaction price.</strong> If multiple performance obligations exist, allocate the transaction price based on the relative standalone selling prices of each obligation.</p>
-<p><strong>Step 5 &mdash; Recognize revenue when (or as) each performance obligation is satisfied.</strong> A performance obligation is satisfied when control of the good or service transfers to the customer&mdash;either at a point in time or over time.</p>
+<p><strong>Step 1 - Identify the contract(s) with a customer.</strong> A contract must be approved, have commercial substance, and create enforceable rights and obligations. Contracts may be written, verbal, or implied by customary business practices.</p>
+<p><strong>Step 2 - Identify the performance obligations.</strong> A performance obligation is a promise to transfer a distinct good or service. "Distinct" means the customer can benefit from it on its own or with readily available resources. Bundled products and services may need to be separated into multiple performance obligations.</p>
+<p><strong>Step 3 - Determine the transaction price.</strong> This is the amount the company expects to receive. It includes variable consideration (estimated rebates, discounts, returns) subject to a constraint: only include variable amounts if it's highly probable a significant revenue reversal won't occur.</p>
+<p><strong>Step 4 - Allocate the transaction price.</strong> If multiple performance obligations exist, allocate the transaction price based on the relative standalone selling prices of each obligation.</p>
+<p><strong>Step 5 - Recognize revenue when (or as) each performance obligation is satisfied.</strong> A performance obligation is satisfied when control of the good or service transfers to the customer-either at a point in time or over time.</p>
 </div>
 
 <h4>Point in Time vs. Over Time</h4>

@@ -68,7 +68,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile hamburger button — hidden on desktop via both inline + CSS */}
+      {/* Mobile hamburger button - hidden on desktop via both inline + CSS */}
       <button className="mobile-hamburger" onClick={() => setMobileOpen(true)} type="button" aria-label="Open menu"
         style={{ display: 'none' }}>
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>

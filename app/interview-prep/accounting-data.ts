@@ -3,25 +3,25 @@ export const ACCOUNTING_SECTIONS = [
     title: 'Why Profit ≠ Cash',
     content: `<p>Everything in valuation depends on cash flow. But no public company directly reports the "cash flow" figure we need for valuation. Instead, companies report three interconnected financial statements, and analysts must work through them to extract a meaningful cash flow number.</p>
 
-<p>The root cause of the complexity is <strong>accrual accounting</strong>. Under accrual rules (used by virtually all public companies under both U.S. GAAP and IFRS), revenue is recorded when a product or service is delivered&mdash;not when payment is received. Expenses are recorded when incurred&mdash;not when paid. This means the Income Statement tells you what the company "earned" in an accounting sense, but not how much cash actually moved through the door.</p>
+<p>The root cause of the complexity is <strong>accrual accounting</strong>. Under accrual rules (used by virtually all public companies under both U.S. GAAP and IFRS), revenue is recorded when a product or service is delivered-not when payment is received. Expenses are recorded when incurred-not when paid. This means the Income Statement tells you what the company "earned" in an accounting sense, but not how much cash actually moved through the door.</p>
 
 <p>Consider a landscape design firm that completes a $50,000 project in March but won't be paid until June. Under accrual accounting, the firm records $50,000 in revenue in March. Its March income statement looks great. But its March bank account hasn't budged. The mismatch between accounting income and cash is tracked through the Balance Sheet and Cash Flow Statement.</p>`,
   },
   {
     title: 'The Income Statement',
-    content: `<p>The Income Statement (also called the Profit &amp; Loss or P&amp;L) covers a specific period&mdash;a quarter or a year&mdash;and shows what the company earned and spent according to accounting rules. The key items from top to bottom:</p>
+    content: `<p>The Income Statement (also called the Profit &amp; Loss or P&amp;L) covers a specific period-a quarter or a year-and shows what the company earned and spent according to accounting rules. The key items from top to bottom:</p>
 
 <p><strong>Revenue (Sales):</strong> Total value of goods sold or services delivered during the period. This is recognized upon delivery, not upon cash collection.</p>
 
-<p><strong>Cost of Goods Sold (COGS):</strong> Direct costs tied to producing what was sold&mdash;raw materials, manufacturing labor, shipping for physical goods. Subtracting COGS from Revenue gives <strong>Gross Profit</strong>, and the Gross Margin (Gross Profit / Revenue) tells you how much incremental profit each additional sale generates before overhead.</p>
+<p><strong>Cost of Goods Sold (COGS):</strong> Direct costs tied to producing what was sold-raw materials, manufacturing labor, shipping for physical goods. Subtracting COGS from Revenue gives <strong>Gross Profit</strong>, and the Gross Margin (Gross Profit / Revenue) tells you how much incremental profit each additional sale generates before overhead.</p>
 
-<p><strong>Operating Expenses (OpEx):</strong> Overhead costs not directly tied to individual units sold&mdash;salaries, rent, marketing, R&amp;D. Subtracting OpEx from Gross Profit gives <strong>Operating Income (EBIT)</strong>, which reflects the profitability of core business operations before interest and taxes.</p>
+<p><strong>Operating Expenses (OpEx):</strong> Overhead costs not directly tied to individual units sold-salaries, rent, marketing, R&amp;D. Subtracting OpEx from Gross Profit gives <strong>Operating Income (EBIT)</strong>, which reflects the profitability of core business operations before interest and taxes.</p>
 
 <p><strong>Interest Expense / Income:</strong> The cost of Debt and earnings on Cash balances. These are "below the line" because they reflect financing decisions, not operating performance.</p>
 
 <p><strong>Taxes:</strong> Corporate income taxes on Pre-Tax Income.</p>
 
-<p><strong>Net Income:</strong> The bottom line&mdash;what's left for common shareholders after all expenses and taxes.</p>
+<p><strong>Net Income:</strong> The bottom line-what's left for common shareholders after all expenses and taxes.</p>
 
 <p>For an item to appear on the Income Statement, it must satisfy two conditions: it must correspond to the reporting period, and it must affect the income available to shareholders. A factory purchase doesn't go on the Income Statement because it benefits multiple future periods. A loan principal repayment doesn't go there either because it doesn't affect shareholder income (it's just exchanging one asset for another).</p>`,
   },
@@ -31,21 +31,21 @@ export const ACCOUNTING_SECTIONS = [
 
 <h4>Accounts Receivable (AR)</h4>
 
-<p>When you deliver a product but the customer hasn't paid yet, you've earned Revenue (it hits the Income Statement), but you haven't received cash. You record an Account Receivable on the Balance Sheet&mdash;essentially an IOU. When the customer pays, AR decreases and Cash increases. During the gap, Net Income overstates cash generated.</p>
+<p>When you deliver a product but the customer hasn't paid yet, you've earned Revenue (it hits the Income Statement), but you haven't received cash. You record an Account Receivable on the Balance Sheet-essentially an IOU. When the customer pays, AR decreases and Cash increases. During the gap, Net Income overstates cash generated.</p>
 
 <p>Imagine a consulting firm bills $200,000 in December for work completed, but the client pays in February. In December, the Income Statement shows $200K in revenue, but the Cash Flow Statement must subtract that $200K because no cash arrived. In February, cash comes in but there's no new Income Statement impact.</p>
 
 <h4>Accounts Payable (AP)</h4>
 
-<p>The mirror image: you receive goods or services from a supplier but haven't paid yet. The expense hits the Income Statement, but cash stays in your account. AP increases on the Balance Sheet until you pay. During the gap, Net Income understates cash generated&mdash;you've had the benefit of holding onto cash longer than the income statement suggests.</p>
+<p>The mirror image: you receive goods or services from a supplier but haven't paid yet. The expense hits the Income Statement, but cash stays in your account. AP increases on the Balance Sheet until you pay. During the gap, Net Income understates cash generated-you've had the benefit of holding onto cash longer than the income statement suggests.</p>
 
 <h4>Inventory</h4>
 
-<p>When you purchase raw materials or finished goods, you spend cash but cannot recognize the cost on the Income Statement until you sell and deliver those goods to customers. Cash goes out immediately; the expense (COGS) is delayed until the sale. Rising Inventory means cash is being tied up in unsold goods&mdash;a negative for cash flow even if the Income Statement looks unchanged.</p>
+<p>When you purchase raw materials or finished goods, you spend cash but cannot recognize the cost on the Income Statement until you sell and deliver those goods to customers. Cash goes out immediately; the expense (COGS) is delayed until the sale. Rising Inventory means cash is being tied up in unsold goods-a negative for cash flow even if the Income Statement looks unchanged.</p>
 
 <h4>Deferred Revenue</h4>
 
-<p>When customers pay in advance&mdash;annual software subscriptions, prepaid memberships, gift cards&mdash;you collect cash but can't recognize Revenue until the product or service is actually delivered. Deferred Revenue increases on the Balance Sheet (it's a Liability because you owe the customer something). Cash is higher than the Income Statement would suggest. This is why subscription businesses often appear to generate more cash than profit.</p>
+<p>When customers pay in advance-annual software subscriptions, prepaid memberships, gift cards-you collect cash but can't recognize Revenue until the product or service is actually delivered. Deferred Revenue increases on the Balance Sheet (it's a Liability because you owe the customer something). Cash is higher than the Income Statement would suggest. This is why subscription businesses often appear to generate more cash than profit.</p>
 
 <h4>Prepaid Expenses</h4>
 
@@ -57,9 +57,9 @@ export const ACCOUNTING_SECTIONS = [
   },
   {
     title: 'Capital Expenditures and Depreciation',
-    content: `<p>When a company buys a long-lived asset&mdash;a delivery truck, a server farm, a factory&mdash;the purchase is a <strong>Capital Expenditure (CapEx)</strong>. Because the asset will generate benefits over many years, you don't record the entire cost as an expense in the purchase year. Instead, you spread the cost over the asset's useful life through <strong>Depreciation</strong>.</p>
+    content: `<p>When a company buys a long-lived asset-a delivery truck, a server farm, a factory-the purchase is a <strong>Capital Expenditure (CapEx)</strong>. Because the asset will generate benefits over many years, you don't record the entire cost as an expense in the purchase year. Instead, you spread the cost over the asset's useful life through <strong>Depreciation</strong>.</p>
 
-<p>For example, if a logistics company buys a fleet of trucks for $2 million with a 10-year useful life, Depreciation would be $200,000 per year (straight-line method). In Year 1, Cash decreases by $2M (the actual purchase), but the Income Statement shows only $200K of Depreciation expense. In Years 2–10, there's no cash outflow, but the Income Statement still shows $200K of Depreciation each year.</p>
+<p>For example, if a logistics company buys a fleet of trucks for $2 million with a 10-year useful life, Depreciation would be $200,000 per year (straight-line method). In Year 1, Cash decreases by $2M (the actual purchase), but the Income Statement shows only $200K of Depreciation expense. In Years 2-10, there's no cash outflow, but the Income Statement still shows $200K of Depreciation each year.</p>
 
 <p>This is why Depreciation is called a <strong>"non-cash expense."</strong> The cash was spent when the asset was purchased. In subsequent years, Depreciation appears on the Income Statement to allocate the cost, but it doesn't represent any new cash spending. On the Cash Flow Statement, Depreciation is added back to Net Income to undo this non-cash reduction.</p>
 
@@ -71,11 +71,11 @@ export const ACCOUNTING_SECTIONS = [
 
 <p>When a company borrows money, the loan proceeds appear as a cash inflow on the Cash Flow Statement (under Financing), and the Debt balance increases on the Balance Sheet. Nothing hits the Income Statement at issuance because borrowing isn't an operating activity.</p>
 
-<p>Over time, the company pays <strong>Interest Expense</strong> (which appears on the Income Statement, reducing Net Income and taxes) and repays <strong>Debt principal</strong> (which appears only on the Cash Flow Statement as a financing outflow&mdash;it doesn't affect Net Income because repaying a loan isn't an expense, it's just returning borrowed money).</p>
+<p>Over time, the company pays <strong>Interest Expense</strong> (which appears on the Income Statement, reducing Net Income and taxes) and repays <strong>Debt principal</strong> (which appears only on the Cash Flow Statement as a financing outflow-it doesn't affect Net Income because repaying a loan isn't an expense, it's just returning borrowed money).</p>
 
 <h4>Equity Issuance</h4>
 
-<p>When a company sells new shares, it receives cash (CFS inflow under Financing) and Equity increases on the Balance Sheet. No Income Statement impact. Existing shareholders get diluted&mdash;they own a smaller percentage of a now-larger company. Companies can return cash to shareholders through <strong>Dividends</strong> (cash payments) or <strong>Share Repurchases</strong> (buying back shares, which reduces the share count). Both reduce Cash and Equity, and both appear on the CFS, not the Income Statement.</p>
+<p>When a company sells new shares, it receives cash (CFS inflow under Financing) and Equity increases on the Balance Sheet. No Income Statement impact. Existing shareholders get diluted-they own a smaller percentage of a now-larger company. Companies can return cash to shareholders through <strong>Dividends</strong> (cash payments) or <strong>Share Repurchases</strong> (buying back shares, which reduces the share count). Both reduce Cash and Equity, and both appear on the CFS, not the Income Statement.</p>
 
 <h4>Preferred Stock</h4>
 
@@ -85,7 +85,7 @@ export const ACCOUNTING_SECTIONS = [
     title: 'Leases on the Balance Sheet',
     content: `<p>Companies that lease assets (office space, retail locations, equipment) must record the lease on the Balance Sheet as both a <strong>Right-of-Use Asset</strong> and a <strong>Lease Liability</strong>, equal to the present value of future lease payments.</p>
 
-<p>A <strong>Finance Lease</strong> (where the company effectively "buys" the asset through the lease) records Depreciation on the asset and Interest on the liability separately&mdash;similar to buying with a loan. An <strong>Operating Lease</strong> under IFRS works the same way; under U.S. GAAP, it records a single straight-line lease expense but still shows the asset and liability on the Balance Sheet. The total cash outflow over the lease's life is identical regardless of classification&mdash;only the year-to-year Income Statement profile differs.</p>`,
+<p>A <strong>Finance Lease</strong> (where the company effectively "buys" the asset through the lease) records Depreciation on the asset and Interest on the liability separately-similar to buying with a loan. An <strong>Operating Lease</strong> under IFRS works the same way; under U.S. GAAP, it records a single straight-line lease expense but still shows the asset and liability on the Balance Sheet. The total cash outflow over the lease's life is identical regardless of classification-only the year-to-year Income Statement profile differs.</p>`,
   },
   {
     title: 'Deferred Taxes and NOLs',
@@ -99,7 +99,7 @@ export const ACCOUNTING_SECTIONS = [
     title: 'Other Non-Cash Items',
     content: `<h4>Stock-Based Compensation (SBC)</h4>
 
-<p>When companies grant stock options or restricted stock units to employees, they record an expense on the Income Statement for the fair value of the grants. No cash changes hands (the company is issuing paper, not writing a check), so SBC is a non-cash expense added back on the Cash Flow Statement. However, SBC dilutes existing shareholders, so there's a real economic cost&mdash;it's just paid in equity rather than cash.</p>
+<p>When companies grant stock options or restricted stock units to employees, they record an expense on the Income Statement for the fair value of the grants. No cash changes hands (the company is issuing paper, not writing a check), so SBC is a non-cash expense added back on the Cash Flow Statement. However, SBC dilutes existing shareholders, so there's a real economic cost-it's just paid in equity rather than cash.</p>
 
 <h4>Goodwill and Intangible Assets</h4>
 
@@ -146,7 +146,7 @@ UFCF = EBIT × (1 − Tax Rate) + D&amp;A ± Non-Cash Adjustments − ΔWorking 
   },
   {
     title: 'Key Ratios and Metrics',
-    content: `<p><strong>EBITDA</strong> (Earnings Before Interest, Taxes, Depreciation, and Amortization) is a rough proxy for operating cash flow. It's widely used because it strips out capital structure (interest), tax jurisdiction (taxes), and accounting policy (D&A) differences, making cross-company comparisons cleaner. But it's not actual cash flow&mdash;it ignores CapEx, working capital changes, and taxes, all of which matter enormously.</p>
+    content: `<p><strong>EBITDA</strong> (Earnings Before Interest, Taxes, Depreciation, and Amortization) is a rough proxy for operating cash flow. It's widely used because it strips out capital structure (interest), tax jurisdiction (taxes), and accounting policy (D&A) differences, making cross-company comparisons cleaner. But it's not actual cash flow-it ignores CapEx, working capital changes, and taxes, all of which matter enormously.</p>
 
 <p><strong>ROIC (Return on Invested Capital)</strong> = NOPAT / Invested Capital. This measures how efficiently a company converts invested capital into operating profit. When ROIC exceeds WACC, the company is creating value. When it's below WACC, it's destroying value.</p>
 
@@ -169,7 +169,7 @@ UFCF = EBIT × (1 − Tax Rate) + D&amp;A ± Non-Cash Adjustments − ΔWorking 
 <div class="interview-q">
 <div class="q-label">Question 3</div>
 <div class="question">A company prepays $60,000 for a year of insurance. Walk through the statements at the time of payment and 6 months later.</div>
-<div class="answer"><strong>At payment:</strong> No Income Statement effect (the expense hasn't been "used" yet). CFS: Cash down $60K. BS: Cash down $60K, Prepaid Expenses (an asset) up $60K. <strong>After 6 months:</strong> IS: $30K expense recognized (6/12 of the annual cost). At 30% tax, Net Income decreases by $21K. CFS: Net Income down $21K. Prepaid Expenses decreasing is added back as a positive working capital adjustment of $30K. But wait&mdash;the tax benefit is already in Net Income. Net cash effect: $30K − $21K = +$9K (that's the $30K × 30% tax savings). BS: Cash up $9K, Prepaid Expenses down $30K → Assets down $21K. Equity down $21K. Balances.</div>
+<div class="answer"><strong>At payment:</strong> No Income Statement effect (the expense hasn't been "used" yet). CFS: Cash down $60K. BS: Cash down $60K, Prepaid Expenses (an asset) up $60K. <strong>After 6 months:</strong> IS: $30K expense recognized (6/12 of the annual cost). At 30% tax, Net Income decreases by $21K. CFS: Net Income down $21K. Prepaid Expenses decreasing is added back as a positive working capital adjustment of $30K. But wait-the tax benefit is already in Net Income. Net cash effect: $30K − $21K = +$9K (that's the $30K × 30% tax savings). BS: Cash up $9K, Prepaid Expenses down $30K → Assets down $21K. Equity down $21K. Balances.</div>
 </div>
 
 <div class="interview-q">
@@ -187,7 +187,7 @@ UFCF = EBIT × (1 − Tax Rate) + D&amp;A ± Non-Cash Adjustments − ΔWorking 
 <div class="interview-q">
 <div class="q-label">Question 6</div>
 <div class="question">Is negative Working Capital a good or bad sign?</div>
-<div class="answer">It depends on the composition. If negative Working Capital is driven by high Deferred Revenue (e.g., a subscription business collecting annual payments upfront), it's very positive&mdash;the company collects cash before delivering services. But if it's driven by excessive Accounts Payable (the company can't pay suppliers on time), it's a warning sign of financial distress. Always look at the individual components, not just the net number.</div>
+<div class="answer">It depends on the composition. If negative Working Capital is driven by high Deferred Revenue (e.g., a subscription business collecting annual payments upfront), it's very positive-the company collects cash before delivering services. But if it's driven by excessive Accounts Payable (the company can't pay suppliers on time), it's a warning sign of financial distress. Always look at the individual components, not just the net number.</div>
 </div>
 
 <div class="interview-q">

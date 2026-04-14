@@ -81,7 +81,7 @@ export default function ResumeReviewPage() {
       reader.onload = () => { setResumeText(reader.result as string); };
       reader.readAsText(file);
     } else {
-      // For .txt, .doc files — read as text
+      // For .txt, .doc files - read as text
       const reader = new FileReader();
       reader.onload = () => { setResumeText(reader.result as string); };
       reader.readAsText(file);
@@ -111,7 +111,7 @@ export default function ResumeReviewPage() {
         if (data.week === weekStart) {
           setUsageCount(data.count || 0);
         } else {
-          // New week — reset weekly count but keep lifetime
+          // New week - reset weekly count but keep lifetime
           localStorage.setItem('offerbell_resume_usage', JSON.stringify({ week: weekStart, count: 0, lifetime: data.lifetime || 0 }));
           setUsageCount(0);
         }
@@ -181,7 +181,7 @@ export default function ResumeReviewPage() {
           <div className="rr-upload-view">
             <div className="rr-badge">Resume Review</div>
             <h1 className="rr-title">Get your resume <em>reviewed.</em></h1>
-            <p className="rr-sub">Upload your resume and select your target career track. Our AI will analyze every section and give you specific, actionable feedback — with rewritten bullet examples.</p>
+            <p className="rr-sub">Upload your resume and select your target career track. Our AI will analyze every section and give you specific, actionable feedback - with rewritten bullet examples.</p>
 
               <>
                 <div className="rr-config">

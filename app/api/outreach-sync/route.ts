@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     };
 
     if (action === "get") {
-      // Return whatever the client reports — both website and extension
+      // Return whatever the client reports - both website and extension
       // use this to confirm the count. The real source of truth is Convex
       // (outreachCount on the user doc), which gets set by incrementOutreachCount.
       return NextResponse.json(

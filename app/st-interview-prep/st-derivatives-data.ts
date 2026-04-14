@@ -28,7 +28,7 @@ export const ST_DERIVATIVES_SECTIONS = [
 
 <p><strong>Gamma (Γ):</strong> How much delta changes for a $1 move in the underlying. Gamma is highest for at-the-money options near expiration. High gamma means delta is changing rapidly, which makes hedging more difficult.</p>
 
-<p><strong>Theta (Θ):</strong> How much the option loses in value per day from time decay, all else equal. Options are wasting assets&mdash;they lose value as expiration approaches. Theta is highest for at-the-money options near expiration.</p>
+<p><strong>Theta (Θ):</strong> How much the option loses in value per day from time decay, all else equal. Options are wasting assets-they lose value as expiration approaches. Theta is highest for at-the-money options near expiration.</p>
 
 <p><strong>Vega (ν):</strong> How much the option price changes for a 1% change in implied volatility. Vega is highest for at-the-money options with longer time to expiration.</p>
 
@@ -59,7 +59,7 @@ Call − Put = Stock − PV(Strike)<br>
 
 <p>Swaps are used to: hedge interest rate exposure (a company with floating-rate debt can swap to fixed to lock in costs), express views on rates (if you expect rates to fall, receive fixed in a swap), and manage asset-liability duration mismatches (a bank can use swaps to match the duration of its assets and liabilities).</p>
 
-<p>The <strong>swap rate</strong> is a critical benchmark&mdash;it reflects the market's expectation of future short-term rates plus a credit/liquidity premium. The swap curve is closely watched alongside the Treasury curve.</p>`,
+<p>The <strong>swap rate</strong> is a critical benchmark-it reflects the market's expectation of future short-term rates plus a credit/liquidity premium. The swap curve is closely watched alongside the Treasury curve.</p>`,
   },
   {
     title: 'Credit Default Swaps (CDS)',

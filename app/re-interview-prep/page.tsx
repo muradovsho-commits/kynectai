@@ -82,8 +82,8 @@ export default function REInterviewPrepPage() {
               </ol></div>
               <div className="ib-how-to-use">
                 <h4>How to Use This Guide</h4>
-                <p><strong>Foundations:</strong> Modules 1–4 cover the RE landscape, property types, valuation, and lease analysis - the core knowledge base.</p>
-                <p><strong>Advanced:</strong> Modules 5–9 cover modeling, REPE, REITs, debt markets, and development - the specialized technical skills.</p>
+                <p><strong>Foundations:</strong> Modules 1-4 cover the RE landscape, property types, valuation, and lease analysis - the core knowledge base.</p>
+                <p><strong>Advanced:</strong> Modules 5-9 cover modeling, REPE, REITs, debt markets, and development - the specialized technical skills.</p>
                 <p><strong>Interview ready:</strong> Module 10 covers the exact technical questions and common mistakes in RE interviews.</p>
               </div>
               <div className="ib-module-cards">

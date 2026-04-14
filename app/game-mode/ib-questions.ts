@@ -1,4 +1,4 @@
-// Game Mode — Multiple Choice Question Bank
+// Game Mode - Multiple Choice Question Bank
 // Each question: question, 4 answer choices, correct answer index (0-3), category
 export type MCQ = { q: string; choices: string[]; correct: number; cat: string };
 
@@ -12,7 +12,7 @@ export const IB_QUESTIONS: MCQ[] = [
   {q:"Which of these is NOT a non-cash expense?",choices:["Depreciation","Amortization","Stock-based compensation","Interest expense"],correct:3,cat:"Accounting"},
   {q:"A company issues $100 in debt. Where does this appear on the cash flow statement?",choices:["Operating activities","Investing activities","Financing activities","It doesn't appear"],correct:2,cat:"Accounting"},
   {q:"Deferred revenue increases by $30. What is the cash flow impact?",choices:["Cash inflow of $30","Cash outflow of $30","No impact","Cash inflow of $18"],correct:0,cat:"Accounting"},
-  {q:"Capital expenditures of $50 appear in which section of the cash flow statement?",choices:["Operating","Investing","Financing","None — CapEx is non-cash"],correct:1,cat:"Accounting"},
+  {q:"Capital expenditures of $50 appear in which section of the cash flow statement?",choices:["Operating","Investing","Financing","None - CapEx is non-cash"],correct:1,cat:"Accounting"},
   {q:"What does a negative change in working capital mean for cash flow?",choices:["Cash is being consumed","Cash is being generated","No impact on cash","It depends on the tax rate"],correct:1,cat:"Accounting"},
   {q:"Goodwill is created when:",choices:["A company buys back stock","Purchase price exceeds fair value of net assets acquired","A company writes down an asset","Revenue exceeds expenses"],correct:1,cat:"Accounting"},
   {q:"Goodwill impairment affects which statements?",choices:["Only the income statement","Income statement and balance sheet","Only the balance sheet","All three statements"],correct:3,cat:"Accounting"},
@@ -45,7 +45,7 @@ export const IB_QUESTIONS: MCQ[] = [
   {q:"Which financing method is most likely to be accretive?",choices:["All stock deal at high P/E","All cash deal funded by debt","50/50 stock and cash","It depends on relative P/E ratios and cost of debt"],correct:3,cat:"M&A"},
   {q:"In a stock-for-stock merger, what determines accretion/dilution?",choices:["The size of the companies","The relative P/E ratios of buyer and target","The industry they're in","Total revenue"],correct:1,cat:"M&A"},
   {q:"A buyer with a higher P/E acquires a target with a lower P/E using all stock. The deal is likely:",choices:["Dilutive","Accretive","Neutral","Cannot determine"],correct:1,cat:"M&A"},
-  {q:"Synergies in M&A typically include:",choices:["Revenue synergies only","Cost synergies only","Both revenue and cost synergies","Neither — synergies are theoretical"],correct:2,cat:"M&A"},
+  {q:"Synergies in M&A typically include:",choices:["Revenue synergies only","Cost synergies only","Both revenue and cost synergies","Neither - synergies are theoretical"],correct:2,cat:"M&A"},
   {q:"Purchase price allocation assigns value to:",choices:["Only goodwill","Identifiable tangible and intangible assets, with residual as goodwill","Only the target's book value","The buyer's existing assets"],correct:1,cat:"M&A"},
   {q:"A fairness opinion is issued by:",choices:["The acquiring company's management","An independent investment bank","The SEC","The target's auditor"],correct:1,cat:"M&A"},
   {q:"In a merger model, what creates goodwill?",choices:["Revenue synergies","The premium paid over the fair value of identifiable net assets","Cost savings","Debt assumption"],correct:1,cat:"M&A"},

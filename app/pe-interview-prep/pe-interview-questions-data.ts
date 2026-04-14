@@ -4,7 +4,7 @@ export const PE_INTERVIEW_QUESTIONS_SECTIONS = [
     content: `<div class="interview-q">
 <div class="q-label">Question 1</div>
 <div class="question">Why private equity? Why not stay in investment banking / consulting?</div>
-<div class="answer">Effective answers emphasize three themes: (1) Long-term ownership vs. advisory&mdash;in PE, you see the outcome of your work over years, not just the transaction. (2) Operational involvement&mdash;PE allows you to influence strategy, management, and performance, not just model the numbers. (3) Investment judgment&mdash;PE develops your ability to make investment decisions with real capital at stake, rather than advising others on their decisions. Avoid clichés like "I want to be on the buy side" without explaining what that means to you personally. The best answers are specific and authentic.</div>
+<div class="answer">Effective answers emphasize three themes: (1) Long-term ownership vs. advisory-in PE, you see the outcome of your work over years, not just the transaction. (2) Operational involvement-PE allows you to influence strategy, management, and performance, not just model the numbers. (3) Investment judgment-PE develops your ability to make investment decisions with real capital at stake, rather than advising others on their decisions. Avoid clichés like "I want to be on the buy side" without explaining what that means to you personally. The best answers are specific and authentic.</div>
 </div>
 
 <div class="interview-q">
@@ -18,7 +18,7 @@ export const PE_INTERVIEW_QUESTIONS_SECTIONS = [
     content: `<div class="interview-q">
 <div class="q-label">Question 3</div>
 <div class="question">Walk me through a leveraged buyout.</div>
-<div class="answer">A PE firm identifies a company with stable cash flows. It acquires the company using a mix of Equity (30–50%, from the PE fund) and Debt (50–70%, from banks and institutional lenders). The Debt is secured against the company's assets and cash flows. Over a 3–7 year holding period, the PE firm works to increase the company's EBITDA (through revenue growth, cost cuts, and operational improvements) while using the company's Free Cash Flow to repay Debt. At the end of the holding period, the PE firm exits by selling the company (to a strategic buyer, another PE firm, or via IPO). Returns are measured by MOIC and IRR, and they come from three sources: Debt paydown, EBITDA growth, and multiple expansion.</div>
+<div class="answer">A PE firm identifies a company with stable cash flows. It acquires the company using a mix of Equity (30-50%, from the PE fund) and Debt (50-70%, from banks and institutional lenders). The Debt is secured against the company's assets and cash flows. Over a 3-7 year holding period, the PE firm works to increase the company's EBITDA (through revenue growth, cost cuts, and operational improvements) while using the company's Free Cash Flow to repay Debt. At the end of the holding period, the PE firm exits by selling the company (to a strategic buyer, another PE firm, or via IPO). Returns are measured by MOIC and IRR, and they come from three sources: Debt paydown, EBITDA growth, and multiple expansion.</div>
 </div>
 
 <div class="interview-q">
@@ -30,7 +30,7 @@ export const PE_INTERVIEW_QUESTIONS_SECTIONS = [
 <div class="interview-q">
 <div class="q-label">Question 5</div>
 <div class="question">A company has $50M EBITDA. You buy it at 8.0x with 5.0x leverage. EBITDA grows to $65M in 5 years. You exit at 8.0x. No Debt is repaid. What's the approximate MOIC?</div>
-<div class="answer">Purchase EV: $50M × 8.0x = $400M. Debt: $50M × 5.0x = $250M. Equity: $150M. Exit EV: $65M × 8.0x = $520M. Remaining Debt: $250M (no paydown). Exit Equity: $520M − $250M = $270M. MOIC: $270M / $150M = 1.80x. The return came entirely from EBITDA growth. Without Debt paydown, the return is moderate. If Debt had been paid down to $150M, Exit Equity would be $370M and MOIC would be 2.47x&mdash;showing how Debt paydown amplifies returns.</div>
+<div class="answer">Purchase EV: $50M × 8.0x = $400M. Debt: $50M × 5.0x = $250M. Equity: $150M. Exit EV: $65M × 8.0x = $520M. Remaining Debt: $250M (no paydown). Exit Equity: $520M − $250M = $270M. MOIC: $270M / $150M = 1.80x. The return came entirely from EBITDA growth. Without Debt paydown, the return is moderate. If Debt had been paid down to $150M, Exit Equity would be $370M and MOIC would be 2.47x-showing how Debt paydown amplifies returns.</div>
 </div>
 
 <div class="interview-q">
@@ -42,13 +42,13 @@ export const PE_INTERVIEW_QUESTIONS_SECTIONS = [
 <div class="interview-q">
 <div class="q-label">Question 7</div>
 <div class="question">How does more leverage affect the IRR of an LBO?</div>
-<div class="answer">More leverage amplifies returns in both directions. In a successful deal, more leverage means less Equity invested, so the same dollar gain represents a higher percentage return (higher IRR). But more leverage also means higher Interest Expense (reducing FCF for Debt paydown), less margin for error (if EBITDA declines, the company may not be able to service its Debt), and potentially higher interest rates (lenders charge more at higher leverage). Past a certain point, the risk increase outweighs the return enhancement. Typical leverage capacity is 4–6x EBITDA for most buyouts.</div>
+<div class="answer">More leverage amplifies returns in both directions. In a successful deal, more leverage means less Equity invested, so the same dollar gain represents a higher percentage return (higher IRR). But more leverage also means higher Interest Expense (reducing FCF for Debt paydown), less margin for error (if EBITDA declines, the company may not be able to service its Debt), and potentially higher interest rates (lenders charge more at higher leverage). Past a certain point, the risk increase outweighs the return enhancement. Typical leverage capacity is 4-6x EBITDA for most buyouts.</div>
 </div>
 
 <div class="interview-q">
 <div class="q-label">Question 8</div>
 <div class="question">Why does a dividend recapitalization improve IRR but not MOIC?</div>
-<div class="answer">A dividend recap returns cash to the PE firm sooner by having the company borrow additional Debt and paying a dividend. This improves IRR because IRR is time-weighted&mdash;receiving cash earlier increases the annualized return. But MOIC can actually decrease because the additional Debt reduces Exit Equity (the company has more Debt to repay at exit). The total dollar profit may be similar or even lower, but because it was received earlier, the annualized return (IRR) is higher. This illustrates why PE firms track both IRR and MOIC&mdash;each captures a different dimension of performance.</div>
+<div class="answer">A dividend recap returns cash to the PE firm sooner by having the company borrow additional Debt and paying a dividend. This improves IRR because IRR is time-weighted-receiving cash earlier increases the annualized return. But MOIC can actually decrease because the additional Debt reduces Exit Equity (the company has more Debt to repay at exit). The total dollar profit may be similar or even lower, but because it was received earlier, the annualized return (IRR) is higher. This illustrates why PE firms track both IRR and MOIC-each captures a different dimension of performance.</div>
 </div>`,
   },
   {
@@ -68,7 +68,7 @@ export const PE_INTERVIEW_QUESTIONS_SECTIONS = [
 <div class="interview-q">
 <div class="q-label">Question 11</div>
 <div class="question">What's the difference between Gross IRR and Net IRR?</div>
-<div class="answer">Gross IRR is calculated on the fund's investment returns before deducting management fees and carried interest. It reflects the returns generated by the investment portfolio itself. Net IRR is the return LPs actually receive after fees and carry are subtracted. Net IRR is always lower than Gross IRR&mdash;typically by 400–700 basis points for a standard "2 and 20" fund. Net IRR is the more meaningful figure for LPs because it represents their actual economic return. GPs typically cite Gross IRR to showcase investment performance, while LPs focus on Net IRR to evaluate their actual return experience.</div>
+<div class="answer">Gross IRR is calculated on the fund's investment returns before deducting management fees and carried interest. It reflects the returns generated by the investment portfolio itself. Net IRR is the return LPs actually receive after fees and carry are subtracted. Net IRR is always lower than Gross IRR-typically by 400-700 basis points for a standard "2 and 20" fund. Net IRR is the more meaningful figure for LPs because it represents their actual economic return. GPs typically cite Gross IRR to showcase investment performance, while LPs focus on Net IRR to evaluate their actual return experience.</div>
 </div>`,
   },
   {
@@ -76,28 +76,28 @@ export const PE_INTERVIEW_QUESTIONS_SECTIONS = [
     content: `<div class="interview-q">
 <div class="q-label">Question 12</div>
 <div class="question">How would you evaluate whether to pursue a buy-and-build strategy?</div>
-<div class="answer">The buy-and-build thesis requires several conditions: (1) A fragmented industry with many small operators and no dominant player. (2) A quality platform company with professional management, scalable systems, and a track record of integrating acquisitions. (3) Availability of actionable add-on targets at reasonable multiples (ideally 4–6x EBITDA vs. 7–10x for the platform). (4) Genuine synergy potential&mdash;cost savings from consolidation, revenue benefits from broader geographic or product coverage. (5) Multiple expansion potential&mdash;larger, more diversified platforms should command higher multiples. And (6) Management bandwidth to execute multiple integrations simultaneously without disrupting the core business.</div>
+<div class="answer">The buy-and-build thesis requires several conditions: (1) A fragmented industry with many small operators and no dominant player. (2) A quality platform company with professional management, scalable systems, and a track record of integrating acquisitions. (3) Availability of actionable add-on targets at reasonable multiples (ideally 4-6x EBITDA vs. 7-10x for the platform). (4) Genuine synergy potential-cost savings from consolidation, revenue benefits from broader geographic or product coverage. (5) Multiple expansion potential-larger, more diversified platforms should command higher multiples. And (6) Management bandwidth to execute multiple integrations simultaneously without disrupting the core business.</div>
 </div>
 
 <div class="interview-q">
 <div class="q-label">Question 13</div>
 <div class="question">Name three risks you'd look for during due diligence on a software company.</div>
-<div class="answer">(1) <strong>Customer concentration:</strong> If 30%+ of revenue comes from one client, losing that client would devastate the business and impair Debt service. (2) <strong>Churn / retention risk:</strong> If annual churn exceeds 15–20%, the company must acquire a significant number of new customers just to maintain revenue, which is expensive and uncertain. Investigate the reasons for churn and whether they're structural or fixable. (3) <strong>Technical debt:</strong> Legacy code, outdated infrastructure, or a monolithic architecture that requires a major re-platforming investment to remain competitive. This represents a hidden CapEx obligation that may not be reflected in the financial projections.</div>
+<div class="answer">(1) <strong>Customer concentration:</strong> If 30%+ of revenue comes from one client, losing that client would devastate the business and impair Debt service. (2) <strong>Churn / retention risk:</strong> If annual churn exceeds 15-20%, the company must acquire a significant number of new customers just to maintain revenue, which is expensive and uncertain. Investigate the reasons for churn and whether they're structural or fixable. (3) <strong>Technical debt:</strong> Legacy code, outdated infrastructure, or a monolithic architecture that requires a major re-platforming investment to remain competitive. This represents a hidden CapEx obligation that may not be reflected in the financial projections.</div>
 </div>
 
 <div class="interview-q">
 <div class="q-label">Question 14</div>
 <div class="question">How would you create value in a business services company?</div>
-<div class="answer">Key levers: (1) Pricing optimization&mdash;many services businesses undercharge; implementing disciplined pricing can improve margins by 200–500 bps. (2) Labor productivity&mdash;optimizing scheduling, reducing overtime, investing in technology to automate manual processes. (3) Cross-selling&mdash;expanding the service offering to existing customers. (4) Geographic expansion&mdash;opening new locations or expanding into adjacent markets, potentially through add-on acquisitions. (5) Customer retention programs&mdash;reducing churn through improved service quality, dedicated account management, and longer-term contracts. (6) Back-office professionalization&mdash;implementing ERP systems, financial controls, and management reporting that founder-led businesses often lack.</div>
+<div class="answer">Key levers: (1) Pricing optimization-many services businesses undercharge; implementing disciplined pricing can improve margins by 200-500 bps. (2) Labor productivity-optimizing scheduling, reducing overtime, investing in technology to automate manual processes. (3) Cross-selling-expanding the service offering to existing customers. (4) Geographic expansion-opening new locations or expanding into adjacent markets, potentially through add-on acquisitions. (5) Customer retention programs-reducing churn through improved service quality, dedicated account management, and longer-term contracts. (6) Back-office professionalization-implementing ERP systems, financial controls, and management reporting that founder-led businesses often lack.</div>
 </div>`,
   },
   {
     title: 'Case Study Format',
     content: `<p>PE interviews often include a case study, which may take one of several forms:</p>
 
-<p><strong>Paper LBO (30–60 minutes):</strong> Given a set of financial assumptions, build a simplified LBO model on paper or in a blank Excel sheet. Calculate purchase price, capital structure, FCF projections, Debt paydown, exit value, and returns. Demonstrate fluency with the mechanics and the ability to do quick mental math.</p>
+<p><strong>Paper LBO (30-60 minutes):</strong> Given a set of financial assumptions, build a simplified LBO model on paper or in a blank Excel sheet. Calculate purchase price, capital structure, FCF projections, Debt paydown, exit value, and returns. Demonstrate fluency with the mechanics and the ability to do quick mental math.</p>
 
-<p><strong>LBO Modeling Test (2–4 hours):</strong> Build a full LBO model in Excel from a provided CIM or set of financial data. This tests your Excel skills, modeling speed, accuracy, and ability to structure a complex model logically. Practice building LBO models under timed conditions.</p>
+<p><strong>LBO Modeling Test (2-4 hours):</strong> Build a full LBO model in Excel from a provided CIM or set of financial data. This tests your Excel skills, modeling speed, accuracy, and ability to structure a complex model logically. Practice building LBO models under timed conditions.</p>
 
 <p><strong>Investment Memo / Recommendation (take-home or on-site):</strong> Review a CIM or case packet and prepare a written or verbal recommendation: should the firm invest in this company? Cover the investment thesis, key risks and mitigants, valuation (including an LBO analysis), value creation plan, and exit strategy. The best answers demonstrate independent judgment, not just mechanical analysis.</p>
 

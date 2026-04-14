@@ -1,13 +1,13 @@
 export const CONS_BEHAVIORAL_SECTIONS = [
   {
     title: 'Why Behavioral Matters',
-    content: `<p>Consulting is a people business. You spend 12–16 hours a day with your team and your client. If you're brilliant but abrasive, you won't get staffed on good projects. If you're personable but can't work under pressure, you'll crumble during the inevitable 2 AM crunch. Behavioral interviews assess whether you have the interpersonal skills, resilience, and self-awareness to thrive in the consulting environment.</p>
+    content: `<p>Consulting is a people business. You spend 12-16 hours a day with your team and your client. If you're brilliant but abrasive, you won't get staffed on good projects. If you're personable but can't work under pressure, you'll crumble during the inevitable 2 AM crunch. Behavioral interviews assess whether you have the interpersonal skills, resilience, and self-awareness to thrive in the consulting environment.</p>
 
 <p>At MBB, behavioral questions are weighted equally with cases. You can ace every case and still be rejected if the behavioral interviewer raises concerns about fit.</p>`,
   },
   {
     title: 'The STAR Framework',
-    content: `<p>Structure your behavioral answers using <strong>STAR</strong>: Situation (set the context), Task (describe your specific role and objective), Action (explain what you did and why), Result (share the outcome, quantified if possible). Keep answers to 2–3 minutes. Be specific&mdash;vague, generic answers ("I worked on a team and we succeeded") are worthless. The interviewer wants to understand <em>your</em> contribution and <em>your</em> thinking.</p>`,
+    content: `<p>Structure your behavioral answers using <strong>STAR</strong>: Situation (set the context), Task (describe your specific role and objective), Action (explain what you did and why), Result (share the outcome, quantified if possible). Keep answers to 2-3 minutes. Be specific-vague, generic answers ("I worked on a team and we succeeded") are worthless. The interviewer wants to understand <em>your</em> contribution and <em>your</em> thinking.</p>`,
   },
   {
     title: 'Key Behavioral Themes and Sample Answers',
@@ -47,7 +47,7 @@ export const CONS_BEHAVIORAL_SECTIONS = [
 
 <p><strong>Choosing the wrong stories.</strong> Stories should demonstrate consulting-relevant qualities: analytical thinking, structured communication, leadership, teamwork under pressure, and impact. A story about organizing a birthday party, no matter how well-structured, doesn't signal consulting readiness.</p>
 
-<p><strong>Not having enough stories.</strong> Prepare 8–10 STAR stories that cover the major themes (leadership, teamwork, failure, achievement, influence). You'll be able to repurpose them across different question framings.</p>
+<p><strong>Not having enough stories.</strong> Prepare 8-10 STAR stories that cover the major themes (leadership, teamwork, failure, achievement, influence). You'll be able to repurpose them across different question framings.</p>
 
 <p><strong>Ignoring the "Why consulting?" question.</strong> Many candidates prepare intensely for cases but wing the behavioral. "Why consulting?" is asked in every single interview. If your answer isn't polished and genuine, you're making a basic preparation error.</p>`,
   },

@@ -15,25 +15,25 @@ export const CONS_CASES_SECTIONS = [
     title: 'The Case Interview Flow',
     content: `<p>Every case follows a similar arc, regardless of the topic:</p>
 
-<h4>1. Listen and Clarify (1–2 minutes)</h4>
+<h4>1. Listen and Clarify (1-2 minutes)</h4>
 
-<p>The interviewer presents the problem. Take notes carefully. Before diving in, ask 2–3 clarifying questions to ensure you understand the context: What industry is the client in? What's the time horizon? Are there specific constraints? What does "success" look like? Don't ask questions you could answer yourself; ask questions that genuinely change how you'd approach the problem.</p>
+<p>The interviewer presents the problem. Take notes carefully. Before diving in, ask 2-3 clarifying questions to ensure you understand the context: What industry is the client in? What's the time horizon? Are there specific constraints? What does "success" look like? Don't ask questions you could answer yourself; ask questions that genuinely change how you'd approach the problem.</p>
 
-<h4>2. Structure the Problem (2–3 minutes)</h4>
+<h4>2. Structure the Problem (2-3 minutes)</h4>
 
-<p>Ask for a moment to collect your thoughts. Develop a framework&mdash;a structured breakdown of the problem into 3–4 key areas you need to investigate. Present the framework to the interviewer, explaining your logic. The framework should be MECE, tailored to the specific problem (not a generic template), and prioritized (which area do you want to explore first, and why?).</p>
+<p>Ask for a moment to collect your thoughts. Develop a framework-a structured breakdown of the problem into 3-4 key areas you need to investigate. Present the framework to the interviewer, explaining your logic. The framework should be MECE, tailored to the specific problem (not a generic template), and prioritized (which area do you want to explore first, and why?).</p>
 
 <div class="warning-box">
 <strong>Critical:</strong> The biggest mistake candidates make is applying a memorized framework that doesn't fit the problem. If a client asks "Should we launch a new product?", don't force-fit a profitability framework (Revenue − Costs). Instead, build a custom structure: market attractiveness, competitive positioning, capability fit, financial viability. The interviewer can instantly tell whether you're thinking or reciting.
 </div>
 
-<h4>3. Analyze (15–25 minutes)</h4>
+<h4>3. Analyze (15-25 minutes)</h4>
 
 <p>Work through your framework systematically. For each branch, hypothesize what you expect to find, ask the interviewer for data, analyze the data, and draw a conclusion before moving to the next branch. Key behaviors: always state your hypothesis before asking for data ("I suspect the profit decline is cost-driven; can I see the cost breakdown?"); do math carefully and talk through your calculations; synthesize after each branch ("So we've established that revenue is flat, which means the issue is on the cost side. Let me explore that now."); and be willing to revise your framework if the data takes you in an unexpected direction.</p>
 
-<h4>4. Recommend (1–2 minutes)</h4>
+<h4>4. Recommend (1-2 minutes)</h4>
 
-<p>When the interviewer asks for your recommendation (or when you've exhausted the key branches), deliver a concise synthesis. Use the Pyramid Principle: lead with the recommendation, support it with 2–3 key reasons, note any risks or next steps. Example: "I recommend the client exit the UK market. The market is structurally unattractive due to regulatory headwinds and pricing pressure. The client's market share has declined three consecutive years with no credible path to recovery. And the capital freed up could be redeployed to the faster-growing US business, where the client has a stronger competitive position."</p>`,
+<p>When the interviewer asks for your recommendation (or when you've exhausted the key branches), deliver a concise synthesis. Use the Pyramid Principle: lead with the recommendation, support it with 2-3 key reasons, note any risks or next steps. Example: "I recommend the client exit the UK market. The market is structurally unattractive due to regulatory headwinds and pricing pressure. The client's market share has declined three consecutive years with no credible path to recovery. And the capital freed up could be redeployed to the faster-growing US business, where the client has a stronger competitive position."</p>`,
   },
   {
     title: 'Common Case Types',
@@ -50,7 +50,7 @@ export const CONS_CASES_SECTIONS = [
   },
   {
     title: 'Building Custom Frameworks',
-    content: `<p>The key to strong frameworks is starting from first principles rather than memorized templates. For any problem, ask yourself: <strong>What are the 3–4 key questions I need to answer to solve this problem?</strong> Those questions become your framework branches.</p>
+    content: `<p>The key to strong frameworks is starting from first principles rather than memorized templates. For any problem, ask yourself: <strong>What are the 3-4 key questions I need to answer to solve this problem?</strong> Those questions become your framework branches.</p>
 
 <p>A few techniques for generating custom frameworks:</p>
 

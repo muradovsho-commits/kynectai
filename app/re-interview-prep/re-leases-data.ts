@@ -11,11 +11,11 @@ export const RE_LEASES_SECTIONS = [
     title: 'Critical Lease Terms',
     content: `<p><strong>Base Rent and Escalations:</strong> The starting rent and how it increases over time. Escalations can be: fixed (3% per year), CPI-linked (tied to inflation), or based on a market reset at defined intervals. The escalation structure significantly affects the property's NOI trajectory and therefore its value.</p>
 
-<p><strong>Tenant Improvement Allowance (TI):</strong> The amount the landlord pays to build out or customize the space for the tenant. TIs can be substantial ($50&ndash;$100+ per SF for office) and represent a significant upfront investment that the landlord recoups through the lease term. Higher TIs mean higher upfront cost but may attract better tenants or higher rents.</p>
+<p><strong>Tenant Improvement Allowance (TI):</strong> The amount the landlord pays to build out or customize the space for the tenant. TIs can be substantial ($50-$100+ per SF for office) and represent a significant upfront investment that the landlord recoups through the lease term. Higher TIs mean higher upfront cost but may attract better tenants or higher rents.</p>
 
-<p><strong>Leasing Commissions (LC):</strong> Fees paid to brokers for securing the lease. Typically 4&ndash;6% of total lease value for new leases and 2&ndash;3% for renewals.</p>
+<p><strong>Leasing Commissions (LC):</strong> Fees paid to brokers for securing the lease. Typically 4-6% of total lease value for new leases and 2-3% for renewals.</p>
 
-<p><strong>Free Rent (Concessions):</strong> Periods where the tenant doesn't pay rent (typically 1&ndash;6 months at the start of the lease). Free rent reduces the effective rent below the stated face rent. Always calculate the <strong>effective rent</strong> (total rent payments over the lease term divided by the total months) when comparing leases.</p>
+<p><strong>Free Rent (Concessions):</strong> Periods where the tenant doesn't pay rent (typically 1-6 months at the start of the lease). Free rent reduces the effective rent below the stated face rent. Always calculate the <strong>effective rent</strong> (total rent payments over the lease term divided by the total months) when comparing leases.</p>
 
 <p><strong>Options:</strong> Renewal options (the tenant's right to extend the lease at a predetermined or market rate), expansion options (right to lease additional space), and termination options (right to break the lease early, usually with a penalty). Options that favor the tenant reduce the landlord's certainty and can reduce the property's value.</p>`,
   },

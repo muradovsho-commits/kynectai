@@ -22,10 +22,10 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: "usd",
             product_data: {
-              name: isAnnual ? "OfferBell Pro — Annual" : "OfferBell Pro — Monthly",
+              name: isAnnual ? "OfferBell Pro - Annual" : "OfferBell Pro - Monthly",
               description: isAnnual
-                ? "Unlimited outreach, AI Coach, and more — billed annually"
-                : "Unlimited outreach, AI Coach, and more — billed monthly",
+                ? "Unlimited outreach, AI Coach, and more - billed annually"
+                : "Unlimited outreach, AI Coach, and more - billed monthly",
             },
             unit_amount: isAnnual ? 19900 : 2000,
             recurring: { interval: isAnnual ? "year" : "month" },

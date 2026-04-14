@@ -9,7 +9,7 @@ export const GE_UNIT_ECONOMICS_SECTIONS = [
 
 <p>ARR is the annualized value of all active subscription contracts. MRR = ARR / 12. These are the single most important metrics for any subscription business because they represent the predictable, repeating revenue base. Non-recurring revenue (professional services, one-time implementation fees) is tracked separately because it's less predictable and typically lower-margin.</p>
 
-<p><strong>ARR growth rate</strong> is the headline metric for any GE software investment. Growth rates above 40% are considered strong; above 80% is exceptional. But the growth rate alone is insufficient&mdash;you need to understand the <em>composition</em> of growth.</p>
+<p><strong>ARR growth rate</strong> is the headline metric for any GE software investment. Growth rates above 40% are considered strong; above 80% is exceptional. But the growth rate alone is insufficient-you need to understand the <em>composition</em> of growth.</p>
 
 <div class="formula-box">
 ARR Growth = New ARR (new logos) + Expansion ARR (upsells to existing customers)<br>
@@ -25,7 +25,7 @@ Net New ARR = New + Expansion − Churn − Contraction
 NRR = (Beginning ARR + Expansion − Churn − Contraction) / Beginning ARR
 </div>
 
-<p>An NRR above 100% means the existing customer base is growing even without acquiring a single new customer. This is the hallmark of a best-in-class SaaS business. Benchmarks: NRR above 120% is elite (Datadog, Snowflake at their best), 110&ndash;120% is strong, 100&ndash;110% is healthy, and below 100% indicates the company is leaking revenue from its installed base.</p>
+<p>An NRR above 100% means the existing customer base is growing even without acquiring a single new customer. This is the hallmark of a best-in-class SaaS business. Benchmarks: NRR above 120% is elite (Datadog, Snowflake at their best), 110-120% is strong, 100-110% is healthy, and below 100% indicates the company is leaking revenue from its installed base.</p>
 
 <p>NRR is arguably the most important metric in GE investing because it captures the combined effect of product stickiness, expansion potential, and customer satisfaction in a single number. A company with 130% NRR can cut its S&M spending to zero and still grow revenue at 30% from existing customers alone.</p>
 
@@ -53,7 +53,7 @@ LTV = Average Revenue per Customer × Gross Margin / Annual Churn Rate
 
 <p>The golden ratio of SaaS investing. It tells you how much gross profit each customer generates relative to the cost of acquiring them.</p>
 
-<p>Benchmarks: LTV/CAC above 3.0x is considered healthy (you earn $3 for every $1 spent acquiring a customer). Above 5.0x is excellent and suggests the company could afford to invest more aggressively in customer acquisition. Below 1.0x means the company is literally losing money on each customer&mdash;a non-starter for growth equity.</p>
+<p>Benchmarks: LTV/CAC above 3.0x is considered healthy (you earn $3 for every $1 spent acquiring a customer). Above 5.0x is excellent and suggests the company could afford to invest more aggressively in customer acquisition. Below 1.0x means the company is literally losing money on each customer-a non-starter for growth equity.</p>
 
 <h4>CAC Payback Period</h4>
 
@@ -63,7 +63,7 @@ LTV = Average Revenue per Customer × Gross Margin / Annual Churn Rate
 CAC Payback (months) = CAC / (Monthly Revenue per Customer × Gross Margin)
 </div>
 
-<p>A payback period under 18 months is considered healthy for enterprise SaaS. Under 12 months is strong. Above 24 months raises concerns about capital efficiency&mdash;you're waiting two years to break even on each customer, which means you need a lot of capital to fund the growth.</p>
+<p>A payback period under 18 months is considered healthy for enterprise SaaS. Under 12 months is strong. Above 24 months raises concerns about capital efficiency-you're waiting two years to break even on each customer, which means you need a lot of capital to fund the growth.</p>
 
 <h4>Gross Margin</h4>
 
@@ -79,7 +79,7 @@ CAC Payback (months) = CAC / (Monthly Revenue per Customer × Gross Margin)
 Rule of 40 Score = Revenue Growth % + FCF Margin %
 </div>
 
-<p>A company growing 60% with a negative 15% FCF margin scores 45%&mdash;passing the test. A company growing 20% with a 25% FCF margin scores 45%&mdash;also passing. The Rule of 40 captures the trade-off between growth and profitability: a company can sacrifice one as long as the other compensates. Companies consistently above 40% are considered best-in-class; below 20% is concerning.</p>`,
+<p>A company growing 60% with a negative 15% FCF margin scores 45%-passing the test. A company growing 20% with a 25% FCF margin scores 45%-also passing. The Rule of 40 captures the trade-off between growth and profitability: a company can sacrifice one as long as the other compensates. Companies consistently above 40% are considered best-in-class; below 20% is concerning.</p>`,
   },
   {
     title: 'Non-SaaS Unit Economics',

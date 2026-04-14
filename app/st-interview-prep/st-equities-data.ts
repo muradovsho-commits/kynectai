@@ -1,17 +1,17 @@
 export const ST_EQUITIES_SECTIONS = [
   {
     title: 'Cash Equities',
-    content: `<p>Cash equities involves trading actual shares of stock. The desk makes markets for institutional clients, executes large block trades (blocks are orders large enough to move the market if executed all at once&mdash;typically 10,000+ shares or $200K+), and provides electronic execution through algorithms.</p>
+    content: `<p>Cash equities involves trading actual shares of stock. The desk makes markets for institutional clients, executes large block trades (blocks are orders large enough to move the market if executed all at once-typically 10,000+ shares or $200K+), and provides electronic execution through algorithms.</p>
 
-<p><strong>High-touch trading:</strong> Large, complex orders handled by a human trader who uses judgment, market knowledge, and relationships to find liquidity. A client selling $300M of a mid-cap stock can't just hit "sell" on a screen&mdash;that would crash the price. The trader works the order over hours or days, finding natural buyers and carefully managing market impact.</p>
+<p><strong>High-touch trading:</strong> Large, complex orders handled by a human trader who uses judgment, market knowledge, and relationships to find liquidity. A client selling $300M of a mid-cap stock can't just hit "sell" on a screen-that would crash the price. The trader works the order over hours or days, finding natural buyers and carefully managing market impact.</p>
 
 <p><strong>Electronic / low-touch trading:</strong> Smaller or simpler orders routed through algorithms (VWAP, TWAP, implementation shortfall) that execute automatically. This is the majority of equity trading volume today. The bank earns commissions and benefits from the order flow data.</p>
 
 <h4>Key Equity Metrics to Know</h4>
 
-<p><strong>P/E ratio, EV/EBITDA, P/B:</strong> Standard valuation multiples. You should know current ranges for major indices (S&P 500 typically 18&ndash;22x forward P/E; lower during recessions, higher during expansions).</p>
+<p><strong>P/E ratio, EV/EBITDA, P/B:</strong> Standard valuation multiples. You should know current ranges for major indices (S&P 500 typically 18-22x forward P/E; lower during recessions, higher during expansions).</p>
 
-<p><strong>Market cap:</strong> Share price × shares outstanding. Classifies companies as large-cap ($10B+), mid-cap ($2&ndash;10B), or small-cap (under $2B).</p>
+<p><strong>Market cap:</strong> Share price × shares outstanding. Classifies companies as large-cap ($10B+), mid-cap ($2-10B), or small-cap (under $2B).</p>
 
 <p><strong>Beta:</strong> A stock's sensitivity to market movements. Beta of 1.5 means the stock moves 1.5% for every 1% move in the market. Higher beta = more volatile = more risky.</p>
 

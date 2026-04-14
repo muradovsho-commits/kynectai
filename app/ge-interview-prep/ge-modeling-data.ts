@@ -9,7 +9,7 @@ export const GE_MODELING_SECTIONS = [
 
 <p>For a consumer marketplace, the revenue build might be: active buyers × transactions per buyer × average order value × take rate. For an enterprise services business: number of clients × average engagement size × utilization rate.</p>
 
-<p><strong>2. Operating Expense Build:</strong> Project COGS (hosting, support, professional services) and OpEx (S&M, R&D, G&A) separately. Key assumptions: S&M as a percentage of revenue (should decline over time as growth becomes more efficient), R&D as a percentage of revenue (should stabilize), G&A as a percentage of revenue (should decline significantly as the company scales). The combined effect of revenue growth outpacing OpEx growth is <strong>operating leverage</strong>&mdash;the path to profitability.</p>
+<p><strong>2. Operating Expense Build:</strong> Project COGS (hosting, support, professional services) and OpEx (S&M, R&D, G&A) separately. Key assumptions: S&M as a percentage of revenue (should decline over time as growth becomes more efficient), R&D as a percentage of revenue (should stabilize), G&A as a percentage of revenue (should decline significantly as the company scales). The combined effect of revenue growth outpacing OpEx growth is <strong>operating leverage</strong>-the path to profitability.</p>
 
 <p><strong>3. Cash Flow and Cash Needs:</strong> Free Cash Flow = Operating Income + D&A &minus; CapEx &minus; ΔWC &minus; SBC cash taxes (though SBC is non-cash, it's worth tracking for dilution). How long until the company is cash flow positive? How much additional capital will it need before reaching self-sustainability? This determines whether the company will need to raise more capital (diluting your ownership).</p>
 

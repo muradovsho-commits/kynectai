@@ -1,7 +1,7 @@
 export const AM_RESEARCH_SECTIONS = [
   {
     title: 'The Research Process',
-    content: `<p>Fundamental equity research is the process of developing an informed, evidence-based view on whether a company's stock is undervalued, overvalued, or fairly priced. The output is an investment thesis&mdash;a clear, falsifiable argument for why the stock will outperform or underperform the market over a defined time horizon.</p>
+    content: `<p>Fundamental equity research is the process of developing an informed, evidence-based view on whether a company's stock is undervalued, overvalued, or fairly priced. The output is an investment thesis-a clear, falsifiable argument for why the stock will outperform or underperform the market over a defined time horizon.</p>
 
 <h4>Step 1: Industry and Business Understanding</h4>
 
@@ -17,7 +17,7 @@ export const AM_RESEARCH_SECTIONS = [
 
 <h4>Step 3: Financial Modeling and Projections</h4>
 
-<p>Build a detailed financial model projecting the company's Income Statement, Balance Sheet, and Cash Flow Statement for the next 3–5 years. The model should be driver-based: revenue projections should be built from unit economics (volume × price, or subscribers × ARPU, or stores × revenue per store), not just growth rate assumptions.</p>
+<p>Build a detailed financial model projecting the company's Income Statement, Balance Sheet, and Cash Flow Statement for the next 3-5 years. The model should be driver-based: revenue projections should be built from unit economics (volume × price, or subscribers × ARPU, or stores × revenue per store), not just growth rate assumptions.</p>
 
 <p>Key modeling decisions: How fast can revenue grow? Will margins expand or contract? How much capital expenditure is needed? What's the working capital intensity? How will the company deploy excess cash (reinvestment, M&A, buybacks, dividends)?</p>
 
@@ -33,7 +33,7 @@ export const AM_RESEARCH_SECTIONS = [
     title: 'Primary Research',
     content: `<p>The best fundamental investors go beyond public filings and sell-side research. <strong>Primary research</strong> involves gathering information directly from industry participants:</p>
 
-<p><strong>Expert network calls:</strong> Conversations with former employees, industry executives, customers, suppliers, and competitors. These provide insights unavailable in public documents&mdash;competitive dynamics, management quality, product perception, pricing trends.</p>
+<p><strong>Expert network calls:</strong> Conversations with former employees, industry executives, customers, suppliers, and competitors. These provide insights unavailable in public documents-competitive dynamics, management quality, product perception, pricing trends.</p>
 
 <p><strong>Channel checks:</strong> Monitoring real-time business trends. For a retailer, this might mean visiting stores, tracking foot traffic, and monitoring promotional activity. For a software company, it might mean surveying IT buyers about their purchasing intentions.</p>
 

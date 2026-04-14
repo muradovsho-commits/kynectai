@@ -7,14 +7,14 @@ export const ACCT_AUDIT_SECTIONS = [
     title: 'Phases of the Audit',
     content: `<h4>1. Client Acceptance &amp; Continuance</h4>
 
-<p>Before accepting a new engagement, the firm assesses client risk: management integrity, industry risk, ability to pay fees, and whether the firm has the competence and independence to serve the client. For continuing clients, the firm considers any developments that increase risk&mdash;management changes, regulatory investigations, financial deterioration. This gate-keeping function protects audit quality and firm reputation.</p>
+<p>Before accepting a new engagement, the firm assesses client risk: management integrity, industry risk, ability to pay fees, and whether the firm has the competence and independence to serve the client. For continuing clients, the firm considers any developments that increase risk-management changes, regulatory investigations, financial deterioration. This gate-keeping function protects audit quality and firm reputation.</p>
 
 <h4>2. Planning &amp; Risk Assessment</h4>
 
 <p>Planning is the foundation of an effective audit. The auditor develops an understanding of the entity and its environment (the business, its industry, key accounting policies, related parties, and regulatory environment), identifies and assesses <strong>risks of material misstatement</strong> (RMM) at both the financial statement level and the assertion level, and designs audit procedures to respond to those risks.</p>
 
 <div class="key-concept">
-<strong>Materiality:</strong> Auditors focus on matters that could influence the economic decisions of users. Materiality is both a quantitative threshold (typically 0.5&ndash;2% of pre-tax income, 0.5&ndash;1% of total assets, or 1&ndash;2% of revenue, depending on the entity and user base) and a qualitative consideration (some misstatements are material regardless of size&mdash;a fraud of any amount, or a misclassification that affects a debt covenant ratio, for example). Performance materiality (typically 50&ndash;75% of overall materiality) is used to design procedures with a buffer for undetected misstatements.
+<strong>Materiality:</strong> Auditors focus on matters that could influence the economic decisions of users. Materiality is both a quantitative threshold (typically 0.5-2% of pre-tax income, 0.5-1% of total assets, or 1-2% of revenue, depending on the entity and user base) and a qualitative consideration (some misstatements are material regardless of size-a fraud of any amount, or a misclassification that affects a debt covenant ratio, for example). Performance materiality (typically 50-75% of overall materiality) is used to design procedures with a buffer for undetected misstatements.
 </div>
 
 <h4>3. Controls Testing</h4>

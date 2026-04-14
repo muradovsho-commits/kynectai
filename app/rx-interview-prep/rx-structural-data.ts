@@ -1,7 +1,7 @@
 export const RX_STRUCTURAL_SECTIONS = [
   {
     title: 'What Is Structural Subordination?',
-    content: `<p>Structural subordination occurs when debt at a parent holding company (HoldCo) is effectively junior to debt at an operating subsidiary (OpCo)&mdash;even if both are called "unsecured notes"&mdash;because the OpCo debt has a direct claim on the operating assets while the HoldCo debt has only an indirect claim through its equity ownership of the OpCo.</p>
+    content: `<p>Structural subordination occurs when debt at a parent holding company (HoldCo) is effectively junior to debt at an operating subsidiary (OpCo)-even if both are called "unsecured notes"-because the OpCo debt has a direct claim on the operating assets while the HoldCo debt has only an indirect claim through its equity ownership of the OpCo.</p>
 
 <div class="example-box">
 <div class="example-label">Structural Subordination Example</div>
@@ -15,7 +15,7 @@ export const RX_STRUCTURAL_SECTIONS = [
     title: 'Upstream and Downstream Guarantees',
     content: `<p>To mitigate structural subordination, companies issue <strong>guarantees</strong>:</p>
 
-<p>An <strong>upstream guarantee</strong> is when OpCo guarantees HoldCo's debt. This gives HoldCo's creditors a direct claim at the OpCo level (typically an unsecured claim), moving them from being structurally subordinate to being pari passu with OpCo's unsecured creditors. Upstream guarantees are critical for HoldCo debt issuance&mdash;without one, few lenders would accept the structural subordination risk.</p>
+<p>An <strong>upstream guarantee</strong> is when OpCo guarantees HoldCo's debt. This gives HoldCo's creditors a direct claim at the OpCo level (typically an unsecured claim), moving them from being structurally subordinate to being pari passu with OpCo's unsecured creditors. Upstream guarantees are critical for HoldCo debt issuance-without one, few lenders would accept the structural subordination risk.</p>
 
 <p>A <strong>downstream guarantee</strong> is when HoldCo guarantees OpCo's debt. In a simple two-entity structure, this is less meaningful because HoldCo typically has no assets beyond OpCo's equity. But in more complex structures with multiple OpCos, cross-guarantees between entities can significantly affect recovery values.</p>
 

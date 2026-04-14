@@ -1,13 +1,13 @@
 export const EV_SECTIONS = [
   {
     title: 'Two Ways to Measure Value',
-    content: `<p>A company doesn't have a single "value"&mdash;the number depends on whose perspective you're taking. A homeowner and a bank looking at the same house see different numbers. The homeowner cares about <em>equity</em>&mdash;the home's market value minus the mortgage balance. The bank cares about the <em>total property value</em>&mdash;because the whole property secures the loan, not just the owner's equity in it.</p>
+    content: `<p>A company doesn't have a single "value"-the number depends on whose perspective you're taking. A homeowner and a bank looking at the same house see different numbers. The homeowner cares about <em>equity</em>-the home's market value minus the mortgage balance. The bank cares about the <em>total property value</em>-because the whole property secures the loan, not just the owner's equity in it.</p>
 
 <p>It's the same with companies:</p>
 
 <div class="key-concept">
-<strong>Equity Value</strong> is the value of the company to its common shareholders&mdash;what they'd receive if the company were liquidated after all other claims were settled. It's the "homeowner's equity" of corporate finance.<br><br>
-<strong>Enterprise Value (EV)</strong> is the value of the company's entire operating business to all investors&mdash;equity holders, debt holders, and any other capital providers. It's the "total property value" that underlies all those claims.
+<strong>Equity Value</strong> is the value of the company to its common shareholders-what they'd receive if the company were liquidated after all other claims were settled. It's the "homeowner's equity" of corporate finance.<br><br>
+<strong>Enterprise Value (EV)</strong> is the value of the company's entire operating business to all investors-equity holders, debt holders, and any other capital providers. It's the "total property value" that underlies all those claims.
 </div>
 
 <p>The simplest version of Equity Value: <strong>Share Price × Total Diluted Shares Outstanding</strong>. This is also called Market Capitalization when referring to the current market price.</p>
@@ -18,11 +18,11 @@ export const EV_SECTIONS = [
 Enterprise Value = Equity Value + Total Debt + Preferred Stock + Noncontrolling Interests − Cash &amp; Equivalents
 </div>
 
-<p>Why add Debt? Because EV represents the total cost of acquiring the company's operations, and an acquirer would either assume the existing Debt or have to repay it. Why subtract Cash? Because Cash isn't an operating asset&mdash;it can be used to offset the purchase cost. Noncontrolling Interests are added because the company consolidates 100% of a subsidiary's operations but doesn't own 100%&mdash;the outside owners' claim must be reflected.</p>
+<p>Why add Debt? Because EV represents the total cost of acquiring the company's operations, and an acquirer would either assume the existing Debt or have to repay it. Why subtract Cash? Because Cash isn't an operating asset-it can be used to offset the purchase cost. Noncontrolling Interests are added because the company consolidates 100% of a subsidiary's operations but doesn't own 100%-the outside owners' claim must be reflected.</p>
 
 <h4>Market Value vs. Intrinsic Value</h4>
 
-<p>Both Equity Value and Enterprise Value can be expressed as either <strong>current market values</strong> (based on today's stock price) or <strong>implied/intrinsic values</strong> (based on your analysis&mdash;e.g., a DCF output). Discrepancies between the two are what create investment opportunities: you buy when intrinsic value exceeds market value, and sell (or short) when the opposite is true.</p>`,
+<p>Both Equity Value and Enterprise Value can be expressed as either <strong>current market values</strong> (based on today's stock price) or <strong>implied/intrinsic values</strong> (based on your analysis-e.g., a DCF output). Discrepancies between the two are what create investment opportunities: you buy when intrinsic value exceeds market value, and sell (or short) when the opposite is true.</p>`,
   },
   {
     title: 'How Events Change Equity Value and Enterprise Value',
@@ -37,12 +37,12 @@ Enterprise Value = Equity Value + Total Debt + Preferred Stock + Noncontrolling 
 <tr>
   <td>Company borrows $100M (issues Debt)</td>
   <td>Unchanged (Cash +$100M offsets Debt +$100M)</td>
-  <td>Unchanged (Debt up, Cash up&mdash;cancel out in bridge)</td>
+  <td>Unchanged (Debt up, Cash up-cancel out in bridge)</td>
 </tr>
 <tr>
   <td>Company sells $100M in new shares</td>
   <td>Increases by $100M (more shares, more Cash)</td>
-  <td>Unchanged (Equity up, Cash up&mdash;cancel out)</td>
+  <td>Unchanged (Equity up, Cash up-cancel out)</td>
 </tr>
 <tr>
   <td>Company repays $100M of Debt with Cash</td>
@@ -80,7 +80,7 @@ Enterprise Value = Equity Value + Total Debt + Preferred Stock + Noncontrolling 
 
 <h4>The Cardinal Rule: Consistency</h4>
 
-<p>The numerator and denominator of a multiple must be consistent. If the numerator represents value to <em>all</em> investors (Enterprise Value), the denominator must be a metric available to <em>all</em> investors&mdash;something pre-interest, like Revenue, EBITDA, or EBIT. If the numerator represents value to <em>equity holders only</em> (Equity Value), the denominator must be a metric after interest, like Net Income or Book Value of Equity.</p>
+<p>The numerator and denominator of a multiple must be consistent. If the numerator represents value to <em>all</em> investors (Enterprise Value), the denominator must be a metric available to <em>all</em> investors-something pre-interest, like Revenue, EBITDA, or EBIT. If the numerator represents value to <em>equity holders only</em> (Equity Value), the denominator must be a metric after interest, like Net Income or Book Value of Equity.</p>
 
 <table class="comparison-table">
 <tr>
@@ -122,7 +122,7 @@ Enterprise Value = Equity Value + Total Debt + Preferred Stock + Noncontrolling 
 </table>
 
 <div class="warning-box">
-<strong>Never do this:</strong> EV / Net Income (inconsistent&mdash;EV is all-investor, Net Income is equity-only) or Price / EBITDA (inconsistent&mdash;Price is equity-only, EBITDA is all-investor). These produce meaningless numbers that change with capital structure.
+<strong>Never do this:</strong> EV / Net Income (inconsistent-EV is all-investor, Net Income is equity-only) or Price / EBITDA (inconsistent-Price is equity-only, EBITDA is all-investor). These produce meaningless numbers that change with capital structure.
 </div>
 
 <h4>Using Multiples in Practice</h4>
@@ -134,7 +134,7 @@ Enterprise Value = Equity Value + Total Debt + Preferred Stock + Noncontrolling 
     content: `<div class="interview-q">
 <div class="q-label">Question 1</div>
 <div class="question">Explain the difference between Equity Value and Enterprise Value.</div>
-<div class="answer">Equity Value is the value of the company to common shareholders only&mdash;think of it as the "residual" after all other claims are paid. Enterprise Value is the value of the company's core business to all investors, including debt holders, preferred stockholders, and noncontrolling interests. You bridge from Equity Value to Enterprise Value by adding Debt, Preferred Stock, and Noncontrolling Interests, then subtracting Cash.</div>
+<div class="answer">Equity Value is the value of the company to common shareholders only-think of it as the "residual" after all other claims are paid. Enterprise Value is the value of the company's core business to all investors, including debt holders, preferred stockholders, and noncontrolling interests. You bridge from Equity Value to Enterprise Value by adding Debt, Preferred Stock, and Noncontrolling Interests, then subtracting Cash.</div>
 </div>
 
 <div class="interview-q">
@@ -146,7 +146,7 @@ Enterprise Value = Equity Value + Total Debt + Preferred Stock + Noncontrolling 
 <div class="interview-q">
 <div class="q-label">Question 3</div>
 <div class="question">A company issues $150M in new Debt. What happens to Equity Value and Enterprise Value?</div>
-<div class="answer">Both are unchanged. Cash increases by $150M and Debt increases by $150M. For Equity Value, the extra Cash offsets the extra Debt&mdash;the net effect on shareholders is zero. For Enterprise Value, you add $150M of Debt but subtract $150M of Cash in the bridge, so EV is the same. No operating value has been created or destroyed.</div>
+<div class="answer">Both are unchanged. Cash increases by $150M and Debt increases by $150M. For Equity Value, the extra Cash offsets the extra Debt-the net effect on shareholders is zero. For Enterprise Value, you add $150M of Debt but subtract $150M of Cash in the bridge, so EV is the same. No operating value has been created or destroyed.</div>
 </div>
 
 <div class="interview-q">

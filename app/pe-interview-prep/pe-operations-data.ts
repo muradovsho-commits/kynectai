@@ -9,7 +9,7 @@ export const PE_OPERATIONS_SECTIONS = [
     title: 'Revenue Growth Levers',
     content: `<p>PE firms pursue revenue growth through several channels, depending on the business:</p>
 
-<p><strong>Pricing Optimization:</strong> Many privately held companies, especially founder-led ones, undercharge for their products or services. A systematic pricing study often reveals that prices can be raised 3–10% without significant customer attrition. Implementing tiered pricing, value-based pricing, or reducing discounting discipline can have an outsized impact on margins because pricing drops directly to the bottom line&mdash;there's no associated cost increase.</p>
+<p><strong>Pricing Optimization:</strong> Many privately held companies, especially founder-led ones, undercharge for their products or services. A systematic pricing study often reveals that prices can be raised 3-10% without significant customer attrition. Implementing tiered pricing, value-based pricing, or reducing discounting discipline can have an outsized impact on margins because pricing drops directly to the bottom line-there's no associated cost increase.</p>
 
 <p><strong>Sales Force Effectiveness:</strong> Investing in CRM systems, implementing structured sales processes, adding sales headcount in underpenetrated territories, creating inside sales teams, or redesigning incentive compensation to drive specific behaviors (cross-selling, upselling, new logo acquisition).</p>
 
@@ -50,7 +50,7 @@ Cash Conversion Cycle = DSO + DIO − DPO<br>
 
 <p>This strategy creates value through several mechanisms:</p>
 
-<p><strong>Multiple Arbitrage:</strong> Smaller companies typically trade at lower multiples than larger ones. If the platform was acquired at 8x EBITDA and add-ons are acquired at 5–6x EBITDA, the blended acquisition cost is lower, but the combined entity may be sold at the platform's multiple (or higher). This mechanical uplift in implied value is one of the most reliable return generators in PE.</p>
+<p><strong>Multiple Arbitrage:</strong> Smaller companies typically trade at lower multiples than larger ones. If the platform was acquired at 8x EBITDA and add-ons are acquired at 5-6x EBITDA, the blended acquisition cost is lower, but the combined entity may be sold at the platform's multiple (or higher). This mechanical uplift in implied value is one of the most reliable return generators in PE.</p>
 
 <p><strong>Operational Synergies:</strong> Combining companies in the same industry enables real cost savings: consolidating back offices, eliminating redundant management, negotiating better supplier terms with greater scale, and sharing best practices across locations.</p>
 
@@ -71,7 +71,7 @@ Cash Conversion Cycle = DSO + DIO − DPO<br>
 
 <p><strong>Board of Directors:</strong> The PE firm typically controls the board (the majority of seats) and appoints the chairman. Board meetings occur monthly or quarterly and cover financial performance, strategic initiatives, M&A pipeline, and risk management.</p>
 
-<p><strong>KPI Dashboards:</strong> PE firms establish a set of Key Performance Indicators that management reports on regularly&mdash;often weekly or monthly. These go beyond financial metrics to include operational measures: customer acquisition cost, churn rate, employee turnover, order backlog, on-time delivery, and others specific to the industry.</p>
+<p><strong>KPI Dashboards:</strong> PE firms establish a set of Key Performance Indicators that management reports on regularly-often weekly or monthly. These go beyond financial metrics to include operational measures: customer acquisition cost, churn rate, employee turnover, order backlog, on-time delivery, and others specific to the industry.</p>
 
 <p><strong>Operating Partners:</strong> Many PE firms employ experienced operators (former CEOs, CFOs, or functional experts) who work directly with portfolio companies on specific initiatives. Operating partners bring deep industry expertise and hands-on execution capability that financial professionals typically lack.</p>
 

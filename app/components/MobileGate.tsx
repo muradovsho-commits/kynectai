@@ -63,7 +63,7 @@ export default function MobileGate({ children }: { children: React.ReactNode }) 
             lineHeight: 1.7,
             marginBottom: '32px',
           }}>
-            OfferBell is built for focused work sessions — outreach, interview prep, and career planning. Open it on your laptop or desktop for the full experience.
+            OfferBell is built for focused work sessions - outreach, interview prep, and career planning. Open it on your laptop or desktop for the full experience.
           </div>
           <a href="/" style={{
             display: 'inline-block',

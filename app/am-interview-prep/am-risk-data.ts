@@ -3,17 +3,17 @@ export const AM_RISK_SECTIONS = [
     title: 'Types of Risk',
     content: `<p><strong>Market risk (systematic):</strong> The risk that the overall market declines. Cannot be diversified away. Measured by Beta. Compensated by the Equity Risk Premium.</p>
 
-<p><strong>Idiosyncratic risk (specific):</strong> Risk specific to an individual company&mdash;a product recall, a management scandal, a competitive disruption. Can be diversified away by holding multiple positions. Not compensated because it can be eliminated.</p>
+<p><strong>Idiosyncratic risk (specific):</strong> Risk specific to an individual company-a product recall, a management scandal, a competitive disruption. Can be diversified away by holding multiple positions. Not compensated because it can be eliminated.</p>
 
 <p><strong>Liquidity risk:</strong> The risk that you can't sell a position without significantly moving the price. Small-cap stocks, distressed bonds, and private investments all carry liquidity risk. During market crises, liquidity can evaporate even in normally liquid markets.</p>
 
 <p><strong>Concentration risk:</strong> Overexposure to a single stock, sector, geography, or factor. A portfolio with 30% in one stock has extreme concentration risk regardless of how great the stock is.</p>
 
-<p><strong>Tail risk:</strong> The risk of extreme, unexpected events (market crashes, pandemics, sovereign debt crises). Standard risk models assume normally distributed returns, but real-world returns have "fat tails"&mdash;extreme events occur far more frequently than a normal distribution would predict.</p>`,
+<p><strong>Tail risk:</strong> The risk of extreme, unexpected events (market crashes, pandemics, sovereign debt crises). Standard risk models assume normally distributed returns, but real-world returns have "fat tails"-extreme events occur far more frequently than a normal distribution would predict.</p>`,
   },
   {
     title: 'Risk Measurement Tools',
-    content: `<p><strong>Value at Risk (VaR):</strong> The maximum expected loss at a given confidence level over a given time period. "95% daily VaR of $2M" means: on 19 out of 20 days, the portfolio will lose no more than $2M. The problem: VaR tells you nothing about what happens on that 20th day&mdash;the loss could be $3M or $30M.</p>
+    content: `<p><strong>Value at Risk (VaR):</strong> The maximum expected loss at a given confidence level over a given time period. "95% daily VaR of $2M" means: on 19 out of 20 days, the portfolio will lose no more than $2M. The problem: VaR tells you nothing about what happens on that 20th day-the loss could be $3M or $30M.</p>
 
 <p><strong>Expected Shortfall (CVaR):</strong> The average loss in the worst X% of scenarios. Addresses VaR's blind spot by quantifying the severity of tail losses.</p>
 

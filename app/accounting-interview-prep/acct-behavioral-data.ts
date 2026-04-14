@@ -1,7 +1,7 @@
-// Accounting & Audit Mastery Manual — Module 10 (Behavioral/Mastery) + Appendices
+// Accounting & Audit Mastery Manual - Module 10 (Behavioral/Mastery) + Appendices
 export const ACCT_BEHAVIORAL_SECTIONS = [
   {
-    title: '10.1–10.3 What Firms Evaluate, Tell Me About Yourself, Why Audit',
+    title: '10.1-10.3 What Firms Evaluate, Tell Me About Yourself, Why Audit',
     content: `<h3>10.1 What Firms Are Really Evaluating</h3>
 <p>Accounting and audit interviews are not just technical screens. Firms are evaluating whether you can be trusted with professional work under deadlines and standards.</p>
 <p><strong>They look for:</strong> integrity, attention to detail, organization, communication, coachability, judgment, resilience, professionalism with clients and teams.</p>
@@ -17,7 +17,7 @@ export const ACCT_BEHAVIORAL_SECTIONS = [
 <ul><li>audit develops strong accounting judgment</li><li>audit provides broad industry exposure</li><li>audit builds a deep understanding of reporting and controls</li><li>audit requires analytical thinking, skepticism, and teamwork</li><li>audit offers a strong foundation for long-term finance or accounting careers</li></ul>`,
   },
   {
-    title: '10.4–10.6 Why Our Firm, Resume Walkthrough, Professionalism Scenarios',
+    title: '10.4-10.6 Why Our Firm, Resume Walkthrough, Professionalism Scenarios',
     content: `<h3>10.4 Why Our Firm</h3>
 <p><strong>Strong answers mention:</strong> the training environment, culture and people, client base or industry exposure, reputation for development and standards.</p>
 <p>Generic praise is weak. Specificity is strong.</p>
@@ -30,7 +30,7 @@ export const ACCT_BEHAVIORAL_SECTIONS = [
 <p><strong>Strong candidate mindset:</strong> escalate appropriately, document carefully, stay calm and professional, rely on evidence and process, avoid ego-driven conflict.</p>`,
   },
   {
-    title: '10.7–10.9 Detail & Time Management, Teamwork, Final Interview Execution',
+    title: '10.7-10.9 Detail & Time Management, Teamwork, Final Interview Execution',
     content: `<h3>10.7 Attention to Detail and Time Management</h3>
 <p>Audit and accounting work can involve volume, deadlines, and precision.</p>
 <p><strong>Good examples to discuss:</strong> balancing multiple deadlines, catching a subtle error, improving a process, reconciling inconsistent data.</p>
@@ -44,7 +44,7 @@ export const ACCT_BEHAVIORAL_SECTIONS = [
 <ol><li>define the concept</li><li>explain why it matters</li><li>walk through the mechanics</li><li>mention a common risk or nuance</li></ol>
 <p><strong>For behavioral questions, use this structure:</strong></p>
 <ol><li>context</li><li>challenge</li><li>action</li><li>result</li><li>what you learned</li></ol>
-<p><strong>Tone — You should sound:</strong> precise, professional, thoughtful, honest, interested in the work.</p>`,
+<p><strong>Tone - You should sound:</strong> precise, professional, thoughtful, honest, interested in the work.</p>`,
   },
   {
     title: '10.10 Final Mastery Checklist + Appendix A: Rapid-Fire Review Sheet',

@@ -4,7 +4,7 @@ export const PE_MASTERY_SECTIONS = [
     content: `<p>When a Principal or Partner interviews you, they ask themselves one subconscious question:</p>
 <p><em>"If it is 2:00 AM on a Sunday and we have to submit a $1 Billion binding bid by 8:00 AM, will this candidate's financial model bankrupt my fund, or can I trust their numbers?"</em></p>
 <ul>
-<li><strong>Do not guess:</strong> If you don't know how depreciation flows to the balance sheet, say "I need to map that out, but my initial thought is X." Guessing and being confidently wrong is an immediate rejection — it signals you will hide mistakes in a live deal.</li>
+<li><strong>Do not guess:</strong> If you don't know how depreciation flows to the balance sheet, say "I need to map that out, but my initial thought is X." Guessing and being confidently wrong is an immediate rejection - it signals you will hide mistakes in a live deal.</li>
 <li><strong>Narrate your math:</strong> Speak your steps aloud. "Ten times twenty is two hundred, minus fifty is one fifty..." If you make a simple arithmetic error but your logic is flawless, they will often pass you. If you sit in silence for two minutes and give the wrong answer, you are done.</li>
 </ul>`
   },
@@ -45,6 +45,6 @@ export const PE_MASTERY_SECTIONS = [
     content: `<h4>Drill 1: Explain a Dividend Recapitalization to a 5th grader.</h4>
 <p>"Imagine you buy a piggy bank for $10. Over a few years, it magically fills up with $5. Instead of waiting to sell the piggy bank, you just take the $5 out right now to buy toys. You still own the piggy bank, but you already got half your money back, so you're really happy and safe."</p>
 <h4>Drill 2: Explain a Dividend Recapitalization to the Investment Committee.</h4>
-<p>"By executing a dividend recap in Year 2, we are utilizing the company's excess debt capacity — driven by the 15% EBITDA expansion we achieved in Year 1 — to return 50% of our initial paid-in capital. This fundamentally de-risks the downside profile of the hold and synthetically drives our projected IRR from 18% to 26%, even if we model a conservative full-turn multiple contraction at exit."</p>`
+<p>"By executing a dividend recap in Year 2, we are utilizing the company's excess debt capacity - driven by the 15% EBITDA expansion we achieved in Year 1 - to return 50% of our initial paid-in capital. This fundamentally de-risks the downside profile of the hold and synthetically drives our projected IRR from 18% to 26%, even if we model a conservative full-turn multiple contraction at exit."</p>`
   },
 ];

@@ -126,9 +126,9 @@ export default function AMInterviewPrepPage() {
 
               <div className="ib-how-to-use">
                 <h4>How to Use This Guide</h4>
-                <p><strong>New to AM:</strong> Start with Modules 1–3 to understand the industry, research process, and core valuation methods before tackling advanced topics.</p>
+                <p><strong>New to AM:</strong> Start with Modules 1-3 to understand the industry, research process, and core valuation methods before tackling advanced topics.</p>
                 <p><strong>Interview prep:</strong> Focus on Modules 8 and 10 - the stock pitch is the centerpiece of most buy-side interviews.</p>
-                <p><strong>Deep dive:</strong> Modules 4–7 cover financial analysis, fixed income, portfolio theory, and fund structures for comprehensive preparation.</p>
+                <p><strong>Deep dive:</strong> Modules 4-7 cover financial analysis, fixed income, portfolio theory, and fund structures for comprehensive preparation.</p>
               </div>
 
               <div className="ib-module-cards">

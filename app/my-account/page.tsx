@@ -180,7 +180,7 @@ export default function MyAccountPage() {
               const msgPct = isPro ? 100 : Math.min(100, Math.round(messagesUsed / 3 * 100));
               return [
                 {label:'Resume Review', used: resumeDisplay, total: String(resumeMax), pct: Math.min(100, Math.round(resumeCount / resumeMax * 100)), color: resumeRemaining === 0 ? '#dc2626' : 'var(--text)', reset: isPro ? `${resumeRemaining} of 10 left this week` : resumeCount >= 1 ? 'Free review used' : '1 free review'},
-                {label:'Outreach Messages', used: messagesUsed, total: msgMax, pct: msgPct, color: 'var(--text)', reset: isPro ? 'Unlimited — Pro' : `${Math.max(0, 3 - messagesUsed)} of 3 left`},
+                {label:'Outreach Messages', used: messagesUsed, total: msgMax, pct: msgPct, color: 'var(--text)', reset: isPro ? 'Unlimited - Pro' : `${Math.max(0, 3 - messagesUsed)} of 3 left`},
                 {label:'Contacts Tracked', used: contactsTracked, total: 'Unlimited', pct: 100, color: '#16a34a', reset: 'No limit'},
               ];
             })().map(u=>(
@@ -261,7 +261,7 @@ export default function MyAccountPage() {
                         const code = promoCode.toLowerCase();
                         // Lifetime / forever codes
                         if (code.includes('lifetime') || code.includes('forever') || code.includes('free')) {
-                          return <>Lifetime Pro via code <strong>{promoCode}</strong> — no renewal needed</>;
+                          return <>Lifetime Pro via code <strong>{promoCode}</strong> - no renewal needed</>;
                         }
                         // Codes with month numbers (e.g. "3MONTHFREE", "promo2mo")
                         const monthMatch = code.match(/(\d+)\s*(?:mo|month)/i);
@@ -276,7 +276,7 @@ export default function MyAccountPage() {
                             return <>Promo ended · Renews {fmtDate(renewDate.getTime())}</>;
                           }
                         }
-                        // Generic promo — show code + standard renewal
+                        // Generic promo - show code + standard renewal
                         if (planActivatedAt) {
                           return <>Activated via code <strong>{promoCode}</strong> · Renews {fmtDate(planActivatedAt + (billingCycle === 'annual' ? 365 : 30) * 24 * 60 * 60 * 1000)}</>;
                         }

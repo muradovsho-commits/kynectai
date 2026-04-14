@@ -25,7 +25,7 @@ export const PE_ADVANCED_TOPICS_SECTIONS = [
     title: 'ESG in Private Equity',
     content: `<p>Environmental, Social, and Governance (ESG) considerations have become a significant factor in PE investing. Most large PE firms now have dedicated ESG teams and integrate ESG into their due diligence and value creation processes.</p>
 
-<p>From a value creation perspective, ESG initiatives can reduce costs (energy efficiency, waste reduction), mitigate risks (regulatory compliance, reputational risk), and enhance revenue (customers increasingly prefer sustainable products and services). Many LPs&mdash;particularly European pension funds and sovereign wealth funds&mdash;now require GPs to report on ESG metrics and demonstrate ESG integration as a condition of investment.</p>`,
+<p>From a value creation perspective, ESG initiatives can reduce costs (energy efficiency, waste reduction), mitigate risks (regulatory compliance, reputational risk), and enhance revenue (customers increasingly prefer sustainable products and services). Many LPs-particularly European pension funds and sovereign wealth funds-now require GPs to report on ESG metrics and demonstrate ESG integration as a condition of investment.</p>`,
   },
   {
     title: 'Sector-Specific Considerations',
@@ -39,7 +39,7 @@ export const PE_ADVANCED_TOPICS_SECTIONS = [
 
 <h4>Industrials</h4>
 
-<p>Industrial companies are classic PE targets: stable cash flows, tangible assets, and significant operational improvement potential. Value creation often focuses on manufacturing efficiency (lean operations, automation), supply chain optimization, and buy-and-build strategies to consolidate fragmented industries. Cyclicality is the main risk&mdash;industrial companies are highly sensitive to economic downturns, which can impair Debt service capacity.</p>
+<p>Industrial companies are classic PE targets: stable cash flows, tangible assets, and significant operational improvement potential. Value creation often focuses on manufacturing efficiency (lean operations, automation), supply chain optimization, and buy-and-build strategies to consolidate fragmented industries. Cyclicality is the main risk-industrial companies are highly sensitive to economic downturns, which can impair Debt service capacity.</p>
 
 <h4>Financial Services</h4>
 
@@ -47,8 +47,8 @@ export const PE_ADVANCED_TOPICS_SECTIONS = [
   },
   {
     title: 'Distressed and Turnaround Investing',
-    content: `<p>Distressed PE differs fundamentally from traditional buyout PE. Instead of acquiring healthy companies and optimizing them, distressed investors acquire companies in financial trouble&mdash;often through purchasing Debt at a discount and converting it to Equity through a bankruptcy process (known as a "loan-to-own" strategy).</p>
+    content: `<p>Distressed PE differs fundamentally from traditional buyout PE. Instead of acquiring healthy companies and optimizing them, distressed investors acquire companies in financial trouble-often through purchasing Debt at a discount and converting it to Equity through a bankruptcy process (known as a "loan-to-own" strategy).</p>
 
-<p>Key skills in distressed PE: understanding bankruptcy law (Chapter 11 in the U.S.), valuing distressed Debt, negotiating with creditor committees, and executing operational turnarounds under severe time and resource constraints. Returns can be exceptional (distressed Debt purchased at 30–50 cents on the dollar and converted to Equity can produce 3–5x returns) but the failure rate is also much higher than in traditional buyouts.</p>`,
+<p>Key skills in distressed PE: understanding bankruptcy law (Chapter 11 in the U.S.), valuing distressed Debt, negotiating with creditor committees, and executing operational turnarounds under severe time and resource constraints. Returns can be exceptional (distressed Debt purchased at 30-50 cents on the dollar and converted to Equity can produce 3-5x returns) but the failure rate is also much higher than in traditional buyouts.</p>`,
   },
 ];

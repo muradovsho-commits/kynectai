@@ -1,7 +1,7 @@
-// Accounting & Audit Mastery Manual — Module 6 + Module 7
+// Accounting & Audit Mastery Manual - Module 6 + Module 7
 export const ACCT_TAX_SECTIONS = [
   {
-    title: '6.1–6.3 What an Audit Is, Reasonable Assurance, Management vs Auditor Responsibility',
+    title: '6.1-6.3 What an Audit Is, Reasonable Assurance, Management vs Auditor Responsibility',
     content: `<h3>6.1 What an Audit Is</h3>
 <p>An audit is an independent examination of financial statements performed to express an opinion on whether they are presented fairly, in all material respects, in accordance with the applicable financial reporting framework.</p>
 <p><strong>Why audits exist:</strong> Because users of financial statements need confidence in the reliability of management-prepared information.</p>
@@ -17,7 +17,7 @@ export const ACCT_TAX_SECTIONS = [
 <p><strong>Interview insight:</strong> This division is critical. Candidates often blur it.</p>`,
   },
   {
-    title: '6.4–6.6 Audit Assertions, Audit Risk Model, Material Misstatement Risk',
+    title: '6.4-6.6 Audit Assertions, Audit Risk Model, Material Misstatement Risk',
     content: `<h3>6.4 Audit Assertions</h3>
 <p>Assertions are management's implicit or explicit claims embedded in account balances, transactions, and disclosures.</p>
 <p><strong>Common assertions for transactions:</strong> occurrence, completeness, accuracy, cut-off, classification.</p>
@@ -38,7 +38,7 @@ export const ACCT_TAX_SECTIONS = [
 <p><strong>Why it matters:</strong> A strong audit candidate understands that risk is not abstract. It differs by: account, assertion, business process, estimate, fraud vulnerability.</p>`,
   },
   {
-    title: '6.7–6.9 Audit Process, Internal Control Basics, Walkthroughs + Module 6 Practice',
+    title: '6.7-6.9 Audit Process, Internal Control Basics, Walkthroughs + Module 6 Practice',
     content: `<h3>6.7 The Audit Process at a High Level</h3>
 <ol><li>client acceptance / continuance</li><li>planning and understanding the entity</li><li>risk assessment</li><li>understanding and testing controls where relevant</li><li>substantive procedures</li><li>completion and review</li><li>opinion and reporting</li></ol>
 
@@ -53,11 +53,11 @@ export const ACCT_TAX_SECTIONS = [
 
 <h3>Module 6 Practice Drills</h3>
 <p><strong>Explain-out-loud drills:</strong> What is the purpose of an audit? What is reasonable assurance? What are audit assertions? What is the difference between inherent risk and control risk?</p>
-<p><strong>Assertion drills — For each account, identify the most important assertions and why:</strong></p>
+<p><strong>Assertion drills - For each account, identify the most important assertions and why:</strong></p>
 <ol><li>cash</li><li>accounts receivable</li><li>inventory</li><li>accounts payable</li><li>revenue</li><li>goodwill</li></ol>`,
   },
   {
-    title: '7.1–7.4 Audit Evidence, Types of Procedures, Tests of Controls, Substantive Procedures',
+    title: '7.1-7.4 Audit Evidence, Types of Procedures, Tests of Controls, Substantive Procedures',
     content: `<h3>7.1 Sufficient Appropriate Audit Evidence</h3>
 <p><strong>What it means:</strong> Audit evidence must be both: sufficient (enough quantity) and appropriate (relevant and reliable quality).</p>
 <p><strong>Why it matters:</strong> Not all evidence is equally persuasive.</p>
@@ -79,7 +79,7 @@ export const ACCT_TAX_SECTIONS = [
 <p><strong>Examples:</strong> confirm receivables, test inventory counts, inspect invoices and shipping documents, search for unrecorded liabilities, recalculate depreciation.</p>`,
   },
   {
-    title: '7.5–7.8 Sampling, Analytical Procedures, Revenue Testing, Inventory Testing',
+    title: '7.5-7.8 Sampling, Analytical Procedures, Revenue Testing, Inventory Testing',
     content: `<h3>7.5 Sampling</h3>
 <p>Auditors often use sampling because testing every transaction is impractical.</p>
 <p><strong>Why this matters:</strong> Candidates should understand that audit evidence is often probabilistic and judgment-based.</p>
@@ -101,7 +101,7 @@ export const ACCT_TAX_SECTIONS = [
 <p><strong>Common assertions:</strong> existence, completeness, valuation.</p>`,
   },
   {
-    title: '7.9–7.11 Unrecorded Liabilities, Cash Testing, Controls vs Substantive + Module 7 Practice',
+    title: '7.9-7.11 Unrecorded Liabilities, Cash Testing, Controls vs Substantive + Module 7 Practice',
     content: `<h3>7.9 Search for Unrecorded Liabilities</h3>
 <p>This is a classic completeness procedure.</p>
 <p><strong>Common procedures:</strong> inspect post-year-end cash disbursements, inspect unmatched receiving reports, inspect vendor statements, inspect legal invoices and accrual support.</p>
@@ -117,7 +117,7 @@ export const ACCT_TAX_SECTIONS = [
 
 <h3>Module 7 Practice Drills</h3>
 <p><strong>Explain-out-loud drills:</strong> What makes audit evidence persuasive? What is the difference between tests of controls and substantive testing? Why is the search for unrecorded liabilities important? Why is cut-off testing critical for revenue and inventory?</p>
-<p><strong>Procedure-matching drills — Match the account / assertion to an appropriate procedure:</strong></p>
+<p><strong>Procedure-matching drills - Match the account / assertion to an appropriate procedure:</strong></p>
 <ol><li>AR existence</li><li>AP completeness</li><li>inventory existence</li><li>depreciation accuracy</li><li>deferred revenue completeness</li></ol>`,
   },
 ];

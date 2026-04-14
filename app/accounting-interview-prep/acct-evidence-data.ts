@@ -1,7 +1,7 @@
 export const ACCT_EVIDENCE_SECTIONS = [
   {
     title: 'Financial Statement Assertions',
-    content: `<p>Audit procedures are designed to address specific <strong>assertions</strong>&mdash;the explicit and implicit claims management makes when presenting financial statements. Testing assertions ensures that audit work is targeted at the right risks rather than testing everything indiscriminately.</p>
+    content: `<p>Audit procedures are designed to address specific <strong>assertions</strong>-the explicit and implicit claims management makes when presenting financial statements. Testing assertions ensures that audit work is targeted at the right risks rather than testing everything indiscriminately.</p>
 
 <div class="key-concept">
 <strong>Key Assertions by Category:</strong><br><br>
@@ -29,7 +29,7 @@ export const ACCT_EVIDENCE_SECTIONS = [
 <p>The auditor obtains a direct response from a third party verifying the accuracy of information. Positive confirmations request a reply regardless of whether the recipient agrees or disagrees; negative confirmations (used for lower-risk populations) request a reply only if the recipient disagrees. AR confirmations test the existence and accuracy assertions for receivable balances. Bank confirmations test cash and debt balances directly.</p>
 
 <h4>Analytical Procedures</h4>
-<p>Analytical procedures compare financial data to expectations derived from prior periods, industry benchmarks, budgets, or relationships between financial and nonfinancial data. A gross margin that dropped from 42% to 28% in a year requires explanation. Analytical procedures are efficient but depend on the quality of the expectations developed&mdash;a sophisticated fraud can be designed to manipulate both the financial statements and the underlying operational data that auditors use to build expectations.</p>
+<p>Analytical procedures compare financial data to expectations derived from prior periods, industry benchmarks, budgets, or relationships between financial and nonfinancial data. A gross margin that dropped from 42% to 28% in a year requires explanation. Analytical procedures are efficient but depend on the quality of the expectations developed-a sophisticated fraud can be designed to manipulate both the financial statements and the underlying operational data that auditors use to build expectations.</p>
 
 <h4>Sampling</h4>
 <p>Auditors rarely test 100% of a population. Statistical sampling provides a basis for drawing conclusions about the entire population from a subset. <strong>Attribute sampling</strong> tests the rate of deviation in a control (relevant for tests of controls). <strong>Variable sampling</strong> estimates the dollar amount of misstatement in a population (relevant for substantive tests). The sample size is determined by the acceptable risk of incorrect conclusions, the expected error rate or amount, and the population size.</p>`,

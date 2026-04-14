@@ -1,7 +1,7 @@
 export const RE_REITS_SECTIONS = [
   {
     title: 'What Is a REIT?',
-    content: `<p>A Real Estate Investment Trust (REIT) is a company that owns, operates, or finances income-producing real estate and elects special tax status. To qualify as a REIT: at least 75% of assets must be real estate, at least 75% of gross income must come from real estate activities, and the company must distribute at least 90% of taxable income as dividends. In exchange, the REIT pays no corporate income tax on distributed income&mdash;avoiding the double taxation that normal corporations face.</p>`,
+    content: `<p>A Real Estate Investment Trust (REIT) is a company that owns, operates, or finances income-producing real estate and elects special tax status. To qualify as a REIT: at least 75% of assets must be real estate, at least 75% of gross income must come from real estate activities, and the company must distribute at least 90% of taxable income as dividends. In exchange, the REIT pays no corporate income tax on distributed income-avoiding the double taxation that normal corporations face.</p>`,
   },
   {
     title: 'REIT Valuation Metrics',
@@ -13,7 +13,7 @@ AFFO = FFO − Recurring CapEx (maintenance) − Straight-Line Rent Adjustments<
 NAV = (Value of RE Assets) + Other Assets − Liabilities
 </div>
 
-<p><strong>FFO (Funds From Operations):</strong> Adds back depreciation and removes gains/losses on property sales from net income. FFO is the REIT equivalent of earnings&mdash;the standard metric for comparing REIT profitability. P/FFO is the REIT equivalent of P/E.</p>
+<p><strong>FFO (Funds From Operations):</strong> Adds back depreciation and removes gains/losses on property sales from net income. FFO is the REIT equivalent of earnings-the standard metric for comparing REIT profitability. P/FFO is the REIT equivalent of P/E.</p>
 
 <p><strong>AFFO (Adjusted FFO):</strong> Subtracts maintenance CapEx and straight-line rent adjustments from FFO to approximate actual recurring cash flow. AFFO is more conservative and economically meaningful than FFO but less standardized (different REITs calculate it differently).</p>
 

@@ -15,9 +15,9 @@ export const AM_FINANCIAL_ANALYSIS_SECTIONS = [
     title: 'Earnings Quality',
     content: `<p>The gap between reported earnings and economic reality can be enormous. Key areas to scrutinize:</p>
 
-<p><strong>Non-cash charges and adjustments:</strong> Companies increasingly report "adjusted" earnings that exclude stock-based compensation, amortization of intangibles, restructuring charges, and other items. Some of these adjustments are legitimate (truly one-time charges), but others are recurring costs disguised as one-time items. If a company takes a "restructuring charge" every year for five consecutive years, it's not one-time&mdash;it's a cost of doing business.</p>
+<p><strong>Non-cash charges and adjustments:</strong> Companies increasingly report "adjusted" earnings that exclude stock-based compensation, amortization of intangibles, restructuring charges, and other items. Some of these adjustments are legitimate (truly one-time charges), but others are recurring costs disguised as one-time items. If a company takes a "restructuring charge" every year for five consecutive years, it's not one-time-it's a cost of doing business.</p>
 
-<p><strong>SBC (Stock-Based Compensation):</strong> Many tech companies exclude SBC from "adjusted" earnings, but SBC is a real economic cost&mdash;it dilutes existing shareholders. A company reporting $2 in "adjusted EPS" but $1.20 in GAAP EPS (because of $0.80 in SBC) is not as profitable as the adjusted number suggests.</p>
+<p><strong>SBC (Stock-Based Compensation):</strong> Many tech companies exclude SBC from "adjusted" earnings, but SBC is a real economic cost-it dilutes existing shareholders. A company reporting $2 in "adjusted EPS" but $1.20 in GAAP EPS (because of $0.80 in SBC) is not as profitable as the adjusted number suggests.</p>
 
 <p><strong>Depreciation vs. CapEx:</strong> If Depreciation consistently falls well below CapEx, the company may be under-depreciating its assets (inflating reported earnings). Conversely, if D&A exceeds CapEx for extended periods, either the company is underinvesting or its assets are declining in value.</p>
 
@@ -39,12 +39,12 @@ export const AM_FINANCIAL_ANALYSIS_SECTIONS = [
   },
   {
     title: 'Balance Sheet Red Flags',
-    content: `<p><strong>Rising goodwill as a percentage of total assets:</strong> Indicates the company has made significant acquisitions at premium prices. If those acquisitions underperform, goodwill impairments will follow&mdash;destroying shareholder value retroactively.</p>
+    content: `<p><strong>Rising goodwill as a percentage of total assets:</strong> Indicates the company has made significant acquisitions at premium prices. If those acquisitions underperform, goodwill impairments will follow-destroying shareholder value retroactively.</p>
 
 <p><strong>Off-balance-sheet obligations:</strong> Operating leases (though now capitalized under current accounting standards), unconsolidated joint ventures, special purpose entities, and contingent liabilities. Read the footnotes carefully; the balance sheet face doesn't tell the full story.</p>
 
-<p><strong>Rising Debt without corresponding asset growth:</strong> If Debt is increasing but assets aren't growing (or are declining), the company may be borrowing to fund operating losses, dividends, or share buybacks&mdash;all unsustainable in the long run.</p>
+<p><strong>Rising Debt without corresponding asset growth:</strong> If Debt is increasing but assets aren't growing (or are declining), the company may be borrowing to fund operating losses, dividends, or share buybacks-all unsustainable in the long run.</p>
 
-<p><strong>Pension underfunding:</strong> A large unfunded pension obligation is a real liability that reduces the company's intrinsic value. Check the footnotes for assumptions about discount rate and expected return on plan assets&mdash;overly optimistic assumptions mask the true size of the obligation.</p>`,
+<p><strong>Pension underfunding:</strong> A large unfunded pension obligation is a real liability that reduces the company's intrinsic value. Check the footnotes for assumptions about discount rate and expected return on plan assets-overly optimistic assumptions mask the true size of the obligation.</p>`,
   },
 ];

@@ -21,7 +21,7 @@ export const ST_MARKET_STRUCTURE_SECTIONS = [
     title: 'Liquidity',
     content: `<p>Liquidity is the ability to buy or sell an asset quickly without significantly moving the price. It's the lifeblood of trading. Liquid markets have tight bid-ask spreads, deep order books (large quantities available at each price level), and high trading volume. Illiquid markets have wide spreads, thin order books, and low volume.</p>
 
-<p>Liquidity is not constant&mdash;it varies by time of day (thinnest at market open and close), market conditions (evaporates during crises), and instrument type (a US Treasury is infinitely more liquid than a small-cap corporate bond). Traders must constantly assess liquidity because it determines how quickly they can exit a position and at what cost.</p>`,
+<p>Liquidity is not constant-it varies by time of day (thinnest at market open and close), market conditions (evaporates during crises), and instrument type (a US Treasury is infinitely more liquid than a small-cap corporate bond). Traders must constantly assess liquidity because it determines how quickly they can exit a position and at what cost.</p>`,
   },
   {
     title: 'Clearing and Settlement',

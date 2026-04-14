@@ -9,7 +9,7 @@ export const CONS_ADVANCED_CASES_SECTIONS = [
 
 <p><strong>2. Target Assessment:</strong> Is the target a good business? Analyze its financial performance (revenue, margins, growth), competitive position, customer base, management quality, and risks. Conduct a simplified QoE analysis: is the reported EBITDA sustainable?</p>
 
-<p><strong>3. Synergy Analysis:</strong> Quantify the potential synergies. Cost synergies are typically 5–15% of the smaller company's cost base, realized over 2–3 years. Revenue synergies are harder to quantify and less reliable. What's the total synergy value, and how does it compare to the acquisition premium being paid?</p>
+<p><strong>3. Synergy Analysis:</strong> Quantify the potential synergies. Cost synergies are typically 5-15% of the smaller company's cost base, realized over 2-3 years. Revenue synergies are harder to quantify and less reliable. What's the total synergy value, and how does it compare to the acquisition premium being paid?</p>
 
 <p><strong>4. Integration Risks:</strong> What could go wrong? Cultural clashes, key talent leaving, customer attrition, IT system incompatibility, regulatory hurdles. How would you mitigate each risk?</p>
 
@@ -17,7 +17,7 @@ export const CONS_ADVANCED_CASES_SECTIONS = [
   },
   {
     title: 'Pricing Cases',
-    content: `<p>Pricing is one of the most powerful profit levers&mdash;a 1% price increase typically flows directly to the bottom line, whereas a 1% cost reduction or volume increase has a much smaller margin impact. Yet pricing is under-optimized at most companies.</p>
+    content: `<p>Pricing is one of the most powerful profit levers-a 1% price increase typically flows directly to the bottom line, whereas a 1% cost reduction or volume increase has a much smaller margin impact. Yet pricing is under-optimized at most companies.</p>
 
 <h4>Pricing Framework</h4>
 

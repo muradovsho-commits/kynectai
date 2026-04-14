@@ -19,9 +19,9 @@ export const ST_FIXED_INCOME_SECTIONS = [
   },
   {
     title: 'Corporate Credit',
-    content: `<p>Corporate bond trading involves investment-grade (IG) and high-yield (HY) bonds issued by companies. Unlike Treasuries, corporate bonds carry credit risk&mdash;the risk that the issuer defaults. The <strong>credit spread</strong> (the yield premium over comparable Treasuries) compensates investors for this risk.</p>
+    content: `<p>Corporate bond trading involves investment-grade (IG) and high-yield (HY) bonds issued by companies. Unlike Treasuries, corporate bonds carry credit risk-the risk that the issuer defaults. The <strong>credit spread</strong> (the yield premium over comparable Treasuries) compensates investors for this risk.</p>
 
-<p>IG spreads typically range from 50&ndash;200 basis points. HY spreads range from 300&ndash;800+ bps, widening dramatically during stress (1,000+ bps in severe crises). Credit traders analyze companies' fundamental credit quality (leverage, coverage, FCF) and make relative value judgments: Is Company A's 5-year bond cheap or rich relative to Company B's, given their relative credit profiles?</p>`,
+<p>IG spreads typically range from 50-200 basis points. HY spreads range from 300-800+ bps, widening dramatically during stress (1,000+ bps in severe crises). Credit traders analyze companies' fundamental credit quality (leverage, coverage, FCF) and make relative value judgments: Is Company A's 5-year bond cheap or rich relative to Company B's, given their relative credit profiles?</p>`,
   },
   {
     title: 'Structured Products',

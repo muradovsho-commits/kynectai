@@ -50,15 +50,15 @@ const CHEVRON = <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>;
 
 // Micro-learning insight generator (hardcoded tips per category)
 const INSIGHTS: Record<string, { why: string; shows: string; top1: string }> = {
-  Accounting: { why: "Accounting is the language of business. Every transaction, every model, every deal starts here.", shows: "Interviewers use accounting to test whether you actually understand how businesses work vs just memorizing formulas.", top1: "Top candidates don't just recite the impact — they explain the economic intuition behind why it works that way." },
+  Accounting: { why: "Accounting is the language of business. Every transaction, every model, every deal starts here.", shows: "Interviewers use accounting to test whether you actually understand how businesses work vs just memorizing formulas.", top1: "Top candidates don't just recite the impact - they explain the economic intuition behind why it works that way." },
   Valuation: { why: "Valuation determines whether a deal makes sense. It's the core analytical skill in any finance role.", shows: "You'll be asked to value companies in every round. Interviewers test whether you can think critically about what a business is worth.", top1: "Elite candidates discuss what assumptions matter most and acknowledge uncertainty rather than pretending DCF gives a precise answer." },
-  "M&A": { why: "M&A is the bread and butter of investment banking. Understanding deal mechanics is non-negotiable.", shows: "Interviewers test whether you understand how transactions actually work — not just textbook definitions.", top1: "The best candidates connect M&A concepts to real deals they've followed and discuss strategic rationale, not just mechanics." },
+  "M&A": { why: "M&A is the bread and butter of investment banking. Understanding deal mechanics is non-negotiable.", shows: "Interviewers test whether you understand how transactions actually work - not just textbook definitions.", top1: "The best candidates connect M&A concepts to real deals they've followed and discuss strategic rationale, not just mechanics." },
   LBO: { why: "LBO mechanics are tested in both IB and PE interviews. It's where valuation meets capital structure.", shows: "Can you think like a financial sponsor? Do you understand how leverage creates (and destroys) value?", top1: "Top candidates can do a paper LBO in their head and discuss which return lever matters most in different scenarios." },
-  Modeling: { why: "Models are the primary deliverable analysts produce. Your modeling skills directly impact deal execution.", shows: "Interviewers want to know if you can build something that works — and catch when something doesn't.", top1: "The best analysts build models that are transparent, auditable, and tell a clear story. They sanity-check every output." },
-  Behavioral: { why: "Culture fit matters as much as technical skill. You'll spend 80+ hours/week with your team.", shows: "Are you self-aware? Can you handle pressure? Will you be someone people want on their deal team at 2 AM?", top1: "Top candidates give specific, structured stories that reveal character — not rehearsed corporate-speak." },
+  Modeling: { why: "Models are the primary deliverable analysts produce. Your modeling skills directly impact deal execution.", shows: "Interviewers want to know if you can build something that works - and catch when something doesn't.", top1: "The best analysts build models that are transparent, auditable, and tell a clear story. They sanity-check every output." },
+  Behavioral: { why: "Culture fit matters as much as technical skill. You'll spend 80+ hours/week with your team.", shows: "Are you self-aware? Can you handle pressure? Will you be someone people want on their deal team at 2 AM?", top1: "Top candidates give specific, structured stories that reveal character - not rehearsed corporate-speak." },
   Frameworks: { why: "Structured thinking is the core consulting skill. Frameworks give you a starting point for any problem.", shows: "Can you break down ambiguous problems into clear, actionable components without being told how?", top1: "The best candidates customize frameworks to the specific case rather than mechanically applying a template." },
   "Market Sizing": { why: "Market sizing tests your ability to structure problems and make reasonable assumptions under pressure.", shows: "Interviewers care about your process and logic, not whether you get the exact number.", top1: "Top candidates state assumptions explicitly, do clean mental math, and sanity-check their answer at the end." },
-  Audit: { why: "Audit develops professional judgment, skepticism, and deep accounting knowledge — the foundation of accounting careers.", shows: "Do you understand why we audit, not just how? Can you connect assertions to procedures?", top1: "The best candidates show professional skepticism while being practical about materiality and risk-based approaches." },
+  Audit: { why: "Audit develops professional judgment, skepticism, and deep accounting knowledge - the foundation of accounting careers.", shows: "Do you understand why we audit, not just how? Can you connect assertions to procedures?", top1: "The best candidates show professional skepticism while being practical about materiality and risk-based approaches." },
 };
 function getInsight(category: string) {
   return INSIGHTS[category] || { why: "This concept is fundamental to the role and is tested frequently in interviews.", shows: "Interviewers use this to assess your technical depth and ability to think on your feet.", top1: "Top candidates explain the 'why' behind concepts, not just the 'what.' They connect theory to practice." };
@@ -305,12 +305,12 @@ export default function FlashcardsPage() {
         }),
       });
       const data = await res.json();
-      if (data.error) { setAiHistory([...newHistory, { role: 'assistant', content: 'Something went wrong — try again.' }]); }
+      if (data.error) { setAiHistory([...newHistory, { role: 'assistant', content: 'Something went wrong - try again.' }]); }
       else {
         const entry: { role: string; content: string; score?: Score } = { role: 'assistant', content: data.feedback };
         if (data.score) {
           entry.score = data.score;
-          // Update performance — read fresh from localStorage to avoid overwriting practice mode data
+          // Update performance - read fresh from localStorage to avoid overwriting practice mode data
           const verdict = data.score.verdict;
           const cat = card.category;
           const freshRaw = localStorage.getItem('offerbell_flash_perf');
@@ -347,7 +347,7 @@ export default function FlashcardsPage() {
         }
         setAiHistory([...newHistory, entry]);
       }
-    } catch { setAiHistory([...newHistory, { role: 'assistant', content: 'Network error — please try again.' }]); }
+    } catch { setAiHistory([...newHistory, { role: 'assistant', content: 'Network error - please try again.' }]); }
     setAiLoading(false);
     setTimeout(() => inputRef.current?.focus(), 100);
   };
@@ -370,7 +370,7 @@ export default function FlashcardsPage() {
               let diagScore = 0;
               try { const h = JSON.parse(localStorage.getItem('offerbell_diag_history') || '[]'); if (h.length > 0) diagScore = Math.max(...h.map((d: any) => d.score || 0)); } catch {}
               if (diagScore >= 70) return (
-                <div style={{fontSize:12,color:'#16a34a',fontWeight:600,marginBottom:6,marginTop:-4}}>Your diagnostic scores are strong — go through every question below to lock it in.</div>
+                <div style={{fontSize:12,color:'#16a34a',fontWeight:600,marginBottom:6,marginTop:-4}}>Your diagnostic scores are strong - go through every question below to lock it in.</div>
               );
               if (diagScore > 0) return (
                 <div style={{fontSize:12,color:'var(--text-3)',marginBottom:6,marginTop:-4}}>You're at {diagScore}% on diagnostics. We recommend hitting 70%+ on <a href="/diagnostic-review" style={{color:'var(--text)',fontWeight:600,textDecoration:'underline'}}>Diagnostic Review</a> before deep-diving here.</div>
@@ -491,7 +491,7 @@ export default function FlashcardsPage() {
                           const wasHidden = !showAnswer;
                           setShowAnswer(!showAnswer);
                           if (wasHidden) {
-                            // Track as drilled — update both localStorage AND React state
+                            // Track as drilled - update both localStorage AND React state
                             try {
                               const raw = localStorage.getItem('offerbell_flash_perf');
                               const p = raw ? JSON.parse(raw) : { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
@@ -787,7 +787,7 @@ export default function FlashcardsPage() {
                                 {r.score.accuracy}/10 accuracy · {r.score.depth}/10 depth · {r.score.clarity}/10 clarity
                               </span>
                             )}
-                            <span style={{ fontSize: 11, color: 'var(--text-3)' }}>· {r.category || '—'}</span>
+                            <span style={{ fontSize: 11, color: 'var(--text-3)' }}>· {r.category || '-'}</span>
                             <div style={{ flex: 1 }} />
                             <span style={{ fontSize: 11, color: 'var(--text-3)' }}>{ago}</span>
                           </div>

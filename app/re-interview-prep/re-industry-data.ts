@@ -1,15 +1,15 @@
 export const RE_INDUSTRY_SECTIONS = [
   {
     title: 'Why Real Estate Is Different',
-    content: `<p>Real estate is the world's largest asset class&mdash;total global property value exceeds $300 trillion, dwarfing the combined value of all equities and bonds. It's also one of the most tangible: unlike a stock or a bond, a building is a physical asset that generates income from tenants paying rent to use the space. This tangibility creates unique characteristics that make RE finance fundamentally different from corporate finance.</p>
+    content: `<p>Real estate is the world's largest asset class-total global property value exceeds $300 trillion, dwarfing the combined value of all equities and bonds. It's also one of the most tangible: unlike a stock or a bond, a building is a physical asset that generates income from tenants paying rent to use the space. This tangibility creates unique characteristics that make RE finance fundamentally different from corporate finance.</p>
 
-<p><strong>Location is irreplaceable.</strong> Two identical office buildings in different locations can have wildly different values because the supply of desirable locations is fixed. You can't manufacture more beachfront property or duplicate a Manhattan subway stop. This creates natural scarcity that protects asset values&mdash;but also means that location selection is the single most important investment decision.</p>
+<p><strong>Location is irreplaceable.</strong> Two identical office buildings in different locations can have wildly different values because the supply of desirable locations is fixed. You can't manufacture more beachfront property or duplicate a Manhattan subway stop. This creates natural scarcity that protects asset values-but also means that location selection is the single most important investment decision.</p>
 
-<p><strong>Leverage is structural.</strong> Real estate is inherently leveraged because banks are willing to lend 50&ndash;75% of a property's value (sometimes more). A $100M building might be purchased with $35M of equity and $65M of debt. This amplifies equity returns significantly: if the property appreciates 10% to $110M, the equity has grown from $35M to $45M&mdash;a 29% return on equity from a 10% property appreciation.</p>
+<p><strong>Leverage is structural.</strong> Real estate is inherently leveraged because banks are willing to lend 50-75% of a property's value (sometimes more). A $100M building might be purchased with $35M of equity and $65M of debt. This amplifies equity returns significantly: if the property appreciates 10% to $110M, the equity has grown from $35M to $45M-a 29% return on equity from a 10% property appreciation.</p>
 
-<p><strong>Cash flow is contractual.</strong> Unlike a company whose revenue depends on customer demand, a property's income is largely determined by existing leases&mdash;contracts that obligate tenants to pay rent for defined periods. A 10-year lease with a creditworthy tenant is as close to a guaranteed cash flow as you'll find in private markets.</p>
+<p><strong>Cash flow is contractual.</strong> Unlike a company whose revenue depends on customer demand, a property's income is largely determined by existing leases-contracts that obligate tenants to pay rent for defined periods. A 10-year lease with a creditworthy tenant is as close to a guaranteed cash flow as you'll find in private markets.</p>
 
-<p><strong>Every asset is unique.</strong> No two buildings are identical. Even two properties on the same block differ in age, condition, tenant mix, lease terms, and physical characteristics. This creates information asymmetry and pricing inefficiency&mdash;which is where skilled real estate investors generate returns.</p>`,
+<p><strong>Every asset is unique.</strong> No two buildings are identical. Even two properties on the same block differ in age, condition, tenant mix, lease terms, and physical characteristics. This creates information asymmetry and pricing inefficiency-which is where skilled real estate investors generate returns.</p>`,
   },
   {
     title: 'The Major Career Paths',

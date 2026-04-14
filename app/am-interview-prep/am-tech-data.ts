@@ -1,7 +1,7 @@
-// Asset Management Mastery Manual — Modules 1-2
+// Asset Management Mastery Manual - Modules 1-2
 export const AM_TECH_SECTIONS = [
   {
-    title: '1.1–1.2 What Asset Management Is & How It Differs',
+    title: '1.1-1.2 What Asset Management Is & How It Differs',
     content: `<h3>1.1 What Asset Management Actually Is</h3>
 <p>Asset management is the professional process of managing capital on behalf of clients or institutions with the objective of achieving specific return and risk outcomes over a defined time horizon.</p>
 <p><strong>Why it exists:</strong> Most pools of capital cannot simply sit idle. Individuals, pensions, endowments, insurance companies, sovereign funds, foundations, family offices, and corporations need to: preserve purchasing power, compound wealth, meet future liabilities, generate income, outperform a benchmark, manage downside risk.</p>
@@ -17,7 +17,7 @@ export const AM_TECH_SECTIONS = [
 <p><strong>Interview insight:</strong> A strong candidate understands that asset management is not "just researching stocks." It is about making decisions under mandate constraints and being accountable for both returns and risk.</p>`,
   },
   {
-    title: '1.3–1.5 Core Investor Questions, The AM Mindset, What Interviews Test',
+    title: '1.3-1.5 Core Investor Questions, The AM Mindset, What Interviews Test',
     content: `<h3>1.3 The Core Questions Every Investor Is Really Asking</h3>
 <ol><li>What is this asset worth?</li><li>What is currently priced into it?</li><li>Why is the market potentially wrong or incomplete?</li><li>What is the catalyst or time horizon for convergence?</li><li>What are the key risks, including being early or wrong?</li><li>How does this fit within the broader portfolio?</li></ol>
 <p>A weak candidate describes businesses. A strong candidate compares price to value. An elite candidate compares price to value, weighs probability distributions, and places the idea in a portfolio context.</p>
@@ -33,7 +33,7 @@ export const AM_TECH_SECTIONS = [
 <p>The best candidates do not just know finance. They show judgment.</p>`,
   },
   {
-    title: '1.6–1.9 Good Business vs Good Investment, Sources of Edge, Investment Styles, Institutional Process',
+    title: '1.6-1.9 Good Business vs Good Investment, Sources of Edge, Investment Styles, Institutional Process',
     content: `<h3>1.6 The Difference Between a Good Business and a Good Investment</h3>
 <p>A company can be: a wonderful business but a poor investment if it is overpriced, a mediocre business but a good investment if expectations are too low and the price is cheap enough.</p>
 <p><strong>Why this matters:</strong> The market pays for future expectations, not admiration.</p>
@@ -69,7 +69,7 @@ export const AM_TECH_SECTIONS = [
 <p><strong>Self-test checklist:</strong> Did I talk about price versus value? Did I mention time horizon and risk? Did I sound like an investor, not just a market commentator?</p>`,
   },
   {
-    title: '2.1–2.5 Asset Classes: Equities, Fixed Income, Cash, Alternatives',
+    title: '2.1-2.5 Asset Classes: Equities, Fixed Income, Cash, Alternatives',
     content: `<h3>2.1 Why Asset Class Understanding Matters</h3>
 <p>An asset manager allocates capital across different types of securities, each with different drivers, risks, and valuation frameworks. If you do not understand how an asset class works, you cannot understand what drives performance, what the benchmark means, or what risk you are taking.</p>
 
@@ -94,7 +94,7 @@ export const AM_TECH_SECTIONS = [
 <p><strong>Why this matters:</strong> Alternatives can alter return sources, diversification, inflation sensitivity, and liquidity profile.</p>`,
   },
   {
-    title: '2.6–2.10 How Markets Price Securities, Discount Rates, Benchmarks, Efficiency, Expectations + Module 2 Practice',
+    title: '2.6-2.10 How Markets Price Securities, Discount Rates, Benchmarks, Efficiency, Expectations + Module 2 Practice',
     content: `<h3>2.6 How Markets Price Securities</h3>
 <p>At a high level, price reflects the market's collective expectations about: future cash flows, growth, risk, discount rates, scarcity and flows, liquidity, policy and macro conditions.</p>
 <p><strong>Key investing insight:</strong> A stock does not rise because earnings are good in an absolute sense. It rises if outcomes are better than what was already priced in, or if the multiple investors are willing to pay increases.</p>
@@ -116,7 +116,7 @@ export const AM_TECH_SECTIONS = [
 
 <h3>2.10 The Role of Expectations</h3>
 <p>Asset prices are often a function of expectations, revisions, and surprises.</p>
-<p><strong>Strong investing frame — Do not ask only:</strong> Is this company good? <strong>Also ask:</strong> What does the market expect? What would need to happen for this to outperform or disappoint? Is the current narrative too optimistic or too pessimistic?</p>
+<p><strong>Strong investing frame - Do not ask only:</strong> Is this company good? <strong>Also ask:</strong> What does the market expect? What would need to happen for this to outperform or disappoint? Is the current narrative too optimistic or too pessimistic?</p>
 
 <h3>Module 2 Practice Drills</h3>
 <p><strong>Explain-out-loud drills:</strong> What drives stock returns over time? What drives bond prices? Why do discount rates matter so much? Why does benchmark awareness matter in institutional investing?</p>
