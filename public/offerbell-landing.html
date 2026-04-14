@@ -68,9 +68,9 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
   border-radius:4px;
   box-shadow:
     0 1px 0 rgba(255,255,255,0.8) inset,
-    0 30px 60px -20px rgba(44,24,16,0.18),
-    0 8px 20px -6px rgba(44,24,16,0.08);
-  padding:38px 42px 34px;
+    0 20px 40px -16px rgba(44,24,16,0.16),
+    0 6px 14px -4px rgba(44,24,16,0.06);
+  padding:24px 28px 22px;
   position:relative;
   font-family:'Source Serif 4',Georgia,serif;
   color:#2c1810;
@@ -88,77 +88,45 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
 }
 /* left hairline like a book margin */
 .manifesto::after{
-  content:'';position:absolute;top:32px;bottom:32px;left:22px;
+  content:'';position:absolute;top:22px;bottom:22px;left:14px;
   width:1px;background:linear-gradient(180deg,transparent,rgba(139,37,0,0.25),transparent);
 }
 
 .man-head{
   display:flex;justify-content:space-between;align-items:baseline;
-  padding-bottom:14px;margin-bottom:22px;
+  padding-bottom:10px;margin-bottom:16px;
   border-bottom:1px solid rgba(139,37,0,0.18);
   font-family:'Sora',sans-serif;
   position:relative;z-index:2;
 }
-.man-issue{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#8b2500;}
+.man-issue{font-size:9.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#8b2500;}
 .man-date{font-size:10px;font-weight:500;letter-spacing:1px;color:rgba(44,24,16,0.5);font-style:italic;font-family:'Source Serif 4',Georgia,serif;}
 
-.man-body{position:relative;z-index:2;margin-bottom:26px;}
+.man-body{position:relative;z-index:2;}
 .man-kicker{
   font-family:'Sora',sans-serif;
-  font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
-  color:rgba(44,24,16,0.55);margin-bottom:16px;
+  font-size:9.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  color:rgba(44,24,16,0.55);margin-bottom:10px;
 }
 .man-headline{
   font-family:'Instrument Serif',serif;
-  font-size:38px;line-height:1.05;letter-spacing:-1px;
-  color:#2c1810;margin:0 0 20px;font-weight:400;
+  font-size:30px;line-height:1.08;letter-spacing:-0.8px;
+  color:#2c1810;margin:0 0 14px;font-weight:400;
 }
 .man-line{display:block;opacity:0;animation:man-line-in 0.7s ease forwards;}
-.man-line:nth-child(1){animation-delay:0.2s;}
-.man-line:nth-child(2){animation-delay:0.34s;}
-.man-line:nth-child(3){animation-delay:0.48s;}
-.man-line:nth-child(4){animation-delay:0.62s;}
+.man-line:nth-child(1){animation-delay:0.18s;}
+.man-line:nth-child(2){animation-delay:0.32s;}
+.man-line:nth-child(3){animation-delay:0.46s;}
 .man-line-em em{font-style:italic;color:#8b2500;}
 @keyframes man-line-in{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 .man-deck{
-  font-size:14px;line-height:1.55;color:rgba(44,24,16,0.72);
-  max-width:92%;font-style:italic;
-}
-
-.man-pillars{
-  position:relative;z-index:2;
-  padding-top:22px;
-  border-top:1px solid rgba(139,37,0,0.18);
-}
-.man-pillar{
-  display:flex;align-items:baseline;gap:18px;
-  padding:11px 0;opacity:0;animation:man-line-in 0.6s ease forwards;
-}
-.man-pillar:nth-of-type(1){animation-delay:0.8s;}
-.man-pillar:nth-of-type(3){animation-delay:0.92s;}
-.man-pillar:nth-of-type(5){animation-delay:1.04s;}
-.man-pillar:nth-of-type(7){animation-delay:1.16s;}
-.man-roman{
-  font-family:'Instrument Serif',serif;
-  font-size:16px;color:#8b2500;font-weight:400;font-style:italic;
-  min-width:26px;letter-spacing:0.5px;
-}
-.man-pillar-title{
-  font-family:'Instrument Serif',serif;
-  font-size:17px;color:#2c1810;letter-spacing:-0.3px;line-height:1.2;
-}
-.man-pillar-sub{
-  font-family:'Sora',sans-serif;
-  font-size:11px;color:rgba(44,24,16,0.58);margin-top:3px;
-  letter-spacing:0.1px;
-}
-.man-rule{
-  height:1px;background:rgba(139,37,0,0.12);margin:0 0 0 44px;
+  font-size:13px;line-height:1.5;color:rgba(44,24,16,0.7);
+  font-style:italic;
 }
 
 .man-corner{
-  position:absolute;bottom:22px;right:26px;color:#8b2500;z-index:2;
-  opacity:0;animation:man-line-in 0.8s ease forwards 1.3s;
+  position:absolute;bottom:14px;right:18px;color:#8b2500;z-index:2;
+  opacity:0;animation:man-line-in 0.8s ease forwards 0.9s;
 }
 .demo-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:var(--g50);border-bottom:1px solid var(--g200);}
 .demo-dot{width:10px;height:10px;border-radius:50%;}
@@ -642,65 +610,25 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
     </div>
     <div class="hero-right">
       <div class="manifesto">
-        <!-- Paper texture + margin marks -->
         <div class="man-head">
           <div class="man-issue">Issue 01 · The Recruiting OS</div>
-          <div class="man-date" id="man-date">Est. 2026</div>
+          <div class="man-date">Est. 2026</div>
         </div>
 
-        <!-- Main serif statement -->
         <div class="man-body">
           <div class="man-kicker">From curious student to signed offer</div>
           <h3 class="man-headline">
-            <span class="man-line">Networking,</span>
-            <span class="man-line">interview prep,</span>
-            <span class="man-line">and recruiting strategy -</span>
+            <span class="man-line">Networking, prep,</span>
+            <span class="man-line">and strategy -</span>
             <span class="man-line man-line-em"><em>one platform.</em></span>
           </h3>
           <div class="man-deck">
-            For students breaking into investment banking, private equity, consulting,
-            tech, and everything between.
+            For students breaking into finance, consulting, and tech.
           </div>
         </div>
 
-        <!-- Four pillars: minimal, roman numeral list -->
-        <div class="man-pillars">
-          <div class="man-pillar">
-            <span class="man-roman">I</span>
-            <div>
-              <div class="man-pillar-title">Discover</div>
-              <div class="man-pillar-sub">Career roadmaps across 11 tracks</div>
-            </div>
-          </div>
-          <div class="man-rule"></div>
-          <div class="man-pillar">
-            <span class="man-roman">II</span>
-            <div>
-              <div class="man-pillar-title">Reach out</div>
-              <div class="man-pillar-sub">Personalized outreach, tracked end-to-end</div>
-            </div>
-          </div>
-          <div class="man-rule"></div>
-          <div class="man-pillar">
-            <span class="man-roman">III</span>
-            <div>
-              <div class="man-pillar-title">Prepare</div>
-              <div class="man-pillar-sub">Prep guides, flashcards, live mock interviews</div>
-            </div>
-          </div>
-          <div class="man-rule"></div>
-          <div class="man-pillar">
-            <span class="man-roman">IV</span>
-            <div>
-              <div class="man-pillar-title">Land the offer</div>
-              <div class="man-pillar-sub">AI coaching on every step that matters</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Corner mark -->
         <div class="man-corner">
-          <svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+          <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
             <path d="M20 4 L34 20 L20 36 L6 20 Z" stroke="currentColor" stroke-width="0.8" opacity="0.4"/>
             <path d="M20 12 L28 20 L20 28 L12 20 Z" stroke="currentColor" stroke-width="0.8" opacity="0.6"/>
             <circle cx="20" cy="20" r="2.5" fill="currentColor"/>
