@@ -144,13 +144,6 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
   margin-bottom:48px;
   padding:0 20px;
 }
-.logos-head-emoji{
-  font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;
-  font-size:24px;
-  margin-left:8px;
-  position:relative;
-  top:2px;
-}
 .logos-marquee{
   width:100%;
   overflow:hidden;
@@ -163,10 +156,9 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
   align-items:center;
   gap:80px;
   width:max-content;
-  animation:logos-scroll 75s linear infinite;
+  animation:logos-scroll 35s linear infinite;
   padding-left:80px;
 }
-.logos-marquee:hover .logos-track{animation-play-state:paused;}
 @keyframes logos-scroll{
   from{transform:translateX(0);}
   to{transform:translateX(-50%);}
@@ -1113,7 +1105,6 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 <section class="logos-strip">
   <div class="logos-head">
     Our Users Get The Best Offers
-    <span class="logos-head-emoji" aria-hidden>&#128071;</span>
   </div>
   <div class="logos-marquee" aria-label="Firms our users have received offers from">
     <div class="logos-track">
