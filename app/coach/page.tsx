@@ -139,6 +139,60 @@ Be direct, specific, and warm - like a brilliant older friend who went through t
 
 type Message = { role: 'user' | 'assistant'; content: string; time?: number };
 
+type StoredConvo = {
+  id: string;
+  track: string;
+  feature: string | null;
+  preview: string;
+  messages: Message[];
+  createdAt: number;
+  updatedAt: number;
+};
+
+const HISTORY_KEY = 'offerbell_coach_history';
+const HISTORY_MAX = 50;
+
+function loadConvos(): StoredConvo[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed;
+  } catch { return []; }
+}
+
+function saveConvos(convos: StoredConvo[]) {
+  if (typeof window === 'undefined') return;
+  try {
+    // Keep newest first, capped at HISTORY_MAX
+    const sorted = [...convos].sort((a, b) => b.updatedAt - a.updatedAt).slice(0, HISTORY_MAX);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(sorted));
+  } catch {}
+}
+
+function newConvoId() {
+  return 'c_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+}
+
+function makePreview(messages: Message[]): string {
+  const firstUser = messages.find(m => m.role === 'user');
+  if (!firstUser) return 'New conversation';
+  const text = firstUser.content.replace(/\s+/g, ' ').trim();
+  return text.length > 80 ? text.slice(0, 78).trim() + '...' : text;
+}
+
+function timeAgo(ts: number): string {
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return Math.floor(s / 60) + 'm ago';
+  if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+  const d = Math.floor(s / 86400);
+  if (d < 7) return d + 'd ago';
+  return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
 function formatText(text: string): string {
   return text
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -160,7 +214,8 @@ export default function CoachPage() {
   const [activeTrack, setActiveTrack] = useState('Investment Banking');
   const [activeFeature, setActiveFeature] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [conversationHistory, setConversationHistory] = useState<Record<string, Message[]>>({});
+  const [convos, setConvos] = useState<StoredConvo[]>([]);
+  const [activeConvoId, setActiveConvoId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [inputVal, setInputVal] = useState('');
   const [userName, setUserName] = useState({ first: '', last: '' });
@@ -169,6 +224,7 @@ export default function CoachPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -251,6 +307,8 @@ export default function CoachPage() {
     const { isUserPro } = await import('../lib/plan');
     setIsPro(isUserPro());
     setPlanLoaded(true);
+    // Load saved conversations
+    setConvos(loadConvos());
     // Use saved theme preference
     const savedTheme = localStorage.getItem('offerbell-theme');
     if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
@@ -265,6 +323,63 @@ export default function CoachPage() {
   const scrollBottom = useCallback(() => {
     setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
   }, []);
+
+  // Auto-save the active conversation whenever messages change
+  useEffect(() => {
+    if (!planLoaded) return;
+    if (messages.length === 0) return;
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      const id = activeConvoId || newConvoId();
+      const now = Date.now();
+      setConvos(prev => {
+        const existing = prev.find(c => c.id === id);
+        const updated: StoredConvo = existing
+          ? { ...existing, messages, preview: makePreview(messages), updatedAt: now, track: activeTrack, feature: activeFeature }
+          : { id, track: activeTrack, feature: activeFeature, preview: makePreview(messages), messages, createdAt: now, updatedAt: now };
+        const others = prev.filter(c => c.id !== id);
+        const next = [updated, ...others];
+        saveConvos(next);
+        return next;
+      });
+      if (!activeConvoId) setActiveConvoId(id);
+    }, 350);
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages, planLoaded]);
+
+  const loadConvo = (c: StoredConvo) => {
+    setActiveTrack(c.track);
+    setActiveFeature(c.feature);
+    setMessages(c.messages);
+    setActiveConvoId(c.id);
+    setInputVal('');
+    scrollBottom();
+  };
+
+  const newConversation = () => {
+    setMessages([]);
+    setInputVal('');
+    setActiveConvoId(null);
+    setActiveFeature(null);
+    setTimeout(() => textareaRef.current?.focus(), 100);
+  };
+
+  const deleteConvo = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setConvos(prev => {
+      const next = prev.filter(c => c.id !== id);
+      saveConvos(next);
+      return next;
+    });
+    if (id === activeConvoId) {
+      setMessages([]);
+      setActiveConvoId(null);
+      setActiveFeature(null);
+    }
+  };
 
   const sendMessage = async (text: string) => {
     if (isLoading || !text.trim()) return;
@@ -306,18 +421,14 @@ export default function CoachPage() {
   };
 
   const selectFeature = (title: string, prompt: string) => {
-    // Save current conversation
-    if (activeFeature && messages.length > 0) {
-      setConversationHistory(prev => ({ ...prev, [activeFeature]: messages }));
-    }
     setActiveFeature(title);
-    // Restore or start new
-    const prev = conversationHistory[title];
-    if (prev && prev.length > 0) {
-      setMessages(prev);
-      setInputVal('');
+    // Look for an existing recent convo on this track + feature
+    const match = convos.find(c => c.track === activeTrack && c.feature === title);
+    if (match) {
+      loadConvo(match);
     } else {
       setMessages([]);
+      setActiveConvoId(null);
       setInputVal(prompt);
     }
     setTimeout(() => textareaRef.current?.focus(), 100);
@@ -397,12 +508,10 @@ export default function CoachPage() {
             className="coach-track-select"
             value={activeTrack}
             onChange={e => {
-              if (activeFeature && messages.length > 0) {
-                setConversationHistory(prev => ({ ...prev, [activeFeature]: messages }));
-              }
               setActiveTrack(e.target.value);
               setActiveFeature(null);
               setMessages([]);
+              setActiveConvoId(null);
               setInputVal('');
             }}
           >
@@ -425,6 +534,50 @@ export default function CoachPage() {
               </div>
             ))}
           </div>
+
+          {convos.length > 0 && (
+            <div className="coach-history">
+              <div className="coach-history-head">
+                <div className="coach-left-section" style={{ marginBottom: 0 }}>Recent</div>
+                {messages.length > 0 && (
+                  <button className="coach-history-new" onClick={newConversation} type="button" title="Start a new conversation">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                    New
+                  </button>
+                )}
+              </div>
+              <div className="coach-history-list">
+                {convos.slice(0, 8).map(c => {
+                  const isActive = c.id === activeConvoId;
+                  return (
+                    <div
+                      key={c.id}
+                      className={`coach-history-item${isActive ? ' active' : ''}`}
+                      onClick={() => loadConvo(c)}
+                    >
+                      <div className="coach-history-item-main">
+                        <div className="coach-history-item-meta">
+                          <span className="coach-history-item-track">{c.track}</span>
+                          {c.feature && <span className="coach-history-item-feature"> · {c.feature}</span>}
+                        </div>
+                        <div className="coach-history-item-preview">{c.preview}</div>
+                        <div className="coach-history-item-time">{timeAgo(c.updatedAt)}</div>
+                      </div>
+                      <button
+                        className="coach-history-item-delete"
+                        onClick={e => deleteConvo(c.id, e)}
+                        type="button"
+                        title="Delete conversation"
+                        aria-label="Delete conversation"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           <div className="coach-left-quote">
             <div className="coach-left-quote-text" dangerouslySetInnerHTML={{ __html: QUOTES[quoteIdx].text }} />
