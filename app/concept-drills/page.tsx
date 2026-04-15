@@ -291,10 +291,16 @@ export default function ConceptDrillsPage() {
             </section>
           )}
 
-          <div className="cd-result-actions">
-            <button className="cd-action-primary" onClick={() => startDrill(activeTopic)} type="button">Drill again</button>
-            <button className="cd-action-secondary" onClick={() => setPhase('topics')} type="button">Pick topic</button>
-            <button className="cd-action-secondary" onClick={() => setPhase('landing')} type="button">All tracks</button>
+          <div className="cd-result-actions-wrap">
+            <div className="cd-result-actions-label">Next</div>
+            <div className="cd-result-actions">
+              <button className="cd-action-primary" onClick={() => startDrill(activeTopic)} type="button">
+                Drill again
+                <span aria-hidden>↻</span>
+              </button>
+              <button className="cd-action-secondary" onClick={() => setPhase('topics')} type="button">Pick another topic</button>
+              <button className="cd-action-secondary" onClick={() => setPhase('landing')} type="button">All tracks</button>
+            </div>
           </div>
         </div>
       </main>
