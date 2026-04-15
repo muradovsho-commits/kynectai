@@ -1428,25 +1428,17 @@ const fc6=document.getElementById('fc6');if(fc6)j6obs.observe(fc6);
 // ── FAQ ──
 function toggleFaq(btn){const item=btn.closest('.faq-item');document.querySelectorAll('.faq-item.open').forEach(i=>{if(i!==item)i.classList.remove('open');});item.classList.toggle('open');}
 
-// ── Smooth auth navigation ──
-document.querySelectorAll('a[href="/signin"], a[href="/signup"]').forEach(link=>{
-  link.addEventListener('click',e=>{
-    if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||e.button!==0)return;
-    e.preventDefault();
-    const href=link.getAttribute('href');
-    if(!href)return;
-    document.body.classList.add('page-exit');
-    setTimeout(()=>{window.location.href=href;},220);
-  });
-});
+// ── Smooth auth navigation ── (handled by global handler below)
 </script>
-</body>
 <script>
   document.addEventListener('click', function(e) {
     const a = e.target.closest('a');
     if (a && a.getAttribute('href') && a.getAttribute('href').startsWith('/')) {
       e.preventDefault();
-      window.parent.postMessage({ type: 'navigate', url: a.getAttribute('href') }, '*');
+      document.body.classList.add('page-exit');
+      setTimeout(function() {
+        window.parent.postMessage({ type: 'navigate', url: a.getAttribute('href') }, '*');
+      }, 200);
     }
   });
 </script>
