@@ -43,14 +43,82 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
 .hero h1{font-family:'Instrument Serif',serif;font-size:clamp(44px,5.5vw,72px);line-height:1.0;letter-spacing:-2px;margin-bottom:20px;animation:fadeUp 0.5s 0.08s ease both;}
 .hero h1 em{font-style:italic;}
 .hero-sub{font-size:17px;color:var(--g600);max-width:480px;line-height:1.65;margin-bottom:14px;animation:fadeUp 0.5s 0.16s ease both;}
-.hero-typing-row{font-size:13px;color:var(--g400);margin-bottom:28px;min-height:20px;animation:fadeUp 0.5s 0.2s ease both;}
+.hero-typing-row{font-size:13px;color:var(--g400);margin-bottom:20px;min-height:20px;animation:fadeUp 0.5s 0.2s ease both;}
 .hero-typing-row strong{color:var(--black);font-weight:600;}
+
+/* New hero lede (Superday-style: bold lead-in + lighter follow-up) */
+.hero-lede{
+  font-family:'Instrument Serif',serif;
+  font-size:24px;
+  line-height:1.35;
+  letter-spacing:-0.4px;
+  color:var(--g500);
+  margin:0 0 24px;
+  max-width:520px;
+  animation:fadeUp 0.5s 0.22s ease both;
+  font-weight:400;
+}
+.hero-lede strong{
+  color:var(--black);
+  font-weight:700;
+}
+
+/* CTA + campus row */
+.hero-cta-row{
+  display:flex;
+  align-items:center;
+  gap:24px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+  animation:fadeUp 0.5s 0.28s ease both;
+}
 .hero-btns{display:flex;gap:12px;flex-wrap:wrap;animation:fadeUp 0.5s 0.26s ease both;margin-bottom:10px;}
-.btn-primary{background:var(--black);color:var(--white);padding:13px 28px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;transition:all 0.15s;}
+.btn-primary{background:var(--black);color:var(--white);padding:13px 28px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;transition:all 0.15s;display:inline-flex;align-items:center;}
 .btn-primary:hover{opacity:0.85;transform:translateY(-1px);}
+.btn-primary-lg{
+  padding:16px 30px;
+  font-size:15px;
+  border-radius:12px;
+  box-shadow:0 4px 14px -4px rgba(0,0,0,0.25);
+}
+.btn-primary-lg:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 20px -4px rgba(0,0,0,0.32);
+  opacity:1;
+}
 .btn-secondary{background:var(--white);color:var(--black);padding:13px 28px;border-radius:10px;font-size:14px;font-weight:500;text-decoration:none;border:1.5px solid var(--g200);transition:all 0.15s;}
 .btn-secondary:hover{border-color:var(--black);transform:translateY(-1px);}
-.hero-reassure{font-size:11px;color:var(--g400);animation:fadeUp 0.5s 0.3s ease both;margin-bottom:24px;}
+
+/* Campus pills + caption */
+.hero-campus{display:flex;flex-direction:column;gap:6px;align-items:flex-start;}
+.hero-campus-pills{display:flex;align-items:center;}
+.campus-pill{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  margin-left:-8px;
+  background:#fff;
+  border:2px solid #fff;
+  box-shadow:0 1px 3px rgba(0,0,0,0.12),0 0 0 1px rgba(0,0,0,0.04);
+  overflow:hidden;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  transition:transform 0.15s ease;
+}
+.campus-pill:first-child{margin-left:0;}
+.campus-pill:hover{transform:translateY(-2px);z-index:1;}
+.campus-pill svg{width:100%;height:100%;display:block;}
+.hero-campus-caption{
+  font-size:12px;
+  color:var(--g500);
+  font-weight:500;
+  letter-spacing:0.1px;
+  margin-left:2px;
+}
+
+.hero-reassure{font-size:11px;color:var(--g400);animation:fadeUp 0.5s 0.34s ease both;margin-bottom:24px;}
 .hero-proof{display:flex;align-items:center;gap:10px;animation:fadeUp 0.5s 0.36s ease both;}
 .proof-avatars{display:flex;}
 .proof-av{width:26px;height:26px;border-radius:50%;border:2px solid var(--white);margin-left:-6px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;}
@@ -788,22 +856,66 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
     <div>
       <div class="hero-badge">AI-powered · Your all-in-one recruiting hub</div>
       <h1>Stop Guessing.<br><em>Start Landing</em> Interviews.</h1>
-      <p class="hero-sub">Career roadmaps, AI-personalized outreach, and elite interview prep - OfferBell gives you everything you need to land your dream role in IB, PE, consulting, accounting, and beyond.</p>
       <div class="hero-typing-row">Targeting: <strong id="hero-type"></strong><span class="demo-cursor"></span></div>
-      <div class="hero-btns">
-        <a href="/signup" class="btn-primary">Start for Free</a>
-        <a href="#features" class="btn-secondary">See How It Works</a>
-      </div>
-      <p class="hero-reassure">Takes 30 seconds. No credit card required.</p>
-      <div class="hero-proof">
-        <div class="proof-avatars">
-          <div class="proof-av" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">S</div>
-          <div class="proof-av" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)">J</div>
-          <div class="proof-av" style="background:linear-gradient(135deg,#22c55e,#16a34a)">M</div>
-          <div class="proof-av" style="background:linear-gradient(135deg,#ec4899,#f43f5e)">A</div>
+
+      <p class="hero-lede">
+        <strong>#1 finance recruiting platform.</strong>
+        <span>Trained on thousands of real interview questions from top firms.</span>
+      </p>
+
+      <div class="hero-cta-row">
+        <a href="/signup" class="btn-primary btn-primary-lg">
+          Try For Free Today
+          <span aria-hidden style="margin-left:6px;font-weight:600;">&rarr;</span>
+        </a>
+        <div class="hero-campus">
+          <div class="hero-campus-pills">
+            <span class="campus-pill" title="Harvard University">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <circle cx="16" cy="16" r="16" fill="#a51c30"/>
+                <text x="16" y="14" text-anchor="middle" fill="#fff" font-family="Georgia,serif" font-size="6.5" font-weight="700" letter-spacing="0.4">VE RI</text>
+                <text x="16" y="22" text-anchor="middle" fill="#fff" font-family="Georgia,serif" font-size="6.5" font-weight="700" letter-spacing="0.4">TAS</text>
+              </svg>
+            </span>
+            <span class="campus-pill" title="NYU Stern">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <circle cx="16" cy="16" r="16" fill="#57068c"/>
+                <text x="16" y="20" text-anchor="middle" fill="#fff" font-family="'Helvetica Neue',Arial,sans-serif" font-size="9.5" font-weight="800" letter-spacing="-0.2">NYU</text>
+              </svg>
+            </span>
+            <span class="campus-pill" title="Columbia University">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <circle cx="16" cy="16" r="16" fill="#003478"/>
+                <path d="M16 8 L13.5 11 L18.5 11 Z" fill="#fff"/>
+                <rect x="14" y="11" width="4" height="11" fill="#fff"/>
+                <path d="M11 22 L21 22 L21 24 L11 24 Z" fill="#fff"/>
+                <circle cx="16" cy="9" r="0.9" fill="#fff"/>
+              </svg>
+            </span>
+            <span class="campus-pill" title="University of Michigan">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <circle cx="16" cy="16" r="16" fill="#00274c"/>
+                <text x="16" y="22" text-anchor="middle" fill="#ffcb05" font-family="'Helvetica Neue',Arial,sans-serif" font-size="14" font-weight="900">M</text>
+              </svg>
+            </span>
+            <span class="campus-pill" title="University of Virginia">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <circle cx="16" cy="16" r="16" fill="#e57200"/>
+                <rect x="9" y="20" width="14" height="2" fill="#fff"/>
+                <path d="M9 20 L23 20 L20 14 L12 14 Z" fill="#fff"/>
+                <rect x="11" y="14" width="1.4" height="6" fill="#e57200"/>
+                <rect x="14" y="14" width="1.4" height="6" fill="#e57200"/>
+                <rect x="16.6" y="14" width="1.4" height="6" fill="#e57200"/>
+                <rect x="19.2" y="14" width="1.4" height="6" fill="#e57200"/>
+                <path d="M9 14 L16 9 L23 14 Z" fill="#fff"/>
+              </svg>
+            </span>
+          </div>
+          <div class="hero-campus-caption">Used on 50+ campuses</div>
         </div>
-        <span class="hero-proof-text">Used by students recruiting at Goldman, JPMorgan, Blackstone & more</span>
       </div>
+
+      <p class="hero-reassure">Takes 30 seconds. No credit card required.</p>
     </div>
     <div class="hero-right">
       <div class="hero-mock-window">
