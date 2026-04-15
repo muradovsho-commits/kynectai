@@ -61,73 +61,266 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
 .hero-right{animation:fadeUp 0.6s 0.12s ease both;}
 .demo-win{background:var(--white);border:1px solid var(--g200);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,0.08),0 2px 8px rgba(0,0,0,0.04);overflow:hidden;}
 
-/* ── Manifesto card (hero right) ── */
-.manifesto{
-  background:#faf8f3;
-  border:1px solid #e8e3d6;
-  border-radius:4px;
+/* ── Hero dashboard preview (browser window mockup, hero right) ── */
+.hero-mock-window{
+  background:#ffffff;
+  border:1px solid #e5e0d2;
+  border-radius:12px;
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.8) inset,
-    0 20px 40px -16px rgba(44,24,16,0.16),
-    0 6px 14px -4px rgba(44,24,16,0.06);
-  padding:24px 28px 22px;
-  position:relative;
-  font-family:'Source Serif 4',Georgia,serif;
-  color:#2c1810;
+    0 1px 0 rgba(255,255,255,0.9) inset,
+    0 24px 56px -18px rgba(44,24,16,0.22),
+    0 8px 22px -6px rgba(44,24,16,0.10);
   overflow:hidden;
-}
-/* subtle paper grain */
-.manifesto::before{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background-image:
-    radial-gradient(rgba(44,24,16,0.035) 1px,transparent 1px),
-    radial-gradient(rgba(44,24,16,0.02) 1px,transparent 1px);
-  background-size:28px 28px,14px 14px;
-  background-position:0 0,14px 14px;
-  opacity:0.6;
-}
-/* left hairline like a book margin */
-.manifesto::after{
-  content:'';position:absolute;top:22px;bottom:22px;left:14px;
-  width:1px;background:linear-gradient(180deg,transparent,rgba(139,37,0,0.25),transparent);
+  font-family:'Sora',sans-serif;
+  color:#1a1a1a;
 }
 
-.man-head{
-  display:flex;justify-content:space-between;align-items:baseline;
-  padding-bottom:10px;margin-bottom:16px;
-  border-bottom:1px solid rgba(139,37,0,0.18);
-  font-family:'Sora',sans-serif;
-  position:relative;z-index:2;
+/* Browser chrome bar */
+.hmw-chrome{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;
+  background:#f4f1ea;
+  border-bottom:1px solid #e8e3d6;
 }
-.man-issue{font-size:9.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#8b2500;}
-.man-date{font-size:10px;font-weight:500;letter-spacing:1px;color:rgba(44,24,16,0.5);font-style:italic;font-family:'Source Serif 4',Georgia,serif;}
+.hmw-dots{display:flex;gap:6px;flex-shrink:0;}
+.hmw-dot{width:11px;height:11px;border-radius:50%;}
+.hmw-dot-r{background:#ff5f57;}
+.hmw-dot-y{background:#febc2e;}
+.hmw-dot-g{background:#28c840;}
+.hmw-url{
+  flex:1;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  background:#fdfcf8;
+  border:1px solid #e8e3d6;
+  border-radius:6px;
+  padding:5px 14px;
+  font-size:11.5px;
+  color:#5a4a3a;
+  letter-spacing:0.2px;
+  max-width:340px;
+  margin:0 auto;
+}
+.hmw-url svg{color:#9a8a78;flex-shrink:0;}
+.hmw-chrome-spacer{width:38px;flex-shrink:0;}
 
-.man-body{position:relative;z-index:2;}
-.man-kicker{
-  font-family:'Sora',sans-serif;
-  font-size:9.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
-  color:rgba(44,24,16,0.55);margin-bottom:10px;
+/* App body: sidebar + main */
+.hmw-body{
+  display:grid;
+  grid-template-columns:172px 1fr;
+  background:#fafaf7;
+  min-height:480px;
 }
-.man-headline{
+
+/* Sidebar */
+.hmw-side{
+  background:#ffffff;
+  border-right:1px solid #ebe7da;
+  padding:14px 12px;
+  font-size:11px;
+}
+.hmw-brand{
   font-family:'Instrument Serif',serif;
-  font-size:30px;line-height:1.08;letter-spacing:-0.8px;
-  color:#2c1810;margin:0 0 14px;font-weight:400;
+  font-size:18px;
+  letter-spacing:-0.3px;
+  color:#1a1a1a;
+  padding:4px 4px 12px;
+  border-bottom:1px solid #f0ece0;
+  margin-bottom:10px;
 }
-.man-line{display:block;opacity:0;animation:man-line-in 0.7s ease forwards;}
-.man-line:nth-child(1){animation-delay:0.18s;}
-.man-line:nth-child(2){animation-delay:0.32s;}
-.man-line:nth-child(3){animation-delay:0.46s;}
-.man-line-em em{font-style:italic;color:#8b2500;}
-@keyframes man-line-in{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-.man-deck{
-  font-size:13px;line-height:1.5;color:rgba(44,24,16,0.7);
+.hmw-user{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 4px 12px;
+  border-bottom:1px solid #f0ece0;
+  margin-bottom:8px;
+}
+.hmw-avatar{
+  width:28px;height:28px;border-radius:50%;
+  background:#1a1a1a;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9.5px;font-weight:700;letter-spacing:0.4px;
+  flex-shrink:0;
+}
+.hmw-user-meta{min-width:0;flex:1;}
+.hmw-user-name{
+  font-size:11px;font-weight:700;color:#1a1a1a;
+  line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.hmw-user-plan{
+  font-size:9px;font-weight:600;color:#16a34a;
+  letter-spacing:0.2px;
+  margin-top:2px;
+}
+.hmw-nav{display:flex;flex-direction:column;gap:1px;}
+.hmw-nav-section{
+  font-size:8.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:#9a8a78;
+  padding:10px 6px 4px;
+}
+.hmw-nav-item{
+  display:flex;align-items:center;gap:7px;
+  padding:5px 8px;
+  border-radius:5px;
+  font-size:10.5px;font-weight:500;
+  color:#4a4035;
+  line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.hmw-nav-item svg{
+  width:11px;height:11px;flex-shrink:0;
+  stroke-width:1.8;
+}
+.hmw-nav-item.active{
+  background:#1a1a1a;color:#fff;font-weight:600;
+}
+
+/* Main panel */
+.hmw-main{
+  padding:18px 20px 22px;
+  min-width:0;
+  display:flex;flex-direction:column;gap:14px;
+}
+.hmw-main-head{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  gap:12px;
+  padding-bottom:14px;
+  border-bottom:1px solid #ebe7da;
+}
+.hmw-greet-eyebrow{
+  font-size:10px;color:#7a6a5a;
+  margin-bottom:3px;
+}
+.hmw-greet{
+  font-family:'Instrument Serif',serif;
+  font-size:22px;
+  letter-spacing:-0.5px;
+  color:#1a1a1a;
+  font-weight:400;
+  margin:0;
+  line-height:1;
+}
+.hmw-greet em{font-style:italic;}
+.hmw-profile-btn{
+  background:#1a1a1a;color:#fff;
+  border:none;border-radius:6px;
+  padding:6px 12px;
+  font-size:10px;font-weight:600;
+  font-family:inherit;
+  letter-spacing:0.2px;
+  flex-shrink:0;
+}
+
+/* Cards */
+.hmw-card{
+  background:#fff;
+  border:1px solid #ebe7da;
+  border-radius:9px;
+  padding:14px 16px;
+}
+.hmw-card-eyebrow{
+  font-size:9px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:#9a8a78;
+  margin-bottom:6px;
+}
+.hmw-card-title{
+  font-family:'Instrument Serif',serif;
+  font-size:17px;letter-spacing:-0.3px;
+  color:#1a1a1a;line-height:1.15;
+  margin-bottom:4px;
+}
+.hmw-card-sub{
+  font-size:10.5px;color:#7a6a5a;
+  line-height:1.45;
+  margin-bottom:12px;
+}
+.hmw-actions{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+}
+.hmw-action{
+  background:#fafaf7;
+  border:1px solid #ebe7da;
+  border-radius:7px;
+  padding:10px 11px;
+}
+.hmw-action-title{
+  font-size:11px;font-weight:700;
+  color:#1a1a1a;
+  margin-bottom:3px;
+  letter-spacing:-0.1px;
+}
+.hmw-action-desc{
+  font-size:9.5px;color:#7a6a5a;
+  line-height:1.4;
+  margin-bottom:8px;
+  min-height:26px;
+}
+.hmw-action-cta{
+  font-size:9.5px;font-weight:700;
+  color:#1a1a1a;
+  letter-spacing:0.1px;
+}
+
+/* Progress card */
+.hmw-card-progress{padding:14px 18px 16px;}
+.hmw-progress-head{
+  display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:12px;
+}
+.hmw-progress-title{
+  font-family:'Instrument Serif',serif;
+  font-size:15px;letter-spacing:-0.2px;
+  color:#1a1a1a;
+}
+.hmw-progress-sub{
+  font-size:9.5px;color:#9a8a78;
   font-style:italic;
 }
-
-.man-corner{
-  position:absolute;bottom:14px;right:18px;color:#8b2500;z-index:2;
-  opacity:0;animation:man-line-in 0.8s ease forwards 0.9s;
+.hmw-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
 }
+.hmw-stat-lbl{
+  font-size:9.5px;color:#7a6a5a;
+  margin-bottom:4px;
+  letter-spacing:0.1px;
+}
+.hmw-stat-num{
+  font-family:'Instrument Serif',serif;
+  font-size:28px;font-weight:400;
+  color:#1a1a1a;
+  letter-spacing:-1px;
+  line-height:1;
+}
+
+/* Dark theme variant for the mockup so it doesn't get inverted */
+[data-theme="dark"] .hero-mock-window{
+  background:#1a1a1a;border-color:#2a2a2a;
+  color:#e8e3d6;
+  box-shadow:
+    0 24px 56px -18px rgba(0,0,0,0.5),
+    0 8px 22px -6px rgba(0,0,0,0.3);
+}
+[data-theme="dark"] .hmw-chrome{background:#222;border-bottom-color:#2a2a2a;}
+[data-theme="dark"] .hmw-url{background:#1a1a1a;border-color:#2a2a2a;color:#9a8a78;}
+[data-theme="dark"] .hmw-body{background:#161616;}
+[data-theme="dark"] .hmw-side{background:#1a1a1a;border-right-color:#2a2a2a;}
+[data-theme="dark"] .hmw-brand,
+[data-theme="dark"] .hmw-user-name,
+[data-theme="dark"] .hmw-greet,
+[data-theme="dark"] .hmw-card-title,
+[data-theme="dark"] .hmw-action-title,
+[data-theme="dark"] .hmw-progress-title,
+[data-theme="dark"] .hmw-stat-num,
+[data-theme="dark"] .hmw-action-cta{color:#e8e3d6;}
+[data-theme="dark"] .hmw-user,
+[data-theme="dark"] .hmw-brand{border-bottom-color:#2a2a2a;}
+[data-theme="dark"] .hmw-avatar{background:#e8e3d6;color:#1a1a1a;}
+[data-theme="dark"] .hmw-nav-item{color:#9a8a78;}
+[data-theme="dark"] .hmw-nav-item.active{background:#e8e3d6;color:#1a1a1a;}
+[data-theme="dark"] .hmw-main-head,
+[data-theme="dark"] .hmw-card{background:#1a1a1a;border-color:#2a2a2a;border-bottom-color:#2a2a2a;}
+[data-theme="dark"] .hmw-action{background:#222;border-color:#2a2a2a;}
+[data-theme="dark"] .hmw-profile-btn{background:#e8e3d6;color:#1a1a1a;}
+
 .demo-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:var(--g50);border-bottom:1px solid var(--g200);}
 .demo-dot{width:10px;height:10px;border-radius:50%;}
 .demo-url{font-size:11px;color:var(--g400);margin-left:6px;}
@@ -542,6 +735,11 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
   html,body{overflow-x:hidden;}
   .hero-tagline{font-size:40px;line-height:1.1;}
   .hero-sub{font-size:14px;}
+  .hmw-body{grid-template-columns:1fr;}
+  .hmw-side{display:none;}
+  .hmw-actions{grid-template-columns:1fr;}
+  .hmw-stats{grid-template-columns:repeat(3,1fr);gap:8px;}
+  .hmw-stat-num{font-size:22px;}
   .features-bento{grid-template-columns:1fr;}
   .f-card-1,.f-card-2,.f-card-3,.f-card-4,.f-card-5,.f-card-6,.f-card-7,.f-card-8,.f-card-9,.f-card-coach{grid-column:span 1;}
   .comp-intro{grid-template-columns:1fr;gap:12px;}
@@ -609,30 +807,136 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
       </div>
     </div>
     <div class="hero-right">
-      <div class="manifesto">
-        <div class="man-head">
-          <div class="man-issue">Issue 01 · The Recruiting OS</div>
-          <div class="man-date">Est. 2026</div>
-        </div>
-
-        <div class="man-body">
-          <div class="man-kicker">From curious student to signed offer</div>
-          <h3 class="man-headline">
-            <span class="man-line">Networking, prep,</span>
-            <span class="man-line">and strategy -</span>
-            <span class="man-line man-line-em"><em>one platform.</em></span>
-          </h3>
-          <div class="man-deck">
-            For students breaking into finance, consulting, and tech.
+      <div class="hero-mock-window">
+        <!-- Browser chrome -->
+        <div class="hmw-chrome">
+          <div class="hmw-dots">
+            <span class="hmw-dot hmw-dot-r"></span>
+            <span class="hmw-dot hmw-dot-y"></span>
+            <span class="hmw-dot hmw-dot-g"></span>
           </div>
+          <div class="hmw-url">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            offerbell.com/dashboard
+          </div>
+          <div class="hmw-chrome-spacer"></div>
         </div>
 
-        <div class="man-corner">
-          <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-            <path d="M20 4 L34 20 L20 36 L6 20 Z" stroke="currentColor" stroke-width="0.8" opacity="0.4"/>
-            <path d="M20 12 L28 20 L20 28 L12 20 Z" stroke="currentColor" stroke-width="0.8" opacity="0.6"/>
-            <circle cx="20" cy="20" r="2.5" fill="currentColor"/>
-          </svg>
+        <!-- App body -->
+        <div class="hmw-body">
+          <!-- Sidebar -->
+          <aside class="hmw-side">
+            <div class="hmw-brand">OfferBell.</div>
+            <div class="hmw-user">
+              <div class="hmw-avatar">OB</div>
+              <div class="hmw-user-meta">
+                <div class="hmw-user-name">Offer Bell</div>
+                <div class="hmw-user-plan">Pro plan</div>
+              </div>
+            </div>
+            <div class="hmw-nav">
+              <div class="hmw-nav-section">Overview</div>
+              <div class="hmw-nav-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                Dashboard
+              </div>
+              <div class="hmw-nav-section">Learn</div>
+              <div class="hmw-nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                Learning Hub
+              </div>
+              <div class="hmw-nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Concept Drills
+              </div>
+              <div class="hmw-nav-section">Prep</div>
+              <div class="hmw-nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                Coach
+              </div>
+              <div class="hmw-nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+                Interview Flashcards
+              </div>
+              <div class="hmw-nav-section">Networking</div>
+              <div class="hmw-nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Outreach Tracker
+              </div>
+              <div class="hmw-nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Outreach Writer
+              </div>
+              <div class="hmw-nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 6 8 12 8 12s8-6 8-12a8 8 0 0 0-8-8z"/></svg>
+                Referral Map
+              </div>
+              <div class="hmw-nav-section">Insights</div>
+              <div class="hmw-nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Resume Review
+              </div>
+              <div class="hmw-nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                Diagnostic Review
+              </div>
+            </div>
+          </aside>
+
+          <!-- Main panel -->
+          <main class="hmw-main">
+            <div class="hmw-main-head">
+              <div>
+                <div class="hmw-greet-eyebrow">Recruiting season is in full swing.</div>
+                <h2 class="hmw-greet">Good day, <em>Offer</em></h2>
+              </div>
+              <button class="hmw-profile-btn" type="button">View profile</button>
+            </div>
+
+            <div class="hmw-card hmw-card-today">
+              <div class="hmw-card-eyebrow">Today on OfferBell</div>
+              <div class="hmw-card-title">Do just one thing to move recruiting forward.</div>
+              <div class="hmw-card-sub">Pick one path, complete it, then come back tomorrow. You can always access everything else from the sidebar.</div>
+              <div class="hmw-actions">
+                <div class="hmw-action">
+                  <div class="hmw-action-title">Learn a path</div>
+                  <div class="hmw-action-desc">Spend 10 minutes in the Learning Hub.</div>
+                  <div class="hmw-action-cta">Open Learning Hub →</div>
+                </div>
+                <div class="hmw-action">
+                  <div class="hmw-action-title">Reach out to 1 person</div>
+                  <div class="hmw-action-desc">Choose a contact and send one email.</div>
+                  <div class="hmw-action-cta">Go to Outreach / Pipeline →</div>
+                </div>
+                <div class="hmw-action">
+                  <div class="hmw-action-title">Drill interview questions</div>
+                  <div class="hmw-action-desc">Practice with 1,500+ technical flashcards.</div>
+                  <div class="hmw-action-cta">Open Interview Flashcards →</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="hmw-card hmw-card-progress">
+              <div class="hmw-progress-head">
+                <span class="hmw-progress-title">Lightweight progress</span>
+                <span class="hmw-progress-sub">Just enough to know you're moving.</span>
+              </div>
+              <div class="hmw-stats">
+                <div class="hmw-stat">
+                  <div class="hmw-stat-lbl">Contacts tracked</div>
+                  <div class="hmw-stat-num">12</div>
+                </div>
+                <div class="hmw-stat">
+                  <div class="hmw-stat-lbl">Messages sent</div>
+                  <div class="hmw-stat-num">38</div>
+                </div>
+                <div class="hmw-stat">
+                  <div class="hmw-stat-lbl">Flashcards drilled</div>
+                  <div class="hmw-stat-num">214</div>
+                </div>
+              </div>
+            </div>
+          </main>
         </div>
       </div>
     </div>
