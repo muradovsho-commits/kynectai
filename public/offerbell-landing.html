@@ -175,41 +175,23 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
   .logos-track{animation:none;}
 }
 
-/* Brand wordmarks · typographic approximations */
+/* Brand wordmarks · uniform text treatment */
 .brand{
   display:inline-flex;
   align-items:center;
   height:44px;
   flex-shrink:0;
-  font-family:'Helvetica Neue',Arial,sans-serif;
+  font-family:'Instrument Serif',Georgia,serif;
+  font-size:26px;
+  font-weight:400;
+  color:var(--g500);
+  letter-spacing:-0.3px;
   white-space:nowrap;
-  filter:grayscale(0);
-  opacity:0.92;
-  transition:opacity 0.15s ease;
+  opacity:0.85;
+  transition:opacity 0.15s ease, color 0.15s ease;
   line-height:1;
 }
-.brand:hover{opacity:1;}
-.brand svg{height:44px;width:auto;display:block;}
-
-/* Bulge bracket / banks */
-.brand-jefferies{font-family:Georgia,'Times New Roman',serif;font-size:30px;font-weight:700;color:#000;letter-spacing:-0.6px;}
-.brand-lazard{font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:400;color:#3a3a3a;letter-spacing:4px;}
-.brand-moelis{font-family:Georgia,'Times New Roman',serif;font-size:30px;font-weight:700;color:#1a1a1a;letter-spacing:-0.4px;}
-.brand-gs{display:inline-flex;flex-direction:column;align-items:flex-start;justify-content:center;line-height:1;font-family:Georgia,'Times New Roman',serif;color:#7badd9;font-weight:700;}
-.brand-gs-1,.brand-gs-2{font-size:21px;letter-spacing:-0.3px;}
-.brand-gs-2{margin-top:2px;}
-.brand-jpm{font-family:Georgia,'Times New Roman',serif;font-size:26px;font-weight:400;color:#1a1a1a;letter-spacing:-0.3px;}
-.brand-ms{font-family:'Helvetica Neue',Arial,sans-serif;font-size:24px;font-weight:600;color:#000;letter-spacing:-0.4px;}
-.brand-evercore{font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:400;color:#1a1a1a;letter-spacing:4.5px;}
-.brand-centerview{font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:400;color:#1a1a1a;letter-spacing:-0.3px;font-style:italic;}
-
-/* Consulting */
-.brand-mck{font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:400;color:#051c2c;letter-spacing:0.3px;}
-.brand-bcg{font-family:'Helvetica Neue',Arial,sans-serif;font-size:34px;font-weight:900;color:#177b57;letter-spacing:-1.4px;}
-.brand-bain{font-family:'Helvetica Neue',Arial,sans-serif;font-size:20px;font-weight:800;color:#cc0000;letter-spacing:1.4px;}
-
-/* Buy-side */
-.brand-blackstone{font-family:'Helvetica Neue',Arial,sans-serif;font-size:24px;font-weight:700;color:#000;letter-spacing:-0.5px;}
+.brand:hover{opacity:1;color:var(--black);}
 
 /* Hero demo window */
 .hero-right{animation:fadeUp 0.6s 0.12s ease both;}
@@ -1135,135 +1117,66 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
   </div>
   <div class="logos-marquee" aria-label="Firms our users have received offers from">
     <div class="logos-track">
-      <!-- One full set of logos. Duplicated below for seamless infinite scroll. -->
-      <span class="brand brand-jefferies">Jefferies</span>
-      <span class="brand brand-lazard">LAZARD</span>
-      <span class="brand brand-moelis">Moelis</span>
-      <span class="brand brand-pjt">
-        <svg viewBox="0 0 60 30" aria-hidden="true">
-          <text x="0" y="22" font-family="'Helvetica Neue',Arial,sans-serif" font-size="22" font-weight="900" fill="#0033a0" letter-spacing="-1">PJT</text>
-        </svg>
-      </span>
-      <span class="brand brand-gs">
-        <span class="brand-gs-1">Goldman</span>
-        <span class="brand-gs-2">Sachs</span>
-      </span>
-      <span class="brand brand-jpm">J.P.Morgan</span>
-      <span class="brand brand-bofa">
-        <svg viewBox="0 0 110 30" aria-hidden="true">
-          <g transform="translate(0,2)">
-            <rect x="0" y="0" width="3" height="14" fill="#e31837"/>
-            <rect x="4" y="0" width="3" height="14" fill="#0066b3"/>
-            <rect x="8" y="0" width="3" height="14" fill="#e31837"/>
-            <rect x="12" y="0" width="3" height="14" fill="#0066b3"/>
-            <rect x="16" y="0" width="3" height="14" fill="#e31837"/>
-            <rect x="20" y="0" width="3" height="14" fill="#0066b3"/>
-          </g>
-          <text x="28" y="22" font-family="'Helvetica Neue',Arial,sans-serif" font-size="9" font-weight="700" fill="#012169" letter-spacing="0.4">BANK OF AMERICA</text>
-        </svg>
-      </span>
-      <span class="brand brand-barclays">
-        <svg viewBox="0 0 130 30" aria-hidden="true">
-          <path d="M8 4 L8 12 Q8 18 14 22 L18 22 Q14 18 14 12 L14 4 Z M16 4 L16 14 Q18 19 22 22 L26 22 Q22 19 22 14 L22 4 Z" fill="#00aeef"/>
-          <text x="34" y="20" font-family="'Helvetica Neue',Arial,sans-serif" font-size="13" font-weight="800" fill="#00aeef" letter-spacing="0.4">BARCLAYS</text>
-        </svg>
-      </span>
-      <span class="brand brand-ms">Morgan Stanley</span>
-      <span class="brand brand-evercore">EVERCORE</span>
-      <span class="brand brand-centerview">Centerview</span>
-      <span class="brand brand-deloitte">
-        <svg viewBox="0 0 110 30" aria-hidden="true">
-          <text x="0" y="22" font-family="'Helvetica Neue',Arial,sans-serif" font-size="20" font-weight="700" fill="#000" letter-spacing="-0.5">Deloitte</text>
-          <circle cx="100" cy="22" r="3.5" fill="#86bc25"/>
-        </svg>
-      </span>
-      <span class="brand brand-pwc">
-        <svg viewBox="0 0 70 30" aria-hidden="true">
-          <text x="0" y="22" font-family="Georgia,'Times New Roman',serif" font-size="20" font-weight="700" fill="#000" letter-spacing="-0.4">pwc</text>
-          <rect x="38" y="6" width="6" height="3" fill="#ff7300"/>
-          <rect x="46" y="6" width="6" height="3" fill="#dc6900"/>
-          <rect x="54" y="6" width="6" height="3" fill="#a05a00"/>
-        </svg>
-      </span>
-      <span class="brand brand-ey">
-        <svg viewBox="0 0 50 30" aria-hidden="true">
-          <rect x="0" y="2" width="44" height="22" fill="#2e2e38"/>
-          <text x="22" y="20" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="15" font-weight="900" fill="#ffe600" letter-spacing="-0.3">EY</text>
-        </svg>
-      </span>
-      <span class="brand brand-kpmg">
-        <svg viewBox="0 0 80 30" aria-hidden="true">
-          <text x="0" y="22" font-family="'Helvetica Neue',Arial,sans-serif" font-size="20" font-weight="900" fill="#00338d" letter-spacing="-0.3">KPMG</text>
-        </svg>
-      </span>
-      <span class="brand brand-mck">McKinsey &amp; Company</span>
-      <span class="brand brand-bcg">BCG</span>
-      <span class="brand brand-bain">BAIN &amp; COMPANY</span>
-      <span class="brand brand-blackrock">
-        <svg viewBox="0 0 90 30" aria-hidden="true">
-          <text x="0" y="22" font-family="'Helvetica Neue',Arial,sans-serif" font-size="14" font-weight="900" fill="#000" letter-spacing="0.5">BLACKROCK</text>
-        </svg>
-      </span>
-      <span class="brand brand-blackstone">Blackstone</span>
-
-      <!-- Duplicate set: required for the marquee to loop seamlessly -->
-      <span class="brand brand-jefferies" aria-hidden="true">Jefferies</span>
-      <span class="brand brand-lazard" aria-hidden="true">LAZARD</span>
-      <span class="brand brand-moelis" aria-hidden="true">Moelis</span>
-      <span class="brand brand-pjt" aria-hidden="true">
-        <svg viewBox="0 0 60 30"><text x="0" y="22" font-family="'Helvetica Neue',Arial,sans-serif" font-size="22" font-weight="900" fill="#0033a0" letter-spacing="-1">PJT</text></svg>
-      </span>
-      <span class="brand brand-gs" aria-hidden="true">
-        <span class="brand-gs-1">Goldman</span>
-        <span class="brand-gs-2">Sachs</span>
-      </span>
-      <span class="brand brand-jpm" aria-hidden="true">J.P.Morgan</span>
-      <span class="brand brand-bofa" aria-hidden="true">
-        <svg viewBox="0 0 110 30">
-          <g transform="translate(0,2)">
-            <rect x="0" y="0" width="3" height="14" fill="#e31837"/>
-            <rect x="4" y="0" width="3" height="14" fill="#0066b3"/>
-            <rect x="8" y="0" width="3" height="14" fill="#e31837"/>
-            <rect x="12" y="0" width="3" height="14" fill="#0066b3"/>
-            <rect x="16" y="0" width="3" height="14" fill="#e31837"/>
-            <rect x="20" y="0" width="3" height="14" fill="#0066b3"/>
-          </g>
-          <text x="28" y="22" font-family="'Helvetica Neue',Arial,sans-serif" font-size="9" font-weight="700" fill="#012169" letter-spacing="0.4">BANK OF AMERICA</text>
-        </svg>
-      </span>
-      <span class="brand brand-barclays" aria-hidden="true">
-        <svg viewBox="0 0 130 30">
-          <path d="M8 4 L8 12 Q8 18 14 22 L18 22 Q14 18 14 12 L14 4 Z M16 4 L16 14 Q18 19 22 22 L26 22 Q22 19 22 14 L22 4 Z" fill="#00aeef"/>
-          <text x="34" y="20" font-family="'Helvetica Neue',Arial,sans-serif" font-size="13" font-weight="800" fill="#00aeef" letter-spacing="0.4">BARCLAYS</text>
-        </svg>
-      </span>
-      <span class="brand brand-ms" aria-hidden="true">Morgan Stanley</span>
-      <span class="brand brand-evercore" aria-hidden="true">EVERCORE</span>
-      <span class="brand brand-centerview" aria-hidden="true">Centerview</span>
-      <span class="brand brand-deloitte" aria-hidden="true">
-        <svg viewBox="0 0 110 30"><text x="0" y="22" font-family="'Helvetica Neue',Arial,sans-serif" font-size="20" font-weight="700" fill="#000" letter-spacing="-0.5">Deloitte</text><circle cx="100" cy="22" r="3.5" fill="#86bc25"/></svg>
-      </span>
-      <span class="brand brand-pwc" aria-hidden="true">
-        <svg viewBox="0 0 70 30">
-          <text x="0" y="22" font-family="Georgia,'Times New Roman',serif" font-size="20" font-weight="700" fill="#000" letter-spacing="-0.4">pwc</text>
-          <rect x="38" y="6" width="6" height="3" fill="#ff7300"/>
-          <rect x="46" y="6" width="6" height="3" fill="#dc6900"/>
-          <rect x="54" y="6" width="6" height="3" fill="#a05a00"/>
-        </svg>
-      </span>
-      <span class="brand brand-ey" aria-hidden="true">
-        <svg viewBox="0 0 50 30"><rect x="0" y="2" width="44" height="22" fill="#2e2e38"/><text x="22" y="20" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="15" font-weight="900" fill="#ffe600" letter-spacing="-0.3">EY</text></svg>
-      </span>
-      <span class="brand brand-kpmg" aria-hidden="true">
-        <svg viewBox="0 0 80 30"><text x="0" y="22" font-family="'Helvetica Neue',Arial,sans-serif" font-size="20" font-weight="900" fill="#00338d" letter-spacing="-0.3">KPMG</text></svg>
-      </span>
-      <span class="brand brand-mck" aria-hidden="true">McKinsey &amp; Company</span>
-      <span class="brand brand-bcg" aria-hidden="true">BCG</span>
-      <span class="brand brand-bain" aria-hidden="true">BAIN &amp; COMPANY</span>
-      <span class="brand brand-blackrock" aria-hidden="true">
-        <svg viewBox="0 0 90 30"><text x="0" y="22" font-family="'Helvetica Neue',Arial,sans-serif" font-size="14" font-weight="900" fill="#000" letter-spacing="0.5">BLACKROCK</text></svg>
-      </span>
-      <span class="brand brand-blackstone" aria-hidden="true">Blackstone</span>
+      <span class="brand">Goldman Sachs</span>
+      <span class="brand">J.P. Morgan</span>
+      <span class="brand">Morgan Stanley</span>
+      <span class="brand">Bank of America</span>
+      <span class="brand">Barclays</span>
+      <span class="brand">Citi</span>
+      <span class="brand">Lazard</span>
+      <span class="brand">Evercore</span>
+      <span class="brand">Centerview</span>
+      <span class="brand">PJT Partners</span>
+      <span class="brand">Moelis</span>
+      <span class="brand">Jefferies</span>
+      <span class="brand">Houlihan Lokey</span>
+      <span class="brand">Rothschild & Co</span>
+      <span class="brand">Deloitte</span>
+      <span class="brand">PwC</span>
+      <span class="brand">EY</span>
+      <span class="brand">KPMG</span>
+      <span class="brand">Grant Thornton</span>
+      <span class="brand">BDO</span>
+      <span class="brand">McKinsey & Company</span>
+      <span class="brand">Boston Consulting Group</span>
+      <span class="brand">Bain & Company</span>
+      <span class="brand">BlackRock</span>
+      <span class="brand">Blackstone</span>
+      <span class="brand">KKR</span>
+      <span class="brand">Apollo</span>
+      <span class="brand">Carlyle</span>
+      <span class="brand">Citadel</span>
+      <span class="brand">Point72</span>
+      <span class="brand" aria-hidden="true">Goldman Sachs</span>
+      <span class="brand" aria-hidden="true">J.P. Morgan</span>
+      <span class="brand" aria-hidden="true">Morgan Stanley</span>
+      <span class="brand" aria-hidden="true">Bank of America</span>
+      <span class="brand" aria-hidden="true">Barclays</span>
+      <span class="brand" aria-hidden="true">Citi</span>
+      <span class="brand" aria-hidden="true">Lazard</span>
+      <span class="brand" aria-hidden="true">Evercore</span>
+      <span class="brand" aria-hidden="true">Centerview</span>
+      <span class="brand" aria-hidden="true">PJT Partners</span>
+      <span class="brand" aria-hidden="true">Moelis</span>
+      <span class="brand" aria-hidden="true">Jefferies</span>
+      <span class="brand" aria-hidden="true">Houlihan Lokey</span>
+      <span class="brand" aria-hidden="true">Rothschild & Co</span>
+      <span class="brand" aria-hidden="true">Deloitte</span>
+      <span class="brand" aria-hidden="true">PwC</span>
+      <span class="brand" aria-hidden="true">EY</span>
+      <span class="brand" aria-hidden="true">KPMG</span>
+      <span class="brand" aria-hidden="true">Grant Thornton</span>
+      <span class="brand" aria-hidden="true">BDO</span>
+      <span class="brand" aria-hidden="true">McKinsey & Company</span>
+      <span class="brand" aria-hidden="true">Boston Consulting Group</span>
+      <span class="brand" aria-hidden="true">Bain & Company</span>
+      <span class="brand" aria-hidden="true">BlackRock</span>
+      <span class="brand" aria-hidden="true">Blackstone</span>
+      <span class="brand" aria-hidden="true">KKR</span>
+      <span class="brand" aria-hidden="true">Apollo</span>
+      <span class="brand" aria-hidden="true">Carlyle</span>
+      <span class="brand" aria-hidden="true">Citadel</span>
+      <span class="brand" aria-hidden="true">Point72</span>
     </div>
   </div>
 </section>
