@@ -53,13 +53,6 @@ export default function ConceptDrillsPage() {
 
   const track = TRACKS[trackKey];
 
-  const topicCounts = (() => {
-    const c: Record<string, number> = {};
-    if (!track) return c;
-    for (const q of track.questions) c[q.topic] = (c[q.topic] || 0) + 1;
-    return c;
-  })();
-
   const startDrill = (topic: string) => {
     setActiveTopic(topic);
     const allQs = track.questions;
@@ -116,7 +109,7 @@ export default function ConceptDrillsPage() {
           <section className="cd-index">
             <div className="cd-index-head">
               <span className="cd-index-lbl">Tracks</span>
-              <span className="cd-index-lbl-right">Questions</span>
+              <span className="cd-index-lbl-right">Topics</span>
             </div>
             <ul className="cd-index-list">
               {TRACK_KEYS.map((k, i) => {
@@ -133,7 +126,7 @@ export default function ConceptDrillsPage() {
                         <span className="cd-index-title">{t.title}</span>
                         <span className="cd-index-desc">{t.desc}</span>
                       </span>
-                      <span className="cd-index-count">{t.questions.length}</span>
+                      <span className="cd-index-count">{t.topics.length}</span>
                       <span className="cd-index-arrow" aria-hidden>›</span>
                     </button>
                   </li>
@@ -165,20 +158,17 @@ export default function ConceptDrillsPage() {
           <ul className="cd-topic-list">
             <li>
               <button className="cd-topic-row cd-topic-all" onClick={() => startDrill('All Topics')} type="button">
-                <span className="cd-topic-num">-</span>
+                <span className="cd-topic-num" aria-hidden></span>
                 <span className="cd-topic-name">All topics</span>
-                <span className="cd-topic-count">{track.questions.length}</span>
                 <span className="cd-topic-arrow" aria-hidden>›</span>
               </button>
             </li>
             {track.topics.map((topic, i) => {
-              const count = topicCounts[topic] || 0;
               return (
                 <li key={topic}>
                   <button className="cd-topic-row" onClick={() => startDrill(topic)} type="button">
                     <span className="cd-topic-num">{String(i + 1).padStart(2, '0')}</span>
                     <span className="cd-topic-name">{topic}</span>
-                    <span className="cd-topic-count">{count}</span>
                     <span className="cd-topic-arrow" aria-hidden>›</span>
                   </button>
                 </li>
