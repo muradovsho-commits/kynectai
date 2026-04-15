@@ -265,3 +265,16 @@
 [data-theme="dark"] .flash-track-icon.icon-re { background: #0a1f0a; }
 [data-theme="dark"] .flash-track-icon.icon-vc { background: #1e1b2e; }
 [data-theme="dark"] .flash-track-icon.icon-rx { background: #2a0f0f; }
+
+/* ═══ BOOKMARKS ═══ */
+.flash-bookmark-btn { background: none; border: none; cursor: pointer; color: var(--text-3); padding: 4px; margin-left: auto; display: flex; align-items: center; transition: color 0.15s, transform 0.15s; flex-shrink: 0; }
+.flash-bookmark-btn:hover { color: var(--text); transform: scale(1.15); }
+.flash-bookmark-btn.active { color: #f59e0b; }
+.flash-bookmark-btn.active:hover { color: #d97706; }
+.flash-bookmarks-toggle { display: inline-flex; align-items: center; gap: 4px; padding: 6px 10px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-3); font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Sora', sans-serif; transition: all 0.15s; }
+.flash-bookmarks-toggle:hover:not(:disabled) { border-color: #f59e0b; color: #f59e0b; }
+.flash-bookmarks-toggle:disabled { opacity: 0.35; cursor: default; }
+.flash-bookmarks-toggle.active { background: #f59e0b; border-color: #f59e0b; color: #fff; }
+.flash-bookmarks-toggle svg { width: 14px; height: 14px; }
+.flash-bm-count { font-size: 11px; font-weight: 700; }
+.flash-track-saved { font-size: 10px; font-weight: 700; color: #f59e0b; }

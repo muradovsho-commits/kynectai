@@ -15,6 +15,15 @@ import { ER_FLASHCARDS, RE_FLASHCARDS, VC_FLASHCARDS, RX_FLASHCARDS } from './ot
 type Track = { id: string; title: string; desc: string; cards: number; iconClass: string; icon: React.ReactNode };
 type Score = { accuracy: number; depth: number; clarity: number; verdict: string; tip: string };
 type PerfData = { seen: number; pass: number; partial: number; fail: number; byCat: Record<string, { seen: number; pass: number }> };
+type Bookmark = { track: string; q: string; savedAt: number };
+
+const BOOKMARKS_KEY = 'offerbell_flash_bookmarks';
+const BOOKMARK_CAP = 500;
+function loadBookmarks(): Bookmark[] { try { return JSON.parse(localStorage.getItem(BOOKMARKS_KEY) || '[]'); } catch { return []; } }
+function saveBookmarks(b: Bookmark[]) { localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(b.slice(-BOOKMARK_CAP))); }
+
+const BM_ICON = <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>;
+const BM_ICON_FILLED = <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" stroke="currentColor" strokeWidth="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>;
 type ReviewEntry = {
   id: string;
   track: string;
@@ -178,6 +187,8 @@ export default function FlashcardsPage() {
   const [reviewFilter, setReviewFilter] = useState<'all' | 'pass' | 'partial' | 'fail'>('all');
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
+  const [showBookmarksOnly, setShowBookmarksOnly] = useState(false);
 
   // Detect Web Speech API support
   useEffect(() => {
@@ -243,21 +254,46 @@ export default function FlashcardsPage() {
     if (saved) try { setPerf(JSON.parse(saved)); } catch { /* */ }
     const savedReview = localStorage.getItem('offerbell_flash_review');
     if (savedReview) try { setReviewLog(JSON.parse(savedReview)); } catch { /* */ }
+    setBookmarks(loadBookmarks());
   }, [router]);
 
   const savePerf = useCallback((p: PerfData) => { setPerf(p); localStorage.setItem('offerbell_flash_perf', JSON.stringify(p)); }, []);
+
+  // Bookmark helpers
+  const bookmarkSet = useMemo(() => new Set(bookmarks.map(b => `${b.track}::${b.q}`)), [bookmarks]);
+  const isBookmarked = useCallback((q: string) => activeTrack ? bookmarkSet.has(`${activeTrack}::${q}`) : false, [activeTrack, bookmarkSet]);
+  const toggleBookmark = useCallback((c: Flashcard) => {
+    if (!activeTrack) return;
+    const key = `${activeTrack}::${c.q}`;
+    let next: Bookmark[];
+    if (bookmarkSet.has(key)) {
+      next = bookmarks.filter(b => !(b.track === activeTrack && b.q === c.q));
+    } else {
+      next = [...bookmarks, { track: activeTrack, q: c.q, savedAt: Date.now() }];
+    }
+    setBookmarks(next);
+    saveBookmarks(next);
+  }, [activeTrack, bookmarks, bookmarkSet]);
+  const trackBookmarkCount = useMemo(() => {
+    const m: Record<string, number> = {};
+    for (const b of bookmarks) m[b.track] = (m[b.track] || 0) + 1;
+    return m;
+  }, [bookmarks]);
+  const currentTrackBmCount = activeTrack ? (trackBookmarkCount[activeTrack] || 0) : 0;
 
   const allCards = useMemo(() => activeTrack ? (CARD_MAP[activeTrack] || []) : [], [activeTrack]);
   const categories = useMemo(() => ['All', ...Array.from(new Set(allCards.map(c => c.category)))], [allCards]);
   const filtered = useMemo(() => {
     let base = filterCat === 'All' ? allCards : allCards.filter(c => c.category === filterCat);
     if (filterDiff !== 'All') base = base.filter(c => c.difficulty === filterDiff);
+    if (showBookmarksOnly) base = base.filter(c => isBookmarked(c.q));
     if (shuffleKey > 0) { const a = [...base]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
     return base;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allCards, filterCat, filterDiff, shuffleKey]);
+  }, [allCards, filterCat, filterDiff, shuffleKey, showBookmarksOnly, bookmarkSet]);
 
   const card = filtered[idx] || null;
+  useEffect(() => { if (idx >= filtered.length && filtered.length > 0) setIdx(0); }, [idx, filtered.length]);
 
   const resetCardState = useCallback(() => {
     setShowAnswer(false); setAiHistory([]); setUserInput(''); setShowInsight(false);
@@ -279,7 +315,7 @@ export default function FlashcardsPage() {
 
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [aiHistory]);
 
-  const openTrack = (id: string) => { setActiveTrack(id); setFilterCat('All'); setFilterDiff('All'); setIdx(0); resetCardState(); setShuffleKey(0); };
+  const openTrack = (id: string) => { setActiveTrack(id); setFilterCat('All'); setFilterDiff('All'); setIdx(0); resetCardState(); setShuffleKey(0); setShowBookmarksOnly(false); };
   const goBack = () => { setActiveTrack(null); setIdx(0); resetCardState(); setMode('practice'); };
   const handleModeSwitch = (m: 'practice' | 'interview') => {
     if (m === 'interview' && !isPro) { setShowProModal(true); return; }
@@ -392,6 +428,7 @@ export default function FlashcardsPage() {
                   <div className="flash-track-desc">{t.desc}</div>
                   <div className="flash-track-footer">
                     <span className={`flash-track-count${t.cards === 0 ? ' soon' : ''}`}>{t.cards > 0 ? `${t.cards} QUESTIONS` : 'COMING SOON'}</span>
+                    {trackBookmarkCount[t.id] > 0 && <span className="flash-track-saved">{trackBookmarkCount[t.id]} saved</span>}
                     {t.cards > 0 && <span className="flash-track-cta">Start {ARROW_R}</span>}
                   </div>
                 </div>
@@ -446,6 +483,16 @@ export default function FlashcardsPage() {
                 <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
                 Shuffle
               </button>
+              <button
+                className={`flash-bookmarks-toggle${showBookmarksOnly ? ' active' : ''}`}
+                onClick={() => { setShowBookmarksOnly(p => !p); setIdx(0); resetCardState(); setGridFlipped({}); }}
+                disabled={currentTrackBmCount === 0 && !showBookmarksOnly}
+                type="button"
+                title={currentTrackBmCount === 0 ? 'No bookmarks yet' : `${currentTrackBmCount} bookmarked`}
+              >
+                {BM_ICON_FILLED}
+                {currentTrackBmCount > 0 && <span className="flash-bm-count">{currentTrackBmCount}</span>}
+              </button>
               {mode === 'interview' && isPro && (
                 <button
                   className="flash-shuffle"
@@ -475,9 +522,10 @@ export default function FlashcardsPage() {
                     <div className="flash-card-tags">
                       <span className="flash-tag flash-tag-cat">{card.category}</span>
                       {card.difficulty && <span className={`flash-tag flash-tag-diff-${card.difficulty.toLowerCase()}`}>{card.difficulty}</span>}
+                      <button className={`flash-bookmark-btn${isBookmarked(card.q) ? ' active' : ''}`} onClick={() => toggleBookmark(card)} type="button" title={isBookmarked(card.q) ? 'Remove bookmark' : 'Bookmark this question'}>
+                        {isBookmarked(card.q) ? BM_ICON_FILLED : BM_ICON}
+                      </button>
                     </div>
-                    <div className="flash-question">{card.q}</div>
-                    <div className="flash-firm-row">
                       <span className="flash-firm-tag">
                         <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
                         Reported in an interview
@@ -669,6 +717,9 @@ export default function FlashcardsPage() {
                           <div className="flash-card-tags" style={{marginBottom:10}}>
                             <span className="flash-tag flash-tag-cat">{c.category}</span>
                             {c.difficulty && <span className={`flash-tag flash-tag-diff-${c.difficulty.toLowerCase()}`}>{c.difficulty}</span>}
+                            <button className={`flash-bookmark-btn${isBookmarked(c.q) ? ' active' : ''}`} onClick={(e) => { e.stopPropagation(); toggleBookmark(c); }} type="button" title={isBookmarked(c.q) ? 'Remove bookmark' : 'Bookmark'}>
+                              {isBookmarked(c.q) ? BM_ICON_FILLED : BM_ICON}
+                            </button>
                           </div>
                           <div className="flash-grid-q">{c.q}</div>
                           <div className="flash-grid-bottom">
