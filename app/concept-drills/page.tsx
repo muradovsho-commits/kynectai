@@ -201,7 +201,7 @@ export default function ConceptDrillsPage() {
 
           <article className="cd-q">
             <header className="cd-q-head">
-              <span className="cd-q-index">Question {String(idx + 1).padStart(2, '0')} <span className="cd-q-of">/ {questions.length}</span></span>
+              <span className="cd-q-index">Q{String(idx + 1).padStart(2, '0')}<span className="cd-q-of">/ {questions.length}</span></span>
               <span className="cd-q-rule" aria-hidden></span>
               <span className="cd-q-cat">{q.category}</span>
               {q.difficulty && <span className={`cd-q-diff cd-q-diff-${q.difficulty}`}>{q.difficulty}</span>}
