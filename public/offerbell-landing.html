@@ -37,8 +37,6 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
 
 /* ── HERO ── */
 .hero{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:120px 48px 48px;max-width:1280px;margin:0 auto;}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--g100);border:1px solid var(--g200);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;color:var(--g600);margin-bottom:24px;letter-spacing:0.3px;text-transform:uppercase;animation:fadeUp 0.5s ease both;}
-.hero-badge::before{content:'';width:6px;height:6px;background:#22c55e;border-radius:50%;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 .hero h1{font-family:'Instrument Serif',serif;font-size:clamp(44px,5.5vw,72px);line-height:1.0;letter-spacing:-2px;margin-bottom:20px;animation:fadeUp 0.5s 0.08s ease both;}
 .hero h1 em{font-style:italic;}
@@ -901,7 +899,6 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
 <section style="padding-top:64px;background:var(--white);">
   <div class="hero">
     <div>
-      <div class="hero-badge">AI-powered · Your all-in-one recruiting hub</div>
       <h1>Stop Guessing.<br><em>Start Landing</em> Interviews.</h1>
       <div class="hero-typing-row">Targeting: <strong id="hero-type"></strong><span class="demo-cursor"></span></div>
 
