@@ -70,7 +70,21 @@ function ResetPasswordContent() {
               <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
             </div>
             <button
-              onClick={() => router.push("/signin")}
+              onClick={() => {
+                // Clear any stale session data before going to signin
+                // so orphaned keys from a previous signup test or
+                // different account can't interfere with the signin flow
+                if (typeof window !== 'undefined') {
+                  const allKeys: string[] = [];
+                  for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (k && k.startsWith('offerbell') && k !== 'offerbell-theme') allKeys.push(k);
+                  }
+                  allKeys.forEach(k => localStorage.removeItem(k));
+                  document.cookie = 'offerbell_user_id=; path=/; max-age=0';
+                }
+                router.push("/signin");
+              }}
               style={{
                 width: "100%", height: 48, borderRadius: 10, border: "none",
                 background: "#0a0a0a", color: "#ffffff", fontSize: 14, fontWeight: 700,

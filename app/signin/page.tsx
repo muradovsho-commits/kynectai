@@ -28,93 +28,65 @@ function SigninContent() {
       if (typeof window !== "undefined" && userId) {
         const id = String(userId);
         
-        // ── Clear previous user's data to prevent bleed-over ──
-        const previousUser = window.localStorage.getItem("offerbell_user_id");
-        let shouldClear = false;
-        if (previousUser && previousUser !== id) {
-          // Different user ID - definitely clear
-          shouldClear = true;
-        } else if (!previousUser) {
-          // No user ID (signed out) - check if leftover profile belongs to someone else
-          try {
-            const raw = window.localStorage.getItem("offerbell_onboarding_profile");
-            if (raw) {
-              const prof = JSON.parse(raw);
-              if (prof.email && prof.email.toLowerCase() !== email.toLowerCase()) shouldClear = true;
-            }
-          } catch {}
+        // ── ALWAYS clear previous session data to prevent any bleed-over ──
+        // This is the nuclear option: every signin starts with a clean slate.
+        // We preserve only offerbell-theme (visual preference).
+        const allKeys: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith('offerbell') && k !== 'offerbell-theme') allKeys.push(k);
         }
-        if (shouldClear) {
-          const allKeys: string[] = [];
-          for (let i = 0; i < localStorage.length; i++) {
-            const k = localStorage.key(i);
-            if (k && k.startsWith('offerbell') && k !== 'offerbell-theme') allKeys.push(k);
-          }
-          allKeys.forEach(k => localStorage.removeItem(k));
-        }
+        allKeys.forEach(k => localStorage.removeItem(k));
+        // Also clear the cookie in case it's stale
+        document.cookie = 'offerbell_user_id=; path=/; max-age=0';
         
+        // ── Write the new session ──
+        const plan = result?.plan || 'free';
         window.localStorage.setItem("offerbell_user_id", id);
         window.localStorage.setItem("offerbell_messages_sent", String(result?.outreachCount || 0));
-        document.cookie = `offerbell_user_id=${encodeURIComponent(id)}; path=/; max-age=${60 * 60 * 24 * 30}`;
-        // Restore plan from database
-        const plan = result?.plan || 'free';
         window.localStorage.setItem("offerbell_plan", plan);
+        document.cookie = `offerbell_user_id=${encodeURIComponent(id)}; path=/; max-age=${60 * 60 * 24 * 30}`;
         if (result?.planActivatedAt) {
           window.localStorage.setItem("offerbell_plan_activated_at", String(result.planActivatedAt));
         }
         if (result?.promoCode) {
           window.localStorage.setItem("offerbell_promo_code", result.promoCode);
         }
-        // Also update profile if it exists
+
+        // Create a default onboarding profile from the DB data so the
+        // app has a profile to read on first load after signin
+        const nm = result?.name || "";
+        const pts = nm.split(" ");
+        window.localStorage.setItem("offerbell_onboarding_profile", JSON.stringify({
+          firstName: pts[0] || "",
+          lastName: pts.slice(1).join(" ") || "",
+          university: "",
+          targetRoles: [],
+          targetFirms: [],
+          major: "",
+          year: "",
+          recruitYear: "",
+          email: email,
+          plan: plan,
+        }));
+
+        // Sync to Chrome extension if installed
         try {
-          const raw = window.localStorage.getItem("offerbell_onboarding_profile");
-          if (raw) {
-            const existing = JSON.parse(raw);
-            existing.plan = plan;
-            if (result?.planActivatedAt) existing.planActivatedAt = result.planActivatedAt;
-            if (result?.promoCode) { existing.promoCode = result.promoCode; existing.promoApplied = true; }
-            window.localStorage.setItem("offerbell_onboarding_profile", JSON.stringify(existing));
+          if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
+            const extId = 'ecmiggmdjpohgidmdonhbcbnlhdagmkp';
+            if (extId) {
+              chrome.runtime.sendMessage(extId, {
+                action: 'updateCount',
+                userId: id,
+                messagesSent: result?.outreachCount || 0,
+                plan: plan
+              }, () => {});
+            }
           }
         } catch {}
       }
-      // Send all users to dashboard - tutorial handles first-time setup
-      // Sync to Chrome extension if installed
-      try {
-        if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
-          const extId = 'ecmiggmdjpohgidmdonhbcbnlhdagmkp';
-          if (extId) {
-            chrome.runtime.sendMessage(extId, {
-              action: 'updateCount',
-              userId: id,
-              messagesSent: result?.outreachCount || 0,
-              plan: plan
-            }, () => {});
-          }
-        }
-      } catch {}
-      if (typeof window !== "undefined" && window.localStorage.getItem("offerbell_needs_onboarding")) {
-        window.localStorage.removeItem("offerbell_needs_onboarding");
-        router.push("/dashboard");
-      } else {
-        // Existing user - create default profile if missing and go to dashboard
-        if (typeof window !== "undefined" && !window.localStorage.getItem("offerbell_onboarding_profile")) {
-          const nm = result?.name || "";
-          const pts = nm.split(" ");
-          window.localStorage.setItem("offerbell_onboarding_profile", JSON.stringify({
-            firstName: pts[0] || "",
-            lastName: pts.slice(1).join(" ") || "",
-            university: "",
-            targetRoles: [],
-            targetFirms: [],
-            major: "",
-            year: "",
-            recruitYear: "",
-            email: email,
-            plan: plan,
-          }));
-        }
-        router.push("/dashboard");
-      }
+      // Always go to dashboard
+      router.push("/dashboard");
     } catch (err: any) {
       console.error("Sign in failed", err);
       const msg = err?.data ? String(err.data) : (err instanceof Error ? err.message : (err?.message || "Invalid email or password."));

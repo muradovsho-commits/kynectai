@@ -39,19 +39,10 @@ function SignupContent() {
       }
 
       // Flag that this is a new user who needs onboarding
-      if (typeof window !== "undefined") {
-        // Clear any previous user's data
-        const allKeys: string[] = [];
-        for (let i = 0; i < localStorage.length; i++) {
-          const k = localStorage.key(i);
-          if (k && k.startsWith('offerbell') && k !== 'offerbell-theme') allKeys.push(k);
-        }
-        allKeys.forEach(k => localStorage.removeItem(k));
-        
-        window.localStorage.setItem("offerbell_needs_onboarding", "true");
-        window.localStorage.setItem("offerbell_signup_name", fullName);
-        window.localStorage.setItem("offerbell_signup_email", email);
-      }
+      // NOTE: We do NOT set any localStorage here. The user must verify
+      // their email first, then sign in. Only the signin flow creates
+      // the session. This prevents orphaned keys from interfering with
+      // subsequent logins.
       setSuccess(true);
     } catch (err: any) {
       const msg = err?.data ? String(err.data) : (err instanceof Error ? err.message : (err?.message || "Something went wrong."));
