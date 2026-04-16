@@ -162,7 +162,7 @@ export default function MyAccountPage() {
           </div>
           <div style={{display:'flex',flexDirection:'column',gap:8,alignItems:'flex-end'}}>
             <button onClick={saveChanges} type="button" style={{background:'var(--text)',color:'var(--surface)',padding:'9px 20px',borderRadius:10,fontSize:13,fontWeight:700,border:'none',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Save Changes</button>
-            <button type="button" onClick={() => { localStorage.removeItem('offerbell_user_id'); localStorage.removeItem('userId'); localStorage.removeItem('offerbell_plan'); localStorage.removeItem('offerbell_flash_perf'); localStorage.removeItem('offerbell_billing_cycle'); localStorage.removeItem('offerbell_plan_activated_at'); document.cookie = 'offerbell_user_id=; path=/; max-age=0'; router.push('/'); }} style={{background:'var(--surface)',color:'var(--text-2)',padding:'8px 20px',borderRadius:10,fontSize:13,fontWeight:600,border:'1.5px solid var(--border-2)',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Sign Out</button>
+            <button type="button" onClick={() => { const keys: string[] = []; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('offerbell') && k !== 'offerbell-theme') keys.push(k); } keys.forEach(k => localStorage.removeItem(k)); localStorage.removeItem('userId'); document.cookie = 'offerbell_user_id=; path=/; max-age=0'; router.push('/'); }} style={{background:'var(--surface)',color:'var(--text-2)',padding:'8px 20px',borderRadius:10,fontSize:13,fontWeight:600,border:'1.5px solid var(--border-2)',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Sign Out</button>
           </div>
         </div>
 
