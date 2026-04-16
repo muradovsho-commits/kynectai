@@ -286,22 +286,23 @@ export default function OutreachTrackerPage() {
         <Sidebar activePage="outreach-tracker" />
 
         {/* MAIN */}
-        <main className="main" style={{ padding: '32px 36px' }}>
+        <main className="main" style={{ padding: '40px 40px 60px', maxWidth: 1200, margin: '0 auto' }}>
 
           {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24, gap: 20 }}>
             <div>
-              <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 28, letterSpacing: '-.5px', color: 'var(--text)', marginBottom: 3 }}>
+              <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 34, letterSpacing: '-.7px', color: 'var(--text)', marginBottom: 4, lineHeight: 1 }}>
                 Outreach <em style={{ fontStyle: 'italic' }}>Tracker</em>
               </div>
-              <div style={{ fontSize: 13, color: 'var(--text-3)' }}>
-                Track every networking conversation in one place.{' '}
-                <span style={{ color: 'var(--text-3)' }}>Click any row to update status, add notes, or log a call date.</span>
+              <div style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 6, lineHeight: 1.5 }}>
+                Every conversation, one place. Click a row to update status or log a call.
               </div>
             </div>
-            <button onClick={() => setModalOpen(true)} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 10, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif' }}>+ Add Contact</button>
+            <button onClick={() => setModalOpen(true)} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 100, padding: '10px 22px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif', letterSpacing: '0.3px', display: 'inline-flex', alignItems: 'center', gap: 6, flexShrink: 0, textTransform: 'uppercase' }}>
+              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              Add Contact
+            </button>
           </div>
-
 
           {/* Reminders */}
           <RemindersPanel contacts={contacts} onOpenContact={(id) => {
@@ -309,136 +310,134 @@ export default function OutreachTrackerPage() {
             if (c) openDrawer(c);
           }} />
 
-          {/* Stats */}
-          <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
-            {[
-              { label: 'Total', val: total, sub: 'contacts tracked' },
-              { label: 'Sent', val: sent, sub: 'emails out' },
-              { label: 'Following Up', val: fu, sub: 'awaiting reply' },
-              { label: 'Spoken With', val: spoken, sub: 'calls completed', highlight: true },
-              { label: 'Completion Rate', val: rate, sub: 'of all sent' },
-            ].map(s => (
-              <div key={s.label} style={{ background: s.highlight ? '#0c0c0c' : 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12, padding: '14px 18px', flex: 1, minWidth: 100 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: s.highlight ? 'rgba(255,255,255,0.5)' : 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.5px', marginBottom: 6 }}>{s.label}</div>
-                <div style={{ fontSize: 24, fontWeight: 800, color: s.highlight ? '#ffffff' : 'var(--text)', letterSpacing: '-1px', lineHeight: 1 }}>{s.val}</div>
-                <div style={{ fontSize: 11, color: s.highlight ? 'rgba(255,255,255,0.5)' : 'var(--text-3)', marginTop: 4 }}>{s.sub}</div>
-              </div>
-            ))}
-          </div>
-
-
+          {/* Stats - redesigned: 3 numbers, editorial style */}
+          {total > 0 && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 0, padding: '20px 0', borderTop: '2px solid var(--text)', borderBottom: '1px solid var(--border)', marginBottom: 24 }}>
+              {[
+                { label: 'Contacts', val: total, sub: 'tracked' },
+                { label: 'Outreach', val: sent, sub: 'emails sent' },
+                { label: 'Conversations', val: spoken, sub: 'calls completed', emphasize: true },
+                { label: 'Response Rate', val: rate, sub: sent > 0 ? 'of all sent' : 'send some first' },
+              ].map((s, i, arr) => (
+                <div key={s.label} style={{ padding: '0 20px', borderRight: i < arr.length - 1 ? '1px solid var(--border)' : 'none', minWidth: 0 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 8 }}>{s.label}</div>
+                  <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 36, lineHeight: 1, letterSpacing: '-1px', color: s.emphasize ? '#16a34a' : 'var(--text)', fontWeight: 400 }}>{s.val}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 6, fontWeight: 500 }}>{s.sub}</div>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Filters */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 1 }}>Filter:</span>
             {[
-              { key: 'all', label: 'All' }, { key: 'drafted', label: 'Drafted' }, { key: 'sent', label: 'Sent' },
-              { key: 'followup', label: 'Following Up' }, { key: 'needsfu', label: 'Needs Follow Up' }, { key: 'spoken', label: 'Spoken With' },
-              { key: 'stay', label: 'Stay in Touch' }, { key: 'noresp', label: 'No Response' },
-            ].map(f => (
-              <button key={f.key} onClick={() => setActiveFilter(f.key)} style={{ padding: '5px 12px', borderRadius: 100, border: '1.5px solid', borderColor: activeFilter === f.key ? 'var(--text)' : 'var(--border-2)', background: activeFilter === f.key ? 'var(--text)' : 'var(--surface)', color: activeFilter === f.key ? 'var(--surface)' : 'var(--text-2)', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Sora, sans-serif', transition: 'all .15s' }}>
+              { key: 'all', label: 'All', count: total },
+              { key: 'drafted', label: 'Drafted', count: contacts.filter(c => c.status === 'drafted').length },
+              { key: 'sent', label: 'Sent', count: contacts.filter(c => c.status === 'sent').length },
+              { key: 'followup', label: 'Following Up', count: contacts.filter(c => ['fu1','fu2','fu3'].includes(c.status)).length },
+              { key: 'spoken', label: 'Spoken', count: contacts.filter(c => c.status === 'spoken').length },
+              { key: 'stay', label: 'Staying in Touch', count: contacts.filter(c => c.status === 'stay').length },
+              { key: 'noresp', label: 'No Response', count: contacts.filter(c => c.status === 'noresp').length },
+            ].filter(f => f.key === 'all' || f.count > 0).map(f => (
+              <button key={f.key} onClick={() => setActiveFilter(f.key)} style={{ padding: '6px 12px', borderRadius: 100, border: '1.5px solid', borderColor: activeFilter === f.key ? 'var(--text)' : 'var(--border-2)', background: activeFilter === f.key ? 'var(--text)' : 'var(--surface)', color: activeFilter === f.key ? 'var(--surface)' : 'var(--text-2)', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Sora, sans-serif', transition: 'all .15s', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                 {f.label}
+                {f.count > 0 && f.key !== 'all' && <span style={{ fontSize: 10, fontWeight: 700, opacity: 0.7 }}>{f.count}</span>}
               </button>
             ))}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--surface)', border: '1.5px solid var(--border-2)', borderRadius: 8, padding: '6px 12px', marginLeft: 'auto' }}>
-              <svg width="14" height="14" fill="none" stroke="var(--text-3)" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search name or firm…" style={{ border: 'none', background: 'none', fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', outline: 'none', width: 180 }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--surface)', border: '1.5px solid var(--border-2)', borderRadius: 100, padding: '6px 14px', marginLeft: 'auto' }}>
+              <svg width="14" height="14" fill="none" stroke="var(--text-3)" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search name or firm..." style={{ border: 'none', background: 'none', fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', outline: 'none', width: 180 }} />
             </div>
           </div>
 
-          {/* Table */}
+          {/* Table - redesigned with fewer columns */}
           <div style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 14, overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ background: '#1a1a19' }}>
-                  {['Name', 'Firm & Role', 'Status', 'Angle', 'LinkedIn', 'Date Added', 'Days Since Contact', 'Quality', 'Notes', ''].map(h => (
-                    <th key={h} style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'rgba(255,255,255,.6)', padding: '11px 14px', textAlign: 'left', whiteSpace: 'nowrap', borderRight: h !== '' ? '1px solid rgba(255,255,255,.07)' : 'none' }}>{h}</th>
+                <tr style={{ background: 'var(--surface-2)', borderBottom: '1.5px solid var(--border)' }}>
+                  {['Contact', 'Status', 'Last Activity', 'LinkedIn', 'Notes'].map(h => (
+                    <th key={h} style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-3)', padding: '12px 16px', textAlign: 'left', whiteSpace: 'nowrap' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={10} style={{ padding: '60px 20px', textAlign: 'center' }}>
-                    <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 20, fontStyle: 'italic', color: 'var(--text)', marginBottom: 8 }}>No contacts here yet</div>
-                    <div style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 20 }}>Add your first contact to start tracking.</div>
-                    <button onClick={() => setModalOpen(true)} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif' }}>+ Add Contact</button>
+                  <tr><td colSpan={5} style={{ padding: '72px 20px', textAlign: 'center' }}>
+                    <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'var(--surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+                      <svg width="22" height="22" fill="none" stroke="var(--text-3)" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 22, fontStyle: 'italic', color: 'var(--text)', marginBottom: 6 }}>No contacts here yet</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 20, maxWidth: 320, margin: '0 auto 20px', lineHeight: 1.55 }}>
+                      {activeFilter === 'all' ? 'Add your first contact to start tracking who you have reached out to.' : 'No contacts match this filter.'}
+                    </div>
+                    {activeFilter === 'all' && <button onClick={() => setModalOpen(true)} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 100, padding: '10px 22px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif', letterSpacing: '0.3px', textTransform: 'uppercase' }}>Add your first contact</button>}
                   </td></tr>
                 ) : filtered.map(c => {
                   const daysSent = daysSince(c.sentAt);
                   const daysFU = daysSince(c.lastFollowUpAt);
                   const daysLC = daysSince(c.lastContact);
-                  let daysStr = '-';
+                  let daysStr = '—';
                   let daysCls = 'var(--text-3)';
+                  let daysBold = false;
                   if (c.status === 'drafted') {
                     const d = daysSince(c.createdAt);
-                    daysStr = d !== null ? `drafted ${d}d ago` : '-';
-                    daysCls = d !== null && d > 7 ? '#d97706' : d !== null && d > 14 ? '#dc2626' : 'var(--text-3)';
+                    daysStr = d !== null ? (d === 0 ? 'Drafted today' : `Drafted ${d}d ago`) : '—';
+                    daysCls = d !== null && d > 14 ? '#dc2626' : d !== null && d > 7 ? '#d97706' : 'var(--text-3)';
+                    daysBold = d !== null && d > 7;
                   } else if (c.status === 'sent') {
-                    daysStr = daysSent !== null ? `sent ${daysSent}d ago` : '-';
+                    daysStr = daysSent !== null ? (daysSent === 0 ? 'Sent today' : `Sent ${daysSent}d ago`) : '—';
                     daysCls = daysSent !== null ? (daysSent > 7 ? '#dc2626' : daysSent > 3 ? '#d97706' : '#16a34a') : 'var(--text-3)';
+                    daysBold = daysSent !== null && daysSent > 3;
                   } else if (['fu1','fu2','fu3'].includes(c.status)) {
-                    daysStr = daysFU !== null ? `followed up ${daysFU}d ago` : daysSent !== null ? `sent ${daysSent}d ago` : '-';
+                    const fuN = c.status === 'fu1' ? '1st' : c.status === 'fu2' ? '2nd' : '3rd';
+                    daysStr = daysFU !== null ? `${fuN} follow-up ${daysFU}d ago` : daysSent !== null ? `Sent ${daysSent}d ago` : '—';
                     const d = daysFU ?? daysSent;
                     daysCls = d !== null ? (d > 10 ? '#dc2626' : d > 5 ? '#d97706' : '#16a34a') : 'var(--text-3)';
+                    daysBold = d !== null && d > 5;
                   } else if (['spoken','stay'].includes(c.status)) {
-                    daysStr = daysLC !== null ? `spoke ${daysLC}d ago` : '-';
+                    daysStr = daysLC !== null ? (daysLC === 0 ? 'Spoke today' : `Spoke ${daysLC}d ago`) : '—';
                     daysCls = daysLC !== null ? (daysLC > 60 ? '#dc2626' : daysLC > 30 ? '#d97706' : '#16a34a') : 'var(--text-3)';
                   } else if (c.status === 'noresp') {
-                    daysStr = daysLC !== null ? `${daysLC}d no reply` : '-';
+                    daysStr = daysLC !== null ? `${daysLC}d, no reply` : 'No reply';
                     daysCls = '#dc2626';
+                    daysBold = true;
+                  } else if (c.status === 'scheduled') {
+                    if (c.scheduledAt) {
+                      const dAhead = Math.ceil((c.scheduledAt - Date.now()) / 864e5);
+                      daysStr = dAhead === 0 ? 'Scheduled today' : dAhead === 1 ? 'Tomorrow' : dAhead > 0 ? `In ${dAhead} days` : `${Math.abs(dAhead)}d ago`;
+                      daysCls = dAhead >= 0 ? '#16a34a' : '#d97706';
+                      daysBold = dAhead >= 0 && dAhead <= 2;
+                    }
                   }
                   const st = STATUSES[c.status] || { label: c.status, cls: 'b-drafted' };
                   const color = colorFor(c.fname + c.lname);
                   return (
-                    <tr key={c.id} onClick={() => openDrawer(c)} style={{ borderBottom: '1px solid var(--border)', cursor: 'pointer' }}
+                    <tr key={c.id} onClick={() => openDrawer(c)} style={{ borderBottom: '1px solid var(--border)', cursor: 'pointer', transition: 'background 0.12s' }}
                       onMouseEnter={e => (e.currentTarget.style.background = 'var(--surface-2)')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                      <td style={{ padding: '11px 14px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-                          <div style={{ width: 30, height: 30, borderRadius: '50%', background: color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, color: '#fff', flexShrink: 0 }}>{initials(c.fname, c.lname)}</div>
-                          <span style={{ fontWeight: 700, fontSize: 13 }}>{c.fname} {c.lname}</span>
+                      <td style={{ padding: '14px 16px', minWidth: 220 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <div style={{ width: 34, height: 34, borderRadius: 10, background: color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: '#fff', flexShrink: 0 }}>{initials(c.fname, c.lname)}</div>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', letterSpacing: '-0.1px' }}>{c.fname} {c.lname}</div>
+                            <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 220 }}>{c.firm || 'Unknown firm'}{c.role ? ` — ${c.role}` : ''}</div>
+                          </div>
                         </div>
                       </td>
-                      <td style={{ padding: '11px 14px' }}>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{c.firm || '-'}</div>
-                        <div style={{ fontSize: 12, color: 'var(--text-2)' }}>{c.role}</div>
+                      <td style={{ padding: '14px 16px', whiteSpace: 'nowrap' }}>
+                        <span className={`badge ${st.cls}`} style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 10px', borderRadius: 100, fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap', letterSpacing: '0.2px' }}>
+                          {st.label}
+                        </span>
                       </td>
-                      <td style={{ padding: '11px 14px' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-                          <span className={`badge ${st.cls}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 100, fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap' }}>
-                            {st.label}
-                          </span>
-                          {c.status === 'scheduled' && c.scheduledAt && (
-                            <div style={{ fontSize: 10, color: 'var(--text-3)' }}>{new Date(c.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
-                          )}
-                        </div>
-                      </td>
-                      <td style={{ padding: '11px 14px' }}>
-                        {c.angle ? <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 4, background: 'var(--surface-2)', color: 'var(--text-3)' }}>{c.angle}</span> : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>-</span>}
-                      </td>
-                      <td style={{ padding: '11px 14px' }}>
-                        {c.linkedin ? <a href={c.linkedin.startsWith('http') ? c.linkedin : 'https://' + c.linkedin} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 600, color: '#0a66c2', textDecoration: 'none' }}>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
+                      <td style={{ padding: '14px 16px', fontSize: 12, fontWeight: daysBold ? 700 : 500, color: daysCls, whiteSpace: 'nowrap' }}>{daysStr}</td>
+                      <td style={{ padding: '14px 16px' }}>
+                        {c.linkedin ? <a href={c.linkedin.startsWith('http') ? c.linkedin : 'https://' + c.linkedin} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, fontWeight: 600, color: '#0a66c2', textDecoration: 'none' }}>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
                           Profile
-                        </a> : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>-</span>}
+                        </a> : <span style={{ color: 'var(--border-2)', fontSize: 12 }}>—</span>}
                       </td>
-                      <td style={{ padding: '11px 14px', fontSize: 12, color: 'var(--text-3)', whiteSpace: 'nowrap' }}>{fmtDate(c.createdAt)}</td>
-                      <td style={{ padding: '11px 14px', fontSize: 12, fontWeight: 700, color: daysCls, whiteSpace: 'nowrap' }}>{daysStr}</td>
-                      <td style={{ padding: '11px 14px' }}>
-                        {c.quality === 'great' ? <span style={{ color: '#16a34a', fontWeight: 700, fontSize: 12 }}>Great</span>
-                          : c.quality === 'ok' ? <span style={{ color: '#d97706', fontWeight: 700, fontSize: 12 }}>OK</span>
-                          : c.quality === 'cold' ? <span style={{ color: '#dc2626', fontWeight: 700, fontSize: 12 }}>Cold</span>
-                          : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>-</span>}
-                      </td>
-                      <td style={{ padding: '11px 14px', fontSize: 12, color: 'var(--text-2)', maxWidth: 260, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {c.notes || <span style={{ color: 'var(--text-3)' }}>No notes</span>}
-                      </td>
-                      <td style={{ padding: '11px 8px', textAlign: 'center' }}>
-                        <button onClick={e => { e.stopPropagation(); if (confirm('Remove ' + c.fname + ' ' + c.lname + '?')) { const updated = contacts.filter(x => x.id !== c.id); setContacts(updated); persist(updated); showToast('Removed'); } }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-3)', padding: 4, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Delete contact"
-                          onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')}
-                          onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-3)')}>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                        </button>
+                      <td style={{ padding: '14px 16px', fontSize: 12, color: 'var(--text-2)', maxWidth: 280, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {c.notes || <span style={{ color: 'var(--border-2)', fontStyle: 'italic' }}>No notes</span>}
                       </td>
                     </tr>
                   );
