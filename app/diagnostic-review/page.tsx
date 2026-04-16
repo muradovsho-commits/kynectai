@@ -374,7 +374,7 @@ export default function DiagnosticReviewPage() {
                     <span className="diag-tr-num">{String(i + 1).padStart(2, '0')}</span>
                     <div>
                       <div className="diag-tr-name">{t.title}</div>
-                      <div className="diag-tr-name-sub">{t.categories.length} categories · {t.questions.length} questions</div>
+                      <div className="diag-tr-name-sub">{t.categories.length} categories</div>
                     </div>
                     <div>
                       <div className="diag-tr-label">Avg Score</div>
