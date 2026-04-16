@@ -286,7 +286,10 @@ export default function OutreachTrackerPage() {
         <Sidebar activePage="outreach-tracker" />
 
         {/* MAIN */}
-        <main className="main" style={{ padding: '40px 40px 60px', maxWidth: 1200, margin: '0 auto' }}>
+        <main className="main" style={{ padding: '40px 40px 60px' }}>
+
+          {/* Inner wrapper: centers content within the post-sidebar area */}
+          <div style={{ maxWidth: 1200, margin: '0 auto' }}>
 
           {/* Header */}
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24, gap: 20 }}>
@@ -444,6 +447,7 @@ export default function OutreachTrackerPage() {
                 })}
               </tbody>
             </table>
+          </div>
           </div>
         </main>
       </div>
