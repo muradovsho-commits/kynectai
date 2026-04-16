@@ -57,6 +57,7 @@ function SigninContent() {
         // app has a profile to read on first load after signin
         const nm = result?.name || "";
         const pts = nm.split(" ");
+        const onboardingDone = result?.onboardingComplete || false;
         window.localStorage.setItem("offerbell_onboarding_profile", JSON.stringify({
           firstName: pts[0] || "",
           lastName: pts.slice(1).join(" ") || "",
@@ -68,7 +69,13 @@ function SigninContent() {
           recruitYear: "",
           email: email,
           plan: plan,
+          tutorialComplete: onboardingDone,
         }));
+        // If user already completed onboarding (on another browser),
+        // set the tutorial-complete flag so dashboard skips the tutorial
+        if (onboardingDone) {
+          window.localStorage.setItem("offerbell_tutorial_complete", "true");
+        }
 
         // Sync to Chrome extension if installed
         try {

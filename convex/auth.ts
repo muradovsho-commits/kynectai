@@ -104,7 +104,7 @@ export const signIn = mutation({
       throw new ConvexError("Please verify your email address to sign in.");
     }
 
-    return { userId: user._id.toString(), name: user.name, email: user.email, outreachCount: user.outreachCount || 0, plan: user.plan || 'free', planActivatedAt: user.planActivatedAt || null, promoCode: user.promoCode || null };
+    return { userId: user._id.toString(), name: user.name, email: user.email, outreachCount: user.outreachCount || 0, plan: user.plan || 'free', planActivatedAt: user.planActivatedAt || null, promoCode: user.promoCode || null, onboardingComplete: user.onboardingComplete || false };
   },
 });
 
