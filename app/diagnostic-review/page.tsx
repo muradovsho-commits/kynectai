@@ -1,4 +1,3 @@
-// Build: v3-handwritten-mcqs
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Sidebar from '../components/Sidebar';
@@ -38,7 +37,6 @@ function buildAssessment(track: TrackDef): MCQ[] {
       allQ.push({ q: d.q, category: cat, options: d.options, correct: d.correct, explanation: d.explanation });
     }
   }
-  // If not enough from categories, fill with random from all questions
   if (allQ.length < 10) {
     const used = new Set(allQ.map(q => q.q));
     const remaining = shuffle(track.questions.filter(q => !used.has(q.q))).slice(0, 10 - allQ.length);
@@ -49,14 +47,14 @@ function buildAssessment(track: TrackDef): MCQ[] {
   return shuffle(allQ);
 }
 
-function loadHistory(): DiagResult[] {
-  try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; }
-}
-function saveHistory(h: DiagResult[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(h));
-}
+function loadHistory(): DiagResult[] { try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; } }
+function saveHistory(h: DiagResult[]) { localStorage.setItem(STORAGE_KEY, JSON.stringify(h)); }
 
 type Phase = 'home' | 'select' | 'assess' | 'results';
+
+const ARROW = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 12h14M12 5l7 7-7 7"/></svg>;
+const BACK_ARROW = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>;
+const ARROW_R = <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 6l6 6-6 6"/></svg>;
 
 export default function DiagnosticReviewPage() {
   const [phase, setPhase] = useState<Phase>('home');
@@ -71,7 +69,6 @@ export default function DiagnosticReviewPage() {
   const [totalAnswered, setTotalAnswered] = useState(0);
   const [missed, setMissed] = useState<{ q: string; explanation: string; category: string }[]>([]);
   const [history, setHistory] = useState<DiagResult[]>([]);
-  const [activeTopic, setActiveTopic] = useState('All Topics');
   const [viewTrack, setViewTrack] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -150,166 +147,157 @@ export default function DiagnosticReviewPage() {
   const overallPct = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
   const vc = overallPct >= 80 ? 'strong' : overallPct >= 55 ? 'mid' : 'weak';
   const vt = overallPct >= 80 ? 'Interview Ready' : overallPct >= 65 ? 'Solid Foundation' : overallPct >= 55 ? 'Getting There' : overallPct >= 40 ? 'Needs Work' : 'Significant Gaps';
+  const vDesc = overallPct >= 80 ? 'Strong command of fundamentals across most categories.' : overallPct >= 65 ? 'Good base. Sharpen weak areas and drill consistency.' : overallPct >= 40 ? 'Foundation forming. Prioritize weakest categories first.' : 'Early stage. Work through guides and flashcards first.';
 
-  // Aggregate performance data across all history
-  const trackHistory = history.filter(h => !trackKey || h.track === trackKey);
-  const allTrackHistory = history;
-  const latestByTrack: Record<string, DiagResult> = {};
-  for (const h of history) { if (!latestByTrack[h.track]) latestByTrack[h.track] = h; }
-
-  // Overall readiness from flash_perf
-  const [flashPerf, setFlashPerf] = useState<{ seen: number; pass: number; partial: number; fail: number; byCat: Record<string, { seen: number; pass: number }> }>({ seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} });
-  useEffect(() => {
-    try { const raw = localStorage.getItem('offerbell_flash_perf'); if (raw) setFlashPerf(JSON.parse(raw)); } catch {}
-  }, []);
-
-  // ═══ HOME - Career Track Selection + Per-Track Stats ═══
-  if (phase === 'home') {
-
-    // Per-track stats
-    const trackStats = (tk: string) => {
-      const th = history.filter(h => h.track === tk);
-      const diagsTaken = th.length;
-      const bestScore = th.length > 0 ? Math.max(...th.map(h => h.score)) : 0;
-      const avgScore = th.length > 0 ? Math.round(th.reduce((s, h) => s + h.score, 0) / th.length) : 0;
-      // Category scores from diagnostic history for this track
-      const catAgg: Record<string, { total: number; correct: number }> = {};
-      for (const h of th) {
-        for (const [cat, sc] of Object.entries(h.catScores)) {
-          if (!catAgg[cat]) catAgg[cat] = { total: 0, correct: 0 };
-          catAgg[cat].total += sc.total;
-          catAgg[cat].correct += sc.correct;
-        }
+  const trackStats = (tk: string) => {
+    const th = history.filter(h => h.track === tk);
+    const diagsTaken = th.length;
+    const bestScore = th.length > 0 ? Math.max(...th.map(h => h.score)) : 0;
+    const avgScore = th.length > 0 ? Math.round(th.reduce((s, h) => s + h.score, 0) / th.length) : 0;
+    const catAgg: Record<string, { total: number; correct: number }> = {};
+    for (const h of th) {
+      for (const [cat, sc] of Object.entries(h.catScores)) {
+        if (!catAgg[cat]) catAgg[cat] = { total: 0, correct: 0 };
+        catAgg[cat].total += sc.total;
+        catAgg[cat].correct += sc.correct;
       }
-      const cats = Object.entries(catAgg).map(([cat, d]) => ({
-        cat, ...d, pct: d.total > 0 ? Math.round((d.correct / d.total) * 100) : 0,
-      })).sort((a, b) => b.pct - a.pct);
-      return { diagsTaken, bestScore, avgScore, cats, history: th };
-    };
+    }
+    const cats = Object.entries(catAgg).map(([cat, d]) => ({ cat, ...d, pct: d.total > 0 ? Math.round((d.correct / d.total) * 100) : 0 })).sort((a, b) => b.pct - a.pct);
+    return { diagsTaken, bestScore, avgScore, cats, history: th };
+  };
 
-    // If viewing a specific track's stats
+  // ═══ HOME ═══
+  if (phase === 'home') {
+    // Track detail view
     if (viewTrack && TRACKS[viewTrack]) {
       const t = TRACKS[viewTrack];
       const st = trackStats(viewTrack);
       const readinessScore = st.avgScore;
       const readinessLabel = readinessScore >= 80 ? 'Interview Ready' : readinessScore >= 65 ? 'Solid Foundation' : readinessScore >= 50 ? 'Getting There' : readinessScore >= 30 ? 'Building Up' : st.diagsTaken > 0 ? 'Just Starting' : 'Not Started';
-      const readinessColor = readinessScore >= 80 ? '#16a34a' : readinessScore >= 65 ? '#22c55e' : readinessScore >= 50 ? '#d97706' : readinessScore >= 30 ? '#f59e0b' : '#94a3b8';
+      const readinessDesc = readinessScore >= 80 ? 'Strong performance across categories. Focus on depth and mock interviews.' : readinessScore >= 65 ? 'Solid foundation. Target weak categories to close the gap.' : readinessScore >= 50 ? 'Building momentum. Continue drilling to reach interview-ready.' : readinessScore >= 30 ? 'Early stage. Work through guides and flashcards before diagnostics.' : st.diagsTaken > 0 ? 'Just getting started. Keep taking diagnostics to build a baseline.' : 'Take your first diagnostic to establish a baseline.';
+      const scoreCls = readinessScore >= 80 ? 'strong' : readinessScore >= 55 ? 'mid' : readinessScore > 0 ? 'weak' : 'none';
+      const weakCats = st.cats.filter(c => c.pct < 50 && c.total >= 2);
 
       return (
         <div className="app"><Sidebar activePage="diagnostic-review" />
           <main className="diag-main">
-            <div className="diag-container">
-              <button className="diag-back-link" onClick={() => setViewTrack(null)} type="button">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                All Tracks
+            <div className="diag-wrap">
+              <button className="diag-back" onClick={() => setViewTrack(null)} type="button">
+                {BACK_ARROW}All Tracks
               </button>
-              <div className="diag-title">{t.title} <em>Readiness</em></div>
-              <div className="diag-sub">{st.diagsTaken > 0 ? `${st.diagsTaken} diagnostic${st.diagsTaken > 1 ? 's' : ''} taken` : 'No diagnostics taken yet for this track'}</div>
 
-              {/* Readiness Ring */}
-              <div className="diag-readiness-card">
-                <div className="diag-ring-wrap">
-                  <svg viewBox="0 0 120 120" className="diag-ring-svg">
-                    <circle cx="60" cy="60" r="52" fill="none" stroke="var(--surface-2)" strokeWidth="8" />
-                    <circle cx="60" cy="60" r="52" fill="none" stroke={readinessColor} strokeWidth="8"
-                      strokeDasharray={`${readinessScore * 3.267} 326.7`} strokeDashoffset="0"
-                      strokeLinecap="round" transform="rotate(-90 60 60)" style={{ transition: 'stroke-dasharray 1s ease' }} />
-                  </svg>
-                  <div className="diag-ring-inner">
-                    <div className="diag-ring-score" style={{ color: readinessColor }}>{readinessScore}%</div>
-                    <div className="diag-ring-label">{readinessLabel}</div>
-                  </div>
+              {/* Hero with giant score */}
+              <div className="diag-detail-hero">
+                <div className="diag-detail-hero-top">
+                  <div className="diag-detail-track-name">{t.title}<br/><em>Readiness Report</em></div>
+                  <div className="diag-detail-tag">{st.diagsTaken > 0 ? `${st.diagsTaken} Diagnostic${st.diagsTaken > 1 ? 's' : ''}` : 'Not Started'}</div>
                 </div>
-                <div className="diag-readiness-stats">
-                  <div className="diag-rs"><div className="diag-rs-val">{st.diagsTaken}</div><div className="diag-rs-label">Diagnostics Taken</div></div>
-                  <div className="diag-rs"><div className="diag-rs-val">{st.bestScore}%</div><div className="diag-rs-label">Best Score</div></div>
-                  <div className="diag-rs"><div className="diag-rs-val">{st.avgScore}%</div><div className="diag-rs-label">Average Score</div></div>
-                  <div className="diag-rs"><div className="diag-rs-val">{t.categories.length}</div><div className="diag-rs-label">Categories</div></div>
-                </div>
-              </div>
 
-              {/* High Performance Recommendation */}
-              {readinessScore >= 70 && st.diagsTaken >= 1 && (
-                <div style={{background:'linear-gradient(135deg, rgba(22,163,74,0.06), rgba(34,197,94,0.04))',border:'1.5px solid rgba(22,163,74,0.2)',borderRadius:12,padding:'16px 18px',marginBottom:20,display:'flex',alignItems:'flex-start',gap:12}}>
-                  <div style={{width:28,height:28,borderRadius:8,background:'rgba(22,163,74,0.1)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <div className="diag-mega-score-row">
+                  <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <span className={`diag-mega-score ${scoreCls}`}>{st.diagsTaken > 0 ? readinessScore : '—'}</span>
+                    {st.diagsTaken > 0 && <span className="diag-mega-sign">%</span>}
                   </div>
-                  <div>
-                    <div style={{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:3}}>Strong performance - keep pushing</div>
-                    <div style={{fontSize:12,color:'var(--text-3)',lineHeight:1.6}}>
-                      You're scoring well on {t.title} diagnostics. To solidify your prep, we recommend going through as many of the <a href="/flashcards" style={{color:'var(--text)',fontWeight:700,textDecoration:'underline'}}>Interview Flashcards</a> as possible. The more cards you drill, the sharper you'll be under pressure.
+                  <div className="diag-mega-label">
+                    <div className="diag-mega-label-title">{readinessLabel}</div>
+                    <div className="diag-mega-label-desc">{readinessDesc}</div>
+                  </div>
+                  <div className="diag-mega-meta">
+                    <div className="diag-mega-meta-item">
+                      <div className="diag-mega-meta-val">{st.bestScore || '—'}{st.bestScore > 0 ? '%' : ''}</div>
+                      <div className="diag-mega-meta-label">Best</div>
+                    </div>
+                    <div className="diag-mega-meta-item">
+                      <div className="diag-mega-meta-val">{t.categories.length}</div>
+                      <div className="diag-mega-meta-label">Categories</div>
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Strong performance pullquote */}
+              {readinessScore >= 70 && st.diagsTaken >= 1 && (
+                <div className="diag-pullquote">
+                  <div className="diag-pullquote-eyebrow">Recommendation</div>
+                  <div className="diag-pullquote-text">
+                    Strong scores on {t.title} diagnostics. To solidify, drill <a href="/flashcards">Interview Flashcards</a> — the more cards, the sharper you'll be under pressure.
+                  </div>
+                </div>
               )}
+
+              {/* Category breakdown */}
               {st.cats.length > 0 && (
-                <div className="diag-section">
-                  <div className="diag-section-title">Category Breakdown</div>
-                  <div className="diag-section-sub">Performance across {t.title} topics</div>
-                  <div className="diag-mastery-grid">
-                    {st.cats.map(c => {
+                <>
+                  <div className="diag-section-head">
+                    <div className="diag-section-h">Category <em>Breakdown</em></div>
+                    <div className="diag-section-meta">{t.title}</div>
+                  </div>
+                  <div className="diag-cat-list">
+                    {st.cats.map((c, i) => {
                       const color = c.pct >= 80 ? '#16a34a' : c.pct >= 60 ? '#d97706' : c.pct >= 40 ? '#f59e0b' : '#dc2626';
                       return (
-                        <div key={c.cat} className="diag-mastery-item">
-                          <div className="diag-mastery-top">
-                            <span className="diag-mastery-cat">{c.cat}</span>
-                            <span className="diag-mastery-pct" style={{ color }}>{c.pct}%</span>
+                        <div key={c.cat} className="diag-cat-entry">
+                          <span className="diag-cat-rank">{String(i + 1).padStart(2, '0')}</span>
+                          <div className="diag-cat-main">
+                            <div className="diag-cat-heading">{c.cat}</div>
+                            <div className="diag-cat-detail">{c.correct} of {c.total} correct</div>
                           </div>
-                          <div className="diag-mastery-bar-wrap">
-                            <div className="diag-mastery-bar" style={{ width: `${c.pct}%`, background: color }} />
+                          <div className="diag-cat-bar-container">
+                            <div className="diag-cat-bar-fill" style={{ width: `${c.pct}%`, background: color }} />
                           </div>
-                          <div className="diag-mastery-detail">{c.correct}/{c.total} correct</div>
+                          <div className="diag-cat-pct" style={{ color }}>{c.pct}<span style={{ fontSize: 12, color: 'var(--text-3)' }}>%</span></div>
                         </div>
                       );
                     })}
                   </div>
-                </div>
+                </>
               )}
 
-              {/* History for this track */}
-              {st.history.length > 0 && (
-                <div className="diag-section">
-                  <div className="diag-section-title">History</div>
-                  <div className="diag-history-list">
-                    {st.history.slice(0, 10).map(h => {
-                      const hColor = h.score >= 80 ? '#16a34a' : h.score >= 55 ? '#d97706' : '#dc2626';
-                      const dateStr = new Date(h.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                      return (
-                        <div key={h.id} className="diag-history-row">
-                          <div className="diag-history-track">{dateStr}</div>
-                          <div className="diag-history-detail">{h.totalCorrect}/{h.totalAnswered}</div>
-                          <div className="diag-history-score" style={{ color: hColor }}>{h.score}%</div>
-                          <div className="diag-history-bar-wrap">
-                            <div className="diag-history-bar" style={{ width: `${h.score}%`, background: hColor }} />
-                          </div>
-                        </div>
-                      );
-                    })}
+              {/* Focus areas */}
+              {weakCats.length > 0 && (
+                <div className="diag-focus-card">
+                  <div className="diag-focus-head">
+                    <span className="diag-focus-label">Priority Focus</span>
                   </div>
-                </div>
-              )}
-
-              {/* Focus Areas for this track */}
-              {st.cats.filter(c => c.pct < 50 && c.total >= 2).length > 0 && (
-                <div className="diag-section">
-                  <div className="diag-section-title">Focus Areas</div>
-                  <div className="diag-focus-list">
-                    {st.cats.filter(c => c.pct < 50 && c.total >= 2).map(c => (
-                      <div key={c.cat} className="diag-focus-item">
-                        <div className="diag-focus-dot" />
-                        <div>
-                          <div className="diag-focus-cat">{c.cat}</div>
-                          <div className="diag-focus-detail">{c.pct}% accuracy ({c.correct}/{c.total}) - drill this in Flashcards and Concept Drills</div>
-                        </div>
-                      </div>
+                  <div className="diag-focus-title">These areas need <em>urgent work</em></div>
+                  <div className="diag-focus-desc">Drill these in Flashcards and Concept Drills before your next diagnostic.</div>
+                  <div className="diag-focus-chips">
+                    {weakCats.map(c => (
+                      <span key={c.cat} className="diag-focus-chip">{c.cat} <strong>{c.pct}%</strong></span>
                     ))}
                   </div>
                 </div>
               )}
 
-              <button className="diag-cta-btn" onClick={() => { setTrackKey(viewTrack); const tr = TRACKS[viewTrack]; const qs = buildAssessment(tr); setQuestions(qs); setIdx(0); setSelected(null); setShowExp(false); setTimer(TIME_PER_Q); setCatResults({}); setTotalCorrect(0); setTotalAnswered(0); setMissed([]); setPhase('assess'); }} type="button">
-                Take {t.title} Diagnostic
-                <svg viewBox="0 0 24 24" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2"/></svg>
+              {/* History */}
+              {st.history.length > 0 && (
+                <div style={{ marginTop: 40 }}>
+                  <div className="diag-section-head">
+                    <div className="diag-section-h">Timeline</div>
+                    <div className="diag-section-meta">Last {Math.min(st.history.length, 10)}</div>
+                  </div>
+                  <div className="diag-history-table">
+                    {st.history.slice(0, 10).map(h => {
+                      const hColor = h.score >= 80 ? '#16a34a' : h.score >= 55 ? '#d97706' : '#dc2626';
+                      const dateStr = new Date(h.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                      return (
+                        <div key={h.id} className="diag-history-entry">
+                          <div className="diag-hist-date">{dateStr}</div>
+                          <div className="diag-hist-bar">
+                            <div className="diag-hist-bar-fill" style={{ width: `${h.score}%`, background: hColor }} />
+                          </div>
+                          <div className="diag-hist-ratio">{h.totalCorrect}/{h.totalAnswered}</div>
+                          <div className="diag-hist-score" style={{ color: hColor }}>{h.score}%</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <button className="diag-cta-primary" onClick={() => { setTrackKey(viewTrack); const tr = TRACKS[viewTrack]; const qs = buildAssessment(tr); setQuestions(qs); setIdx(0); setSelected(null); setShowExp(false); setTimer(TIME_PER_Q); setCatResults({}); setTotalCorrect(0); setTotalAnswered(0); setMissed([]); setPhase('assess'); }} type="button">
+                {st.diagsTaken > 0 ? 'Take Another Diagnostic' : `Start ${t.title} Diagnostic`}
+                {ARROW}
               </button>
             </div>
           </main>
@@ -317,33 +305,102 @@ export default function DiagnosticReviewPage() {
       );
     }
 
-    // Main landing - career track selection grid
+    // Main landing — all tracks
+    const allLatest = history.slice(0, 20);
+    const totalDiagnostics = history.length;
+    const allTrackEntries = Object.entries(TRACKS);
+    const allStats = allTrackEntries.map(([k, t]) => ({ k, t, st: trackStats(k) }));
+    const tracksWithData = allStats.filter(s => s.st.diagsTaken > 0);
+    const overallAvg = tracksWithData.length > 0 ? Math.round(tracksWithData.reduce((s, x) => s + x.st.avgScore, 0) / tracksWithData.length) : 0;
+    const bestTrackOverall = tracksWithData.length > 0 ? tracksWithData.reduce((a, b) => a.st.bestScore > b.st.bestScore ? a : b) : null;
+
     return (
       <div className="app"><Sidebar activePage="diagnostic-review" />
         <main className="diag-main">
-          <div className="diag-container">
-            <div className="diag-title">Diagnostic <em>Review</em></div>
-            <div className="diag-sub">Select a career track to view your readiness or take a diagnostic assessment.</div>
+          <div className="diag-wrap">
+            <div className="diag-eyebrow">OfferBell Assessment</div>
+            <div className="diag-hero-title">Diagnostic<br/><em>Review</em></div>
+            <div className="diag-lede">Test your interview readiness across career tracks. Timed MCQs across every core category, with detailed performance reports and targeted recommendations.</div>
 
-            <div className="diag-track-select-grid">
-              {Object.entries(TRACKS).map(([k, t]) => {
-                const st = trackStats(k);
-                const hasData = st.diagsTaken > 0;
-                const scoreColor = st.avgScore >= 80 ? '#16a34a' : st.avgScore >= 55 ? '#d97706' : st.avgScore > 0 ? '#f59e0b' : 'var(--text-3)';
+            {/* Hero stats row */}
+            <div className="diag-hero-row">
+              <div className="diag-hero-stat">
+                <div>
+                  <div className="diag-hero-stat-label">Overall Average</div>
+                  <div className="diag-hero-stat-num">
+                    {totalDiagnostics > 0 ? overallAvg : '—'}
+                    {totalDiagnostics > 0 && <span style={{ fontSize: 28, color: 'var(--text-3)', fontStyle: 'italic' }}>%</span>}
+                  </div>
+                </div>
+                <div className="diag-hero-stat-sub">{tracksWithData.length} track{tracksWithData.length !== 1 ? 's' : ''} assessed</div>
+              </div>
+              <div className="diag-hero-stat">
+                <div>
+                  <div className="diag-hero-stat-label">Total Taken</div>
+                  <div className="diag-hero-stat-num">{totalDiagnostics || '0'}</div>
+                </div>
+                <div className="diag-hero-stat-sub">All time</div>
+              </div>
+              <div className="diag-hero-stat">
+                <div>
+                  <div className="diag-hero-stat-label">Best Track</div>
+                  <div className="diag-hero-stat-num" style={{ fontSize: bestTrackOverall ? 26 : 52 }}>
+                    {bestTrackOverall ? bestTrackOverall.t.title.split(' ')[0] : '—'}
+                  </div>
+                </div>
+                <div className="diag-hero-stat-sub">{bestTrackOverall ? `${bestTrackOverall.st.bestScore}% best` : 'No data'}</div>
+              </div>
+              <div className="diag-hero-stat">
+                <div>
+                  <div className="diag-hero-stat-label">Avail. Tracks</div>
+                  <div className="diag-hero-stat-num">{allTrackEntries.length}</div>
+                </div>
+                <div className="diag-hero-stat-sub">Ready to assess</div>
+              </div>
+            </div>
+
+            {/* Track list */}
+            <div className="diag-section-head">
+              <div className="diag-section-h">Select a <em>Track</em></div>
+              <div className="diag-section-meta">{allTrackEntries.length} available</div>
+            </div>
+
+            <div className="diag-track-list">
+              {allStats.map(({ k, t, st }, i) => {
+                const scoreColor = st.avgScore >= 80 ? '#16a34a' : st.avgScore >= 55 ? '#d97706' : st.avgScore > 0 ? '#dc2626' : 'var(--text-3)';
+                const recent = st.history.slice(0, 6).reverse();
                 return (
-                  <div key={k} className="diag-track-select-card" onClick={() => setViewTrack(k)}>
-                    <div className="diag-tsc-title">{t.title}</div>
-                    {hasData ? (
-                      <div className="diag-tsc-stats">
-                        <div className="diag-tsc-score" style={{ color: scoreColor }}>{st.avgScore}%</div>
-                        <div className="diag-tsc-detail">{st.diagsTaken} diagnostic{st.diagsTaken > 1 ? 's' : ''} · Best: {st.bestScore}%</div>
-                      </div>
-                    ) : (
-                      <div className="diag-tsc-empty">No diagnostics yet</div>
-                    )}
-                    <div className="diag-tsc-arrow">
-                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                  <div key={k} className="diag-track-row" onClick={() => setViewTrack(k)}>
+                    <span className="diag-tr-num">{String(i + 1).padStart(2, '0')}</span>
+                    <div>
+                      <div className="diag-tr-name">{t.title}</div>
+                      <div className="diag-tr-name-sub">{t.categories.length} categories · {t.questions.length} questions</div>
                     </div>
+                    <div>
+                      <div className="diag-tr-label">Avg Score</div>
+                      {st.diagsTaken > 0 ? (
+                        <div className="diag-tr-val" style={{ color: scoreColor }}>{st.avgScore}<span style={{ fontSize: 12, color: 'var(--text-3)', fontStyle: 'italic' }}>%</span></div>
+                      ) : (
+                        <div className="diag-tr-val-none">—</div>
+                      )}
+                    </div>
+                    <div>
+                      <div className="diag-tr-label">Best</div>
+                      {st.diagsTaken > 0 ? (
+                        <div className="diag-tr-val">{st.bestScore}<span style={{ fontSize: 12, color: 'var(--text-3)', fontStyle: 'italic' }}>%</span></div>
+                      ) : (
+                        <div className="diag-tr-val-none">—</div>
+                      )}
+                    </div>
+                    <div>
+                      <div className="diag-tr-label">Trend</div>
+                      <div className="diag-tr-spark">
+                        {recent.length > 0 ? recent.map((h, j) => (
+                          <div key={j} className="diag-spark-bar" style={{ height: `${Math.max(4, (h.score / 100) * 28)}px`, background: h.score >= 70 ? '#16a34a' : h.score >= 50 ? '#d97706' : '#dc2626', opacity: 0.85 }} />
+                        )) : <div style={{ fontSize: 18, color: 'var(--border-2)', fontStyle: 'italic', fontFamily: "'Instrument Serif', serif" }}>—</div>}
+                      </div>
+                    </div>
+                    <div className="diag-tr-arrow">{ARROW_R}</div>
                   </div>
                 );
               })}
@@ -354,76 +411,55 @@ export default function DiagnosticReviewPage() {
     );
   }
 
-  // ═══ TRACK SELECTION ═══
-  if (phase === 'select') return (
-    <div className="app"><Sidebar activePage="diagnostic-review" />
-      <main className="diag-main">
-        <div className="diag-container">
-          <button className="diag-back-link" onClick={() => setPhase('home')} type="button">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            Back to Overview
-          </button>
-          <div className="diag-title">Start <em>Diagnostic</em></div>
-          <div className="diag-sub">Select a career track. You will be tested on {QUESTIONS_PER_CAT} questions per category, with {TIME_PER_Q} seconds per question.</div>
-          <div className="diag-track-grid">
-            {Object.entries(TRACKS).map(([k, t]) => (
-              <button key={k} className={`diag-track-btn${trackKey === k ? ' active' : ''}`} onClick={() => setTrackKey(k)} type="button">{t.title}</button>
-            ))}
-          </div>
-          <button className={`diag-start-btn ${trackKey ? 'ready' : 'disabled'}`} onClick={startAssessment} type="button">
-            {trackKey ? `Start ${TRACKS[trackKey].title} Diagnostic (${TRACKS[trackKey].categories.length * QUESTIONS_PER_CAT} questions)` : 'Select a career track'}
-          </button>
-        </div>
-      </main>
-    </div>
-  );
-
   // ═══ ASSESSMENT ═══
   if (phase === 'assess' && q && track) return (
     <div className="app"><Sidebar activePage="diagnostic-review" />
       <main className="diag-main">
-        <div className="diag-container">
-          <div className="diag-top">
-            <div className="diag-top-left">
-              <div className="diag-top-track">{track.title} <em>Diagnostic</em></div>
-              <span className="diag-top-cat">{q.category}</span>
+        <div className="diag-assess-wrap">
+          <div className="diag-assess-top">
+            <div className="diag-assess-left">
+              <span className="diag-assess-track">{track.title} <em>Diagnostic</em></span>
+              <span className="diag-assess-chip">{q.category}</span>
             </div>
-            <div className="diag-top-right">
-              <span className={`diag-timer ${timer > 20 ? 'ok' : timer > 10 ? 'warn' : 'danger'}`}>{timer}s</span>
-              <span className="diag-counter">{idx + 1} / {questions.length}</span>
+            <div className="diag-assess-right">
+              <span className={`diag-timer ${timer > 20 ? 'ok' : timer > 10 ? 'warn' : 'danger'}`}>{String(timer).padStart(2, '0')}<span style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--text-3)', marginLeft: 2 }}>s</span></span>
+              <span className="diag-counter">Q{idx + 1} / {questions.length}</span>
             </div>
           </div>
-          <div className="diag-progress-wrap"><div className="diag-progress-bar" style={{ width: `${(idx / questions.length) * 100}%` }} /></div>
-          <div className="diag-q-card">
-            <div className="diag-q-num">Question {idx + 1} of {questions.length} - {q.category}</div>
+          <div className="diag-prog-track">
+            <div className="diag-prog-fill" style={{ width: `${((idx + 1) / questions.length) * 100}%` }} />
+          </div>
+
+          <div className="diag-q-block">
+            <div className="diag-q-num">Question {idx + 1} of {questions.length}</div>
             <div className="diag-q-text">{q.q}</div>
           </div>
-          <div className="diag-choices">
+
+          <div className="diag-opts">
             {q.options.map((opt, i) => {
-              let cls = 'diag-choice';
+              let cls = 'diag-opt';
               if (selected !== null) { if (i === q.correct) cls += ' correct'; else if (i === selected) cls += ' wrong'; else cls += ' faded'; }
               return (
                 <button key={i} className={cls} onClick={() => handleSelect(i)} type="button" disabled={selected !== null}>
-                  <span className="diag-choice-letter">{'ABCD'[i]}</span>
-                  <span className="diag-choice-text">{opt}</span>
-                  {selected !== null && i === q.correct && <span className="diag-choice-tag ok">Correct</span>}
-                  {selected !== null && i === selected && i !== q.correct && <span className="diag-choice-tag no">Wrong</span>}
-                  {selected === -1 && i === q.correct && <span className="diag-choice-tag ok">Answer</span>}
+                  <span className="diag-opt-letter">{'ABCD'[i]}</span>
+                  <span className="diag-opt-txt">{opt}</span>
+                  {selected !== null && i === q.correct && <span className="diag-opt-tag ok">Correct</span>}
+                  {selected !== null && i === selected && i !== q.correct && <span className="diag-opt-tag no">Wrong</span>}
+                  {selected === -1 && i === q.correct && <span className="diag-opt-tag ok">Answer</span>}
                 </button>
               );
             })}
           </div>
+
           {showExp && (
-            <>
-              <div className={`diag-exp ${selected === q.correct ? 'correct' : 'wrong'}`}>
-                <div className="diag-exp-label">{selected === q.correct ? 'Correct' : selected === -1 ? 'Time is up' : 'Incorrect'}</div>
-                {q.explanation}
-              </div>
-              <button className="diag-next-btn" onClick={nextQ} type="button">
+            <div className={`diag-explain ${selected === q.correct ? 'correct' : 'wrong'}`}>
+              <div className="diag-explain-head">{selected === q.correct ? 'Correct' : selected === -1 ? 'Time expired' : 'Incorrect'}</div>
+              <div className="diag-explain-txt">{q.explanation}</div>
+              <button className="diag-next" onClick={nextQ} type="button">
                 {idx + 1 >= questions.length ? 'See Results' : 'Next Question'}
-                <svg viewBox="0 0 24 24" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2"/></svg>
+                {ARROW}
               </button>
-            </>
+            </div>
           )}
         </div>
       </main>
@@ -436,66 +472,79 @@ export default function DiagnosticReviewPage() {
     const pct = r.total > 0 ? Math.round((r.correct / r.total) * 100) : 0;
     return { cat, ...r, pct };
   }).sort((a, b) => b.pct - a.pct) : [];
-  const strengths = sortedCats.filter(c => c.pct >= 80);
-  const weaknesses = sortedCats.filter(c => c.pct < 50 && c.total > 0);
 
   return (
     <div className="app"><Sidebar activePage="diagnostic-review" />
       <main className="diag-main">
-        <div className="diag-container">
-          <div className="diag-results">
-            <div className="diag-results-header">
-              <div className="diag-results-title">{track?.title} <em>Diagnostic Results</em></div>
-              <div className={`diag-overall-score ${vc}`}>{overallPct}%</div>
-              <div className={`diag-verdict ${vc}`}>{vt}</div>
-              <div className="diag-verdict-sub">{totalCorrect} of {totalAnswered} correct</div>
+        <div className="diag-results-wrap">
+          <div className="diag-results-mark">Diagnostic Complete</div>
+          <div className="diag-results-title">{track?.title}<br/><em>Performance Report</em></div>
+
+          {/* Main scorecard */}
+          <div className="diag-results-scorecard">
+            <span className="diag-results-corner tl">OfferBell</span>
+            <span className="diag-results-corner tr">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+            <div className={`diag-results-scorecard-verdict ${vc}`}>{vt}</div>
+            <div className={`diag-big-score ${vc}`}>{overallPct}<span className="diag-big-score-pct">%</span></div>
+            <div className="diag-results-verdict-line">{vDesc}</div>
+            <div className="diag-results-ratio">{totalCorrect} of {totalAnswered} correct</div>
+          </div>
+
+          {overallPct >= 70 && (
+            <div className="diag-pullquote">
+              <div className="diag-pullquote-eyebrow">Next Step</div>
+              <div className="diag-pullquote-text">Nice work — you're building momentum. Drill <a href="/flashcards">Interview Flashcards</a> to lock in this knowledge before real interviews.</div>
             </div>
-            {overallPct >= 70 && (
-              <div style={{background:'linear-gradient(135deg, rgba(22,163,74,0.06), rgba(34,197,94,0.04))',border:'1.5px solid rgba(22,163,74,0.2)',borderRadius:12,padding:'16px 18px',marginBottom:16,display:'flex',alignItems:'flex-start',gap:12}}>
-                <div style={{width:28,height:28,borderRadius:8,background:'rgba(22,163,74,0.1)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                </div>
-                <div>
-                  <div style={{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:3}}>Nice score - you're building momentum</div>
-                  <div style={{fontSize:12,color:'var(--text-3)',lineHeight:1.6}}>
-                    Due to your strong performance, we recommend going through as many of the <a href="/flashcards" style={{color:'var(--text)',fontWeight:700,textDecoration:'underline'}}>Interview Flashcards</a> as possible to lock in your knowledge before interviews.
-                  </div>
-                </div>
+          )}
+
+          {/* Cat breakdown */}
+          {sortedCats.length > 0 && (
+            <div className="diag-cat-results">
+              <div className="diag-section-head">
+                <div className="diag-section-h">Performance by <em>Category</em></div>
+                <div className="diag-section-meta">Ranked</div>
               </div>
-            )}
-            <div className="diag-cats">
-              <div className="diag-cats-title">Performance by Category</div>
-              {sortedCats.map(c => {
-                const cls = c.pct >= 80 ? 'strong' : c.pct >= 50 ? 'mid' : 'weak';
+              {sortedCats.map((c, i) => {
                 const color = c.pct >= 80 ? '#16a34a' : c.pct >= 50 ? '#d97706' : '#dc2626';
                 return (
-                  <div key={c.cat} className="diag-cat-row">
-                    <div className="diag-cat-name">{c.cat}</div>
-                    <div className="diag-cat-bar-wrap"><div className={`diag-cat-bar ${cls}`} style={{ width: `${c.pct}%` }} /></div>
-                    <div className="diag-cat-pct" style={{ color }}>{c.pct}%</div>
+                  <div key={c.cat} className="diag-cat-result-row">
+                    <span className="diag-cat-result-rank">{String(i + 1).padStart(2, '0')}</span>
+                    <div>
+                      <div className="diag-cat-result-name">{c.cat}</div>
+                      <div className="diag-cat-result-sub">{c.correct} of {c.total} correct</div>
+                    </div>
+                    <div className="diag-cat-result-bar-wrap">
+                      <div className="diag-cat-result-bar" style={{ width: `${c.pct}%`, background: color }} />
+                    </div>
+                    <div className="diag-cat-result-pct" style={{ color }}>{c.pct}<span style={{ fontSize: 12, color: 'var(--text-3)', fontStyle: 'italic' }}>%</span></div>
                   </div>
                 );
               })}
             </div>
-            <div className="diag-insights">
-              <div className="diag-insights-title">Insights</div>
-              {strengths.map(s => (<div key={s.cat} className="diag-insight strength"><strong>{s.cat}</strong> is a strength - {s.correct}/{s.total} correct ({s.pct}%). Keep sharpening here.</div>))}
-              {weaknesses.map(w => (<div key={w.cat} className="diag-insight weakness"><strong>{w.cat}</strong> needs significant work - {w.correct}/{w.total} correct ({w.pct}%). Prioritize this in your prep.</div>))}
-              {weaknesses.length === 0 && strengths.length === sortedCats.length && (<div className="diag-insight strength">Strong performance across all categories. Focus on speed and depth.</div>)}
-              {overallPct < 60 && (<div className="diag-insight tip">Focus on Interview Flashcards for your weakest categories. Drill 20-30 cards per day in {weaknesses[0]?.cat || 'your weakest area'} before moving on.</div>)}
-              {overallPct >= 60 && overallPct < 80 && (<div className="diag-insight tip">Solid foundation. Use Concept Drills to test under pressure, focus flashcard sessions on {weaknesses.length > 0 ? weaknesses.map(w => w.cat).join(' and ') : 'advanced topics'}.</div>)}
-              {overallPct >= 80 && (<div className="diag-insight tip">You are interview-ready on fundamentals. Shift focus to mock interviews, behavioral storytelling, and firm-specific research.</div>)}
-            </div>
-            {missed.length > 0 && (
-              <div className="diag-missed">
-                <div className="diag-missed-title">Questions You Missed ({missed.length})</div>
-                {missed.map((m, i) => (<div key={i} className="diag-missed-item"><div className="diag-missed-q">{m.q}</div><div className="diag-missed-a">{m.explanation}</div></div>))}
+          )}
+
+          {/* Missed questions */}
+          {missed.length > 0 && (
+            <div className="diag-missed-section">
+              <div className="diag-section-head">
+                <div className="diag-section-h">Questions <em>Missed</em></div>
+                <div className="diag-section-meta">{missed.length} to review</div>
               </div>
-            )}
-            <div className="diag-actions">
-              <button className="diag-action-btn diag-action-primary" onClick={() => { setPhase('home'); }} type="button">Back to Overview</button>
-              <button className="diag-action-btn diag-action-secondary" onClick={() => { startAssessment(); }} type="button">Retake</button>
+              <div className="diag-missed-list">
+                {missed.map((m, i) => (
+                  <div key={i} className="diag-missed-card">
+                    <div className="diag-missed-q-label">{m.category}</div>
+                    <div className="diag-missed-q-text">{m.q}</div>
+                    <div className="diag-missed-a">{m.explanation}</div>
+                  </div>
+                ))}
+              </div>
             </div>
+          )}
+
+          <div className="diag-results-actions">
+            <button className="diag-cta-primary" onClick={() => setPhase('home')} type="button">Back to Overview{ARROW}</button>
+            <button className="diag-cta-ghost" onClick={startAssessment} type="button">Retake</button>
           </div>
         </div>
       </main>
