@@ -1,5 +1,5 @@
 /* ═══ DIAGNOSTIC REVIEW — EDITORIAL REDESIGN ═══ */
-.diag-main { padding: 0 !important; overflow-x: hidden; }
+.diag-main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; background: var(--bg); padding: 0 !important; overflow-x: hidden; }
 .diag-wrap { max-width: 960px; margin: 0 auto; padding: 40px 36px 60px; }
 
 /* ═══ TYPOGRAPHY ═══ */
