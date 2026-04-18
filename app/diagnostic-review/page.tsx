@@ -114,14 +114,15 @@ export default function DiagnosticReviewPage() {
     if (ok) setTotalCorrect(c => c + 1);
     else setMissed(m => [...m, { q: q.q, explanation: q.explanation, category: q.category }]);
     try {
-      const raw = localStorage.getItem('offerbell_flash_perf');
+      const perfTrackKey = `offerbell_flash_perf_${trackKey}`;
+      const raw = localStorage.getItem(perfTrackKey);
       const p = raw ? JSON.parse(raw) : { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
       p.seen = (p.seen || 0) + 1;
       if (ok) p.pass = (p.pass || 0) + 1; else p.fail = (p.fail || 0) + 1;
       const cat = q.category;
       if (!p.byCat[cat]) p.byCat[cat] = { seen: 0, pass: 0 };
       p.byCat[cat].seen++; if (ok) p.byCat[cat].pass++;
-      localStorage.setItem('offerbell_flash_perf', JSON.stringify(p));
+      localStorage.setItem(perfTrackKey, JSON.stringify(p));
     } catch {}
   };
 

@@ -73,7 +73,8 @@ export default function ConceptDrillsPage() {
     else { setWrong(w => w + 1); }
     setHistory(h => [...h, { q: q.q, correct: ok, explanation: q.explanation, topic: q.category }]);
     try {
-      const raw = localStorage.getItem('offerbell_flash_perf');
+      const cdPerfKey = `offerbell_flash_perf_${trackKey}`;
+      const raw = localStorage.getItem(cdPerfKey);
       const p = raw ? JSON.parse(raw) : { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
       p.seen = (p.seen || 0) + 1;
       if (ok) p.pass = (p.pass || 0) + 1; else p.fail = (p.fail || 0) + 1;
@@ -81,7 +82,7 @@ export default function ConceptDrillsPage() {
       if (!p.byCat[cat]) p.byCat[cat] = { seen: 0, pass: 0 };
       p.byCat[cat].seen++;
       if (ok) p.byCat[cat].pass++;
-      localStorage.setItem('offerbell_flash_perf', JSON.stringify(p));
+      localStorage.setItem(cdPerfKey, JSON.stringify(p));
     } catch {}
   };
 

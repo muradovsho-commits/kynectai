@@ -135,8 +135,20 @@ export default function DashboardPage() {
     } catch {}
     try { setSearchesUsed(parseInt(localStorage.getItem("offerbell_searches_used") || "0", 10)); } catch {}
     try {
-      const perf = localStorage.getItem("offerbell_flash_perf");
-      if (perf) { const p = JSON.parse(perf); setFlashcardsDrilled(p.seen || 0); }
+      // Sum flashcard perf across all tracks
+      let totalSeen = 0;
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('offerbell_flash_perf_')) {
+          try { const p = JSON.parse(localStorage.getItem(k) || '{}'); totalSeen += (p.seen || 0); } catch {}
+        }
+      }
+      // Also check old global key for migration
+      if (totalSeen === 0) {
+        const old = localStorage.getItem("offerbell_flash_perf");
+        if (old) { try { totalSeen = JSON.parse(old).seen || 0; } catch {} }
+      }
+      setFlashcardsDrilled(totalSeen);
     } catch {}
   }, []);
   useEffect(() => {

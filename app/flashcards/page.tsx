@@ -114,7 +114,7 @@ function ProModal({ onClose }: { onClose: () => void }) {
 }
 
 // Performance sidebar
-function PerfPanel({ perf, categories }: { perf: PerfData; categories: string[] }) {
+function PerfPanel({ perf, categories, trackTitle }: { perf: PerfData; categories: string[]; trackTitle?: string }) {
   const readiness = perf.seen > 0 ? Math.round((perf.pass / perf.seen) * 100) : 0;
   const weakCats = categories.filter(c => c !== 'All').map(c => {
     const d = perf.byCat[c] || { seen: 0, pass: 0 };
@@ -123,7 +123,7 @@ function PerfPanel({ perf, categories }: { perf: PerfData; categories: string[] 
 
   return (
     <div className="perf-panel">
-      <div className="perf-panel-title">Performance</div>
+      <div className="perf-panel-title">{trackTitle || 'Performance'}</div>
       <div className="perf-readiness">
         <div className="perf-readiness-ring">
           <svg viewBox="0 0 36 36">
@@ -132,7 +132,7 @@ function PerfPanel({ perf, categories }: { perf: PerfData; categories: string[] 
           </svg>
           <span className="perf-readiness-num">{readiness}%</span>
         </div>
-        <div className="perf-readiness-label">Interview Readiness</div>
+        <div className="perf-readiness-label">{trackTitle ? `${trackTitle} Readiness` : 'Interview Readiness'}</div>
       </div>
       <div className="perf-stats-grid">
         <div className="perf-stat"><span className="perf-stat-n">{perf.seen}</span><span className="perf-stat-l">Attempted</span></div>
@@ -250,14 +250,36 @@ export default function FlashcardsPage() {
     if (!window.localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
     setIsPro(localStorage.getItem('offerbell_plan') === 'pro');
     import('../lib/plan').then(({ isUserPro }) => { setIsPro(isUserPro()); });
-    const saved = localStorage.getItem('offerbell_flash_perf');
-    if (saved) try { setPerf(JSON.parse(saved)); } catch { /* */ }
     const savedReview = localStorage.getItem('offerbell_flash_review');
     if (savedReview) try { setReviewLog(JSON.parse(savedReview)); } catch { /* */ }
     setBookmarks(loadBookmarks());
   }, [router]);
 
-  const savePerf = useCallback((p: PerfData) => { setPerf(p); localStorage.setItem('offerbell_flash_perf', JSON.stringify(p)); }, []);
+  // Load perf for active track
+  useEffect(() => {
+    if (!activeTrack) { setPerf({ seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} }); return; }
+    const key = `offerbell_flash_perf_${activeTrack}`;
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved) { setPerf(JSON.parse(saved)); return; }
+    } catch {}
+    // Migrate old global data on first use for this track
+    try {
+      const oldGlobal = localStorage.getItem('offerbell_flash_perf');
+      if (oldGlobal && !localStorage.getItem('offerbell_flash_perf_migrated')) {
+        const oldData = JSON.parse(oldGlobal);
+        // Assign old global data to the first track the user opens (best effort)
+        localStorage.setItem(key, JSON.stringify(oldData));
+        localStorage.setItem('offerbell_flash_perf_migrated', 'true');
+        setPerf(oldData);
+        return;
+      }
+    } catch {}
+    setPerf({ seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} });
+  }, [activeTrack]);
+
+  const perfKey = activeTrack ? `offerbell_flash_perf_${activeTrack}` : 'offerbell_flash_perf';
+  const savePerf = useCallback((p: PerfData) => { setPerf(p); localStorage.setItem(perfKey, JSON.stringify(p)); }, [perfKey]);
 
   // Bookmark helpers
   const bookmarkSet = useMemo(() => new Set(bookmarks.map(b => `${b.track}::${b.q}`)), [bookmarks]);
@@ -349,7 +371,7 @@ export default function FlashcardsPage() {
           // Update performance - read fresh from localStorage to avoid overwriting practice mode data
           const verdict = data.score.verdict;
           const cat = card.category;
-          const freshRaw = localStorage.getItem('offerbell_flash_perf');
+          const freshRaw = localStorage.getItem(perfKey);
           const np = freshRaw ? JSON.parse(freshRaw) : { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
           np.seen = (np.seen || 0) + 1;
           if (verdict === 'pass') np.pass = (np.pass || 0) + 1;
@@ -543,13 +565,13 @@ export default function FlashcardsPage() {
                           if (wasHidden) {
                             // Track as drilled - update both localStorage AND React state
                             try {
-                              const raw = localStorage.getItem('offerbell_flash_perf');
+                              const raw = localStorage.getItem(perfKey);
                               const p = raw ? JSON.parse(raw) : { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
                               p.seen = (p.seen || 0) + 1;
                               const cat = card.category;
                               if (!p.byCat[cat]) p.byCat[cat] = { seen: 0, pass: 0 };
                               p.byCat[cat].seen++;
-                              localStorage.setItem('offerbell_flash_perf', JSON.stringify(p));
+                              localStorage.setItem(perfKey, JSON.stringify(p));
                               setPerf(p);
                             } catch {}
                           }
@@ -702,13 +724,13 @@ export default function FlashcardsPage() {
                       setGridFlipped(p => ({ ...p, [i]: !p[i] }));
                       if (!wasFlipped) {
                         try {
-                          const raw = localStorage.getItem('offerbell_flash_perf');
+                          const raw = localStorage.getItem(perfKey);
                           const p = raw ? JSON.parse(raw) : { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
                           p.seen = (p.seen || 0) + 1;
                           const cat = c.category;
                           if (!p.byCat[cat]) p.byCat[cat] = { seen: 0, pass: 0 };
                           p.byCat[cat].seen++;
-                          localStorage.setItem('offerbell_flash_perf', JSON.stringify(p));
+                          localStorage.setItem(perfKey, JSON.stringify(p));
                           setPerf(p);
                         } catch {}
                       }
@@ -748,7 +770,7 @@ export default function FlashcardsPage() {
 
           {/* Performance panel (Pro, interview mode) */}
           {mode === 'interview' && isPro && (
-            <PerfPanel perf={perf} categories={categories} />
+            <PerfPanel perf={perf} categories={categories} trackTitle={TRACKS.find(t => t.id === activeTrack)?.title} />
           )}
         </div>
       </main>
