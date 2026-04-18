@@ -25,7 +25,6 @@ export default function ResumeReviewPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [review, setReview] = useState<ReviewData | null>(null);
-  const [rawFallback, setRawFallback] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
   const [userPlan, setUserPlan] = useState('free');
 
@@ -40,7 +39,6 @@ export default function ResumeReviewPage() {
     setFileName(file.name);
     setError('');
     setReview(null);
-    setRawFallback('');
 
     if (file.type === 'application/pdf') {
       try {
@@ -148,7 +146,6 @@ export default function ResumeReviewPage() {
     setLoading(true);
     setError('');
     setReview(null);
-    setRawFallback('');
 
     try {
       const res = await fetch('/api/resume-review', {
@@ -160,7 +157,27 @@ export default function ResumeReviewPage() {
 
       if (data.error) { setError(data.error); }
       else if (data.review) { setReview(data.review); incrementUsage(); }
-      else if (data.raw) { setRawFallback(data.raw); incrementUsage(); }
+      else if (data.raw) {
+        // Server couldn't parse the JSON - try one more time client-side
+        let clientParsed = null;
+        try {
+          const raw = data.raw;
+          const firstBrace = raw.indexOf('{');
+          const lastBrace = raw.lastIndexOf('}');
+          if (firstBrace !== -1 && lastBrace > firstBrace) {
+            let slice = raw.slice(firstBrace, lastBrace + 1);
+            slice = slice.replace(/,\s*([}\]])/g, '$1');
+            clientParsed = JSON.parse(slice);
+          }
+        } catch {}
+        if (clientParsed && typeof clientParsed.overallScore === 'number') {
+          setReview(clientParsed);
+        } else {
+          // Absolute last resort: show an error, not raw JSON dump
+          setError('We received feedback but could not format it properly. Please try again.');
+        }
+        incrementUsage();
+      }
       else { setError('Unexpected response. Please try again.'); }
     } catch (err: any) {
       setError('Failed to connect. Please try again.');
@@ -177,7 +194,7 @@ export default function ResumeReviewPage() {
       <Sidebar activePage="resume-review" />
 
       <main className="main rr-main">
-        {!review && !rawFallback ? (
+        {!review ? (
           <div className="rr-upload-view">
             <div className="rr-badge">Resume Review</div>
             <h1 className="rr-title">Get your resume <em>reviewed.</em></h1>
@@ -248,17 +265,10 @@ export default function ResumeReviewPage() {
         ) : (
           /* ═══ RESULTS ═══ */
           <div className="rr-results">
-            <button className="rr-back" onClick={() => { setReview(null); setRawFallback(''); setFileName(''); setResumeText(''); }} type="button">
+            <button className="rr-back" onClick={() => { setReview(null); setFileName(''); setResumeText(''); }} type="button">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
               Upload another resume
             </button>
-
-            {rawFallback && !review && (
-              <div className="rr-raw">
-                <h3>Resume Feedback</h3>
-                <div className="rr-raw-text" dangerouslySetInnerHTML={{ __html: rawFallback.replace(/\n/g, '<br/>') }} />
-              </div>
-            )}
 
             {review && (
               <>

@@ -103,18 +103,57 @@ RESPOND IN THIS EXACT JSON FORMAT (no markdown, no backticks, just raw JSON):
           const data = await res.json();
           const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-          // Try to parse JSON from response
+          // Try to parse JSON from response - multiple strategies
           let parsed = null;
+
+          // Strategy 1: Strip markdown fences and parse directly
           try {
-            // Strip markdown code fences if present
             const clean = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
             parsed = JSON.parse(clean);
-          } catch {
-            // If JSON parse fails, return raw text as fallback
-            return NextResponse.json({ raw: text, model }, { headers: corsHeaders });
+          } catch {}
+
+          // Strategy 2: Extract JSON object using brace matching
+          if (!parsed) {
+            try {
+              const firstBrace = text.indexOf('{');
+              const lastBrace = text.lastIndexOf('}');
+              if (firstBrace !== -1 && lastBrace > firstBrace) {
+                const jsonSlice = text.slice(firstBrace, lastBrace + 1);
+                parsed = JSON.parse(jsonSlice);
+              }
+            } catch {}
           }
 
-          return NextResponse.json({ review: parsed, model }, { headers: corsHeaders });
+          // Strategy 3: Fix common JSON issues (trailing commas, single quotes)
+          if (!parsed) {
+            try {
+              const firstBrace = text.indexOf('{');
+              const lastBrace = text.lastIndexOf('}');
+              if (firstBrace !== -1 && lastBrace > firstBrace) {
+                let jsonSlice = text.slice(firstBrace, lastBrace + 1);
+                // Remove trailing commas before } or ]
+                jsonSlice = jsonSlice.replace(/,\s*([}\]])/g, '$1');
+                // Remove any control characters
+                jsonSlice = jsonSlice.replace(/[\x00-\x1f\x7f]/g, (c) => c === '\n' || c === '\r' || c === '\t' ? c : ' ');
+                parsed = JSON.parse(jsonSlice);
+              }
+            } catch {}
+          }
+
+          // Validate that parsed has the expected structure
+          if (parsed && typeof parsed.overallScore === 'number' && parsed.sections) {
+            return NextResponse.json({ review: parsed, model }, { headers: corsHeaders });
+          }
+
+          // Strategy 4: If we still can't parse, try the client side
+          // Return raw but also signal it's JSON-like so client can retry parsing
+          if (parsed) {
+            // Parsed but missing expected fields - still send as review, client will handle
+            return NextResponse.json({ review: parsed, model }, { headers: corsHeaders });
+          }
+
+          // Last resort: return raw but let the client try to parse it too
+          return NextResponse.json({ raw: text, model }, { headers: corsHeaders });
         } else {
           const errBody = await res.text().catch(() => "");
           console.error(`Model ${model} failed: ${res.status} ${errBody.slice(0, 200)}`);
