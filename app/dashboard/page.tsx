@@ -174,7 +174,9 @@ export default function DashboardPage() {
   const displayFirst = userName.first || "there";
   const greeting = (() => {
     const h = new Date().getHours();
-    return "Good day";
+    if (h < 12) return "Good morning";
+    if (h < 17) return "Good afternoon";
+    return "Good evening";
   })();
 
   return (
@@ -185,7 +187,7 @@ export default function DashboardPage() {
         {/* ── Top bar ── */}
         <div className="dash-topbar">
           <div>
-            <div className="dash-greeting-sub">Recruiting season is in full swing.</div>
+            <div className="dash-greeting-sub">Welcome back to OfferBell.</div>
             <div className="dash-greeting">{greeting}, <em>{displayFirst}</em></div>
           </div>
           <Link className="dash-profile-btn" href="/my-account">View profile</Link>
@@ -211,7 +213,7 @@ export default function DashboardPage() {
             </Link>
             <Link className="dash-action-card" href="/flashcards">
               <div className="dash-action-title">Drill interview questions</div>
-              <div className="dash-action-desc">Practice with 1,500+ technical flashcards across all tracks.</div>
+              <div className="dash-action-desc">Practice with 1,300+ technical flashcards across all tracks.</div>
               <div className="dash-action-link">Open Interview Flashcards →</div>
             </Link>
           </div>

@@ -73,7 +73,7 @@ Keep the conversational part natural. The score block is parsed programmatically
           { role: "user" as const, parts: [{ text: `Interview question: "${question}"\n\nCandidate's answer: "${userAnswer}"` }] },
         ];
 
-    const models = ["gemini-3-flash-preview", "gemini-2.0-flash", "gemini-1.5-flash"];
+    const models = ["gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.5-flash-lite"];
 
     for (const model of models) {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
