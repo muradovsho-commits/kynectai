@@ -1,6 +1,7 @@
 // Build: v5-quiet-editorial
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
 import './drills.css';
@@ -33,6 +34,15 @@ function toRoman(n: number): string {
 type Phase = 'landing' | 'topics' | 'drilling' | 'done';
 
 export default function ConceptDrillsPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>}>
+      <ConceptDrillsContent />
+    </Suspense>
+  );
+}
+
+function ConceptDrillsContent() {
+  const searchParams = useSearchParams();
   const [phase, setPhase] = useState<Phase>('landing');
   const [trackKey, setTrackKey] = useState('ib');
   const [questions, setQuestions] = useState<MCQ[]>([]);
@@ -49,7 +59,27 @@ export default function ConceptDrillsPage() {
     if (typeof window === 'undefined') return;
     const theme = localStorage.getItem('offerbell-theme');
     if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-  }, []);
+
+    // Handle URL params from cross-feature links (e.g. diagnostic review)
+    const paramTrack = searchParams.get('track');
+    const paramTopic = searchParams.get('topic');
+    if (paramTrack && TRACKS[paramTrack]) {
+      setTrackKey(paramTrack);
+      if (paramTopic) {
+        const t = TRACKS[paramTrack];
+        const topicExists = t.topics.includes(paramTopic) || t.questions.some(q => q.topic === paramTopic);
+        if (topicExists) {
+          setActiveTopic(paramTopic);
+          // Auto-navigate to topics view so user can start drilling
+          setPhase('topics');
+        } else {
+          setPhase('topics');
+        }
+      } else {
+        setPhase('topics');
+      }
+    }
+  }, [searchParams]);
 
   const track = TRACKS[trackKey];
 

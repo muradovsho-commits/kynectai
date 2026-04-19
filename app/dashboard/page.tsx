@@ -57,6 +57,8 @@ export default function DashboardPage() {
   const [pipelineCount, setPipelineCount] = useState(0);
   const [searchesUsed, setSearchesUsed] = useState(0);
   const [flashcardsDrilled, setFlashcardsDrilled] = useState(0);
+  const [streakDays, setStreakDays] = useState<boolean[]>([false,false,false,false,false,false,false]);
+  const [currentStreak, setCurrentStreak] = useState(0);
   const [upgradeToast, setUpgradeToast] = useState("");
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
@@ -150,6 +152,51 @@ export default function DashboardPage() {
       }
       setFlashcardsDrilled(totalSeen);
     } catch {}
+
+    // Streak / activity tracking
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const raw = localStorage.getItem('offerbell_activity_days');
+      let days: string[] = raw ? JSON.parse(raw) : [];
+      // Log today if not already logged
+      if (!days.includes(today)) {
+        days.push(today);
+        // Keep only last 60 days
+        const cutoff = new Date(Date.now() - 60 * 864e5).toISOString().split('T')[0];
+        days = days.filter(d => d >= cutoff);
+        localStorage.setItem('offerbell_activity_days', JSON.stringify(days));
+      }
+      // Build this-week array (Mon-Sun)
+      const now = new Date();
+      const dayOfWeek = now.getDay(); // 0=Sun
+      const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      const monday = new Date(now);
+      monday.setDate(now.getDate() - mondayOffset);
+      monday.setHours(0, 0, 0, 0);
+      const weekDays: boolean[] = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        const ds = d.toISOString().split('T')[0];
+        weekDays.push(days.includes(ds));
+      }
+      setStreakDays(weekDays);
+      // Calculate consecutive streak ending today
+      const sorted = [...days].sort().reverse();
+      let streak = 0;
+      let check = new Date();
+      check.setHours(0, 0, 0, 0);
+      for (const d of sorted) {
+        const ds = check.toISOString().split('T')[0];
+        if (d === ds) {
+          streak++;
+          check.setDate(check.getDate() - 1);
+        } else if (d < ds) {
+          break;
+        }
+      }
+      setCurrentStreak(streak);
+    } catch {}
   }, []);
   useEffect(() => {
     loadStats();
@@ -238,6 +285,57 @@ export default function DashboardPage() {
               <div className="dash-stat-label">Flashcards drilled</div>
               <div className="dash-stat-value">{flashcardsDrilled}</div>
             </div>
+          </div>
+        </div>
+
+        {/* ── Activity Streak ── */}
+        <div className="dash-progress-card" style={{ marginTop: 16 }}>
+          <div className="dash-progress-header">
+            <h2 className="dash-progress-title">
+              {currentStreak > 0 ? `${currentStreak}-day streak` : 'This week'}
+            </h2>
+            <span className="dash-progress-hint">
+              {currentStreak >= 7 ? 'On fire. Keep it going.' : currentStreak >= 3 ? 'Building momentum.' : 'Show up. That\'s the hardest part.'}
+            </span>
+          </div>
+          <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
+            {['M','T','W','T','F','S','S'].map((label, i) => {
+              const isToday = (() => {
+                const d = new Date().getDay();
+                const todayIdx = d === 0 ? 6 : d - 1;
+                return i === todayIdx;
+              })();
+              const isFuture = (() => {
+                const d = new Date().getDay();
+                const todayIdx = d === 0 ? 6 : d - 1;
+                return i > todayIdx;
+              })();
+              return (
+                <div key={i} style={{
+                  flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+                }}>
+                  <div style={{
+                    fontSize: 10, fontWeight: 700, letterSpacing: '0.5px',
+                    color: isToday ? 'var(--text)' : 'var(--text-3)',
+                  }}>{label}</div>
+                  <div style={{
+                    width: 32, height: 32, borderRadius: 8,
+                    background: streakDays[i]
+                      ? '#16a34a'
+                      : isFuture
+                        ? 'var(--surface-2)'
+                        : 'var(--border)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'all 0.2s',
+                    border: isToday ? '2px solid var(--text)' : '2px solid transparent',
+                  }}>
+                    {streakDays[i] && (
+                      <svg width="14" height="14" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 

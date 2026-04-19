@@ -78,10 +78,16 @@ export default function OutreachWriterPage() {
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState('');
+  const [savedMsgs, setSavedMsgs] = useState<{id:string;contact:string;firm:string;angle:string;subject:string;body:string;date:string}[]>([]);
+  const [showSaved, setShowSaved] = useState(false);
 
   useEffect(() => {
     const t = localStorage.getItem('offerbell-theme');
     if (t === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); setIsDark(true); }
+    try {
+      const raw = localStorage.getItem('offerbell_saved_messages');
+      if (raw) setSavedMsgs(JSON.parse(raw));
+    } catch {}
   }, []);
 
   function toggleTheme() {
@@ -94,6 +100,30 @@ export default function OutreachWriterPage() {
   function showToast(msg: string) {
     setToast(msg);
     setTimeout(() => setToast(''), 2500);
+  }
+
+  function saveMessage() {
+    if (!output) return;
+    const msg = {
+      id: Date.now().toString(),
+      contact: contactName.trim() || 'Unknown',
+      firm: contactFirm.trim() || 'Unknown',
+      angle: angles.find(a => a.key === angle)?.label || angle,
+      subject,
+      body: output,
+      date: new Date().toISOString(),
+    };
+    const updated = [msg, ...savedMsgs].slice(0, 20);
+    setSavedMsgs(updated);
+    localStorage.setItem('offerbell_saved_messages', JSON.stringify(updated));
+    showToast('Message saved');
+  }
+
+  function deleteSavedMsg(id: string) {
+    const updated = savedMsgs.filter(m => m.id !== id);
+    setSavedMsgs(updated);
+    localStorage.setItem('offerbell_saved_messages', JSON.stringify(updated));
+    showToast('Deleted');
   }
 
   function saveToTracker() {
@@ -335,8 +365,43 @@ Rules:
                 </div>
               </div>
               <div style={{display:'flex',justifyContent:'flex-end'}}>
-                <button onClick={()=>goToStep(2)} style={{background:'var(--text)',color:'var(--surface)',padding:'10px 28px',borderRadius:10,fontSize:13,fontWeight:700,cursor:'pointer',border:'none',fontFamily:"'Sora',sans-serif"}}>Choose angle →</button>
+                <button onClick={()=>goToStep(2)} style={{background:'var(--text)',color:'var(--surface)',padding:'10px 28px',borderRadius:10,fontSize:13,fontWeight:700,cursor:'pointer',border:'none',fontFamily:"'Sora',sans-serif"}}>Choose angle &rarr;</button>
               </div>
+
+              {/* Saved Messages */}
+              {savedMsgs.length > 0 && (
+                <div style={{marginTop:32}}>
+                  <button onClick={()=>setShowSaved(!showSaved)} type="button" style={{
+                    display:'flex',alignItems:'center',gap:8,background:'none',border:'none',cursor:'pointer',
+                    fontFamily:"'Sora',sans-serif",fontSize:13,fontWeight:700,color:'var(--text)',padding:0,marginBottom:12,
+                  }}>
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Saved Drafts ({savedMsgs.length})
+                    <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{transform:showSaved?'rotate(180deg)':'rotate(0)',transition:'transform 0.2s'}}><polyline points="6 9 12 15 18 9"/></svg>
+                  </button>
+                  {showSaved && (
+                    <div style={{display:'flex',flexDirection:'column',gap:8}}>
+                      {savedMsgs.map(m => (
+                        <div key={m.id} style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:12,padding:'14px 18px',position:'relative'}}>
+                          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
+                            <div>
+                              <span style={{fontSize:13,fontWeight:700,color:'var(--text)'}}>{m.contact}</span>
+                              <span style={{fontSize:12,color:'var(--text-3)',marginLeft:8}}>{m.firm} - {m.angle}</span>
+                            </div>
+                            <div style={{display:'flex',gap:6,alignItems:'center'}}>
+                              <span style={{fontSize:10,color:'var(--text-3)'}}>{new Date(m.date).toLocaleDateString()}</span>
+                              <button onClick={()=>{navigator.clipboard.writeText(`Subject: ${m.subject}\n\n${m.body}`);showToast('Copied!');}} type="button" style={{background:'none',border:'1px solid var(--border-2)',borderRadius:6,padding:'3px 8px',fontSize:10,fontWeight:600,color:'var(--text-3)',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Copy</button>
+                              <button onClick={()=>deleteSavedMsg(m.id)} type="button" style={{background:'none',border:'none',cursor:'pointer',color:'var(--text-3)',fontSize:14,padding:'0 2px',lineHeight:1}}>&times;</button>
+                            </div>
+                          </div>
+                          <div style={{fontSize:11,fontWeight:700,color:'var(--text-2)',marginBottom:4}}>Subject: {m.subject}</div>
+                          <div style={{fontSize:12,color:'var(--text-3)',lineHeight:1.6,maxHeight:60,overflow:'hidden',textOverflow:'ellipsis'}}>{m.body.slice(0, 200)}{m.body.length > 200 ? '...' : ''}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
@@ -385,8 +450,9 @@ Rules:
                   </div>
                   {output&&(
                     <div style={{display:'flex',gap:8}}>
-                      <button onClick={()=>goToStep(3)} style={{display:'flex',alignItems:'center',padding:'6px 12px',borderRadius:8,fontSize:12,fontWeight:600,cursor:'pointer',background:'var(--surface)',color:'var(--text-2)',border:'1.5px solid var(--border-2)',fontFamily:"'Sora',sans-serif"}}>↻ Regenerate</button>
+                      <button onClick={()=>goToStep(3)} style={{display:'flex',alignItems:'center',padding:'6px 12px',borderRadius:8,fontSize:12,fontWeight:600,cursor:'pointer',background:'var(--surface)',color:'var(--text-2)',border:'1.5px solid var(--border-2)',fontFamily:"'Sora',sans-serif"}}>&#8635; Regenerate</button>
                       <button onClick={copyMsg} style={{display:'flex',alignItems:'center',padding:'6px 12px',borderRadius:8,fontSize:12,fontWeight:600,cursor:'pointer',background:'var(--surface)',color:'var(--text-2)',border:'1.5px solid var(--border-2)',fontFamily:"'Sora',sans-serif"}}>{copied?'Copied!':'Copy'}</button>
+                      <button onClick={saveMessage} style={{display:'flex',alignItems:'center',padding:'6px 12px',borderRadius:8,fontSize:12,fontWeight:600,cursor:'pointer',background:'var(--surface)',color:'var(--text-2)',border:'1.5px solid var(--border-2)',fontFamily:"'Sora',sans-serif"}}>Save Draft</button>
                       <button onClick={saveToTracker} style={{display:'flex',alignItems:'center',padding:'6px 12px',borderRadius:8,fontSize:12,fontWeight:700,cursor:'pointer',background:'var(--text)',color:'var(--surface)',border:'none',fontFamily:"'Sora',sans-serif"}}>Save to Tracker</button>
                     </div>
                   )}

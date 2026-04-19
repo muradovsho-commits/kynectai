@@ -1,6 +1,6 @@
 'use client';
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useMemo, useCallback, useRef, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
 import './flashcards.css';
@@ -156,7 +156,16 @@ function PerfPanel({ perf, categories, trackTitle }: { perf: PerfData; categorie
 }
 
 export default function FlashcardsPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>}>
+      <FlashcardsContent />
+    </Suspense>
+  );
+}
+
+function FlashcardsContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isPro, setIsPro] = useState(false);
   const [activeTrack, setActiveTrack] = useState<string | null>(null);
   const [idx, setIdx] = useState(0);
@@ -253,7 +262,13 @@ export default function FlashcardsPage() {
     const savedReview = localStorage.getItem('offerbell_flash_review');
     if (savedReview) try { setReviewLog(JSON.parse(savedReview)); } catch { /* */ }
     setBookmarks(loadBookmarks());
-  }, [router]);
+
+    // Handle URL params from cross-feature links (e.g. diagnostic review)
+    const paramTrack = searchParams.get('track');
+    if (paramTrack && CARD_MAP[paramTrack]) {
+      setActiveTrack(paramTrack);
+    }
+  }, [router, searchParams]);
 
   // Load perf for active track
   useEffect(() => {

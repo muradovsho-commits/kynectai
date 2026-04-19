@@ -17,6 +17,19 @@ type ReviewData = {
   interviewReadiness: string;
 };
 
+type SavedReview = {
+  id: string;
+  date: string;
+  track: string;
+  fileName: string;
+  overallScore: number;
+  headline: string;
+  review: ReviewData;
+};
+
+const REVIEW_HISTORY_KEY = 'offerbell_resume_reviews';
+const MAX_SAVED_REVIEWS = 10;
+
 export default function ResumeReviewPage() {
   const router = useRouter();
   const [track, setTrack] = useState('Investment Banking');
@@ -25,6 +38,8 @@ export default function ResumeReviewPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [review, setReview] = useState<ReviewData | null>(null);
+  const [reviewHistory, setReviewHistory] = useState<SavedReview[]>([]);
+  const [viewingPast, setViewingPast] = useState<SavedReview | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const [userPlan, setUserPlan] = useState('free');
 
@@ -32,6 +47,11 @@ export default function ResumeReviewPage() {
     if (typeof window === 'undefined') return;
     if (!localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
     import('../lib/plan').then(({ isUserPro }) => { setUserPlan(isUserPro() ? 'pro' : 'free'); });
+    // Load review history
+    try {
+      const raw = localStorage.getItem(REVIEW_HISTORY_KEY);
+      if (raw) setReviewHistory(JSON.parse(raw));
+    } catch {}
   }, [router]);
 
   // Extract text from PDF using pdf.js or fallback to FileReader
@@ -140,6 +160,33 @@ export default function ResumeReviewPage() {
   const remainingReviews = Math.max(0, maxAllowed - currentUsage);
   const atLimit = remainingReviews <= 0;
 
+  function saveReviewToHistory(rev: ReviewData) {
+    const saved: SavedReview = {
+      id: Date.now().toString(),
+      date: new Date().toISOString(),
+      track,
+      fileName: fileName || 'Untitled',
+      overallScore: rev.overallScore,
+      headline: rev.headline,
+      review: rev,
+    };
+    const updated = [saved, ...reviewHistory].slice(0, MAX_SAVED_REVIEWS);
+    setReviewHistory(updated);
+    localStorage.setItem(REVIEW_HISTORY_KEY, JSON.stringify(updated));
+  }
+
+  function loadPastReview(saved: SavedReview) {
+    setViewingPast(saved);
+    setReview(saved.review);
+    setFileName(saved.fileName);
+  }
+
+  function deletePastReview(id: string) {
+    const updated = reviewHistory.filter(r => r.id !== id);
+    setReviewHistory(updated);
+    localStorage.setItem(REVIEW_HISTORY_KEY, JSON.stringify(updated));
+  }
+
   const submitReview = async () => {
     if (!resumeText.trim()) { setError('Please upload a resume first.'); return; }
     if (atLimit) { setError(isPro ? 'You\'ve reached your weekly limit of 10 reviews. Resets every Monday.' : 'You\'ve used your free review. Upgrade to Pro for 10 reviews per week.'); return; }
@@ -156,7 +203,11 @@ export default function ResumeReviewPage() {
       const data = await res.json();
 
       if (data.error) { setError(data.error); }
-      else if (data.review) { setReview(data.review); incrementUsage(); }
+      else if (data.review) {
+        setReview(data.review);
+        saveReviewToHistory(data.review);
+        incrementUsage();
+      }
       else if (data.raw) {
         // Server couldn't parse the JSON - try one more time client-side
         let clientParsed = null;
@@ -172,8 +223,8 @@ export default function ResumeReviewPage() {
         } catch {}
         if (clientParsed && typeof clientParsed.overallScore === 'number') {
           setReview(clientParsed);
+          saveReviewToHistory(clientParsed);
         } else {
-          // Absolute last resort: show an error, not raw JSON dump
           setError('We received feedback but could not format it properly. Please try again.');
         }
         incrementUsage();
@@ -260,12 +311,55 @@ export default function ResumeReviewPage() {
                     'Review My Resume'
                   )}
                 </button>
+
+                {/* Past Reviews */}
+                {reviewHistory.length > 0 && (
+                  <div style={{ marginTop: 32 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 12 }}>Past Reviews</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {reviewHistory.map(r => {
+                        const scoreColor = r.overallScore >= 8 ? '#16a34a' : r.overallScore >= 6 ? '#d97706' : r.overallScore >= 4 ? '#ea580c' : '#dc2626';
+                        return (
+                          <div key={r.id} style={{
+                            display: 'flex', alignItems: 'center', gap: 14,
+                            background: 'var(--surface)', border: '1px solid var(--border)',
+                            borderRadius: 12, padding: '12px 16px', cursor: 'pointer',
+                            transition: 'background 0.12s',
+                          }}
+                            onClick={() => loadPastReview(r)}
+                            onMouseEnter={e => (e.currentTarget.style.background = 'var(--surface-2)')}
+                            onMouseLeave={e => (e.currentTarget.style.background = 'var(--surface)')}
+                          >
+                            <div style={{
+                              width: 40, height: 40, borderRadius: 10,
+                              border: `2px solid ${scoreColor}`,
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              fontFamily: "'Instrument Serif', serif", fontSize: 18,
+                              color: scoreColor, flexShrink: 0,
+                            }}>{r.overallScore}</div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.fileName}</div>
+                              <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>
+                                {r.track} - {new Date(r.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                              </div>
+                            </div>
+                            <button
+                              onClick={e => { e.stopPropagation(); deletePastReview(r.id); }}
+                              type="button"
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-3)', fontSize: 16, padding: '0 4px', lineHeight: 1 }}
+                            >&times;</button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </>
           </div>
         ) : (
           /* ═══ RESULTS ═══ */
           <div className="rr-results">
-            <button className="rr-back" onClick={() => { setReview(null); setFileName(''); setResumeText(''); }} type="button">
+            <button className="rr-back" onClick={() => { setReview(null); setViewingPast(null); setFileName(''); setResumeText(''); }} type="button">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
               Upload another resume
             </button>

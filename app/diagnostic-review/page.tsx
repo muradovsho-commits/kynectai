@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import Link from 'next/link';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
 import './diagnostic.css';
@@ -261,11 +262,19 @@ export default function DiagnosticReviewPage() {
                     <span className="diag-focus-label">Priority Focus</span>
                   </div>
                   <div className="diag-focus-title">These areas need <em>urgent work</em></div>
-                  <div className="diag-focus-desc">Drill these in Flashcards and Concept Drills before your next diagnostic.</div>
+                  <div className="diag-focus-desc">Click a topic to jump straight into drilling it.</div>
                   <div className="diag-focus-chips">
                     {weakCats.map(c => (
-                      <span key={c.cat} className="diag-focus-chip">{c.cat} <strong>{c.pct}%</strong></span>
+                      <Link key={c.cat} href={`/concept-drills?track=${encodeURIComponent(viewTrack || '')}&topic=${encodeURIComponent(c.cat)}`} className="diag-focus-chip" style={{ textDecoration: 'none', cursor: 'pointer' }}>
+                        {c.cat} <strong>{c.pct}%</strong>
+                        <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ marginLeft: 4, opacity: 0.5 }}><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                      </Link>
                     ))}
+                  </div>
+                  <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
+                    <Link href={`/flashcards?track=${viewTrack === 'ib' ? 'ib' : viewTrack === 'pe' ? 'pe' : viewTrack === 'consulting' ? 'consulting' : viewTrack === 'accounting' ? 'accounting' : viewTrack || 'ib'}`} style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-2)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                      Open Flashcards for this track <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </Link>
                   </div>
                 </div>
               )}
