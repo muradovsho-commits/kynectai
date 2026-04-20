@@ -266,43 +266,25 @@ Rules:
     <div className="app">
       <Sidebar activePage="outreach-writer" />
 
-      <main className="main" style={{padding:'32px 0',display:'flex',flexDirection:'column',alignItems:'center'}}>
-        <div style={{width:'100%',maxWidth:680,padding:'0 24px'}}>
+      <main className="main" style={{padding:'40px 0',display:'flex',flexDirection:'column',alignItems:'center'}}>
+        <div style={{width:'100%',maxWidth:700,padding:'0 28px'}}>
 
-          <div style={{fontFamily:"'Instrument Serif',serif",fontSize:28,letterSpacing:'-.5px',color:'var(--text)',marginBottom:3}}>Outreach <em style={{fontStyle:'italic'}}>Writer</em></div>
-          <div style={{fontSize:13,color:'var(--text-3)',marginBottom:10}}>Three steps to a personalized cold email that gets replies.</div>
-          <div style={{display:'inline-flex',alignItems:'center',gap:6,background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:100,padding:'5px 14px',fontSize:12,fontWeight:600,color:'var(--text-2)',marginBottom:28}}>
-            <span style={{width:6,height:6,borderRadius:'50%',background:'#22c55e',flexShrink:0,display:'inline-block'}}></span>
-            {userPlan === "pro" ? "Unlimited messages - Pro plan" : `${Math.max(0, 3 - messagesSent)} messages remaining`}
-          </div>
-
-          {/* Chrome Extension Banner */}
-          <div style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '20px 24px', marginBottom: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--text)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--surface)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                </div>
-                <div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>OfferBell Chrome Extension</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.5 }}>Write and send outreach emails directly from Gmail &amp; Outlook - without leaving your inbox.</div>
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#f59e0b', background: '#fef3c7', padding: '4px 10px', borderRadius: 100, whiteSpace: 'nowrap' }}>Awaiting Approval</span>
-              </div>
+          <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:24,gap:16}}>
+            <div>
+              <div style={{fontFamily:"'Instrument Serif',serif",fontSize:34,letterSpacing:'-0.7px',color:'var(--text)',marginBottom:4,lineHeight:1}}>Outreach <em style={{fontStyle:'italic'}}>Writer</em></div>
+              <div style={{fontSize:13,color:'var(--text-3)',marginTop:6}}>Three steps to a personalized cold email that gets replies.</div>
             </div>
-            <div style={{ display: 'flex', gap: 16, marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
-              {[
-                { icon: '•', text: 'Works in Gmail & Outlook Web' },
-                { icon: '•', text: 'Generate outreach right in your inbox' },
-                { icon: '•', text: 'Insert into reply with one click' },
-              ].map((f: {icon: string; text: string}) => (
-                <div key={f.text} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: '#16a34a' }}>{f.icon}</span>
-                  <span style={{ fontSize: 11, color: 'var(--text-2)', fontWeight: 500 }}>{f.text}</span>
-                </div>
-              ))}
+            <div style={{display:'flex',gap:8,flexShrink:0,alignItems:'center'}}>
+              <div style={{display:'inline-flex',alignItems:'center',gap:5,background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:100,padding:'6px 14px',fontSize:11,fontWeight:600,color:'var(--text-2)'}}>
+                <span style={{width:5,height:5,borderRadius:'50%',background:userPlan==='pro'?'#22c55e':'#f59e0b',display:'inline-block'}}></span>
+                {userPlan === "pro" ? "Pro" : `${Math.max(0, 3 - messagesSent)} left`}
+              </div>
+              {savedMsgs.length > 0 && (
+                <button onClick={()=>setShowSaved(true)} type="button" style={{display:'inline-flex',alignItems:'center',gap:6,background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:100,padding:'6px 14px',fontSize:11,fontWeight:600,color:'var(--text-2)',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>
+                  <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+                  Drafts ({savedMsgs.length})
+                </button>
+              )}
             </div>
           </div>
 
@@ -311,12 +293,12 @@ Rules:
             {[1,2,3].map((n,i) => (
               <div key={n} style={{display:'flex',alignItems:'center',flex:i<2?1:'initial'}}>
                 <div style={{display:'flex',alignItems:'center',gap:8}}>
-                  <div style={{width:28,height:28,borderRadius:'50%',border:`1.5px solid ${step===n?'var(--text)':step>n?'var(--border-2)':'var(--border-2)'}`,background:step===n?'var(--text)':step>n?'var(--surface-2)':'var(--surface)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:step===n?'var(--surface)':'var(--text-3)',flexShrink:0}}>
-                    {step>n?'':n}
+                  <div style={{width:28,height:28,borderRadius:'50%',border:`1.5px solid ${step===n?'var(--text)':step>n?'#16a34a':'var(--border-2)'}`,background:step===n?'var(--text)':step>n?'#16a34a':'var(--surface)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:step===n?'var(--surface)':step>n?'#fff':'var(--text-3)',flexShrink:0}}>
+                    {step>n?<svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>:n}
                   </div>
                   <span style={{fontSize:12,fontWeight:600,color:step===n?'var(--text)':'var(--text-3)',whiteSpace:'nowrap'}}>{['Contact','Angle','Generate'][n-1]}</span>
                 </div>
-                {i<2&&<div style={{flex:1,height:1,background:'var(--border-2)',margin:'0 8px'}}/>}
+                {i<2&&<div style={{flex:1,height:1,background:step>n?'#16a34a':'var(--border-2)',margin:'0 8px',transition:'background 0.3s'}}/>}
               </div>
             ))}
           </div>
@@ -367,41 +349,6 @@ Rules:
               <div style={{display:'flex',justifyContent:'flex-end'}}>
                 <button onClick={()=>goToStep(2)} style={{background:'var(--text)',color:'var(--surface)',padding:'10px 28px',borderRadius:10,fontSize:13,fontWeight:700,cursor:'pointer',border:'none',fontFamily:"'Sora',sans-serif"}}>Choose angle &rarr;</button>
               </div>
-
-              {/* Saved Messages */}
-              {savedMsgs.length > 0 && (
-                <div style={{marginTop:32}}>
-                  <button onClick={()=>setShowSaved(!showSaved)} type="button" style={{
-                    display:'flex',alignItems:'center',gap:8,background:'none',border:'none',cursor:'pointer',
-                    fontFamily:"'Sora',sans-serif",fontSize:13,fontWeight:700,color:'var(--text)',padding:0,marginBottom:12,
-                  }}>
-                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                    Saved Drafts ({savedMsgs.length})
-                    <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{transform:showSaved?'rotate(180deg)':'rotate(0)',transition:'transform 0.2s'}}><polyline points="6 9 12 15 18 9"/></svg>
-                  </button>
-                  {showSaved && (
-                    <div style={{display:'flex',flexDirection:'column',gap:8}}>
-                      {savedMsgs.map(m => (
-                        <div key={m.id} style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:12,padding:'14px 18px',position:'relative'}}>
-                          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
-                            <div>
-                              <span style={{fontSize:13,fontWeight:700,color:'var(--text)'}}>{m.contact}</span>
-                              <span style={{fontSize:12,color:'var(--text-3)',marginLeft:8}}>{m.firm} - {m.angle}</span>
-                            </div>
-                            <div style={{display:'flex',gap:6,alignItems:'center'}}>
-                              <span style={{fontSize:10,color:'var(--text-3)'}}>{new Date(m.date).toLocaleDateString()}</span>
-                              <button onClick={()=>{navigator.clipboard.writeText(`Subject: ${m.subject}\n\n${m.body}`);showToast('Copied!');}} type="button" style={{background:'none',border:'1px solid var(--border-2)',borderRadius:6,padding:'3px 8px',fontSize:10,fontWeight:600,color:'var(--text-3)',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Copy</button>
-                              <button onClick={()=>deleteSavedMsg(m.id)} type="button" style={{background:'none',border:'none',cursor:'pointer',color:'var(--text-3)',fontSize:14,padding:'0 2px',lineHeight:1}}>&times;</button>
-                            </div>
-                          </div>
-                          <div style={{fontSize:11,fontWeight:700,color:'var(--text-2)',marginBottom:4}}>Subject: {m.subject}</div>
-                          <div style={{fontSize:12,color:'var(--text-3)',lineHeight:1.6,maxHeight:60,overflow:'hidden',textOverflow:'ellipsis'}}>{m.body.slice(0, 200)}{m.body.length > 200 ? '...' : ''}</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
           )}
 
@@ -487,6 +434,49 @@ Rules:
           )}
         </div>
       </main>
+
+      {/* ═══ SAVED DRAFTS DRAWER ═══ */}
+      <div style={{ position: 'fixed', right: 0, top: 0, bottom: 0, width: 400, background: 'var(--surface)', borderLeft: '1.5px solid var(--border)', zIndex: 50, transform: showSaved ? 'translateX(0)' : 'translateX(100%)', transition: 'transform .28s ease', display: 'flex', flexDirection: 'column', boxShadow: '-4px 0 32px rgba(0,0,0,.07)' }}>
+        <div style={{ padding: '18px 20px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <svg width="16" height="16" fill="none" stroke="var(--text)" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+            <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>Saved Drafts</span>
+            <span style={{ fontSize: 10, fontWeight: 700, background: 'var(--surface-2)', color: 'var(--text-3)', padding: '2px 8px', borderRadius: 100 }}>{savedMsgs.length}</span>
+          </div>
+          <button onClick={() => setShowSaved(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: 'var(--text-3)', lineHeight: 1 }} type="button">&times;</button>
+        </div>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
+          {savedMsgs.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '48px 16px', color: 'var(--text-3)' }}>
+              <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 18, fontStyle: 'italic', color: 'var(--text)', marginBottom: 6 }}>No saved drafts</div>
+              <div style={{ fontSize: 12, lineHeight: 1.5 }}>Generate a message and click "Save Draft" to keep it here.</div>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {savedMsgs.map(m => (
+                <div key={m.id} style={{ background: 'var(--bg)', border: '1.5px solid var(--border)', borderRadius: 12, padding: '16px 18px', transition: 'border-color 0.15s' }}
+                  onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--text-3)')}
+                  onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 10 }}>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>{m.contact}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{m.firm} &middot; {m.angle}</div>
+                    </div>
+                    <div style={{ fontSize: 10, color: 'var(--text-3)', whiteSpace: 'nowrap', flexShrink: 0, marginTop: 2 }}>{new Date(m.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+                  </div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-2)', marginBottom: 6 }}>Subject: {m.subject}</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.55, marginBottom: 12, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' as const, overflow: 'hidden' }}>{m.body}</div>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <button onClick={() => { navigator.clipboard.writeText(`Subject: ${m.subject}\n\n${m.body}`); showToast('Copied!'); }} type="button" style={{ flex: 1, padding: '7px 12px', borderRadius: 8, fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: "'Sora',sans-serif", background: 'var(--text)', color: 'var(--surface)', border: 'none' }}>Copy</button>
+                    <button onClick={() => deleteSavedMsg(m.id)} type="button" style={{ padding: '7px 12px', borderRadius: 8, fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: "'Sora',sans-serif", background: 'none', color: '#dc2626', border: '1.5px solid #fecaca' }}>Delete</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+      {showSaved && <div onClick={() => setShowSaved(false)} style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'rgba(0,0,0,0.15)' }} />}
 
       <div style={{position:'fixed',bottom:28,left:'50%',transform:`translateX(-50%) translateY(${toast?'0':'80px'})`,background:'var(--text)',color:'var(--surface)',padding:'10px 20px',borderRadius:100,fontSize:13,fontWeight:600,zIndex:300,transition:'transform .3s ease',pointerEvents:'none',whiteSpace:'nowrap'}}>{toast}</div>
     </div>
