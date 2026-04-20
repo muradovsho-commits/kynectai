@@ -217,6 +217,75 @@ export default function CoachPage() {
   const [convos, setConvos] = useState<StoredConvo[]>([]);
   const [activeConvoId, setActiveConvoId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Usage-based limiting — rolling window
+  const USAGE_KEY = 'offerbell_coach_pro_usage';
+  const MAX_TOKENS = 40;
+  const RESET_HOURS = 8;
+  const [usageTokens, setUsageTokens] = useState(0);
+  const [usageResetAt, setUsageResetAt] = useState<number>(0);
+  const [rateLimited, setRateLimited] = useState(false);
+
+  const getMessageCost = (msgCount: number) => {
+    if (msgCount <= 4) return 1;
+    if (msgCount <= 10) return 2;
+    return 3;
+  };
+
+  const loadUsage = () => {
+    try {
+      const raw = localStorage.getItem(USAGE_KEY);
+      if (raw) {
+        const data = JSON.parse(raw);
+        const now = Date.now();
+        if (data.resetAt && now >= data.resetAt) {
+          const nextReset = now + RESET_HOURS * 3600000;
+          const fresh = { tokens: 0, resetAt: nextReset };
+          localStorage.setItem(USAGE_KEY, JSON.stringify(fresh));
+          setUsageTokens(0); setUsageResetAt(nextReset); setRateLimited(false);
+        } else {
+          setUsageTokens(data.tokens || 0);
+          setUsageResetAt(data.resetAt || now + RESET_HOURS * 3600000);
+          setRateLimited((data.tokens || 0) >= MAX_TOKENS);
+        }
+        return;
+      }
+    } catch {}
+    const nextReset = Date.now() + RESET_HOURS * 3600000;
+    localStorage.setItem(USAGE_KEY, JSON.stringify({ tokens: 0, resetAt: nextReset }));
+    setUsageTokens(0); setUsageResetAt(nextReset); setRateLimited(false);
+  };
+
+  useEffect(() => { loadUsage(); }, []);
+
+  useEffect(() => {
+    const iv = setInterval(() => {
+      if (Date.now() >= usageResetAt && usageResetAt > 0) loadUsage();
+    }, 30000);
+    return () => clearInterval(iv);
+  }, [usageResetAt]);
+
+  const usagePct = Math.min(100, Math.round((usageTokens / MAX_TOKENS) * 100));
+  const usageWarning = usagePct >= 80;
+
+  const incrementUsage = () => {
+    const cost = getMessageCost(messages.length);
+    const newTokens = usageTokens + cost;
+    const data = { tokens: newTokens, resetAt: usageResetAt || Date.now() + RESET_HOURS * 3600000 };
+    localStorage.setItem(USAGE_KEY, JSON.stringify(data));
+    setUsageTokens(newTokens);
+    if (newTokens >= MAX_TOKENS) setRateLimited(true);
+  };
+
+  const formatResetTime = () => {
+    if (!usageResetAt) return 'soon';
+    const diff = usageResetAt - Date.now();
+    if (diff <= 0) return 'any moment now';
+    const hours = Math.floor(diff / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    if (hours > 0) return `in ${hours}h ${mins}m`;
+    return `in ${mins}m`;
+  };
   const [inputVal, setInputVal] = useState('');
   const [userName, setUserName] = useState({ first: '', last: '' });
   const [isPro, setIsPro] = useState(false);
@@ -383,6 +452,8 @@ export default function CoachPage() {
 
   const sendMessage = async (text: string) => {
     if (isLoading || !text.trim()) return;
+    if (isPro && rateLimited) return;
+
     const userMsg: Message = { role: 'user', content: text.trim(), time: Date.now() };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
@@ -403,6 +474,7 @@ export default function CoachPage() {
         setMessages(prev => [...prev, { role: 'assistant', content: ' ' + (data.error || 'Coach is temporarily unavailable.'), time: Date.now() }]);
       } else {
         setMessages(prev => [...prev, { role: 'assistant', content: data.text || 'Something went wrong.', time: Date.now() }]);
+        if (isPro) incrementUsage();
       }
     } catch (err: any) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Connection error: ' + (err?.message || 'please try again.'), time: Date.now() }]);
@@ -639,8 +711,25 @@ export default function CoachPage() {
             </div>
           </div>
 
+          {isPro && rateLimited ? (
+            <div style={{ padding: '24px 20px', borderTop: '1px solid var(--border)', textAlign: 'center' }}>
+              <div style={{ maxWidth: 420, margin: '0 auto' }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 6, fontFamily: "'Instrument Serif', serif" }}>You've hit your limit for this session</div>
+                <div style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.6 }}>
+                  Your usage resets <strong style={{ color: 'var(--text)' }}>{formatResetTime()}</strong>. You'll be able to continue your conversation then.
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 14 }}>Keep prepping: <a href="/flashcards" style={{ color: 'var(--text)', fontWeight: 700, textDecoration: 'underline' }}>Flashcards</a> · <a href="/concept-drills" style={{ color: 'var(--text)', fontWeight: 700, textDecoration: 'underline' }}>Concept Drills</a> · <a href="/diagnostic-review" style={{ color: 'var(--text)', fontWeight: 700, textDecoration: 'underline' }}>Diagnostic Review</a></div>
+              </div>
+            </div>
+          ) : (
           <div className="coach-input-area">
             <div className="coach-input-area-inner">
+              {isPro && usageWarning && !rateLimited && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 14px', marginBottom: 8, background: '#fef3c7', border: '1px solid #fde68a', borderRadius: 8, fontSize: 12, color: '#92400e' }}>
+                  <svg width="14" height="14" fill="none" stroke="#d97706" strokeWidth="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  <span>You've used about <strong>{usagePct}%</strong> of your session limit. Resets {formatResetTime()}.</span>
+                </div>
+              )}
               {activeFeature && (
                 <div className="coach-context-label">Context: {activeTrack} - {activeFeature}</div>
               )}
@@ -667,6 +756,7 @@ export default function CoachPage() {
               <div className="coach-input-footer">{isResumeFeature ? 'Upload your resume with the clip icon, or paste the text directly.' : 'Ask anything about your recruiting process.'}</div>
             </div>
           </div>
+          )}
         </div>
       </div>
     </div>
