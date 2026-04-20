@@ -248,77 +248,54 @@ export default function DashboardPage() {
           const todayIdx = dow === 0 ? 6 : dow - 1;
           const today = new Date().toISOString().split('T')[0];
 
-          // Build 5-week heatmap (35 days ending today, Mon-aligned rows)
-          const heatmapWeeks: { date: string; active: boolean; isToday: boolean; isFuture: boolean }[][] = [];
-          const endDate = new Date();
-          endDate.setHours(0,0,0,0);
-          // Go back to the Monday of 4 weeks ago
-          const startOffset = todayIdx + 28; // days back to Monday of week -4
-          const startDate = new Date(endDate);
-          startDate.setDate(endDate.getDate() - startOffset);
-          for (let w = 0; w < 5; w++) {
-            const week: typeof heatmapWeeks[0] = [];
-            for (let d = 0; d < 7; d++) {
-              const date = new Date(startDate);
-              date.setDate(startDate.getDate() + w * 7 + d);
-              const ds = date.toISOString().split('T')[0];
-              week.push({ date: ds, active: activityDaysSet.has(ds), isToday: ds === today, isFuture: ds > today });
-            }
-            heatmapWeeks.push(week);
+          // Build 5-week heatmap
+          const heatmapDays: { date: string; active: boolean; isToday: boolean; isFuture: boolean }[] = [];
+          const startOffset = todayIdx + 28;
+          const startDate = new Date();
+          startDate.setHours(0,0,0,0);
+          startDate.setDate(startDate.getDate() - startOffset);
+          for (let i = 0; i < 35; i++) {
+            const d = new Date(startDate);
+            d.setDate(startDate.getDate() + i);
+            const ds = d.toISOString().split('T')[0];
+            heatmapDays.push({ date: ds, active: activityDaysSet.has(ds), isToday: ds === today, isFuture: ds > today });
           }
 
           return (
             <div className="streak-card">
               <div className="streak-header">
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                  <span className="streak-count">{currentStreak}</span>
-                  <span className="streak-subtitle">day streak</span>
+                <div className="streak-left">
+                  <div className="streak-section-label">Activity</div>
+                  <div className="streak-headline">
+                    <span className="streak-count">{currentStreak}</span>
+                    <span className="streak-unit">day streak</span>
+                  </div>
                 </div>
-                <button
-                  onClick={() => setCalendarExpanded(!calendarExpanded)}
-                  type="button"
-                  className={`streak-toggle${calendarExpanded ? ' open' : ''}`}
-                >
+                <button onClick={() => setCalendarExpanded(!calendarExpanded)} type="button" className={`streak-toggle${calendarExpanded ? ' open' : ''}`}>
                   {calendarExpanded ? 'Less' : 'More'}
-                  <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                    <polyline points="6 9 12 15 18 9"/>
-                  </svg>
+                  <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
                 </button>
               </div>
 
-              {/* This week strip */}
+              {/* This week */}
               <div className="streak-week">
-                {['M','T','W','T','F','S','S'].map((label, i) => {
-                  const isToday = i === todayIdx;
-                  const isFuture = i > todayIdx;
-                  const isActive = streakDays[i];
-                  return (
-                    <div key={i} className="streak-day">
-                      <div className={`streak-day-label${isToday ? ' today' : ''}`}>{label}</div>
-                      <div className={`streak-day-cell${isActive ? ' active' : isFuture ? ' future' : ' missed'}${isToday ? ' is-today' : ''}`} />
-                    </div>
-                  );
-                })}
+                {['M','T','W','T','F','S','S'].map((label, i) => (
+                  <div key={i} className="streak-day">
+                    <div className={`streak-day-label${i === todayIdx ? ' today' : ''}`}>{label}</div>
+                    <div className={`streak-dot${streakDays[i] ? ' active' : i > todayIdx ? ' future' : ' missed'}${i === todayIdx ? ' is-today' : ''}`} />
+                  </div>
+                ))}
               </div>
 
-              {/* Expanded: 5-week heatmap */}
+              {/* Heatmap */}
               {calendarExpanded && (
                 <div className="streak-heatmap">
-                  <div className="streak-heatmap-label">Last 5 weeks</div>
                   <div className="streak-heatmap-grid">
-                    {['M','T','W','T','F','S','S'].map((h, i) => (
-                      <div key={h + i} className="streak-heatmap-header">{h}</div>
+                    {heatmapDays.map(d => (
+                      <div key={d.date} className={`streak-hm-cell${d.active ? ' active' : d.isFuture ? ' future' : ''}${d.isToday ? ' today' : ''}`} />
                     ))}
-                    {heatmapWeeks.map((week, wi) =>
-                      week.map((day, di) => (
-                        <div
-                          key={day.date}
-                          className={`streak-heatmap-cell${day.active ? ' active' : day.isFuture ? ' future' : ''}${day.isToday ? ' today' : ''}`}
-                          title={day.active ? day.date : ''}
-                        />
-                      ))
-                    )}
                   </div>
+                  <div className="streak-heatmap-footer">5 weeks ago &rarr; today</div>
                 </div>
               )}
             </div>

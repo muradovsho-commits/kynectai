@@ -330,28 +330,43 @@ body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text
 }
 
 /* ══════════════════════════════════════════════
-   STREAK CARD - compact, clean
+   STREAK CARD
    ══════════════════════════════════════════════ */
 .streak-card {
   background: var(--surface);
   border: 1.5px solid var(--border);
   border-radius: 16px;
   margin-bottom: 24px;
+  padding: 20px 24px;
 }
 .streak-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  padding: 20px 24px 0;
+  margin-bottom: 16px;
+}
+.streak-left {}
+.streak-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 4px;
+}
+.streak-headline {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
 }
 .streak-count {
   font-family: 'Instrument Serif', serif;
-  font-size: 26px;
+  font-size: 28px;
   letter-spacing: -0.8px;
   line-height: 1;
   color: var(--text);
 }
-.streak-subtitle {
+.streak-unit {
   font-size: 13px;
   color: var(--text-3);
   font-weight: 500;
@@ -359,27 +374,27 @@ body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text
 .streak-toggle {
   background: none;
   border: 1.5px solid var(--border-2);
-  padding: 5px 12px;
+  padding: 4px 10px;
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--text-3);
   cursor: pointer;
   font-family: 'Sora', sans-serif;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   transition: color 0.15s, border-color 0.15s;
+  margin-top: 4px;
 }
 .streak-toggle:hover { color: var(--text-2); border-color: var(--text-3); }
 .streak-toggle svg { transition: transform 0.2s ease; }
 .streak-toggle.open svg { transform: rotate(180deg); }
 
-/* Week strip */
+/* Week dots */
 .streak-week {
   display: flex;
-  gap: 6px;
-  padding: 16px 24px 20px;
+  gap: 8px;
 }
 .streak-day {
   flex: 1;
@@ -390,78 +405,50 @@ body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text
 }
 .streak-day-label {
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+  font-weight: 600;
   color: var(--text-3);
+  letter-spacing: 0.2px;
 }
-.streak-day-label.today { color: var(--text); }
-.streak-day-cell {
-  width: 100%;
-  max-width: 36px;
-  aspect-ratio: 1;
-  border-radius: 8px;
+.streak-day-label.today { color: var(--text); font-weight: 700; }
+.streak-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
 }
-.streak-day-cell.active {
-  background: #16a34a;
-}
-.streak-day-cell.missed {
-  background: var(--surface-2);
-}
-.streak-day-cell.future {
-  background: transparent;
-  border: 1.5px dashed var(--border);
-}
-.streak-day-cell.is-today {
-  box-shadow: inset 0 0 0 2px var(--text);
-}
+.streak-dot.active { background: #16a34a; }
+.streak-dot.missed { background: var(--surface-2); }
+.streak-dot.future { background: transparent; border: 1.5px dashed var(--border); }
+.streak-dot.is-today { box-shadow: inset 0 0 0 2px var(--text); }
 
 /* Heatmap (expanded) */
 .streak-heatmap {
-  padding: 0 24px 20px;
+  margin-top: 16px;
+  padding-top: 14px;
   border-top: 1px solid var(--border);
-  margin-top: 0;
-  animation: dashFadeUp 0.2s ease both;
-}
-.streak-heatmap-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--text-3);
-  padding: 14px 0 10px;
+  animation: dashFadeUp 0.15s ease both;
 }
 .streak-heatmap-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 3px;
 }
-.streak-heatmap-header {
-  text-align: center;
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--text-3);
-  letter-spacing: 0.3px;
-  padding-bottom: 4px;
-}
-.streak-heatmap-cell {
+.streak-hm-cell {
   aspect-ratio: 1;
-  border-radius: 4px;
+  border-radius: 3px;
   background: var(--surface-2);
-  transition: background 0.15s;
 }
-.streak-heatmap-cell.active {
-  background: #16a34a;
-}
-.streak-heatmap-cell.future {
-  background: transparent;
-}
-.streak-heatmap-cell.today {
-  box-shadow: inset 0 0 0 1.5px var(--text);
+.streak-hm-cell.active { background: #16a34a; }
+.streak-hm-cell.future { background: transparent; }
+.streak-hm-cell.today { box-shadow: inset 0 0 0 1.5px var(--text); }
+.streak-heatmap-footer {
+  font-size: 9px;
+  color: var(--text-3);
+  text-align: right;
+  margin-top: 6px;
+  letter-spacing: 0.2px;
 }
 
 @media (max-width: 900px) {
-  .streak-header { padding: 16px 18px 0; }
-  .streak-week { padding: 14px 18px 18px; }
-  .streak-heatmap { padding: 0 18px 18px; }
-  .streak-day-cell { max-width: 32px; }
+  .streak-card { padding: 16px 18px; }
+  .streak-dot { width: 18px; height: 18px; border-radius: 5px; }
 }
