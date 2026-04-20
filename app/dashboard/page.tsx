@@ -53,12 +53,11 @@ const TIPS = [
 export default function DashboardPage() {
   const router = useRouter();
   const [userName, setUserName] = useState({ first: "", last: "" });
-  const [messagesSent, setMessagesSent] = useState(0);
-  const [pipelineCount, setPipelineCount] = useState(0);
-  const [searchesUsed, setSearchesUsed] = useState(0);
-  const [flashcardsDrilled, setFlashcardsDrilled] = useState(0);
   const [streakDays, setStreakDays] = useState<boolean[]>([false,false,false,false,false,false,false]);
   const [currentStreak, setCurrentStreak] = useState(0);
+  const [activityDaysSet, setActivityDaysSet] = useState<Set<string>>(new Set());
+  const [calendarExpanded, setCalendarExpanded] = useState(false);
+  const [calendarMonth, setCalendarMonth] = useState(() => { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), 1); });
   const [upgradeToast, setUpgradeToast] = useState("");
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
@@ -128,31 +127,8 @@ export default function DashboardPage() {
     } catch {}
   }, []);
 
-  // Load stats - refresh on mount AND on window focus (so returning from flashcards updates)
+  // Load activity data - refresh on mount AND on window focus
   const loadStats = useCallback(() => {
-    try { setMessagesSent(parseInt(localStorage.getItem("offerbell_messages_sent") || "0", 10)); } catch {}
-    try {
-      const t = localStorage.getItem("offerbell_tracker_v3");
-      if (t) setPipelineCount(JSON.parse(t).length);
-    } catch {}
-    try { setSearchesUsed(parseInt(localStorage.getItem("offerbell_searches_used") || "0", 10)); } catch {}
-    try {
-      // Sum flashcard perf across all tracks
-      let totalSeen = 0;
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && k.startsWith('offerbell_flash_perf_')) {
-          try { const p = JSON.parse(localStorage.getItem(k) || '{}'); totalSeen += (p.seen || 0); } catch {}
-        }
-      }
-      // Also check old global key for migration
-      if (totalSeen === 0) {
-        const old = localStorage.getItem("offerbell_flash_perf");
-        if (old) { try { totalSeen = JSON.parse(old).seen || 0; } catch {} }
-      }
-      setFlashcardsDrilled(totalSeen);
-    } catch {}
-
     // Streak / activity tracking
     try {
       const today = new Date().toISOString().split('T')[0];
@@ -161,11 +137,12 @@ export default function DashboardPage() {
       // Log today if not already logged
       if (!days.includes(today)) {
         days.push(today);
-        // Keep only last 60 days
-        const cutoff = new Date(Date.now() - 60 * 864e5).toISOString().split('T')[0];
+        // Keep only last 90 days for calendar view
+        const cutoff = new Date(Date.now() - 90 * 864e5).toISOString().split('T')[0];
         days = days.filter(d => d >= cutoff);
         localStorage.setItem('offerbell_activity_days', JSON.stringify(days));
       }
+      setActivityDaysSet(new Set(days));
       // Build this-week array (Mon-Sun)
       const now = new Date();
       const dayOfWeek = now.getDay(); // 0=Sun
@@ -266,77 +243,177 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* ── Lightweight Progress ── */}
+        {/* ── Activity Streak ── */}
         <div className="dash-progress-card">
           <div className="dash-progress-header">
-            <h2 className="dash-progress-title">Lightweight progress</h2>
-            <span className="dash-progress-hint">Just enough to know you&apos;re moving.</span>
-          </div>
-          <div className="dash-progress-stats">
-            <div>
-              <div className="dash-stat-label">Contacts tracked</div>
-              <div className="dash-stat-value">{pipelineCount}</div>
-            </div>
-            <div>
-              <div className="dash-stat-label">Messages sent</div>
-              <div className="dash-stat-value">{messagesSent}</div>
-            </div>
-            <div>
-              <div className="dash-stat-label">Flashcards drilled</div>
-              <div className="dash-stat-value">{flashcardsDrilled}</div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Activity Streak ── */}
-        <div className="dash-progress-card" style={{ marginTop: 16 }}>
-          <div className="dash-progress-header">
-            <h2 className="dash-progress-title">
-              {currentStreak > 0 ? `${currentStreak}-day streak` : 'This week'}
-            </h2>
-            <span className="dash-progress-hint">
-              {currentStreak >= 7 ? 'On fire. Keep it going.' : currentStreak >= 3 ? 'Building momentum.' : 'Show up. That\'s the hardest part.'}
-            </span>
-          </div>
-          <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
-            {['M','T','W','T','F','S','S'].map((label, i) => {
-              const isToday = (() => {
-                const d = new Date().getDay();
-                const todayIdx = d === 0 ? 6 : d - 1;
-                return i === todayIdx;
-              })();
-              const isFuture = (() => {
-                const d = new Date().getDay();
-                const todayIdx = d === 0 ? 6 : d - 1;
-                return i > todayIdx;
-              })();
-              return (
-                <div key={i} style={{
-                  flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+            <h2 className="dash-progress-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              {currentStreak > 0 && (
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 5,
+                  background: currentStreak >= 7 ? '#16a34a' : currentStreak >= 3 ? '#d97706' : 'var(--text)',
+                  color: '#fff', padding: '3px 10px', borderRadius: 100,
+                  fontSize: 12, fontWeight: 700, letterSpacing: '0.3px',
                 }}>
-                  <div style={{
-                    fontSize: 10, fontWeight: 700, letterSpacing: '0.5px',
-                    color: isToday ? 'var(--text)' : 'var(--text-3)',
-                  }}>{label}</div>
-                  <div style={{
-                    width: 32, height: 32, borderRadius: 8,
-                    background: streakDays[i]
-                      ? '#16a34a'
-                      : isFuture
-                        ? 'var(--surface-2)'
-                        : 'var(--border)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    transition: 'all 0.2s',
-                    border: isToday ? '2px solid var(--text)' : '2px solid transparent',
-                  }}>
-                    {streakDays[i] && (
-                      <svg width="14" height="14" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                    )}
+                  {currentStreak} day{currentStreak !== 1 ? 's' : ''}
+                </span>
+              )}
+              {currentStreak >= 7 ? 'On fire.' : currentStreak >= 3 ? 'Building momentum.' : 'Your activity'}
+            </h2>
+            <button
+              onClick={() => setCalendarExpanded(!calendarExpanded)}
+              type="button"
+              style={{
+                background: 'none', border: '1px solid var(--border-2)',
+                padding: '5px 12px', borderRadius: 100,
+                fontSize: 11, fontWeight: 600, color: 'var(--text-2)',
+                cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+                display: 'flex', alignItems: 'center', gap: 5,
+              }}
+            >
+              {calendarExpanded ? 'Week view' : 'Calendar'}
+              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                {calendarExpanded
+                  ? <polyline points="6 15 12 9 18 15"/>
+                  : <polyline points="6 9 12 15 18 9"/>
+                }
+              </svg>
+            </button>
+          </div>
+
+          {/* Week view (default) */}
+          {!calendarExpanded && (
+            <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+              {['M','T','W','T','F','S','S'].map((label, i) => {
+                const d = new Date().getDay();
+                const todayIdx = d === 0 ? 6 : d - 1;
+                const isToday = i === todayIdx;
+                const isFuture = i > todayIdx;
+                return (
+                  <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.5px', color: isToday ? 'var(--text)' : 'var(--text-3)' }}>{label}</div>
+                    <div style={{
+                      width: 32, height: 32, borderRadius: 8,
+                      background: streakDays[i] ? '#16a34a' : isFuture ? 'var(--surface-2)' : 'var(--border)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      border: isToday ? '2px solid var(--text)' : '2px solid transparent',
+                    }}>
+                      {streakDays[i] && <svg width="14" height="14" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Calendar view (expanded) */}
+          {calendarExpanded && (() => {
+            const year = calendarMonth.getFullYear();
+            const month = calendarMonth.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startDow = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Mon=0
+            const today = new Date().toISOString().split('T')[0];
+            const monthLabel = firstDay.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            const now = new Date();
+            const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
+            const canGoForward = !isCurrentMonth;
+
+            // Count active days this month
+            const activeDaysThisMonth = Array.from({ length: daysInMonth }, (_, i) => {
+              const ds = new Date(year, month, i + 1).toISOString().split('T')[0];
+              return activityDaysSet.has(ds) ? 1 : 0;
+            }).reduce((a, b) => a + b, 0);
+
+            return (
+              <div style={{ marginTop: 8 }}>
+                {/* Month navigation */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                  <button
+                    onClick={() => setCalendarMonth(new Date(year, month - 1, 1))}
+                    type="button"
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-2)', padding: '4px 8px', fontSize: 16 }}
+                  >&lsaquo;</button>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{monthLabel}</span>
+                    <span style={{ fontSize: 11, color: 'var(--text-3)' }}>{activeDaysThisMonth} active day{activeDaysThisMonth !== 1 ? 's' : ''}</span>
+                  </div>
+                  <button
+                    onClick={() => { if (canGoForward) setCalendarMonth(new Date(year, month + 1, 1)); }}
+                    type="button"
+                    style={{ background: 'none', border: 'none', cursor: canGoForward ? 'pointer' : 'default', color: canGoForward ? 'var(--text-2)' : 'var(--border)', padding: '4px 8px', fontSize: 16 }}
+                  >&rsaquo;</button>
+                </div>
+
+                {/* Day headers */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 4 }}>
+                  {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => (
+                    <div key={d} style={{ textAlign: 'center', fontSize: 9, fontWeight: 700, letterSpacing: '0.5px', color: 'var(--text-3)', textTransform: 'uppercase', padding: '4px 0' }}>{d}</div>
+                  ))}
+                </div>
+
+                {/* Calendar grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+                  {/* Empty cells for offset */}
+                  {Array.from({ length: startDow }, (_, i) => (
+                    <div key={'empty-' + i} style={{ aspectRatio: '1', borderRadius: 6 }} />
+                  ))}
+                  {/* Day cells */}
+                  {Array.from({ length: daysInMonth }, (_, i) => {
+                    const dayNum = i + 1;
+                    const ds = new Date(year, month, dayNum).toISOString().split('T')[0];
+                    const isActive = activityDaysSet.has(ds);
+                    const isToday = ds === today;
+                    const isFuture = ds > today;
+                    return (
+                      <div key={dayNum} style={{
+                        aspectRatio: '1',
+                        borderRadius: 6,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 11, fontWeight: isActive ? 700 : 500,
+                        background: isActive ? '#16a34a' : isFuture ? 'transparent' : 'var(--surface-2)',
+                        color: isActive ? '#fff' : isFuture ? 'var(--border-2)' : 'var(--text-3)',
+                        border: isToday ? '2px solid var(--text)' : '2px solid transparent',
+                        position: 'relative',
+                      }}>
+                        {dayNum}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Total stats */}
+                <div style={{ display: 'flex', gap: 20, marginTop: 14, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+                  <div>
+                    <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: 'var(--text)', letterSpacing: '-0.5px', lineHeight: 1 }}>{activityDaysSet.size}</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 4 }}>Total active days</div>
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: currentStreak >= 3 ? '#16a34a' : 'var(--text)', letterSpacing: '-0.5px', lineHeight: 1 }}>{currentStreak}</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 4 }}>Current streak</div>
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: 'var(--text)', letterSpacing: '-0.5px', lineHeight: 1 }}>{(() => {
+                      // Longest streak from all activity days
+                      const sorted = [...activityDaysSet].sort();
+                      let longest = 0, run = 0, prev = '';
+                      for (const d of sorted) {
+                        if (prev) {
+                          const prevDate = new Date(prev);
+                          prevDate.setDate(prevDate.getDate() + 1);
+                          if (prevDate.toISOString().split('T')[0] === d) { run++; } else { run = 1; }
+                        } else { run = 1; }
+                        if (run > longest) longest = run;
+                        prev = d;
+                      }
+                      return longest;
+                    })()}</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 4 }}>Longest streak</div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })()}
         </div>
 
         {/* ── Tip of the Week ── */}
