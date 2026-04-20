@@ -57,6 +57,7 @@ export default function DashboardPage() {
   const [currentStreak, setCurrentStreak] = useState(0);
   const [activityDaysSet, setActivityDaysSet] = useState<Set<string>>(new Set());
   const [calendarExpanded, setCalendarExpanded] = useState(false);
+  const [accountCreatedAt, setAccountCreatedAt] = useState<string | null>(null);
   const [upgradeToast, setUpgradeToast] = useState("");
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
@@ -128,6 +129,14 @@ export default function DashboardPage() {
 
   // Load activity data - refresh on mount AND on window focus
   const loadStats = useCallback(() => {
+    // Account creation date
+    let created = localStorage.getItem('offerbell_account_created');
+    if (!created) {
+      created = new Date().toISOString().split('T')[0];
+      localStorage.setItem('offerbell_account_created', created);
+    }
+    setAccountCreatedAt(created);
+
     // Streak / activity tracking
     try {
       const today = new Date().toISOString().split('T')[0];
@@ -270,7 +279,10 @@ export default function DashboardPage() {
           }
 
           const activeDaysCount = allDays.filter(d => d.active && !d.isFuture).length;
-          const totalPastDays = allDays.filter(d => !d.isFuture).length;
+          // Consistency: days since account creation
+          const accountStart = accountCreatedAt || today;
+          const daysSinceCreation = Math.max(1, Math.floor((new Date(today).getTime() - new Date(accountStart).getTime()) / 864e5) + 1);
+          const consistencyPct = Math.round((activeDaysCount / daysSinceCreation) * 100);
 
           return (
             <>
@@ -330,15 +342,24 @@ export default function DashboardPage() {
                       </div>
                       <div style={{ width: 1, height: 32, background: 'var(--border)' }} />
                       <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: 'var(--text)', lineHeight: 1, letterSpacing: '-0.5px' }}>{totalPastDays > 0 ? Math.round((activeDaysCount / totalPastDays) * 100) : 0}%</div>
+                        <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: 'var(--text)', lineHeight: 1, letterSpacing: '-0.5px' }}>{consistencyPct}%</div>
                         <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 3 }}>Consistency</div>
                       </div>
                     </div>
                   </div>
 
                   {/* Calendar months */}
-                  <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: 32 }}>
+                  <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: 32 }} ref={(el) => {
+                    // Auto-scroll to current month on mount
+                    if (el) {
+                      setTimeout(() => {
+                        const currentMonthEl = el.querySelector('[data-current-month]');
+                        if (currentMonthEl) currentMonthEl.scrollIntoView({ behavior: 'instant', block: 'start' });
+                      }, 50);
+                    }
+                  }}>
                     {months.map(m => {
+                      const isCurrentMonth = m.month === new Date().getMonth() && m.year === new Date().getFullYear();
                       // Build a proper month grid: figure out what day of week the 1st falls on
                       const firstOfMonth = new Date(m.year, m.month, 1);
                       const lastOfMonth = new Date(m.year, m.month + 1, 0);
@@ -355,7 +376,7 @@ export default function DashboardPage() {
                       }
 
                       return (
-                        <div key={m.label}>
+                        <div key={m.label} {...(isCurrentMonth ? { 'data-current-month': 'true' } : {})}>
                           <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 20, color: 'var(--text)', marginBottom: 14, letterSpacing: '-0.3px' }}>{m.label}</div>
                           {/* Day labels */}
                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 6 }}>
@@ -373,14 +394,12 @@ export default function DashboardPage() {
                               return (
                                 <div key={c.date} style={{
                                   aspectRatio: '1', borderRadius: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: isT ? 800 : 500, fontFamily: "'Sora', sans-serif",
-                                  background: isActive ? 'var(--text)' : isT ? 'var(--surface-2)' : 'transparent',
-                                  color: isActive ? 'var(--surface)' : isFut ? 'var(--border-2)' : isT ? 'var(--text)' : 'var(--text-2)',
+                                  background: isActive ? '#16a34a' : 'transparent',
+                                  color: isActive ? '#fff' : isFut ? 'var(--border-2)' : isT ? 'var(--text)' : 'var(--text-3)',
                                   border: isT && !isActive ? '2px solid var(--text)' : '2px solid transparent',
                                   transition: 'background 0.15s',
-                                  position: 'relative',
                                 }}>
                                   {c.day}
-                                  {isActive && <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#22c55e', position: 'absolute', bottom: 6 }} />}
                                 </div>
                               );
                             })}
@@ -392,9 +411,9 @@ export default function DashboardPage() {
 
                   {/* Footer legend */}
                   <div style={{ padding: '14px 28px', borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 20, fontSize: 11, color: 'var(--text-3)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><div style={{ width: 12, height: 12, borderRadius: 4, background: 'var(--text)' }} /><span>Active</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><div style={{ width: 12, height: 12, borderRadius: 4, background: '#16a34a' }} /><span>Active</span></div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><div style={{ width: 12, height: 12, borderRadius: 4, border: '2px solid var(--text)', background: 'transparent' }} /><span>Today</span></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><div style={{ width: 12, height: 12, borderRadius: 4, background: 'var(--surface-2)' }} /><span>No activity</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><div style={{ width: 12, height: 12, borderRadius: 4, background: 'transparent', border: '1px solid var(--border)' }} /><span>Inactive</span></div>
                     <div style={{ marginLeft: 'auto', fontWeight: 600 }}>Click outside or &times; to close</div>
                   </div>
                 </div>
