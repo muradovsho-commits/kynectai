@@ -6,17 +6,53 @@ import Link from 'next/link';
 import '../contact-finder/contact-finder.css';
 import RemindersPanel from './RemindersPanel';
 
-const STATUSES: Record<string, { label: string; cls: string }> = {
-  drafted: { label: 'Drafted', cls: 'b-drafted' },
-  sent: { label: 'Sent', cls: 'b-sent' },
-  fu1: { label: 'Followed Up 1x', cls: 'b-fu1' },
-  fu2: { label: 'Followed Up 2x', cls: 'b-fu2' },
-  fu3: { label: 'Followed Up 3x', cls: 'b-fu3' },
-  scheduled: { label: 'Scheduled', cls: 'b-scheduled' },
-  spoken: { label: 'Spoken With', cls: 'b-spoken' },
-  stay: { label: 'Staying in Touch', cls: 'b-stay' },
-  noresp: { label: 'No Response', cls: 'b-noresp' },
+type TrackerConfig = {
+  columns: { key: string; label: string; visible: boolean }[];
+  statuses: { key: string; label: string; cls: string }[];
 };
+
+const DEFAULT_COLUMNS = [
+  { key: 'name', label: 'Contact', visible: true },
+  { key: 'firmRole', label: 'Firm & Role', visible: true },
+  { key: 'status', label: 'Status', visible: true },
+  { key: 'angle', label: 'Angle', visible: false },
+  { key: 'linkedin', label: 'LinkedIn', visible: true },
+  { key: 'dateAdded', label: 'Date Added', visible: false },
+  { key: 'daysSince', label: 'Last Activity', visible: true },
+  { key: 'quality', label: 'Quality', visible: false },
+  { key: 'notes', label: 'Notes', visible: true },
+];
+
+const DEFAULT_STATUSES = [
+  { key: 'drafted', label: 'Drafted', cls: 'b-drafted' },
+  { key: 'sent', label: 'Sent', cls: 'b-sent' },
+  { key: 'fu1', label: 'Followed Up 1x', cls: 'b-fu1' },
+  { key: 'fu2', label: 'Followed Up 2x', cls: 'b-fu2' },
+  { key: 'fu3', label: 'Followed Up 3x', cls: 'b-fu3' },
+  { key: 'scheduled', label: 'Scheduled', cls: 'b-scheduled' },
+  { key: 'spoken', label: 'Spoken With', cls: 'b-spoken' },
+  { key: 'stay', label: 'Staying in Touch', cls: 'b-stay' },
+  { key: 'noresp', label: 'No Response', cls: 'b-noresp' },
+];
+
+const CONFIG_KEY = 'offerbell_tracker_config';
+function loadConfig(): TrackerConfig {
+  try {
+    const raw = localStorage.getItem(CONFIG_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // Ensure all default columns exist (in case new ones were added)
+      const existing = new Set(parsed.columns.map((c: any) => c.key));
+      for (const dc of DEFAULT_COLUMNS) { if (!existing.has(dc.key)) parsed.columns.push(dc); }
+      return parsed;
+    }
+  } catch {}
+  return { columns: DEFAULT_COLUMNS.map(c => ({ ...c })), statuses: DEFAULT_STATUSES.map(s => ({ ...s })) };
+}
+function saveConfig(cfg: TrackerConfig) { localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); }
+
+const STATUSES: Record<string, { label: string; cls: string }> = {};
+// Will be populated from config in the component
 
 const COLORS = ['#6366f1','#0ea5e9','#10b981','#f59e0b','#ec4899','#8b5cf6','#ef4444','#14b8a6','#f97316','#06b6d4'];
 
@@ -77,6 +113,17 @@ export default function OutreachTrackerPage() {
   const [aDate, setADate] = useState('');
   const [toast, setToast] = useState('');
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [devMode, setDevMode] = useState(false);
+  const [config, setConfig] = useState<TrackerConfig>(loadConfig());
+
+  // Build dynamic STATUSES from config
+  const statusMap: Record<string, { label: string; cls: string }> = {};
+  for (const s of config.statuses) statusMap[s.key] = { label: s.label, cls: s.cls };
+  // Also update the module-level STATUSES for backward compat
+  Object.keys(STATUSES).forEach(k => delete STATUSES[k]);
+  Object.assign(STATUSES, statusMap);
+
+  const visibleColumns = config.columns.filter(c => c.visible);
 
   useEffect(() => {
     const saved = localStorage.getItem('offerbell_tracker_v3');
@@ -90,6 +137,7 @@ export default function OutreachTrackerPage() {
     }
     const theme = localStorage.getItem('offerbell-theme');
     if (theme === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); setIsDark(true); }
+    setConfig(loadConfig());
   }, []);
 
   function persist(c: Contact[]) { localStorage.setItem('offerbell_tracker_v3', JSON.stringify(c)); }
@@ -295,11 +343,17 @@ export default function OutreachTrackerPage() {
                 Outreach <em style={{ fontStyle: 'italic' }}>Tracker</em>
               </div>
               <div style={{ fontSize: 13, color: 'var(--text-3)' }}>
-                Track every networking conversation in one place.{' '}
-                <span style={{ color: 'var(--text-3)' }}>Click any row to update status, add notes, or log a call date.</span>
+                Track every networking conversation in one place. Click any row to update.
               </div>
             </div>
-            <button onClick={() => setModalOpen(true)} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 10, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif' }}>+ Add Contact</button>
+            <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+              <button onClick={() => setDevMode(true)} type="button" title="Customize tracker" style={{ width: 38, height: 38, borderRadius: 10, border: '1.5px solid var(--border)', background: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'border-color 0.15s' }}
+                onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--text)')}
+                onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}>
+                <svg width="16" height="16" fill="none" stroke="var(--text-2)" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </button>
+              <button onClick={() => setModalOpen(true)} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 10, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif' }}>+ Add Contact</button>
+            </div>
           </div>
 
 
@@ -350,96 +404,83 @@ export default function OutreachTrackerPage() {
           <div style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 14, overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ background: '#1a1a19' }}>
-                  {['Name', 'Firm & Role', 'Status', 'Angle', 'LinkedIn', 'Date Added', 'Days Since Contact', 'Quality', 'Notes', ''].map(h => (
-                    <th key={h} style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'rgba(255,255,255,.6)', padding: '11px 14px', textAlign: 'left', whiteSpace: 'nowrap', borderRight: h !== '' ? '1px solid rgba(255,255,255,.07)' : 'none' }}>{h}</th>
+                <tr style={{ background: 'var(--surface-2)', borderBottom: '1.5px solid var(--border)' }}>
+                  {visibleColumns.map(h => (
+                    <th key={h.key} style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-3)', padding: '12px 14px', textAlign: 'left', whiteSpace: 'nowrap' }}>{h.label}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={10} style={{ padding: '60px 20px', textAlign: 'center' }}>
+                  <tr><td colSpan={visibleColumns.length} style={{ padding: '60px 20px', textAlign: 'center' }}>
                     <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 20, fontStyle: 'italic', color: 'var(--text)', marginBottom: 8 }}>No contacts here yet</div>
                     <div style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 20 }}>Add your first contact to start tracking.</div>
                     <button onClick={() => setModalOpen(true)} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif' }}>+ Add Contact</button>
                   </td></tr>
                 ) : filtered.map(c => {
-                  const daysSent = daysSince(c.sentAt);
-                  const daysFU = daysSince(c.lastFollowUpAt);
-                  const daysLC = daysSince(c.lastContact);
-                  let daysStr = '-';
-                  let daysCls = 'var(--text-3)';
+                  const daysSent2 = daysSince(c.sentAt);
+                  const daysFU2 = daysSince(c.lastFollowUpAt);
+                  const daysLC2 = daysSince(c.lastContact);
+                  let daysStr2 = '-';
+                  let daysCls2 = 'var(--text-3)';
                   if (c.status === 'drafted') {
                     const d = daysSince(c.createdAt);
-                    daysStr = d !== null ? `drafted ${d}d ago` : '-';
-                    daysCls = d !== null && d > 7 ? '#d97706' : d !== null && d > 14 ? '#dc2626' : 'var(--text-3)';
+                    daysStr2 = d !== null ? (d === 0 ? 'Today' : `${d}d ago`) : '-';
+                    daysCls2 = d !== null && d > 14 ? '#dc2626' : d !== null && d > 7 ? '#d97706' : 'var(--text-3)';
                   } else if (c.status === 'sent') {
-                    daysStr = daysSent !== null ? `sent ${daysSent}d ago` : '-';
-                    daysCls = daysSent !== null ? (daysSent > 7 ? '#dc2626' : daysSent > 3 ? '#d97706' : '#16a34a') : 'var(--text-3)';
+                    daysStr2 = daysSent2 !== null ? (daysSent2 === 0 ? 'Today' : `${daysSent2}d ago`) : '-';
+                    daysCls2 = daysSent2 !== null ? (daysSent2 > 7 ? '#dc2626' : daysSent2 > 3 ? '#d97706' : '#16a34a') : 'var(--text-3)';
                   } else if (['fu1','fu2','fu3'].includes(c.status)) {
-                    daysStr = daysFU !== null ? `followed up ${daysFU}d ago` : daysSent !== null ? `sent ${daysSent}d ago` : '-';
-                    const d = daysFU ?? daysSent;
-                    daysCls = d !== null ? (d > 10 ? '#dc2626' : d > 5 ? '#d97706' : '#16a34a') : 'var(--text-3)';
+                    daysStr2 = daysFU2 !== null ? `${daysFU2}d ago` : daysSent2 !== null ? `${daysSent2}d ago` : '-';
+                    const d2 = daysFU2 ?? daysSent2;
+                    daysCls2 = d2 !== null ? (d2 > 10 ? '#dc2626' : d2 > 5 ? '#d97706' : '#16a34a') : 'var(--text-3)';
                   } else if (['spoken','stay'].includes(c.status)) {
-                    daysStr = daysLC !== null ? `spoke ${daysLC}d ago` : '-';
-                    daysCls = daysLC !== null ? (daysLC > 60 ? '#dc2626' : daysLC > 30 ? '#d97706' : '#16a34a') : 'var(--text-3)';
+                    daysStr2 = daysLC2 !== null ? (daysLC2 === 0 ? 'Today' : `${daysLC2}d ago`) : '-';
+                    daysCls2 = daysLC2 !== null ? (daysLC2 > 60 ? '#dc2626' : daysLC2 > 30 ? '#d97706' : '#16a34a') : 'var(--text-3)';
                   } else if (c.status === 'noresp') {
-                    daysStr = daysLC !== null ? `${daysLC}d no reply` : '-';
-                    daysCls = '#dc2626';
+                    daysStr2 = daysLC2 !== null ? `${daysLC2}d` : '-';
+                    daysCls2 = '#dc2626';
                   }
                   const st = STATUSES[c.status] || { label: c.status, cls: 'b-drafted' };
                   const color = colorFor(c.fname + c.lname);
+
+                  const cellRenderers: Record<string, React.ReactNode> = {
+                    name: (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{ width: 32, height: 32, borderRadius: 9, background: color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, color: '#fff', flexShrink: 0 }}>{initials(c.fname, c.lname)}</div>
+                        <span style={{ fontWeight: 700, fontSize: 13 }}>{c.fname} {c.lname}</span>
+                      </div>
+                    ),
+                    firmRole: (
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{c.firm || '-'}</div>
+                        <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{c.role}</div>
+                      </div>
+                    ),
+                    status: (
+                      <span className={`badge ${st.cls}`} style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 10px', borderRadius: 100, fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap' }}>{st.label}</span>
+                    ),
+                    angle: c.angle ? <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 4, background: 'var(--surface-2)', color: 'var(--text-3)' }}>{c.angle}</span> : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>-</span>,
+                    linkedin: c.linkedin ? <a href={c.linkedin.startsWith('http') ? c.linkedin : 'https://' + c.linkedin} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 600, color: '#0a66c2', textDecoration: 'none' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
+                      Profile
+                    </a> : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>-</span>,
+                    dateAdded: <span style={{ fontSize: 12, color: 'var(--text-3)', whiteSpace: 'nowrap' }}>{fmtDate(c.createdAt)}</span>,
+                    daysSince: <span style={{ fontSize: 12, fontWeight: 600, color: daysCls2, whiteSpace: 'nowrap' }}>{daysStr2}</span>,
+                    quality: c.quality === 'great' ? <span style={{ color: '#16a34a', fontWeight: 700, fontSize: 12 }}>Great</span>
+                      : c.quality === 'ok' ? <span style={{ color: '#d97706', fontWeight: 700, fontSize: 12 }}>OK</span>
+                      : c.quality === 'cold' ? <span style={{ color: '#dc2626', fontWeight: 700, fontSize: 12 }}>Cold</span>
+                      : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>-</span>,
+                    notes: <span style={{ fontSize: 12, color: c.notes ? 'var(--text-2)' : 'var(--text-3)', maxWidth: 260, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block' }}>{c.notes || 'No notes'}</span>,
+                  };
+
                   return (
-                    <tr key={c.id} onClick={() => openDrawer(c)} style={{ borderBottom: '1px solid var(--border)', cursor: 'pointer' }}
+                    <tr key={c.id} onClick={() => openDrawer(c)} style={{ borderBottom: '1px solid var(--border)', cursor: 'pointer', transition: 'background 0.12s' }}
                       onMouseEnter={e => (e.currentTarget.style.background = 'var(--surface-2)')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                      <td style={{ padding: '11px 14px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-                          <div style={{ width: 30, height: 30, borderRadius: '50%', background: color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, color: '#fff', flexShrink: 0 }}>{initials(c.fname, c.lname)}</div>
-                          <span style={{ fontWeight: 700, fontSize: 13 }}>{c.fname} {c.lname}</span>
-                        </div>
-                      </td>
-                      <td style={{ padding: '11px 14px' }}>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{c.firm || '-'}</div>
-                        <div style={{ fontSize: 12, color: 'var(--text-2)' }}>{c.role}</div>
-                      </td>
-                      <td style={{ padding: '11px 14px' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-                          <span className={`badge ${st.cls}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 100, fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap' }}>
-                            {st.label}
-                          </span>
-                          {c.status === 'scheduled' && c.scheduledAt && (
-                            <div style={{ fontSize: 10, color: 'var(--text-3)' }}>{new Date(c.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
-                          )}
-                        </div>
-                      </td>
-                      <td style={{ padding: '11px 14px' }}>
-                        {c.angle ? <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 4, background: 'var(--surface-2)', color: 'var(--text-3)' }}>{c.angle}</span> : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>-</span>}
-                      </td>
-                      <td style={{ padding: '11px 14px' }}>
-                        {c.linkedin ? <a href={c.linkedin.startsWith('http') ? c.linkedin : 'https://' + c.linkedin} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 600, color: '#0a66c2', textDecoration: 'none' }}>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
-                          Profile
-                        </a> : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>-</span>}
-                      </td>
-                      <td style={{ padding: '11px 14px', fontSize: 12, color: 'var(--text-3)', whiteSpace: 'nowrap' }}>{fmtDate(c.createdAt)}</td>
-                      <td style={{ padding: '11px 14px', fontSize: 12, fontWeight: 700, color: daysCls, whiteSpace: 'nowrap' }}>{daysStr}</td>
-                      <td style={{ padding: '11px 14px' }}>
-                        {c.quality === 'great' ? <span style={{ color: '#16a34a', fontWeight: 700, fontSize: 12 }}>Great</span>
-                          : c.quality === 'ok' ? <span style={{ color: '#d97706', fontWeight: 700, fontSize: 12 }}>OK</span>
-                          : c.quality === 'cold' ? <span style={{ color: '#dc2626', fontWeight: 700, fontSize: 12 }}>Cold</span>
-                          : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>-</span>}
-                      </td>
-                      <td style={{ padding: '11px 14px', fontSize: 12, color: 'var(--text-2)', maxWidth: 260, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {c.notes || <span style={{ color: 'var(--text-3)' }}>No notes</span>}
-                      </td>
-                      <td style={{ padding: '11px 8px', textAlign: 'center' }}>
-                        <button onClick={e => { e.stopPropagation(); if (confirm('Remove ' + c.fname + ' ' + c.lname + '?')) { const updated = contacts.filter(x => x.id !== c.id); setContacts(updated); persist(updated); showToast('Removed'); } }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-3)', padding: 4, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Delete contact"
-                          onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')}
-                          onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-3)')}>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                        </button>
-                      </td>
+                      {visibleColumns.map(col => (
+                        <td key={col.key} style={{ padding: '12px 14px' }}>{cellRenderers[col.key]}</td>
+                      ))}
                     </tr>
                   );
                 })}
@@ -563,6 +604,89 @@ export default function OutreachTrackerPage() {
           </div>
         </>}
       </div>
+
+      {/* ═══ DEVELOPER MODE OVERLAY ═══ */}
+      {devMode && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', display: 'flex', flexDirection: 'column' }} onClick={() => setDevMode(false)}>
+          <div style={{ position: 'absolute', top: 20, right: 20, zIndex: 310 }}>
+            <button onClick={(e) => { e.stopPropagation(); setDevMode(false); }} style={{ width: 36, height: 36, borderRadius: 10, border: '1.5px solid var(--border)', background: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} type="button">
+              <svg width="16" height="16" fill="none" stroke="var(--text)" strokeWidth="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div onClick={e => e.stopPropagation()} style={{ flex: 1, margin: 20, borderRadius: 20, background: 'var(--surface)', border: '1.5px solid var(--border)', overflow: 'hidden', display: 'flex', flexDirection: 'column', maxWidth: 700, marginLeft: 'auto', marginRight: 'auto', width: '100%' }}>
+            {/* Header */}
+            <div style={{ padding: '20px 28px', borderBottom: '2px solid var(--text)', display: 'flex', alignItems: 'center', gap: 14 }}>
+              <svg width="18" height="18" fill="none" stroke="var(--text)" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              <div>
+                <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: 'var(--text)', letterSpacing: '-0.4px' }}>Customize <em style={{ fontStyle: 'italic' }}>Tracker</em></div>
+                <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>Toggle columns and rename statuses to match your workflow</div>
+              </div>
+            </div>
+
+            <div style={{ flex: 1, overflowY: 'auto', padding: '28px 28px' }}>
+              {/* ── Column Visibility ── */}
+              <div style={{ marginBottom: 36 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 14 }}>Visible Columns</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {config.columns.map((col, ci) => (
+                    <div key={col.key} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', background: 'var(--bg)', border: '1.5px solid var(--border)', borderRadius: 10, transition: 'border-color 0.15s' }}>
+                      <button onClick={() => {
+                        if (col.key === 'name' || col.key === 'status') return; // Always visible
+                        const next = { ...config, columns: config.columns.map((c, i) => i === ci ? { ...c, visible: !c.visible } : c) };
+                        setConfig(next); saveConfig(next);
+                      }} type="button" style={{ width: 22, height: 22, borderRadius: 6, border: `2px solid ${col.visible ? 'var(--text)' : 'var(--border-2)'}`, background: col.visible ? 'var(--text)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: col.key === 'name' || col.key === 'status' ? 'default' : 'pointer', flexShrink: 0, opacity: col.key === 'name' || col.key === 'status' ? 0.5 : 1 }}>
+                        {col.visible && <svg width="12" height="12" fill="none" stroke="var(--surface)" strokeWidth="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>}
+                      </button>
+                      <span style={{ fontSize: 14, fontWeight: 600, color: col.visible ? 'var(--text)' : 'var(--text-3)', flex: 1 }}>{col.label}</span>
+                      {(col.key === 'name' || col.key === 'status') && <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', background: 'var(--surface-2)', padding: '3px 8px', borderRadius: 100 }}>Required</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* ── Status Labels ── */}
+              <div style={{ marginBottom: 36 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 14 }}>Status Labels</div>
+                <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 14, lineHeight: 1.5 }}>Rename any status to match your workflow. Changes apply everywhere in the tracker.</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {config.statuses.map((s, si) => (
+                    <div key={s.key} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 16px', background: 'var(--bg)', border: '1.5px solid var(--border)', borderRadius: 10 }}>
+                      <span className={`badge ${s.cls}`} style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', flexShrink: 0 }} />
+                      <input
+                        value={s.label}
+                        onChange={e => {
+                          const next = { ...config, statuses: config.statuses.map((st, i) => i === si ? { ...st, label: e.target.value } : st) };
+                          setConfig(next); saveConfig(next);
+                        }}
+                        style={{ flex: 1, border: 'none', background: 'transparent', fontSize: 14, fontWeight: 600, color: 'var(--text)', fontFamily: "'Sora', sans-serif", outline: 'none', padding: '4px 0' }}
+                      />
+                      <span style={{ fontSize: 10, color: 'var(--text-3)', fontFamily: "'SFMono-Regular', monospace" }}>{s.key}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* ── Reset ── */}
+              <div style={{ paddingTop: 20, borderTop: '1px solid var(--border)' }}>
+                <button onClick={() => {
+                  const fresh = { columns: DEFAULT_COLUMNS.map(c => ({ ...c })), statuses: DEFAULT_STATUSES.map(s => ({ ...s })) };
+                  setConfig(fresh); saveConfig(fresh);
+                  showToast('Reset to defaults');
+                }} type="button" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 100, border: '1.5px solid #fecaca', background: 'none', color: '#dc2626', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>
+                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                  Reset to Defaults
+                </button>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div style={{ padding: '14px 28px', borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ fontSize: 11, color: 'var(--text-3)' }}>Changes save automatically</div>
+              <button onClick={() => setDevMode(false)} type="button" style={{ padding: '10px 24px', borderRadius: 100, background: 'var(--text)', color: 'var(--surface)', border: 'none', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: "'Sora', sans-serif", letterSpacing: '0.3px', textTransform: 'uppercase' }}>Done</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* TOAST */}
       <div style={{ position: 'fixed', bottom: 28, left: '50%', transform: `translateX(-50%) translateY(${toast ? '0' : '80px'})`, background: 'var(--text)', color: 'var(--surface)', padding: '10px 20px', borderRadius: 100, fontSize: 13, fontWeight: 600, zIndex: 300, transition: 'transform .3s ease', pointerEvents: 'none', whiteSpace: 'nowrap' }}>{toast}</div>
