@@ -80,6 +80,7 @@ export default function OutreachWriterPage() {
   const [toast, setToast] = useState('');
   const [savedMsgs, setSavedMsgs] = useState<{id:string;contact:string;firm:string;angle:string;subject:string;body:string;date:string}[]>([]);
   const [showSaved, setShowSaved] = useState(false);
+  const [expandedDraft, setExpandedDraft] = useState<string | null>(null);
 
   useEffect(() => {
     const t = localStorage.getItem('offerbell-theme');
@@ -426,9 +427,12 @@ Rules:
                   </div>
                 )}
               </div>
-              <div style={{display:'flex',justifyContent:'space-between'}}>
-                <button onClick={()=>setStep(2)} style={{background:'none',border:'1.5px solid var(--border-2)',color:'var(--text-2)',padding:'10px 20px',borderRadius:10,fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>← Edit angle</button>
-                <button onClick={()=>{setStep(1);setOutput('');setSubject('');}} style={{background:'var(--text)',color:'var(--surface)',padding:'10px 28px',borderRadius:10,fontSize:13,fontWeight:700,cursor:'pointer',border:'none',fontFamily:"'Sora',sans-serif"}}>Write another →</button>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <button onClick={()=>setStep(2)} style={{background:'none',border:'1.5px solid var(--border-2)',color:'var(--text-2)',padding:'10px 20px',borderRadius:10,fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>&#8592; Edit angle</button>
+                <button onClick={()=>{setStep(1);setOutput('');setSubject('');setContactName('');setContactFirm('');setContactRole('');setContactSchool('');setCtx('');}} style={{background:'var(--text)',color:'var(--surface)',padding:'10px 28px',borderRadius:10,fontSize:13,fontWeight:700,cursor:'pointer',border:'none',fontFamily:"'Sora',sans-serif",display:'inline-flex',alignItems:'center',gap:8}}>
+                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                  New Email
+                </button>
               </div>
             </div>
           )}
@@ -453,25 +457,42 @@ Rules:
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {savedMsgs.map(m => (
-                <div key={m.id} style={{ background: 'var(--bg)', border: '1.5px solid var(--border)', borderRadius: 12, padding: '16px 18px', transition: 'border-color 0.15s' }}
+              {savedMsgs.map(m => {
+                const isExpanded = expandedDraft === m.id;
+                return (
+                <div key={m.id} style={{ background: 'var(--bg)', border: '1.5px solid var(--border)', borderRadius: 12, overflow: 'hidden', transition: 'border-color 0.15s' }}
                   onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--text-3)')}
                   onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 10 }}>
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>{m.contact}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{m.firm} &middot; {m.angle}</div>
+                  {/* Clickable header */}
+                  <div onClick={() => setExpandedDraft(isExpanded ? null : m.id)} style={{ padding: '16px 18px', cursor: 'pointer' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>{m.contact}</div>
+                        <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{m.firm} &middot; {m.angle}</div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                        <span style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 2 }}>{new Date(m.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                        <svg width="12" height="12" fill="none" stroke="var(--text-3)" strokeWidth="2" viewBox="0 0 24 24" style={{ transition: 'transform 0.2s', transform: isExpanded ? 'rotate(180deg)' : 'rotate(0)' }}><polyline points="6 9 12 15 18 9"/></svg>
+                      </div>
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--text-3)', whiteSpace: 'nowrap', flexShrink: 0, marginTop: 2 }}>{new Date(m.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-2)' }}>Subject: {m.subject}</div>
+                    {!isExpanded && (
+                      <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.55, marginTop: 6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const, overflow: 'hidden' }}>{m.body}</div>
+                    )}
                   </div>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-2)', marginBottom: 6 }}>Subject: {m.subject}</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.55, marginBottom: 12, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' as const, overflow: 'hidden' }}>{m.body}</div>
-                  <div style={{ display: 'flex', gap: 6 }}>
-                    <button onClick={() => { navigator.clipboard.writeText(`Subject: ${m.subject}\n\n${m.body}`); showToast('Copied!'); }} type="button" style={{ flex: 1, padding: '7px 12px', borderRadius: 8, fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: "'Sora',sans-serif", background: 'var(--text)', color: 'var(--surface)', border: 'none' }}>Copy</button>
-                    <button onClick={() => deleteSavedMsg(m.id)} type="button" style={{ padding: '7px 12px', borderRadius: 8, fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: "'Sora',sans-serif", background: 'none', color: '#dc2626', border: '1.5px solid #fecaca' }}>Delete</button>
-                  </div>
+                  {/* Expanded body */}
+                  {isExpanded && (
+                    <div style={{ padding: '0 18px 16px' }}>
+                      <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.75, whiteSpace: 'pre-wrap', padding: '14px 16px', background: 'var(--surface)', borderRadius: 10, border: '1px solid var(--border)', marginBottom: 12 }}>{m.body}</div>
+                      <div style={{ display: 'flex', gap: 6 }}>
+                        <button onClick={() => { navigator.clipboard.writeText(`Subject: ${m.subject}\n\n${m.body}`); showToast('Copied!'); }} type="button" style={{ flex: 1, padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: "'Sora',sans-serif", background: 'var(--text)', color: 'var(--surface)', border: 'none' }}>Copy Full Message</button>
+                        <button onClick={() => deleteSavedMsg(m.id)} type="button" style={{ padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: "'Sora',sans-serif", background: 'none', color: '#dc2626', border: '1.5px solid #fecaca' }}>Delete</button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
