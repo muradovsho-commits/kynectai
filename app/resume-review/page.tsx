@@ -257,33 +257,43 @@ export default function ResumeReviewPage() {
                     <label className="rr-label">Target Career Track</label>
                     <div className="rr-pills">
                       {TRACKS.map(t => (
-                        <button key={t} className={`rr-pill${track === t ? ' active' : ''}`} onClick={() => setTrack(t)} type="button">{t}</button>
+                        <button key={t} className={`rr-pill${track === t ? ' active' : ''}`} onClick={() => !loading && setTrack(t)} type="button" style={{ opacity: loading ? 0.5 : 1, pointerEvents: loading ? 'none' : 'auto' }}>{t}</button>
                       ))}
                     </div>
                   </div>
                 </div>
 
                 <div
-                  className={`rr-dropzone${fileName ? ' has-file' : ''}`}
-                  onClick={() => fileRef.current?.click()}
-                  onDragOver={e => e.preventDefault()}
-                  onDrop={handleDrop}
+                  className={`rr-dropzone${fileName ? ' has-file' : ''}${loading ? ' loading' : ''}`}
+                  onClick={() => !loading && fileRef.current?.click()}
+                  onDragOver={e => { e.preventDefault(); if (loading) e.dataTransfer.dropEffect = 'none'; }}
+                  onDrop={e => { if (loading) { e.preventDefault(); return; } handleDrop(e); }}
+                  style={{ pointerEvents: loading ? 'none' : 'auto', opacity: loading ? 0.5 : 1, transition: 'opacity 0.2s' }}
                 >
-                  <input ref={fileRef} type="file" accept=".pdf,.txt,.doc,.docx" onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); }} hidden />
+                  <input ref={fileRef} type="file" accept=".pdf,.txt,.doc,.docx" onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); }} hidden disabled={loading} />
                   {fileName ? (
                     <div className="rr-file-info">
                       <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                       <span>{fileName}</span>
-                      <button className="rr-change-file" onClick={e => { e.stopPropagation(); setFileName(''); setResumeText(''); fileRef.current!.value = ''; }} type="button">Change</button>
+                      {!loading && <button className="rr-change-file" onClick={e => { e.stopPropagation(); setFileName(''); setResumeText(''); fileRef.current!.value = ''; }} type="button">Change</button>}
                     </div>
                   ) : (
                     <>
                       <svg width="32" height="32" fill="none" stroke="var(--text-3)" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                       <div className="rr-drop-text">Drop your resume here or click to upload</div>
-                      <div className="rr-drop-hint">PDF, TXT, or DOC · Max 5 pages</div>
+                      <div className="rr-drop-hint">PDF, TXT, or DOC - Max 5 pages</div>
                     </>
                   )}
                 </div>
+
+                {/* Loading overlay */}
+                {loading && (
+                  <div style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '40px 28px', textAlign: 'center', marginTop: -8, marginBottom: 8 }}>
+                    <div style={{ width: 48, height: 48, borderRadius: '50%', border: '3px solid var(--border)', borderTopColor: 'var(--text)', margin: '0 auto 18px', animation: 'rr-spin 0.8s linear infinite' }} />
+                    <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: 'var(--text)', marginBottom: 6, letterSpacing: '-0.4px' }}>Analyzing your <em style={{ fontStyle: 'italic' }}>resume</em></div>
+                    <div style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.5 }}>Reviewing each section against {track} standards. This takes about 15 seconds.</div>
+                  </div>
+                )}
 
                 {error && <div className="rr-error">{error}</div>}
 
