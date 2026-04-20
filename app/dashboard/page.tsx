@@ -394,9 +394,9 @@ export default function DashboardPage() {
                               return (
                                 <div key={c.date} style={{
                                   aspectRatio: '1', borderRadius: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: isT ? 800 : 500, fontFamily: "'Sora', sans-serif",
-                                  background: isActive ? '#16a34a' : 'transparent',
+                                  background: isActive ? '#16a34a' : 'var(--surface)',
                                   color: isActive ? '#fff' : isFut ? 'var(--border-2)' : isT ? 'var(--text)' : 'var(--text-3)',
-                                  border: isT && !isActive ? '2px solid var(--text)' : '2px solid transparent',
+                                  border: isT && !isActive ? '2px solid var(--text)' : isActive ? '2px solid #16a34a' : '1.5px solid var(--border)',
                                   transition: 'background 0.15s',
                                 }}>
                                   {c.day}
