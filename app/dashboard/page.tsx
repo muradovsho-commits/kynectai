@@ -248,20 +248,32 @@ export default function DashboardPage() {
           const todayIdx = dow === 0 ? 6 : dow - 1;
           const today = new Date().toISOString().split('T')[0];
 
-          // Build 5-week heatmap
-          const heatmapDays: { date: string; active: boolean; isToday: boolean; isFuture: boolean }[] = [];
-          const startOffset = todayIdx + 28;
-          const startDate = new Date();
-          startDate.setHours(0,0,0,0);
-          startDate.setDate(startDate.getDate() - startOffset);
-          for (let i = 0; i < 35; i++) {
-            const d = new Date(startDate);
-            d.setDate(startDate.getDate() + i);
+          // Build 90-day history for the expanded view
+          const allDays: { date: string; active: boolean; isToday: boolean; isFuture: boolean; day: number; month: number; year: number }[] = [];
+          const histStart = new Date();
+          histStart.setHours(0,0,0,0);
+          histStart.setDate(histStart.getDate() - 89);
+          for (let i = 0; i < 90; i++) {
+            const d = new Date(histStart);
+            d.setDate(histStart.getDate() + i);
             const ds = d.toISOString().split('T')[0];
-            heatmapDays.push({ date: ds, active: activityDaysSet.has(ds), isToday: ds === today, isFuture: ds > today });
+            allDays.push({ date: ds, active: activityDaysSet.has(ds), isToday: ds === today, isFuture: ds > today, day: d.getDate(), month: d.getMonth(), year: d.getFullYear() });
           }
 
+          // Group by month for expanded calendar
+          const months: { label: string; year: number; month: number; days: typeof allDays }[] = [];
+          for (const d of allDays) {
+            const key = `${d.year}-${d.month}`;
+            let m = months.find(m => `${m.year}-${m.month}` === key);
+            if (!m) { m = { label: new Date(d.year, d.month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }), year: d.year, month: d.month, days: [] }; months.push(m); }
+            m.days.push(d);
+          }
+
+          const activeDaysCount = allDays.filter(d => d.active && !d.isFuture).length;
+          const totalPastDays = allDays.filter(d => !d.isFuture).length;
+
           return (
+            <>
             <div className="streak-card">
               <div className="streak-header">
                 <div className="streak-left">
@@ -271,9 +283,9 @@ export default function DashboardPage() {
                     <span className="streak-unit">day streak</span>
                   </div>
                 </div>
-                <button onClick={() => setCalendarExpanded(!calendarExpanded)} type="button" className={`streak-toggle${calendarExpanded ? ' open' : ''}`}>
-                  {calendarExpanded ? 'Less' : 'More'}
-                  <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                <button onClick={() => setCalendarExpanded(true)} type="button" className="streak-toggle">
+                  Expand
+                  <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
                 </button>
               </div>
 
@@ -286,19 +298,109 @@ export default function DashboardPage() {
                   </div>
                 ))}
               </div>
-
-              {/* Heatmap */}
-              {calendarExpanded && (
-                <div className="streak-heatmap">
-                  <div className="streak-heatmap-grid">
-                    {heatmapDays.map(d => (
-                      <div key={d.date} className={`streak-hm-cell${d.active ? ' active' : d.isFuture ? ' future' : ''}${d.isToday ? ' today' : ''}`} />
-                    ))}
-                  </div>
-                  <div className="streak-heatmap-footer">5 weeks ago &rarr; today</div>
-                </div>
-              )}
             </div>
+
+            {/* ═══ FULLSCREEN CALENDAR ═══ */}
+            {calendarExpanded && (
+              <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', display: 'flex', flexDirection: 'column' }} onClick={() => setCalendarExpanded(false)}>
+                <div style={{ position: 'absolute', top: 20, right: 20, display: 'flex', gap: 8, zIndex: 310 }}>
+                  <button onClick={(e) => { e.stopPropagation(); setCalendarExpanded(false); }} style={{ width: 36, height: 36, borderRadius: 10, border: '1.5px solid var(--border)', background: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} type="button">
+                    <svg width="16" height="16" fill="none" stroke="var(--text)" strokeWidth="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                </div>
+                <div onClick={e => e.stopPropagation()} style={{ flex: 1, margin: 20, borderRadius: 20, background: 'var(--surface)', border: '1.5px solid var(--border)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                  {/* Header */}
+                  <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                      <svg width="18" height="18" fill="none" stroke="var(--text)" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                      <div>
+                        <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: 'var(--text)', letterSpacing: '-0.4px' }}>Activity <em style={{ fontStyle: 'italic' }}>Calendar</em></div>
+                        <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>Last 90 days of activity</div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
+                      <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: 'var(--text)', lineHeight: 1, letterSpacing: '-0.5px' }}>{currentStreak}</div>
+                        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 3 }}>Streak</div>
+                      </div>
+                      <div style={{ width: 1, height: 32, background: 'var(--border)' }} />
+                      <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: '#16a34a', lineHeight: 1, letterSpacing: '-0.5px' }}>{activeDaysCount}</div>
+                        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 3 }}>Active Days</div>
+                      </div>
+                      <div style={{ width: 1, height: 32, background: 'var(--border)' }} />
+                      <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: 'var(--text)', lineHeight: 1, letterSpacing: '-0.5px' }}>{totalPastDays > 0 ? Math.round((activeDaysCount / totalPastDays) * 100) : 0}%</div>
+                        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 3 }}>Consistency</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Calendar months */}
+                  <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: 32 }}>
+                    {months.map(m => {
+                      // Build a proper month grid: figure out what day of week the 1st falls on
+                      const firstOfMonth = new Date(m.year, m.month, 1);
+                      const lastOfMonth = new Date(m.year, m.month + 1, 0);
+                      const startDow = firstOfMonth.getDay() === 0 ? 6 : firstOfMonth.getDay() - 1; // Mon=0
+                      const daysInMonth = lastOfMonth.getDate();
+
+                      // Build cells: empty padding + actual days
+                      const cells: (typeof allDays[0] | null)[] = [];
+                      for (let i = 0; i < startDow; i++) cells.push(null);
+                      for (let day = 1; day <= daysInMonth; day++) {
+                        const dateStr = `${m.year}-${String(m.month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                        const found = allDays.find(d => d.date === dateStr);
+                        cells.push(found || { date: dateStr, active: false, isToday: dateStr === today, isFuture: dateStr > today, day, month: m.month, year: m.year });
+                      }
+
+                      return (
+                        <div key={m.label}>
+                          <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 20, color: 'var(--text)', marginBottom: 14, letterSpacing: '-0.3px' }}>{m.label}</div>
+                          {/* Day labels */}
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 6 }}>
+                            {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => (
+                              <div key={d} style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', textAlign: 'center', letterSpacing: '0.5px', textTransform: 'uppercase', padding: '4px 0' }}>{d}</div>
+                            ))}
+                          </div>
+                          {/* Day cells */}
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+                            {cells.map((c, i) => {
+                              if (!c) return <div key={`empty-${i}`} />;
+                              const isActive = c.active;
+                              const isFut = c.isFuture;
+                              const isT = c.isToday;
+                              return (
+                                <div key={c.date} style={{
+                                  aspectRatio: '1', borderRadius: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: isT ? 800 : 500, fontFamily: "'Sora', sans-serif",
+                                  background: isActive ? 'var(--text)' : isT ? 'var(--surface-2)' : 'transparent',
+                                  color: isActive ? 'var(--surface)' : isFut ? 'var(--border-2)' : isT ? 'var(--text)' : 'var(--text-2)',
+                                  border: isT && !isActive ? '2px solid var(--text)' : '2px solid transparent',
+                                  transition: 'background 0.15s',
+                                  position: 'relative',
+                                }}>
+                                  {c.day}
+                                  {isActive && <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#22c55e', position: 'absolute', bottom: 6 }} />}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Footer legend */}
+                  <div style={{ padding: '14px 28px', borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 20, fontSize: 11, color: 'var(--text-3)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><div style={{ width: 12, height: 12, borderRadius: 4, background: 'var(--text)' }} /><span>Active</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><div style={{ width: 12, height: 12, borderRadius: 4, border: '2px solid var(--text)', background: 'transparent' }} /><span>Today</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><div style={{ width: 12, height: 12, borderRadius: 4, background: 'var(--surface-2)' }} /><span>No activity</span></div>
+                    <div style={{ marginLeft: 'auto', fontWeight: 600 }}>Click outside or &times; to close</div>
+                  </div>
+                </div>
+              </div>
+            )}
+            </>
           );
         })()}
 
