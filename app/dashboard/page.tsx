@@ -244,177 +244,155 @@ export default function DashboardPage() {
         </div>
 
         {/* ── Activity Streak ── */}
-        <div className="dash-progress-card">
-          <div className="dash-progress-header">
-            <h2 className="dash-progress-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              {currentStreak > 0 && (
-                <span style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 5,
-                  background: currentStreak >= 7 ? '#16a34a' : currentStreak >= 3 ? '#d97706' : 'var(--text)',
-                  color: '#fff', padding: '3px 10px', borderRadius: 100,
-                  fontSize: 12, fontWeight: 700, letterSpacing: '0.3px',
-                }}>
-                  {currentStreak} day{currentStreak !== 1 ? 's' : ''}
-                </span>
-              )}
-              {currentStreak >= 7 ? 'On fire.' : currentStreak >= 3 ? 'Building momentum.' : 'Your activity'}
-            </h2>
-            <button
-              onClick={() => setCalendarExpanded(!calendarExpanded)}
-              type="button"
-              style={{
-                background: 'none', border: '1px solid var(--border-2)',
-                padding: '5px 12px', borderRadius: 100,
-                fontSize: 11, fontWeight: 600, color: 'var(--text-2)',
-                cursor: 'pointer', fontFamily: "'Sora', sans-serif",
-                display: 'flex', alignItems: 'center', gap: 5,
-              }}
-            >
-              {calendarExpanded ? 'Week view' : 'Calendar'}
-              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                {calendarExpanded
-                  ? <polyline points="6 15 12 9 18 15"/>
-                  : <polyline points="6 9 12 15 18 9"/>
-                }
-              </svg>
-            </button>
-          </div>
+        {(() => {
+          const d = new Date().getDay();
+          const todayIdx = d === 0 ? 6 : d - 1;
+          const flameClass = currentStreak >= 7 ? 'hot' : currentStreak >= 3 ? 'warm' : 'cold';
 
-          {/* Week view (default) */}
-          {!calendarExpanded && (
-            <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
-              {['M','T','W','T','F','S','S'].map((label, i) => {
-                const d = new Date().getDay();
-                const todayIdx = d === 0 ? 6 : d - 1;
-                const isToday = i === todayIdx;
-                const isFuture = i > todayIdx;
-                return (
-                  <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.5px', color: isToday ? 'var(--text)' : 'var(--text-3)' }}>{label}</div>
-                    <div style={{
-                      width: 32, height: 32, borderRadius: 8,
-                      background: streakDays[i] ? '#16a34a' : isFuture ? 'var(--surface-2)' : 'var(--border)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      border: isToday ? '2px solid var(--text)' : '2px solid transparent',
-                    }}>
-                      {streakDays[i] && <svg width="14" height="14" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>}
+          // Longest streak computation
+          const longestStreak = (() => {
+            const sorted = [...activityDaysSet].sort();
+            let longest = 0, run = 0, prev = '';
+            for (const day of sorted) {
+              if (prev) {
+                const prevDate = new Date(prev);
+                prevDate.setDate(prevDate.getDate() + 1);
+                if (prevDate.toISOString().split('T')[0] === day) run++;
+                else run = 1;
+              } else run = 1;
+              if (run > longest) longest = run;
+              prev = day;
+            }
+            return longest;
+          })();
+
+          return (
+            <div className="streak-card">
+              {/* Header */}
+              <div className="streak-header">
+                <div className="streak-meta">
+                  <div className={`streak-flame ${flameClass}`}>
+                    {currentStreak >= 3 ? '\u{1F525}' : '\u{1F4C5}'}
+                  </div>
+                  <div>
+                    <div className="streak-count">
+                      {currentStreak}<span>day{currentStreak !== 1 ? 's' : ''}</span>
+                    </div>
+                    <div className="streak-subtitle">
+                      {currentStreak >= 14 ? 'Unstoppable. Two weeks straight.'
+                        : currentStreak >= 7 ? 'Full week. Keep this energy.'
+                        : currentStreak >= 3 ? 'Momentum is building.'
+                        : currentStreak >= 1 ? 'You showed up today. That counts.'
+                        : 'Start your streak today.'}
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Calendar view (expanded) */}
-          {calendarExpanded && (() => {
-            const year = calendarMonth.getFullYear();
-            const month = calendarMonth.getMonth();
-            const firstDay = new Date(year, month, 1);
-            const lastDay = new Date(year, month + 1, 0);
-            const daysInMonth = lastDay.getDate();
-            const startDow = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Mon=0
-            const today = new Date().toISOString().split('T')[0];
-            const monthLabel = firstDay.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-            const now = new Date();
-            const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
-            const canGoForward = !isCurrentMonth;
-
-            // Count active days this month
-            const activeDaysThisMonth = Array.from({ length: daysInMonth }, (_, i) => {
-              const ds = new Date(year, month, i + 1).toISOString().split('T')[0];
-              return activityDaysSet.has(ds) ? 1 : 0;
-            }).reduce((a, b) => a + b, 0);
-
-            return (
-              <div style={{ marginTop: 8 }}>
-                {/* Month navigation */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                  <button
-                    onClick={() => setCalendarMonth(new Date(year, month - 1, 1))}
-                    type="button"
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-2)', padding: '4px 8px', fontSize: 16 }}
-                  >&lsaquo;</button>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{monthLabel}</span>
-                    <span style={{ fontSize: 11, color: 'var(--text-3)' }}>{activeDaysThisMonth} active day{activeDaysThisMonth !== 1 ? 's' : ''}</span>
-                  </div>
-                  <button
-                    onClick={() => { if (canGoForward) setCalendarMonth(new Date(year, month + 1, 1)); }}
-                    type="button"
-                    style={{ background: 'none', border: 'none', cursor: canGoForward ? 'pointer' : 'default', color: canGoForward ? 'var(--text-2)' : 'var(--border)', padding: '4px 8px', fontSize: 16 }}
-                  >&rsaquo;</button>
                 </div>
+                <button
+                  onClick={() => setCalendarExpanded(!calendarExpanded)}
+                  type="button"
+                  className={`streak-toggle${calendarExpanded ? ' open' : ''}`}
+                >
+                  {calendarExpanded ? 'Week' : 'Calendar'}
+                  <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+              </div>
 
-                {/* Day headers */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 4 }}>
-                  {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => (
-                    <div key={d} style={{ textAlign: 'center', fontSize: 9, fontWeight: 700, letterSpacing: '0.5px', color: 'var(--text-3)', textTransform: 'uppercase', padding: '4px 0' }}>{d}</div>
-                  ))}
-                </div>
-
-                {/* Calendar grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
-                  {/* Empty cells for offset */}
-                  {Array.from({ length: startDow }, (_, i) => (
-                    <div key={'empty-' + i} style={{ aspectRatio: '1', borderRadius: 6 }} />
-                  ))}
-                  {/* Day cells */}
-                  {Array.from({ length: daysInMonth }, (_, i) => {
-                    const dayNum = i + 1;
-                    const ds = new Date(year, month, dayNum).toISOString().split('T')[0];
-                    const isActive = activityDaysSet.has(ds);
-                    const isToday = ds === today;
-                    const isFuture = ds > today;
+              {/* Week view */}
+              {!calendarExpanded && (
+                <div className="streak-week">
+                  {['M','T','W','T','F','S','S'].map((label, i) => {
+                    const isToday = i === todayIdx;
+                    const isFuture = i > todayIdx;
+                    const isActive = streakDays[i];
+                    const cellClass = `streak-day-cell${isActive ? ' active' : isFuture ? ' future' : ' missed'}${isToday ? ' is-today' : ''}`;
                     return (
-                      <div key={dayNum} style={{
-                        aspectRatio: '1',
-                        borderRadius: 6,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 11, fontWeight: isActive ? 700 : 500,
-                        background: isActive ? '#16a34a' : isFuture ? 'transparent' : 'var(--surface-2)',
-                        color: isActive ? '#fff' : isFuture ? 'var(--border-2)' : 'var(--text-3)',
-                        border: isToday ? '2px solid var(--text)' : '2px solid transparent',
-                        position: 'relative',
-                      }}>
-                        {dayNum}
+                      <div key={i} className="streak-day">
+                        <div className={`streak-day-label${isToday ? ' today' : ''}`}>{label}</div>
+                        <div className={cellClass}>
+                          {isActive && <svg width="16" height="16" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>}
+                        </div>
                       </div>
                     );
                   })}
                 </div>
+              )}
 
-                {/* Total stats */}
-                <div style={{ display: 'flex', gap: 20, marginTop: 14, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
-                  <div>
-                    <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: 'var(--text)', letterSpacing: '-0.5px', lineHeight: 1 }}>{activityDaysSet.size}</div>
-                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 4 }}>Total active days</div>
+              {/* Calendar view */}
+              {calendarExpanded && (() => {
+                const year = calendarMonth.getFullYear();
+                const month = calendarMonth.getMonth();
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                const daysInMonth = lastDay.getDate();
+                const startDow = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
+                const today = new Date().toISOString().split('T')[0];
+                const monthLabel = firstDay.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                const now = new Date();
+                const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
+
+                const activeDaysThisMonth = Array.from({ length: daysInMonth }, (_, i) => {
+                  const ds = new Date(year, month, i + 1).toISOString().split('T')[0];
+                  return activityDaysSet.has(ds) ? 1 : 0;
+                }).reduce((a: number, b: number) => a + b, 0);
+
+                return (
+                  <div className="streak-calendar">
+                    {/* Month nav */}
+                    <div className="cal-nav">
+                      <button className="cal-nav-btn" type="button" onClick={() => setCalendarMonth(new Date(year, month - 1, 1))}>
+                        <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                      </button>
+                      <div>
+                        <span className="cal-month-label">{monthLabel}</span>
+                        <span className="cal-month-count">{activeDaysThisMonth} active</span>
+                      </div>
+                      <button className="cal-nav-btn" type="button" disabled={isCurrentMonth} onClick={() => setCalendarMonth(new Date(year, month + 1, 1))}>
+                        <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                      </button>
+                    </div>
+
+                    {/* Grid */}
+                    <div className="cal-grid">
+                      {['M','T','W','T','F','S','S'].map(h => (
+                        <div key={h} className="cal-header-cell">{h}</div>
+                      ))}
+                      {Array.from({ length: startDow }, (_, i) => (
+                        <div key={'e' + i} className="cal-cell empty" />
+                      ))}
+                      {Array.from({ length: daysInMonth }, (_, i) => {
+                        const dayNum = i + 1;
+                        const ds = new Date(year, month, dayNum).toISOString().split('T')[0];
+                        const isActive = activityDaysSet.has(ds);
+                        const isToday = ds === today;
+                        const isFuture = ds > today;
+                        const cls = `cal-cell${isActive ? ' active' : isFuture ? ' future-cell' : ' inactive'}${isToday ? ' today-cell' : ''}`;
+                        return <div key={dayNum} className={cls}>{dayNum}</div>;
+                      })}
+                    </div>
                   </div>
-                  <div>
-                    <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: currentStreak >= 3 ? '#16a34a' : 'var(--text)', letterSpacing: '-0.5px', lineHeight: 1 }}>{currentStreak}</div>
-                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 4 }}>Current streak</div>
-                  </div>
-                  <div>
-                    <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: 'var(--text)', letterSpacing: '-0.5px', lineHeight: 1 }}>{(() => {
-                      // Longest streak from all activity days
-                      const sorted = [...activityDaysSet].sort();
-                      let longest = 0, run = 0, prev = '';
-                      for (const d of sorted) {
-                        if (prev) {
-                          const prevDate = new Date(prev);
-                          prevDate.setDate(prevDate.getDate() + 1);
-                          if (prevDate.toISOString().split('T')[0] === d) { run++; } else { run = 1; }
-                        } else { run = 1; }
-                        if (run > longest) longest = run;
-                        prev = d;
-                      }
-                      return longest;
-                    })()}</div>
-                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 4 }}>Longest streak</div>
-                  </div>
+                );
+              })()}
+
+              {/* Stats footer */}
+              <div className="streak-stats">
+                <div className="streak-stat">
+                  <div className="streak-stat-num">{activityDaysSet.size}</div>
+                  <div className="streak-stat-label">Total days</div>
+                </div>
+                <div className="streak-stat">
+                  <div className={`streak-stat-num${currentStreak >= 3 ? ' green' : ''}`}>{currentStreak}</div>
+                  <div className="streak-stat-label">Current</div>
+                </div>
+                <div className="streak-stat">
+                  <div className="streak-stat-num">{longestStreak}</div>
+                  <div className="streak-stat-label">Best</div>
                 </div>
               </div>
-            );
-          })()}
-        </div>
+            </div>
+          );
+        })()}
 
         {/* ── Tip of the Week ── */}
         <div className="dash-tip-card">
