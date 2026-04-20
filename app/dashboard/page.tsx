@@ -282,7 +282,7 @@ export default function DashboardPage() {
           // Consistency: days since account creation
           const accountStart = accountCreatedAt || today;
           const daysSinceCreation = Math.max(1, Math.floor((new Date(today).getTime() - new Date(accountStart).getTime()) / 864e5) + 1);
-          const consistencyPct = Math.round((activeDaysCount / daysSinceCreation) * 100);
+          const consistencyPct = Math.min(100, Math.round((activeDaysCount / daysSinceCreation) * 100));
 
           return (
             <>
