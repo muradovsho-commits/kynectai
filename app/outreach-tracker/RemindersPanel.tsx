@@ -3,8 +3,32 @@ import { useState, useEffect } from 'react';
 
 type Contact = { id: string; fname: string; lname: string; firm: string; status: string; lastContact: number | null; };
 type Reminder = { id: string; type: string; contactName: string; contactFirm: string; contactId: string; message: string; };
+type AlertRule = { status: string; enabled: boolean; days: number; };
 
 function daysSince(ts: number | null) { if (!ts) return null; return Math.floor((Date.now() - ts) / 864e5); }
+
+function loadAlertRules(): { rules: AlertRule[]; enabled: boolean } {
+  try {
+    const raw = localStorage.getItem('offerbell_tracker_config');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.alerts && parsed.alertsGlobal !== undefined) {
+        return { rules: parsed.alerts, enabled: parsed.alertsGlobal };
+      }
+    }
+  } catch {}
+  // Defaults if no config exists
+  return {
+    enabled: true,
+    rules: [
+      { status: 'sent', enabled: true, days: 5 },
+      { status: 'fu1', enabled: true, days: 7 },
+      { status: 'fu2', enabled: true, days: 7 },
+      { status: 'fu3', enabled: true, days: 10 },
+      { status: 'stay', enabled: true, days: 30 },
+    ],
+  };
+}
 
 export default function RemindersPanel({ contacts, onOpenContact }: { contacts: Contact[]; onOpenContact?: (id: string) => void }) {
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
@@ -16,14 +40,21 @@ export default function RemindersPanel({ contacts, onOpenContact }: { contacts: 
 
   useEffect(() => {
     if (!contacts.length) return;
-    let followUpDays = 7;
-    try { const s = localStorage.getItem('offerbell_sync_settings'); if (s) followUpDays = JSON.parse(s).followUpReminderDays || 7; } catch {}
+    const { rules, enabled } = loadAlertRules();
+    if (!enabled) { setReminders([]); return; }
+
+    // Build a map of status -> days threshold for enabled rules
+    const thresholds: Record<string, number> = {};
+    for (const rule of rules) {
+      if (rule.enabled) thresholds[rule.status] = rule.days;
+    }
 
     const r: Reminder[] = [];
     for (const c of contacts) {
-      if (['drafted', 'spoken', 'stay'].includes(c.status)) continue;
+      const threshold = thresholds[c.status];
+      if (threshold === undefined) continue; // no alert rule for this status
       const days = daysSince(c.lastContact);
-      if (days !== null && days >= followUpDays) {
+      if (days !== null && days >= threshold) {
         r.push({
           id: `fu_${c.id}`,
           type: 'follow_up',

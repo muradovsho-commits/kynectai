@@ -6,9 +6,17 @@ import Link from 'next/link';
 import '../contact-finder/contact-finder.css';
 import RemindersPanel from './RemindersPanel';
 
+type AlertRule = {
+  status: string;
+  enabled: boolean;
+  days: number;        // days of inactivity before alert fires
+};
+
 type TrackerConfig = {
   columns: { key: string; label: string; visible: boolean }[];
   statuses: { key: string; label: string; cls: string }[];
+  alerts: AlertRule[];
+  alertsGlobal: boolean;  // master toggle
 };
 
 const DEFAULT_COLUMNS = [
@@ -35,6 +43,16 @@ const DEFAULT_STATUSES = [
   { key: 'noresp', label: 'No Response', cls: 'b-noresp' },
 ];
 
+const DEFAULT_ALERTS: AlertRule[] = [
+  { status: 'sent',  enabled: true, days: 5 },
+  { status: 'fu1',   enabled: true, days: 7 },
+  { status: 'fu2',   enabled: true, days: 7 },
+  { status: 'fu3',   enabled: true, days: 10 },
+  { status: 'stay',  enabled: true, days: 30 },
+  { status: 'scheduled', enabled: false, days: 1 },
+  { status: 'drafted',   enabled: false, days: 14 },
+];
+
 const CONFIG_KEY = 'offerbell_tracker_config';
 function loadConfig(): TrackerConfig {
   try {
@@ -44,10 +62,16 @@ function loadConfig(): TrackerConfig {
       // Ensure all default columns exist (in case new ones were added)
       const existing = new Set(parsed.columns.map((c: any) => c.key));
       for (const dc of DEFAULT_COLUMNS) { if (!existing.has(dc.key)) parsed.columns.push(dc); }
+      // Migrate: add alerts if missing (old configs won't have them)
+      if (!parsed.alerts) parsed.alerts = DEFAULT_ALERTS.map(a => ({ ...a }));
+      if (parsed.alertsGlobal === undefined) parsed.alertsGlobal = true;
+      // Ensure all default alert statuses exist
+      const existingAlerts = new Set(parsed.alerts.map((a: any) => a.status));
+      for (const da of DEFAULT_ALERTS) { if (!existingAlerts.has(da.status)) parsed.alerts.push({ ...da }); }
       return parsed;
     }
   } catch {}
-  return { columns: DEFAULT_COLUMNS.map(c => ({ ...c })), statuses: DEFAULT_STATUSES.map(s => ({ ...s })) };
+  return { columns: DEFAULT_COLUMNS.map(c => ({ ...c })), statuses: DEFAULT_STATUSES.map(s => ({ ...s })), alerts: DEFAULT_ALERTS.map(a => ({ ...a })), alertsGlobal: true };
 }
 function saveConfig(cfg: TrackerConfig) { localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); }
 
@@ -666,10 +690,96 @@ export default function OutreachTrackerPage() {
                 </div>
               </div>
 
+              {/* ── Follow-up Alerts ── */}
+              <div style={{ marginBottom: 36 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-3)' }}>Follow-up Alerts</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4, lineHeight: 1.5 }}>Choose which statuses trigger reminders and how many days of silence before they fire.</div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const next = { ...config, alertsGlobal: !config.alertsGlobal };
+                      setConfig(next); saveConfig(next);
+                    }}
+                    type="button"
+                    style={{
+                      width: 44, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer', flexShrink: 0,
+                      background: config.alertsGlobal ? '#16a34a' : 'var(--border)',
+                      position: 'relative', transition: 'background 0.2s',
+                    }}
+                  >
+                    <div style={{
+                      width: 18, height: 18, borderRadius: '50%', background: '#fff',
+                      position: 'absolute', top: 3,
+                      left: config.alertsGlobal ? 23 : 3,
+                      transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                    }} />
+                  </button>
+                </div>
+
+                {config.alertsGlobal && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {config.alerts.map((rule, ai) => {
+                      const statusLabel = config.statuses.find(s => s.key === rule.status)?.label || rule.status;
+                      const statusCls = config.statuses.find(s => s.key === rule.status)?.cls || '';
+                      return (
+                        <div key={rule.status} style={{
+                          display: 'flex', alignItems: 'center', gap: 12,
+                          padding: '12px 16px', background: 'var(--bg)',
+                          border: '1.5px solid var(--border)', borderRadius: 10,
+                          opacity: rule.enabled ? 1 : 0.5, transition: 'opacity 0.15s',
+                        }}>
+                          <button
+                            onClick={() => {
+                              const next = { ...config, alerts: config.alerts.map((a, i) => i === ai ? { ...a, enabled: !a.enabled } : a) };
+                              setConfig(next); saveConfig(next);
+                            }}
+                            type="button"
+                            style={{
+                              width: 22, height: 22, borderRadius: 6, flexShrink: 0,
+                              border: `2px solid ${rule.enabled ? 'var(--text)' : 'var(--border-2)'}`,
+                              background: rule.enabled ? 'var(--text)' : 'transparent',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                            }}
+                          >
+                            {rule.enabled && <svg width="12" height="12" fill="none" stroke="var(--surface)" strokeWidth="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>}
+                          </button>
+                          <span className={`badge ${statusCls}`} style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', flexShrink: 0 }} />
+                          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', flex: 1, minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{statusLabel}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                            <span style={{ fontSize: 11, color: 'var(--text-3)' }}>after</span>
+                            <input
+                              type="number"
+                              min={1}
+                              max={90}
+                              value={rule.days}
+                              onChange={e => {
+                                const val = Math.max(1, Math.min(90, parseInt(e.target.value) || 1));
+                                const next = { ...config, alerts: config.alerts.map((a, i) => i === ai ? { ...a, days: val } : a) };
+                                setConfig(next); saveConfig(next);
+                              }}
+                              style={{
+                                width: 48, padding: '5px 6px', textAlign: 'center',
+                                border: '1.5px solid var(--border)', borderRadius: 6,
+                                fontSize: 13, fontWeight: 700, color: 'var(--text)',
+                                background: 'var(--surface)', fontFamily: "'Sora', sans-serif",
+                                outline: 'none',
+                              }}
+                            />
+                            <span style={{ fontSize: 11, color: 'var(--text-3)' }}>days</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
               {/* ── Reset ── */}
               <div style={{ paddingTop: 20, borderTop: '1px solid var(--border)' }}>
                 <button onClick={() => {
-                  const fresh = { columns: DEFAULT_COLUMNS.map(c => ({ ...c })), statuses: DEFAULT_STATUSES.map(s => ({ ...s })) };
+                  const fresh = { columns: DEFAULT_COLUMNS.map(c => ({ ...c })), statuses: DEFAULT_STATUSES.map(s => ({ ...s })), alerts: DEFAULT_ALERTS.map(a => ({ ...a })), alertsGlobal: true };
                   setConfig(fresh); saveConfig(fresh);
                   showToast('Reset to defaults');
                 }} type="button" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 100, border: '1.5px solid #fecaca', background: 'none', color: '#dc2626', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>
