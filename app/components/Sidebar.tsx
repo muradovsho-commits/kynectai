@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -13,6 +13,8 @@ export default function Sidebar({ activePage }: SidebarProps) {
   const [userPlan, setUserPlan] = useState('free');
   const [messagesSent, setMessagesSent] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profilePic, setProfilePic] = useState<string | null>(null);
+  const picInputRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
 
   // Read message count and keep it in sync
@@ -32,6 +34,11 @@ export default function Sidebar({ activePage }: SidebarProps) {
         const plan = localStorage.getItem('offerbell_plan') || 'free';
         setUserPlan(p.plan || plan);
       }
+    } catch {}
+    // Load profile picture
+    try {
+      const pic = localStorage.getItem('offerbell_profile_pic');
+      if (pic) setProfilePic(pic);
     } catch {}
     // Listen for localStorage changes (from other components on the same page)
     const onStorage = (e: StorageEvent) => { if (e.key === 'offerbell_messages_sent') refreshMessageCount(); };
@@ -64,6 +71,34 @@ export default function Sidebar({ activePage }: SidebarProps) {
     localStorage.setItem('offerbell-theme', next);
   }
 
+  function handlePicUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) return;
+    // Resize to 128x128 to keep localStorage small
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 128;
+        canvas.height = 128;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        // Center-crop to square
+        const size = Math.min(img.width, img.height);
+        const sx = (img.width - size) / 2;
+        const sy = (img.height - size) / 2;
+        ctx.drawImage(img, sx, sy, size, size, 0, 0, 128, 128);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        setProfilePic(dataUrl);
+        localStorage.setItem('offerbell_profile_pic', dataUrl);
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+
   const cls = (page: string) => `nav-item${activePage === page ? ' active' : ''}`;
 
   return (
@@ -87,7 +122,29 @@ export default function Sidebar({ activePage }: SidebarProps) {
         </div>
         <div className="sidebar-user">
           <div style={{position:'relative'}}>
-            <div className="user-avi">{displayInitials}</div>
+            <input
+              ref={picInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handlePicUpload}
+              style={{ display: 'none' }}
+            />
+            <div
+              className="user-avi"
+              onClick={() => picInputRef.current?.click()}
+              style={{
+                cursor: 'pointer',
+                overflow: 'hidden',
+                position: 'relative',
+              }}
+              title="Click to change photo"
+            >
+              {profilePic ? (
+                <img src={profilePic} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit', display: 'block' }} />
+              ) : (
+                displayInitials
+              )}
+            </div>
             {userPlan === 'pro' && <div style={{position:'absolute',bottom:-1,right:-1,width:12,height:12,borderRadius:'50%',background:'#16a34a',border:'2px solid var(--surface)',display:'flex',alignItems:'center',justifyContent:'center'}}>
               <svg width="7" height="7" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
             </div>}
