@@ -199,11 +199,7 @@ export default function MyAccountPage() {
                 height:24,
                 background:'rgba(0,0,0,0.55)',
                 display:'flex',alignItems:'center',justifyContent:'center',
-                opacity:0,transition:'opacity 0.15s',
-              }}
-                onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
-                onMouseLeave={e => (e.currentTarget.style.opacity = '0')}
-              >
+              }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
               </div>
             </div>
