@@ -15,6 +15,7 @@ const TRACKS = [
   'Equity Research',
   'Sales & Trading',
   'Venture Capital',
+  'Growth Equity',
   'Real Estate',
   'Restructuring',
 ];
@@ -98,6 +99,13 @@ const TRACK_FEATURES: Record<string, Feature[]> = {
     { icon: ICONS.layers, title: 'Pitch deck evaluation', desc: 'Would you invest? Framework', prompt: 'Walk me through how to evaluate a startup pitch deck. What do I look for in each section?' },
     { icon: ICONS.dollar, title: 'Fund math & deal terms', desc: 'Ownership, dilution, term sheets', prompt: 'Quiz me on VC fund economics, ownership math, and term sheet concepts like liquidation preference and anti-dilution.' },
   ],
+  'Growth Equity': [
+    { icon: ICONS.mail, title: 'Cold email feedback', desc: 'Outreach to GE professionals', prompt: 'Review my cold email to a growth equity investor or associate:\n\n[paste your email here]' },
+    { icon: ICONS.chat, title: 'Behavioral story prep', desc: 'Why GE? Why not VC or PE?', prompt: 'Help me craft my "Why growth equity?" answer and differentiate it from PE and VC.' },
+    { icon: ICONS.chart, title: 'Technical drill', desc: 'Unit economics, SaaS, cohort analysis', prompt: 'Give me a growth equity technical drill. Ask me about unit economics, LTV/CAC, Rule of 40, net dollar retention, cohort analysis, and growth-stage valuation.' },
+    { icon: ICONS.layers, title: 'Investment memo prep', desc: 'Evaluate a high-growth company', prompt: 'Help me build a growth equity investment memo for a company growing 50%+ YoY. Walk me through market size, competitive positioning, unit economics, and deal structure.' },
+    { icon: ICONS.dollar, title: 'Deal structure & terms', desc: 'Minority stakes, governance, returns', prompt: 'Quiz me on growth equity deal structures - minority vs majority stakes, board seats, protective provisions, preferred equity, and how GE returns differ from buyout returns.' },
+  ],
   'Real Estate': [
     { icon: ICONS.mail, title: 'Cold email feedback', desc: 'Outreach to REPE professionals', prompt: 'Review my cold email to a real estate PE professional:\n\n[paste your email here]' },
     { icon: ICONS.chat, title: 'Behavioral story prep', desc: 'Why RE? Why REPE?', prompt: 'Help me craft my "Why real estate?" answer for [REPE/REIT/development] roles.' },
@@ -123,6 +131,7 @@ const TRACK_SUBS: Record<string, string> = {
   'Equity Research': 'Building sector expertise, EPS models, and differentiated stock pitches.',
   'Sales & Trading': 'Sharpening market awareness, mental math, and trade idea delivery.',
   'Venture Capital': 'Developing sector theses, startup evaluation skills, and fund-level thinking.',
+  'Growth Equity': 'Mastering unit economics, growth-stage investing, and minority deal structures.',
   'Real Estate': 'Mastering pro forma modeling, cap rates, and REPE deal analysis.',
   'Restructuring': 'Building distressed analysis skills, bankruptcy fluency, and credit expertise.',
 };
