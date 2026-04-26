@@ -2,7 +2,7 @@
 
 import Sidebar from "../components/Sidebar";
 import TutorialOverlay from "../components/TutorialOverlay";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
@@ -41,6 +41,8 @@ export default function MyAccountPage() {
   const [planActivatedAt, setPlanActivatedAt] = useState<number | null>(null);
   const [promoCode, setPromoCode] = useState<string | null>(null);
   const [billingCycle, setBillingCycle] = useState<string>('monthly');
+  const [profilePic, setProfilePic] = useState<string | null>(null);
+  const picInputRef = useRef<HTMLInputElement>(null);
 
   // Tutorial check
   useEffect(() => {
@@ -102,6 +104,8 @@ export default function MyAccountPage() {
         }
       }
     } catch (e) {}
+    // Load profile picture
+    try { const pic = localStorage.getItem('offerbell_profile_pic'); if (pic) setProfilePic(pic); } catch {}
   }, []);
 
   function toggleTheme() {
@@ -109,6 +113,33 @@ export default function MyAccountPage() {
     document.documentElement.setAttribute('data-theme', next);
     setIsDark(!isDark);
     localStorage.setItem('offerbell-theme', next);
+  }
+
+  function handlePicUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 128; canvas.height = 128;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        const size = Math.min(img.width, img.height);
+        ctx.drawImage(img, (img.width - size) / 2, (img.height - size) / 2, size, size, 0, 0, 128, 128);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        setProfilePic(dataUrl);
+        localStorage.setItem('offerbell_profile_pic', dataUrl);
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removePic() {
+    setProfilePic(null);
+    localStorage.removeItem('offerbell_profile_pic');
   }
 
   function mark() { setDirty(true); setSaved(false); }
@@ -146,7 +177,46 @@ export default function MyAccountPage() {
 
         {/* Profile Header */}
         <div style={{display:'flex',alignItems:'flex-start',gap:20,marginBottom:32,paddingBottom:32,borderBottom:'1px solid var(--border)'}}>
-          <div style={{width:72,height:72,borderRadius:'50%',background:'var(--text)',color:'var(--surface)',fontSize:22,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'Instrument Serif',serif",flexShrink:0}}>{initials}</div>
+          <div style={{position:'relative',flexShrink:0}}>
+            <input ref={picInputRef} type="file" accept="image/*" onChange={handlePicUpload} style={{display:'none'}} />
+            <div
+              onClick={() => picInputRef.current?.click()}
+              style={{
+                width:72,height:72,borderRadius:'50%',
+                background:'var(--text)',color:'var(--surface)',
+                fontSize:22,fontWeight:700,
+                display:'flex',alignItems:'center',justifyContent:'center',
+                fontFamily:"'Instrument Serif',serif",
+                cursor:'pointer',overflow:'hidden',position:'relative',
+              }}
+            >
+              {profilePic ? (
+                <img src={profilePic} alt="" style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}} />
+              ) : initials}
+              {/* Pencil overlay */}
+              <div style={{
+                position:'absolute',bottom:0,left:0,right:0,
+                height:24,
+                background:'rgba(0,0,0,0.55)',
+                display:'flex',alignItems:'center',justifyContent:'center',
+                opacity:0,transition:'opacity 0.15s',
+              }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '0')}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+              </div>
+            </div>
+            {profilePic && (
+              <button onClick={removePic} type="button" title="Remove photo" style={{
+                position:'absolute',top:-4,right:-4,
+                width:20,height:20,borderRadius:'50%',
+                background:'var(--surface)',border:'1.5px solid var(--border)',
+                display:'flex',alignItems:'center',justifyContent:'center',
+                cursor:'pointer',fontSize:12,color:'var(--text-3)',lineHeight:1,padding:0,
+              }}>&times;</button>
+            )}
+          </div>
           <div style={{flex:1}}>
             <div style={{fontFamily:"'Instrument Serif',serif",fontSize:26,letterSpacing:'-.3px',color:'var(--text)',marginBottom:3}}>{firstName} <em style={{fontStyle:'italic'}}>{lastName}</em></div>
             <div style={{fontSize:13,color:'var(--text-3)',marginBottom:10}}>{email}</div>
