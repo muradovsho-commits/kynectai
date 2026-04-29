@@ -38,6 +38,8 @@ export default function MockInterviewPage() {
   const [shuffleKey, setShuffleKey] = useState(0);
   const [filterCat, setFilterCat] = useState('All');
   const [aiHistory, setAiHistory] = useState<{role:string;content:string;score?:Score}[]>([]);
+  // Session: persist each card's conversation so navigating back shows history
+  const [sessionMap, setSessionMap] = useState<Record<string, {role:string;content:string;score?:Score}[]>>({});
   const [userInput, setUserInput] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
   const [perf, setPerf] = useState<PerfData>({seen:0,pass:0,partial:0,fail:0,byCat:{}});
@@ -82,10 +84,51 @@ export default function MockInterviewPage() {
   useEffect(() => { if (idx >= filtered.length && filtered.length > 0) setIdx(0); }, [idx, filtered.length]);
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [aiHistory]);
 
-  const resetCard = useCallback(() => { setAiHistory([]); setUserInput(''); if (isRecording) { try { recognitionRef.current?.stop(); } catch {} } setVoiceError(null); }, [isRecording]);
-  const goNext = useCallback(() => { if (idx < filtered.length - 1) { setIdx(idx + 1); resetCard(); } }, [idx, filtered.length, resetCard]);
-  const goPrev = useCallback(() => { if (idx > 0) { setIdx(idx - 1); resetCard(); } }, [idx, resetCard]);
-  const openTrack = (id: string) => { setActiveTrack(id); setFilterCat('All'); setIdx(0); resetCard(); setShuffleKey(0); };
+  // Save current card's history to session before leaving
+  const saveCurrentSession = useCallback(() => {
+    if (card && aiHistory.length > 0) {
+      setSessionMap(prev => ({ ...prev, [card.q]: aiHistory }));
+    }
+  }, [card, aiHistory]);
+
+  // Load a card's session history
+  const loadSession = useCallback((question: string) => {
+    const saved = sessionMap[question];
+    setAiHistory(saved || []);
+    setUserInput('');
+    if (isRecording) { try { recognitionRef.current?.stop(); } catch {} }
+    setVoiceError(null);
+  }, [sessionMap, isRecording]);
+
+  const goNext = useCallback(() => {
+    if (idx < filtered.length - 1) {
+      saveCurrentSession();
+      const nextIdx = idx + 1;
+      setIdx(nextIdx);
+      const nextCard = filtered[nextIdx];
+      if (nextCard) loadSession(nextCard.q);
+    }
+  }, [idx, filtered, saveCurrentSession, loadSession]);
+
+  const goPrev = useCallback(() => {
+    if (idx > 0) {
+      saveCurrentSession();
+      const prevIdx = idx - 1;
+      setIdx(prevIdx);
+      const prevCard = filtered[prevIdx];
+      if (prevCard) loadSession(prevCard.q);
+    }
+  }, [idx, filtered, saveCurrentSession, loadSession]);
+
+  const resetSession = useCallback(() => {
+    setSessionMap({});
+    setAiHistory([]);
+    setUserInput('');
+    if (isRecording) { try { recognitionRef.current?.stop(); } catch {} }
+    setVoiceError(null);
+  }, [isRecording]);
+
+  const openTrack = (id: string) => { setActiveTrack(id); setFilterCat('All'); setIdx(0); resetSession(); setShuffleKey(0); };
 
   // Voice
   const toggleRecording = () => {
@@ -129,6 +172,8 @@ export default function MockInterviewPage() {
           localStorage.setItem('offerbell_flash_review_log', JSON.stringify(updatedLog));
         }
         setAiHistory([...newHistory, entry]);
+        // Persist to session map
+        if (card) setSessionMap(prev => ({ ...prev, [card.q]: [...newHistory, entry] }));
       }
     } catch { setAiHistory([...newHistory, { role: 'assistant', content: 'Connection error - try again.' }]); }
     setAiLoading(false);
@@ -188,14 +233,17 @@ export default function MockInterviewPage() {
             {/* Top bar */}
             <div style={{ padding: '14px 24px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexShrink: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <button onClick={() => { setActiveTrack(null); resetCard(); }} type="button" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-3)', display: 'flex', alignItems: 'center', padding: 0 }}>
+                <button onClick={() => { setActiveTrack(null); resetSession(); }} type="button" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-3)', display: 'flex', alignItems: 'center', padding: 0 }}>
                   <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                 </button>
                 <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{trackTitle}</div>
-                <span style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 500 }}>Q{idx + 1} / {filtered.length}</span>
+                <span style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 500 }}>Q{idx + 1} / {filtered.length}{Object.keys(sessionMap).length > 0 ? ` · ${Object.keys(sessionMap).length} answered` : ''}</span>
               </div>
               <div style={{ display: 'flex', gap: 6 }}>
-                <button onClick={() => { setShuffleKey(p => p + 1); setIdx(0); resetCard(); }} type="button" style={{ padding: '6px 12px', borderRadius: 8, border: '1.5px solid var(--border)', background: 'var(--surface)', fontSize: 11, fontWeight: 600, color: 'var(--text-2)', cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>Shuffle</button>
+                <button onClick={() => { setShuffleKey(p => p + 1); setIdx(0); resetSession(); }} type="button" style={{ padding: '6px 12px', borderRadius: 8, border: '1.5px solid var(--border)', background: 'var(--surface)', fontSize: 11, fontWeight: 600, color: 'var(--text-2)', cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>Shuffle</button>
+                {Object.keys(sessionMap).length > 0 && (
+                  <button onClick={() => { if (confirm('Reset all answers in this session?')) { resetSession(); } }} type="button" style={{ padding: '6px 12px', borderRadius: 8, border: '1.5px solid #fecaca', background: 'var(--surface)', fontSize: 11, fontWeight: 600, color: '#dc2626', cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>Reset Session</button>
+                )}
                 {reviewLog.filter(r => r.track === activeTrack).length > 0 && (
                   <button onClick={() => setShowReview(true)} type="button" style={{ padding: '6px 12px', borderRadius: 8, border: '1.5px solid var(--border)', background: 'var(--surface)', fontSize: 11, fontWeight: 600, color: 'var(--text-2)', cursor: 'pointer', fontFamily: "'Sora', sans-serif", display: 'flex', alignItems: 'center', gap: 5 }}>
                     Review
