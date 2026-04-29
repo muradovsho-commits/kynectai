@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
-import '../flashcards/flashcards.css';
+import './mock-interview.css';
 import { IB_FLASHCARDS, Flashcard } from '../flashcards/ib-flashcard-data';
 import { PE_FLASHCARDS } from '../flashcards/pe-flashcard-data';
 import { CONSULTING_FLASHCARDS } from '../flashcards/consulting-flashcard-data';
@@ -12,388 +12,547 @@ import { AM_FLASHCARDS } from '../flashcards/am-flashcard-data';
 import { ST_FLASHCARDS } from '../flashcards/st-flashcard-data';
 import { ER_FLASHCARDS, RE_FLASHCARDS, VC_FLASHCARDS, RX_FLASHCARDS } from '../flashcards/other-flashcard-data';
 
-type Score = { accuracy: number; depth: number; clarity: number; verdict: string; tip: string };
-type PerfData = { seen: number; pass: number; partial: number; fail: number; byCat: Record<string, { seen: number; pass: number }> };
-type ReviewEntry = { id: string; track: string; trackTitle: string; cardQ: string; cardA: string; category: string; difficulty: string; userAnswer: string; feedback: string; score?: Score; verdict: string; at: number };
+// ══════════════════════════════════════════════════════════════
+// TYPES
+// ══════════════════════════════════════════════════════════════
 
-type Track = { id: string; title: string; cards: number; icon: React.ReactNode };
-const TRACKS: Track[] = [
-  {id:'ib',title:'Investment Banking',cards:IB_FLASHCARDS.length,icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>},
-  {id:'pe',title:'Private Equity',cards:PE_FLASHCARDS.length,icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>},
-  {id:'rx',title:'Restructuring',cards:RX_FLASHCARDS.length,icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>},
-  {id:'consulting',title:'Consulting',cards:CONSULTING_FLASHCARDS.length,icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>},
-  {id:'accounting',title:'Accounting',cards:ACCT_FLASHCARDS.length,icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>},
-  {id:'am',title:'Asset Management',cards:AM_FLASHCARDS.length,icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>},
-  {id:'st',title:'Sales & Trading',cards:ST_FLASHCARDS.length,icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>},
-  {id:'er',title:'Equity Research',cards:ER_FLASHCARDS.length,icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>},
-  {id:'re',title:'Real Estate',cards:RE_FLASHCARDS.length,icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>},
-  {id:'vc',title:'Venture Capital',cards:VC_FLASHCARDS.length,icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>},
+type Grade = 'Great' | 'Good' | 'Bad';
+
+type ResponseEntry = {
+  id: string;
+  questionId: string;
+  videoUrl: null;
+  transcript: string;
+  grade: Grade;
+  overallFeedback: string;
+  strengths: string[];
+  weaknesses: string[];
+  wordsPerMin: number;
+  durationSec: number;
+  timestamp: number;
+};
+
+type TrackDef = { id: string; title: string; cards: Flashcard[]; icon: React.ReactNode };
+
+// ══════════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════════
+
+const TRACKS: TrackDef[] = [
+  {id:'ib',title:'Investment Banking',cards:IB_FLASHCARDS,icon:<svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>},
+  {id:'pe',title:'Private Equity',cards:PE_FLASHCARDS,icon:<svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>},
+  {id:'rx',title:'Restructuring',cards:RX_FLASHCARDS,icon:<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>},
+  {id:'consulting',title:'Consulting',cards:CONSULTING_FLASHCARDS,icon:<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>},
+  {id:'accounting',title:'Accounting',cards:ACCT_FLASHCARDS,icon:<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>},
+  {id:'am',title:'Asset Management',cards:AM_FLASHCARDS,icon:<svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>},
+  {id:'st',title:'Sales & Trading',cards:ST_FLASHCARDS,icon:<svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>},
+  {id:'er',title:'Equity Research',cards:ER_FLASHCARDS,icon:<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>},
+  {id:'re',title:'Real Estate',cards:RE_FLASHCARDS,icon:<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>},
+  {id:'vc',title:'Venture Capital',cards:VC_FLASHCARDS,icon:<svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>},
 ];
-const CARD_MAP: Record<string, Flashcard[]> = {ib:IB_FLASHCARDS,pe:PE_FLASHCARDS,consulting:CONSULTING_FLASHCARDS,accounting:ACCT_FLASHCARDS,am:AM_FLASHCARDS,st:ST_FLASHCARDS,er:ER_FLASHCARDS,re:RE_FLASHCARDS,vc:VC_FLASHCARDS,rx:RX_FLASHCARDS};
+
+const RESPONSES_KEY = 'offerbell_mock_responses';
+
+function loadResponses(): ResponseEntry[] {
+  try { const raw = localStorage.getItem(RESPONSES_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; }
+}
+function saveResponses(entries: ResponseEntry[]) {
+  localStorage.setItem(RESPONSES_KEY, JSON.stringify(entries.slice(0, 200)));
+}
+function makeQid(trackId: string, q: string): string {
+  return `${trackId}::${q.slice(0, 80)}`;
+}
+function scoreToGrade(avg: number): Grade {
+  if (avg >= 7.5) return 'Great';
+  if (avg >= 5) return 'Good';
+  return 'Bad';
+}
+function gCls(g: Grade): string {
+  return g === 'Great' ? 'great' : g === 'Good' ? 'good' : 'bad';
+}
+
+// ══════════════════════════════════════════════════════════════
+// COMPONENT
+// ══════════════════════════════════════════════════════════════
 
 export default function MockInterviewPage() {
   const router = useRouter();
-  const [activeTrack, setActiveTrack] = useState<string | null>(null);
-  const [idx, setIdx] = useState(0);
-  const [shuffleKey, setShuffleKey] = useState(0);
-  const [filterCat, setFilterCat] = useState('All');
-  const [aiHistory, setAiHistory] = useState<{role:string;content:string;score?:Score}[]>([]);
-  // Session: persist each card's conversation so navigating back shows history
-  const [sessionMap, setSessionMap] = useState<Record<string, {role:string;content:string;score?:Score}[]>>({});
-  const [userInput, setUserInput] = useState('');
-  const [aiLoading, setAiLoading] = useState(false);
-  const [perf, setPerf] = useState<PerfData>({seen:0,pass:0,partial:0,fail:0,byCat:{}});
-  const [reviewLog, setReviewLog] = useState<ReviewEntry[]>([]);
-  const [showReview, setShowReview] = useState(false);
-  const [isPro, setIsPro] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [voiceError, setVoiceError] = useState<string|null>(null);
-  const recognitionRef = useRef<any>(null);
-  const chatEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-  const voiceSupported = typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
 
+  const [activeTrack, setActiveTrack] = useState<TrackDef | null>(null);
+  const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set());
+  const [activeQuestion, setActiveQuestion] = useState<Flashcard | null>(null);
+
+  const [cameraReady, setCameraReady] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [grading, setGrading] = useState(false);
+
+  const [allResponses, setAllResponses] = useState<ResponseEntry[]>([]);
+  const [sessionVideos, setSessionVideos] = useState<Record<string, string>>({});
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const transcriptRef = useRef('');
+  const recognitionRef = useRef<any>(null);
+  const recordingStartRef = useRef<number>(0);
+
+  // Init
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
-    const t = localStorage.getItem('offerbell-theme');
-    if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-    try { const p = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}'); setIsPro(p.plan === 'pro'); } catch {}
-    const savedReview = localStorage.getItem('offerbell_flash_review_log');
-    if (savedReview) try { setReviewLog(JSON.parse(savedReview)); } catch {}
+    setAllResponses(loadResponses());
   }, [router]);
 
-  const perfKey = activeTrack ? `offerbell_flash_perf_${activeTrack}` : 'offerbell_flash_perf';
-
+  // Camera lifecycle
   useEffect(() => {
-    if (!activeTrack) return;
-    try { const raw = localStorage.getItem(perfKey); if (raw) setPerf(JSON.parse(raw)); else setPerf({seen:0,pass:0,partial:0,fail:0,byCat:{}}); } catch {}
-  }, [activeTrack, perfKey]);
-
-  const savePerf = useCallback((p: PerfData) => { setPerf(p); localStorage.setItem(perfKey, JSON.stringify(p)); }, [perfKey]);
-
-  const allCards = useMemo(() => activeTrack ? (CARD_MAP[activeTrack] || []) : [], [activeTrack]);
-  const categories = useMemo(() => ['All', ...Array.from(new Set(allCards.map(c => c.category)))], [allCards]);
-  const filtered = useMemo(() => {
-    let base = filterCat === 'All' ? allCards : allCards.filter(c => c.category === filterCat);
-    if (shuffleKey > 0) { const a = [...base]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-    return base;
-  }, [allCards, filterCat, shuffleKey]);
-
-  const card = filtered[idx] || null;
-  useEffect(() => { if (idx >= filtered.length && filtered.length > 0) setIdx(0); }, [idx, filtered.length]);
-  useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [aiHistory]);
-
-  // Save current card's history to session before leaving
-  const saveCurrentSession = useCallback(() => {
-    if (card && aiHistory.length > 0) {
-      setSessionMap(prev => ({ ...prev, [card.q]: aiHistory }));
+    if (!activeQuestion) {
+      if (streamRef.current) { streamRef.current.getTracks().forEach(t => t.stop()); streamRef.current = null; }
+      setCameraReady(false);
+      return;
     }
-  }, [card, aiHistory]);
+    let cancelled = false;
+    (async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        if (cancelled) { stream.getTracks().forEach(t => t.stop()); return; }
+        streamRef.current = stream;
+        if (videoRef.current) videoRef.current.srcObject = stream;
+        setCameraReady(true);
+      } catch { setCameraReady(false); }
+    })();
+    return () => { cancelled = true; };
+  }, [activeQuestion]);
 
-  // Load a card's session history
-  const loadSession = useCallback((question: string) => {
-    const saved = sessionMap[question];
-    setAiHistory(saved || []);
-    setUserInput('');
-    if (isRecording) { try { recognitionRef.current?.stop(); } catch {} }
-    setVoiceError(null);
-  }, [sessionMap, isRecording]);
-
-  const goNext = useCallback(() => {
-    if (idx < filtered.length - 1) {
-      saveCurrentSession();
-      const nextIdx = idx + 1;
-      setIdx(nextIdx);
-      const nextCard = filtered[nextIdx];
-      if (nextCard) loadSession(nextCard.q);
+  // Recording timer
+  useEffect(() => {
+    if (isRecording) {
+      setRecordingTime(0);
+      timerRef.current = setInterval(() => setRecordingTime(t => t + 1), 1000);
+    } else {
+      if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
     }
-  }, [idx, filtered, saveCurrentSession, loadSession]);
-
-  const goPrev = useCallback(() => {
-    if (idx > 0) {
-      saveCurrentSession();
-      const prevIdx = idx - 1;
-      setIdx(prevIdx);
-      const prevCard = filtered[prevIdx];
-      if (prevCard) loadSession(prevCard.q);
-    }
-  }, [idx, filtered, saveCurrentSession, loadSession]);
-
-  const resetSession = useCallback(() => {
-    setSessionMap({});
-    setAiHistory([]);
-    setUserInput('');
-    if (isRecording) { try { recognitionRef.current?.stop(); } catch {} }
-    setVoiceError(null);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [isRecording]);
 
-  const openTrack = (id: string) => { setActiveTrack(id); setFilterCat('All'); setIdx(0); resetSession(); setShuffleKey(0); };
+  // Categories for current track
+  const categories = useMemo(() => {
+    if (!activeTrack) return [];
+    const map = new Map<string, Flashcard[]>();
+    for (const c of activeTrack.cards) {
+      const list = map.get(c.category) || [];
+      list.push(c);
+      map.set(c.category, list);
+    }
+    return Array.from(map.entries()).map(([name, cards]) => ({ name, cards }));
+  }, [activeTrack]);
 
-  // Voice
-  const toggleRecording = () => {
-    if (isRecording) { try { recognitionRef.current?.stop(); } catch {} setIsRecording(false); return; }
+  // Navigation
+  function openTrack(t: TrackDef) { setActiveTrack(t); setExpandedCats(new Set()); setActiveQuestion(null); }
+  function toggleCat(c: string) { setExpandedCats(prev => { const n = new Set(prev); n.has(c) ? n.delete(c) : n.add(c); return n; }); }
+  function openQuestion(card: Flashcard) { setActiveQuestion(card); setShowAnswer(false); setIsRecording(false); setRecordingTime(0); transcriptRef.current = ''; }
+  function backToCats() { setActiveQuestion(null); setShowAnswer(false); if (isRecording) stopRecording(); }
+  function backToTracks() { setActiveTrack(null); setActiveQuestion(null); }
+
+  // Recording
+  function startRecording() {
+    if (!streamRef.current || !activeQuestion || !activeTrack) return;
+    chunksRef.current = [];
+    transcriptRef.current = '';
+    recordingStartRef.current = Date.now();
+
+    // MediaRecorder
+    try {
+      let recorder: MediaRecorder;
+      try { recorder = new MediaRecorder(streamRef.current, { mimeType: 'video/webm;codecs=vp9,opus' }); }
+      catch { recorder = new MediaRecorder(streamRef.current); }
+      recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
+      recorder.onstop = () => processRecording();
+      recorderRef.current = recorder;
+      recorder.start();
+    } catch { return; }
+
+    // Speech recognition
     try {
       const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      const r = new SR(); r.continuous = true; r.interimResults = true; r.lang = 'en-US';
-      r.onresult = (e: any) => { let t = ''; for (let i = 0; i < e.results.length; i++) t += e.results[i][0].transcript; setUserInput(t); };
-      r.onerror = (e: any) => { setVoiceError('Voice error: ' + e.error); setIsRecording(false); };
-      r.onend = () => setIsRecording(false);
-      recognitionRef.current = r; r.start(); setIsRecording(true); setVoiceError(null);
-    } catch { setVoiceError('Voice recognition not supported'); }
-  };
-
-  // AI Submit
-  const submitAnswer = async () => {
-    if (!card || !userInput.trim() || aiLoading) return;
-    if (isRecording) { try { recognitionRef.current?.stop(); } catch {} }
-    const answer = userInput.trim(); setUserInput('');
-    const newHistory = [...aiHistory, { role: 'user', content: answer }];
-    setAiHistory(newHistory); setAiLoading(true);
-    try {
-      const res = await fetch('/api/interview-mock', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question: card.q, correctAnswer: card.a, userAnswer: answer, history: newHistory, track: activeTrack }) });
-      const data = await res.json();
-      if (data.error) { setAiHistory([...newHistory, { role: 'assistant', content: 'Something went wrong - try again.' }]); }
-      else {
-        const entry: { role: string; content: string; score?: Score } = { role: 'assistant', content: data.feedback };
-        if (data.score) {
-          entry.score = data.score;
-          const verdict = data.score.verdict; const cat = card.category;
-          const freshRaw = localStorage.getItem(perfKey);
-          const np = freshRaw ? JSON.parse(freshRaw) : { seen:0,pass:0,partial:0,fail:0,byCat:{} };
-          np.seen++; if (verdict === 'pass') np.pass++; else if (verdict === 'partial') np.partial++; else np.fail++;
-          if (!np.byCat[cat]) np.byCat[cat] = { seen: 0, pass: 0 };
-          np.byCat[cat].seen++; if (verdict === 'pass') np.byCat[cat].pass++;
-          savePerf(np);
-          const trackDef = TRACKS.find(t => t.id === activeTrack);
-          const re: ReviewEntry = { id: `${Date.now()}_${Math.random().toString(36).slice(2,6)}`, track: activeTrack || '', trackTitle: trackDef?.title || '', cardQ: card.q, cardA: card.a, category: cat, difficulty: card.difficulty || '', userAnswer: answer, feedback: data.feedback, score: data.score, verdict, at: Date.now() };
-          const updatedLog = [re, ...reviewLog].slice(0, 100);
-          setReviewLog(updatedLog);
-          localStorage.setItem('offerbell_flash_review_log', JSON.stringify(updatedLog));
-        }
-        setAiHistory([...newHistory, entry]);
-        // Persist to session map
-        if (card) setSessionMap(prev => ({ ...prev, [card.q]: [...newHistory, entry] }));
+      if (SR) {
+        const r = new SR();
+        r.continuous = true; r.interimResults = false; r.lang = 'en-US';
+        r.onresult = (e: any) => {
+          let t = '';
+          for (let i = 0; i < e.results.length; i++) { if (e.results[i].isFinal) t += e.results[i][0].transcript + ' '; }
+          transcriptRef.current = t.trim();
+        };
+        r.onerror = () => {};
+        recognitionRef.current = r;
+        r.start();
       }
-    } catch { setAiHistory([...newHistory, { role: 'assistant', content: 'Connection error - try again.' }]); }
-    setAiLoading(false);
-  };
+    } catch {}
 
-  const readiness = perf.seen > 0 ? Math.round((perf.pass / perf.seen) * 100) : 0;
-  const trackTitle = TRACKS.find(t => t.id === activeTrack)?.title || '';
+    setIsRecording(true);
+  }
 
-  // ═══ TRACK PICKER ═══
+  function stopRecording() {
+    try { recorderRef.current?.stop(); } catch {}
+    try { recognitionRef.current?.stop(); } catch {}
+    setIsRecording(false);
+  }
+
+  async function processRecording() {
+    if (!activeQuestion || !activeTrack) return;
+    setGrading(true);
+
+    const blob = new Blob(chunksRef.current, { type: 'video/webm' });
+    const videoUrl = URL.createObjectURL(blob);
+    const transcript = transcriptRef.current || '[No speech detected]';
+    const actualDuration = Math.round((Date.now() - recordingStartRef.current) / 1000);
+    const wordCount = transcript.split(/\s+/).filter(Boolean).length;
+    const wpm = actualDuration > 0 ? Math.round((wordCount / actualDuration) * 60) : 0;
+
+    let grade: Grade = 'Bad';
+    let overallFeedback = '';
+    let strengths: string[] = [];
+    let weaknesses: string[] = [];
+
+    try {
+      const res = await fetch('/api/interview-mock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: activeQuestion.q, correctAnswer: activeQuestion.a, userAnswer: transcript, track: activeTrack.id }),
+      });
+      const data = await res.json();
+
+      if (data.feedback) {
+        overallFeedback = data.feedback.replace(/\|\|\|SCORE:.*?\|\|\|/g, '').trim();
+      }
+      if (data.score) {
+        const avg = ((data.score.accuracy || 0) + (data.score.depth || 0) + (data.score.clarity || 0)) / 3;
+        grade = scoreToGrade(avg);
+        if (data.score.tip) weaknesses.push(data.score.tip);
+        if (data.score.accuracy >= 7) strengths.push('Strong technical accuracy');
+        if (data.score.depth >= 7) strengths.push('Good depth of explanation');
+        if (data.score.clarity >= 7) strengths.push('Clear and structured communication');
+        if (data.score.accuracy < 5) weaknesses.push('Technical accuracy needs improvement');
+        if (data.score.depth < 5) weaknesses.push('Response lacks sufficient depth');
+        if (data.score.clarity < 5) weaknesses.push('Communication could be clearer and more structured');
+      }
+    } catch {
+      overallFeedback = 'Could not connect to AI grader. Please try again.';
+    }
+
+    const entryId = `${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+    const questionId = makeQid(activeTrack.id, activeQuestion.q);
+
+    const entry: ResponseEntry = {
+      id: entryId, questionId, videoUrl: null,
+      transcript, grade, overallFeedback, strengths, weaknesses,
+      wordsPerMin: wpm, durationSec: actualDuration, timestamp: Date.now(),
+    };
+
+    setSessionVideos(prev => ({ ...prev, [entryId]: videoUrl }));
+    const updated = [entry, ...allResponses];
+    setAllResponses(updated);
+    saveResponses(updated);
+    setGrading(false);
+  }
+
+  function deleteResponse(id: string) {
+    const updated = allResponses.filter(r => r.id !== id);
+    setAllResponses(updated);
+    saveResponses(updated);
+    if (sessionVideos[id]) { URL.revokeObjectURL(sessionVideos[id]); setSessionVideos(prev => { const n = { ...prev }; delete n[id]; return n; }); }
+  }
+
+  // Helpers
+  function bestForQ(questionId: string): Grade | null {
+    const m = allResponses.filter(r => r.questionId === questionId);
+    if (!m.length) return null;
+    if (m.some(r => r.grade === 'Great')) return 'Great';
+    if (m.some(r => r.grade === 'Good')) return 'Good';
+    return 'Bad';
+  }
+  function avgForQ(questionId: string): Grade | null {
+    const m = allResponses.filter(r => r.questionId === questionId);
+    if (!m.length) return null;
+    const s = m.map(r => r.grade === 'Great' ? 10 : r.grade === 'Good' ? 6 : 2);
+    return scoreToGrade(s.reduce((a, b) => a + b, 0) / s.length);
+  }
+  const fmtTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+
+  // Thumb icons
+  const ThumbUp = <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>;
+  const ThumbDown = <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M10 15V19a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/></svg>;
+
+  // ══════════════════════════════════════════════════════════════
+  // RENDER: TRACK PICKER
+  // ══════════════════════════════════════════════════════════════
+
   if (!activeTrack) return (
     <div className="app"><Sidebar activePage="mock-interview" />
-      <main className="main" style={{ padding: 0 }}>
-        <div style={{ maxWidth: 960, margin: '0 auto', padding: '48px 40px 60px' }}>
-          <div style={{ marginBottom: 32 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 12 }}>OfferBell Pro</div>
-            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 42, letterSpacing: '-1px', color: 'var(--text)', lineHeight: 1, marginBottom: 12 }}>Mock <em style={{ fontStyle: 'italic' }}>Interview</em></div>
-            <div style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.6, maxWidth: 520 }}>Answer real interview questions. An AI interviewer scores your response, pushes deeper with follow-ups, and tells you exactly where to improve.</div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
-            {TRACKS.map(t => {
-              const tp = (() => { try { const r = localStorage.getItem(`offerbell_flash_perf_${t.id}`); return r ? JSON.parse(r) : null; } catch { return null; } })();
-              const tReadiness = tp && tp.seen > 0 ? Math.round((tp.pass / tp.seen) * 100) : 0;
-              const attempted = tp?.seen || 0;
-              return (
-                <div key={t.id} onClick={() => openTrack(t.id)} style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '22px 24px', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', flexDirection: 'column', gap: 14 }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'translateY(0)'; }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <div style={{ width: 20, height: 20 }}>{t.icon}</div>
-                    </div>
-                    {attempted > 0 && (
-                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: tReadiness >= 70 ? '#16a34a' : tReadiness >= 40 ? '#d97706' : 'var(--text-3)' }}>{tReadiness}% ready</div>
-                    )}
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>{t.title}</div>
-                    <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{t.cards} questions{attempted > 0 ? ` · ${attempted} attempted` : ''}</div>
-                  </div>
+      <main className="mi-main"><div className="mi-wrap">
+        <div className="mi-label">Practice</div>
+        <div className="mi-title">Mock <em>Interview</em></div>
+        <div className="mi-sub">Record yourself answering real interview questions. Get AI feedback on accuracy, depth, and clarity with video playback of every attempt.</div>
+        <div className="mi-track-grid">
+          {TRACKS.map(t => {
+            const attempted = new Set(allResponses.filter(r => r.questionId.startsWith(t.id + '::')).map(r => r.questionId)).size;
+            return (
+              <div key={t.id} className="mi-track-card" onClick={() => openTrack(t)}>
+                <div className="mi-track-icon">{t.icon}</div>
+                <div>
+                  <div className="mi-track-name">{t.title}</div>
+                  <div className="mi-track-count">{t.cards.length} questions{attempted > 0 ? ` - ${attempted} attempted` : ''}</div>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
-      </main>
+      </div></main>
     </div>
   );
 
-  // ═══ INTERVIEW SESSION ═══
+  // ══════════════════════════════════════════════════════════════
+  // RENDER: QUESTION DETAIL
+  // ══════════════════════════════════════════════════════════════
+
+  if (activeQuestion) {
+    const questionId = makeQid(activeTrack.id, activeQuestion.q);
+    const qResps = allResponses.filter(r => r.questionId === questionId);
+    const best = bestForQ(questionId);
+    const avg = avgForQ(questionId);
+
+    return (
+      <div className="app"><Sidebar activePage="mock-interview" />
+        <main className="mi-main"><div className="mi-wrap">
+          <button className="mi-back" onClick={backToCats} type="button">
+            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back
+          </button>
+
+          <div className="mi-detail-header">
+            <div>
+              <div className="mi-detail-label">Question</div>
+              <div className="mi-detail-title">{activeQuestion.q}</div>
+            </div>
+            <div className="mi-detail-stats">
+              <div className="mi-detail-stat">
+                <div className="mi-detail-stat-val">{qResps.length}</div>
+                <div className="mi-detail-stat-label">Submissions</div>
+              </div>
+              <div className="mi-detail-stat">
+                <div className={`mi-detail-stat-val ${best ? gCls(best) : 'neutral'}`}>{best || '--'}</div>
+                <div className="mi-detail-stat-label">Best</div>
+              </div>
+              <div className="mi-detail-stat">
+                <div className={`mi-detail-stat-val ${avg ? gCls(avg) : 'neutral'}`}>{avg || '--'}</div>
+                <div className="mi-detail-stat-label">Average</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mi-actions">
+            {!isRecording ? (
+              <button className="mi-btn-record start" onClick={startRecording} disabled={!cameraReady || grading} type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                Record a Response
+              </button>
+            ) : (
+              <button className="mi-btn-record stop" onClick={stopRecording} type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+                Stop Recording
+              </button>
+            )}
+            <button className="mi-btn-secondary" onClick={() => setShowAnswer(!showAnswer)} type="button">
+              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              {showAnswer ? 'Hide correct answer' : 'View correct answer'}
+            </button>
+          </div>
+
+          {showAnswer && (
+            <div className="mi-answer-box">
+              <div className="mi-answer-label">Correct Answer</div>
+              <div className="mi-answer-text">{activeQuestion.a}</div>
+            </div>
+          )}
+
+          <div className="mi-prompt">
+            <div className="mi-prompt-label">Prompt:</div>
+            <div className="mi-prompt-text">{activeQuestion.q}</div>
+          </div>
+
+          <div className="mi-camera-wrap">
+            <video ref={videoRef} autoPlay muted playsInline />
+            {isRecording && (
+              <><div className="mi-recording-dot" /><div className="mi-recording-timer">{fmtTime(recordingTime)}</div></>
+            )}
+            {!isRecording && cameraReady && (
+              <div className="mi-camera-notice">You are not currently being recorded. Click &apos;Record a Response&apos; to get started.</div>
+            )}
+            {!cameraReady && !isRecording && (
+              <div className="mi-camera-notice">Camera access required. Please allow camera permissions.</div>
+            )}
+          </div>
+
+          {grading && (
+            <div className="mi-loading"><div className="mi-spinner" />Analyzing your response...</div>
+          )}
+
+          {qResps.length > 0 && (
+            <div className="mi-responses">
+              <div className="mi-responses-title">Your Response{qResps.length > 1 ? 's' : ''}:</div>
+              {qResps.map(r => {
+                const vid = sessionVideos[r.id] || null;
+                return (
+                  <div key={r.id} className="mi-response-card">
+                    {vid && <video className="mi-response-video" src={vid} controls playsInline />}
+
+                    <div className="mi-response-body">
+                      <div className="mi-response-grade">
+                        <div className={`mi-grade-label ${gCls(r.grade)}`}>
+                          {r.grade === 'Bad' ? ThumbDown : ThumbUp}
+                          {r.grade}
+                          <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-3)', marginLeft: 4 }}>Graded Submission</span>
+                        </div>
+                        <div className="mi-grade-stats">
+                          <div className="mi-grade-stat">{ThumbUp}<strong>{r.strengths.length}</strong>Strengths</div>
+                          <div className="mi-grade-stat">{ThumbDown}<strong>{r.weaknesses.length}</strong>Weaknesses</div>
+                          <div className="mi-grade-stat">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            <strong>{r.wordsPerMin}</strong>Words/min
+                          </div>
+                          <div className="mi-grade-stat">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <strong>{r.durationSec}s</strong>Tot. Length
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mi-response-feedback">
+                        <h4>Overall Feedback</h4>
+                        <p>{r.overallFeedback}</p>
+                      </div>
+
+                      {(r.strengths.length > 0 || r.weaknesses.length > 0) && (
+                        <div className="mi-response-cols">
+                          {r.strengths.length > 0 && (
+                            <div className="mi-response-col"><h4>Strengths</h4><ul>{r.strengths.map((s, i) => <li key={i}>{s}</li>)}</ul></div>
+                          )}
+                          {r.weaknesses.length > 0 && (
+                            <div className="mi-response-col"><h4>Weaknesses</h4><ul>{r.weaknesses.map((w, i) => <li key={i}>{w}</li>)}</ul></div>
+                          )}
+                        </div>
+                      )}
+
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
+                        <div className="mi-response-time">
+                          Submitted {new Date(r.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </div>
+                        <button onClick={() => deleteResponse(r.id)} type="button" style={{ background: 'none', border: 'none', fontSize: 11, color: 'var(--text-3)', cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>Delete</button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div></main>
+      </div>
+    );
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  // RENDER: CATEGORY LIST
+  // ══════════════════════════════════════════════════════════════
+
   return (
     <div className="app"><Sidebar activePage="mock-interview" />
-      <main className="main" style={{ padding: 0 }}>
-        <div style={{ display: 'flex', height: '100vh' }}>
-          {/* Left — Question + Chat */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-            {/* Top bar */}
-            <div style={{ padding: '14px 24px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexShrink: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <button onClick={() => { setActiveTrack(null); resetSession(); }} type="button" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-3)', display: 'flex', alignItems: 'center', padding: 0 }}>
-                  <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                </button>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{trackTitle}</div>
-                <span style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 500 }}>Q{idx + 1} / {filtered.length}{Object.keys(sessionMap).length > 0 ? ` · ${Object.keys(sessionMap).length} answered` : ''}</span>
-              </div>
-              <div style={{ display: 'flex', gap: 6 }}>
-                <button onClick={() => { setShuffleKey(p => p + 1); setIdx(0); resetSession(); }} type="button" style={{ padding: '6px 12px', borderRadius: 8, border: '1.5px solid var(--border)', background: 'var(--surface)', fontSize: 11, fontWeight: 600, color: 'var(--text-2)', cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>Shuffle</button>
-                {Object.keys(sessionMap).length > 0 && (
-                  <button onClick={() => { if (confirm('Reset all answers in this session?')) { resetSession(); } }} type="button" style={{ padding: '6px 12px', borderRadius: 8, border: '1.5px solid #fecaca', background: 'var(--surface)', fontSize: 11, fontWeight: 600, color: '#dc2626', cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>Reset Session</button>
-                )}
-                {reviewLog.filter(r => r.track === activeTrack).length > 0 && (
-                  <button onClick={() => setShowReview(true)} type="button" style={{ padding: '6px 12px', borderRadius: 8, border: '1.5px solid var(--border)', background: 'var(--surface)', fontSize: 11, fontWeight: 600, color: 'var(--text-2)', cursor: 'pointer', fontFamily: "'Sora', sans-serif", display: 'flex', alignItems: 'center', gap: 5 }}>
-                    Review
-                    <span style={{ background: 'var(--text)', color: 'var(--surface)', fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 8 }}>{reviewLog.filter(r => r.track === activeTrack).length}</span>
-                  </button>
-                )}
-              </div>
-            </div>
+      <main className="mi-main"><div className="mi-wrap">
+        <button className="mi-back" onClick={backToTracks} type="button">
+          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
 
-            {/* Question card */}
-            {card && (
-              <div style={{ padding: '28px 28px 16px', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
-                <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 100, background: 'var(--surface-2)', color: 'var(--text-2)' }}>{card.category}</span>
-                  {card.difficulty && <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 100, background: card.difficulty === 'Advanced' ? '#fef2f2' : '#fef3c7', color: card.difficulty === 'Advanced' ? '#dc2626' : '#d97706' }}>{card.difficulty}</span>}
-                </div>
-                <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: 'var(--text)', lineHeight: 1.3, letterSpacing: '-0.4px' }}>{card.q}</div>
-              </div>
-            )}
+        <div className="mi-label">{activeTrack.title}</div>
+        <div className="mi-title" style={{ fontSize: 32, marginBottom: 24 }}>Practice <em>Questions</em></div>
 
-            {/* Chat area */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '20px 28px' }}>
-              {aiHistory.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-3)' }}>
-                  <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>Answer as you would in a real interview</div>
-                  <div style={{ fontSize: 12 }}>The AI interviewer will evaluate your response and push deeper with follow-ups.</div>
-                </div>
-              )}
-              {aiHistory.map((msg, i) => (
-                <div key={i} className={`flash-chat-msg ${msg.role}`}>
-                  <div className="flash-chat-label">{msg.role === 'user' ? 'You' : 'Interviewer'}</div>
-                  <div className="flash-chat-text">{msg.content}</div>
-                  {msg.score && (
-                    <div className={`flash-score-card verdict-${msg.score.verdict}`}>
-                      <div className="flash-score-header">
-                        <span className={`flash-verdict-badge ${msg.score.verdict}`}>
-                          {msg.score.verdict === 'pass' ? 'Pass' : msg.score.verdict === 'partial' ? '~ Partial' : 'Fail'}
-                        </span>
-                      </div>
-                      <div className="flash-score-bars">
-                        <div className="flash-score-row"><span>Accuracy</span><div className="flash-score-track"><div className="flash-score-fill" style={{width:`${msg.score.accuracy*10}%`}}/></div><span>{msg.score.accuracy}/10</span></div>
-                        <div className="flash-score-row"><span>Depth</span><div className="flash-score-track"><div className="flash-score-fill" style={{width:`${msg.score.depth*10}%`}}/></div><span>{msg.score.depth}/10</span></div>
-                        <div className="flash-score-row"><span>Clarity</span><div className="flash-score-track"><div className="flash-score-fill" style={{width:`${msg.score.clarity*10}%`}}/></div><span>{msg.score.clarity}/10</span></div>
-                      </div>
-                      {msg.score.tip && <div className="flash-score-tip">{msg.score.tip}</div>}
-                    </div>
-                  )}
-                </div>
-              ))}
-              {aiLoading && <div className="flash-chat-msg assistant"><div className="flash-chat-label">Interviewer</div><div className="flash-chat-text flash-typing">Evaluating<span className="dot-1">.</span><span className="dot-2">.</span><span className="dot-3">.</span></div></div>}
-              <div ref={chatEndRef} />
-              {voiceError && <div style={{ fontSize: 11, color: '#dc2626', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, padding: '8px 12px', margin: '8px 0' }}>{voiceError}</div>}
-              {isRecording && <div style={{ fontSize: 11, color: '#dc2626', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8, padding: '6px 4px' }}><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#dc2626', animation: 'flash-rec-pulse 1.1s ease-in-out infinite' }} />Recording... speak your answer</div>}
-            </div>
+        <div className="mi-cat-list">
+          {categories.map(cat => {
+            const isExp = expandedCats.has(cat.name);
+            const total = cat.cards.length;
+            const attemptedSet = new Set(cat.cards.map(c => makeQid(activeTrack.id, c.q)).filter(id => allResponses.some(r => r.questionId === id)));
+            const attempted = attemptedSet.size;
+            const pct = total > 0 ? Math.round((attempted / total) * 100) : 0;
+            const catResps = allResponses.filter(r => cat.cards.some(c => r.questionId === makeQid(activeTrack.id, c.q)));
+            const subs = catResps.length;
+            const catBest: Grade | null = subs === 0 ? null : catResps.some(r => r.grade === 'Great') ? 'Great' : catResps.some(r => r.grade === 'Good') ? 'Good' : 'Bad';
+            const catAvg: Grade | null = subs === 0 ? null : scoreToGrade(catResps.map(r => r.grade === 'Great' ? 10 : r.grade === 'Good' ? 6 : 2).reduce((a, b) => a + b, 0) / subs);
 
-            {/* Input */}
-            <div style={{ padding: '12px 24px 16px', borderTop: '1px solid var(--border)', flexShrink: 0 }}>
-              <div className="flash-interview-input">
-                <textarea ref={inputRef} value={userInput} onChange={e => setUserInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitAnswer(); }}} placeholder={voiceSupported ? 'Tap mic to speak, or type your answer...' : 'Type your answer...'} rows={2} />
-                {voiceSupported && (
-                  <button onClick={toggleRecording} disabled={aiLoading} type="button" title={isRecording ? 'Stop' : 'Record'} style={{ background: isRecording ? '#dc2626' : 'var(--surface-2)', border: `1.5px solid ${isRecording ? '#dc2626' : 'var(--border)'}`, color: isRecording ? '#fff' : 'var(--text-2)' }}>
-                    {isRecording ? <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg> : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>}
-                  </button>
-                )}
-                <button onClick={submitAnswer} disabled={!userInput.trim() || aiLoading} type="button"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
-              </div>
-              {/* Nav */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10 }}>
-                <button onClick={goPrev} disabled={idx === 0} type="button" style={{ background: 'none', border: '1.5px solid var(--border)', borderRadius: 8, padding: '6px 14px', fontSize: 12, fontWeight: 600, cursor: idx === 0 ? 'default' : 'pointer', color: idx === 0 ? 'var(--border-2)' : 'var(--text-2)', fontFamily: "'Sora', sans-serif" }}>Previous</button>
-                <button onClick={() => { goNext(); setTimeout(() => inputRef.current?.focus(), 100); }} disabled={idx >= filtered.length - 1} type="button" style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 8, padding: '6px 14px', fontSize: 12, fontWeight: 600, cursor: idx >= filtered.length - 1 ? 'default' : 'pointer', fontFamily: "'Sora', sans-serif", opacity: idx >= filtered.length - 1 ? 0.5 : 1 }}>Next Question</button>
-              </div>
-            </div>
-          </div>
-
-          {/* Right — Performance Panel */}
-          <div style={{ width: 280, borderLeft: '1px solid var(--border)', background: 'var(--surface)', overflowY: 'auto', flexShrink: 0, padding: '24px 20px' }}>
-            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 16 }}>{trackTitle} Readiness</div>
-            {/* Readiness ring */}
-            <div style={{ textAlign: 'center', marginBottom: 24 }}>
-              <div style={{ width: 100, height: 100, margin: '0 auto', position: 'relative' }}>
-                <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%' }}>
-                  <path d="M18 2.0845a 15.9155 15.9155 0 0 1 0 31.831a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--border)" strokeWidth="3"/>
-                  <path d="M18 2.0845a 15.9155 15.9155 0 0 1 0 31.831a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke={readiness >= 70 ? '#22c55e' : readiness >= 40 ? '#f59e0b' : '#ef4444'} strokeWidth="3" strokeDasharray={`${readiness}, 100`} strokeLinecap="round"/>
-                </svg>
-                <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Instrument Serif', serif", fontSize: 28, letterSpacing: '-0.5px', color: 'var(--text)' }}>{readiness}%</span>
-              </div>
-            </div>
-            {/* Stats */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 24 }}>
-              {[{n:perf.seen,l:'Attempted',c:'var(--text)'},{n:perf.pass,l:'Passed',c:'#22c55e'},{n:perf.partial,l:'Partial',c:'#f59e0b'},{n:perf.fail,l:'Failed',c:'#ef4444'}].map(s => (
-                <div key={s.l} style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 12px', textAlign: 'center' }}>
-                  <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: s.c, lineHeight: 1 }}>{s.n}</div>
-                  <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 4 }}>{s.l}</div>
-                </div>
-              ))}
-            </div>
-            {/* Weak areas */}
-            {(() => {
-              const weakCats = categories.filter(c => c !== 'All').map(c => {
-                const d = perf.byCat[c] || { seen: 0, pass: 0 };
-                return { cat: c, rate: d.seen > 0 ? d.pass / d.seen : -1, seen: d.seen };
-              }).filter(c => c.seen > 0 && c.rate < 0.6).sort((a, b) => a.rate - b.rate);
-              if (weakCats.length === 0) return null;
-              return (
-                <div>
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#dc2626', marginBottom: 10 }}>Focus Areas</div>
-                  {weakCats.slice(0, 4).map(w => (
-                    <div key={w.cat} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--border)', fontSize: 12 }}>
-                      <span style={{ color: 'var(--text)', fontWeight: 500 }}>{w.cat}</span>
-                      <span style={{ color: '#dc2626', fontWeight: 700 }}>{Math.round(w.rate * 100)}%</span>
-                    </div>
-                  ))}
-                </div>
-              );
-            })()}
-          </div>
-        </div>
-      </main>
-
-      {/* Review modal — reuse same pattern */}
-      {showReview && (
-        <div onClick={() => setShowReview(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 250, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 20, width: '100%', maxWidth: 760, maxHeight: '86vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-            <div style={{ padding: '22px 26px 18px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: 'var(--text)', letterSpacing: '-0.5px' }}>Review <em style={{ fontStyle: 'italic' }}>History</em></div>
-                <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4 }}>Your past answers and interviewer feedback.</div>
-              </div>
-              <button onClick={() => setShowReview(false)} type="button" style={{ width: 32, height: 32, borderRadius: 8, border: '1.5px solid var(--border)', background: 'var(--surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: '16px 26px' }}>
-              {reviewLog.filter(r => r.track === activeTrack).map(r => (
-                <div key={r.id} style={{ padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{r.cardQ.slice(0, 80)}{r.cardQ.length > 80 ? '...' : ''}</span>
-                    <span className={`flash-verdict-badge ${r.verdict}`} style={{ fontSize: 10, padding: '2px 8px', borderRadius: 4 }}>{r.verdict === 'pass' ? 'Pass' : r.verdict === 'partial' ? 'Partial' : 'Fail'}</span>
+            return (
+              <div key={cat.name} className={`mi-cat-row${isExp ? ' expanded' : ''}`}>
+                <div className="mi-cat-header" onClick={() => toggleCat(cat.name)}>
+                  <div className="mi-cat-icon">
+                    <svg fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   </div>
-                  <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 4 }}><strong>You:</strong> {r.userAnswer.slice(0, 120)}{r.userAnswer.length > 120 ? '...' : ''}</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-2)' }}><strong>Feedback:</strong> {r.feedback.slice(0, 150)}{r.feedback.length > 150 ? '...' : ''}</div>
+                  <div className="mi-cat-info">
+                    <div className="mi-cat-name">{cat.name} <span style={{ fontWeight: 400, color: 'var(--text-3)', fontSize: 12 }}>({attempted}/{total} complete)</span></div>
+                    <div className="mi-cat-bar"><div className="mi-cat-bar-fill" style={{ width: `${pct}%` }} /></div>
+                  </div>
+                  <div className="mi-cat-stat">
+                    <div className={`mi-cat-stat-val${subs > 0 ? '' : ' neutral'}`}>{subs}</div>
+                    <div className="mi-cat-stat-label">Submissions</div>
+                  </div>
+                  <div className="mi-cat-stat">
+                    <div className={`mi-cat-stat-val ${catBest ? gCls(catBest) : 'neutral'}`}>
+                      {catBest ? <>{catBest === 'Bad' ? ThumbDown : ThumbUp} {catBest}</> : '--'}
+                    </div>
+                    <div className="mi-cat-stat-label">Best</div>
+                  </div>
+                  <div className="mi-cat-stat">
+                    <div className={`mi-cat-stat-val ${catAvg ? gCls(catAvg) : 'neutral'}`}>
+                      {catAvg ? <>{catAvg === 'Bad' ? ThumbDown : ThumbUp} {catAvg}</> : '--'}
+                    </div>
+                    <div className="mi-cat-stat-label">Average</div>
+                  </div>
+                  <div className="mi-cat-chevron">
+                    <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                  </div>
                 </div>
-              ))}
-              {reviewLog.filter(r => r.track === activeTrack).length === 0 && (
-                <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-3)', fontSize: 13 }}>No review history for this track yet.</div>
-              )}
-            </div>
-          </div>
+
+                {isExp && (
+                  <div className="mi-q-list">
+                    {cat.cards.map(card => {
+                      const cqid = makeQid(activeTrack.id, card.q);
+                      const cBest = bestForQ(cqid);
+                      const isDone = cBest !== null;
+                      return (
+                        <div key={card.q} className="mi-q-row" onClick={() => openQuestion(card)}>
+                          <div className={`mi-q-status${isDone ? ' done' : ''}`}>
+                            {isDone && <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>}
+                          </div>
+                          <div className="mi-q-title">{card.q}</div>
+                          <div className="mi-q-pills">
+                            <span className="mi-q-pill cat-pill">{card.category}</span>
+                            <span className="mi-q-pill diff-pill">{card.difficulty || 'Intermediate'}</span>
+                          </div>
+                          {cBest && (
+                            <div className={`mi-q-score ${gCls(cBest)}`}>
+                              {cBest === 'Bad' ? ThumbDown : ThumbUp}
+                              {cBest}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
-      )}
+      </div></main>
     </div>
   );
 }
