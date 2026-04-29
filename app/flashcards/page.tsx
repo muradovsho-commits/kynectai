@@ -97,8 +97,6 @@ function ProModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-}
-
 export default function FlashcardsPage() {
   return (
     <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>}>
