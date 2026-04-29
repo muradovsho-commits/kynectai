@@ -13,7 +13,6 @@ import { ST_FLASHCARDS } from './st-flashcard-data';
 import { ER_FLASHCARDS, RE_FLASHCARDS, VC_FLASHCARDS, RX_FLASHCARDS } from './other-flashcard-data';
 
 type Track = { id: string; title: string; desc: string; cards: number; iconClass: string; icon: React.ReactNode };
-type Score = { accuracy: number; depth: number; clarity: number; verdict: string; tip: string };
 type PerfData = { seen: number; pass: number; partial: number; fail: number; byCat: Record<string, { seen: number; pass: number }> };
 type Bookmark = { track: string; q: string; savedAt: number };
 
@@ -24,21 +23,6 @@ function saveBookmarks(b: Bookmark[]) { localStorage.setItem(BOOKMARKS_KEY, JSON
 
 const BM_ICON = <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>;
 const BM_ICON_FILLED = <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" stroke="currentColor" strokeWidth="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>;
-type ReviewEntry = {
-  id: string;
-  track: string;
-  trackTitle: string;
-  cardQ: string;
-  cardA: string;
-  category: string;
-  difficulty: string;
-  userAnswer: string;
-  feedback: string;
-  score?: Score;
-  verdict: string;
-  at: number;
-};
-
 const TRACKS: Track[] = [
   {id:'ib',title:'Investment Banking',desc:'Accounting, DCF, M&A, LBO, and behavioral questions reported across bulge brackets, elite boutiques, and middle market banks.',cards:IB_FLASHCARDS.length,iconClass:'icon-ib',icon:<svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>},
   {id:'pe',title:'Private Equity',desc:'LBO mechanics, fund economics, deal process, and operational value creation from mega-funds to middle market sponsors.',cards:PE_FLASHCARDS.length,iconClass:'icon-pe',icon:<svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>},
@@ -113,46 +97,6 @@ function ProModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-// Performance sidebar
-function PerfPanel({ perf, categories, trackTitle }: { perf: PerfData; categories: string[]; trackTitle?: string }) {
-  const readiness = perf.seen > 0 ? Math.round((perf.pass / perf.seen) * 100) : 0;
-  const weakCats = categories.filter(c => c !== 'All').map(c => {
-    const d = perf.byCat[c] || { seen: 0, pass: 0 };
-    return { cat: c, rate: d.seen > 0 ? d.pass / d.seen : -1, seen: d.seen };
-  }).filter(c => c.seen > 0 && c.rate < 0.6).sort((a, b) => a.rate - b.rate);
-
-  return (
-    <div className="perf-panel">
-      <div className="perf-panel-title">{trackTitle || 'Performance'}</div>
-      <div className="perf-readiness">
-        <div className="perf-readiness-ring">
-          <svg viewBox="0 0 36 36">
-            <path d="M18 2.0845a 15.9155 15.9155 0 0 1 0 31.831a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--border)" strokeWidth="3"/>
-            <path d="M18 2.0845a 15.9155 15.9155 0 0 1 0 31.831a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke={readiness >= 70 ? '#22c55e' : readiness >= 40 ? '#f59e0b' : '#ef4444'} strokeWidth="3" strokeDasharray={`${readiness}, 100`} strokeLinecap="round"/>
-          </svg>
-          <span className="perf-readiness-num">{readiness}%</span>
-        </div>
-        <div className="perf-readiness-label">{trackTitle ? `${trackTitle} Readiness` : 'Interview Readiness'}</div>
-      </div>
-      <div className="perf-stats-grid">
-        <div className="perf-stat"><span className="perf-stat-n">{perf.seen}</span><span className="perf-stat-l">Attempted</span></div>
-        <div className="perf-stat"><span className="perf-stat-n" style={{color:'#22c55e'}}>{perf.pass}</span><span className="perf-stat-l">Passed</span></div>
-        <div className="perf-stat"><span className="perf-stat-n" style={{color:'#f59e0b'}}>{perf.partial}</span><span className="perf-stat-l">Partial</span></div>
-        <div className="perf-stat"><span className="perf-stat-n" style={{color:'#ef4444'}}>{perf.fail}</span><span className="perf-stat-l">Failed</span></div>
-      </div>
-      {weakCats.length > 0 && (
-        <div className="perf-weak">
-          <div className="perf-weak-title">Focus Areas</div>
-          {weakCats.slice(0, 3).map(w => (
-            <div key={w.cat} className="perf-weak-row">
-              <span>{w.cat}</span>
-              <span className="perf-weak-pct">{Math.round(w.rate * 100)}%</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
 }
 
 export default function FlashcardsPage() {
@@ -174,93 +118,21 @@ function FlashcardsContent() {
   const [filterDiff, setFilterDiff] = useState('All');
   const [shuffleKey, setShuffleKey] = useState(0);
   // Pro features
-  const [mode, setMode] = useState<'practice' | 'interview'>('practice');
   const [viewMode, setViewMode] = useState<'single' | 'grid'>('single');
   const [showProModal, setShowProModal] = useState(false);
-  const [userInput, setUserInput] = useState('');
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiHistory, setAiHistory] = useState<{ role: string; content: string; score?: Score }[]>([]);
   const [gridFlipped, setGridFlipped] = useState<Record<number, boolean>>({});
   const [showInsight, setShowInsight] = useState(false);
-  // Voice recording
-  const [isRecording, setIsRecording] = useState(false);
-  const [voiceSupported, setVoiceSupported] = useState(false);
-  const [voiceError, setVoiceError] = useState<string | null>(null);
-  const recognitionRef = useRef<any>(null);
-  const baseInputRef = useRef<string>(''); // text before current recording session
   // Performance
   const [perf, setPerf] = useState<PerfData>({ seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} });
-  // Review log (per-attempt history)
-  const [reviewLog, setReviewLog] = useState<ReviewEntry[]>([]);
-  const [showReview, setShowReview] = useState(false);
-  const [reviewFilter, setReviewFilter] = useState<'all' | 'pass' | 'partial' | 'fail'>('all');
-  const chatEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [showBookmarksOnly, setShowBookmarksOnly] = useState(false);
-
-  // Detect Web Speech API support
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    setVoiceSupported(!!SR);
-  }, []);
-
-  // Cleanup recognition on unmount or mode switch
-  useEffect(() => {
-    return () => { try { recognitionRef.current?.stop(); } catch {} };
-  }, []);
-
-  const toggleRecording = () => {
-    setVoiceError(null);
-    if (isRecording) {
-      try { recognitionRef.current?.stop(); } catch {}
-      return;
-    }
-    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SR) { setVoiceError('Your browser does not support voice recording. Try Chrome or Edge.'); return; }
-    const rec = new SR();
-    rec.continuous = true;
-    rec.interimResults = true;
-    rec.lang = 'en-US';
-    baseInputRef.current = userInput ? userInput.trimEnd() + ' ' : '';
-    rec.onresult = (event: any) => {
-      let interim = '';
-      let final = '';
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const t = event.results[i][0].transcript;
-        if (event.results[i].isFinal) final += t + ' ';
-        else interim += t;
-      }
-      if (final) baseInputRef.current += final;
-      setUserInput(baseInputRef.current + interim);
-    };
-    rec.onerror = (event: any) => {
-      const err = event.error || 'unknown';
-      if (err === 'not-allowed' || err === 'service-not-allowed') setVoiceError('Microphone access denied. Enable it in your browser settings.');
-      else if (err === 'no-speech') setVoiceError('No speech detected. Try again and speak clearly.');
-      else if (err === 'aborted') { /* silent - user-initiated stop */ }
-      else setVoiceError(`Voice error: ${err}`);
-      setIsRecording(false);
-    };
-    rec.onend = () => { setIsRecording(false); };
-    try {
-      rec.start();
-      recognitionRef.current = rec;
-      setIsRecording(true);
-    } catch (e: any) {
-      setVoiceError('Could not start recording. Please try again.');
-      setIsRecording(false);
-    }
-  };
+  const [isPro, setIsPro] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!window.localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
     setIsPro(localStorage.getItem('offerbell_plan') === 'pro');
     import('../lib/plan').then(({ isUserPro }) => { setIsPro(isUserPro()); });
-    const savedReview = localStorage.getItem('offerbell_flash_review');
-    if (savedReview) try { setReviewLog(JSON.parse(savedReview)); } catch { /* */ }
     setBookmarks(loadBookmarks());
 
     // Handle URL params from cross-feature links (e.g. diagnostic review)
@@ -333,97 +205,22 @@ function FlashcardsContent() {
   useEffect(() => { if (idx >= filtered.length && filtered.length > 0) setIdx(0); }, [idx, filtered.length]);
 
   const resetCardState = useCallback(() => {
-    setShowAnswer(false); setAiHistory([]); setUserInput(''); setShowInsight(false);
-    if (isRecording) { try { recognitionRef.current?.stop(); } catch {} }
-    setVoiceError(null);
-  }, [isRecording]);
+    setShowAnswer(false); setShowInsight(false);
+  }, []);
   const goNext = useCallback(() => { if (idx < filtered.length - 1) { setIdx(idx + 1); resetCardState(); } }, [idx, filtered.length, resetCardState]);
   const goPrev = useCallback(() => { if (idx > 0) { setIdx(idx - 1); resetCardState(); } }, [idx, resetCardState]);
 
   useEffect(() => {
-    if (mode === 'interview') return; // disable keyboard in interview mode (textarea needs keys)
     const h = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' || e.key === 'l') goNext();
       if (e.key === 'ArrowLeft' || e.key === 'h') goPrev();
       if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setShowAnswer(p => !p); }
     };
     window.addEventListener('keydown', h); return () => window.removeEventListener('keydown', h);
-  }, [goNext, goPrev, mode]);
-
-  useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [aiHistory]);
+  }, [goNext, goPrev]);
 
   const openTrack = (id: string) => { setActiveTrack(id); setFilterCat('All'); setFilterDiff('All'); setIdx(0); resetCardState(); setShuffleKey(0); setShowBookmarksOnly(false); };
-  const goBack = () => { setActiveTrack(null); setIdx(0); resetCardState(); setMode('practice'); };
-  const handleModeSwitch = (m: 'practice' | 'interview') => {
-    if (m === 'interview' && !isPro) { setShowProModal(true); return; }
-    setMode(m); resetCardState();
-  };
-
-  // AI Interview submit
-  const submitAnswer = async () => {
-    if (!card || !userInput.trim() || aiLoading) return;
-    if (isRecording) { try { recognitionRef.current?.stop(); } catch {} }
-    const answer = userInput.trim();
-    setUserInput('');
-    const newHistory = [...aiHistory, { role: 'user', content: answer }];
-    setAiHistory(newHistory);
-    setAiLoading(true);
-    try {
-      const res = await fetch('/api/interview-mock', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          question: card.q, correctAnswer: card.a, userAnswer: answer,
-          history: newHistory, track: activeTrack,
-        }),
-      });
-      const data = await res.json();
-      if (data.error) { setAiHistory([...newHistory, { role: 'assistant', content: 'Something went wrong - try again.' }]); }
-      else {
-        const entry: { role: string; content: string; score?: Score } = { role: 'assistant', content: data.feedback };
-        if (data.score) {
-          entry.score = data.score;
-          // Update performance - read fresh from localStorage to avoid overwriting practice mode data
-          const verdict = data.score.verdict;
-          const cat = card.category;
-          const freshRaw = localStorage.getItem(perfKey);
-          const np = freshRaw ? JSON.parse(freshRaw) : { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
-          np.seen = (np.seen || 0) + 1;
-          if (verdict === 'pass') np.pass = (np.pass || 0) + 1;
-          else if (verdict === 'partial') np.partial = (np.partial || 0) + 1;
-          else np.fail = (np.fail || 0) + 1;
-          if (!np.byCat[cat]) np.byCat[cat] = { seen: 0, pass: 0 };
-          np.byCat[cat].seen++;
-          if (verdict === 'pass') np.byCat[cat].pass++;
-          savePerf(np);
-          // Append to review log
-          const reviewEntry: ReviewEntry = {
-            id: `rv_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-            track: activeTrack || '',
-            trackTitle: TRACKS.find(t => t.id === activeTrack)?.title || '',
-            cardQ: card.q,
-            cardA: card.a,
-            category: cat,
-            difficulty: (card as any).difficulty || '',
-            userAnswer: answer,
-            feedback: data.feedback,
-            score: data.score,
-            verdict,
-            at: Date.now(),
-          };
-          const freshReviewRaw = localStorage.getItem('offerbell_flash_review');
-          const freshReview: ReviewEntry[] = freshReviewRaw ? JSON.parse(freshReviewRaw) : [];
-          // Prepend newest first, cap at 200 entries
-          const nextLog = [reviewEntry, ...freshReview].slice(0, 200);
-          setReviewLog(nextLog);
-          localStorage.setItem('offerbell_flash_review', JSON.stringify(nextLog));
-        }
-        setAiHistory([...newHistory, entry]);
-      }
-    } catch { setAiHistory([...newHistory, { role: 'assistant', content: 'Network error - please try again.' }]); }
-    setAiLoading(false);
-    setTimeout(() => inputRef.current?.focus(), 100);
-  };
+  const goBack = () => { setActiveTrack(null); setIdx(0); resetCardState(); };
 
   const trackInfo = TRACKS.find(t => t.id === activeTrack);
   const insight = card ? getInsight(card.category) : null;
@@ -483,23 +280,11 @@ function FlashcardsContent() {
     <div className="app">
       <Sidebar activePage="flashcards" />
       <main className="flash-main">
-        <div className={`flash-drill-layout${mode === 'interview' && isPro ? ' with-perf' : ''}`}>
+        <div className="flash-drill-layout">
           <div className="flash-drill">
             <button className="flash-back" onClick={goBack} type="button">{ARROW_L} All Tracks</button>
             <div className="flash-drill-head">
               <div className="flash-drill-title">{trackInfo?.title}</div>
-              {/* Mode toggle */}
-              <div className="flash-mode-toggle">
-                <button className={`flash-mode-btn${mode === 'practice' ? ' active' : ''}`} onClick={() => handleModeSwitch('practice')} type="button">
-                  <svg viewBox="0 0 24 24" width="14" height="14"><rect x="2" y="3" width="20" height="14" rx="2" fill="none" stroke="currentColor" strokeWidth="2"/><path d="M8 21h8M12 17v4" fill="none" stroke="currentColor" strokeWidth="2"/></svg>
-                  Practice
-                </button>
-                <button className={`flash-mode-btn${mode === 'interview' ? ' active' : ''}${!isPro ? ' locked' : ''}`} onClick={() => handleModeSwitch('interview')} type="button">
-                  <svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" fill="none" stroke="currentColor" strokeWidth="2"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8" fill="none" stroke="currentColor" strokeWidth="2"/></svg>
-                  Interview Mode
-                  {!isPro && <span className="flash-pro-badge">PRO</span>}
-                </button>
-              </div>
             </div>
 
             {/* Filter bar */}
@@ -530,23 +315,6 @@ function FlashcardsContent() {
                 {BM_ICON_FILLED}
                 {currentTrackBmCount > 0 && <span className="flash-bm-count">{currentTrackBmCount}</span>}
               </button>
-              {mode === 'interview' && isPro && (
-                <button
-                  className="flash-shuffle"
-                  onClick={() => setShowReview(true)}
-                  type="button"
-                  title="Review your past answers"
-                  style={{ position: 'relative' }}
-                >
-                  <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 10 9 10"/></svg>
-                  Review
-                  {reviewLog.filter(r => !activeTrack || r.track === activeTrack).length > 0 && (
-                    <span style={{ marginLeft: 6, background: 'var(--text)', color: 'var(--surface)', fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 10, minWidth: 18, textAlign: 'center' }}>
-                      {reviewLog.filter(r => !activeTrack || r.track === activeTrack).length}
-                    </span>
-                  )}
-                </button>
-              )}
             </div>
 
             {/* ═══ SINGLE CARD VIEW ═══ */}
@@ -572,7 +340,6 @@ function FlashcardsContent() {
                     </div>
 
                     {/* ── PRACTICE MODE ── */}
-                    {mode === 'practice' && (
                       <>
                         <button className={`flash-show-btn${showAnswer ? ' shown' : ''}`} onClick={() => {
                           const wasHidden = !showAnswer;
@@ -623,88 +390,6 @@ function FlashcardsContent() {
                       </>
                     )}
 
-                    {/* ── INTERVIEW MODE ── */}
-                    {mode === 'interview' && isPro && (
-                      <div className="flash-interview-area">
-                        {aiHistory.length === 0 && (
-                          <div className="flash-interview-prompt">Answer as you would in a real interview. The AI interviewer will evaluate your response and push deeper.</div>
-                        )}
-                        {aiHistory.map((msg, i) => (
-                          <div key={i} className={`flash-chat-msg ${msg.role}`}>
-                            <div className="flash-chat-label">{msg.role === 'user' ? 'You' : ' Interviewer'}</div>
-                            <div className="flash-chat-text">{msg.content}</div>
-                            {msg.score && (
-                              <div className={`flash-score-card verdict-${msg.score.verdict}`}>
-                                <div className="flash-score-header">
-                                  <span className={`flash-verdict-badge ${msg.score.verdict}`}>
-                                    {msg.score.verdict === 'pass' ? ' Pass' : msg.score.verdict === 'partial' ? '~ Partial' : ' Fail'}
-                                  </span>
-                                </div>
-                                <div className="flash-score-bars">
-                                  <div className="flash-score-row"><span>Accuracy</span><div className="flash-score-track"><div className="flash-score-fill" style={{ width: `${msg.score.accuracy * 10}%` }} /></div><span>{msg.score.accuracy}/10</span></div>
-                                  <div className="flash-score-row"><span>Depth</span><div className="flash-score-track"><div className="flash-score-fill" style={{ width: `${msg.score.depth * 10}%` }} /></div><span>{msg.score.depth}/10</span></div>
-                                  <div className="flash-score-row"><span>Clarity</span><div className="flash-score-track"><div className="flash-score-fill" style={{ width: `${msg.score.clarity * 10}%` }} /></div><span>{msg.score.clarity}/10</span></div>
-                                </div>
-                                {msg.score.tip && <div className="flash-score-tip"> {msg.score.tip}</div>}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                        {aiLoading && <div className="flash-chat-msg assistant"><div className="flash-chat-label"> Interviewer</div><div className="flash-chat-text flash-typing">Evaluating<span className="dot-1">.</span><span className="dot-2">.</span><span className="dot-3">.</span></div></div>}
-                        <div ref={chatEndRef} />
-                        {voiceError && (
-                          <div style={{ fontSize: 11, color: '#dc2626', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, padding: '8px 12px', margin: '8px 0', display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                            {voiceError}
-                          </div>
-                        )}
-                        {isRecording && (
-                          <div style={{ fontSize: 11, color: '#dc2626', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8, padding: '6px 4px' }}>
-                            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#dc2626', animation: 'flash-rec-pulse 1.1s ease-in-out infinite' }} />
-                            Recording... speak your answer, then tap the mic again to stop
-                          </div>
-                        )}
-                        <div className="flash-interview-input">
-                          <textarea
-                            ref={inputRef}
-                            value={userInput}
-                            onChange={e => setUserInput(e.target.value)}
-                            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitAnswer(); }}}
-                            placeholder={voiceSupported ? 'Tap the mic to speak your answer, or type it here...' : 'Type your answer as you would in a real interview...'}
-                            rows={3}
-                          />
-                          {voiceSupported && (
-                            <button
-                              onClick={toggleRecording}
-                              disabled={aiLoading}
-                              type="button"
-                              title={isRecording ? 'Stop recording' : 'Record your answer'}
-                              style={{
-                                background: isRecording ? '#dc2626' : 'var(--surface-2)',
-                                border: `1.5px solid ${isRecording ? '#dc2626' : 'var(--border)'}`,
-                                color: isRecording ? '#fff' : 'var(--text-2)',
-                                transition: 'all 0.15s',
-                              }}
-                            >
-                              {isRecording ? (
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
-                              ) : (
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-                              )}
-                            </button>
-                          )}
-                          <button onClick={submitAnswer} disabled={!userInput.trim() || aiLoading} type="button">
-                            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                          </button>
-                        </div>
-                        <style jsx>{`
-                          @keyframes flash-rec-pulse {
-                            0%, 100% { opacity: 1; transform: scale(1); }
-                            50% { opacity: 0.4; transform: scale(1.3); }
-                          }
-                        `}</style>
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -714,8 +399,7 @@ function FlashcardsContent() {
                   <span className="flash-nav-counter">Question {idx + 1} of {filtered.length}</span>
                   <button className="flash-nav-btn" onClick={goNext} disabled={idx >= filtered.length - 1} type="button">Next {ARROW_R}</button>
                 </div>
-                {mode === 'practice' && (
-                  <div className="flash-keyboard-hint">
+                <div className="flash-keyboard-hint">
                     <span><span className="flash-kbd">←</span> Previous</span>
                     <span><span className="flash-kbd">→</span> Next</span>
                     <span><span className="flash-kbd">⎵</span> Toggle Answer</span>
@@ -783,149 +467,9 @@ function FlashcardsContent() {
             )}
           </div>
 
-          {/* Performance panel (Pro, interview mode) */}
-          {mode === 'interview' && isPro && (
-            <PerfPanel perf={perf} categories={categories} trackTitle={TRACKS.find(t => t.id === activeTrack)?.title} />
-          )}
         </div>
       </main>
       {showProModal && <ProModal onClose={() => setShowProModal(false)} />}
-      {showReview && (
-        <div onClick={() => setShowReview(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 250, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 20, width: '100%', maxWidth: 760, maxHeight: '86vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 24px 60px rgba(0,0,0,0.2)' }}>
-            {/* Header */}
-            <div style={{ padding: '22px 26px 18px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
-              <div>
-                <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: 'var(--text)', letterSpacing: '-0.5px' }}>Review <em style={{ fontStyle: 'italic' }}>History</em></div>
-                <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4 }}>Go back to any question you&apos;ve answered. See what the interviewer said and retry if you want another shot.</div>
-              </div>
-              <button onClick={() => setShowReview(false)} type="button" style={{ width: 32, height: 32, borderRadius: 8, border: '1.5px solid var(--border)', background: 'var(--surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-
-            {/* Filter chips */}
-            {(() => {
-              const tlog = reviewLog.filter(r => !activeTrack || r.track === activeTrack);
-              const cpass = tlog.filter(r => r.verdict === 'pass').length;
-              const cpart = tlog.filter(r => r.verdict === 'partial').length;
-              const cfail = tlog.filter(r => r.verdict === 'fail').length;
-              const visible = reviewFilter === 'all' ? tlog : tlog.filter(r => r.verdict === reviewFilter);
-              const chip = (key: typeof reviewFilter, label: string, count: number, color: string) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => setReviewFilter(key)}
-                  style={{
-                    padding: '7px 14px', borderRadius: 999, border: `1.5px solid ${reviewFilter === key ? color : 'var(--border)'}`,
-                    background: reviewFilter === key ? color : 'var(--surface-2)', color: reviewFilter === key ? '#fff' : 'var(--text-2)',
-                    fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: "'Sora', sans-serif", display: 'inline-flex', alignItems: 'center', gap: 6, transition: 'all 0.15s'
-                  }}
-                >
-                  {label}
-                  <span style={{ background: reviewFilter === key ? 'rgba(255,255,255,0.25)' : 'var(--surface)', color: reviewFilter === key ? '#fff' : 'var(--text-3)', padding: '1px 7px', borderRadius: 999, fontSize: 10, fontWeight: 800 }}>{count}</span>
-                </button>
-              );
-              return (
-                <>
-                  <div style={{ padding: '14px 26px 12px', display: 'flex', gap: 6, flexWrap: 'wrap', borderBottom: '1px solid var(--border)' }}>
-                    {chip('all', 'All', tlog.length, '#111827')}
-                    {chip('pass', 'Passed', cpass, '#16a34a')}
-                    {chip('partial', 'Partial', cpart, '#d97706')}
-                    {chip('fail', 'Missed', cfail, '#dc2626')}
-                    <div style={{ flex: 1 }} />
-                    {tlog.length > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (!confirm('Clear your review history? This cannot be undone.')) return;
-                          const others = reviewLog.filter(r => activeTrack && r.track !== activeTrack);
-                          setReviewLog(others);
-                          localStorage.setItem('offerbell_flash_review', JSON.stringify(others));
-                        }}
-                        style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-3)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
-                      >
-                        Clear history
-                      </button>
-                    )}
-                  </div>
-
-                  {/* List */}
-                  <div style={{ flex: 1, overflowY: 'auto', padding: '14px 20px 20px' }}>
-                    {visible.length === 0 && (
-                      <div style={{ textAlign: 'center', padding: '50px 20px', color: 'var(--text-3)', fontSize: 13 }}>
-                        {tlog.length === 0 ? 'No answers recorded yet. Answer a question in Interview Mode to start building your review history.' : 'No questions match this filter.'}
-                      </div>
-                    )}
-                    {visible.map((r) => {
-                      const vColor = r.verdict === 'pass' ? '#16a34a' : r.verdict === 'partial' ? '#d97706' : '#dc2626';
-                      const vLabel = r.verdict === 'pass' ? 'Passed' : r.verdict === 'partial' ? 'Partial' : 'Missed';
-                      const when = new Date(r.at);
-                      const ago = (() => {
-                        const s = (Date.now() - r.at) / 1000;
-                        if (s < 60) return 'just now';
-                        if (s < 3600) return `${Math.floor(s/60)}m ago`;
-                        if (s < 86400) return `${Math.floor(s/3600)}h ago`;
-                        return `${when.toLocaleDateString()}`;
-                      })();
-                      return (
-                        <div key={r.id} style={{ background: 'var(--surface-2)', border: '1.5px solid var(--border)', borderRadius: 12, padding: '14px 16px', marginBottom: 10 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-                            <span style={{ fontSize: 10, fontWeight: 800, color: '#fff', background: vColor, padding: '3px 8px', borderRadius: 6, letterSpacing: 0.3, textTransform: 'uppercase' }}>{vLabel}</span>
-                            {r.score && (
-                              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-2)' }}>
-                                {r.score.accuracy}/10 accuracy · {r.score.depth}/10 depth · {r.score.clarity}/10 clarity
-                              </span>
-                            )}
-                            <span style={{ fontSize: 11, color: 'var(--text-3)' }}>· {r.category || '-'}</span>
-                            <div style={{ flex: 1 }} />
-                            <span style={{ fontSize: 11, color: 'var(--text-3)' }}>{ago}</span>
-                          </div>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 8, lineHeight: 1.45 }}>{r.cardQ}</div>
-                          <details style={{ marginBottom: 8 }}>
-                            <summary style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-3)', cursor: 'pointer', padding: '4px 0' }}>Your answer</summary>
-                            <div style={{ fontSize: 12, color: 'var(--text-2)', lineHeight: 1.6, padding: '6px 10px', background: 'var(--surface)', borderRadius: 8, marginTop: 4, whiteSpace: 'pre-wrap' }}>{r.userAnswer}</div>
-                          </details>
-                          <details>
-                            <summary style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-3)', cursor: 'pointer', padding: '4px 0' }}>Interviewer feedback{r.score?.tip ? ' + tip' : ''}</summary>
-                            <div style={{ fontSize: 12, color: 'var(--text-2)', lineHeight: 1.6, padding: '6px 10px', background: 'var(--surface)', borderRadius: 8, marginTop: 4, whiteSpace: 'pre-wrap' }}>
-                              {r.feedback}
-                              {r.score?.tip && (<><br/><br/><strong style={{ color: 'var(--text)' }}>Tip:</strong> {r.score.tip}</>)}
-                            </div>
-                          </details>
-                          <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                // Jump to that card: switch track if needed, reset filters, find index
-                                if (r.track && r.track !== activeTrack) {
-                                  setActiveTrack(r.track);
-                                }
-                                setFilterCat('All'); setFilterDiff('All'); setShuffleKey(0);
-                                setShowReview(false);
-                                // Defer index set until filtered recalculates
-                                setTimeout(() => {
-                                  const list = CARD_MAP[r.track] || [];
-                                  const foundIdx = list.findIndex((c: any) => c.q === r.cardQ);
-                                  if (foundIdx >= 0) { setIdx(foundIdx); resetCardState(); }
-                                }, 50);
-                              }}
-                              style={{ fontSize: 12, fontWeight: 600, padding: '7px 14px', borderRadius: 8, border: 'none', background: 'var(--text)', color: 'var(--surface)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 }}
-                            >
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 10 9 10"/></svg>
-                              Retry this question
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </>
-              );
-            })()}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
