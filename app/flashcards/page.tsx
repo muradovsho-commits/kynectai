@@ -124,7 +124,6 @@ function FlashcardsContent() {
   const [perf, setPerf] = useState<PerfData>({ seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} });
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [showBookmarksOnly, setShowBookmarksOnly] = useState(false);
-  const [isPro, setIsPro] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -386,7 +385,6 @@ function FlashcardsContent() {
                           </button>
                         )}
                       </>
-                    )}
 
                   </div>
                 </div>
@@ -402,7 +400,6 @@ function FlashcardsContent() {
                     <span><span className="flash-kbd">→</span> Next</span>
                     <span><span className="flash-kbd">⎵</span> Toggle Answer</span>
                   </div>
-                )}
               </>
             ) : (
               <div className="flash-card-container"><div className="flash-card-single" style={{ alignItems: 'center', justifyContent: 'center', minHeight: 180 }}><div style={{ color: 'var(--text-3)', fontSize: 14 }}>No questions match the current filters.</div></div></div>
