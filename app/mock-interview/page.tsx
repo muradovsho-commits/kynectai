@@ -231,13 +231,22 @@ export default function MockInterviewPage() {
       if (data.score) {
         const avg = ((data.score.accuracy || 0) + (data.score.depth || 0) + (data.score.clarity || 0)) / 3;
         grade = scoreToGrade(avg);
-        if (data.score.tip) weaknesses.push(data.score.tip);
-        if (data.score.accuracy >= 7) strengths.push('Strong technical accuracy');
-        if (data.score.depth >= 7) strengths.push('Good depth of explanation');
-        if (data.score.clarity >= 7) strengths.push('Clear and structured communication');
-        if (data.score.accuracy < 5) weaknesses.push('Technical accuracy needs improvement');
-        if (data.score.depth < 5) weaknesses.push('Response lacks sufficient depth');
-        if (data.score.clarity < 5) weaknesses.push('Communication could be clearer and more structured');
+        // Use structured strengths/weaknesses from AI if provided
+        if (data.score.strengths && Array.isArray(data.score.strengths)) {
+          strengths = data.score.strengths;
+        } else {
+          if (data.score.accuracy >= 7) strengths.push('Strong technical accuracy');
+          if (data.score.depth >= 7) strengths.push('Good depth of explanation');
+          if (data.score.clarity >= 7) strengths.push('Clear and structured communication');
+        }
+        if (data.score.weaknesses && Array.isArray(data.score.weaknesses)) {
+          weaknesses = data.score.weaknesses;
+        } else {
+          if (data.score.tip) weaknesses.push(data.score.tip);
+          if (data.score.accuracy < 5) weaknesses.push('Technical accuracy needs improvement');
+          if (data.score.depth < 5) weaknesses.push('Response lacks sufficient depth');
+          if (data.score.clarity < 5) weaknesses.push('Communication could be clearer and more structured');
+        }
       }
     } catch {
       overallFeedback = 'Could not connect to AI grader. Please try again.';

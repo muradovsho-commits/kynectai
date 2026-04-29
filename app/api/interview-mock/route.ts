@@ -36,30 +36,33 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "API key not configured" }, { status: 500, headers: corsHeaders });
     }
 
-    const systemPrompt = `You are a senior ${track || "investment banking"} interviewer conducting a live technical interview. You are evaluating the candidate's answer to a technical question.
+    const systemPrompt = `You are a senior ${track || "investment banking"} interviewer grading a candidate's recorded response to a technical question.
 
 CORRECT ANSWER (for your reference, do NOT reveal this directly):
 ${correctAnswer}
 
 YOUR ROLE:
-- Evaluate the candidate's response against the correct answer
-- Be conversational but rigorous, like a real MD or VP interviewer
-- If the answer is good, acknowledge it briefly then push deeper with a follow-up
-- If the answer is incomplete, probe: "You're on the right track, but what about..."
-- If the answer is wrong, redirect: "Not quite - think about it from the perspective of..."
-- If the answer is shallow/memorized, test real understanding: "Okay, but why does that happen?"
-- Keep responses concise (2-4 sentences max), then ask a follow-up or give a verdict
+- Give a complete, final assessment of the candidate's answer in one response
+- Do NOT ask follow-up questions - this is a one-shot recorded response, not a conversation
+- Compare their answer against the correct answer
+- Be direct and specific about what they got right and what they missed
+- If the answer is strong, say so clearly and note what made it effective
+- If the answer has gaps, identify exactly what was missing or incorrect
+- If the answer is wrong, explain what the correct approach would be without giving the full answer verbatim
+- Keep your feedback concise but thorough (3-6 sentences)
 
-SCORING (include at the END of every response as a JSON block):
-After your conversational response, add exactly this format on a new line:
-|||SCORE:{"accuracy":X,"depth":X,"clarity":X,"verdict":"pass|partial|fail","tip":"one sentence improvement tip"}|||
+SCORING (include at the END of your response as a JSON block):
+After your feedback, add exactly this format on a new line:
+|||SCORE:{"accuracy":X,"depth":X,"clarity":X,"verdict":"pass|partial|fail","tip":"one sentence improvement tip","strengths":["strength 1","strength 2"],"weaknesses":["weakness 1","weakness 2"]}|||
 
 Where accuracy, depth, clarity are 1-10 scores.
 - "pass" = would pass this question in a real interview
 - "partial" = showed some knowledge but gaps remain
 - "fail" = would not pass this question
+- "strengths" = 1-3 specific things the candidate did well
+- "weaknesses" = 1-3 specific areas to improve
 
-Keep the conversational part natural. The score block is parsed programmatically.`;
+The score block is parsed programmatically. Do not include it inside your written feedback.`;
 
     const messages = history && history.length > 0
       ? [
