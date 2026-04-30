@@ -26,6 +26,38 @@
 .mi-track-name { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.1px; }
 .mi-track-count { font-size: 11px; color: var(--text-3); margin-top: 2px; }
 
+/* Track picker - compact rows */
+
+/* Track picker - compact rows */
+.mi-pick-list { display: flex; flex-direction: column; gap: 4px; }
+.mi-pick-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 20px; border-radius: 12px;
+  border: 1.5px solid var(--border); background: var(--surface);
+  cursor: pointer; transition: border-color 0.15s, background 0.12s;
+}
+.mi-pick-row:hover { border-color: var(--text-3); background: var(--surface-2); }
+.mi-pick-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: var(--surface-2); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.mi-pick-icon svg { width: 17px; height: 17px; stroke: var(--text-2); fill: none; stroke-width: 1.5; }
+.mi-pick-info { flex: 1; min-width: 0; }
+.mi-pick-name { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.1px; }
+.mi-pick-meta { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.mi-pick-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--text-3); }
+.mi-pick-progress { display: flex; align-items: center; gap: 8px; flex-shrink: 0; min-width: 80px; }
+.mi-pick-bar { width: 48px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.mi-pick-bar-fill { height: 100%; border-radius: 2px; background: #16a34a; }
+.mi-pick-pct { font-size: 11px; font-weight: 700; color: var(--text-3); min-width: 28px; }
+.mi-pick-best { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.mi-pick-best svg { width: 13px; height: 13px; }
+.mi-pick-best.great { color: #16a34a; }
+.mi-pick-best.good { color: #3b82f6; }
+.mi-pick-best.bad { color: #dc2626; }
+.mi-pick-arrow { color: var(--text-3); flex-shrink: 0; display: flex; align-items: center; }
+
 /* Back button */
 .mi-back {
   display: inline-flex; align-items: center; gap: 6px;
@@ -236,6 +268,8 @@
 @media (max-width: 900px) {
   .mi-main { margin-left: 0; }
   .mi-wrap { padding: 24px 16px 60px; }
+  .mi-pick-progress { display: none; }
+  .mi-pick-row { padding: 12px 16px; gap: 10px; }
   .mi-cat-header { grid-template-columns: 40px 1fr auto 28px; gap: 10px; padding: 14px 16px; }
   .mi-cat-stat:not(:last-of-type) { display: none; }
   .mi-q-row { padding-left: 56px; }

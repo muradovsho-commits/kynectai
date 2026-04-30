@@ -305,15 +305,39 @@ export default function MockInterviewPage() {
         <div className="mi-label">Practice</div>
         <div className="mi-title">Mock <em>Interview</em></div>
         <div className="mi-sub">Record yourself answering real interview questions. Get AI feedback on accuracy, depth, and clarity with video playback of every attempt.</div>
-        <div className="mi-track-grid">
+        <div className="mi-pick-list">
           {TRACKS.map(t => {
-            const attempted = new Set(allResponses.filter(r => r.questionId.startsWith(t.id + '::')).map(r => r.questionId)).size;
+            const total = t.cards.length;
+            const attemptedSet = new Set(allResponses.filter(r => r.questionId.startsWith(t.id + '::')).map(r => r.questionId));
+            const attempted = attemptedSet.size;
+            const pct = total > 0 ? Math.round((attempted / total) * 100) : 0;
+            const tResps = allResponses.filter(r => r.questionId.startsWith(t.id + '::'));
+            const tBest: Grade | null = tResps.length === 0 ? null : tResps.some(r => r.grade === 'Great') ? 'Great' : tResps.some(r => r.grade === 'Good') ? 'Good' : 'Bad';
             return (
-              <div key={t.id} className="mi-track-card" onClick={() => openTrack(t)}>
-                <div className="mi-track-icon">{t.icon}</div>
-                <div>
-                  <div className="mi-track-name">{t.title}</div>
-                  <div className="mi-track-count">{t.cards.length} questions{attempted > 0 ? ` - ${attempted} attempted` : ''}</div>
+              <div key={t.id} className="mi-pick-row" onClick={() => openTrack(t)}>
+                <div className="mi-pick-icon">{t.icon}</div>
+                <div className="mi-pick-info">
+                  <div className="mi-pick-name">{t.title}</div>
+                  <div className="mi-pick-meta">
+                    <span>{total} questions</span>
+                    {attempted > 0 && <span className="mi-pick-dot" />}
+                    {attempted > 0 && <span>{attempted} attempted</span>}
+                  </div>
+                </div>
+                {attempted > 0 && (
+                  <div className="mi-pick-progress">
+                    <div className="mi-pick-bar"><div className="mi-pick-bar-fill" style={{ width: `${pct}%` }} /></div>
+                    <span className="mi-pick-pct">{pct}%</span>
+                  </div>
+                )}
+                {tBest && (
+                  <div className={`mi-pick-best ${gCls(tBest)}`}>
+                    {tBest === 'Bad' ? ThumbDown : ThumbUp}
+                    {tBest}
+                  </div>
+                )}
+                <div className="mi-pick-arrow">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
                 </div>
               </div>
             );
