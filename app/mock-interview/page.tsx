@@ -87,6 +87,9 @@ export default function MockInterviewPage() {
   const [recordingTime, setRecordingTime] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [grading, setGrading] = useState(false);
+  const [recordingPhase, setRecordingPhase] = useState<'idle' | 'preview' | 'countdown' | 'recording'>('idle');
+  const [countdown, setCountdown] = useState(3);
+  const MAX_RECORDING_SEC = 60;
 
   const [allResponses, setAllResponses] = useState<ResponseEntry[]>([]);
   const [sessionVideos, setSessionVideos] = useState<Record<string, string>>({});
@@ -107,9 +110,9 @@ export default function MockInterviewPage() {
     setAllResponses(loadResponses());
   }, [router]);
 
-  // Camera lifecycle
+  // Camera lifecycle — only activate when in preview/countdown/recording
   useEffect(() => {
-    if (!activeQuestion) {
+    if (!activeQuestion || recordingPhase === 'idle') {
       if (streamRef.current) { streamRef.current.getTracks().forEach(t => t.stop()); streamRef.current = null; }
       setCameraReady(false);
       return;
@@ -125,13 +128,20 @@ export default function MockInterviewPage() {
       } catch { setCameraReady(false); }
     })();
     return () => { cancelled = true; };
-  }, [activeQuestion]);
+  }, [activeQuestion, recordingPhase]);
 
-  // Recording timer
+  // Recording timer + auto-stop at 60s
   useEffect(() => {
     if (isRecording) {
       setRecordingTime(0);
-      timerRef.current = setInterval(() => setRecordingTime(t => t + 1), 1000);
+      timerRef.current = setInterval(() => setRecordingTime(t => {
+        if (t + 1 >= MAX_RECORDING_SEC) {
+          // Auto-stop
+          setTimeout(() => stopRecording(), 0);
+          return MAX_RECORDING_SEC;
+        }
+        return t + 1;
+      }), 1000);
     } else {
       if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
     }
@@ -153,12 +163,34 @@ export default function MockInterviewPage() {
   // Navigation
   function openTrack(t: TrackDef) { setActiveTrack(t); setExpandedCats(new Set()); setActiveQuestion(null); }
   function toggleCat(c: string) { setExpandedCats(prev => { const n = new Set(prev); n.has(c) ? n.delete(c) : n.add(c); return n; }); }
-  function openQuestion(card: Flashcard) { setActiveQuestion(card); setShowAnswer(false); setIsRecording(false); setRecordingTime(0); transcriptRef.current = ''; }
-  function backToCats() { setActiveQuestion(null); setShowAnswer(false); if (isRecording) stopRecording(); }
-  function backToTracks() { setActiveTrack(null); setActiveQuestion(null); }
+  function openQuestion(card: Flashcard) { setActiveQuestion(card); setShowAnswer(false); setIsRecording(false); setRecordingTime(0); setRecordingPhase('idle'); transcriptRef.current = ''; }
+  function backToCats() { setActiveQuestion(null); setShowAnswer(false); setRecordingPhase('idle'); if (isRecording) stopRecording(); }
+  function backToTracks() { setActiveTrack(null); setActiveQuestion(null); setRecordingPhase('idle'); }
 
-  // Recording
-  function startRecording() {
+  // Phase 1: Enter preview (camera activates)
+  function enterPreview() {
+    setRecordingPhase('preview');
+  }
+
+  // Phase 2: Start countdown 3..2..1 then record
+  function beginCountdown() {
+    setCountdown(3);
+    setRecordingPhase('countdown');
+    let c = 3;
+    const iv = setInterval(() => {
+      c--;
+      if (c <= 0) {
+        clearInterval(iv);
+        setRecordingPhase('recording');
+        actuallyStartRecording();
+      } else {
+        setCountdown(c);
+      }
+    }, 1000);
+  }
+
+  // Phase 3: Actually start media recording
+  function actuallyStartRecording() {
     if (!streamRef.current || !activeQuestion || !activeTrack) return;
     chunksRef.current = [];
     transcriptRef.current = '';
@@ -199,6 +231,7 @@ export default function MockInterviewPage() {
     try { recorderRef.current?.stop(); } catch {}
     try { recognitionRef.current?.stop(); } catch {}
     setIsRecording(false);
+    setRecordingPhase('idle');
   }
 
   async function processRecording() {
@@ -405,75 +438,125 @@ export default function MockInterviewPage() {
             Back
           </button>
 
-          <div className="mi-detail-header">
-            <div>
-              <div className="mi-detail-label">Question</div>
-              <div className="mi-detail-title">{activeQuestion.q}</div>
-            </div>
-            <div className="mi-detail-stats">
-              <div className="mi-detail-stat">
-                <div className="mi-detail-stat-val">{qResps.length}</div>
-                <div className="mi-detail-stat-label">Submissions</div>
-              </div>
-              <div className="mi-detail-stat">
-                <div className={`mi-detail-stat-val ${best ? gCls(best) : 'neutral'}`}>{best || '--'}</div>
-                <div className="mi-detail-stat-label">Best</div>
-              </div>
-              <div className="mi-detail-stat">
-                <div className={`mi-detail-stat-val ${avg ? gCls(avg) : 'neutral'}`}>{avg || '--'}</div>
-                <div className="mi-detail-stat-label">Average</div>
-              </div>
-            </div>
-          </div>
+          {/* ═══ RECORDING PHASES ═══ */}
 
-          <div className="mi-actions">
-            {!isRecording ? (
-              <button className="mi-btn-record start" onClick={startRecording} disabled={!cameraReady || grading} type="button">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
-                Record a Response
-              </button>
-            ) : (
-              <button className="mi-btn-record stop" onClick={stopRecording} type="button">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
-                Stop Recording
-              </button>
-            )}
-            <button className="mi-btn-secondary" onClick={() => setShowAnswer(!showAnswer)} type="button">
-              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              {showAnswer ? 'Hide correct answer' : 'View correct answer'}
-            </button>
-          </div>
+          {/* IDLE — show question, stats, record button */}
+          {recordingPhase === 'idle' && (
+            <>
+              <div className="mi-detail-header">
+                <div>
+                  <div className="mi-detail-label">Question</div>
+                  <div className="mi-detail-title">{activeQuestion.q}</div>
+                </div>
+                <div className="mi-detail-stats">
+                  <div className="mi-detail-stat">
+                    <div className="mi-detail-stat-val">{qResps.length}</div>
+                    <div className="mi-detail-stat-label">Submissions</div>
+                  </div>
+                  <div className="mi-detail-stat">
+                    <div className={`mi-detail-stat-val ${best ? gCls(best) : 'neutral'}`}>{best || '--'}</div>
+                    <div className="mi-detail-stat-label">Best</div>
+                  </div>
+                  <div className="mi-detail-stat">
+                    <div className={`mi-detail-stat-val ${avg ? gCls(avg) : 'neutral'}`}>{avg || '--'}</div>
+                    <div className="mi-detail-stat-label">Average</div>
+                  </div>
+                </div>
+              </div>
 
-          {showAnswer && (
-            <div className="mi-answer-box">
-              <div className="mi-answer-label">Correct Answer</div>
-              <div className="mi-answer-text">{activeQuestion.a}</div>
+              <div className="mi-actions">
+                <button className="mi-btn-record start" onClick={enterPreview} disabled={grading} type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                  Record a Response
+                </button>
+                <button className="mi-btn-secondary" onClick={() => setShowAnswer(!showAnswer)} type="button">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  {showAnswer ? 'Hide correct answer' : 'View correct answer'}
+                </button>
+              </div>
+
+              {showAnswer && (
+                <div className="mi-answer-box">
+                  <div className="mi-answer-label">Correct Answer</div>
+                  <div className="mi-answer-text">{activeQuestion.a}</div>
+                </div>
+              )}
+
+              {grading && (
+                <div className="mi-loading"><div className="mi-spinner" />Analyzing your response...</div>
+              )}
+            </>
+          )}
+
+          {/* PREVIEW — camera centered, prompt above, "Record" button below */}
+          {recordingPhase === 'preview' && (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: 640, margin: '0 auto' }}>
+              <div style={{ width: '100%', padding: '16px 20px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12, marginBottom: 20, textAlign: 'center' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 8 }}>Your Prompt</div>
+                <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: 'var(--text)', lineHeight: 1.3, letterSpacing: '-0.3px' }}>{activeQuestion.q}</div>
+              </div>
+              <div className="mi-camera-wrap" style={{ width: '100%', marginBottom: 20 }}>
+                <video ref={videoRef} autoPlay muted playsInline />
+                {!cameraReady && (
+                  <div className="mi-camera-notice">Activating camera...</div>
+                )}
+              </div>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button className="mi-btn-record start" onClick={beginCountdown} disabled={!cameraReady} type="button" style={{ padding: '12px 32px', fontSize: 14 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                  Record a Response
+                </button>
+                <button className="mi-btn-secondary" onClick={() => setRecordingPhase('idle')} type="button">Cancel</button>
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 12 }}>You have 60 seconds to answer. Recording stops automatically.</div>
             </div>
           )}
 
-          <div className="mi-prompt">
-            <div className="mi-prompt-label">Prompt:</div>
-            <div className="mi-prompt-text">{activeQuestion.q}</div>
-          </div>
-
-          <div className="mi-camera-wrap">
-            <video ref={videoRef} autoPlay muted playsInline />
-            {isRecording && (
-              <><div className="mi-recording-dot" /><div className="mi-recording-timer">{fmtTime(recordingTime)}</div></>
-            )}
-            {!isRecording && cameraReady && (
-              <div className="mi-camera-notice">You are not currently being recorded. Click &apos;Record a Response&apos; to get started.</div>
-            )}
-            {!cameraReady && !isRecording && (
-              <div className="mi-camera-notice">Camera access required. Please allow camera permissions.</div>
-            )}
-          </div>
-
-          {grading && (
-            <div className="mi-loading"><div className="mi-spinner" />Analyzing your response...</div>
+          {/* COUNTDOWN — 3...2...1 overlay on camera */}
+          {recordingPhase === 'countdown' && (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: 640, margin: '0 auto' }}>
+              <div style={{ width: '100%', padding: '16px 20px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12, marginBottom: 20, textAlign: 'center' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 8 }}>Your Prompt</div>
+                <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: 'var(--text)', lineHeight: 1.3, letterSpacing: '-0.3px' }}>{activeQuestion.q}</div>
+              </div>
+              <div className="mi-camera-wrap" style={{ width: '100%', marginBottom: 20 }}>
+                <video ref={videoRef} autoPlay muted playsInline />
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 120, color: '#fff', lineHeight: 1, animation: 'mi-countdown-pop 0.6s ease', key: countdown }} key={countdown}>{countdown}</div>
+                </div>
+              </div>
+              <div style={{ fontSize: 13, color: 'var(--text-3)', fontWeight: 600 }}>Get ready...</div>
+            </div>
           )}
 
-          {qResps.length > 0 && (
+          {/* RECORDING — camera centered with timer, stop button */}
+          {recordingPhase === 'recording' && (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: 640, margin: '0 auto' }}>
+              <div style={{ width: '100%', padding: '16px 20px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12, marginBottom: 20, textAlign: 'center' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 8 }}>Your Prompt</div>
+                <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: 'var(--text)', lineHeight: 1.3, letterSpacing: '-0.3px' }}>{activeQuestion.q}</div>
+              </div>
+              <div className="mi-camera-wrap" style={{ width: '100%', marginBottom: 20 }}>
+                <video ref={videoRef} autoPlay muted playsInline />
+                <div className="mi-recording-dot" />
+                <div className="mi-recording-timer">{fmtTime(recordingTime)}</div>
+                {/* Time remaining bar */}
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 4, background: 'rgba(255,255,255,0.2)' }}>
+                  <div style={{ height: '100%', background: recordingTime >= 50 ? '#dc2626' : recordingTime >= 40 ? '#d97706' : '#16a34a', width: `${((MAX_RECORDING_SEC - recordingTime) / MAX_RECORDING_SEC) * 100}%`, transition: 'width 1s linear, background 0.3s' }} />
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <button className="mi-btn-record stop" onClick={stopRecording} type="button" style={{ padding: '12px 32px', fontSize: 14 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+                  Stop Recording
+                </button>
+                <span style={{ fontSize: 13, fontWeight: 700, color: recordingTime >= 50 ? '#dc2626' : 'var(--text-3)', fontFamily: "'SFMono-Regular', monospace" }}>{MAX_RECORDING_SEC - recordingTime}s left</span>
+              </div>
+            </div>
+          )}
+
+          {/* Past responses — always visible in idle */}
+          {recordingPhase === 'idle' && qResps.length > 0 && (
             <div className="mi-responses">
               <div className="mi-responses-title">Your Response{qResps.length > 1 ? 's' : ''}:</div>
               {qResps.map(r => {
