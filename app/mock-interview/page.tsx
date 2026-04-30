@@ -299,13 +299,40 @@ export default function MockInterviewPage() {
   // RENDER: TRACK PICKER
   // ══════════════════════════════════════════════════════════════
 
-  if (!activeTrack) return (
+  if (!activeTrack) {
+    // Aggregate stats
+    const totalAttempted = new Set(allResponses.map(r => r.questionId)).size;
+    const totalSubmissions = allResponses.length;
+    const totalGreat = allResponses.filter(r => r.grade === 'Great').length;
+
+    return (
     <div className="app"><Sidebar activePage="mock-interview" />
-      <main className="mi-main"><div className="mi-wrap">
-        <div className="mi-label">Practice</div>
-        <div className="mi-title">Mock <em>Interview</em></div>
-        <div className="mi-sub">Record yourself answering real interview questions. Get AI feedback on accuracy, depth, and clarity with video playback of every attempt.</div>
-        <div className="mi-pick-list">
+      <main className="mi-main"><div className="mi-wrap" style={{ maxWidth: 1060 }}>
+        {/* Header row — title left, stats right */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 24, marginBottom: 28 }}>
+          <div>
+            <div className="mi-label">Practice</div>
+            <div className="mi-title" style={{ fontSize: 36, marginBottom: 6 }}>Mock <em>Interview</em></div>
+            <div style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.5, maxWidth: 420 }}>Record yourself answering real questions. AI grades your accuracy, depth, and clarity.</div>
+          </div>
+          {totalSubmissions > 0 && (
+            <div style={{ display: 'flex', gap: 20, flexShrink: 0, marginTop: 18 }}>
+              {[
+                { val: totalAttempted, label: 'Practiced' },
+                { val: totalSubmissions, label: 'Submissions' },
+                { val: totalGreat, label: 'Great', color: '#16a34a' },
+              ].map(s => (
+                <div key={s.label} style={{ textAlign: 'center' }}>
+                  <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: s.color || 'var(--text)', lineHeight: 1, letterSpacing: '-0.5px' }}>{s.val}</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 4 }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Track grid — 2 columns, compact cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
           {TRACKS.map(t => {
             const total = t.cards.length;
             const attemptedSet = new Set(allResponses.filter(r => r.questionId.startsWith(t.id + '::')).map(r => r.questionId));
@@ -314,30 +341,40 @@ export default function MockInterviewPage() {
             const tResps = allResponses.filter(r => r.questionId.startsWith(t.id + '::'));
             const tBest: Grade | null = tResps.length === 0 ? null : tResps.some(r => r.grade === 'Great') ? 'Great' : tResps.some(r => r.grade === 'Good') ? 'Good' : 'Bad';
             return (
-              <div key={t.id} className="mi-pick-row" onClick={() => openTrack(t)}>
-                <div className="mi-pick-icon">{t.icon}</div>
-                <div className="mi-pick-info">
-                  <div className="mi-pick-name">{t.title}</div>
-                  <div className="mi-pick-meta">
-                    <span>{total} questions</span>
-                    {attempted > 0 && <span className="mi-pick-dot" />}
-                    {attempted > 0 && <span>{attempted} attempted</span>}
+              <div key={t.id} onClick={() => openTrack(t)} style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                padding: '14px 18px', borderRadius: 12,
+                border: '1.5px solid var(--border)', background: 'var(--surface)',
+                cursor: 'pointer', transition: 'border-color 0.15s, transform 0.12s',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+              >
+                <div style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div style={{ width: 16, height: 16 }}>{t.icon}</div>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.1px' }}>{t.title}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>
+                    <span>{total} Qs</span>
+                    {attempted > 0 && <><span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--text-3)', display: 'inline-block' }} /><span>{attempted} done</span></>}
                   </div>
                 </div>
                 {attempted > 0 && (
-                  <div className="mi-pick-progress">
-                    <div className="mi-pick-bar"><div className="mi-pick-bar-fill" style={{ width: `${pct}%` }} /></div>
-                    <span className="mi-pick-pct">{pct}%</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                    <div style={{ width: 36, height: 3, background: 'var(--border)', borderRadius: 2, overflow: 'hidden' }}>
+                      <div style={{ height: '100%', width: `${pct}%`, background: '#16a34a', borderRadius: 2 }} />
+                    </div>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', minWidth: 24 }}>{pct}%</span>
                   </div>
                 )}
                 {tBest && (
-                  <div className={`mi-pick-best ${gCls(tBest)}`}>
+                  <div style={{ fontSize: 11, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 3, flexShrink: 0, color: tBest === 'Great' ? '#16a34a' : tBest === 'Good' ? '#3b82f6' : '#dc2626' }}>
                     {tBest === 'Bad' ? ThumbDown : ThumbUp}
-                    {tBest}
                   </div>
                 )}
-                <div className="mi-pick-arrow">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                <div style={{ color: 'var(--text-3)', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
                 </div>
               </div>
             );
@@ -345,7 +382,8 @@ export default function MockInterviewPage() {
         </div>
       </div></main>
     </div>
-  );
+    );
+  }
 
   // ══════════════════════════════════════════════════════════════
   // RENDER: QUESTION DETAIL
