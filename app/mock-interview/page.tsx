@@ -300,81 +300,83 @@ export default function MockInterviewPage() {
   // ══════════════════════════════════════════════════════════════
 
   if (!activeTrack) {
-    // Aggregate stats
+    const totalQs = TRACKS.reduce((s, t) => s + t.cards.length, 0);
     const totalAttempted = new Set(allResponses.map(r => r.questionId)).size;
     const totalSubmissions = allResponses.length;
-    const totalGreat = allResponses.filter(r => r.grade === 'Great').length;
+
+    const TRACK_COLORS: Record<string, { bg: string; color: string }> = {
+      ib: { bg: '#dbeafe', color: '#2563eb' },
+      pe: { bg: '#f3e8ff', color: '#7c3aed' },
+      rx: { bg: '#fee2e2', color: '#dc2626' },
+      consulting: { bg: '#fef3c7', color: '#d97706' },
+      accounting: { bg: '#dcfce7', color: '#16a34a' },
+      am: { bg: '#e0f2fe', color: '#0284c7' },
+      st: { bg: '#fce7f3', color: '#db2777' },
+      er: { bg: '#fef9c3', color: '#ca8a04' },
+      re: { bg: '#ffedd5', color: '#ea580c' },
+      vc: { bg: '#ede9fe', color: '#7c3aed' },
+    };
+    const TRACK_DESCS: Record<string, string> = {
+      ib: 'DCF, LBO, M&A, valuation, and accounting questions from top banks.',
+      pe: 'Fund mechanics, deal sourcing, portfolio ops, and returns analysis.',
+      rx: 'Bankruptcy, distressed debt, credit analysis, and turnaround strategies.',
+      consulting: 'Case frameworks, market sizing, profitability, and fit questions.',
+      accounting: 'Financial statements, audit, tax, and technical accounting.',
+      am: 'Portfolio theory, stock pitches, risk management, and market analysis.',
+      st: 'Trading mechanics, derivatives, macro, and market-making concepts.',
+      er: 'Equity valuation, sector analysis, financial modeling, and stock recommendations.',
+      re: 'Cap rates, NOI, property valuation, and real estate finance.',
+      vc: 'Startup valuation, term sheets, due diligence, and venture mechanics.',
+    };
+
+    const ARROW_R = <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>;
 
     return (
     <div className="app"><Sidebar activePage="mock-interview" />
-      <main className="mi-main"><div className="mi-wrap" style={{ maxWidth: 1060 }}>
-        {/* Header row — title left, stats right */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 24, marginBottom: 28 }}>
-          <div>
-            <div className="mi-label">Practice</div>
-            <div className="mi-title" style={{ fontSize: 36, marginBottom: 6 }}>Mock <em>Interview</em></div>
-            <div style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.5, maxWidth: 420 }}>Record yourself answering real questions. AI grades your accuracy, depth, and clarity.</div>
-          </div>
-          {totalSubmissions > 0 && (
-            <div style={{ display: 'flex', gap: 20, flexShrink: 0, marginTop: 18 }}>
-              {[
-                { val: totalAttempted, label: 'Practiced' },
-                { val: totalSubmissions, label: 'Submissions' },
-                { val: totalGreat, label: 'Great', color: '#16a34a' },
-              ].map(s => (
-                <div key={s.label} style={{ textAlign: 'center' }}>
-                  <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: s.color || 'var(--text)', lineHeight: 1, letterSpacing: '-0.5px' }}>{s.val}</div>
-                  <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 4 }}>{s.label}</div>
-                </div>
-              ))}
-            </div>
-          )}
+      <main className="mi-main"><div className="mi-wrap" style={{ maxWidth: 1100 }}>
+        <div className="mi-label">Practice</div>
+        <div className="mi-title">Mock <em>Interview</em></div>
+        <div style={{ fontSize: 14, color: 'var(--text-3)', lineHeight: 1.6, maxWidth: 560, marginBottom: 28 }}>Record yourself answering real interview questions. Get AI feedback on accuracy, depth, and clarity with video playback of every attempt.</div>
+
+        <div style={{ display: 'flex', gap: 36, marginBottom: 40 }}>
+          <div><div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: 'var(--text)', letterSpacing: '-0.5px' }}>{totalQs.toLocaleString()}+</div><div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 2 }}>Questions</div></div>
+          <div><div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: 'var(--text)', letterSpacing: '-0.5px' }}>{TRACKS.length}</div><div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 2 }}>Career Tracks</div></div>
+          {totalSubmissions > 0 && <div><div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: '#16a34a', letterSpacing: '-0.5px' }}>{totalAttempted}</div><div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 2 }}>Practiced</div></div>}
         </div>
 
-        {/* Track grid — 2 columns, compact cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
           {TRACKS.map(t => {
             const total = t.cards.length;
             const attemptedSet = new Set(allResponses.filter(r => r.questionId.startsWith(t.id + '::')).map(r => r.questionId));
             const attempted = attemptedSet.size;
-            const pct = total > 0 ? Math.round((attempted / total) * 100) : 0;
+            const tc = TRACK_COLORS[t.id] || { bg: 'var(--surface-2)', color: 'var(--text)' };
             const tResps = allResponses.filter(r => r.questionId.startsWith(t.id + '::'));
             const tBest: Grade | null = tResps.length === 0 ? null : tResps.some(r => r.grade === 'Great') ? 'Great' : tResps.some(r => r.grade === 'Good') ? 'Good' : 'Bad';
             return (
               <div key={t.id} onClick={() => openTrack(t)} style={{
-                display: 'flex', alignItems: 'center', gap: 14,
-                padding: '14px 18px', borderRadius: 12,
-                border: '1.5px solid var(--border)', background: 'var(--surface)',
-                cursor: 'pointer', transition: 'border-color 0.15s, transform 0.12s',
+                background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 10,
+                padding: '24px 20px 18px', cursor: 'pointer', transition: 'all 0.15s',
+                display: 'flex', flexDirection: 'column',
               }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text)'; e.currentTarget.style.boxShadow = '0 2px 16px rgba(0,0,0,0.04)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.boxShadow = 'none'; }}
               >
-                <div style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <div style={{ width: 16, height: 16 }}>{t.icon}</div>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: tc.bg, color: tc.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                  <div style={{ width: 18, height: 18 }}>{t.icon}</div>
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.1px' }}>{t.title}</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>
-                    <span>{total} Qs</span>
-                    {attempted > 0 && <><span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--text-3)', display: 'inline-block' }} /><span>{attempted} done</span></>}
+                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 4, letterSpacing: '-0.1px' }}>{t.title}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.5, flex: 1, marginBottom: 16 }}>{TRACK_DESCS[t.id] || ''}</div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border)', paddingTop: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: 'var(--text-3)' }}>{total} QUESTIONS</span>
+                    {attempted > 0 && <span style={{ fontSize: 10, fontWeight: 700, color: '#16a34a' }}>{attempted} done</span>}
+                    {tBest && (
+                      <span style={{ fontSize: 10, fontWeight: 700, color: tBest === 'Great' ? '#16a34a' : tBest === 'Good' ? '#3b82f6' : '#dc2626', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        {tBest === 'Bad' ? ThumbDown : ThumbUp}
+                      </span>
+                    )}
                   </div>
-                </div>
-                {attempted > 0 && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-                    <div style={{ width: 36, height: 3, background: 'var(--border)', borderRadius: 2, overflow: 'hidden' }}>
-                      <div style={{ height: '100%', width: `${pct}%`, background: '#16a34a', borderRadius: 2 }} />
-                    </div>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', minWidth: 24 }}>{pct}%</span>
-                  </div>
-                )}
-                {tBest && (
-                  <div style={{ fontSize: 11, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 3, flexShrink: 0, color: tBest === 'Great' ? '#16a34a' : tBest === 'Good' ? '#3b82f6' : '#dc2626' }}>
-                    {tBest === 'Bad' ? ThumbDown : ThumbUp}
-                  </div>
-                )}
-                <div style={{ color: 'var(--text-3)', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>Start {ARROW_R}</span>
                 </div>
               </div>
             );
