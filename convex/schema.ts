@@ -123,4 +123,10 @@ export default defineSchema({
     message: v.string(),
     createdAt: v.number(),
   }).index("by_createdAt", ["createdAt"]),
+
+  userProgress: defineTable({
+    userId: v.string(),
+    data: v.string(), // JSON blob of all progress data
+    updatedAt: v.number(),
+  }).index("by_userId", ["userId"]),
 });

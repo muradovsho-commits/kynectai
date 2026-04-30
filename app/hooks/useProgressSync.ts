@@ -1,0 +1,210 @@
+'use client';
+
+import { useEffect, useRef, useCallback } from 'react';
+import { useMutation, useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
+
+// All localStorage keys that should sync across devices
+const SYNC_KEYS = [
+  'offerbell_onboarding_profile',
+  'offerbell_activity_days',
+  'offerbell_account_created',
+  'offerbell_flash_perf_ib',
+  'offerbell_flash_perf_pe',
+  'offerbell_flash_perf_rx',
+  'offerbell_flash_perf_consulting',
+  'offerbell_flash_perf_accounting',
+  'offerbell_flash_perf_am',
+  'offerbell_flash_perf_st',
+  'offerbell_flash_perf_er',
+  'offerbell_flash_perf_re',
+  'offerbell_flash_perf_vc',
+  'offerbell_flash_bookmarks',
+  'offerbell_diag_history',
+  'offerbell_flash_review',
+  'offerbell_flash_review_log',
+  'offerbell_mock_responses',
+  'offerbell_outreach_saved',
+  'offerbell_tracker_v3',
+  'offerbell_referral_nodes_v3',
+  'offerbell_tracker_config',
+  'offerbell_resume_usage',
+  'offerbell_coach_history',
+  'offerbell_coach_pro_usage',
+  'offerbell_plan',
+  'offerbell_plan_cancelled_at',
+  'offerbell_plan_expires_at',
+  'offerbell_profile_picture',
+  'offerbell-theme',
+];
+
+function gatherLocalData(): Record<string, string> {
+  const data: Record<string, string> = {};
+  for (const key of SYNC_KEYS) {
+    const val = localStorage.getItem(key);
+    if (val !== null) data[key] = val;
+  }
+  return data;
+}
+
+function applyCloudData(cloud: Record<string, string>) {
+  for (const [key, val] of Object.entries(cloud)) {
+    if (val !== null && val !== undefined) {
+      localStorage.setItem(key, val);
+    }
+  }
+}
+
+export function useProgressSync() {
+  const userId = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
+  const saveProgress = useMutation(api.progress.saveProgress);
+  const cloudData = useQuery(api.progress.loadProgress, userId ? { userId } : 'skip');
+  const hasSynced = useRef(false);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // On mount: pull cloud data and merge into localStorage
+  useEffect(() => {
+    if (!userId || hasSynced.current || cloudData === undefined) return;
+    hasSynced.current = true;
+
+    if (cloudData === null) {
+      // No cloud data yet — push local data up as initial seed
+      const local = gatherLocalData();
+      if (Object.keys(local).length > 0) {
+        saveProgress({ userId, data: JSON.stringify(local) }).catch(() => {});
+      }
+      return;
+    }
+
+    // Cloud data exists — merge
+    try {
+      const cloud: Record<string, string> = JSON.parse(cloudData.data);
+      const local = gatherLocalData();
+
+      // For each key: if cloud has it and local doesn't, use cloud.
+      // If both have it, use whichever has more data (longer string = more progress).
+      // Special merge for array-type keys (activity days, bookmarks, responses, etc.)
+      const ARRAY_KEYS = new Set([
+        'offerbell_activity_days',
+        'offerbell_flash_bookmarks',
+        'offerbell_diag_history',
+        'offerbell_flash_review',
+        'offerbell_flash_review_log',
+        'offerbell_mock_responses',
+        'offerbell_outreach_saved',
+        'offerbell_tracker_v3',
+        'offerbell_referral_nodes_v3',
+      ]);
+
+      const merged: Record<string, string> = { ...cloud };
+
+      for (const key of SYNC_KEYS) {
+        const cloudVal = cloud[key];
+        const localVal = local[key];
+
+        if (!cloudVal && localVal) {
+          merged[key] = localVal;
+        } else if (cloudVal && !localVal) {
+          // Cloud has it, local doesn't — use cloud
+        } else if (cloudVal && localVal) {
+          // Both have it — merge intelligently
+          if (ARRAY_KEYS.has(key)) {
+            // Merge arrays by combining unique entries
+            try {
+              const cloudArr = JSON.parse(cloudVal);
+              const localArr = JSON.parse(localVal);
+              if (Array.isArray(cloudArr) && Array.isArray(localArr)) {
+                // For arrays of objects with id fields, dedupe by id
+                const hasIds = cloudArr.length > 0 && typeof cloudArr[0] === 'object' && cloudArr[0] !== null && ('id' in cloudArr[0] || 'q' in cloudArr[0]);
+                if (hasIds) {
+                  const idKey = 'id' in (cloudArr[0] || {}) ? 'id' : 'q';
+                  const seen = new Set<string>();
+                  const combined = [];
+                  for (const item of [...localArr, ...cloudArr]) {
+                    const k = item[idKey];
+                    if (k && !seen.has(k)) { seen.add(k); combined.push(item); }
+                  }
+                  merged[key] = JSON.stringify(combined);
+                } else if (key === 'offerbell_activity_days') {
+                  // String array — union
+                  const combined = [...new Set([...cloudArr, ...localArr])];
+                  merged[key] = JSON.stringify(combined);
+                } else {
+                  // Use whichever is longer
+                  merged[key] = localArr.length >= cloudArr.length ? localVal : cloudVal;
+                }
+              }
+            } catch {
+              // If parse fails, use longer
+              merged[key] = (localVal.length >= cloudVal.length) ? localVal : cloudVal;
+            }
+          } else if (key.startsWith('offerbell_flash_perf_')) {
+            // Perf objects — use whichever has more "seen"
+            try {
+              const cloudPerf = JSON.parse(cloudVal);
+              const localPerf = JSON.parse(localVal);
+              merged[key] = (localPerf.seen || 0) >= (cloudPerf.seen || 0) ? localVal : cloudVal;
+            } catch {
+              merged[key] = localVal;
+            }
+          } else {
+            // Simple values — prefer local (user's current device is "truth")
+            merged[key] = localVal;
+          }
+        }
+      }
+
+      // Apply merged data to localStorage
+      applyCloudData(merged);
+
+      // Push merged data back to cloud
+      saveProgress({ userId, data: JSON.stringify(merged) }).catch(() => {});
+    } catch {
+      // If anything fails, don't break — just push local data
+      const local = gatherLocalData();
+      if (Object.keys(local).length > 0) {
+        saveProgress({ userId, data: JSON.stringify(local) }).catch(() => {});
+      }
+    }
+  }, [userId, cloudData, saveProgress]);
+
+  // Debounced save: call this whenever localStorage changes
+  const pushToCloud = useCallback(() => {
+    if (!userId) return;
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      const local = gatherLocalData();
+      if (Object.keys(local).length > 0) {
+        saveProgress({ userId, data: JSON.stringify(local) }).catch(() => {});
+      }
+    }, 3000); // 3 second debounce
+  }, [userId, saveProgress]);
+
+  // Listen for localStorage changes (from other parts of the app)
+  useEffect(() => {
+    if (!userId) return;
+
+    const handler = (e: StorageEvent) => {
+      if (e.key && SYNC_KEYS.includes(e.key)) {
+        pushToCloud();
+      }
+    };
+    window.addEventListener('storage', handler);
+
+    // Also intercept localStorage.setItem to catch same-tab writes
+    const origSetItem = localStorage.setItem.bind(localStorage);
+    localStorage.setItem = function (key: string, value: string) {
+      origSetItem(key, value);
+      if (SYNC_KEYS.includes(key)) {
+        pushToCloud();
+      }
+    };
+
+    return () => {
+      window.removeEventListener('storage', handler);
+      localStorage.setItem = origSetItem;
+    };
+  }, [userId, pushToCloud]);
+
+  return { pushToCloud };
+}
