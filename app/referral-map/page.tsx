@@ -44,7 +44,7 @@ function load(): Contact[] {
 function save(c: Contact[]) { localStorage.setItem(SK, JSON.stringify(c)); }
 
 // ═══ NETWORK GRAPH COMPONENT ═══
-function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = '', userState }: { contacts: Contact[]; selectedId: string | null; onSelect: (id: string | null) => void; expanded: boolean; searchQuery?: string; userState: string | null }) {
+function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = '', userState, profilePic }: { contacts: Contact[]; selectedId: string | null; onSelect: (id: string | null) => void; expanded: boolean; searchQuery?: string; userState: string | null; profilePic?: string | null }) {
   const [focusedState, setFocusedState] = useState<string | null>(null);
   
   const w = 1000;
@@ -349,10 +349,25 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
               )}
 
               {/* Main node */}
-              <circle cx={n.x} cy={n.y} r={n.r} fill={n.color} />
-              <circle cx={n.x} cy={n.y} r={n.r} fill="url(#rm-node-shine)" style={{ pointerEvents: 'none' }} />
+              {isYou && profilePic ? (
+                <>
+                  <defs>
+                    <clipPath id="you-clip">
+                      <circle cx={n.x} cy={n.y} r={n.r} />
+                    </clipPath>
+                  </defs>
+                  <image href={profilePic} x={n.x - n.r} y={n.y - n.r} width={n.r * 2} height={n.r * 2} clipPath="url(#you-clip)" preserveAspectRatio="xMidYMid slice" />
+                  <circle cx={n.x} cy={n.y} r={n.r} fill="none" stroke="#10b981" strokeWidth="3" />
+                </>
+              ) : (
+                <>
+                  <circle cx={n.x} cy={n.y} r={n.r} fill={n.color} />
+                  <circle cx={n.x} cy={n.y} r={n.r} fill="url(#rm-node-shine)" style={{ pointerEvents: 'none' }} />
+                </>
+              )}
 
               {/* Count/initials */}
+              {!(isYou && profilePic) && (
               <text
                 x={n.x} y={n.y + 1}
                 textAnchor="middle" dominantBaseline="central"
@@ -363,6 +378,7 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
               >
                 {isYou ? 'You' : (isState ? stateCounts[n.id] : getInitials(n.name))}
               </text>
+              )}
 
               {/* Label under state bubbles and selected nodes */}
               {((expanded && (n.isSelected || isState)) || isState) && !isYou && (
@@ -406,12 +422,14 @@ export default function ReferralMapPage() {
   const [impList, setImpList] = useState<{ fname: string; lname: string; firm: string; role: string; sel: boolean }[]>([]);
   const [showHelp, setShowHelp] = useState(false);
   const [graphExpanded, setGraphExpanded] = useState(false);
+  const [profilePic, setProfilePic] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
     setContacts(load());
     setUserState(localStorage.getItem('offerbell_user_state'));
+    try { const pic = localStorage.getItem('offerbell_profile_pic'); if (pic) setProfilePic(pic); } catch {}
     const t = localStorage.getItem('offerbell-theme');
     if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
   }, [router]);
@@ -571,7 +589,7 @@ export default function ReferralMapPage() {
                 <svg width="14" height="14" fill="none" stroke="var(--text-2)" strokeWidth="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
               </button>
 
-              <NetworkGraph contacts={contacts} selectedId={selectedChain} expanded={false} searchQuery={q} userState={userState} onSelect={(id) => {
+              <NetworkGraph contacts={contacts} selectedId={selectedChain} expanded={false} searchQuery={q} userState={userState} profilePic={profilePic} onSelect={(id) => {
                 if (!id) { setSelectedChain(null); return; }
                 const findRoot = (contactId: string): string => {
                   const c = contacts.find(x => x.id === contactId);
@@ -817,7 +835,7 @@ export default function ReferralMapPage() {
                 <div className="rm-graph-grid">
                   <div className="rm-graph-grid-inner" />
                 </div>
-                <NetworkGraph contacts={contacts} selectedId={selectedChain} expanded={true} searchQuery={q} userState={userState} onSelect={(id) => {
+                <NetworkGraph contacts={contacts} selectedId={selectedChain} expanded={true} searchQuery={q} userState={userState} profilePic={profilePic} onSelect={(id) => {
                   if (!id) { setSelectedChain(null); return; }
                   const findRoot = (contactId: string): string => {
                     const c = contacts.find(x => x.id === contactId);

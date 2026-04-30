@@ -34,7 +34,7 @@ const SYNC_KEYS = [
   'offerbell_plan',
   'offerbell_plan_cancelled_at',
   'offerbell_plan_expires_at',
-  'offerbell_profile_picture',
+  'offerbell_profile_pic',
   'offerbell-theme',
 ];
 
