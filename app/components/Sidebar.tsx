@@ -32,7 +32,16 @@ export default function Sidebar({ activePage }: SidebarProps) {
         const p = JSON.parse(raw);
         setUserName({ first: p.firstName || '', last: p.lastName || '' });
         const plan = localStorage.getItem('offerbell_plan') || 'free';
-        setUserPlan(p.plan || plan);
+        // Auto-migrate old pro users to elite
+        const migrated = localStorage.getItem('offerbell_plan_migrated_v2');
+        if (!migrated && plan === 'pro' && localStorage.getItem('offerbell_plan_activated_at')) {
+          localStorage.setItem('offerbell_plan', 'elite');
+          localStorage.setItem('offerbell_plan_migrated_v2', 'true');
+          p.plan = 'elite';
+          localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(p));
+        }
+        const effectivePlan = localStorage.getItem('offerbell_plan') || p.plan || 'free';
+        setUserPlan(effectivePlan);
       }
     } catch {}
     // Load profile picture
@@ -145,11 +154,11 @@ export default function Sidebar({ activePage }: SidebarProps) {
                 displayInitials
               )}
             </div>
-            {userPlan === 'pro' && <div style={{position:'absolute',bottom:-1,right:-1,width:12,height:12,borderRadius:'50%',background:'#16a34a',border:'2px solid var(--surface)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+            {(userPlan === 'pro' || userPlan === 'elite') && <div style={{position:'absolute',bottom:-1,right:-1,width:12,height:12,borderRadius:'50%',background: userPlan === 'elite' ? '#7c3aed' : '#16a34a',border:'2px solid var(--surface)',display:'flex',alignItems:'center',justifyContent:'center'}}>
               <svg width="7" height="7" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
             </div>}
           </div>
-          <div><div style={{fontSize:13,fontWeight:600,color:'var(--text)'}}>{displayName}</div><div style={{fontSize:11,color: userPlan === 'pro' ? '#16a34a' : 'var(--text-3)',fontWeight: userPlan === 'pro' ? 600 : 400}}>{userPlan === 'pro' ? 'Pro plan' : 'Free plan'}</div></div>
+          <div><div style={{fontSize:13,fontWeight:600,color:'var(--text)'}}>{displayName}</div><div style={{fontSize:11,color: userPlan === 'elite' ? '#7c3aed' : userPlan === 'pro' ? '#16a34a' : 'var(--text-3)',fontWeight: userPlan !== 'free' ? 600 : 400}}>{userPlan === 'elite' ? 'Elite plan' : userPlan === 'pro' ? 'Pro plan' : 'Free plan'}</div></div>
         </div>
         <style dangerouslySetInnerHTML={{__html: `
           /* Completely hide scrollbars */
@@ -183,7 +192,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
           <div className="nav-group">
             <span className="nav-group-label">Networking</span>
             <Link className={cls('outreach-tracker')} href="/outreach-tracker"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Outreach Tracker</Link>
-            <Link className={cls('outreach-writer')} href="/outreach-writer"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Outreach Writer{userPlan !== 'pro' && <span className="nav-pill pill-count">{Math.max(0, 3 - messagesSent)} left</span>}</Link>
+            <Link className={cls('outreach-writer')} href="/outreach-writer"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Outreach Writer{userPlan === 'free' && <span className="nav-pill pill-count">{Math.max(0, 3 - messagesSent)} left</span>}</Link>
             <Link className={cls('referral-map')} href="/referral-map"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="5" cy="6" r="3"/><circle cx="19" cy="6" r="3"/><circle cx="12" cy="18" r="3"/><path d="M5 9v3a4 4 0 0 0 4 4h2"/><path d="M19 9v3a4 4 0 0 1-4 4h-2"/></svg>Referral Map</Link>
           </div>
           <div className="nav-group">

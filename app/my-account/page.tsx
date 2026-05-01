@@ -76,7 +76,15 @@ export default function MyAccountPage() {
         setResumeUsed(data.week === weekStart ? (data.count || 0) : 0);
       }
     } catch {}
-    try { const plan = localStorage.getItem('offerbell_plan') || 'free'; const prof = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}'); setUserPlan(prof.plan || plan); } catch {}
+    try { const plan = localStorage.getItem('offerbell_plan') || 'free'; const prof = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}');
+      // Auto-migrate old pro → elite
+      const migrated = localStorage.getItem('offerbell_plan_migrated_v2');
+      if (!migrated && (plan === 'pro' || prof.plan === 'pro') && localStorage.getItem('offerbell_plan_activated_at')) {
+        localStorage.setItem('offerbell_plan', 'elite'); localStorage.setItem('offerbell_plan_migrated_v2', 'true');
+        prof.plan = 'elite'; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(prof));
+      }
+      setUserPlan(localStorage.getItem('offerbell_plan') || prof.plan || plan);
+    } catch {}
     try { const at = localStorage.getItem('offerbell_plan_activated_at'); if (at) setPlanActivatedAt(parseInt(at, 10)); } catch {}
     try { const pc = localStorage.getItem('offerbell_promo_code'); if (pc) setPromoCode(pc); } catch {}
     try { const bc = localStorage.getItem('offerbell_billing_cycle'); if (bc) setBillingCycle(bc); } catch {}
@@ -217,7 +225,9 @@ export default function MyAccountPage() {
             <div style={{fontFamily:"'Instrument Serif',serif",fontSize:26,letterSpacing:'-.3px',color:'var(--text)',marginBottom:3}}>{firstName} <em style={{fontStyle:'italic'}}>{lastName}</em></div>
             <div style={{fontSize:13,color:'var(--text-3)',marginBottom:10}}>{email}</div>
             <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-              {userPlan === 'pro' ? (
+              {userPlan === 'elite' ? (
+                <span style={{display:'inline-flex',padding:'3px 10px',borderRadius:100,fontSize:11,fontWeight:600,background:'#f5f3ff',color:'#5b21b6',border:'1px solid #c4b5fd'}}>Elite Plan</span>
+              ) : userPlan === 'pro' ? (
                 <span style={{display:'inline-flex',padding:'3px 10px',borderRadius:100,fontSize:11,fontWeight:600,background:'#ecfdf5',color:'#166534',border:'1px solid #bbf7d0'}}>Pro Plan</span>
               ) : (
                 <span style={{display:'inline-flex',padding:'3px 10px',borderRadius:100,fontSize:11,fontWeight:600,background:'#fef3c7',color:'#92400e',border:'1px solid #fde68a'}}>Free Plan</span>
@@ -237,16 +247,17 @@ export default function MyAccountPage() {
           <div style={{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:14,display:'flex',alignItems:'center',gap:8}}>This Month's Usage<div style={{flex:1,height:1,background:'var(--border)'}}/></div>
           <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
             {(() => {
-              const isPro = userPlan === 'pro';
+              const isPro = userPlan === 'pro' || userPlan === 'elite';
               const resumeCount = isPro ? resumeUsed : resumeLifetime;
-              const resumeMax = isPro ? 10 : 1;
+              const resumeMax = userPlan === 'elite' ? 30 : isPro ? 10 : 1;
               const resumeDisplay = Math.min(resumeCount, resumeMax);
               const resumeRemaining = Math.max(0, resumeMax - resumeCount);
-              const msgMax = isPro ? 'Unlimited' : '3';
-              const msgPct = isPro ? 100 : Math.min(100, Math.round(messagesUsed / 3 * 100));
+              const owMax = userPlan === 'elite' ? 30 : isPro ? 20 : 5;
+              const owLabel = userPlan === 'elite' ? '30/week' : isPro ? '20/week' : '5 total';
+              const msgPct = Math.min(100, Math.round(messagesUsed / owMax * 100));
               return [
-                {label:'Resume Review', used: resumeDisplay, total: String(resumeMax), pct: Math.min(100, Math.round(resumeCount / resumeMax * 100)), color: resumeRemaining === 0 ? '#dc2626' : 'var(--text)', reset: isPro ? `${resumeRemaining} of 10 left this week` : resumeCount >= 1 ? 'Free review used' : '1 free review'},
-                {label:'Outreach Messages', used: messagesUsed, total: msgMax, pct: msgPct, color: 'var(--text)', reset: isPro ? 'Unlimited - Pro' : `${Math.max(0, 3 - messagesUsed)} of 3 left`},
+                {label:'Resume Review', used: resumeDisplay, total: String(resumeMax), pct: Math.min(100, Math.round(resumeCount / resumeMax * 100)), color: resumeRemaining === 0 ? '#dc2626' : 'var(--text)', reset: isPro ? `${resumeRemaining} of ${resumeMax} left this week` : resumeCount >= 1 ? 'Free review used' : '1 free review'},
+                {label:'Outreach Messages', used: messagesUsed, total: String(owMax), pct: msgPct, color: 'var(--text)', reset: isPro ? `${owLabel}` : `${Math.max(0, 5 - messagesUsed)} of 5 left`},
                 {label:'Contacts Tracked', used: contactsTracked, total: 'Unlimited', pct: 100, color: '#16a34a', reset: 'No limit'},
               ];
             })().map(u=>(
@@ -309,15 +320,15 @@ export default function MyAccountPage() {
         {/* Plan */}
         <div data-tutorial="plan-section" style={{marginBottom:28}}>
           <div style={{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:14,display:'flex',alignItems:'center',gap:8}}>Plan & Billing<div style={{flex:1,height:1,background:'var(--border)'}}/></div>
-          {userPlan === 'pro' ? (
+          {(userPlan === 'pro' || userPlan === 'elite') ? (
             <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,padding:20,display:'flex',alignItems:'center',justifyContent:'space-between',gap:20}}>
               <div style={{display:'flex',alignItems:'center',gap:14}}>
-                <div style={{width:44,height:44,borderRadius:12,background:'#166534',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                <div style={{width:44,height:44,borderRadius:12,background: userPlan === 'elite' ? '#5b21b6' : '#166534',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
                   <svg width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                 </div>
                 <div>
-                  <div style={{fontSize:15,fontWeight:700,color:'var(--text)',marginBottom:2}}>Pro Plan</div>
-                  <div style={{fontSize:12,color:'var(--text-3)'}}>Unlimited messages · 10 resume reviews/week · all features</div>
+                  <div style={{fontSize:15,fontWeight:700,color:'var(--text)',marginBottom:2}}>{userPlan === 'elite' ? 'Elite' : 'Pro'} Plan</div>
+                  <div style={{fontSize:12,color:'var(--text-3)'}}>{userPlan === 'elite' ? 'Higher AI limits · 30 resume reviews/week · priority support' : 'Usage-based AI · 10 resume reviews/week · all features'}</div>
                   <div style={{fontSize:11,color:'var(--text-3)',marginTop:4}}>
                     {(() => {
                       if (!planActivatedAt && !promoCode) return null;
@@ -363,8 +374,8 @@ export default function MyAccountPage() {
                     {promoCode && (promoCode.toLowerCase().includes('lifetime') || promoCode.toLowerCase().includes('forever') || promoCode.toLowerCase().includes('free'))
                       ? <>$0 <span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/mo</span></>
                       : billingCycle === 'annual'
-                        ? <>$199 <span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/yr</span></>
-                        : <>$20 <span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/mo</span></>
+                        ? <>{userPlan === 'elite' ? '$399' : '$199'} <span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/yr</span></>
+                        : <>{userPlan === 'elite' ? '$40' : '$20'} <span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/mo</span></>
                     }
                   </div>
                   {(() => {
@@ -374,7 +385,7 @@ export default function MyAccountPage() {
                 <button type="button" onClick={() => {
                   setModal({
                     title: 'Cancel Subscription',
-                    desc: 'Are you sure you want to cancel? You will immediately lose access to all Pro features and be moved to the Free plan.',
+                    desc: `Are you sure you want to cancel? You will lose access to all ${userPlan === 'elite' ? 'Elite' : 'Pro'} features and be moved to the Free plan.`,
                     confirmLabel: 'Yes, Cancel',
                     onConfirm: async () => {
                       try {
@@ -415,7 +426,7 @@ export default function MyAccountPage() {
                   <div style={{fontFamily:"'Instrument Serif',serif",fontSize:24,fontStyle:'italic',color:'var(--text)',letterSpacing:'-.3px'}}>$0 <span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/mo</span></div>
                   <div style={{fontSize:11,color:'var(--text-3)',marginTop:2}}>No card required</div>
                 </div>
-                <button type="button" onClick={() => window.location.href='/checkout'} style={{background:'#f59e0b',color:'#fff',padding:'9px 20px',borderRadius:10,fontSize:13,fontWeight:700,border:'none',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Upgrade to Pro</button>
+                <button type="button" onClick={() => window.location.href='/checkout'} style={{background:'#f59e0b',color:'#fff',padding:'9px 20px',borderRadius:10,fontSize:13,fontWeight:700,border:'none',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>View Plans</button>
               </div>
             </div>
           )}
