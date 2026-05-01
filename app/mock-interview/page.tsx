@@ -570,24 +570,29 @@ export default function MockInterviewPage() {
                     <svg fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   </div>
                   <div className="mi-cat-info">
-                    <div className="mi-cat-name">{cat.name} <span style={{ fontWeight: 400, color: 'var(--text-3)', fontSize: 12 }}>({attempted}/{total} complete)</span></div>
-                    <div className="mi-cat-bar"><div className="mi-cat-bar-fill" style={{ width: `${pct}%` }} /></div>
-                  </div>
-                  <div className="mi-cat-stat">
-                    <div className={`mi-cat-stat-val${subs > 0 ? '' : ' neutral'}`}>{subs}</div>
-                    <div className="mi-cat-stat-label">Submissions</div>
-                  </div>
-                  <div className="mi-cat-stat">
-                    <div className={`mi-cat-stat-val ${catBest ? gCls(catBest) : 'neutral'}`}>
-                      {catBest ? <>{catBest === 'Bad' ? ThumbDown : ThumbUp} {catBest}</> : '--'}
+                    <div className="mi-cat-name">{cat.name} <span>({attempted}/{total} complete)</span></div>
+                    <div className="mi-cat-progress-row">
+                      <span className="mi-cat-pct">{pct}%</span>
+                      <div className="mi-cat-bar"><div className="mi-cat-bar-fill" style={{ width: `${pct}%` }} /></div>
                     </div>
-                    <div className="mi-cat-stat-label">Best</div>
                   </div>
-                  <div className="mi-cat-stat">
-                    <div className={`mi-cat-stat-val ${catAvg ? gCls(catAvg) : 'neutral'}`}>
-                      {catAvg ? <>{catAvg === 'Bad' ? ThumbDown : ThumbUp} {catAvg}</> : '--'}
+                  <div className="mi-cat-stats">
+                    <div className="mi-cat-stat">
+                      <div className={`mi-cat-stat-val${subs > 0 ? '' : ' neutral'}`}>{subs}</div>
+                      <div className="mi-cat-stat-label">Submissions</div>
                     </div>
-                    <div className="mi-cat-stat-label">Average</div>
+                    <div className="mi-cat-stat">
+                      <div className={`mi-cat-stat-val ${catBest ? gCls(catBest) : 'neutral'}`}>
+                        {catBest ? <>{catBest === 'Bad' ? ThumbDown : ThumbUp} {catBest}</> : '--'}
+                      </div>
+                      <div className="mi-cat-stat-label">Best</div>
+                    </div>
+                    <div className="mi-cat-stat">
+                      <div className={`mi-cat-stat-val ${catAvg ? gCls(catAvg) : 'neutral'}`}>
+                        {catAvg ? <>{catAvg === 'Bad' ? ThumbDown : ThumbUp} {catAvg}</> : '--'}
+                      </div>
+                      <div className="mi-cat-stat-label">Average</div>
+                    </div>
                   </div>
                   <div className="mi-cat-chevron">
                     <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>

@@ -1,6 +1,6 @@
 /* ── Mock Interview ── */
 .mi-main { margin-left: var(--sidebar-w); min-height: 100vh; background: var(--bg); }
-.mi-wrap { max-width: 960px; margin: 0 auto; padding: 48px 40px 80px; }
+.mi-wrap { max-width: 1100px; margin: 0 auto; padding: 48px 40px 80px; }
 
 /* Track picker */
 .mi-title { font-family: 'Instrument Serif', serif; font-size: 42px; letter-spacing: -1px; color: var(--text); line-height: 1; margin-bottom: 12px; }
@@ -69,18 +69,22 @@
 .mi-back:hover { color: var(--text); }
 
 /* Category list */
-.mi-cat-list { display: flex; flex-direction: column; gap: 6px; }
+.mi-cat-list { display: flex; flex-direction: column; gap: 0; }
 
 .mi-cat-row {
-  background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: 14px; overflow: hidden; transition: border-color 0.15s;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-bottom: none;
+  overflow: hidden; transition: border-color 0.15s;
 }
-.mi-cat-row.expanded { border-color: var(--text-3); }
+.mi-cat-row:first-child { border-radius: 14px 14px 0 0; }
+.mi-cat-row:last-child { border-bottom: 1.5px solid var(--border); border-radius: 0 0 14px 14px; }
+.mi-cat-row:only-child { border-radius: 14px; border-bottom: 1.5px solid var(--border); }
+.mi-cat-row.expanded { border-color: var(--border); }
 
 .mi-cat-header {
-  display: grid; grid-template-columns: 44px 1fr auto auto auto 32px;
-  align-items: center; gap: 14px;
-  padding: 16px 20px; cursor: pointer;
+  display: flex; align-items: center; gap: 16px;
+  padding: 20px 28px; cursor: pointer;
   transition: background 0.12s;
 }
 .mi-cat-header:hover { background: var(--surface-2); }
@@ -88,25 +92,31 @@
 .mi-cat-icon {
   width: 40px; height: 40px; border-radius: 10px;
   background: var(--surface-2); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
 }
-.mi-cat-icon svg { width: 18px; height: 18px; stroke: var(--text-3); }
+.mi-cat-icon svg { width: 18px; height: 18px; stroke: var(--text-3); fill: none; stroke-width: 1.5; }
 
-.mi-cat-info { min-width: 0; }
-.mi-cat-name { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.1px; }
-.mi-cat-progress-text { font-size: 11px; color: var(--text-3); margin-top: 3px; }
-.mi-cat-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 6px; max-width: 180px; }
-.mi-cat-bar-fill { height: 100%; border-radius: 2px; background: #16a34a; transition: width 0.3s; }
+.mi-cat-info { flex: 1; min-width: 0; }
+.mi-cat-name { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.2px; }
+.mi-cat-name span { font-weight: 400; color: var(--text-3); font-size: 13px; margin-left: 6px; }
+.mi-cat-progress-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.mi-cat-pct { font-size: 12px; font-weight: 600; color: var(--text-3); min-width: 28px; }
+.mi-cat-bar { height: 4px; background: var(--border); border-radius: 2px; flex: 1; max-width: 200px; overflow: hidden; }
+.mi-cat-bar-fill { height: 100%; border-radius: 2px; background: #3b82f6; transition: width 0.3s; }
 
-.mi-cat-stat { text-align: center; min-width: 60px; }
-.mi-cat-stat-val { font-size: 16px; font-weight: 700; color: var(--text); }
+.mi-cat-stats { display: flex; align-items: center; gap: 24px; flex-shrink: 0; }
+
+.mi-cat-stat { text-align: center; min-width: 70px; }
+.mi-cat-stat-val { font-size: 18px; font-weight: 700; color: var(--text); display: flex; align-items: center; justify-content: center; gap: 4px; }
+.mi-cat-stat-val svg { width: 16px; height: 16px; }
 .mi-cat-stat-val.great { color: #16a34a; }
 .mi-cat-stat-val.good { color: #3b82f6; }
 .mi-cat-stat-val.bad { color: #dc2626; }
 .mi-cat-stat-val.neutral { color: var(--text-3); }
-.mi-cat-stat-label { font-size: 9px; font-weight: 600; letter-spacing: 0.5px; color: var(--text-3); text-transform: uppercase; margin-top: 2px; }
+.mi-cat-stat-label { font-size: 9px; font-weight: 600; letter-spacing: 0.5px; color: var(--text-3); text-transform: uppercase; margin-top: 3px; }
 
-.mi-cat-chevron { display: flex; align-items: center; justify-content: center; }
-.mi-cat-chevron svg { width: 16px; height: 16px; stroke: var(--text-3); transition: transform 0.2s; }
+.mi-cat-chevron { display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-left: 8px; }
+.mi-cat-chevron svg { width: 18px; height: 18px; stroke: var(--text-3); transition: transform 0.2s; }
 .mi-cat-row.expanded .mi-cat-chevron svg { transform: rotate(180deg); }
 
 /* Question list inside expanded category */
