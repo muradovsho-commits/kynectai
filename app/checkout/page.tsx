@@ -73,39 +73,26 @@ export default function CheckoutPage() {
   const proMonthly = billingCycle === 'annual' ? (PRO_A / 12).toFixed(0) : PRO_M;
   const eliteMonthly = billingCycle === 'annual' ? (ELITE_A / 12).toFixed(0) : ELITE_M;
 
-  // Already subscribed
-  if (currentPlan !== 'free') {
-    const planLabel = currentPlan === 'elite' ? 'Elite' : 'Pro';
-    return (
-      <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-        <div style={{ width: '100%', maxWidth: 480, background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 20, padding: '40px 32px', textAlign: 'center' }}>
-          <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#ecfdf5', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: 24 }}>✓</div>
-          <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: 'var(--text)', marginBottom: 8 }}>You&apos;re on <em>{planLabel}</em></div>
-          <div style={{ fontSize: 14, color: 'var(--text-3)', marginBottom: 32, lineHeight: 1.6 }}>You have full access to all OfferBell {planLabel} features.</div>
-          <div style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 12, padding: 20, marginBottom: 24, textAlign: 'left' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}><span style={{ fontSize: 13, color: 'var(--text-3)' }}>Plan</span><span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>OfferBell {planLabel}</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}><span style={{ fontSize: 13, color: 'var(--text-3)' }}>Billing</span><span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{currentCycle === 'annual' ? 'Annual' : 'Monthly'}</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ fontSize: 13, color: 'var(--text-3)' }}>Status</span><span style={{ fontSize: 13, fontWeight: 700, color: '#16a34a' }}>Active</span></div>
-          </div>
-          {currentPlan === 'pro' && (
-            <button onClick={() => handleCheckout('elite')} disabled={!!loading} type="button" style={{ width: '100%', padding: '14px 0', background: 'linear-gradient(135deg, #7c3aed, #6366f1)', color: '#fff', borderRadius: 12, border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'Sora', sans-serif", marginBottom: 12, opacity: loading ? 0.6 : 1 }}>
-              {loading ? 'Redirecting...' : 'Upgrade to Elite'}
-            </button>
-          )}
-          <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 24, lineHeight: 1.6 }}>To cancel or update payment, contact officialofferbell@gmail.com.</div>
-          <button onClick={() => router.push("/dashboard")} type="button" style={{ width: '100%', padding: '14px 0', background: 'var(--text)', color: 'var(--surface)', borderRadius: 12, border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>Back to Dashboard</button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', padding: '40px 24px', animation: 'checkoutIn 0.4s ease both' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 36 }}>
-          <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 36, color: 'var(--text)', letterSpacing: '-0.8px', marginBottom: 6 }}>Choose your <em style={{ fontStyle: 'italic' }}>plan</em></div>
-          <div style={{ fontSize: 14, color: 'var(--text-3)', marginBottom: 20 }}>Start free. Upgrade when you&apos;re ready to get serious about recruiting.</div>
+          {currentPlan !== 'free' && (
+            <div style={{ marginBottom: 16 }}>
+              <button onClick={() => router.push('/dashboard')} type="button" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: 'var(--text-3)', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: "'Sora', sans-serif", marginBottom: 12 }}>
+                <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back to Dashboard
+              </button>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: currentPlan === 'elite' ? '#f5f3ff' : '#ecfdf5', border: `1px solid ${currentPlan === 'elite' ? '#c4b5fd' : '#bbf7d0'}`, borderRadius: 100, padding: '6px 16px', fontSize: 12, fontWeight: 600, color: currentPlan === 'elite' ? '#5b21b6' : '#166534' }}>
+                  Current plan: {currentPlan === 'elite' ? 'Elite' : 'Pro'}
+                </div>
+              </div>
+            </div>
+          )}
+          <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 36, color: 'var(--text)', letterSpacing: '-0.8px', marginBottom: 6 }}>{currentPlan !== 'free' ? 'Manage your ' : 'Choose your '}<em style={{ fontStyle: 'italic' }}>plan</em></div>
+          <div style={{ fontSize: 14, color: 'var(--text-3)', marginBottom: 20 }}>{currentPlan !== 'free' ? 'Switch plans, change billing, or compare features.' : 'Start free. Upgrade when you\'re ready to get serious about recruiting.'}</div>
 
           {/* Billing toggle */}
           <div style={{ display: 'inline-flex', gap: 4, background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 100, padding: 4 }}>
@@ -126,7 +113,7 @@ export default function CheckoutPage() {
               <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 40, color: 'var(--text)', letterSpacing: '-1px' }}>$0</span>
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 20 }}>Get started with the basics</div>
-            <button onClick={() => { localStorage.setItem('offerbell_plan', 'free'); try { const p = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}'); p.plan = 'free'; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(p)); } catch {} router.push('/dashboard'); }} type="button" style={{ width: '100%', padding: '12px 0', borderRadius: 10, border: '1.5px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'Sora', sans-serif", marginBottom: 20 }}>Continue Free</button>
+            <button onClick={() => { if (currentPlan !== 'free' && !confirm('Switch to Free? You\'ll lose all paid features.')) return; localStorage.setItem('offerbell_plan', 'free'); try { const p = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}'); p.plan = 'free'; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(p)); } catch {} if (currentPlan === 'free') { router.push('/dashboard'); } else { localStorage.removeItem('offerbell_plan_activated_at'); localStorage.removeItem('offerbell_billing_cycle'); window.location.href = '/dashboard'; } }} type="button" style={{ width: '100%', padding: '12px 0', borderRadius: 10, border: currentPlan === 'free' ? '1.5px solid var(--text)' : '1.5px solid var(--border)', background: currentPlan === 'free' ? 'var(--text)' : 'var(--surface)', color: currentPlan === 'free' ? 'var(--surface)' : 'var(--text)', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'Sora', sans-serif", marginBottom: 20 }}>{currentPlan === 'free' ? 'Current Plan' : 'Downgrade to Free'}</button>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
               {['10% of flashcards per track', '5 questions per drill', '1 diagnostic track', 'Flashcard bookmarks', 'Cross-device sync', 'Activity streak', '5 outreach contacts', '3 referral contacts', '5 outreach emails total', '1 resume review', '1 coach message'].map(f => (
                 <div key={f} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 12, color: 'var(--text-2)' }}>{CHECK}{f}</div>
@@ -143,7 +130,7 @@ export default function CheckoutPage() {
               <span style={{ fontSize: 13, color: 'var(--text-3)' }}>/mo</span>
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 20 }}>{billingCycle === 'annual' ? `$${PRO_A} billed annually` : 'Billed monthly. Cancel anytime.'}</div>
-            <button onClick={() => handleCheckout('pro')} disabled={!!loading} type="button" style={{ width: '100%', padding: '12px 0', borderRadius: 10, border: 'none', background: 'var(--text)', color: 'var(--surface)', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'Sora', sans-serif", marginBottom: 20, opacity: loading === 'pro' ? 0.6 : 1 }}>{loading === 'pro' ? 'Redirecting...' : 'Get Pro'}</button>
+            <button onClick={() => { if (currentPlan === 'pro') return; if (currentPlan === 'elite') { if (!confirm('Switch to Pro? You\'ll lose Elite perks like higher AI limits and priority support.')) return; localStorage.setItem('offerbell_plan', 'pro'); try { const p = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}'); p.plan = 'pro'; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(p)); } catch {} window.location.href = '/dashboard'; return; } handleCheckout('pro'); }} disabled={currentPlan === 'pro' || !!loading} type="button" style={{ width: '100%', padding: '12px 0', borderRadius: 10, border: 'none', background: currentPlan === 'pro' ? 'var(--surface-2)' : 'var(--text)', color: currentPlan === 'pro' ? 'var(--text-3)' : 'var(--surface)', fontSize: 13, fontWeight: 700, cursor: currentPlan === 'pro' ? 'default' : 'pointer', fontFamily: "'Sora', sans-serif", marginBottom: 20, opacity: loading === 'pro' ? 0.6 : 1 }}>{currentPlan === 'pro' ? 'Current Plan' : currentPlan === 'elite' ? 'Switch to Pro' : loading === 'pro' ? 'Redirecting...' : 'Get Pro'}</button>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
               {['Full flashcard access — all tracks', 'Unlimited concept drills', 'All diagnostic tracks', 'Interview prep guides', 'AI Coach (usage-based)', 'Mock Interview (usage-based)', 'Resume Review (10/week)', 'Outreach Writer (20/week)', 'Unlimited outreach contacts', 'Unlimited referral map', 'Contact Finder'].map(f => (
                 <div key={f} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 12, color: 'var(--text-2)' }}>{CHECK}{f}</div>
@@ -159,7 +146,7 @@ export default function CheckoutPage() {
               <span style={{ fontSize: 13, color: 'var(--text-3)' }}>/mo</span>
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 20 }}>{billingCycle === 'annual' ? `$${ELITE_A} billed annually` : 'Billed monthly. Cancel anytime.'}</div>
-            <button onClick={() => handleCheckout('elite')} disabled={!!loading} type="button" style={{ width: '100%', padding: '12px 0', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, #7c3aed, #6366f1)', color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'Sora', sans-serif", marginBottom: 20, opacity: loading === 'elite' ? 0.6 : 1 }}>{loading === 'elite' ? 'Redirecting...' : 'Get Elite'}</button>
+            <button onClick={() => { if (currentPlan === 'elite') return; handleCheckout('elite'); }} disabled={currentPlan === 'elite' || !!loading} type="button" style={{ width: '100%', padding: '12px 0', borderRadius: 10, border: 'none', background: currentPlan === 'elite' ? 'rgba(124,58,237,0.15)' : 'linear-gradient(135deg, #7c3aed, #6366f1)', color: currentPlan === 'elite' ? '#7c3aed' : '#fff', fontSize: 13, fontWeight: 700, cursor: currentPlan === 'elite' ? 'default' : 'pointer', fontFamily: "'Sora', sans-serif", marginBottom: 20, opacity: loading === 'elite' ? 0.6 : 1 }}>{currentPlan === 'elite' ? 'Current Plan' : loading === 'elite' ? 'Redirecting...' : currentPlan === 'pro' ? 'Upgrade to Elite' : 'Get Elite'}</button>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
               {['Everything in Pro, plus:', 'AI Coach (higher limits)', 'Mock Interview (higher limits)', 'Resume Review (30/week)', 'Outreach Writer (30/week)', 'Priority support', 'Early feature access'].map((f, i) => (
                 <div key={f} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 12, color: i === 0 ? 'var(--text)' : 'var(--text-2)', fontWeight: i === 0 ? 700 : 400 }}>{i === 0 ? null : CHECK}{f}</div>
