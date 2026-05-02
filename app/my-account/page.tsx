@@ -321,93 +321,153 @@ export default function MyAccountPage() {
         <div data-tutorial="plan-section" style={{marginBottom:28}}>
           <div style={{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:14,display:'flex',alignItems:'center',gap:8}}>Plan & Billing<div style={{flex:1,height:1,background:'var(--border)'}}/></div>
           {(userPlan === 'pro' || userPlan === 'elite') ? (
-            <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,padding:20,display:'flex',alignItems:'center',justifyContent:'space-between',gap:20}}>
-              <div style={{display:'flex',alignItems:'center',gap:14}}>
-                <div style={{width:44,height:44,borderRadius:12,background: userPlan === 'elite' ? '#5b21b6' : '#166534',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
-                  <svg width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                </div>
-                <div>
-                  <div style={{fontSize:15,fontWeight:700,color:'var(--text)',marginBottom:2}}>{userPlan === 'elite' ? 'Elite' : 'Pro'} Plan</div>
-                  <div style={{fontSize:12,color:'var(--text-3)'}}>{userPlan === 'elite' ? 'Higher AI limits · 30 resume reviews/week · priority support' : 'Usage-based AI · 10 resume reviews/week · all features'}</div>
-                  <div style={{fontSize:11,color:'var(--text-3)',marginTop:4}}>
-                    {(() => {
-                      if (!planActivatedAt && !promoCode) return null;
-                      const fmtDate = (ts: number) => new Date(ts).toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
-                      // Promo code user
-                      if (promoCode) {
-                        const code = promoCode.toLowerCase();
-                        // Lifetime / forever codes
-                        if (code.includes('lifetime') || code.includes('forever') || code.includes('free')) {
-                          return <>Lifetime Pro via code <strong>{promoCode}</strong> - no renewal needed</>;
+            <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,overflow:'hidden'}}>
+              {/* Current plan header */}
+              <div style={{padding:'20px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:16,borderBottom:'1px solid var(--border)'}}>
+                <div style={{display:'flex',alignItems:'center',gap:14}}>
+                  <div style={{width:44,height:44,borderRadius:12,background: userPlan === 'elite' ? '#5b21b6' : '#166534',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                    <svg width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                  </div>
+                  <div>
+                    <div style={{fontSize:15,fontWeight:700,color:'var(--text)',marginBottom:2}}>{userPlan === 'elite' ? 'Elite' : 'Pro'} Plan</div>
+                    <div style={{fontSize:12,color:'var(--text-3)'}}>
+                      {userPlan === 'elite' ? 'Higher AI limits · 30 resume reviews/week · priority support' : 'Usage-based AI · 10 resume reviews/week · all features'}
+                    </div>
+                    <div style={{fontSize:11,color:'var(--text-3)',marginTop:4}}>
+                      {(() => {
+                        if (!planActivatedAt && !promoCode) return null;
+                        const fmtDate = (ts: number) => new Date(ts).toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+                        if (promoCode) {
+                          const code = promoCode.toLowerCase();
+                          if (code.includes('lifetime') || code.includes('forever') || code.includes('free')) return <>Lifetime via code <strong>{promoCode}</strong></>;
+                          const monthMatch = code.match(/(\d+)\s*(?:mo|month)/i);
+                          if (monthMatch && planActivatedAt) { const m = parseInt(monthMatch[1],10); const ends = new Date(planActivatedAt + m*30*864e5); if (new Date() < ends) return <>{m} months free via <strong>{promoCode}</strong> · billing starts {fmtDate(ends.getTime())}</>; }
+                          if (planActivatedAt) return <>Via code <strong>{promoCode}</strong> · Renews {fmtDate(planActivatedAt + (billingCycle === 'annual' ? 365 : 30) * 864e5)}</>;
+                          return <>Via code <strong>{promoCode}</strong></>;
                         }
-                        // Codes with month numbers (e.g. "3MONTHFREE", "promo2mo")
-                        const monthMatch = code.match(/(\d+)\s*(?:mo|month)/i);
-                        if (monthMatch && planActivatedAt) {
-                          const freeMonths = parseInt(monthMatch[1], 10);
-                          const freeEnds = new Date(planActivatedAt + freeMonths * 30 * 24 * 60 * 60 * 1000);
-                          const now = new Date();
-                          if (now < freeEnds) {
-                            return <>{freeMonths} months free via code <strong>{promoCode}</strong> · billing starts {fmtDate(freeEnds.getTime())}</>;
-                          } else {
-                            const renewDate = new Date(freeEnds.getTime() + 30 * 24 * 60 * 60 * 1000);
-                            return <>Promo ended · Renews {fmtDate(renewDate.getTime())}</>;
-                          }
-                        }
-                        // Generic promo - show code + standard renewal
-                        if (planActivatedAt) {
-                          return <>Activated via code <strong>{promoCode}</strong> · Renews {fmtDate(planActivatedAt + (billingCycle === 'annual' ? 365 : 30) * 24 * 60 * 60 * 1000)}</>;
-                        }
-                        return <>Activated via code <strong>{promoCode}</strong></>;
-                      }
-                      // Standard paid user
-                      if (planActivatedAt) {
-                        return <>Renews {fmtDate(planActivatedAt + (billingCycle === 'annual' ? 365 : 30) * 24 * 60 * 60 * 1000)}</>;
-                      }
-                      return null;
-                    })()}
+                        if (planActivatedAt) return <>Renews {fmtDate(planActivatedAt + (billingCycle === 'annual' ? 365 : 30) * 864e5)}</>;
+                        return null;
+                      })()}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div style={{display:'flex',alignItems:'center',gap:16}}>
                 <div style={{textAlign:'right'}}>
                   <div style={{fontFamily:"'Instrument Serif',serif",fontSize:24,fontStyle:'italic',color:'var(--text)',letterSpacing:'-.3px'}}>
                     {promoCode && (promoCode.toLowerCase().includes('lifetime') || promoCode.toLowerCase().includes('forever') || promoCode.toLowerCase().includes('free'))
-                      ? <>$0 <span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/mo</span></>
+                      ? <>$0<span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/mo</span></>
                       : billingCycle === 'annual'
-                        ? <>{userPlan === 'elite' ? '$399' : '$199'} <span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/yr</span></>
-                        : <>{userPlan === 'elite' ? '$40' : '$20'} <span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/mo</span></>
+                        ? <>{userPlan === 'elite' ? '$399' : '$199'}<span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/yr</span></>
+                        : <>{userPlan === 'elite' ? '$40' : '$20'}<span style={{fontSize:13,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/mo</span></>
                     }
                   </div>
-                  {(() => {
-                    return <div style={{fontSize:11,color:'#16a34a',marginTop:2,fontWeight:600}}>Active</div>;
-                  })()}
+                  <div style={{fontSize:11,color:'#16a34a',marginTop:2,fontWeight:600}}>Active</div>
                 </div>
-                <button type="button" onClick={() => {
-                  setModal({
-                    title: 'Cancel Subscription',
-                    desc: `Are you sure you want to cancel? You will lose access to all ${userPlan === 'elite' ? 'Elite' : 'Pro'} features and be moved to the Free plan.`,
-                    confirmLabel: 'Yes, Cancel',
-                    onConfirm: async () => {
-                      try {
-                        localStorage.setItem('offerbell_plan', 'free');
-                        localStorage.removeItem('offerbell_plan_activated_at');
-                        localStorage.removeItem('offerbell_plan_cancelled_at');
-                        localStorage.removeItem('offerbell_plan_expires_at');
-                        localStorage.removeItem('offerbell_billing_cycle');
-                        const raw = localStorage.getItem('offerbell_onboarding_profile');
-                        const existing = raw ? JSON.parse(raw) : {};
-                        existing.plan = 'free';
-                        delete existing.planActivatedAt;
-                        delete existing.planCancelledAt;
-                        delete existing.planExpiresAt;
-                        localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(existing));
-                        const userId = localStorage.getItem('offerbell_user_id');
-                        if (userId && downgradePlanMutation) { await downgradePlanMutation({ userId }).catch(() => {}); }
-                      } catch {}
-                      window.location.reload();
-                    }
-                  });
-                }} style={{background:'var(--surface)',color:'var(--text-2)',padding:'9px 20px',borderRadius:10,fontSize:13,fontWeight:600,border:'1.5px solid var(--border-2)',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Cancel Subscription</button>
+              </div>
+
+              {/* Plan actions */}
+              <div style={{padding:'16px 24px',display:'flex',flexDirection:'column',gap:10}}>
+                {/* Switch plan option */}
+                {userPlan === 'pro' && (
+                  <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'14px 18px',background:'linear-gradient(135deg, rgba(124,58,237,0.04), transparent)',border:'1.5px solid rgba(124,58,237,0.2)',borderRadius:12}}>
+                    <div>
+                      <div style={{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:2}}>Upgrade to Elite</div>
+                      <div style={{fontSize:11,color:'var(--text-3)'}}>Higher AI limits, 30 resume reviews/week, priority support</div>
+                    </div>
+                    <button type="button" onClick={() => window.location.href='/checkout'} style={{background:'linear-gradient(135deg, #7c3aed, #6366f1)',color:'#fff',padding:'8px 18px',borderRadius:8,fontSize:12,fontWeight:700,border:'none',cursor:'pointer',fontFamily:"'Sora',sans-serif",whiteSpace:'nowrap'}}>
+                      {billingCycle === 'annual' ? '$399/yr' : '$40/mo'}
+                    </button>
+                  </div>
+                )}
+                {userPlan === 'elite' && (
+                  <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'14px 18px',background:'var(--bg)',border:'1.5px solid var(--border)',borderRadius:12}}>
+                    <div>
+                      <div style={{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:2}}>Switch to Pro</div>
+                      <div style={{fontSize:11,color:'var(--text-3)'}}>Keep all core features at a lower price</div>
+                    </div>
+                    <button type="button" onClick={() => {
+                      setModal({
+                        title: 'Switch to Pro',
+                        desc: 'You\'ll be moved to the Pro plan. You\'ll keep all core features but lose Elite perks like higher AI limits, priority support, and early feature access. Your billing will update to the Pro rate.',
+                        confirmLabel: 'Switch to Pro',
+                        onConfirm: async () => {
+                          try {
+                            localStorage.setItem('offerbell_plan', 'pro');
+                            const raw = localStorage.getItem('offerbell_onboarding_profile');
+                            const existing = raw ? JSON.parse(raw) : {};
+                            existing.plan = 'pro';
+                            localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(existing));
+                          } catch {}
+                          window.location.reload();
+                        }
+                      });
+                    }} style={{background:'var(--surface)',color:'var(--text)',padding:'8px 18px',borderRadius:8,fontSize:12,fontWeight:600,border:'1.5px solid var(--border)',cursor:'pointer',fontFamily:"'Sora',sans-serif",whiteSpace:'nowrap'}}>
+                      {billingCycle === 'annual' ? '$199/yr' : '$20/mo'}
+                    </button>
+                  </div>
+                )}
+
+                {/* Billing cycle switch */}
+                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'14px 18px',background:'var(--bg)',border:'1.5px solid var(--border)',borderRadius:12}}>
+                  <div>
+                    <div style={{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:2}}>
+                      {billingCycle === 'annual' ? 'Switch to Monthly' : 'Switch to Annual'}
+                    </div>
+                    <div style={{fontSize:11,color:'var(--text-3)'}}>
+                      {billingCycle === 'annual' ? 'More flexibility, higher monthly rate' : 'Save ~17% with annual billing'}
+                    </div>
+                  </div>
+                  <button type="button" onClick={() => {
+                    const newCycle = billingCycle === 'annual' ? 'monthly' : 'annual';
+                    setModal({
+                      title: `Switch to ${newCycle === 'annual' ? 'Annual' : 'Monthly'} Billing`,
+                      desc: newCycle === 'annual'
+                        ? `You'll be billed ${userPlan === 'elite' ? '$399' : '$199'} annually instead of ${userPlan === 'elite' ? '$40' : '$20'}/month. That's a ~17% savings.`
+                        : `You'll be billed ${userPlan === 'elite' ? '$40' : '$20'}/month instead of annually. Changes take effect at your next renewal.`,
+                      confirmLabel: 'Confirm Switch',
+                      onConfirm: async () => {
+                        localStorage.setItem('offerbell_billing_cycle', newCycle);
+                        try { const raw = localStorage.getItem('offerbell_onboarding_profile'); const p = raw ? JSON.parse(raw) : {}; p.billingCycle = newCycle; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(p)); } catch {}
+                        window.location.reload();
+                      }
+                    });
+                  }} style={{background:'var(--surface)',color:'var(--text-2)',padding:'8px 18px',borderRadius:8,fontSize:12,fontWeight:600,border:'1.5px solid var(--border)',cursor:'pointer',fontFamily:"'Sora',sans-serif",whiteSpace:'nowrap'}}>
+                    {billingCycle === 'annual' ? 'Go Monthly' : 'Go Annual'}
+                  </button>
+                </div>
+
+                {/* Cancel */}
+                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'14px 18px',background:'var(--bg)',border:'1.5px solid var(--border)',borderRadius:12}}>
+                  <div>
+                    <div style={{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:2}}>Cancel Subscription</div>
+                    <div style={{fontSize:11,color:'var(--text-3)'}}>You'll be moved to the Free plan</div>
+                  </div>
+                  <button type="button" onClick={() => {
+                    setModal({
+                      title: 'Cancel Subscription',
+                      desc: `Are you sure? You'll lose access to all ${userPlan === 'elite' ? 'Elite' : 'Pro'} features including AI Coach, Mock Interview, and full flashcard access. You'll be moved to the Free plan.`,
+                      confirmLabel: 'Yes, Cancel',
+                      onConfirm: async () => {
+                        try {
+                          localStorage.setItem('offerbell_plan', 'free');
+                          localStorage.removeItem('offerbell_plan_activated_at');
+                          localStorage.removeItem('offerbell_plan_cancelled_at');
+                          localStorage.removeItem('offerbell_plan_expires_at');
+                          localStorage.removeItem('offerbell_billing_cycle');
+                          const raw = localStorage.getItem('offerbell_onboarding_profile');
+                          const existing = raw ? JSON.parse(raw) : {};
+                          existing.plan = 'free';
+                          delete existing.planActivatedAt;
+                          delete existing.planCancelledAt;
+                          delete existing.planExpiresAt;
+                          localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(existing));
+                          const userId = localStorage.getItem('offerbell_user_id');
+                          if (userId && downgradePlanMutation) { await downgradePlanMutation({ userId }).catch(() => {}); }
+                        } catch {}
+                        window.location.reload();
+                      }
+                    });
+                  }} style={{background:'var(--surface)',color:'#dc2626',padding:'8px 18px',borderRadius:8,fontSize:12,fontWeight:600,border:'1.5px solid #fecaca',cursor:'pointer',fontFamily:"'Sora',sans-serif",whiteSpace:'nowrap'}}>Cancel</button>
+                </div>
               </div>
             </div>
           ) : (
