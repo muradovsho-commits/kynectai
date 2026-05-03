@@ -124,8 +124,8 @@ export default function CheckoutPage() {
 
   const cycles: { key: BillingCycle; label: string; badge?: string }[] = [
     { key: 'monthly', label: 'Monthly' },
-    { key: '6month', label: '6 Months', badge: '2 Months Off' },
-    { key: 'annual', label: 'Yearly', badge: '5 Months Off' },
+    { key: '6month', label: '6 Months', badge: 'Save 10%' },
+    { key: 'annual', label: 'Yearly', badge: 'Save 20%' },
   ];
 
   return (
