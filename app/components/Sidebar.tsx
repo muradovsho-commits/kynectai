@@ -8,11 +8,12 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ activePage }: SidebarProps) {
-  // Initialize synchronously from localStorage to prevent flicker on navigation
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem('offerbell-theme') === 'dark';
-  });
+  // Dark mode: read from DOM, not state. The blocking <script> in layout.tsx
+  // already sets data-theme="dark" before React hydrates, so the DOM is the
+  // source of truth. Using React state causes flicker on navigation.
+  const [darkKey, setDarkKey] = useState(0); // force re-render after toggle
+  const isDark = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'dark';
+
   const [userName, setUserName] = useState(() => {
     if (typeof window === 'undefined') return { first: '', last: '' };
     try {
@@ -77,8 +78,8 @@ export default function Sidebar({ activePage }: SidebarProps) {
   function toggleTheme() {
     const next = isDark ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
-    setIsDark(!isDark);
     localStorage.setItem('offerbell-theme', next);
+    setDarkKey(k => k + 1); // force re-render to pick up new DOM attribute
   }
 
   function handlePicUpload(e: React.ChangeEvent<HTMLInputElement>) {
