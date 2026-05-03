@@ -8,55 +8,56 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ activePage }: SidebarProps) {
-  const [isDark, setIsDark] = useState(false);
-  const [userName, setUserName] = useState({ first: '', last: '' });
-  const [userPlan, setUserPlan] = useState('free');
-  const [messagesSent, setMessagesSent] = useState(0);
+  // Initialize synchronously from localStorage to prevent flicker on navigation
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('offerbell-theme') === 'dark';
+  });
+  const [userName, setUserName] = useState(() => {
+    if (typeof window === 'undefined') return { first: '', last: '' };
+    try {
+      const raw = localStorage.getItem('offerbell_onboarding_profile');
+      if (raw) { const p = JSON.parse(raw); return { first: p.firstName || '', last: p.lastName || '' }; }
+    } catch {}
+    return { first: '', last: '' };
+  });
+  const [userPlan, setUserPlan] = useState(() => {
+    if (typeof window === 'undefined') return 'free';
+    return localStorage.getItem('offerbell_plan') || 'free';
+  });
+  const [messagesSent, setMessagesSent] = useState(() => {
+    if (typeof window === 'undefined') return 0;
+    try { return parseInt(localStorage.getItem('offerbell_messages_sent') || '0', 10); } catch { return 0; }
+  });
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [profilePic, setProfilePic] = useState<string | null>(null);
+  const [profilePic, setProfilePic] = useState(() => {
+    if (typeof window === 'undefined') return null;
+    try { return localStorage.getItem('offerbell_profile_pic') || null; } catch { return null; }
+  });
   const picInputRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
 
-  // Read message count and keep it in sync
-  const refreshMessageCount = () => {
-    try { setMessagesSent(parseInt(localStorage.getItem('offerbell_messages_sent') || '0', 10)); } catch {}
-  };
-
+  // Side effects only - state is already initialized synchronously above
   useEffect(() => {
-    const t = localStorage.getItem('offerbell-theme');
-    if (t === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); setIsDark(true); }
-    refreshMessageCount();
+    // One-time migration for old pro users
     try {
-      const raw = localStorage.getItem('offerbell_onboarding_profile');
-      if (raw) {
-        const p = JSON.parse(raw);
-        setUserName({ first: p.firstName || '', last: p.lastName || '' });
-        const plan = localStorage.getItem('offerbell_plan') || 'free';
-        // Auto-migrate old pro users to elite
-        const migrated = localStorage.getItem('offerbell_plan_migrated_v2');
-        if (!migrated && plan === 'pro' && localStorage.getItem('offerbell_plan_activated_at')) {
-          localStorage.setItem('offerbell_plan', 'elite');
-          localStorage.setItem('offerbell_plan_migrated_v2', 'true');
-          p.plan = 'elite';
-          localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(p));
-        }
-        const effectivePlan = localStorage.getItem('offerbell_plan') || p.plan || 'free';
-        setUserPlan(effectivePlan);
+      const plan = localStorage.getItem('offerbell_plan') || 'free';
+      const migrated = localStorage.getItem('offerbell_plan_migrated_v2');
+      if (!migrated && plan === 'pro' && localStorage.getItem('offerbell_plan_activated_at')) {
+        localStorage.setItem('offerbell_plan', 'elite');
+        localStorage.setItem('offerbell_plan_migrated_v2', 'true');
+        const raw = localStorage.getItem('offerbell_onboarding_profile');
+        if (raw) { const p = JSON.parse(raw); p.plan = 'elite'; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(p)); }
+        setUserPlan('elite');
       }
     } catch {}
-    // Load profile picture
-    try {
-      const pic = localStorage.getItem('offerbell_profile_pic');
-      if (pic) setProfilePic(pic);
-    } catch {}
-    // Listen for localStorage changes (from other components on the same page)
-    const onStorage = (e: StorageEvent) => { if (e.key === 'offerbell_messages_sent') refreshMessageCount(); };
+    // Keep message count in sync
+    const refresh = () => { try { setMessagesSent(parseInt(localStorage.getItem('offerbell_messages_sent') || '0', 10)); } catch {} };
+    const onStorage = (e: StorageEvent) => { if (e.key === 'offerbell_messages_sent') refresh(); };
     window.addEventListener('storage', onStorage);
-    // Also refresh on visibility change (when user comes back to tab)
-    const onVisible = () => { if (document.visibilityState === 'visible') refreshMessageCount(); };
+    const onVisible = () => { if (document.visibilityState === 'visible') refresh(); };
     document.addEventListener('visibilitychange', onVisible);
-    // Poll every 2 seconds to catch same-page updates (storage event doesn't fire for same-page writes)
-    const interval = setInterval(refreshMessageCount, 2000);
+    const interval = setInterval(refresh, 2000);
     return () => { window.removeEventListener('storage', onStorage); document.removeEventListener('visibilitychange', onVisible); clearInterval(interval); };
   }, []);
 
