@@ -327,7 +327,7 @@ export default function MyAccountPage() {
                   <svg width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                 </div>
                 <div>
-                  <div style={{fontSize:15,fontWeight:700,color:'var(--text)',marginBottom:2}}>{userPlan === 'elite' ? 'Elite' : 'Pro'} Plan</div>
+                  <div style={{fontSize:15,fontWeight:700,color:'var(--text)',marginBottom:2}}>{userPlan === 'elite' ? 'Diamond' : 'Pro'} Plan</div>
                   <div style={{fontSize:12,color:'var(--text-3)'}}>
                     {userPlan === 'elite' ? 'Higher AI limits · 30 resume reviews/week · priority support' : 'Usage-based AI · 10 resume reviews/week · all features'}
                   </div>
@@ -335,13 +335,14 @@ export default function MyAccountPage() {
                     {(() => {
                       if (!planActivatedAt && !promoCode) return null;
                       const fmtDate = (ts: number) => new Date(ts).toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+                      const cycleDays = billingCycle === 'annual' ? 365 : billingCycle === '6month' ? 182 : 30;
                       if (promoCode) {
                         const code = promoCode.toLowerCase();
                         if (code.includes('lifetime') || code.includes('forever') || code.includes('free')) return <>Lifetime via code <strong>{promoCode}</strong></>;
-                        if (planActivatedAt) return <>Via code <strong>{promoCode}</strong> · Renews {fmtDate(planActivatedAt + (billingCycle === 'annual' ? 365 : 30) * 864e5)}</>;
+                        if (planActivatedAt) return <>Via code <strong>{promoCode}</strong> · Renews {fmtDate(planActivatedAt + cycleDays * 864e5)}</>;
                         return <>Via code <strong>{promoCode}</strong></>;
                       }
-                      if (planActivatedAt) return <>Renews {fmtDate(planActivatedAt + (billingCycle === 'annual' ? 365 : 30) * 864e5)}</>;
+                      if (planActivatedAt) return <>Renews {fmtDate(planActivatedAt + cycleDays * 864e5)}</>;
                       return null;
                     })()}
                   </div>
@@ -353,8 +354,10 @@ export default function MyAccountPage() {
                     {promoCode && (promoCode.toLowerCase().includes('lifetime') || promoCode.toLowerCase().includes('forever') || promoCode.toLowerCase().includes('free'))
                       ? <>$0</>
                       : billingCycle === 'annual'
-                        ? <>{userPlan === 'elite' ? '$399' : '$199'}<span style={{fontSize:12,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/yr</span></>
-                        : <>{userPlan === 'elite' ? '$40' : '$20'}<span style={{fontSize:12,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/mo</span></>
+                        ? <>{userPlan === 'elite' ? '$384' : '$192'}<span style={{fontSize:12,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/yr</span></>
+                        : billingCycle === '6month'
+                          ? <>{userPlan === 'elite' ? '$216' : '$108'}<span style={{fontSize:12,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/6mo</span></>
+                          : <>{userPlan === 'elite' ? '$40' : '$20'}<span style={{fontSize:12,fontStyle:'normal',fontFamily:"'Sora',sans-serif",color:'var(--text-3)',fontWeight:400}}>/mo</span></>
                     }
                   </div>
                   <div style={{fontSize:10,color:'#16a34a',fontWeight:600}}>Active</div>
