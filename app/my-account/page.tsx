@@ -226,7 +226,7 @@ export default function MyAccountPage() {
             <div style={{fontSize:13,color:'var(--text-3)',marginBottom:10}}>{email}</div>
             <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
               {userPlan === 'elite' ? (
-                <span style={{display:'inline-flex',padding:'3px 10px',borderRadius:100,fontSize:11,fontWeight:600,background:'#f5f3ff',color:'#5b21b6',border:'1px solid #c4b5fd'}}>Elite Plan</span>
+                <span style={{display:'inline-flex',padding:'3px 10px',borderRadius:100,fontSize:11,fontWeight:600,background:'#eff6ff',color:'#1d4ed8',border:'1px solid #93c5fd'}}>Elite Plan</span>
               ) : userPlan === 'pro' ? (
                 <span style={{display:'inline-flex',padding:'3px 10px',borderRadius:100,fontSize:11,fontWeight:600,background:'#ecfdf5',color:'#166534',border:'1px solid #bbf7d0'}}>Pro Plan</span>
               ) : (
@@ -323,11 +323,11 @@ export default function MyAccountPage() {
           {(userPlan === 'pro' || userPlan === 'elite') ? (
             <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,padding:'20px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:20}}>
               <div style={{display:'flex',alignItems:'center',gap:14}}>
-                <div style={{width:44,height:44,borderRadius:12,background: userPlan === 'elite' ? '#5b21b6' : '#166534',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                <div style={{width:44,height:44,borderRadius:12,background: userPlan === 'elite' ? '#1d4ed8' : '#166534',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
                   <svg width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                 </div>
                 <div>
-                  <div style={{fontSize:15,fontWeight:700,color:'var(--text)',marginBottom:2}}>{userPlan === 'elite' ? 'Diamond' : 'Pro'} Plan</div>
+                  <div style={{fontSize:15,fontWeight:700,color:'var(--text)',marginBottom:2}}>{userPlan === 'elite' ? 'Elite' : 'Pro'} Plan</div>
                   <div style={{fontSize:12,color:'var(--text-3)'}}>
                     {userPlan === 'elite' ? 'Higher AI limits · 30 resume reviews/week · priority support' : 'Usage-based AI · 10 resume reviews/week · all features'}
                   </div>

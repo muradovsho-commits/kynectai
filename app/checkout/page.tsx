@@ -15,17 +15,17 @@ const FEATURES: Feature[] = [
   { label: 'Interview Flashcards', free: LIMIT('10% per track'), pro: CHECK, elite: CHECK },
   { label: 'Concept Drills', free: LIMIT('5 Qs/drill'), pro: CHECK, elite: CHECK },
   { label: 'Diagnostic Review', free: LIMIT('1 track'), pro: CHECK, elite: CHECK },
+  { label: 'Career Guides / Quiz', free: CHECK, pro: CHECK, elite: CHECK },
   { label: 'Interview Prep Guides', free: DASH, pro: CHECK, elite: CHECK },
   { label: 'Flashcard Bookmarks', free: CHECK, pro: CHECK, elite: CHECK },
   { label: 'Cross-device Sync', free: CHECK, pro: CHECK, elite: CHECK },
   { label: 'Activity Streak & Calendar', free: CHECK, pro: CHECK, elite: CHECK },
   { label: 'Outreach Tracker', free: LIMIT('5 contacts'), pro: CHECK, elite: CHECK },
-  { label: 'Referral Map', free: LIMIT('3 contacts'), pro: CHECK, elite: CHECK },
+  { label: 'Referral Map', free: LIMIT('5 contacts'), pro: CHECK, elite: CHECK },
   { label: 'Outreach Writer', free: LIMIT('5 total'), pro: LIMIT('20/week'), elite: LIMIT('30/week') },
-  { label: 'AI Resume Review', free: LIMIT('1 total'), pro: LIMIT('10/week'), elite: LIMIT('30/week') },
-  { label: 'AI Coach', free: LIMIT('1 message'), pro: LIMIT('Usage-based'), elite: LIMIT('Higher limits') },
-  { label: 'Mock Interview', free: DASH, pro: LIMIT('Usage-based'), elite: LIMIT('Higher limits') },
-  { label: 'Contact Finder', free: DASH, pro: CHECK, elite: CHECK },
+  { label: 'AI Resume Review', free: LIMIT('1/week'), pro: LIMIT('10/week'), elite: LIMIT('30/week') },
+  { label: 'AI Coach', free: LIMIT('1/week'), pro: LIMIT('Usage-based'), elite: LIMIT('Higher limits') },
+  { label: 'Mock Interview', free: LIMIT('3/week'), pro: CHECK, elite: CHECK },
   { label: 'Priority Support', free: DASH, pro: DASH, elite: CHECK },
   { label: 'Early Feature Access', free: DASH, pro: DASH, elite: CHECK },
 ];
@@ -287,15 +287,15 @@ export default function CheckoutPage() {
 
           {/* ELITE */}
           <div style={{
-            background: 'var(--surface)', border: '1.5px solid rgba(124,58,237,0.35)', borderRadius: 16,
+            background: 'var(--surface)', border: '1.5px solid rgba(37,99,235,0.35)', borderRadius: 16,
             overflow: 'hidden', display: 'flex', flexDirection: 'column',
           }}>
             <div style={{ height: 160, overflow: 'hidden', position: 'relative' }}>
               <img src={IMG_ELITE} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-              <div style={{ position: 'absolute', top: 12, right: 12, background: '#7c3aed', color: '#fff', fontSize: 9, fontWeight: 800, padding: '4px 10px', borderRadius: 6, letterSpacing: '0.5px', textTransform: 'uppercase' }}>Best Value</div>
+              <div style={{ position: 'absolute', top: 12, right: 12, background: '#2563eb', color: '#fff', fontSize: 9, fontWeight: 800, padding: '4px 10px', borderRadius: 6, letterSpacing: '0.5px', textTransform: 'uppercase' }}>Best Value</div>
             </div>
             <div style={{ padding: '24px 24px 28px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>Diamond</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>Elite</div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 4 }}>
                 <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 38, color: 'var(--text)', letterSpacing: '-1px' }}>${monthlyEquiv('elite', billingCycle)}</span>
                 <span style={{ fontSize: 13, color: 'var(--text-3)' }}>monthly</span>
@@ -325,15 +325,15 @@ export default function CheckoutPage() {
                 type="button"
                 style={{
                   width: '100%', padding: '12px 0', borderRadius: 10, marginTop: 20, border: 'none',
-                  background: currentPlan === 'elite' ? 'rgba(124,58,237,0.15)' : 'linear-gradient(135deg, #7c3aed, #6366f1)',
-                  color: currentPlan === 'elite' ? '#7c3aed' : '#fff',
+                  background: currentPlan === 'elite' ? 'rgba(37,99,235,0.15)' : 'linear-gradient(135deg, #2563eb, #3b82f6)',
+                  color: currentPlan === 'elite' ? '#2563eb' : '#fff',
                   fontSize: 13, fontWeight: 700,
                   cursor: currentPlan === 'elite' ? 'default' : 'pointer',
                   fontFamily: "'Sora', sans-serif",
                   opacity: loading === 'elite' ? 0.6 : 1,
                 }}
               >
-                {currentPlan === 'elite' ? 'Current Plan' : loading === 'elite' ? 'Redirecting...' : 'Upgrade to Diamond'}
+                {currentPlan === 'elite' ? 'Current Plan' : loading === 'elite' ? 'Redirecting...' : 'Upgrade to Elite'}
               </button>
             </div>
           </div>
@@ -350,16 +350,16 @@ export default function CheckoutPage() {
                 <th style={{ padding: '14px 24px', textAlign: 'left', fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '1px' }}>Feature</th>
                 <th style={{ padding: '14px 20px', textAlign: 'center', fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '1px', width: 120 }}>Basic</th>
                 <th style={{ padding: '14px 20px', textAlign: 'center', fontSize: 12, fontWeight: 700, color: 'var(--text)', textTransform: 'uppercase', letterSpacing: '1px', width: 120 }}>Pro</th>
-                <th style={{ padding: '14px 20px', textAlign: 'center', fontSize: 12, fontWeight: 700, color: '#7c3aed', textTransform: 'uppercase', letterSpacing: '1px', width: 120 }}>Diamond</th>
+                <th style={{ padding: '14px 20px', textAlign: 'center', fontSize: 12, fontWeight: 700, color: '#2563eb', textTransform: 'uppercase', letterSpacing: '1px', width: 120 }}>Elite</th>
               </tr>
             </thead>
             <tbody>
               {FEATURES.map((f, i) => (
                 <tr key={f.label} style={{ borderBottom: i < FEATURES.length - 1 ? '1px solid var(--border)' : 'none' }}>
                   <td style={{ padding: '12px 24px', fontSize: 13, color: 'var(--text)', fontWeight: 500 }}>{f.label}</td>
-                  <td style={{ padding: '12px 20px', textAlign: 'center' }}>{f.free}</td>
-                  <td style={{ padding: '12px 20px', textAlign: 'center' }}>{f.pro}</td>
-                  <td style={{ padding: '12px 20px', textAlign: 'center' }}>{f.elite}</td>
+                  <td style={{ padding: '12px 20px' }}><div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{f.free}</div></td>
+                  <td style={{ padding: '12px 20px' }}><div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{f.pro}</div></td>
+                  <td style={{ padding: '12px 20px' }}><div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{f.elite}</div></td>
                 </tr>
               ))}
             </tbody>
