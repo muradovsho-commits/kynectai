@@ -308,7 +308,8 @@ export default function DiagnosticReviewPage() {
               {(() => {
                 const plan = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_plan') || 'free') : 'free';
                 const isPaid = plan === 'pro' || plan === 'elite';
-                const totalTaken = allStats.reduce((sum, s) => sum + s.st.diagsTaken, 0);
+                // Count total diagnostics taken across all tracks
+                const totalTaken = Object.keys(TRACKS).reduce((sum, k) => sum + trackStats(k).diagsTaken, 0);
                 const atLimit = !isPaid && totalTaken >= 1;
 
                 if (atLimit) return (
