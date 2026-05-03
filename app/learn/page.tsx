@@ -204,16 +204,17 @@ export default function LearnPage() {
             const isPaid = plan === 'pro' || plan === 'elite';
             if (!isPaid) {
               return (
-                <div key={g.id} className="learn-card" style={{ opacity: 0.55, cursor: 'not-allowed', position: 'relative' }} onClick={() => { window.location.href = '/checkout'; }}>
-                  <div style={{ position: 'absolute', top: 12, right: 12 }}>
-                    <svg width="16" height="16" fill="none" stroke="var(--text-3)" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <div key={g.id} className="learn-card" style={{ position: 'relative', cursor: 'pointer' }} onClick={() => { window.location.href = '/checkout'; }}>
+                  <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 100, background: 'var(--text)', color: 'var(--surface)', fontSize: 9, fontWeight: 800, letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+                    <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Pro
                   </div>
                   <div className={`learn-card-icon ${g.iconClass}`}>{g.icon}</div>
                   <div className="learn-card-title">{g.title}</div>
                   <div className="learn-card-desc">{g.desc}</div>
                   <div className="learn-card-footer">
                     <span className="learn-card-modules">{g.modules} Modules</span>
-                    <span className="learn-card-link" style={{ color: 'var(--text-3)' }}>Pro Plan</span>
+                    <span className="learn-card-link" style={{ color: 'var(--text-2)' }}>Unlock with Pro</span>
                   </div>
                 </div>
               );

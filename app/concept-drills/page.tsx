@@ -327,6 +327,21 @@ function ConceptDrillsContent() {
           )}
 
           <div className="cd-result-actions-wrap">
+            {(() => {
+              const plan = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_plan') || 'free') : 'free';
+              if (plan === 'pro' || plan === 'elite') return null;
+              return (
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '12px 18px', marginBottom: 16,
+                  background: 'var(--surface)', border: '1.5px solid var(--border)',
+                  borderRadius: 10, fontSize: 12, color: 'var(--text-3)',
+                }}>
+                  <span>Free drills are 5 questions. Upgrade for full {DRILL_SIZE}-question drills across all tracks.</span>
+                  <a href="/checkout" style={{ padding: '5px 12px', borderRadius: 7, fontSize: 11, fontWeight: 700, background: 'var(--text)', color: 'var(--surface)', textDecoration: 'none', fontFamily: "'Sora', sans-serif", flexShrink: 0, marginLeft: 12 }}>Upgrade</a>
+                </div>
+              );
+            })()}
             <div className="cd-result-actions-label">Next</div>
             <div className="cd-result-actions">
               <button className="cd-action-primary" onClick={() => startDrill(activeTopic)} type="button">

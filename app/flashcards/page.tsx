@@ -322,6 +322,26 @@ function FlashcardsContent() {
               </button>
             </div>
 
+            {/* Free user teaser - show how many more cards they're missing */}
+            {!isPro && activeTrack && allCards.length > accessibleCards.length && (
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '12px 18px', marginBottom: 16,
+                background: 'var(--surface)', border: '1.5px solid var(--border)',
+                borderRadius: 10, fontSize: 12, color: 'var(--text-3)',
+              }}>
+                <span>
+                  Showing <strong style={{ color: 'var(--text)' }}>{accessibleCards.length}</strong> of <strong style={{ color: 'var(--text)' }}>{allCards.length}</strong> questions in this track.
+                  Upgrade to unlock all {allCards.length}.
+                </span>
+                <a href="/checkout" style={{
+                  padding: '6px 14px', borderRadius: 8, fontSize: 11, fontWeight: 700,
+                  background: 'var(--text)', color: 'var(--surface)', textDecoration: 'none',
+                  fontFamily: "'Sora', sans-serif", flexShrink: 0, marginLeft: 12,
+                }}>Upgrade</a>
+              </div>
+            )}
+
             {/* ═══ SINGLE CARD VIEW ═══ */}
             {viewMode === 'single' && (
             <>

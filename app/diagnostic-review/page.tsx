@@ -305,7 +305,18 @@ export default function DiagnosticReviewPage() {
                 </div>
               )}
 
-              <button className="diag-cta-primary" onClick={() => { setTrackKey(viewTrack); const tr = TRACKS[viewTrack]; const qs = buildAssessment(tr); setQuestions(qs); setIdx(0); setSelected(null); setShowExp(false); setTimer(TIME_PER_Q); setCatResults({}); setTotalCorrect(0); setTotalAnswered(0); setMissed([]); setPhase('assess'); }} type="button">
+              <button className="diag-cta-primary" onClick={() => {
+                // Free users: 1 diagnostic total
+                const plan = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_plan') || 'free') : 'free';
+                if (plan !== 'pro' && plan !== 'elite') {
+                  const totalTaken = allStats.reduce((sum, s) => sum + s.st.diagsTaken, 0);
+                  if (totalTaken >= 1) {
+                    alert('Free plan includes 1 diagnostic. Upgrade to Pro for unlimited diagnostics across all tracks.');
+                    return;
+                  }
+                }
+                setTrackKey(viewTrack); const tr = TRACKS[viewTrack]; const qs = buildAssessment(tr); setQuestions(qs); setIdx(0); setSelected(null); setShowExp(false); setTimer(TIME_PER_Q); setCatResults({}); setTotalCorrect(0); setTotalAnswered(0); setMissed([]); setPhase('assess');
+              }} type="button">
                 {st.diagsTaken > 0 ? 'Take Another Diagnostic' : `Start ${t.title} Diagnostic`}
                 {ARROW}
               </button>
@@ -379,12 +390,9 @@ export default function DiagnosticReviewPage() {
               {allStats.map(({ k, t, st }, i) => {
                 const scoreColor = st.avgScore >= 80 ? '#16a34a' : st.avgScore >= 55 ? '#d97706' : st.avgScore > 0 ? '#dc2626' : 'var(--text-3)';
                 const recent = st.history.slice(0, 6).reverse();
-                const plan = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_plan') || 'free') : 'free';
-                const isPaid = plan === 'pro' || plan === 'elite';
-                const isLocked = !isPaid && i >= 1; // Free users: only first track
                 return (
-                  <div key={k} className="diag-track-row" onClick={() => { if (isLocked) { alert('Upgrade to Pro to access all diagnostic tracks.'); return; } setViewTrack(k); }} style={isLocked ? { opacity: 0.5, cursor: 'not-allowed' } : {}}>
-                    <span className="diag-tr-num">{isLocked ? <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> : String(i + 1).padStart(2, '0')}</span>
+                  <div key={k} className="diag-track-row" onClick={() => setViewTrack(k)}>
+                    <span className="diag-tr-num">{String(i + 1).padStart(2, '0')}</span>
                     <div>
                       <div className="diag-tr-name">{t.title}</div>
                       <div className="diag-tr-name-sub">{t.categories.length} categories</div>

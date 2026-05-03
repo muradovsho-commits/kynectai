@@ -386,6 +386,19 @@ export default function OutreachTrackerPage() {
             </div>
           </div>
 
+          {/* Free user limit indicator */}
+          {userPlan !== 'pro' && userPlan !== 'elite' && (
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '10px 16px', marginBottom: 16,
+              background: 'var(--surface)', border: '1.5px solid var(--border)',
+              borderRadius: 10, fontSize: 12, color: 'var(--text-3)',
+            }}>
+              <span><strong style={{ color: 'var(--text)' }}>{contacts.length}</strong> of <strong style={{ color: 'var(--text)' }}>5</strong> contacts used. Upgrade for unlimited contacts and full pipeline tracking.</span>
+              <a href="/checkout" style={{ padding: '5px 12px', borderRadius: 7, fontSize: 11, fontWeight: 700, background: 'var(--text)', color: 'var(--surface)', textDecoration: 'none', fontFamily: "'Sora', sans-serif", flexShrink: 0, marginLeft: 12 }}>Upgrade</a>
+            </div>
+          )}
+
 
           {/* Reminders */}
           <RemindersPanel contacts={contacts} onOpenContact={(id) => {
