@@ -463,6 +463,25 @@ export default function CoachPage() {
     if (isLoading || !text.trim()) return;
     if (isPro && rateLimited) return;
 
+    // Free users: 1 coach message per week
+    if (!isPro) {
+      try {
+        const now = new Date(); const day = now.getDay(); const diff = day === 0 ? 6 : day - 1;
+        const mon = new Date(now); mon.setDate(now.getDate() - diff); mon.setHours(0,0,0,0);
+        const week = mon.toISOString().split('T')[0];
+        const raw = localStorage.getItem('offerbell_coach_weekly');
+        let wk = raw ? JSON.parse(raw) : { week, count: 0 };
+        if (wk.week !== week) wk = { week, count: 0 };
+        if (wk.count >= 1) {
+          setMessages(prev => [...prev,
+            { role: 'user', content: text.trim(), time: Date.now() },
+            { role: 'assistant', content: 'You have used your free coach message this week. Upgrade to Pro for more. Resets every Monday.', time: Date.now() }
+          ]);
+          return;
+        }
+      } catch {}
+    }
+
     const userMsg: Message = { role: 'user', content: text.trim(), time: Date.now() };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
@@ -483,7 +502,21 @@ export default function CoachPage() {
         setMessages(prev => [...prev, { role: 'assistant', content: ' ' + (data.error || 'Coach is temporarily unavailable.'), time: Date.now() }]);
       } else {
         setMessages(prev => [...prev, { role: 'assistant', content: data.text || 'Something went wrong.', time: Date.now() }]);
-        if (isPro) incrementUsage();
+        if (isPro) {
+          incrementUsage();
+        } else {
+          // Increment free weekly count
+          try {
+            const now = new Date(); const day = now.getDay(); const diff = day === 0 ? 6 : day - 1;
+            const mon = new Date(now); mon.setDate(now.getDate() - diff); mon.setHours(0,0,0,0);
+            const week = mon.toISOString().split('T')[0];
+            const raw = localStorage.getItem('offerbell_coach_weekly');
+            let wk = raw ? JSON.parse(raw) : { week, count: 0 };
+            if (wk.week !== week) wk = { week, count: 0 };
+            wk.count++;
+            localStorage.setItem('offerbell_coach_weekly', JSON.stringify(wk));
+          } catch {}
+        }
       }
     } catch (err: any) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Connection error: ' + (err?.message || 'please try again.'), time: Date.now() }]);
@@ -526,54 +559,7 @@ export default function CoachPage() {
     </div>
   );
 
-  // ═══ FREE USER GATE ═══
-  if (!isPro) return (
-    <div className="app">
-      <Sidebar activePage="coach" />
-      <div className="coach-main" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ maxWidth: 560, padding: '40px 32px', textAlign: 'center' }}>
-          <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: 'var(--text)', marginBottom: 6, letterSpacing: '-0.5px' }}>AI <em>Coach</em></div>
-          <div style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.7, marginBottom: 24, maxWidth: 420, margin: '0 auto 24px' }}>
-            Your personal recruiting advisor. Cold email rewrites, behavioral coaching, technical drills, and more - tailored to your career track.
-          </div>
-
-          {/* Animated demo conversation */}
-          <div style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '20px 18px', textAlign: 'left', marginBottom: 24, position: 'relative', overflow: 'hidden' }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 14 }}>Preview</div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {/* User message */}
-              <div style={{ alignSelf: 'flex-end', background: 'var(--text)', color: 'var(--surface)', padding: '10px 14px', borderRadius: '14px 14px 4px 14px', fontSize: 12, lineHeight: 1.5, maxWidth: '80%' }}>
-                Can you review my cold email to a VP at Goldman Sachs?
-              </div>
-
-              {/* Coach response */}
-              <div style={{ alignSelf: 'flex-start', background: 'var(--surface-2)', padding: '12px 14px', borderRadius: '14px 14px 14px 4px', fontSize: 12, lineHeight: 1.7, maxWidth: '85%', color: 'var(--text-2)' }}>
-                <span style={{ fontWeight: 700, color: 'var(--text)' }}>Coach:</span> Your opening line is too generic - "I'm reaching out because I'm interested in IB" doesn't give them a reason to keep reading. Lead with something specific: a deal they worked on, a shared connection, or a genuine insight about their group. Here's a rewrite...
-              </div>
-
-              {/* User follow-up */}
-              <div style={{ alignSelf: 'flex-end', background: 'var(--text)', color: 'var(--surface)', padding: '10px 14px', borderRadius: '14px 14px 4px 14px', fontSize: 12, lineHeight: 1.5, maxWidth: '80%' }}>
-                What about my "Why IB?" story - is it strong enough?
-              </div>
-
-              {/* Coach response 2 */}
-              <div style={{ alignSelf: 'flex-start', background: 'var(--surface-2)', padding: '12px 14px', borderRadius: '14px 14px 14px 4px', fontSize: 12, lineHeight: 1.7, maxWidth: '85%', color: 'var(--text-2)' }}>
-                <span style={{ fontWeight: 700, color: 'var(--text)' }}>Coach:</span> Your story connects your finance club experience to IB well, but the transition feels abrupt. Try: "Working on the mock M&A pitch made me realize I wanted to do this for real - the analytical depth and client advisory..."
-              </div>
-            </div>
-
-            {/* Blurred overlay at bottom */}
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 60, background: 'linear-gradient(transparent, var(--surface))', pointerEvents: 'none' }} />
-          </div>
-
-          <a href="/checkout" style={{ display: 'inline-block', padding: '13px 28px', borderRadius: 10, background: 'var(--text)', color: 'var(--surface)', fontSize: 13, fontWeight: 700, textDecoration: 'none', fontFamily: "'Sora', sans-serif" }}>
-            Unlock Coach - Upgrade to Pro
-          </a>
-        </div>
-      </div>
-    </div>
-  );
+  // Free users can access coach but with weekly limit (enforced in sendMessage)
 
   return (
     <div className="app">
