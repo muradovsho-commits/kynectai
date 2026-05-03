@@ -160,6 +160,24 @@ export default function MockInterviewPage() {
   // Recording
   function startRecording() {
     if (!streamRef.current || !activeQuestion || !activeTrack) return;
+
+    // Free users: 3 recordings per week
+    const plan = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_plan') || 'free') : 'free';
+    if (plan !== 'pro' && plan !== 'elite') {
+      try {
+        const now = new Date(); const day = now.getDay(); const diff = day === 0 ? 6 : day - 1;
+        const mon = new Date(now); mon.setDate(now.getDate() - diff); mon.setHours(0,0,0,0);
+        const week = mon.toISOString().split('T')[0];
+        const raw = localStorage.getItem('offerbell_mock_weekly');
+        let wk = raw ? JSON.parse(raw) : { week, count: 0 };
+        if (wk.week !== week) wk = { week, count: 0 };
+        if (wk.count >= 3) {
+          alert('Free plan allows 3 mock interviews per week. Upgrade to Pro for unlimited.');
+          return;
+        }
+      } catch {}
+    }
+
     chunksRef.current = [];
     transcriptRef.current = '';
     recordingStartRef.current = Date.now();
@@ -265,6 +283,22 @@ export default function MockInterviewPage() {
     const updated = [entry, ...allResponses];
     setAllResponses(updated);
     saveResponses(updated);
+
+    // Increment weekly usage for free users
+    const plan = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_plan') || 'free') : 'free';
+    if (plan !== 'pro' && plan !== 'elite') {
+      try {
+        const now = new Date(); const day = now.getDay(); const diff = day === 0 ? 6 : day - 1;
+        const mon = new Date(now); mon.setDate(now.getDate() - diff); mon.setHours(0,0,0,0);
+        const week = mon.toISOString().split('T')[0];
+        const raw = localStorage.getItem('offerbell_mock_weekly');
+        let wk = raw ? JSON.parse(raw) : { week, count: 0 };
+        if (wk.week !== week) wk = { week, count: 0 };
+        wk.count++;
+        localStorage.setItem('offerbell_mock_weekly', JSON.stringify(wk));
+      } catch {}
+    }
+
     setGrading(false);
   }
 

@@ -160,9 +160,32 @@ export default function OutreachWriterPage() {
   }
 
   async function generate() {
-    if (userPlan !== 'pro' && messagesSent >= 3) {
-      showToast('You have reached your free plan limit of 3 messages.');
-      return;
+    // Plan-based limits
+    const plan = userPlan;
+    if (plan === 'free' || plan !== 'pro' && plan !== 'elite') {
+      if (messagesSent >= 5) {
+        showToast('You have reached your free plan limit of 5 messages. Upgrade to Pro for 20/week.');
+        return;
+      }
+    } else {
+      // Pro/Elite: weekly limit
+      const weeklyUsed = (() => {
+        try {
+          const raw = localStorage.getItem('offerbell_outreach_weekly');
+          if (!raw) return 0;
+          const d = JSON.parse(raw);
+          const now = new Date(); const day = now.getDay(); const diff = day === 0 ? 6 : day - 1;
+          const mon = new Date(now); mon.setDate(now.getDate() - diff); mon.setHours(0,0,0,0);
+          const week = mon.toISOString().split('T')[0];
+          if (d.week !== week) { localStorage.setItem('offerbell_outreach_weekly', JSON.stringify({ week, count: 0 })); return 0; }
+          return d.count || 0;
+        } catch { return 0; }
+      })();
+      const weeklyMax = plan === 'elite' ? 30 : 20;
+      if (weeklyUsed >= weeklyMax) {
+        showToast(`You have used all ${weeklyMax} messages this week. Resets Monday.`);
+        return;
+      }
     }
 
     setGenerating(true);
@@ -208,14 +231,25 @@ Rules:
           const newQ = await incrementOutreachCount({ userId: storedUid as any });
           localStorage.setItem("offerbell_messages_sent", String(newQ));
           setMessagesSent(newQ);
-          // Sync to extension via cookie
           document.cookie = `offerbell_msg_count=${newQ}; path=/; max-age=2592000; SameSite=Lax`;
         } else {
           const prev = parseInt(localStorage.getItem("offerbell_messages_sent") || "0", 10); 
           localStorage.setItem("offerbell_messages_sent", String(prev + 1)); 
           setMessagesSent(prev + 1);
-          // Sync to extension via cookie
           document.cookie = `offerbell_msg_count=${prev + 1}; path=/; max-age=2592000; SameSite=Lax`;
+        }
+        // Increment weekly usage for Pro/Elite
+        if (userPlan === 'pro' || userPlan === 'elite') {
+          try {
+            const now = new Date(); const day = now.getDay(); const diff = day === 0 ? 6 : day - 1;
+            const mon = new Date(now); mon.setDate(now.getDate() - diff); mon.setHours(0,0,0,0);
+            const week = mon.toISOString().split('T')[0];
+            const raw = localStorage.getItem('offerbell_outreach_weekly');
+            let wk = raw ? JSON.parse(raw) : { week, count: 0 };
+            if (wk.week !== week) wk = { week, count: 0 };
+            wk.count++;
+            localStorage.setItem('offerbell_outreach_weekly', JSON.stringify(wk));
+          } catch {}
         }
         // Also sync plan
         const currentPlan = localStorage.getItem('offerbell_plan') || 'free';
@@ -278,7 +312,7 @@ Rules:
             <div style={{display:'flex',gap:8,flexShrink:0,alignItems:'center'}}>
               <div style={{display:'inline-flex',alignItems:'center',gap:5,background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:100,padding:'6px 14px',fontSize:11,fontWeight:600,color:'var(--text-2)'}}>
                 <span style={{width:5,height:5,borderRadius:'50%',background:userPlan==='pro'?'#22c55e':'#f59e0b',display:'inline-block'}}></span>
-                {userPlan === "pro" ? "Pro" : `${Math.max(0, 3 - messagesSent)} left`}
+                {userPlan === "pro" || userPlan === "elite" ? "Pro" : `${Math.max(0, 5 - messagesSent)} left`}
               </div>
               {savedMsgs.length > 0 && (
                 <button onClick={()=>setShowSaved(true)} type="button" style={{display:'inline-flex',alignItems:'center',gap:6,background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:100,padding:'6px 14px',fontSize:11,fontWeight:600,color:'var(--text-2)',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>

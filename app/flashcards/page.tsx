@@ -188,15 +188,23 @@ function FlashcardsContent() {
   const currentTrackBmCount = activeTrack ? (trackBookmarkCount[activeTrack] || 0) : 0;
 
   const allCards = useMemo(() => activeTrack ? (CARD_MAP[activeTrack] || []) : [], [activeTrack]);
-  const categories = useMemo(() => ['All', ...Array.from(new Set(allCards.map(c => c.category)))], [allCards]);
+
+  // Free users only see 10% of cards per track
+  const accessibleCards = useMemo(() => {
+    if (isPro) return allCards;
+    const limit = Math.max(1, Math.ceil(allCards.length * 0.1));
+    return allCards.slice(0, limit);
+  }, [allCards, isPro]);
+
+  const categories = useMemo(() => ['All', ...Array.from(new Set(accessibleCards.map(c => c.category)))], [accessibleCards]);
   const filtered = useMemo(() => {
-    let base = filterCat === 'All' ? allCards : allCards.filter(c => c.category === filterCat);
+    let base = filterCat === 'All' ? accessibleCards : accessibleCards.filter(c => c.category === filterCat);
     if (filterDiff !== 'All') base = base.filter(c => c.difficulty === filterDiff);
     if (showBookmarksOnly) base = base.filter(c => isBookmarked(c.q));
     if (shuffleKey > 0) { const a = [...base]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
     return base;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allCards, filterCat, filterDiff, shuffleKey, showBookmarksOnly, bookmarkSet]);
+  }, [accessibleCards, filterCat, filterDiff, shuffleKey, showBookmarksOnly, bookmarkSet]);
 
   const card = filtered[idx] || null;
   useEffect(() => { if (idx >= filtered.length && filtered.length > 0) setIdx(0); }, [idx, filtered.length]);

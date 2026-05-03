@@ -199,17 +199,37 @@ export default function LearnPage() {
 
         {/* Unified Card Grid */}
         <div className="learn-grid">
-          {GUIDES.map(g => (
-            <Link key={g.id} href={g.href} className="learn-card">
-              <div className={`learn-card-icon ${g.iconClass}`}>{g.icon}</div>
-              <div className="learn-card-title">{g.title}</div>
-              <div className="learn-card-desc">{g.desc}</div>
-              <div className="learn-card-footer">
-                <span className="learn-card-modules">{g.modules} Modules</span>
-                <span className="learn-card-link">Start Guide {ARROW}</span>
-              </div>
-            </Link>
-          ))}
+          {GUIDES.map(g => {
+            const plan = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_plan') || 'free') : 'free';
+            const isPaid = plan === 'pro' || plan === 'elite';
+            if (!isPaid) {
+              return (
+                <div key={g.id} className="learn-card" style={{ opacity: 0.55, cursor: 'not-allowed', position: 'relative' }} onClick={() => { window.location.href = '/checkout'; }}>
+                  <div style={{ position: 'absolute', top: 12, right: 12 }}>
+                    <svg width="16" height="16" fill="none" stroke="var(--text-3)" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  </div>
+                  <div className={`learn-card-icon ${g.iconClass}`}>{g.icon}</div>
+                  <div className="learn-card-title">{g.title}</div>
+                  <div className="learn-card-desc">{g.desc}</div>
+                  <div className="learn-card-footer">
+                    <span className="learn-card-modules">{g.modules} Modules</span>
+                    <span className="learn-card-link" style={{ color: 'var(--text-3)' }}>Pro Plan</span>
+                  </div>
+                </div>
+              );
+            }
+            return (
+              <Link key={g.id} href={g.href} className="learn-card">
+                <div className={`learn-card-icon ${g.iconClass}`}>{g.icon}</div>
+                <div className="learn-card-title">{g.title}</div>
+                <div className="learn-card-desc">{g.desc}</div>
+                <div className="learn-card-footer">
+                  <span className="learn-card-modules">{g.modules} Modules</span>
+                  <span className="learn-card-link">Start Guide {ARROW}</span>
+                </div>
+              </Link>
+            );
+          })}
           {/* Bespoke Coaching Card */}
           <Link href="/coach" className="learn-card coaching-card">
             <div className="learn-card-title" style={{ fontSize: 19 }}>Bespoke Coaching</div>

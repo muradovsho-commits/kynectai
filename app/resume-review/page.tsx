@@ -112,11 +112,8 @@ export default function ResumeReviewPage() {
     if (file) handleFile(file);
   };
 
-  // ── Usage limiting: Free = 1 total ever, Pro = 10 per week ──
-  const MAX_FREE = 1;
-  const MAX_PRO_WEEK = 10;
+  // ── Usage limiting: Free = 1/week, Pro = 10/week, Elite = 30/week ──
   const [usageCount, setUsageCount] = useState(0);
-  const [lifetimeCount, setLifetimeCount] = useState(0);
   const [usageLoaded, setUsageLoaded] = useState(false);
 
   useEffect(() => {
@@ -124,13 +121,11 @@ export default function ResumeReviewPage() {
       const raw = localStorage.getItem('offerbell_resume_usage');
       if (raw) {
         const data = JSON.parse(raw);
-        setLifetimeCount(data.lifetime || 0);
         const weekStart = getWeekStart();
         if (data.week === weekStart) {
           setUsageCount(data.count || 0);
         } else {
-          // New week - reset weekly count but keep lifetime
-          localStorage.setItem('offerbell_resume_usage', JSON.stringify({ week: weekStart, count: 0, lifetime: data.lifetime || 0 }));
+          localStorage.setItem('offerbell_resume_usage', JSON.stringify({ week: weekStart, count: 0 }));
           setUsageCount(0);
         }
       }
@@ -141,23 +136,19 @@ export default function ResumeReviewPage() {
   function getWeekStart() {
     const now = new Date();
     const day = now.getDay();
-    const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Monday start
+    const diff = now.getDate() - day + (day === 0 ? -6 : 1);
     return new Date(now.getFullYear(), now.getMonth(), diff).toISOString().split('T')[0];
   }
 
   function incrementUsage() {
     const weekStart = getWeekStart();
     const nextWeekly = usageCount + 1;
-    const nextLifetime = lifetimeCount + 1;
     setUsageCount(nextWeekly);
-    setLifetimeCount(nextLifetime);
-    localStorage.setItem('offerbell_resume_usage', JSON.stringify({ week: weekStart, count: nextWeekly, lifetime: nextLifetime }));
+    localStorage.setItem('offerbell_resume_usage', JSON.stringify({ week: weekStart, count: nextWeekly }));
   }
 
-  const isPro = userPlan === 'pro';
-  const maxAllowed = isPro ? MAX_PRO_WEEK : MAX_FREE;
-  const currentUsage = isPro ? usageCount : lifetimeCount;
-  const remainingReviews = Math.max(0, maxAllowed - currentUsage);
+  const maxAllowed = userPlan === 'elite' ? 30 : userPlan === 'pro' ? 10 : 1;
+  const remainingReviews = Math.max(0, maxAllowed - usageCount);
   const atLimit = remainingReviews <= 0;
 
   function saveReviewToHistory(rev: ReviewData) {
@@ -189,7 +180,7 @@ export default function ResumeReviewPage() {
 
   const submitReview = async () => {
     if (!resumeText.trim()) { setError('Please upload a resume first.'); return; }
-    if (atLimit) { setError(isPro ? 'You\'ve reached your weekly limit of 10 reviews. Resets every Monday.' : 'You\'ve used your free review. Upgrade to Pro for 10 reviews per week.'); return; }
+    if (atLimit) { setError(userPlan === 'free' ? 'You have used your weekly review. Upgrade to Pro for 10 reviews per week.' : `You have reached your weekly limit of ${maxAllowed} reviews. Resets every Monday.`); return; }
     setLoading(true);
     setError('');
     setReview(null);
@@ -300,14 +291,15 @@ export default function ResumeReviewPage() {
                 <div className="rr-usage">
                   {isPro ? (
                     <>
-                      <span className="rr-usage-count">{remainingReviews} of {MAX_PRO_WEEK} reviews remaining this week</span>
+                      <span className="rr-usage-count">{remainingReviews} of {maxAllowed} review{maxAllowed !== 1 ? 's' : ''} remaining this week</span>
+                      {atLimit && <span className="rr-usage-reset"><a href="/checkout" style={{color:'var(--text)',fontWeight:700,textDecoration:'underline'}}>Upgrade</a> for more reviews per week</span>}
                       {remainingReviews <= 2 && remainingReviews > 0 && <span className="rr-usage-warn">Use them wisely</span>}
                       {atLimit && <span className="rr-usage-reset">Resets every Monday</span>}
                     </>
                   ) : (
                     <>
-                      <span className="rr-usage-count">{remainingReviews > 0 ? `${remainingReviews} free review available` : 'Free review used'}</span>
-                      {atLimit && <span className="rr-usage-reset"><a href="/checkout" style={{color:'var(--text)',fontWeight:700,textDecoration:'underline'}}>Upgrade to Pro</a> for 10 reviews per week</span>}
+                      <span className="rr-usage-count">{remainingReviews > 0 ? `${remainingReviews} review${remainingReviews !== 1 ? 's' : ''} remaining this week` : 'Weekly review used'}</span>
+                      {atLimit && <span className="rr-usage-reset"><a href="/checkout" style={{color:'var(--text)',fontWeight:700,textDecoration:'underline'}}>Upgrade</a> for more reviews per week</span>}
                     </>
                   )}
                 </div>

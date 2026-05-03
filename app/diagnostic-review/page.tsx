@@ -379,9 +379,12 @@ export default function DiagnosticReviewPage() {
               {allStats.map(({ k, t, st }, i) => {
                 const scoreColor = st.avgScore >= 80 ? '#16a34a' : st.avgScore >= 55 ? '#d97706' : st.avgScore > 0 ? '#dc2626' : 'var(--text-3)';
                 const recent = st.history.slice(0, 6).reverse();
+                const plan = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_plan') || 'free') : 'free';
+                const isPaid = plan === 'pro' || plan === 'elite';
+                const isLocked = !isPaid && i >= 1; // Free users: only first track
                 return (
-                  <div key={k} className="diag-track-row" onClick={() => setViewTrack(k)}>
-                    <span className="diag-tr-num">{String(i + 1).padStart(2, '0')}</span>
+                  <div key={k} className="diag-track-row" onClick={() => { if (isLocked) { alert('Upgrade to Pro to access all diagnostic tracks.'); return; } setViewTrack(k); }} style={isLocked ? { opacity: 0.5, cursor: 'not-allowed' } : {}}>
+                    <span className="diag-tr-num">{isLocked ? <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> : String(i + 1).padStart(2, '0')}</span>
                     <div>
                       <div className="diag-tr-name">{t.title}</div>
                       <div className="diag-tr-name-sub">{t.categories.length} categories</div>

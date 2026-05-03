@@ -88,7 +88,11 @@ function ConceptDrillsContent() {
     const allQs = track.questions;
     const pool = topic === 'All Topics' ? allQs : allQs.filter(q => q.topic === topic);
     const source = pool.length > 0 ? pool : allQs;
-    const picked = shuffle(source).slice(0, DRILL_SIZE).map(drillToMCQ);
+    // Free users get 5 questions per drill, paid get full DRILL_SIZE
+    const plan = localStorage.getItem('offerbell_plan') || 'free';
+    const isPaid = plan === 'pro' || plan === 'elite';
+    const size = isPaid ? DRILL_SIZE : 5;
+    const picked = shuffle(source).slice(0, size).map(drillToMCQ);
     setQuestions(picked);
     setIdx(0); setSelected(null); setShowExp(false);
     setScore(0); setCorrect(0); setWrong(0); setHistory([]);

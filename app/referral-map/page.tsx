@@ -469,6 +469,15 @@ export default function ReferralMapPage() {
   const saveForm = () => {
     if (!form.name?.trim()) return;
     const id = form.id || `r_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+    const isNew = !contacts.some(c => c.id === id);
+    // Free users: max 5 contacts
+    if (isNew) {
+      const plan = localStorage.getItem('offerbell_plan') || 'free';
+      if (plan !== 'pro' && plan !== 'elite' && contacts.length >= 5) {
+        alert('Free plan allows 5 referral contacts. Upgrade to Pro for unlimited.');
+        return;
+      }
+    }
     const contact: Contact = { id, name: form.name!.trim(), firm: form.firm || '', role: form.role || '', referredBy: form.referredBy || 'you', note: form.note || '', state: form.state || undefined, chainLabel: form.chainLabel || undefined, addedAt: form.addedAt || Date.now() };
     setContacts(prev => { const idx = prev.findIndex(c => c.id === id); if (idx >= 0) { const next = [...prev]; next[idx] = contact; return next; } return [...prev, contact]; });
     setModal(null); setForm({});
@@ -480,7 +489,16 @@ export default function ReferralMapPage() {
     setModal(null); setForm({});
   };
   const doImport = () => {
-    const toAdd = impList.filter(c => c.sel).map(c => ({ id: `imp_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`, name: `${c.fname} ${c.lname}`.trim(), firm: c.firm || '', role: c.role || '', referredBy: 'you', note: '', addedAt: Date.now() }));
+    const plan = localStorage.getItem('offerbell_plan') || 'free';
+    const isPaid = plan === 'pro' || plan === 'elite';
+    let toAdd = impList.filter(c => c.sel).map(c => ({ id: `imp_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`, name: `${c.fname} ${c.lname}`.trim(), firm: c.firm || '', role: c.role || '', referredBy: 'you', note: '', addedAt: Date.now() }));
+    if (!isPaid) {
+      const remaining = Math.max(0, 5 - contacts.length);
+      if (toAdd.length > remaining) {
+        toAdd = toAdd.slice(0, remaining);
+        alert(`Free plan allows 5 contacts. Only ${remaining} imported. Upgrade for unlimited.`);
+      }
+    }
     setContacts(prev => [...prev, ...toAdd]); setModal(null);
   };
 

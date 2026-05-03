@@ -251,6 +251,12 @@ export default function OutreachTrackerPage() {
 
   function saveAdd() {
     if (!aFname.trim()) return;
+    // Free users: max 5 contacts
+    const plan = userPlan;
+    if (plan !== 'pro' && plan !== 'elite' && contacts.length >= 5) {
+      showToast('Free plan allows 5 contacts. Upgrade to Pro for unlimited.');
+      return;
+    }
     const name = aFname.trim();
     const now = Date.now();
     const dateTs = aDate ? new Date(aDate).getTime() : now;
