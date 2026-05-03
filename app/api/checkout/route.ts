@@ -10,16 +10,18 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => ({}));
     const email = typeof body.email === "string" ? body.email : undefined;
     const plan = body.plan === "elite" ? "elite" : "pro";
-    const billing = body.billing === "annual" ? "annual" : "monthly";
+    const billing = body.billing === "annual" ? "annual" : body.billing === "6month" ? "6month" : "monthly";
 
-    const prices: Record<string, Record<string, { amount: number; name: string; desc: string }>> = {
+    const prices: Record<string, Record<string, { amount: number; name: string; desc: string; interval: string; intervalCount: number }>> = {
       pro: {
-        monthly: { amount: 2000, name: "OfferBell Pro - Monthly", desc: "Full access to all prep tools, AI Coach, and Mock Interview - billed monthly" },
-        annual: { amount: 19900, name: "OfferBell Pro - Annual", desc: "Full access to all prep tools, AI Coach, and Mock Interview - billed annually" },
+        monthly: { amount: 2000, name: "OfferBell Pro - Monthly", desc: "Full access to all prep tools, AI Coach, and Mock Interview - billed monthly", interval: "month", intervalCount: 1 },
+        "6month": { amount: 10800, name: "OfferBell Pro - 6 Month", desc: "Full access to all prep tools, AI Coach, and Mock Interview - billed every 6 months (save 10%)", interval: "month", intervalCount: 6 },
+        annual: { amount: 19200, name: "OfferBell Pro - Annual", desc: "Full access to all prep tools, AI Coach, and Mock Interview - billed annually (save 20%)", interval: "year", intervalCount: 1 },
       },
       elite: {
-        monthly: { amount: 4000, name: "OfferBell Elite - Monthly", desc: "Higher AI limits, priority support, and early feature access - billed monthly" },
-        annual: { amount: 39900, name: "OfferBell Elite - Annual", desc: "Higher AI limits, priority support, and early feature access - billed annually" },
+        monthly: { amount: 4000, name: "OfferBell Elite - Monthly", desc: "Higher AI limits, priority support, and early feature access - billed monthly", interval: "month", intervalCount: 1 },
+        "6month": { amount: 21600, name: "OfferBell Elite - 6 Month", desc: "Higher AI limits, priority support, and early feature access - billed every 6 months (save 10%)", interval: "month", intervalCount: 6 },
+        annual: { amount: 38400, name: "OfferBell Elite - Annual", desc: "Higher AI limits, priority support, and early feature access - billed annually (save 20%)", interval: "year", intervalCount: 1 },
       },
     };
 
@@ -35,7 +37,10 @@ export async function POST(request: NextRequest) {
             currency: "usd",
             product_data: { name: p.name, description: p.desc },
             unit_amount: p.amount,
-            recurring: { interval: billing === "annual" ? "year" : "month" },
+            recurring: {
+              interval: p.interval as "month" | "year",
+              interval_count: p.intervalCount,
+            },
           },
           quantity: 1,
         },

@@ -44,7 +44,7 @@ export default function CheckoutSuccessPage() {
   return (
     <div style={{ minHeight: "100vh", display: "flex", animation: "successIn 0.5s ease both", alignItems: "center", justifyContent: "center", background: "#fafaf9", fontFamily: "'Sora', sans-serif" }}>
       <div style={{ textAlign: "center", maxWidth: 440, padding: 24 }}>
-        <div style={{ width: 64, height: 64, borderRadius: "50%", background: planName === 'Elite' ? '#7c3aed' : "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+        <div style={{ width: 64, height: 64, borderRadius: "50%", background: planName === 'Elite' ? '#2563eb' : "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
           <svg width="28" height="28" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 32, letterSpacing: "-.5px", marginBottom: 8 }}>Welcome to <em style={{ fontStyle: "italic" }}>{planName}</em></div>
