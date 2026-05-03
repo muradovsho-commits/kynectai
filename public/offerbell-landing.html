@@ -736,9 +736,10 @@ nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border
 .cbl-ky{display:flex;justify-content:center;}
 .cbl-ky-pill{background:var(--black);color:var(--white);font-size:11px;font-weight:700;padding:5px 14px;border-radius:8px;}
 
-.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:680px;margin:48px auto 0;}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:960px;margin:48px auto 0;}
 .pricing-card{border:1.5px solid var(--g200);border-radius:16px;padding:32px;}
 .pricing-card.featured{border-color:var(--black);position:relative;}
+.pricing-card.elite{border-color:#2563eb;position:relative;}
 .pricing-badge{position:absolute;top:-11px;right:22px;background:var(--black);color:var(--white);font-size:10px;font-weight:700;padding:3px 12px;border-radius:100px;}
 .pricing-tier{font-size:13px;font-weight:700;margin-bottom:6px;}
 .pricing-price{font-size:44px;font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:4px;}
@@ -1464,9 +1465,37 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
       </div>
     </div>
 
-    <!-- 07 Coach -->
+    <!-- 07 Mock Interview -->
+    <div class="f-card f-card-8 reveal" id="fc-mock">
+      <div class="f-num">08 - Mock Interview</div>
+      <div class="f-title">Record. Review.<br><em>Repeat.</em></div>
+      <div class="f-desc">Record yourself answering real interview questions on video. Get AI-graded feedback with accuracy, depth, and clarity scores, plus detailed strengths and weaknesses for every attempt.</div>
+      <div style="margin-top:18px;background:var(--white);border:1px solid var(--g200);border-radius:14px;padding:16px;position:relative;overflow:hidden;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--g400);">Question</div>
+            <div style="font-size:13px;font-weight:700;color:var(--black);margin-top:2px;">Walk me through a DCF.</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;padding:5px 12px;border-radius:8px;background:#dc2626;color:#fff;font-size:10px;font-weight:700;">
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="10"/></svg>
+            REC 1:47
+          </div>
+        </div>
+        <div style="background:#0a0a0a;border-radius:10px;height:100px;display:flex;align-items:center;justify-content:center;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:10px;font-size:10px;color:var(--g400);">
+          <span><strong style="color:var(--black);">Good</strong> Grade</span>
+          <span><strong style="color:var(--black);">3</strong> Strengths</span>
+          <span><strong style="color:var(--black);">1</strong> Weakness</span>
+          <span><strong style="color:var(--black);">142</strong> WPM</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 08 Coach -->
     <div class="f-card f-card-coach reveal reveal-d1" id="fc5">
-      <div class="f-num">08 - AI Coach</div>
+      <div class="f-num">09 - AI Coach</div>
       <div class="f-title">Your personal<br><em>cheat code.</em></div>
       <div class="f-desc">Cold email line-edits, behavioral story shaping, technical drills, LBO walkthroughs, case prep, stock pitches, coffee chat strategy, resume feedback, offer decisions. One assistant. Every scenario.</div>
       <!-- Capability chips -->
@@ -1509,7 +1538,7 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
     <!-- 09 Preparatory Guides -->
     <div class="f-card f-card-7 reveal" id="fc7" style="display:flex;flex-direction:column;justify-content:space-between;">
       <div>
-        <div class="f-num">09 - Preparatory Guides</div>
+        <div class="f-num">10 - Preparatory Guides</div>
         <div class="f-title">Interview ready,<br><em>from day one.</em></div>
         <div class="f-desc">Full interview prep manuals for IB, PE, consulting, S&T, equity research, asset management, accounting, venture capital, real estate, and restructuring. Technical deep-dives, behavioral frameworks, and practice drills.</div>
       </div>
@@ -1606,7 +1635,8 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
       <div class="comp-row"><div class="cr-feat">Interview prep manuals (not just video courses)</div><div class="cr-li c-no">&#10005;</div><div class="cr-ap c-yes">&#10003;</div><div class="cr-ky c-yes">&#10003;</div></div>
       <div class="comp-row"><div class="cr-feat">Technical flashcards with real interview calibration</div><div class="cr-li c-no">&#10005;</div><div class="cr-ap c-yes" style="font-size:11px">&#10003; limited</div><div class="cr-ky c-yes">&#10003;</div></div>
       <div class="comp-row"><div class="cr-feat">Career roadmaps across 12 finance paths</div><div class="cr-li c-no">&#10005;</div><div class="cr-ap c-yes" style="font-size:11px">&#10003; partial</div><div class="cr-ky c-yes">&#10003;</div></div>
-      <div class="comp-row"><div class="cr-feat">AI-powered mock interviews with live scoring &amp; follow-ups</div><div class="cr-li c-no">&#10005;</div><div class="cr-ap c-no">&#10005;</div><div class="cr-ky c-yes">&#10003;</div></div>
+      <div class="comp-row"><div class="cr-feat">Video mock interviews with AI grading and feedback</div><div class="cr-li c-no">&#10005;</div><div class="cr-ap c-no">&#10005;</div><div class="cr-ky c-yes">&#10003;</div></div>
+      <div class="comp-row"><div class="cr-feat">AI Resume Review with section scores and rewritten bullets</div><div class="cr-li c-no">&#10005;</div><div class="cr-ap c-no">&#10005;</div><div class="cr-ky c-yes">&#10003;</div></div>
       <div class="comp-row"><div class="cr-feat">Diagnostic review + concept drills to pinpoint weak spots</div><div class="cr-li c-no">&#10005;</div><div class="cr-ap c-no">&#10005;</div><div class="cr-ky c-yes">&#10003;</div></div>
       <div class="comp-row"><div class="cr-feat">Financial modeling courses (Excel-based)</div><div class="cr-li c-no">&#10005;</div><div class="cr-ap c-yes">&#10003;</div><div class="cr-ky c-no">&#10005;</div></div>
       <div class="comp-row" style="background:rgba(99,102,241,0.04)"><div class="cr-feat" style="font-weight:700">Networking + prep + tracking + coaching in one platform</div><div class="cr-li c-no">&#10005;</div><div class="cr-ap c-no">&#10005;</div><div class="cr-ky c-yes">&#10003;</div></div>
@@ -1655,6 +1685,20 @@ footer{padding:60px 48px 36px;border-top:1px solid var(--g200);}
       <div class="pricing-feature">Unlimited Mock Interviews</div>
       <div class="pricing-feature">AI Resume Review (10/week)</div>
       <a href="/signup" class="pricing-btn pricing-btn-solid">Get started</a>
+    </div>
+    <div class="pricing-card elite">
+      <div class="pricing-badge" style="background:#2563eb;">Best Value</div>
+      <div class="pricing-tier">Elite</div>
+      <div class="pricing-price">$40<span>/mo</span></div>
+      <div class="pricing-label">Maximum limits. Priority everything.</div>
+      <div class="pricing-divider"></div>
+      <div class="pricing-feature">Everything in Pro, plus:</div>
+      <div class="pricing-feature">AI Coach (higher limits)</div>
+      <div class="pricing-feature">Outreach Writer (30/week)</div>
+      <div class="pricing-feature">AI Resume Review (30/week)</div>
+      <div class="pricing-feature">Priority support</div>
+      <div class="pricing-feature">Early feature access</div>
+      <a href="/signup" class="pricing-btn" style="background:#2563eb;color:#fff;">Get started</a>
     </div>
   </div>
 </section>
