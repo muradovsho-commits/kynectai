@@ -289,26 +289,16 @@ export default function ResumeReviewPage() {
                 {error && <div className="rr-error">{error}</div>}
 
                 <div className="rr-usage">
-                  {isPro ? (
-                    <>
-                      <span className="rr-usage-count">{remainingReviews} of {maxAllowed} review{maxAllowed !== 1 ? 's' : ''} remaining this week</span>
-                      {atLimit && <span className="rr-usage-reset"><a href="/checkout" style={{color:'var(--text)',fontWeight:700,textDecoration:'underline'}}>Upgrade</a> for more reviews per week</span>}
-                      {remainingReviews <= 2 && remainingReviews > 0 && <span className="rr-usage-warn">Use them wisely</span>}
-                      {atLimit && <span className="rr-usage-reset">Resets every Monday</span>}
-                    </>
-                  ) : (
-                    <>
-                      <span className="rr-usage-count">{remainingReviews > 0 ? `${remainingReviews} review${remainingReviews !== 1 ? 's' : ''} remaining this week` : 'Weekly review used'}</span>
-                      {atLimit && <span className="rr-usage-reset"><a href="/checkout" style={{color:'var(--text)',fontWeight:700,textDecoration:'underline'}}>Upgrade</a> for more reviews per week</span>}
-                    </>
-                  )}
+                  <span className="rr-usage-count">{remainingReviews} of {maxAllowed} review{maxAllowed !== 1 ? 's' : ''} remaining this week</span>
+                  {atLimit && <span className="rr-usage-reset">Resets every Monday. <a href="/checkout" style={{color:'var(--text)',fontWeight:700,textDecoration:'underline'}}>Upgrade</a> for more.</span>}
+                  {!atLimit && remainingReviews <= 2 && remainingReviews > 0 && <span className="rr-usage-warn">Use them wisely</span>}
                 </div>
 
                 <button className="rr-submit-btn" onClick={submitReview} disabled={loading || !resumeText.trim() || atLimit} type="button">
                   {loading ? (
                     <><span className="rr-spinner" /> Analyzing your resume...</>
                   ) : atLimit ? (
-                    isPro ? 'Weekly limit reached' : 'Upgrade to Pro for more reviews'
+                    userPlan === 'free' ? 'Upgrade to Pro for more reviews' : 'Weekly limit reached'
                   ) : (
                     'Review My Resume'
                   )}
