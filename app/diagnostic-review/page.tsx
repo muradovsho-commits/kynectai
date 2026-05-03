@@ -305,21 +305,44 @@ export default function DiagnosticReviewPage() {
                 </div>
               )}
 
-              <button className="diag-cta-primary" onClick={() => {
-                // Free users: 1 diagnostic total
+              {(() => {
                 const plan = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_plan') || 'free') : 'free';
-                if (plan !== 'pro' && plan !== 'elite') {
-                  const totalTaken = allStats.reduce((sum, s) => sum + s.st.diagsTaken, 0);
-                  if (totalTaken >= 1) {
-                    alert('Free plan includes 1 diagnostic. Upgrade to Pro for unlimited diagnostics across all tracks.');
-                    return;
-                  }
-                }
-                setTrackKey(viewTrack); const tr = TRACKS[viewTrack]; const qs = buildAssessment(tr); setQuestions(qs); setIdx(0); setSelected(null); setShowExp(false); setTimer(TIME_PER_Q); setCatResults({}); setTotalCorrect(0); setTotalAnswered(0); setMissed([]); setPhase('assess');
-              }} type="button">
-                {st.diagsTaken > 0 ? 'Take Another Diagnostic' : `Start ${t.title} Diagnostic`}
-                {ARROW}
-              </button>
+                const isPaid = plan === 'pro' || plan === 'elite';
+                const totalTaken = allStats.reduce((sum, s) => sum + s.st.diagsTaken, 0);
+                const atLimit = !isPaid && totalTaken >= 1;
+
+                if (atLimit) return (
+                  <div style={{ marginTop: 8 }}>
+                    <div style={{
+                      padding: '16px 20px', borderRadius: 12,
+                      background: 'var(--surface)', border: '1.5px solid var(--border)',
+                      textAlign: 'center',
+                    }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>
+                        You've used your free diagnostic
+                      </div>
+                      <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.6, marginBottom: 14 }}>
+                        Upgrade to Pro for unlimited diagnostics across all {Object.keys(TRACKS).length} tracks, with detailed performance tracking and category breakdowns.
+                      </div>
+                      <a href="/checkout" style={{
+                        display: 'inline-block', padding: '10px 24px', borderRadius: 10,
+                        background: 'var(--text)', color: 'var(--surface)',
+                        fontSize: 13, fontWeight: 700, textDecoration: 'none',
+                        fontFamily: "'Sora', sans-serif",
+                      }}>Upgrade to Pro</a>
+                    </div>
+                  </div>
+                );
+
+                return (
+                  <button className="diag-cta-primary" onClick={() => {
+                    setTrackKey(viewTrack); const tr = TRACKS[viewTrack]; const qs = buildAssessment(tr); setQuestions(qs); setIdx(0); setSelected(null); setShowExp(false); setTimer(TIME_PER_Q); setCatResults({}); setTotalCorrect(0); setTotalAnswered(0); setMissed([]); setPhase('assess');
+                  }} type="button">
+                    {st.diagsTaken > 0 ? 'Take Another Diagnostic' : `Start ${t.title} Diagnostic`}
+                    {ARROW}
+                  </button>
+                );
+              })()}
             </div>
           </main>
         </div>
