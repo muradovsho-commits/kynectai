@@ -475,7 +475,7 @@ export default function CoachPage() {
         if (wk.count >= 1) {
           setMessages(prev => [...prev,
             { role: 'user', content: text.trim(), time: Date.now() },
-            { role: 'assistant', content: 'You have used your free coach message this week. Upgrade to Pro for more. Resets every Monday.', time: Date.now() }
+            { role: 'assistant', content: 'You\'ve used your free coach message this week. Resets every Monday.<br/><br/><a href="/checkout" style="display:inline-block;padding:8px 20px;border-radius:8px;background:#0a0a0a;color:#fff;font-size:13px;font-weight:700;text-decoration:none;font-family:Sora,sans-serif">Upgrade to Pro</a>', time: Date.now() }
           ]);
           return;
         }
@@ -713,7 +713,10 @@ export default function CoachPage() {
                 <div style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.6 }}>
                   Your usage resets <strong style={{ color: 'var(--text)' }}>{formatResetTime()}</strong>. You'll be able to continue your conversation then.
                 </div>
-                <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 14 }}>Keep prepping: <a href="/flashcards" style={{ color: 'var(--text)', fontWeight: 700, textDecoration: 'underline' }}>Flashcards</a> · <a href="/concept-drills" style={{ color: 'var(--text)', fontWeight: 700, textDecoration: 'underline' }}>Concept Drills</a> · <a href="/diagnostic-review" style={{ color: 'var(--text)', fontWeight: 700, textDecoration: 'underline' }}>Diagnostic Review</a></div>
+                <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 14 }}>
+                  Keep prepping: <a href="/flashcards" style={{ color: 'var(--text)', fontWeight: 700, textDecoration: 'underline' }}>Flashcards</a> · <a href="/concept-drills" style={{ color: 'var(--text)', fontWeight: 700, textDecoration: 'underline' }}>Concept Drills</a> · <a href="/diagnostic-review" style={{ color: 'var(--text)', fontWeight: 700, textDecoration: 'underline' }}>Diagnostic Review</a>
+                  {typeof window !== 'undefined' && localStorage.getItem('offerbell_plan') !== 'elite' && <> · <a href="/checkout" style={{ color: '#2563eb', fontWeight: 700, textDecoration: 'underline' }}>Upgrade to Elite</a> for higher limits</>}
+                </div>
               </div>
             </div>
           ) : (
