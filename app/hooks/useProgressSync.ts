@@ -205,7 +205,48 @@ export function useProgressSync() {
       if (Object.keys(local).length > 0) {
         saveProgress({ userId, data: JSON.stringify(local) }).catch(() => {});
       }
-    }, 3000); // 3 second debounce
+    }, 2000); // 2 second debounce
+  }, [userId, saveProgress]);
+
+  // Force push on mount + every 10 seconds while active
+  useEffect(() => {
+    if (!userId) return;
+    // Immediate push on mount (catches data that existed before sync was set up)
+    const immediate = setTimeout(() => {
+      const local = gatherLocalData();
+      if (Object.keys(local).length > 2) { // more than just user_id + theme
+        saveProgress({ userId, data: JSON.stringify(local) }).catch(() => {});
+      }
+    }, 1000);
+
+    // Periodic push every 10 seconds
+    const interval = setInterval(() => {
+      const local = gatherLocalData();
+      if (Object.keys(local).length > 2) {
+        saveProgress({ userId, data: JSON.stringify(local) }).catch(() => {});
+      }
+    }, 10000);
+
+    // Push before tab close
+    const beforeUnload = () => {
+      const local = gatherLocalData();
+      if (Object.keys(local).length > 2) {
+        // Use sendBeacon for reliability on tab close
+        try {
+          const blob = new Blob([JSON.stringify({ userId, data: JSON.stringify(local) })], { type: 'application/json' });
+          navigator.sendBeacon('/api/progress-save', blob);
+        } catch {
+          saveProgress({ userId, data: JSON.stringify(local) }).catch(() => {});
+        }
+      }
+    };
+    window.addEventListener('beforeunload', beforeUnload);
+
+    return () => {
+      clearTimeout(immediate);
+      clearInterval(interval);
+      window.removeEventListener('beforeunload', beforeUnload);
+    };
   }, [userId, saveProgress]);
 
   // Listen for localStorage changes (from other parts of the app)
