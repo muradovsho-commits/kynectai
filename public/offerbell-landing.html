@@ -48,54 +48,41 @@ nav.scrolled{border-bottom-color:var(--border)}
 
 /* ═══ HERO ═══ */
 .hero{
-  display:grid;grid-template-columns:0.9fr 1.1fr;gap:40px;align-items:center;
-  max-width:1200px;margin:0 auto;padding:130px 52px 56px;
+  position:relative;min-height:85vh;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:140px 52px 80px;overflow:hidden;
 }
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:url('https://images.unsplash.com/photo-1534430480872-3498386e7856?w=1600&h=900&fit=crop&crop=center') center/cover no-repeat;
+  opacity:0.07;
+}
+.hero::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg, var(--cream) 0%, transparent 30%, transparent 70%, var(--cream) 100%);
+}
+.hero>*{position:relative;z-index:1}
+.hero-inner{max-width:700px;margin:0 auto}
 .hero-label{
   display:inline-block;font-size:9px;font-weight:700;letter-spacing:2.8px;
   text-transform:uppercase;color:var(--brown);
   border:1.5px solid var(--brown);padding:6px 16px;border-radius:100px;margin-bottom:32px;
 }
 .hero h1{
-  font-family:'Instrument Serif',serif;font-size:62px;
-  line-height:1.06;letter-spacing:-2px;margin-bottom:22px;
+  font-family:'Instrument Serif',serif;font-size:clamp(48px,6vw,72px);
+  line-height:1.04;letter-spacing:-2.5px;margin-bottom:22px;
 }
 .hero h1 em{font-style:italic}
-.hero-sub{font-size:14.5px;color:var(--text-2);line-height:1.7;max-width:380px;margin-bottom:28px}
+.hero-sub{font-size:16px;color:var(--text-2);line-height:1.7;max-width:480px;margin:0 auto 32px}
 .btn{
   display:inline-flex;align-items:center;gap:8px;
   background:var(--black);color:var(--white);
-  padding:14px 26px;border-radius:10px;
-  font-size:13.5px;font-weight:600;text-decoration:none;
+  padding:16px 32px;border-radius:10px;
+  font-size:14px;font-weight:600;text-decoration:none;
   font-family:'DM Sans',sans-serif;transition:opacity 0.15s,transform 0.15s;
+  box-shadow:0 4px 14px rgba(0,0,0,0.15);
 }
 .btn:hover{opacity:0.85;transform:translateY(-1px)}
 .hero-note{font-size:11.5px;color:var(--text-3);margin-top:16px}
-
-/* Hero right - illustration area */
-.hero-r{position:relative}
-.hero-illust{
-  width:100%;aspect-ratio:1.05;border-radius:16px;overflow:hidden;
-  background:var(--warm);position:relative;
-}
-.hero-illust img{width:100%;height:100%;object-fit:cover;filter:sepia(0.25) saturate(0.7) brightness(1.05)}
-
-/* Floating cards */
-.hf{
-  position:absolute;background:var(--white);border:1px solid var(--border);
-  border-radius:11px;padding:10px 14px;
-  box-shadow:0 6px 24px rgba(0,0,0,0.05);
-  display:flex;align-items:center;gap:9px;
-  font-size:12px;font-weight:600;color:var(--text);
-  opacity:0;animation:hfIn 0.5s ease forwards;
-}
-.hf-ico{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.hf-sub{font-size:10px;color:var(--text-3);font-weight:400;margin-top:1px}
-.hf1{top:12%;right:-16px;animation-delay:0.2s}
-.hf2{top:36%;right:-24px;animation-delay:0.4s}
-.hf3{bottom:30%;left:-20px;animation-delay:0.6s}
-.hf4{bottom:12%;left:-8px;animation-delay:0.8s}
-@keyframes hfIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* ═══ MARQUEE ═══ */
 .marquee-wrap{padding:40px 0 56px;overflow:hidden;position:relative}
@@ -111,85 +98,66 @@ nav.scrolled{border-bottom-color:var(--border)}
 
 /* ═══ OLD WAY ═══ */
 .oldway{
-  display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;
-  max-width:1200px;margin:0 auto;padding:88px 52px;
+  max-width:800px;margin:0 auto;padding:88px 52px;text-align:center;
 }
-.ow-left{padding-top:8px}
 .sl{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-3);margin-bottom:16px}
 .st{font-family:'Instrument Serif',serif;font-size:clamp(38px,4.2vw,50px);line-height:1.06;letter-spacing:-1.2px;margin-bottom:16px}
 .st em{font-style:italic}
-.ss{font-size:14px;color:var(--text-2);line-height:1.7;max-width:420px;margin-bottom:28px}
+.ss{font-size:14px;color:var(--text-2);line-height:1.7;max-width:520px;margin:0 auto 36px}
 
-.ow-quote{
-  font-family:'Instrument Serif',serif;font-size:17px;font-style:normal;
-  color:var(--text);line-height:1.45;padding:18px 22px;
-  border:1.5px solid var(--border);border-radius:12px;
-  max-width:370px;margin-top:4px;
+.ow-pains{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;text-align:left;
 }
-
-/* Old way right: illustration + pain pills */
-.ow-right{position:relative}
-.ow-illust{
-  width:100%;aspect-ratio:1.1;border-radius:16px;overflow:hidden;
-  background:var(--warm);
+.ow-pain{
+  background:var(--white);border:1px solid var(--border);border-radius:12px;padding:24px 20px;
 }
-.ow-illust img{width:100%;height:100%;object-fit:cover;filter:sepia(0.3) saturate(0.6) brightness(1.05)}
-
-.ow-pills{
-  position:absolute;top:20px;right:-10px;
-  display:flex;flex-direction:column;gap:10px;
-}
-.ow-pill{
-  background:var(--white);border:1px solid var(--border);
-  border-radius:10px;padding:10px 16px;
-  box-shadow:0 4px 16px rgba(0,0,0,0.04);
-  max-width:220px;
-}
-.ow-pill-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
-.ow-pill-title{font-size:12px;font-weight:700;color:var(--text);display:inline;vertical-align:middle}
-.ow-pill-sub{font-size:10.5px;color:var(--text-3);margin-top:3px;line-height:1.4}
+.ow-pain-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-bottom:12px}
+.ow-pain-t{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px}
+.ow-pain-d{font-size:12px;color:var(--text-2);line-height:1.6}
 
 /* ═══ OUR WAY ═══ */
-.ourway{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.ow-inner{
-  display:grid;grid-template-columns:0.85fr 1.15fr;gap:56px;align-items:center;
-  max-width:1200px;margin:0 auto;padding:88px 52px;
+.ourway{
+  position:relative;overflow:hidden;
+  background:var(--black);color:var(--white);
 }
-.ow-bullets{display:flex;flex-direction:column;gap:18px;margin:28px 0}
-.ow-bullet{display:flex;align-items:flex-start;gap:11px}
-.ow-chk{
-  width:20px;height:20px;border-radius:5px;background:var(--green);
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+.ourway::before{
+  content:'';position:absolute;inset:0;
+  background:url('https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=1600&h=900&fit=crop') center/cover no-repeat;
+  opacity:0.12;
 }
-.ow-bt{font-size:14px;font-weight:700;color:var(--text)}
-.ow-bs{font-size:12px;color:var(--text-2);margin-top:2px}
-
-/* Dashboard mockup */
-.ow-mockup{
-  border:1px solid var(--border);border-radius:12px;overflow:hidden;
-  box-shadow:0 12px 48px rgba(0,0,0,0.06);
-  background:var(--white);
+.ourway-inner{
+  position:relative;z-index:1;
+  max-width:800px;margin:0 auto;padding:96px 52px;text-align:center;
 }
-.ow-mockup img{width:100%;display:block}
+.ourway .sl{color:rgba(255,255,255,0.4)}
+.ourway .st{color:var(--white)}
+.ourway .ss{color:rgba(255,255,255,0.6);margin:0 auto 36px}
+.ow-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;text-align:left;margin-bottom:40px;
+}
+.ow-card{
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;padding:22px 20px;
+}
+.ow-card-t{font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px}
+.ow-card-d{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.5}
+.ourway .btn{background:var(--white);color:var(--black)}
+.ourway .hero-note{color:rgba(255,255,255,0.35)}
 
 /* ═══ SOCIAL PROOF ═══ */
 .proof{
-  display:grid;grid-template-columns:1.1fr 0.9fr;gap:56px;align-items:start;
-  max-width:1200px;margin:0 auto;padding:88px 52px;
+  max-width:900px;margin:0 auto;padding:96px 52px;text-align:center;
 }
-.pr-stats{display:flex;gap:36px;margin:32px 0 28px}
-.pr-sn{font-family:'Instrument Serif',serif;font-size:40px;letter-spacing:-1.5px;color:var(--text);line-height:1}
-.pr-sl{font-size:11.5px;color:var(--text-3);margin-top:3px}
-.pr-quotes{display:flex;gap:12px}
+.pr-stats{display:flex;gap:48px;justify-content:center;margin:36px 0 36px}
+.pr-sn{font-family:'Instrument Serif',serif;font-size:48px;letter-spacing:-2px;color:var(--text);line-height:1}
+.pr-sl{font-size:11.5px;color:var(--text-3);margin-top:4px}
+.pr-quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;text-align:left}
 .pr-q{
-  flex:1;background:var(--white);border:1px solid var(--border);
-  border-radius:12px;padding:20px;
+  background:var(--white);border:1px solid var(--border);
+  border-radius:12px;padding:22px;
 }
-.pr-qt{font-size:12.5px;color:var(--text-2);line-height:1.6;font-style:italic;margin-bottom:10px}
+.pr-qt{font-size:13px;color:var(--text-2);line-height:1.6;font-style:italic;margin-bottom:12px}
 .pr-qa{font-size:12px;font-weight:700;color:var(--text)}
-
-.pr-vis{display:flex;align-items:flex-start;justify-content:center}
-.pr-vis img{width:100%;max-width:420px;border-radius:16px;filter:sepia(0.2) saturate(0.75) brightness(1.05)}
 
 /* ═══ FOOTER ═══ */
 footer{background:var(--white);border-top:1px solid var(--border);padding:44px 52px 28px}
@@ -252,20 +220,20 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 }
 
 /* ═══ FEATURES ═══ */
-.features{max-width:1200px;margin:0 auto;padding:88px 52px}
+.features{max-width:1100px;margin:0 auto;padding:48px 52px 48px}
 .feat-row{
   display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;
-  padding:56px 0;border-bottom:1px solid var(--border);
+  padding:72px 0;border-bottom:1px solid var(--border);
 }
 .feat-row:last-child{border-bottom:none}
 .feat-row.reverse{direction:rtl}
 .feat-row.reverse>*{direction:ltr}
-.feat-num{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:10px}
-.feat-n{font-family:'Instrument Serif',serif;font-size:28px;letter-spacing:-0.6px;line-height:1.15;margin-bottom:10px}
+.feat-num{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:12px}
+.feat-n{font-family:'Instrument Serif',serif;font-size:32px;letter-spacing:-0.8px;line-height:1.1;margin-bottom:14px}
 .feat-n em{font-style:italic}
-.feat-d{font-size:13.5px;color:var(--text-2);line-height:1.7;max-width:400px;margin-bottom:18px}
-.feat-points{display:flex;flex-direction:column;gap:8px}
-.feat-pt{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-2)}
+.feat-d{font-size:14.5px;color:var(--text-2);line-height:1.7;max-width:420px;margin-bottom:22px}
+.feat-points{display:flex;flex-direction:column;gap:10px}
+.feat-pt{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2)}
 .feat-pt svg{flex-shrink:0;stroke:#16a34a;stroke-width:2.5;width:14px;height:14px;fill:none}
 
 /* Feature demo boxes */
@@ -319,6 +287,15 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 .demo-coach-label{font-size:8px;font-weight:800;color:#a78bfa;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:3px}
 
 @media(max-width:900px){
+  .hero{padding:120px 24px 60px;min-height:70vh}
+  .hero h1{font-size:44px;letter-spacing:-1.5px}
+  .oldway{padding:56px 24px}
+  .ow-pains{grid-template-columns:1fr}
+  .ourway-inner{padding:64px 24px}
+  .ow-grid{grid-template-columns:1fr}
+  .proof{padding:64px 24px}
+  .pr-stats{flex-direction:column;gap:20px}
+  .pr-quotes{grid-template-columns:1fr}
   .features{padding:56px 24px}
   .feat-row{grid-template-columns:1fr;gap:28px;padding:40px 0}
   .feat-row.reverse{direction:ltr}
@@ -409,33 +386,12 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 
 <!-- ═══ HERO ═══ -->
 <section class="hero reveal">
-  <div>
+  <div class="hero-inner">
     <div class="hero-label">Prepare. Practice. Get Hired.</div>
     <h1>Better prep.<br>Better interviews.<br><em>Better offers.</em></h1>
-    <p class="hero-sub">A complete toolkit for students recruiting across IB, consulting, PE, accounting, and more.</p>
+    <p class="hero-sub">The all-in-one platform for students recruiting into IB, consulting, PE, accounting, and more. From first cold email to signed offer.</p>
     <a href="/signup" class="btn">Try For Free Today &rarr;</a>
-    <div class="hero-note">Used by 50+ campuses worldwide</div>
-  </div>
-  <div class="hero-r">
-    <div class="hero-illust">
-      <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=680&h=650&fit=crop&crop=faces" alt="Team collaborating" style="width:100%;height:100%;object-fit:cover;border-radius:16px"/>
-    </div>
-    <div class="hf hf1">
-      <div class="hf-ico" style="background:#f0fdf4"><svg width="14" height="14" fill="none" stroke="#16a34a" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div><div>Learn</div><div class="hf-sub">Master key concepts</div></div>
-    </div>
-    <div class="hf hf2">
-      <div class="hf-ico" style="background:#eff6ff"><svg width="14" height="14" fill="none" stroke="#3b82f6" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg></div>
-      <div><div>Practice</div><div class="hf-sub">Drill real questions</div></div>
-    </div>
-    <div class="hf hf3">
-      <div class="hf-ico" style="background:#fefce8"><svg width="14" height="14" fill="none" stroke="#a16207" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div><div>Outreach</div><div class="hf-sub">Track &amp; send smarter</div></div>
-    </div>
-    <div class="hf hf4">
-      <div class="hf-ico" style="background:#fdf2f8"><svg width="14" height="14" fill="none" stroke="#be185d" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg></div>
-      <div><div>Analyze</div><div class="hf-sub">Improve with insights</div></div>
-    </div>
+    <div class="hero-note">No credit card required · Used on 50+ campuses</div>
   </div>
 </section>
 
@@ -452,61 +408,54 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 
 <!-- ═══ OLD WAY ═══ -->
 <section class="oldway reveal" id="features">
-  <div class="ow-left">
-    <div class="sl">Old Way</div>
-    <div class="st">Outdated tools.<br><em>Outdated results.</em></div>
-    <p class="ss">Spreadsheets, random PDFs, and scattered advice weren't built for how recruiting actually works.</p>
-    <div class="ow-quote">Recruiting is hard enough.<br>Your tools shouldn't make it harder.</div>
-  </div>
-  <div class="ow-right">
-    <div class="ow-illust">
-      <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=550&fit=crop&crop=center" alt="Stressed student studying" style="width:100%;height:100%;object-fit:cover;border-radius:16px"/>
+  <div class="sl">Old Way</div>
+  <div class="st">Outdated tools.<br><em>Outdated results.</em></div>
+  <p class="ss">Spreadsheets, random PDFs, and scattered advice weren't built for how recruiting actually works.</p>
+  <div class="ow-pains">
+    <div class="ow-pain">
+      <div class="ow-pain-dot" style="background:var(--red)"></div>
+      <div class="ow-pain-t">Disconnected</div>
+      <div class="ow-pain-d">LinkedIn for sourcing, a spreadsheet for tracking, ChatGPT for messages. Nothing talks to each other.</div>
     </div>
-    <div class="ow-pills">
-      <div class="ow-pill">
-        <div><span class="ow-pill-dot" style="background:var(--red)"></span><span class="ow-pill-title">Disconnected</span><div class="ow-pill-sub">Tools don't talk to each other.</div></div>
-      </div>
-      <div class="ow-pill">
-        <div><span class="ow-pill-dot" style="background:var(--brown)"></span><span class="ow-pill-title">Overwhelming</span><div class="ow-pill-sub">Too much info, not enough clarity.</div></div>
-      </div>
-      <div class="ow-pill">
-        <div><span class="ow-pill-dot" style="background:var(--text-3)"></span><span class="ow-pill-title">Unstructured</span><div class="ow-pill-sub">No system. No progress.</div></div>
-      </div>
+    <div class="ow-pain">
+      <div class="ow-pain-dot" style="background:var(--brown)"></div>
+      <div class="ow-pain-t">Overwhelming</div>
+      <div class="ow-pain-d">Too much info scattered across too many places. No clarity on what to do first or what actually matters.</div>
+    </div>
+    <div class="ow-pain">
+      <div class="ow-pain-dot" style="background:var(--text-3)"></div>
+      <div class="ow-pain-t">Unstructured</div>
+      <div class="ow-pain-d">No system, no progress tracking, no feedback. Just guesswork and hoping for the best.</div>
     </div>
   </div>
 </section>
 
 <!-- ═══ OUR WAY ═══ -->
 <section class="ourway reveal">
-  <div class="ow-inner">
-    <div>
-      <div class="sl">Our Way</div>
-      <div class="st">Everything you need,<br><em>Nothing you don't.</em></div>
-      <p class="ss">One integrated platform to help you learn, practice, reach out, and get offers.</p>
-      <div class="ow-bullets">
-        <div class="ow-bullet">
-          <div class="ow-chk"><svg width="11" height="11" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <div><div class="ow-bt">Curated learning paths</div><div class="ow-bs">Built by top students &amp; recruiters</div></div>
-        </div>
-        <div class="ow-bullet">
-          <div class="ow-chk"><svg width="11" height="11" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <div><div class="ow-bt">Real interview practice</div><div class="ow-bs">Questions, cases, and drills</div></div>
-        </div>
-        <div class="ow-bullet">
-          <div class="ow-chk"><svg width="11" height="11" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <div><div class="ow-bt">Smarter outreach</div><div class="ow-bs">Templates, tracking, follow-ups</div></div>
-        </div>
-        <div class="ow-bullet">
-          <div class="ow-chk"><svg width="11" height="11" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <div><div class="ow-bt">Actionable insights</div><div class="ow-bs">Know what to do next</div></div>
-        </div>
+  <div class="ourway-inner">
+    <div class="sl">Our Way</div>
+    <div class="st">Everything you need,<br><em>Nothing you don't.</em></div>
+    <p class="ss">One integrated platform to help you learn, practice, reach out, and land offers.</p>
+    <div class="ow-grid">
+      <div class="ow-card">
+        <div class="ow-card-t">Curated learning paths</div>
+        <div class="ow-card-d">Built by students and recruiters who've been through it.</div>
       </div>
-      <a href="/signup" class="btn">Try For Free Today &rarr;</a>
-      <div class="hero-note">Used by 50+ campuses worldwide</div>
+      <div class="ow-card">
+        <div class="ow-card-t">Real interview practice</div>
+        <div class="ow-card-d">1,300+ questions, mock interviews, and diagnostic reviews.</div>
+      </div>
+      <div class="ow-card">
+        <div class="ow-card-t">Smarter outreach</div>
+        <div class="ow-card-d">AI-written emails, pipeline tracking, and follow-up reminders.</div>
+      </div>
+      <div class="ow-card">
+        <div class="ow-card-t">Actionable insights</div>
+        <div class="ow-card-d">Know exactly where you stand and what to focus on next.</div>
+      </div>
     </div>
-    <div class="ow-mockup">
-      <img src="https://images.unsplash.com/photo-1531538606174-0f90ff5dce83?w=640&h=460&fit=crop&crop=center" alt="Professional workspace" style="width:100%;height:100%;object-fit:cover;border-radius:16px"/>
-    </div>
+    <a href="/signup" class="btn">Try For Free Today &rarr;</a>
+    <div class="hero-note">No credit card required</div>
   </div>
 </section>
 
@@ -800,32 +749,27 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 
 <!-- ═══ SOCIAL PROOF ═══ -->
 <section class="proof reveal" id="proof">
-  <div>
-    <div class="sl">Trusted By Top Students</div>
-    <div class="st">Built with students.<br><em>Backed by results.</em></div>
-    <p class="ss">Join thousands of students from top universities who landed offers with OfferBell.</p>
-    <div class="pr-stats">
-      <div><div class="pr-sn">50+</div><div class="pr-sl">Top campuses</div></div>
-      <div><div class="pr-sn">20K+</div><div class="pr-sl">Active users</div></div>
-      <div><div class="pr-sn">100K+</div><div class="pr-sl">Offers earned</div></div>
-    </div>
-    <div class="pr-quotes">
-      <div class="pr-q">
-        <div class="pr-qt">"OfferBell helped me go from confused to confident."</div>
-        <div class="pr-qa">&mdash; Wharton '25</div>
-      </div>
-      <div class="pr-q">
-        <div class="pr-qt">"The outreach tracker alone saved me so much time."</div>
-        <div class="pr-qa">&mdash; Berkeley '24</div>
-      </div>
-      <div class="pr-q">
-        <div class="pr-qt">"Best investment I made in my recruiting journey."</div>
-        <div class="pr-qa">&mdash; NYU '25</div>
-      </div>
-    </div>
+  <div class="sl">Trusted By Top Students</div>
+  <div class="st">Built with students.<br><em>Backed by results.</em></div>
+  <p class="ss">Join thousands of students from top universities who landed offers with OfferBell.</p>
+  <div class="pr-stats">
+    <div><div class="pr-sn">50+</div><div class="pr-sl">Top campuses</div></div>
+    <div><div class="pr-sn">20K+</div><div class="pr-sl">Active users</div></div>
+    <div><div class="pr-sn">100K+</div><div class="pr-sl">Offers earned</div></div>
   </div>
-  <div class="pr-vis">
-    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=460&h=560&fit=crop&crop=faces" alt="Students celebrating" style="width:100%;height:100%;object-fit:cover;border-radius:20px"/>
+  <div class="pr-quotes">
+    <div class="pr-q">
+      <div class="pr-qt">"OfferBell helped me go from confused to confident."</div>
+      <div class="pr-qa">&mdash; Wharton '25</div>
+    </div>
+    <div class="pr-q">
+      <div class="pr-qt">"The outreach tracker alone saved me so much time."</div>
+      <div class="pr-qa">&mdash; Berkeley '24</div>
+    </div>
+    <div class="pr-q">
+      <div class="pr-qt">"Best investment I made in my recruiting journey."</div>
+      <div class="pr-qa">&mdash; NYU '25</div>
+    </div>
   </div>
 </section>
 
