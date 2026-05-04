@@ -98,14 +98,15 @@ nav.scrolled{border-bottom-color:var(--border)}
 @keyframes hfIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* ═══ MARQUEE ═══ */
-.marquee-wrap{padding:20px 0 48px;overflow:hidden;position:relative}
-.marquee-wrap::before,.marquee-wrap::after{content:'';position:absolute;top:0;bottom:0;width:100px;z-index:2;pointer-events:none}
+.marquee-wrap{padding:40px 0 56px;overflow:hidden;position:relative}
+.marquee-wrap::before,.marquee-wrap::after{content:'';position:absolute;top:0;bottom:0;width:140px;z-index:2;pointer-events:none}
 .marquee-wrap::before{left:0;background:linear-gradient(90deg,var(--cream),transparent)}
 .marquee-wrap::after{right:0;background:linear-gradient(270deg,var(--cream),transparent)}
-.marquee-label{text-align:center;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text-3);margin-bottom:14px}
+.marquee-label{text-align:center;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3);margin-bottom:24px}
 .marquee-track{overflow:hidden}
-.marquee-inner{display:flex;gap:40px;width:max-content;animation:slide 45s linear infinite}
-.marquee-inner span{font-size:14px;font-weight:600;color:var(--text-3);white-space:nowrap;letter-spacing:-0.2px}
+.marquee-inner{display:flex;gap:64px;width:max-content;animation:slide 50s linear infinite}
+.marquee-inner span{font-family:'Instrument Serif',Georgia,serif;font-size:24px;font-weight:400;color:var(--text-2);white-space:nowrap;letter-spacing:-0.3px;opacity:0.75;transition:opacity 0.2s}
+.marquee-inner span:hover{opacity:1}
 @keyframes slide{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* ═══ OLD WAY ═══ */
