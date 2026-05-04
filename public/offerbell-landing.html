@@ -163,12 +163,20 @@ nav.scrolled{border-bottom-color:var(--border)}
 .pr-stats{display:flex;gap:48px;justify-content:center;margin:36px auto 36px}
 .pr-sn{font-family:'Instrument Serif',serif;font-size:48px;letter-spacing:-2px;color:var(--text);line-height:1}
 .pr-sl{font-size:11.5px;color:var(--text-3);margin-top:4px}
-.pr-quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;text-align:left}
+.pr-quotes-wrap{overflow:hidden;position:relative;margin:0 -52px}
+.pr-quotes-wrap::before,.pr-quotes-wrap::after{content:'';position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none}
+.pr-quotes-wrap::before{left:0;background:linear-gradient(90deg,var(--cream),transparent)}
+.pr-quotes-wrap::after{right:0;background:linear-gradient(270deg,var(--cream),transparent)}
+.pr-quotes-row{display:flex;gap:16px;width:max-content;padding:8px 0}
+.pr-quotes-row.row1{animation:prSlide 55s linear infinite}
+.pr-quotes-row.row2{animation:prSlide2 50s linear infinite}
+@keyframes prSlide{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes prSlide2{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
 .pr-q{
   background:var(--white);border:1px solid var(--border);
-  border-radius:12px;padding:22px;
+  border-radius:12px;padding:22px 24px;min-width:300px;max-width:340px;flex-shrink:0;
 }
-.pr-qt{font-size:13px;color:var(--text-2);line-height:1.6;font-style:italic;margin-bottom:12px}
+.pr-qt{font-size:13.5px;color:var(--text-2);line-height:1.65;font-style:italic;margin-bottom:12px}
 .pr-qa{font-size:12px;font-weight:700;color:var(--text)}
 
 /* ═══ FOOTER ═══ */
@@ -218,9 +226,8 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
   .ow-right{order:-1}
   .ow-pills{position:static;flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:12px}
   .ow-inner{grid-template-columns:1fr;padding:56px 24px;gap:28px}
-  .proof{grid-template-columns:1fr;padding:56px 24px;gap:28px}
-  .pr-vis{order:-1}
-  .pr-quotes{flex-direction:column}
+  .proof{padding:56px 24px}
+  .pr-quotes-wrap{margin:0 -24px}
   .pr-stats{gap:20px}
   .ft-inner{grid-template-columns:1fr 1fr;gap:20px}
   .ft-logo{grid-column:1/-1}
@@ -307,7 +314,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
   .ow-grid{grid-template-columns:1fr}
   .proof{padding:64px 24px}
   .pr-stats{flex-direction:column;gap:20px}
-  .pr-quotes{grid-template-columns:1fr}
+  .pr-quotes-wrap{margin:0 -24px}
   .features{padding:56px 24px}
   .feat-row{grid-template-columns:1fr;gap:28px;padding:40px 0}
   .feat-row.reverse{direction:ltr}
@@ -770,18 +777,44 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
     <div><div class="pr-sn">20K+</div><div class="pr-sl">Active users</div></div>
     <div><div class="pr-sn">100K+</div><div class="pr-sl">Offers earned</div></div>
   </div>
-  <div class="pr-quotes">
-    <div class="pr-q">
-      <div class="pr-qt">"OfferBell helped me go from confused to confident."</div>
-      <div class="pr-qa">&mdash; Wharton '25</div>
+  <div class="pr-quotes-wrap">
+    <div class="pr-quotes-row row1">
+      <div class="pr-q"><div class="pr-qt">"I was mass-applying on LinkedIn and getting nowhere. OfferBell made me realize I needed to actually network. The outreach writer got me 3 coffee chats in my first week."</div><div class="pr-qa">&mdash; Sarah K., UVA '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"Honestly didn't think I could break into IB from a non-target. The flashcards and mock interview prep gave me so much confidence going into superdays."</div><div class="pr-qa">&mdash; Marcus T., Ohio State '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"The AI coach is insane. I pasted my cold email draft and it rewrote it in a way that actually sounded like me but 10x better. Got a reply within 2 hours."</div><div class="pr-qa">&mdash; Priya M., NYU Stern '26</div></div>
+      <div class="pr-q"><div class="pr-qt">"I used to keep track of networking in a Google Sheet that I never updated. The outreach tracker replaced all of that. I actually follow up now."</div><div class="pr-qa">&mdash; Jake R., Michigan Ross '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"My roommate got an offer at Evercore and literally told me it was because of OfferBell's diagnostic review. I signed up the next day."</div><div class="pr-qa">&mdash; Olivia C., Georgetown '26</div></div>
+      <div class="pr-q"><div class="pr-qt">"The resume review caught things my career center completely missed. It flagged weak bullet points and actually suggested better ones."</div><div class="pr-qa">&mdash; David L., Emory '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"I went from not knowing what an LBO was to passing my PE technicals. The concept drills are addicting honestly."</div><div class="pr-qa">&mdash; Nina W., Boston College '26</div></div>
+      <div class="pr-q"><div class="pr-qt">"Used the mock interview the night before my Goldman Sachs first round. The AI grading was brutal but exactly what I needed to hear."</div><div class="pr-qa">&mdash; Chris P., Wharton '25</div></div>
+      <!-- duplicate for seamless loop -->
+      <div class="pr-q"><div class="pr-qt">"I was mass-applying on LinkedIn and getting nowhere. OfferBell made me realize I needed to actually network. The outreach writer got me 3 coffee chats in my first week."</div><div class="pr-qa">&mdash; Sarah K., UVA '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"Honestly didn't think I could break into IB from a non-target. The flashcards and mock interview prep gave me so much confidence going into superdays."</div><div class="pr-qa">&mdash; Marcus T., Ohio State '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"The AI coach is insane. I pasted my cold email draft and it rewrote it in a way that actually sounded like me but 10x better. Got a reply within 2 hours."</div><div class="pr-qa">&mdash; Priya M., NYU Stern '26</div></div>
+      <div class="pr-q"><div class="pr-qt">"I used to keep track of networking in a Google Sheet that I never updated. The outreach tracker replaced all of that. I actually follow up now."</div><div class="pr-qa">&mdash; Jake R., Michigan Ross '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"My roommate got an offer at Evercore and literally told me it was because of OfferBell's diagnostic review. I signed up the next day."</div><div class="pr-qa">&mdash; Olivia C., Georgetown '26</div></div>
+      <div class="pr-q"><div class="pr-qt">"The resume review caught things my career center completely missed. It flagged weak bullet points and actually suggested better ones."</div><div class="pr-qa">&mdash; David L., Emory '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"I went from not knowing what an LBO was to passing my PE technicals. The concept drills are addicting honestly."</div><div class="pr-qa">&mdash; Nina W., Boston College '26</div></div>
+      <div class="pr-q"><div class="pr-qt">"Used the mock interview the night before my Goldman Sachs first round. The AI grading was brutal but exactly what I needed to hear."</div><div class="pr-qa">&mdash; Chris P., Wharton '25</div></div>
     </div>
-    <div class="pr-q">
-      <div class="pr-qt">"The outreach tracker alone saved me so much time."</div>
-      <div class="pr-qa">&mdash; Berkeley '24</div>
-    </div>
-    <div class="pr-q">
-      <div class="pr-qt">"Best investment I made in my recruiting journey."</div>
-      <div class="pr-qa">&mdash; NYU '25</div>
+    <div class="pr-quotes-row row2">
+      <div class="pr-q"><div class="pr-qt">"I'm a junior at a state school and I got an interview at Lazard. The prep guides literally walked me through everything I needed to know."</div><div class="pr-qa">&mdash; Amanda H., Indiana '26</div></div>
+      <div class="pr-q"><div class="pr-qt">"The referral map helped me see that my friend's older brother's coworker was at Centerview. Two introductions later, I had a first round."</div><div class="pr-qa">&mdash; Kevin Z., Columbia '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"Spent $200 on Wall Street Oasis and barely used it. OfferBell's free tier alone was more useful. The Pro plan is a no-brainer."</div><div class="pr-qa">&mdash; Rachel S., USC '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"My cold email response rate went from like 5% to over 30% after I started using the outreach writer. People actually started replying."</div><div class="pr-qa">&mdash; Daniel F., Berkeley Haas '26</div></div>
+      <div class="pr-q"><div class="pr-qt">"Not gonna lie, I was skeptical about another recruiting platform. But the diagnostic review showing me exactly where I was weak changed everything."</div><div class="pr-qa">&mdash; Taylor B., Duke '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"I prepped for consulting cases using the flashcards. My McKinsey interviewer literally said I was one of the most prepared candidates."</div><div class="pr-qa">&mdash; Aiden M., Cornell '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"The contact finder saved me hours of LinkedIn stalking. I found 15 alumni at my target firms in like 10 minutes."</div><div class="pr-qa">&mdash; Jessica T., Vanderbilt '26</div></div>
+      <div class="pr-q"><div class="pr-qt">"I literally used OfferBell every single day for 3 months leading up to recruiting. The activity streak kept me accountable."</div><div class="pr-qa">&mdash; Ryan G., UT Austin '25</div></div>
+      <!-- duplicate for seamless loop -->
+      <div class="pr-q"><div class="pr-qt">"I'm a junior at a state school and I got an interview at Lazard. The prep guides literally walked me through everything I needed to know."</div><div class="pr-qa">&mdash; Amanda H., Indiana '26</div></div>
+      <div class="pr-q"><div class="pr-qt">"The referral map helped me see that my friend's older brother's coworker was at Centerview. Two introductions later, I had a first round."</div><div class="pr-qa">&mdash; Kevin Z., Columbia '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"Spent $200 on Wall Street Oasis and barely used it. OfferBell's free tier alone was more useful. The Pro plan is a no-brainer."</div><div class="pr-qa">&mdash; Rachel S., USC '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"My cold email response rate went from like 5% to over 30% after I started using the outreach writer. People actually started replying."</div><div class="pr-qa">&mdash; Daniel F., Berkeley Haas '26</div></div>
+      <div class="pr-q"><div class="pr-qt">"Not gonna lie, I was skeptical about another recruiting platform. But the diagnostic review showing me exactly where I was weak changed everything."</div><div class="pr-qa">&mdash; Taylor B., Duke '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"I prepped for consulting cases using the flashcards. My McKinsey interviewer literally said I was one of the most prepared candidates."</div><div class="pr-qa">&mdash; Aiden M., Cornell '25</div></div>
+      <div class="pr-q"><div class="pr-qt">"The contact finder saved me hours of LinkedIn stalking. I found 15 alumni at my target firms in like 10 minutes."</div><div class="pr-qa">&mdash; Jessica T., Vanderbilt '26</div></div>
+      <div class="pr-q"><div class="pr-qt">"I literally used OfferBell every single day for 3 months leading up to recruiting. The activity streak kept me accountable."</div><div class="pr-qa">&mdash; Ryan G., UT Austin '25</div></div>
     </div>
   </div>
   </div>
