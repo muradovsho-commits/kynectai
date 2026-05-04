@@ -713,42 +713,48 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
         <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Fullscreen expand with custom labels</div>
       </div>
     </div>
-    <div class="feat-vis" style="display:flex;align-items:center;justify-content:center">
+    <div class="feat-vis" style="display:flex;align-items:center;justify-content:center;background:var(--cream);border-color:var(--border)">
       <div style="width:100%;position:relative">
-        <svg viewBox="0 0 400 250" style="width:100%;height:auto" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Simplified US outline -->
-          <path d="M45 85 L55 60 L80 55 L95 45 L120 42 L140 38 L160 42 L180 35 L200 38 L220 32 L240 35 L260 30 L280 32 L300 28 L320 35 L340 40 L355 50 L360 65 L365 80 L358 95 L350 110 L355 130 L360 148 L350 165 L340 175 L325 180 L310 190 L290 195 L270 192 L250 188 L230 195 L210 200 L190 198 L170 195 L150 200 L130 205 L110 200 L90 195 L70 185 L55 170 L45 155 L38 140 L35 120 L38 100Z" stroke="var(--border)" stroke-width="1.5" fill="var(--cream)" opacity="0.6"/>
+        <svg viewBox="0 0 960 600" style="width:100%;height:auto" preserveAspectRatio="xMidYMid meet">
+          <!-- US outline (simplified continental) -->
+          <path d="M844,102 L855,96 L862,105 L880,115 L893,130 L900,152 L910,190 L915,220 L905,255 L890,278 L870,300 L855,320 L845,345 L835,370 L828,390 L820,400 L810,405 L795,420 L775,435 L740,448 L720,455 L700,460 L680,465 L660,462 L635,455 L610,465 L585,475 L560,480 L540,478 L520,470 L505,468 L480,475 L455,485 L430,490 L410,488 L385,480 L360,475 L330,470 L310,478 L285,485 L260,480 L240,470 L220,465 L195,458 L170,455 L145,460 L120,470 L100,480 L85,478 L75,465 L65,445 L58,420 L55,395 L52,365 L50,340 L48,315 L50,290 L55,265 L60,240 L68,220 L78,200 L90,185 L105,168 L120,152 L140,138 L165,122 L190,110 L215,98 L245,88 L275,82 L305,78 L335,75 L365,72 L400,70 L435,68 L470,65 L500,62 L530,60 L560,58 L590,56 L620,55 L650,58 L680,62 L710,68 L735,75 L760,82 L785,90 L810,98 L830,100Z" fill="var(--white)" stroke="var(--border)" stroke-width="1.5" opacity="0.7"/>
+          <!-- State dividers (simplified) -->
+          <line x1="340" y1="75" x2="340" y2="470" stroke="var(--border)" stroke-width="0.5" opacity="0.3"/>
+          <line x1="500" y1="60" x2="500" y2="480" stroke="var(--border)" stroke-width="0.5" opacity="0.3"/>
+          <line x1="650" y1="55" x2="650" y2="465" stroke="var(--border)" stroke-width="0.5" opacity="0.3"/>
+          <line x1="780" y1="85" x2="780" y2="440" stroke="var(--border)" stroke-width="0.5" opacity="0.3"/>
+          <line x1="50" y1="250" x2="915" y2="250" stroke="var(--border)" stroke-width="0.5" opacity="0.3"/>
+          <line x1="50" y1="380" x2="900" y2="380" stroke="var(--border)" stroke-width="0.5" opacity="0.3"/>
           <!-- Connection lines -->
-          <line x1="340" y1="55" x2="280" y2="100" stroke="#10b981" stroke-width="1" opacity="0.4" stroke-dasharray="4 3"/>
-          <line x1="340" y1="55" x2="350" y2="110" stroke="#10b981" stroke-width="1" opacity="0.4" stroke-dasharray="4 3"/>
-          <line x1="280" y1="100" x2="200" y2="130" stroke="#10b981" stroke-width="1" opacity="0.3" stroke-dasharray="4 3"/>
-          <line x1="200" y1="130" x2="120" y2="120" stroke="#10b981" stroke-width="1" opacity="0.3" stroke-dasharray="4 3"/>
-          <line x1="350" y1="110" x2="310" y2="170" stroke="#10b981" stroke-width="1" opacity="0.3" stroke-dasharray="4 3"/>
-          <line x1="120" y1="120" x2="75" y2="105" stroke="#10b981" stroke-width="1" opacity="0.3" stroke-dasharray="4 3"/>
-          <!-- City dots with labels -->
-          <!-- NYC (You) -->
-          <circle cx="340" cy="55" r="10" fill="#10b981" stroke="#fff" stroke-width="2"/>
-          <text x="340" y="59" text-anchor="middle" fill="#fff" font-size="6" font-weight="800" font-family="'DM Sans',sans-serif">You</text>
+          <line x1="870" y1="150" x2="720" y2="210" stroke="#10b981" stroke-width="1.5" opacity="0.3" stroke-dasharray="6 4"/>
+          <line x1="870" y1="150" x2="830" y2="270" stroke="#10b981" stroke-width="1.5" opacity="0.3" stroke-dasharray="6 4"/>
+          <line x1="720" y1="210" x2="480" y2="280" stroke="#10b981" stroke-width="1" opacity="0.2" stroke-dasharray="6 4"/>
+          <line x1="480" y1="280" x2="180" y2="240" stroke="#10b981" stroke-width="1" opacity="0.2" stroke-dasharray="6 4"/>
+          <line x1="830" y1="270" x2="690" y2="380" stroke="#10b981" stroke-width="1" opacity="0.2" stroke-dasharray="6 4"/>
+          <!-- NYC - You -->
+          <circle cx="870" cy="150" r="16" fill="#10b981" stroke="#fff" stroke-width="3"/>
+          <text x="870" y="155" text-anchor="middle" fill="#fff" font-size="9" font-weight="800" font-family="'DM Sans',sans-serif">You</text>
           <!-- Chicago -->
-          <circle cx="280" cy="100" r="7" fill="#3b82f6"/>
-          <text x="280" y="103" text-anchor="middle" fill="#fff" font-size="5" font-weight="700" font-family="'DM Sans',sans-serif">GS</text>
-          <!-- DC -->
-          <circle cx="350" cy="110" r="7" fill="#7c3aed"/>
-          <text x="350" y="113" text-anchor="middle" fill="#fff" font-size="5" font-weight="700" font-family="'DM Sans',sans-serif">MS</text>
-          <!-- Dallas -->
-          <circle cx="200" cy="130" r="6" fill="#f59e0b"/>
-          <text x="200" y="133" text-anchor="middle" fill="#fff" font-size="5" font-weight="700" font-family="'DM Sans',sans-serif">JPM</text>
-          <!-- Charlotte -->
-          <circle cx="310" cy="170" r="6" fill="#ec4899"/>
-          <text x="310" y="173" text-anchor="middle" fill="#fff" font-size="5" font-weight="700" font-family="'DM Sans',sans-serif">BX</text>
-          <!-- Denver -->
-          <circle cx="120" cy="120" r="5" fill="#06b6d4"/>
+          <circle cx="720" cy="210" r="11" fill="#3b82f6"/>
+          <text x="720" y="214" text-anchor="middle" fill="#fff" font-size="7" font-weight="700" font-family="'DM Sans',sans-serif">GS</text>
+          <!-- DC area -->
+          <circle cx="830" cy="270" r="11" fill="#7c3aed"/>
+          <text x="830" y="274" text-anchor="middle" fill="#fff" font-size="7" font-weight="700" font-family="'DM Sans',sans-serif">MS</text>
+          <!-- Texas -->
+          <circle cx="480" cy="280" r="9" fill="#f59e0b"/>
+          <text x="480" y="284" text-anchor="middle" fill="#fff" font-size="6" font-weight="700" font-family="'DM Sans',sans-serif">JPM</text>
+          <!-- Atlanta -->
+          <circle cx="690" cy="380" r="9" fill="#ec4899"/>
+          <text x="690" y="384" text-anchor="middle" fill="#fff" font-size="6" font-weight="700" font-family="'DM Sans',sans-serif">BX</text>
           <!-- SF -->
-          <circle cx="75" cy="105" r="5" fill="#14b8a6"/>
+          <circle cx="180" cy="240" r="8" fill="#06b6d4"/>
+          <text x="180" y="244" text-anchor="middle" fill="#fff" font-size="6" font-weight="700" font-family="'DM Sans',sans-serif">EVC</text>
           <!-- Smaller dots -->
-          <circle cx="160" cy="95" r="3" fill="var(--text-3)" opacity="0.4"/>
-          <circle cx="240" cy="150" r="3" fill="var(--text-3)" opacity="0.4"/>
-          <circle cx="295" cy="140" r="3" fill="var(--text-3)" opacity="0.3"/>
+          <circle cx="350" cy="200" r="4" fill="var(--text-3)" opacity="0.35"/>
+          <circle cx="550" cy="350" r="4" fill="var(--text-3)" opacity="0.35"/>
+          <circle cx="620" cy="300" r="4" fill="var(--text-3)" opacity="0.3"/>
+          <circle cx="420" cy="420" r="3.5" fill="var(--text-3)" opacity="0.25"/>
+          <circle cx="270" cy="340" r="3.5" fill="var(--text-3)" opacity="0.25"/>
         </svg>
       </div>
     </div>
