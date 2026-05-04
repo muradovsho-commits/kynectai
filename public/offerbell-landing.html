@@ -252,6 +252,70 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
   .pr-stats{flex-wrap:wrap}
   .ft-inner{grid-template-columns:1fr}
 }
+
+/* ═══ PRICING ═══ */
+.pricing{padding:88px 52px}
+.pricing-center{text-align:center;margin-bottom:40px}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:960px;margin:0 auto}
+.p-card{border:1.5px solid var(--border);border-radius:16px;padding:30px;background:var(--white);position:relative}
+.p-card.feat{border-color:var(--black)}
+.p-card.elite{border-color:#2563eb}
+.p-badge{position:absolute;top:-11px;right:20px;background:var(--black);color:var(--white);font-size:9px;font-weight:700;padding:3px 12px;border-radius:100px;letter-spacing:0.3px}
+.p-tier{font-size:12px;font-weight:700;margin-bottom:6px;letter-spacing:0.3px}
+.p-price{font-family:'Instrument Serif',serif;font-size:44px;letter-spacing:-2px;line-height:1;margin-bottom:4px}
+.p-price span{font-size:15px;font-family:'DM Sans',sans-serif;color:var(--text-3);letter-spacing:0;font-weight:400}
+.p-label{font-size:12px;color:var(--text-2);margin-bottom:16px}
+.p-div{height:1px;background:var(--border);margin:16px 0}
+.p-feat{font-size:12.5px;color:var(--text-2);padding:4px 0;display:flex;gap:7px;line-height:1.5}
+.p-feat::before{content:'\2713';font-weight:700;color:var(--black);flex-shrink:0}
+.p-btn{display:block;text-align:center;padding:11px;border-radius:9px;font-size:12.5px;font-weight:700;text-decoration:none;margin-top:20px;transition:all 0.15s;font-family:'DM Sans',sans-serif}
+.p-btn:hover{opacity:0.85;transform:translateY(-1px)}
+.p-btn-outline{border:1.5px solid var(--border);color:var(--black);background:var(--white)}
+.p-btn-outline:hover{border-color:var(--black)}
+.p-btn-solid{background:var(--black);color:var(--white);border:none}
+.p-btn-blue{background:#2563eb;color:var(--white);border:none}
+
+/* ═══ FAQ ═══ */
+.faq{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:88px 52px}
+.faq-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:72px;align-items:start;max-width:1200px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  padding:17px 0;font-size:14px;font-weight:500;
+  background:none;border:none;cursor:pointer;text-align:left;
+  color:var(--text);font-family:'DM Sans',sans-serif;
+}
+.faq-q .qi{font-size:18px;color:var(--text-3);transition:transform 0.22s;flex-shrink:0}
+.faq-a{font-size:13px;color:var(--text-2);line-height:1.75;padding-bottom:17px;display:none}
+.faq-item.open .faq-a{display:block}
+.faq-item.open .qi{transform:rotate(45deg)}
+
+/* ═══ CTA BAND ═══ */
+.cta-band{
+  max-width:1200px;margin:48px auto;
+  background:var(--black);border-radius:18px;
+  padding:56px 64px;
+  display:flex;align-items:center;justify-content:space-between;gap:32px;
+}
+.cta-band-t{font-family:'Instrument Serif',serif;font-size:clamp(24px,3vw,36px);line-height:1.15;letter-spacing:-0.8px;color:var(--white)}
+.cta-band-t em{font-style:italic}
+.cta-band-btn{
+  background:var(--white);color:var(--black);
+  padding:13px 26px;border-radius:10px;
+  font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;
+  transition:opacity 0.15s;
+}
+.cta-band-btn:hover{opacity:0.9}
+.cta-band-note{font-size:11px;color:rgba(255,255,255,0.35);margin-top:8px;text-align:right}
+
+@media(max-width:900px){
+  .pricing{padding:56px 24px}
+  .pricing-grid{grid-template-columns:1fr;max-width:400px;margin:0 auto}
+  .faq{padding:56px 24px}
+  .faq-grid{grid-template-columns:1fr;gap:32px}
+  .cta-band{margin:32px 24px;padding:40px 28px;flex-direction:column;text-align:center}
+  .cta-band-note{text-align:center}
+}
 </style>
 </head>
 <body>
@@ -403,6 +467,109 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
     <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=460&h=560&fit=crop&crop=faces" alt=""/>
   </div>
 </section>
+
+<!-- ═══ PRICING ═══ -->
+<section class="pricing reveal" id="pricing">
+  <div class="pricing-center">
+    <div class="sl" style="text-align:center">Pricing</div>
+    <div class="st" style="text-align:center;margin:0 auto 12px">Simple pricing.<br><em>Real results.</em></div>
+    <p class="ss" style="text-align:center;margin:0 auto">Start free. Upgrade when you're ready to go all in.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="p-card">
+      <div class="p-tier">Free</div>
+      <div class="p-price">$0<span>/mo</span></div>
+      <div class="p-label">Get started, no card required.</div>
+      <div class="p-div"></div>
+      <div class="p-feat">5 outreach messages (lifetime)</div>
+      <div class="p-feat">10% of flashcards per track</div>
+      <div class="p-feat">Concept Drills (5 Qs per drill)</div>
+      <div class="p-feat">1 Diagnostic Review</div>
+      <div class="p-feat">Career Guides &amp; Quiz</div>
+      <div class="p-feat">Outreach Tracker (5 contacts)</div>
+      <div class="p-feat">Referral Map (5 contacts)</div>
+      <div class="p-feat">AI Resume Review (1/week)</div>
+      <div class="p-feat">AI Coach (1/week)</div>
+      <div class="p-feat">Mock Interview (3/week)</div>
+      <a href="/signup" class="p-btn p-btn-outline">Get started free</a>
+    </div>
+    <div class="p-card feat">
+      <div class="p-badge">Most popular</div>
+      <div class="p-tier">Pro</div>
+      <div class="p-price">$20<span>/mo</span></div>
+      <div class="p-label">For students serious about breaking in.</div>
+      <div class="p-div"></div>
+      <div class="p-feat">Everything in Free, plus:</div>
+      <div class="p-feat">Full flashcard access - all tracks</div>
+      <div class="p-feat">Unlimited concept drills &amp; diagnostics</div>
+      <div class="p-feat">Interview Prep Guides - all 11 tracks</div>
+      <div class="p-feat">Outreach Writer (20/week)</div>
+      <div class="p-feat">Unlimited outreach contacts &amp; referrals</div>
+      <div class="p-feat">AI Coach (usage-based)</div>
+      <div class="p-feat">Unlimited Mock Interviews</div>
+      <div class="p-feat">AI Resume Review (10/week)</div>
+      <a href="/signup" class="p-btn p-btn-solid">Get started</a>
+    </div>
+    <div class="p-card elite">
+      <div class="p-badge" style="background:#2563eb">Best Value</div>
+      <div class="p-tier">Elite</div>
+      <div class="p-price">$40<span>/mo</span></div>
+      <div class="p-label">Maximum limits. Priority everything.</div>
+      <div class="p-div"></div>
+      <div class="p-feat">Everything in Pro, plus:</div>
+      <div class="p-feat">AI Coach (higher limits)</div>
+      <div class="p-feat">Outreach Writer (30/week)</div>
+      <div class="p-feat">AI Resume Review (30/week)</div>
+      <div class="p-feat">Priority support</div>
+      <div class="p-feat">Early feature access</div>
+      <a href="/signup" class="p-btn p-btn-blue">Get started</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section class="faq reveal" id="faq">
+  <div class="faq-grid">
+    <div>
+      <div class="sl">FAQ</div>
+      <div class="st">Questions?<br><em>We've got answers.</em></div>
+      <p style="font-size:14px;color:var(--text-2);margin-top:14px;line-height:1.6">Still not sure? Email us at<br><strong>officialofferbell@gmail.com</strong></p>
+    </div>
+    <div>
+      <div class="faq-item open">
+        <button class="faq-q" onclick="this.closest('.faq-item').classList.toggle('open')">Is the outreach really personalized, or just a template?<span class="qi">+</span></button>
+        <div class="faq-a">It's genuinely personalized. OfferBell uses your actual background - school, major, clubs, interests - combined with real details about the contact. The result is a message that reflects a real reason you're reaching out to that specific person. No merge tags, no obvious AI tells.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="this.closest('.faq-item').classList.toggle('open')">How is OfferBell different from just using LinkedIn?<span class="qi">+</span></button>
+        <div class="faq-a">LinkedIn shows you who's out there - OfferBell tells you how to reach them, what to say, and whether it's working. You get AI-written outreach, a pipeline to track every conversation, AI resume review, and interview flashcards across 11 careers. It's the full recruiting stack, not just a directory.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="this.closest('.faq-item').classList.toggle('open')">Can I use OfferBell if I go to a non-target school?<span class="qi">+</span></button>
+        <div class="faq-a">OfferBell was built with non-target students in mind. Cold outreach is your primary path in - and that's exactly what OfferBell optimizes. Students from non-target schools have used OfferBell to land interviews at Goldman, Blackstone, Insight Partners, and more.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="this.closest('.faq-item').classList.toggle('open')">Do I need a credit card to start?<span class="qi">+</span></button>
+        <div class="faq-a">No. Sign up and start immediately - no payment required. Upgrade to Pro only when you're ready.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="this.closest('.faq-item').classList.toggle('open')">Can I cancel anytime?<span class="qi">+</span></button>
+        <div class="faq-a">Yes. Cancel Pro anytime from your account settings with no penalties. You'll keep access through the end of your billing period.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA BAND ═══ -->
+<div style="padding:0 52px" class="reveal">
+  <div class="cta-band">
+    <div class="cta-band-t">Ready to land your <em>offer?</em></div>
+    <div>
+      <a href="/signup" class="cta-band-btn">Get Started Free &rarr;</a>
+      <div class="cta-band-note">No credit card required</div>
+    </div>
+  </div>
+</div>
 
 <!-- ═══ FOOTER ═══ -->
 <footer>
