@@ -252,26 +252,75 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 
 /* ═══ FEATURES ═══ */
 .features{max-width:1200px;margin:0 auto;padding:88px 52px}
-.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
-.feat-card{
-  background:var(--white);border:1px solid var(--border);border-radius:14px;
-  padding:28px 24px;transition:transform 0.2s,box-shadow 0.2s;
+.feat-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;
+  padding:56px 0;border-bottom:1px solid var(--border);
 }
-.feat-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,0.05)}
-.feat-ico{
-  width:36px;height:36px;border-radius:9px;
-  display:flex;align-items:center;justify-content:center;margin-bottom:16px;
+.feat-row:last-child{border-bottom:none}
+.feat-row.reverse{direction:rtl}
+.feat-row.reverse>*{direction:ltr}
+.feat-num{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:10px}
+.feat-n{font-family:'Instrument Serif',serif;font-size:28px;letter-spacing:-0.6px;line-height:1.15;margin-bottom:10px}
+.feat-n em{font-style:italic}
+.feat-d{font-size:13.5px;color:var(--text-2);line-height:1.7;max-width:400px;margin-bottom:18px}
+.feat-points{display:flex;flex-direction:column;gap:8px}
+.feat-pt{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-2)}
+.feat-pt svg{flex-shrink:0;stroke:#16a34a;stroke-width:2.5;width:14px;height:14px;fill:none}
+
+/* Feature demo boxes */
+.feat-vis{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:16px;padding:24px;position:relative;
+  min-height:260px;overflow:hidden;
 }
-.feat-ico svg{width:18px;height:18px;stroke-width:1.5;fill:none}
-.feat-n{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:-0.2px}
-.feat-d{font-size:12.5px;color:var(--text-2);line-height:1.65}
+
+/* Resume review demo */
+.demo-rr-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.demo-rr-title{font-size:12px;font-weight:700;color:var(--text)}
+.demo-rr-ring{width:44px;height:44px;border-radius:50%;border:3px solid #16a34a;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:18px;color:#16a34a}
+.demo-rr-sec{background:var(--cream);border-radius:8px;padding:10px 14px;margin-bottom:8px}
+.demo-rr-sec-h{display:flex;align-items:center;justify-content:space-between;font-size:10px;margin-bottom:5px}
+.demo-rr-sec-n{font-weight:700;letter-spacing:0.3px;text-transform:uppercase;color:var(--text-3)}
+.demo-rr-sec-s{font-family:'Instrument Serif',serif;font-size:14px}
+.demo-bar{height:3px;background:var(--border);border-radius:2px}
+.demo-bar-f{height:100%;border-radius:2px;background:#16a34a}
+
+/* Outreach writer demo */
+.demo-ow-avi{width:32px;height:32px;border-radius:8px;background:#3b82f6;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.demo-ow-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.demo-ow-name{font-size:12px;font-weight:700;color:var(--text)}
+.demo-ow-firm{font-size:10px;color:var(--text-3)}
+.demo-ow-body{font-size:12px;color:var(--text-2);line-height:1.7;margin-bottom:12px}
+.demo-ow-pills{display:flex;gap:5px}
+.demo-ow-pill{padding:4px 10px;border-radius:100px;font-size:9.5px;font-weight:700;border:1px solid var(--border);color:var(--text-3)}
+.demo-ow-pill.active{background:var(--black);color:var(--white);border-color:var(--black)}
+
+/* Pipeline demo */
+.demo-pipe{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.demo-pipe-col-h{font-size:9px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);padding-bottom:8px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:5px;margin-bottom:8px}
+.demo-pipe-dot{width:6px;height:6px;border-radius:50%}
+.demo-pipe-card{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:6px}
+.demo-pipe-n{font-size:11px;font-weight:700;color:var(--text)}
+.demo-pipe-f{font-size:9px;color:var(--text-3);margin-top:1px}
+
+/* Mock interview demo */
+.demo-mi-cam{background:#0a0a0a;border-radius:10px;height:140px;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:12px}
+.demo-mi-rec{position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#fff}
+.demo-mi-dot{width:7px;height:7px;border-radius:50%;background:#dc2626;animation:miP 1.2s infinite}
+@keyframes miP{0%,100%{opacity:1}50%{opacity:0.3}}
+.demo-mi-stats{display:flex;gap:14px;font-size:10px;color:var(--text-3)}
+.demo-mi-stats strong{color:var(--text);font-weight:700}
+
+/* Coach demo */
+.demo-coach-msg{border-radius:10px;padding:10px 12px;font-size:11.5px;line-height:1.6;margin-bottom:8px;max-width:88%}
+.demo-coach-user{background:var(--cream);color:var(--text);align-self:flex-end;border-bottom-right-radius:3px;margin-left:auto}
+.demo-coach-ai{background:var(--black);color:rgba(255,255,255,0.9);border-bottom-left-radius:3px}
+.demo-coach-label{font-size:8px;font-weight:800;color:#a78bfa;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:3px}
 
 @media(max-width:900px){
   .features{padding:56px 24px}
-  .feat-grid{grid-template-columns:1fr 1fr;gap:12px}
-}
-@media(max-width:600px){
-  .feat-grid{grid-template-columns:1fr}
+  .feat-row{grid-template-columns:1fr;gap:28px;padding:40px 0}
+  .feat-row.reverse{direction:ltr}
 }
 
 /* ═══ PRICING ═══ */
@@ -461,56 +510,128 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 </section>
 
 <!-- ═══ FEATURES ═══ -->
-<section class="features reveal" id="features-detail">
-  <div class="sl" style="text-align:center">Features</div>
-  <div class="st" style="text-align:center;margin:0 auto 0">The tools that<br><em>get you in.</em></div>
-  <p class="ss" style="text-align:center;margin:12px auto 0">Every feature is built for one thing: helping you land the offer.</p>
+<section class="features" id="features-detail">
+  <div style="text-align:center;margin-bottom:8px" class="reveal">
+    <div class="sl">Features</div>
+    <div class="st">The tools that<br><em>get you in.</em></div>
+    <p class="ss" style="margin:12px auto 0">Every feature built for one thing: helping you land the offer.</p>
+  </div>
 
-  <div class="feat-grid">
-    <div class="feat-card">
-      <div class="feat-ico" style="background:#f0fdf4"><svg stroke="#16a34a" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-      <div class="feat-n">AI Resume Review</div>
-      <div class="feat-d">Upload your resume, pick your target track. Get section-by-section scores, rewritten bullets, and positioning advice.</div>
+  <!-- 01 Resume Review -->
+  <div class="feat-row reveal">
+    <div>
+      <div class="feat-num">01 - AI Resume Review</div>
+      <div class="feat-n">Get your resume<br><em>interview-ready.</em></div>
+      <div class="feat-d">Upload your resume and pick your target track. Get section-by-section scores, rewritten bullets, and positioning advice from an AI trained on what top firms actually look for.</div>
+      <div class="feat-points">
+        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Section-by-section scores with specific rewrites</div>
+        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Tailored to IB, PE, consulting, accounting, and more</div>
+      </div>
     </div>
-    <div class="feat-card">
-      <div class="feat-ico" style="background:#eff6ff"><svg stroke="#3b82f6" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-      <div class="feat-n">Outreach Writer</div>
-      <div class="feat-d">AI-personalized cold emails tailored to each contact's background. Choose an angle, get a message in seconds.</div>
+    <div class="feat-vis">
+      <div class="demo-rr-head"><div class="demo-rr-title">Resume Review</div><div class="demo-rr-ring">9</div></div>
+      <div class="demo-rr-sec"><div class="demo-rr-sec-h"><span class="demo-rr-sec-n">Experience</span><span class="demo-rr-sec-s" style="color:#16a34a">8/10</span></div><div class="demo-bar"><div class="demo-bar-f" style="width:80%"></div></div></div>
+      <div class="demo-rr-sec"><div class="demo-rr-sec-h"><span class="demo-rr-sec-n">Skills</span><span class="demo-rr-sec-s" style="color:#16a34a">9/10</span></div><div class="demo-bar"><div class="demo-bar-f" style="width:90%"></div></div></div>
+      <div class="demo-rr-sec"><div class="demo-rr-sec-h"><span class="demo-rr-sec-n">Education</span><span class="demo-rr-sec-s" style="color:#16a34a">10/10</span></div><div class="demo-bar"><div class="demo-bar-f" style="width:100%"></div></div></div>
+      <div class="demo-rr-sec"><div class="demo-rr-sec-h"><span class="demo-rr-sec-n">Formatting</span><span class="demo-rr-sec-s" style="color:#d97706">7/10</span></div><div class="demo-bar"><div class="demo-bar-f" style="width:70%;background:#d97706"></div></div></div>
     </div>
-    <div class="feat-card">
-      <div class="feat-ico" style="background:#fefce8"><svg stroke="#a16207" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="feat-n">Outreach Tracker</div>
-      <div class="feat-d">Track every networking conversation from drafted to coffee chat. Follow-up reminders, notes, and status tracking.</div>
+  </div>
+
+  <!-- 02 Outreach Writer -->
+  <div class="feat-row reverse reveal">
+    <div>
+      <div class="feat-num">02 - Outreach Writer</div>
+      <div class="feat-n">Messages that<br><em>actually land.</em></div>
+      <div class="feat-d">Pick a contact, choose an angle, get a personalized cold email in seconds. Tailored to their background and your profile.</div>
+      <div class="feat-points">
+        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Alumni, deal reference, shared interest, and more</div>
+        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>AI researches the contact before writing</div>
+      </div>
     </div>
-    <div class="feat-card">
-      <div class="feat-ico" style="background:#fdf2f8"><svg stroke="#db2777" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
-      <div class="feat-n">Mock Interview</div>
-      <div class="feat-d">Record yourself answering real interview questions on video. Get AI-graded feedback with strengths, weaknesses, and scores.</div>
+    <div class="feat-vis">
+      <div class="demo-ow-head"><div class="demo-ow-avi">EZ</div><div><div class="demo-ow-name">Emily Zhang</div><div class="demo-ow-firm">Goldman Sachs - TMT</div></div></div>
+      <div class="demo-ow-body">Hi Emily - I'm a junior at NYU Stern targeting IB. I noticed we were both in the Investment Banking Club and you went through Goldman's recruiting process last year. I'd love to hear about your experience...</div>
+      <div class="demo-ow-pills"><span class="demo-ow-pill active">Alumni</span><span class="demo-ow-pill">Deal Ref</span><span class="demo-ow-pill">Shared Interest</span><span class="demo-ow-pill">Cold</span></div>
     </div>
-    <div class="feat-card">
-      <div class="feat-ico" style="background:#f5f3ff"><svg stroke="#7c3aed" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
-      <div class="feat-n">1,300+ Flashcards</div>
-      <div class="feat-d">Technical flashcards across IB, PE, consulting, accounting, and 7 more tracks. Bookmarks, filtering, and voice mode.</div>
+  </div>
+
+  <!-- 03 Outreach Tracker -->
+  <div class="feat-row reveal">
+    <div>
+      <div class="feat-num">03 - Outreach Tracker</div>
+      <div class="feat-n">Your full pipeline,<br><em>one place.</em></div>
+      <div class="feat-d">Track every networking conversation from drafted to coffee chat. Follow-up reminders, LinkedIn links, notes - everything a spreadsheet can't do well.</div>
+      <div class="feat-points">
+        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Auto follow-up reminders when contacts go cold</div>
+        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>One-click status updates</div>
+      </div>
     </div>
-    <div class="feat-card">
-      <div class="feat-ico" style="background:#fff7ed"><svg stroke="#c2410c" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></div>
-      <div class="feat-n">AI Coach</div>
-      <div class="feat-d">Your personal recruiting advisor across 11 career tracks. Cold email rewrites, behavioral prep, technical drills, and more.</div>
+    <div class="feat-vis">
+      <div class="demo-pipe">
+        <div><div class="demo-pipe-col-h"><div class="demo-pipe-dot" style="background:#94a3b8"></div>Sent</div><div class="demo-pipe-card"><div class="demo-pipe-n">Emily Zhang</div><div class="demo-pipe-f">Goldman Sachs</div></div><div class="demo-pipe-card"><div class="demo-pipe-n">Marcus Li</div><div class="demo-pipe-f">Blackstone</div></div></div>
+        <div><div class="demo-pipe-col-h"><div class="demo-pipe-dot" style="background:#f59e0b"></div>Replied</div><div class="demo-pipe-card"><div class="demo-pipe-n">Sarah Kim</div><div class="demo-pipe-f">JPMorgan</div></div></div>
+        <div><div class="demo-pipe-col-h"><div class="demo-pipe-dot" style="background:#16a34a"></div>Chat</div><div class="demo-pipe-card"><div class="demo-pipe-n">Alex Chen</div><div class="demo-pipe-f">Evercore</div></div></div>
+      </div>
     </div>
-    <div class="feat-card">
-      <div class="feat-ico" style="background:#ecfdf5"><svg stroke="#059669" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg></div>
-      <div class="feat-n">Diagnostic Review</div>
-      <div class="feat-d">Timed diagnostic quizzes that pinpoint your weak spots. Category breakdowns with direct links to drill what you missed.</div>
+  </div>
+
+  <!-- 04 Mock Interview -->
+  <div class="feat-row reverse reveal">
+    <div>
+      <div class="feat-num">04 - Mock Interview</div>
+      <div class="feat-n">Record. Review.<br><em>Repeat.</em></div>
+      <div class="feat-d">Record yourself answering real interview questions on video. Get AI-graded feedback with accuracy, depth, and clarity scores for every attempt.</div>
+      <div class="feat-points">
+        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Video recording with live timer</div>
+        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Strengths, weaknesses, and per-question history</div>
+      </div>
     </div>
-    <div class="feat-card">
-      <div class="feat-ico" style="background:#f0f9ff"><svg stroke="#0284c7" viewBox="0 0 24 24"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/></svg></div>
-      <div class="feat-n">Referral Map</div>
-      <div class="feat-d">Visualize your networking contacts on an interactive US map. Track referral chains and connection quality by state.</div>
+    <div class="feat-vis">
+      <div class="demo-mi-cam">
+        <div class="demo-mi-rec"><div class="demo-mi-dot"></div>REC 1:47</div>
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px">Walk me through a DCF.</div>
+      <div class="demo-mi-stats"><span><strong>Good</strong> Grade</span><span><strong>3</strong> Strengths</span><span><strong>1</strong> Weakness</span><span><strong>142</strong> WPM</span></div>
     </div>
-    <div class="feat-card">
-      <div class="feat-ico" style="background:#fef2f2"><svg stroke="#dc2626" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
-      <div class="feat-n">Interview Prep Guides</div>
-      <div class="feat-d">11 editorial guides covering what firms look for, common questions, answer frameworks, and track-specific concepts.</div>
+  </div>
+
+  <!-- 05 AI Coach -->
+  <div class="feat-row reveal">
+    <div>
+      <div class="feat-num">05 - AI Coach</div>
+      <div class="feat-n">A mentor who<br><em>never sleeps.</em></div>
+      <div class="feat-d">Ask anything about recruiting, prep for a coffee chat, run through a case, or get your "Why this firm?" answer rewritten. Trained across all 11 career tracks.</div>
+      <div class="feat-points">
+        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>IB, PE, consulting, accounting, S&T, ER, and more</div>
+        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Persistent chat history</div>
+      </div>
+    </div>
+    <div class="feat-vis" style="display:flex;flex-direction:column;gap:0">
+      <div class="demo-coach-msg demo-coach-user">Can you review my cold email to a VP at Goldman Sachs?</div>
+      <div class="demo-coach-msg demo-coach-ai"><div class="demo-coach-label">Coach</div>Your opening line is too generic. Lead with something specific: a deal they worked on, a shared connection, or a genuine insight about their group. Here's a rewrite...</div>
+      <div class="demo-coach-msg demo-coach-user">What about my "Why IB?" story?</div>
+    </div>
+  </div>
+
+  <!-- 06 Flashcards + Drills -->
+  <div class="feat-row reverse reveal">
+    <div>
+      <div class="feat-num">06 - Flashcards & Drills</div>
+      <div class="feat-n">1,300+ real<br><em>interview questions.</em></div>
+      <div class="feat-d">Technical flashcards, concept drills, diagnostic reviews, and full prep guides - all calibrated to what firms actually ask.</div>
+      <div class="feat-points">
+        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Accounting, Valuation, DCF, M&A, LBO, and more</div>
+        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Diagnostic reviews that pinpoint weak spots</div>
+        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>11 career track prep guides</div>
+      </div>
+    </div>
+    <div class="feat-vis" style="display:flex;align-items:center;justify-content:center;min-height:240px">
+      <div style="text-align:center">
+        <div style="font-family:'Instrument Serif',serif;font-size:64px;letter-spacing:-2.5px;color:var(--text);line-height:1">1,346</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3);margin-top:6px">Technical questions</div>
+        <div style="font-size:12px;color:var(--text-2);margin-top:12px;line-height:1.5;max-width:260px">Across Accounting, Valuation, DCF, M&A, LBO, Behavioral, and Capital Markets</div>
+      </div>
     </div>
   </div>
 </section>
