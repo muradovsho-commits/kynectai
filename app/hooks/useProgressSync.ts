@@ -4,11 +4,21 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 
-// All localStorage keys that should sync across devices
+// All localStorage keys that should sync across devices/sessions
 const SYNC_KEYS = [
+  // Profile & account
   'offerbell_onboarding_profile',
-  'offerbell_activity_days',
+  'offerbell_plan',
+  'offerbell_plan_activated_at',
+  'offerbell_plan_migrated_v2',
+  'offerbell_billing_cycle',
+  'offerbell_promo_code',
+  'offerbell_profile_pic',
   'offerbell_account_created',
+  'offerbell_tutorial_complete',
+  'offerbell_tutorial_step',
+  'offerbell-theme',
+  // Flashcard progress (per track)
   'offerbell_flash_perf_ib',
   'offerbell_flash_perf_pe',
   'offerbell_flash_perf_rx',
@@ -20,22 +30,36 @@ const SYNC_KEYS = [
   'offerbell_flash_perf_re',
   'offerbell_flash_perf_vc',
   'offerbell_flash_bookmarks',
-  'offerbell_diag_history',
   'offerbell_flash_review',
   'offerbell_flash_review_log',
+  // Diagnostic review
+  'offerbell_diag_history',
+  // Mock interview
   'offerbell_mock_responses',
-  'offerbell_outreach_saved',
+  'offerbell_mock_weekly',
+  // Outreach
   'offerbell_tracker_v3',
-  'offerbell_referral_nodes_v3',
   'offerbell_tracker_config',
+  'offerbell_tracker_seeded',
+  'offerbell_saved_messages',
+  'offerbell_messages_sent',
+  'offerbell_outreach_weekly',
+  'offerbell_dismissed_reminders',
+  // Referral map
+  'offerbell_referral_nodes_v3',
+  // Resume review
   'offerbell_resume_usage',
+  'offerbell_resume_reviews',
+  // Coach
   'offerbell_coach_history',
   'offerbell_coach_pro_usage',
-  'offerbell_plan',
-  'offerbell_plan_cancelled_at',
-  'offerbell_plan_expires_at',
-  'offerbell_profile_pic',
-  'offerbell-theme',
+  'offerbell_coach_weekly',
+  // Activity
+  'offerbell_activity_days',
+  // Usage tracking
+  'offerbell_searches_used',
+  'offerbell_game_scores',
+  'offerbell_feedback_history',
 ];
 
 function gatherLocalData(): Record<string, string> {
@@ -91,9 +115,13 @@ export function useProgressSync() {
         'offerbell_flash_review',
         'offerbell_flash_review_log',
         'offerbell_mock_responses',
-        'offerbell_outreach_saved',
+        'offerbell_saved_messages',
         'offerbell_tracker_v3',
         'offerbell_referral_nodes_v3',
+        'offerbell_dismissed_reminders',
+        'offerbell_resume_reviews',
+        'offerbell_feedback_history',
+        'offerbell_game_scores',
       ]);
 
       const merged: Record<string, string> = { ...cloud };

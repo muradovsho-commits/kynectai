@@ -91,6 +91,25 @@ function SigninContent() {
             }
           }
         } catch {}
+
+        // ── Restore cloud progress data before redirect ──
+        // The useProgressSync hook also does this, but it runs AFTER
+        // the dashboard renders. Restoring here ensures data is in
+        // localStorage before the user sees anything.
+        try {
+          const res = await fetch(`${window.location.origin}/api/progress-restore?userId=${encodeURIComponent(id)}`);
+          if (res.ok) {
+            const { data } = await res.json();
+            if (data) {
+              const cloud: Record<string, string> = JSON.parse(data);
+              for (const [key, val] of Object.entries(cloud)) {
+                if (key && val && key !== 'offerbell_user_id') {
+                  localStorage.setItem(key, val);
+                }
+              }
+            }
+          }
+        } catch {}
       }
       // Always go to dashboard
       router.push("/dashboard");
