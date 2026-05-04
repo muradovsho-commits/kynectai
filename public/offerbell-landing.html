@@ -14,294 +14,243 @@
   --black:#1a1714;
   --white:#ffffff;
   --cream:#faf8f5;
-  --warm:#f5f0ea;
-  --warm-dark:#ebe4da;
+  --warm:#f3ede4;
   --brown:#8b7355;
-  --brown-dark:#6b5a45;
   --text:#1a1714;
   --text-2:#6b6560;
   --text-3:#9e9890;
-  --border:#e8e2da;
+  --border:#e5ded4;
   --green:#16a34a;
-  --red:#b91c1c;
+  --red:#c0392b;
 }
 html{scroll-behavior:smooth}
-body{
-  font-family:'DM Sans',sans-serif;
-  background:var(--cream);
-  color:var(--text);
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.page-exit{opacity:0;transform:translateY(6px);transition:all 0.18s ease}
 
 /* ═══ NAV ═══ */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 48px;height:64px;
-  background:rgba(250,248,245,0.9);
-  backdrop-filter:blur(16px);
-  border-bottom:1px solid transparent;
-  transition:border-color 0.3s;
+  padding:0 52px;height:60px;
+  background:rgba(250,248,245,0.92);backdrop-filter:blur(14px);
+  border-bottom:1px solid transparent;transition:border-color 0.25s;
 }
 nav.scrolled{border-bottom-color:var(--border)}
-.nav-logo{font-family:'Instrument Serif',serif;font-size:22px;letter-spacing:-0.5px;color:var(--black);text-decoration:none}
-.nav-logo em{font-style:italic}
-.nav-links{display:flex;gap:32px}
-.nav-links a{font-size:13.5px;color:var(--text-2);text-decoration:none;font-weight:500;transition:color 0.15s}
-.nav-links a:hover{color:var(--black)}
-.nav-actions{display:flex;align-items:center;gap:10px}
-.nav-signin{font-size:13px;color:var(--text-2);text-decoration:none;font-weight:500;padding:8px 16px}
-.nav-cta{
-  background:var(--black);color:var(--white);
-  padding:9px 20px;border-radius:8px;
-  font-size:13px;font-weight:600;text-decoration:none;
-  transition:opacity 0.15s;
-}
-.nav-cta:hover{opacity:0.85}
+.n-logo{font-family:'Instrument Serif',serif;font-size:22px;letter-spacing:-0.5px;color:var(--black);text-decoration:none}
+.n-logo em{font-style:italic}
+.n-links{display:flex;gap:28px}
+.n-links a{font-size:13px;color:var(--text-2);text-decoration:none;font-weight:500;transition:color 0.15s}
+.n-links a:hover{color:var(--black)}
+.n-actions{display:flex;align-items:center;gap:8px}
+.n-signin{font-size:13px;color:var(--text-2);text-decoration:none;font-weight:500;padding:7px 14px}
+.n-cta{background:var(--black);color:var(--white);padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;border:1.5px solid var(--black);transition:opacity 0.15s}
+.n-cta:hover{opacity:0.85}
 
 /* ═══ HERO ═══ */
 .hero{
-  display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;
-  max-width:1240px;margin:0 auto;
-  padding:140px 48px 64px;
+  display:grid;grid-template-columns:0.9fr 1.1fr;gap:40px;align-items:center;
+  max-width:1200px;margin:0 auto;padding:130px 52px 56px;
 }
-.hero-left{}
 .hero-label{
-  display:inline-block;
-  font-size:10px;font-weight:700;letter-spacing:2.5px;
+  display:inline-block;font-size:9px;font-weight:700;letter-spacing:2.8px;
   text-transform:uppercase;color:var(--brown);
-  border:1.5px solid var(--brown);padding:6px 16px;border-radius:100px;
-  margin-bottom:28px;
+  border:1.5px solid var(--brown);padding:6px 16px;border-radius:100px;margin-bottom:32px;
 }
 .hero h1{
-  font-family:'Instrument Serif',serif;
-  font-size:clamp(42px,5vw,64px);
-  line-height:1.08;letter-spacing:-1.5px;
-  margin-bottom:20px;
+  font-family:'Instrument Serif',serif;font-size:62px;
+  line-height:1.06;letter-spacing:-2px;margin-bottom:22px;
 }
 .hero h1 em{font-style:italic}
-.hero-sub{
-  font-size:15px;color:var(--text-2);line-height:1.7;
-  max-width:400px;margin-bottom:28px;
-}
-.btn-primary{
+.hero-sub{font-size:14.5px;color:var(--text-2);line-height:1.7;max-width:380px;margin-bottom:28px}
+.btn{
   display:inline-flex;align-items:center;gap:8px;
   background:var(--black);color:var(--white);
-  padding:14px 28px;border-radius:10px;
-  font-size:14px;font-weight:600;text-decoration:none;
-  font-family:'DM Sans',sans-serif;
-  transition:opacity 0.15s,transform 0.15s;
+  padding:14px 26px;border-radius:10px;
+  font-size:13.5px;font-weight:600;text-decoration:none;
+  font-family:'DM Sans',sans-serif;transition:opacity 0.15s,transform 0.15s;
 }
-.btn-primary:hover{opacity:0.85;transform:translateY(-1px)}
-.hero-note{font-size:12px;color:var(--text-3);margin-top:14px}
+.btn:hover{opacity:0.85;transform:translateY(-1px)}
+.hero-note{font-size:11.5px;color:var(--text-3);margin-top:16px}
 
-/* Hero illustration placeholder */
-.hero-right{position:relative}
-.hero-img{
-  width:100%;border-radius:20px;
-  background:var(--warm);
-  aspect-ratio:1;
-  display:flex;align-items:center;justify-content:center;
-  overflow:hidden;position:relative;
+/* Hero right - illustration area */
+.hero-r{position:relative}
+.hero-illust{
+  width:100%;aspect-ratio:1.05;border-radius:16px;overflow:hidden;
+  background:var(--warm);position:relative;
 }
-.hero-img img{width:100%;height:100%;object-fit:cover;border-radius:20px;filter:sepia(0.15) saturate(0.9)}
+.hero-illust img{width:100%;height:100%;object-fit:cover;filter:sepia(0.25) saturate(0.7) brightness(1.05)}
 
-/* Floating cards on hero */
-.hero-float{
-  position:absolute;
-  background:var(--white);
-  border:1px solid var(--border);
-  border-radius:12px;padding:12px 16px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.06);
-  display:flex;align-items:center;gap:10px;
+/* Floating cards */
+.hf{
+  position:absolute;background:var(--white);border:1px solid var(--border);
+  border-radius:11px;padding:10px 14px;
+  box-shadow:0 6px 24px rgba(0,0,0,0.05);
+  display:flex;align-items:center;gap:9px;
   font-size:12px;font-weight:600;color:var(--text);
-  animation:floatIn 0.6s ease both;
+  opacity:0;animation:hfIn 0.5s ease forwards;
 }
-.hero-float-icon{
-  width:28px;height:28px;border-radius:7px;
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-}
-.hero-float-sub{font-size:10px;color:var(--text-3);font-weight:400;margin-top:1px}
-.hf-1{top:15%;right:-20px;animation-delay:0.3s}
-.hf-2{top:40%;right:-30px;animation-delay:0.5s}
-.hf-3{bottom:28%;left:-24px;animation-delay:0.7s}
-.hf-4{bottom:10%;left:-10px;animation-delay:0.9s}
+.hf-ico{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hf-sub{font-size:10px;color:var(--text-3);font-weight:400;margin-top:1px}
+.hf1{top:12%;right:-16px;animation-delay:0.2s}
+.hf2{top:36%;right:-24px;animation-delay:0.4s}
+.hf3{bottom:30%;left:-20px;animation-delay:0.6s}
+.hf4{bottom:12%;left:-8px;animation-delay:0.8s}
+@keyframes hfIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-@keyframes floatIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-
-/* ═══ LOGO STRIP ═══ */
+/* ═══ LOGOS ═══ */
 .logos{
-  display:flex;align-items:center;justify-content:center;gap:48px;
-  padding:32px 48px 48px;max-width:900px;margin:0 auto;
-  opacity:0.5;
+  display:flex;align-items:center;justify-content:center;gap:44px;
+  padding:20px 52px 56px;max-width:880px;margin:0 auto;
 }
-.logos img{height:20px;filter:grayscale(1);opacity:0.7}
-.logos span{font-size:14px;font-weight:600;color:var(--text-3);letter-spacing:-0.2px;white-space:nowrap}
+.logo-item{display:flex;align-items:center;gap:6px;opacity:0.45}
+.logo-mark{font-size:16px;color:var(--text)}
+.logo-name{font-size:13px;font-weight:600;color:var(--text);letter-spacing:-0.2px}
+.logo-name.serif{font-family:'Instrument Serif',serif;font-size:16px;letter-spacing:0;font-weight:400}
+.logo-name.bold{font-weight:800;font-size:15px;letter-spacing:-0.5px}
 
 /* ═══ OLD WAY ═══ */
 .oldway{
-  display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;
-  max-width:1240px;margin:0 auto;
-  padding:96px 48px;
+  display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;
+  max-width:1200px;margin:0 auto;padding:88px 52px;
 }
-.oldway-content{}
-.sec-label{
-  font-size:10px;font-weight:700;letter-spacing:2.5px;
-  text-transform:uppercase;color:var(--text-3);margin-bottom:16px;
-}
-.sec-title{
-  font-family:'Instrument Serif',serif;
-  font-size:clamp(36px,4vw,52px);
-  line-height:1.08;letter-spacing:-1.2px;
-  margin-bottom:16px;
-}
-.sec-title em{font-style:italic}
-.sec-sub{font-size:15px;color:var(--text-2);line-height:1.7;max-width:460px;margin-bottom:28px}
+.ow-left{padding-top:8px}
+.sl{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-3);margin-bottom:16px}
+.st{font-family:'Instrument Serif',serif;font-size:clamp(38px,4.2vw,50px);line-height:1.06;letter-spacing:-1.2px;margin-bottom:16px}
+.st em{font-style:italic}
+.ss{font-size:14px;color:var(--text-2);line-height:1.7;max-width:420px;margin-bottom:28px}
 
-.pain-pills{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
-.pain-pill{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 16px;border-radius:10px;
-  border:1.5px solid var(--border);background:var(--white);
-  max-width:320px;
-}
-.pain-dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0}
-.pain-title{font-size:13px;font-weight:700;color:var(--text)}
-.pain-sub{font-size:11px;color:var(--text-3);margin-top:1px}
-
-.oldway-quote{
-  font-family:'Instrument Serif',serif;
-  font-size:18px;font-style:italic;
-  color:var(--text);line-height:1.5;
-  padding:20px 24px;
-  border-left:3px solid var(--border);
-  max-width:400px;
+.ow-quote{
+  font-family:'Instrument Serif',serif;font-size:17px;font-style:normal;
+  color:var(--text);line-height:1.45;padding:18px 22px;
+  border:1.5px solid var(--border);border-radius:12px;
+  max-width:370px;margin-top:4px;
 }
 
-.oldway-visual{
-  display:flex;align-items:center;justify-content:center;
+/* Old way right: illustration + pain pills */
+.ow-right{position:relative}
+.ow-illust{
+  width:100%;aspect-ratio:1.1;border-radius:16px;overflow:hidden;
+  background:var(--warm);
 }
-.oldway-visual img{
-  width:100%;max-width:480px;border-radius:16px;
-  filter:sepia(0.2) saturate(0.85);
+.ow-illust img{width:100%;height:100%;object-fit:cover;filter:sepia(0.3) saturate(0.6) brightness(1.05)}
+
+.ow-pills{
+  position:absolute;top:20px;right:-10px;
+  display:flex;flex-direction:column;gap:10px;
 }
+.ow-pill{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:10px;padding:10px 16px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.04);
+  max-width:220px;
+}
+.ow-pill-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
+.ow-pill-title{font-size:12px;font-weight:700;color:var(--text);display:inline;vertical-align:middle}
+.ow-pill-sub{font-size:10.5px;color:var(--text-3);margin-top:3px;line-height:1.4}
 
 /* ═══ OUR WAY ═══ */
-.ourway{
-  background:var(--white);
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
+.ourway{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.ow-inner{
+  display:grid;grid-template-columns:0.85fr 1.15fr;gap:56px;align-items:center;
+  max-width:1200px;margin:0 auto;padding:88px 52px;
 }
-.ourway-inner{
-  display:grid;grid-template-columns:1fr 1.1fr;gap:64px;align-items:center;
-  max-width:1240px;margin:0 auto;
-  padding:96px 48px;
+.ow-bullets{display:flex;flex-direction:column;gap:18px;margin:28px 0}
+.ow-bullet{display:flex;align-items:flex-start;gap:11px}
+.ow-chk{
+  width:20px;height:20px;border-radius:5px;background:var(--green);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
 }
-.ourway-bullets{display:flex;flex-direction:column;gap:16px;margin:28px 0}
-.ourway-bullet{display:flex;align-items:flex-start;gap:12px}
-.ourway-check{
-  width:22px;height:22px;border-radius:6px;
-  background:var(--green);
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;margin-top:2px;
-}
-.ourway-bullet-title{font-size:14px;font-weight:700;color:var(--text)}
-.ourway-bullet-sub{font-size:12px;color:var(--text-2);margin-top:2px}
+.ow-bt{font-size:14px;font-weight:700;color:var(--text)}
+.ow-bs{font-size:12px;color:var(--text-2);margin-top:2px}
 
-.ourway-mockup{
-  background:var(--cream);border:1px solid var(--border);
-  border-radius:16px;overflow:hidden;
-  box-shadow:0 16px 64px rgba(0,0,0,0.06);
+/* Dashboard mockup */
+.ow-mockup{
+  border:1px solid var(--border);border-radius:12px;overflow:hidden;
+  box-shadow:0 12px 48px rgba(0,0,0,0.06);
+  background:var(--white);
 }
-.ourway-mockup img{width:100%;display:block}
+.ow-mockup img{width:100%;display:block}
 
 /* ═══ SOCIAL PROOF ═══ */
 .proof{
-  display:grid;grid-template-columns:1.1fr 1fr;gap:64px;align-items:center;
-  max-width:1240px;margin:0 auto;
-  padding:96px 48px;
+  display:grid;grid-template-columns:1.1fr 0.9fr;gap:56px;align-items:start;
+  max-width:1200px;margin:0 auto;padding:88px 52px;
 }
-.proof-stats{display:flex;gap:40px;margin:32px 0}
-.proof-stat{}
-.proof-stat-num{font-family:'Instrument Serif',serif;font-size:42px;letter-spacing:-1.5px;color:var(--text);line-height:1}
-.proof-stat-label{font-size:12px;color:var(--text-3);margin-top:4px}
-
-.proof-quotes{display:flex;flex-direction:column;gap:12px;margin-top:28px}
-.proof-quote{
-  background:var(--white);border:1px solid var(--border);
-  border-radius:12px;padding:18px 20px;
+.pr-stats{display:flex;gap:36px;margin:32px 0 28px}
+.pr-sn{font-family:'Instrument Serif',serif;font-size:40px;letter-spacing:-1.5px;color:var(--text);line-height:1}
+.pr-sl{font-size:11.5px;color:var(--text-3);margin-top:3px}
+.pr-quotes{display:flex;gap:12px}
+.pr-q{
+  flex:1;background:var(--white);border:1px solid var(--border);
+  border-radius:12px;padding:20px;
 }
-.proof-quote-text{font-size:13px;color:var(--text-2);line-height:1.6;font-style:italic;margin-bottom:8px}
-.proof-quote-author{font-size:12px;font-weight:700;color:var(--text)}
+.pr-qt{font-size:12.5px;color:var(--text-2);line-height:1.6;font-style:italic;margin-bottom:10px}
+.pr-qa{font-size:12px;font-weight:700;color:var(--text)}
 
-.proof-visual{display:flex;align-items:center;justify-content:center}
-.proof-visual img{width:100%;max-width:440px;border-radius:16px;filter:sepia(0.15) saturate(0.9)}
+.pr-vis{display:flex;align-items:flex-start;justify-content:center}
+.pr-vis img{width:100%;max-width:420px;border-radius:16px;filter:sepia(0.2) saturate(0.75) brightness(1.05)}
 
 /* ═══ FOOTER ═══ */
-footer{
-  background:var(--white);
-  border-top:1px solid var(--border);
-  padding:56px 48px 32px;
+footer{background:var(--white);border-top:1px solid var(--border);padding:44px 52px 28px}
+.ft-inner{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1.4fr repeat(3,0.8fr) auto;gap:32px;align-items:start;
 }
-.footer-inner{
-  max-width:1240px;margin:0 auto;
-  display:grid;grid-template-columns:1.2fr repeat(3,1fr) auto;gap:40px;
-  align-items:start;
-}
-.footer-cta{}
-.footer-cta-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px}
-.footer-cta-sub{font-size:13px;color:var(--text-3);margin-bottom:16px}
-.footer-email-row{display:flex;gap:8px}
-.footer-email-row input{
-  flex:1;padding:10px 14px;border-radius:8px;
-  border:1.5px solid var(--border);font-size:13px;
-  font-family:'DM Sans',sans-serif;background:var(--cream);
+.ft-cta-t{font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px}
+.ft-cta-s{font-size:12px;color:var(--text-3);margin-bottom:14px}
+.ft-email{display:flex;gap:6px}
+.ft-email input{
+  flex:1;padding:9px 12px;border-radius:7px;border:1.5px solid var(--border);
+  font-size:12px;font-family:'DM Sans',sans-serif;background:var(--cream);
   outline:none;color:var(--text);
 }
-.footer-email-row input:focus{border-color:var(--text-3)}
-.footer-email-row button{
-  padding:10px 18px;border-radius:8px;border:none;
-  background:var(--black);color:var(--white);
-  font-size:12px;font-weight:700;cursor:pointer;
-  font-family:'DM Sans',sans-serif;
+.ft-email input:focus{border-color:var(--text-3)}
+.ft-email button{
+  padding:9px 16px;border-radius:7px;border:1.5px solid var(--black);
+  background:var(--white);color:var(--black);font-size:11px;font-weight:700;
+  cursor:pointer;font-family:'DM Sans',sans-serif;
 }
-.footer-col-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3);margin-bottom:14px}
-.footer-col a{display:block;font-size:13px;color:var(--text-2);text-decoration:none;padding:4px 0;transition:color 0.15s}
-.footer-col a:hover{color:var(--text)}
-.footer-logo{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);letter-spacing:-0.3px;align-self:start;padding-top:4px}
-.footer-logo em{font-style:italic}
-.footer-bottom{
-  max-width:1240px;margin:24px auto 0;
-  padding-top:20px;border-top:1px solid var(--border);
-  font-size:11px;color:var(--text-3);
-  display:flex;justify-content:space-between;
+.ft-col-t{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3);margin-bottom:12px}
+.ft-col a{display:block;font-size:12.5px;color:var(--text-2);text-decoration:none;padding:3px 0;transition:color 0.15s}
+.ft-col a:hover{color:var(--text)}
+.ft-logo{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);letter-spacing:-0.3px;padding-top:2px}
+.ft-logo em{font-style:italic}
+.ft-bottom{
+  max-width:1200px;margin:20px auto 0;padding-top:16px;border-top:1px solid var(--border);
+  font-size:10.5px;color:var(--text-3);display:flex;justify-content:flex-end;
 }
 
 /* ═══ ANIMATIONS ═══ */
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease}
-.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity 0.55s ease,transform 0.55s ease}
+.reveal.v{opacity:1;transform:translateY(0)}
+.rd1{transition-delay:0.1s}.rd2{transition-delay:0.2s}
 
 /* ═══ RESPONSIVE ═══ */
 @media(max-width:900px){
   nav{padding:0 20px}
-  .nav-links{display:none}
-  .hero{grid-template-columns:1fr;padding:100px 24px 48px;gap:32px}
-  .hero-right{max-width:400px;margin:0 auto}
-  .hf-1,.hf-2,.hf-3,.hf-4{display:none}
-  .logos{gap:24px;padding:24px;flex-wrap:wrap;justify-content:center}
-  .logos span{font-size:12px}
-  .oldway{grid-template-columns:1fr;padding:64px 24px;gap:32px}
-  .oldway-visual{order:-1}
-  .ourway-inner{grid-template-columns:1fr;padding:64px 24px;gap:32px}
-  .proof{grid-template-columns:1fr;padding:64px 24px;gap:32px}
-  .proof-stats{gap:24px}
-  .proof-visual{order:-1}
-  .footer-inner{grid-template-columns:1fr 1fr;gap:24px}
-  .footer-logo{grid-column:1/-1}
-  .sec-title{font-size:32px}
+  .n-links{display:none}
+  .hero{grid-template-columns:1fr;padding:100px 24px 40px;gap:28px}
+  .hero h1{font-size:42px}
+  .hero-r{max-width:380px;margin:0 auto}
+  .hf{display:none}
+  .logos{gap:20px;flex-wrap:wrap;padding:16px 24px 40px}
+  .oldway{grid-template-columns:1fr;padding:56px 24px;gap:24px}
+  .ow-right{order:-1}
+  .ow-pills{position:static;flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .ow-inner{grid-template-columns:1fr;padding:56px 24px;gap:28px}
+  .proof{grid-template-columns:1fr;padding:56px 24px;gap:28px}
+  .pr-vis{order:-1}
+  .pr-quotes{flex-direction:column}
+  .pr-stats{gap:20px}
+  .ft-inner{grid-template-columns:1fr 1fr;gap:20px}
+  .ft-logo{grid-column:1/-1}
+  .st{font-size:34px}
+}
+@media(max-width:600px){
+  .logos{gap:14px}
+  .logo-item{gap:4px}
+  .pr-stats{flex-wrap:wrap}
+  .ft-inner{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -309,129 +258,117 @@ footer{
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="/" class="nav-logo">OfferBell<em>.</em></a>
-  <div class="nav-links">
+  <a href="/" class="n-logo">OfferBell<em>.</em></a>
+  <div class="n-links">
     <a href="#features">Features</a>
     <a href="#proof">Testimonials</a>
-    <a href="#pricing">Pricing</a>
+    <a href="/checkout">Pricing</a>
     <a href="#careers">Careers</a>
     <a href="#faq">FAQ</a>
   </div>
-  <div class="nav-actions">
-    <a href="/signin" class="nav-signin">Sign in</a>
-    <a href="/signup" class="nav-cta">Get Started</a>
+  <div class="n-actions">
+    <a href="/signin" class="n-signin">Sign in</a>
+    <a href="/signup" class="n-cta">Get Started</a>
   </div>
 </nav>
 
 <!-- ═══ HERO ═══ -->
 <section class="hero reveal">
-  <div class="hero-left">
+  <div>
     <div class="hero-label">Prepare. Practice. Get Hired.</div>
     <h1>Better prep.<br>Better interviews.<br><em>Better offers.</em></h1>
     <p class="hero-sub">A complete toolkit for students recruiting across IB, consulting, PE, accounting, and more.</p>
-    <a href="/signup" class="btn-primary">Try For Free Today &rarr;</a>
+    <a href="/signup" class="btn">Try For Free Today &rarr;</a>
     <div class="hero-note">Used by 50+ campuses worldwide</div>
   </div>
-  <div class="hero-right">
-    <div class="hero-img">
-      <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=700&h=700&fit=crop&crop=faces" alt="Students studying"/>
+  <div class="hero-r">
+    <div class="hero-illust">
+      <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=680&h=650&fit=crop&crop=top" alt=""/>
     </div>
-    <!-- Floating UI cards -->
-    <div class="hero-float hf-1">
-      <div class="hero-float-icon" style="background:#f0fdf4">
-        <svg width="16" height="16" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
-      <div><div>Learn</div><div class="hero-float-sub">Master key concepts</div></div>
+    <div class="hf hf1">
+      <div class="hf-ico" style="background:#f0fdf4"><svg width="14" height="14" fill="none" stroke="#16a34a" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div><div>Learn</div><div class="hf-sub">Master key concepts</div></div>
     </div>
-    <div class="hero-float hf-2">
-      <div class="hero-float-icon" style="background:#eff6ff">
-        <svg width="16" height="16" fill="none" stroke="#3b82f6" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-      </div>
-      <div><div>Practice</div><div class="hero-float-sub">Drill real questions</div></div>
+    <div class="hf hf2">
+      <div class="hf-ico" style="background:#eff6ff"><svg width="14" height="14" fill="none" stroke="#3b82f6" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg></div>
+      <div><div>Practice</div><div class="hf-sub">Drill real questions</div></div>
     </div>
-    <div class="hero-float hf-3">
-      <div class="hero-float-icon" style="background:#fefce8">
-        <svg width="16" height="16" fill="none" stroke="#ca8a04" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
-      <div><div>Outreach</div><div class="hero-float-sub">Track &amp; send smarter</div></div>
+    <div class="hf hf3">
+      <div class="hf-ico" style="background:#fefce8"><svg width="14" height="14" fill="none" stroke="#a16207" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div><div>Outreach</div><div class="hf-sub">Track &amp; send smarter</div></div>
     </div>
-    <div class="hero-float hf-4">
-      <div class="hero-float-icon" style="background:#fdf2f8">
-        <svg width="16" height="16" fill="none" stroke="#db2777" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
-      </div>
-      <div><div>Analyze</div><div class="hero-float-sub">Improve with insights</div></div>
+    <div class="hf hf4">
+      <div class="hf-ico" style="background:#fdf2f8"><svg width="14" height="14" fill="none" stroke="#be185d" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg></div>
+      <div><div>Analyze</div><div class="hf-sub">Improve with insights</div></div>
     </div>
   </div>
 </section>
 
-<!-- ═══ LOGO STRIP ═══ -->
+<!-- ═══ LOGOS ═══ -->
 <div class="logos reveal">
-  <span>Wharton</span>
-  <span>Berkeley</span>
-  <span>NYU</span>
-  <span>Michigan</span>
-  <span>Northwestern</span>
-  <span>UVA</span>
-  <span>Georgetown</span>
+  <div class="logo-item"><span class="logo-name serif" style="font-style:italic">Wharton</span></div>
+  <div class="logo-item"><span class="logo-name serif">Berkeley</span></div>
+  <div class="logo-item"><span class="logo-name bold">NYU</span></div>
+  <div class="logo-item"><span class="logo-mark">M</span><span class="logo-name" style="font-weight:700;letter-spacing:0.5px;font-size:11px;text-transform:uppercase">Michigan</span></div>
+  <div class="logo-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg><span class="logo-name" style="font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase">Northwestern University</span></div>
 </div>
 
 <!-- ═══ OLD WAY ═══ -->
 <section class="oldway reveal" id="features">
-  <div class="oldway-content">
-    <div class="sec-label">Old Way</div>
-    <div class="sec-title">Outdated tools.<br><em>Outdated results.</em></div>
-    <p class="sec-sub">Spreadsheets, random PDFs, and scattered advice weren't built for how recruiting actually works.</p>
-    <div class="pain-pills">
-      <div class="pain-pill">
-        <div class="pain-dot"></div>
-        <div><div class="pain-title">Disconnected</div><div class="pain-sub">Tools don't talk to each other.</div></div>
+  <div class="ow-left">
+    <div class="sl">Old Way</div>
+    <div class="st">Outdated tools.<br><em>Outdated results.</em></div>
+    <p class="ss">Spreadsheets, random PDFs, and scattered advice weren't built for how recruiting actually works.</p>
+    <div class="ow-quote">Recruiting is hard enough.<br>Your tools shouldn't make it harder.</div>
+  </div>
+  <div class="ow-right">
+    <div class="ow-illust">
+      <img src="https://images.unsplash.com/photo-1568667256549-094345857637?w=600&h=550&fit=crop" alt=""/>
+    </div>
+    <div class="ow-pills">
+      <div class="ow-pill">
+        <div><span class="ow-pill-dot" style="background:var(--red)"></span><span class="ow-pill-title">Disconnected</span><div class="ow-pill-sub">Tools don't talk to each other.</div></div>
       </div>
-      <div class="pain-pill">
-        <div class="pain-dot" style="background:var(--brown)"></div>
-        <div><div class="pain-title">Overwhelming</div><div class="pain-sub">Too much info, not enough clarity.</div></div>
+      <div class="ow-pill">
+        <div><span class="ow-pill-dot" style="background:var(--brown)"></span><span class="ow-pill-title">Overwhelming</span><div class="ow-pill-sub">Too much info, not enough clarity.</div></div>
       </div>
-      <div class="pain-pill">
-        <div class="pain-dot" style="background:var(--text-3)"></div>
-        <div><div class="pain-title">Unstructured</div><div class="pain-sub">No system. No progress.</div></div>
+      <div class="ow-pill">
+        <div><span class="ow-pill-dot" style="background:var(--text-3)"></span><span class="ow-pill-title">Unstructured</span><div class="ow-pill-sub">No system. No progress.</div></div>
       </div>
     </div>
-    <div class="oldway-quote">Recruiting is hard enough.<br>Your tools shouldn't make it harder.</div>
-  </div>
-  <div class="oldway-visual">
-    <img src="https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=600&h=500&fit=crop" alt="Messy desk with scattered papers"/>
   </div>
 </section>
 
 <!-- ═══ OUR WAY ═══ -->
 <section class="ourway reveal">
-  <div class="ourway-inner">
+  <div class="ow-inner">
     <div>
-      <div class="sec-label">Our Way</div>
-      <div class="sec-title">Everything you need,<br><em>Nothing you don't.</em></div>
-      <p class="sec-sub">One integrated platform to help you learn, practice, reach out, and get offers.</p>
-      <div class="ourway-bullets">
-        <div class="ourway-bullet">
-          <div class="ourway-check"><svg width="12" height="12" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <div><div class="ourway-bullet-title">Curated learning paths</div><div class="ourway-bullet-sub">Built by top students &amp; recruiters</div></div>
+      <div class="sl">Our Way</div>
+      <div class="st">Everything you need,<br><em>Nothing you don't.</em></div>
+      <p class="ss">One integrated platform to help you learn, practice, reach out, and get offers.</p>
+      <div class="ow-bullets">
+        <div class="ow-bullet">
+          <div class="ow-chk"><svg width="11" height="11" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="ow-bt">Curated learning paths</div><div class="ow-bs">Built by top students &amp; recruiters</div></div>
         </div>
-        <div class="ourway-bullet">
-          <div class="ourway-check"><svg width="12" height="12" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <div><div class="ourway-bullet-title">Real interview practice</div><div class="ourway-bullet-sub">1,300+ questions, drills, and video mock interviews</div></div>
+        <div class="ow-bullet">
+          <div class="ow-chk"><svg width="11" height="11" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="ow-bt">Real interview practice</div><div class="ow-bs">Questions, cases, and drills</div></div>
         </div>
-        <div class="ourway-bullet">
-          <div class="ourway-check"><svg width="12" height="12" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <div><div class="ourway-bullet-title">Smarter outreach</div><div class="ourway-bullet-sub">AI-written cold emails, tracking, and follow-ups</div></div>
+        <div class="ow-bullet">
+          <div class="ow-chk"><svg width="11" height="11" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="ow-bt">Smarter outreach</div><div class="ow-bs">Templates, tracking, follow-ups</div></div>
         </div>
-        <div class="ourway-bullet">
-          <div class="ourway-check"><svg width="12" height="12" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <div><div class="ourway-bullet-title">Actionable insights</div><div class="ourway-bullet-sub">AI resume review, diagnostics, and coaching</div></div>
+        <div class="ow-bullet">
+          <div class="ow-chk"><svg width="11" height="11" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="ow-bt">Actionable insights</div><div class="ow-bs">Know what to do next</div></div>
         </div>
       </div>
-      <a href="/signup" class="btn-primary">Try For Free Today &rarr;</a>
+      <a href="/signup" class="btn">Try For Free Today &rarr;</a>
       <div class="hero-note">Used by 50+ campuses worldwide</div>
     </div>
-    <div class="ourway-mockup">
-      <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=700&h=500&fit=crop" alt="Dashboard preview"/>
+    <div class="ow-mockup">
+      <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=640&h=460&fit=crop" alt="Dashboard"/>
     </div>
   </div>
 </section>
@@ -439,99 +376,81 @@ footer{
 <!-- ═══ SOCIAL PROOF ═══ -->
 <section class="proof reveal" id="proof">
   <div>
-    <div class="sec-label">Trusted By Top Students</div>
-    <div class="sec-title">Built with students.<br><em>Backed by results.</em></div>
-    <p class="sec-sub">Join thousands of students from top universities who landed offers with OfferBell.</p>
-    <div class="proof-stats">
-      <div class="proof-stat">
-        <div class="proof-stat-num">50+</div>
-        <div class="proof-stat-label">Top campuses</div>
-      </div>
-      <div class="proof-stat">
-        <div class="proof-stat-num">20K+</div>
-        <div class="proof-stat-label">Active users</div>
-      </div>
-      <div class="proof-stat">
-        <div class="proof-stat-num">100K+</div>
-        <div class="proof-stat-label">Offers earned</div>
-      </div>
+    <div class="sl">Trusted By Top Students</div>
+    <div class="st">Built with students.<br><em>Backed by results.</em></div>
+    <p class="ss">Join thousands of students from top universities who landed offers with OfferBell.</p>
+    <div class="pr-stats">
+      <div><div class="pr-sn">50+</div><div class="pr-sl">Top campuses</div></div>
+      <div><div class="pr-sn">20K+</div><div class="pr-sl">Active users</div></div>
+      <div><div class="pr-sn">100K+</div><div class="pr-sl">Offers earned</div></div>
     </div>
-    <div class="proof-quotes">
-      <div class="proof-quote">
-        <div class="proof-quote-text">"OfferBell helped me go from confused to confident."</div>
-        <div class="proof-quote-author">&mdash; Wharton '25</div>
+    <div class="pr-quotes">
+      <div class="pr-q">
+        <div class="pr-qt">"OfferBell helped me go from confused to confident."</div>
+        <div class="pr-qa">&mdash; Wharton '25</div>
       </div>
-      <div class="proof-quote">
-        <div class="proof-quote-text">"The outreach tracker alone saved me so much time."</div>
-        <div class="proof-quote-author">&mdash; Berkeley '24</div>
+      <div class="pr-q">
+        <div class="pr-qt">"The outreach tracker alone saved me so much time."</div>
+        <div class="pr-qa">&mdash; Berkeley '24</div>
       </div>
-      <div class="proof-quote">
-        <div class="proof-quote-text">"Best investment I made in my recruiting journey."</div>
-        <div class="proof-quote-author">&mdash; NYU '25</div>
+      <div class="pr-q">
+        <div class="pr-qt">"Best investment I made in my recruiting journey."</div>
+        <div class="pr-qa">&mdash; NYU '25</div>
       </div>
     </div>
   </div>
-  <div class="proof-visual">
-    <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=500&h=600&fit=crop&crop=faces" alt="Students celebrating"/>
+  <div class="pr-vis">
+    <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=460&h=560&fit=crop&crop=faces" alt=""/>
   </div>
 </section>
 
 <!-- ═══ FOOTER ═══ -->
 <footer>
-  <div class="footer-inner">
-    <div class="footer-cta">
-      <div class="footer-cta-title">Get recruiting tips that actually help.</div>
-      <div class="footer-cta-sub">Join 15,000+ students getting weekly insights.</div>
-      <div class="footer-email-row">
+  <div class="ft-inner">
+    <div>
+      <div class="ft-cta-t">Get recruiting tips that actually help.</div>
+      <div class="ft-cta-s">Join 15,000+ students getting weekly insights.</div>
+      <div class="ft-email">
         <input type="email" placeholder="Enter your email"/>
         <button type="button">Subscribe</button>
       </div>
     </div>
-    <div class="footer-col">
-      <div class="footer-col-title">Product</div>
+    <div class="ft-col">
+      <div class="ft-col-t">Product</div>
       <a href="#features">Features</a>
       <a href="/checkout">Pricing</a>
       <a href="#">Changelog</a>
     </div>
-    <div class="footer-col">
-      <div class="footer-col-title">Company</div>
+    <div class="ft-col">
+      <div class="ft-col-t">Company</div>
       <a href="#">About</a>
       <a href="#">Blog</a>
-      <a href="#">Contact</a>
+      <a href="mailto:officialofferbell@gmail.com">Contact</a>
     </div>
-    <div class="footer-col">
-      <div class="footer-col-title">Resources</div>
+    <div class="ft-col">
+      <div class="ft-col-t">Resources</div>
       <a href="/learn">Guides</a>
       <a href="#">Help Center</a>
     </div>
-    <div class="footer-logo">OfferBell<em>.</em></div>
+    <div class="ft-logo">OfferBell<em>.</em></div>
   </div>
-  <div class="footer-bottom">
+  <div class="ft-bottom">
     <span>&copy; 2026 OfferBell. All rights reserved.</span>
-    <span><a href="mailto:officialofferbell@gmail.com" style="color:var(--text-3);text-decoration:none">officialofferbell@gmail.com</a></span>
   </div>
 </footer>
 
 <script>
-// Nav scroll
 const nav=document.getElementById('nav');
-window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>20));
-
-// Scroll reveal
-const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
-  if(e.isIntersecting)e.target.classList.add('visible');
-}),{threshold:0.08});
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>16));
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('v')}),{threshold:0.06});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-
-// Page transition
 document.addEventListener('click',function(e){
   const a=e.target.closest('a');
   if(!a||!a.href||a.target==="_blank"||a.href.startsWith("mailto:"))return;
-  const url=new URL(a.href,location.origin);
-  if(url.origin!==location.origin||url.hash)return;
-  e.preventDefault();
-  document.body.classList.add('page-exit');
-  setTimeout(()=>{location.href=a.href;},180);
+  const u=new URL(a.href,location.origin);
+  if(u.origin!==location.origin||u.hash)return;
+  e.preventDefault();document.body.classList.add('page-exit');
+  setTimeout(()=>{location.href=a.href},160);
 });
 </script>
 </body>
