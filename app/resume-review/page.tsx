@@ -46,7 +46,7 @@ export default function ResumeReviewPage() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
-    import('../lib/plan').then(({ isUserPro }) => { setUserPlan(isUserPro() ? 'pro' : 'free'); });
+    import('../lib/plan').then(({ getUserPlan }) => { setUserPlan(getUserPlan()); });
     // Load review history
     try {
       const raw = localStorage.getItem(REVIEW_HISTORY_KEY);
