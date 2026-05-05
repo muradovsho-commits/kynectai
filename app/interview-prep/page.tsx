@@ -56,15 +56,22 @@ export default function InterviewPrepPage() {
   const [_userName, _setUserName] = useState({ first: '', last: '' });
   const [messagesSent, setMessagesSent] = useState(0);
   const [userPlan, setUserPlan] = useState('free');
+  const [planChecked, setPlanChecked] = useState(false);
 
   useEffect(() => {
     try { setMessagesSent(parseInt(localStorage.getItem('offerbell_messages_sent') || '0', 10)); } catch {}
     try {
       const plan = localStorage.getItem('offerbell_plan') || 'free';
       const prof = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}');
-      setUserPlan(prof.plan || plan);
-    } catch { setUserPlan('free'); }
-  }, []);
+      const effectivePlan = prof.plan || plan;
+      setUserPlan(effectivePlan);
+      setPlanChecked(true);
+      // Free users cannot access prep guides
+      if (effectivePlan !== 'pro' && effectivePlan !== 'elite') {
+        router.replace('/checkout');
+      }
+    } catch { setUserPlan('free'); setPlanChecked(true); router.replace('/checkout'); }
+  }, [router]);
 
   useEffect(() => {
     try {
