@@ -231,13 +231,13 @@ export function useProgressSync() {
     const beforeUnload = () => {
       const local = gatherLocalData();
       if (Object.keys(local).length > 2) {
-        // Use sendBeacon for reliability on tab close
+        // Use sendBeacon to a simple API endpoint for reliability
         try {
           const blob = new Blob([JSON.stringify({ userId, data: JSON.stringify(local) })], { type: 'application/json' });
           navigator.sendBeacon('/api/progress-save', blob);
-        } catch {
-          saveProgress({ userId, data: JSON.stringify(local) }).catch(() => {});
-        }
+        } catch {}
+        // Also try direct Convex as backup
+        saveProgress({ userId, data: JSON.stringify(local) }).catch(() => {});
       }
     };
     window.addEventListener('beforeunload', beforeUnload);

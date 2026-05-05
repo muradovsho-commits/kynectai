@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
+import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../convex/_generated/api";
 import MobileGate from "../components/MobileGate";
 
@@ -93,15 +94,13 @@ function SigninContent() {
         } catch {}
 
         // ── Restore cloud progress data before redirect ──
-        // The useProgressSync hook also does this, but it runs AFTER
-        // the dashboard renders. Restoring here ensures data is in
-        // localStorage before the user sees anything.
         try {
-          const res = await fetch(`${window.location.origin}/api/progress-restore?userId=${encodeURIComponent(id)}`);
-          if (res.ok) {
-            const { data } = await res.json();
-            if (data) {
-              const cloud: Record<string, string> = JSON.parse(data);
+          const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+          if (convexUrl) {
+            const httpClient = new ConvexHttpClient(convexUrl);
+            const result = await httpClient.query(api.progress.loadProgress, { userId: id });
+            if (result && result.data) {
+              const cloud: Record<string, string> = JSON.parse(result.data);
               for (const [key, val] of Object.entries(cloud)) {
                 if (key && val && key !== 'offerbell_user_id') {
                   localStorage.setItem(key, val);
@@ -109,7 +108,9 @@ function SigninContent() {
               }
             }
           }
-        } catch {}
+        } catch (e) {
+          console.error('Cloud restore failed:', e);
+        }
       }
       // Always go to dashboard
       router.push("/dashboard");

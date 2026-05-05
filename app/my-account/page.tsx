@@ -5,6 +5,7 @@ import TutorialOverlay from "../components/TutorialOverlay";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useMutation } from 'convex/react';
+import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../../convex/_generated/api';
 import { useRouter } from 'next/navigation';
 import '../contact-finder/contact-finder.css';
@@ -238,7 +239,24 @@ export default function MyAccountPage() {
           </div>
           <div style={{display:'flex',flexDirection:'column',gap:8,alignItems:'flex-end'}}>
             <button onClick={saveChanges} type="button" style={{background:'var(--text)',color:'var(--surface)',padding:'9px 20px',borderRadius:10,fontSize:13,fontWeight:700,border:'none',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Save Changes</button>
-            <button type="button" onClick={() => { const keys: string[] = []; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('offerbell') && k !== 'offerbell-theme') keys.push(k); } keys.forEach(k => localStorage.removeItem(k)); localStorage.removeItem('userId'); document.cookie = 'offerbell_user_id=; path=/; max-age=0'; router.push('/'); }} style={{background:'var(--surface)',color:'var(--text-2)',padding:'8px 20px',borderRadius:10,fontSize:13,fontWeight:600,border:'1.5px solid var(--border-2)',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Sign Out</button>
+            <button type="button" onClick={async () => {
+              // Save all data to cloud before wiping localStorage
+              try {
+                const userId = localStorage.getItem('offerbell_user_id');
+                const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+                if (userId && convexUrl) {
+                  const SYNC_KEYS = ['offerbell_onboarding_profile','offerbell_plan','offerbell_plan_activated_at','offerbell_billing_cycle','offerbell_promo_code','offerbell_profile_pic','offerbell_account_created','offerbell_tutorial_complete','offerbell-theme','offerbell_flash_perf_ib','offerbell_flash_perf_pe','offerbell_flash_perf_rx','offerbell_flash_perf_consulting','offerbell_flash_perf_accounting','offerbell_flash_perf_am','offerbell_flash_perf_st','offerbell_flash_perf_er','offerbell_flash_perf_re','offerbell_flash_perf_vc','offerbell_flash_bookmarks','offerbell_flash_review','offerbell_flash_review_log','offerbell_diag_history','offerbell_mock_responses','offerbell_mock_weekly','offerbell_tracker_v3','offerbell_tracker_config','offerbell_saved_messages','offerbell_messages_sent','offerbell_outreach_weekly','offerbell_dismissed_reminders','offerbell_referral_nodes_v3','offerbell_resume_usage','offerbell_resume_reviews','offerbell_coach_history','offerbell_coach_pro_usage','offerbell_coach_weekly','offerbell_activity_days','offerbell_searches_used','offerbell_game_scores','offerbell_feedback_history'];
+                  const data: Record<string, string> = {};
+                  for (const key of SYNC_KEYS) { const val = localStorage.getItem(key); if (val !== null) data[key] = val; }
+                  if (Object.keys(data).length > 0) {
+                    const httpClient = new ConvexHttpClient(convexUrl);
+                    await httpClient.mutation(api.progress.saveProgress, { userId, data: JSON.stringify(data) });
+                  }
+                }
+              } catch (e) { console.error('Final save failed:', e); }
+              // Now wipe localStorage
+              const keys: string[] = []; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('offerbell') && k !== 'offerbell-theme') keys.push(k); } keys.forEach(k => localStorage.removeItem(k)); localStorage.removeItem('userId'); document.cookie = 'offerbell_user_id=; path=/; max-age=0'; router.push('/');
+            }} style={{background:'var(--surface)',color:'var(--text-2)',padding:'8px 20px',borderRadius:10,fontSize:13,fontWeight:600,border:'1.5px solid var(--border-2)',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Sign Out</button>
           </div>
         </div>
 
