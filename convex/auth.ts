@@ -231,12 +231,13 @@ export const deleteAccount = mutation({
 });
 
 export const upgradePlan = mutation({
-  args: { userId: v.string(), promoCode: v.optional(v.string()) },
+  args: { userId: v.string(), promoCode: v.optional(v.string()), plan: v.optional(v.string()) },
   handler: async (ctx, args) => {
     const users = await ctx.db.query("users").collect();
     const user = users.find((u) => u._id.toString() === args.userId);
     if (!user) throw new ConvexError("User not found");
-    const patch: any = { plan: "pro", planActivatedAt: Date.now() };
+    const tier = args.plan === 'elite' ? 'elite' : 'pro';
+    const patch: any = { plan: tier, planActivatedAt: Date.now() };
     if (args.promoCode) patch.promoCode = args.promoCode;
     await ctx.db.patch(user._id, patch);
     return { success: true, planActivatedAt: Date.now() };

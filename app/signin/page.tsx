@@ -42,10 +42,9 @@ function SigninContent() {
         document.cookie = 'offerbell_user_id=; path=/; max-age=0';
         
         // ── Write the new session ──
-        const plan = result?.plan || 'free';
+        const dbPlan = result?.plan || 'free';
         window.localStorage.setItem("offerbell_user_id", id);
         window.localStorage.setItem("offerbell_messages_sent", String(result?.outreachCount || 0));
-        window.localStorage.setItem("offerbell_plan", plan);
         document.cookie = `offerbell_user_id=${encodeURIComponent(id)}; path=/; max-age=${60 * 60 * 24 * 30}`;
         if (result?.planActivatedAt) {
           window.localStorage.setItem("offerbell_plan_activated_at", String(result.planActivatedAt));
@@ -54,8 +53,35 @@ function SigninContent() {
           window.localStorage.setItem("offerbell_promo_code", result.promoCode);
         }
 
-        // Create a default onboarding profile from the DB data so the
-        // app has a profile to read on first load after signin
+        // ── Restore cloud progress data BEFORE setting plan ──
+        // Cloud data may have the correct plan if DB is stale
+        let cloudPlan = 'free';
+        try {
+          const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+          if (convexUrl) {
+            const httpClient = new ConvexHttpClient(convexUrl);
+            const cloudResult = await httpClient.query(api.progress.loadProgress, { userId: id });
+            if (cloudResult && cloudResult.data) {
+              const cloud: Record<string, string> = JSON.parse(cloudResult.data);
+              for (const [key, val] of Object.entries(cloud)) {
+                if (key && val && key !== 'offerbell_user_id' && key !== 'offerbell_plan') {
+                  localStorage.setItem(key, val);
+                }
+              }
+              if (cloud['offerbell_plan']) cloudPlan = cloud['offerbell_plan'];
+            }
+          }
+        } catch (e) {
+          console.error('Cloud restore failed:', e);
+        }
+
+        // Use the BEST plan: whichever is higher tier wins
+        // (handles case where DB says 'free' but cloud has 'elite')
+        const planRank: Record<string, number> = { free: 0, pro: 1, elite: 2 };
+        const bestPlan = (planRank[cloudPlan] || 0) >= (planRank[dbPlan] || 0) ? cloudPlan : dbPlan;
+        window.localStorage.setItem("offerbell_plan", bestPlan);
+
+        // Create onboarding profile with the correct plan
         const nm = result?.name || "";
         const pts = nm.split(" ");
         const onboardingDone = result?.onboardingComplete || false;
@@ -69,11 +95,9 @@ function SigninContent() {
           year: "",
           recruitYear: "",
           email: email,
-          plan: plan,
+          plan: bestPlan,
           tutorialComplete: onboardingDone,
         }));
-        // If user already completed onboarding (on another browser),
-        // set the tutorial-complete flag so dashboard skips the tutorial
         if (onboardingDone) {
           window.localStorage.setItem("offerbell_tutorial_complete", "true");
         }
@@ -93,68 +117,6 @@ function SigninContent() {
           }
         } catch {}
 
-        // ── Restore cloud progress data before redirect ──
-        try {
-          const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
-          if (convexUrl) {
-            const httpClient = new ConvexHttpClient(convexUrl);
-            const result = await httpClient.query(api.progress.loadProgress, { userId: id });
-            if (result && result.data) {
-              const cloud: Record<string, string> = JSON.parse(result.data);
-              // Smart merge: for array keys, union instead of overwrite
-              const ARRAY_MERGE_KEYS = new Set(['offerbell_activity_days', 'offerbell_flash_bookmarks', 'offerbell_diag_history', 'offerbell_mock_responses', 'offerbell_outreach_saved', 'offerbell_tracker_v3', 'offerbell_referral_nodes_v3']);
-              for (const [key, val] of Object.entries(cloud)) {
-                if (!key || !val || key === 'offerbell_user_id') continue;
-                const localVal = localStorage.getItem(key);
-                if (ARRAY_MERGE_KEYS.has(key) && localVal) {
-                  // Merge arrays
-                  try {
-                    const cloudArr = JSON.parse(val);
-                    const localArr = JSON.parse(localVal);
-                    if (Array.isArray(cloudArr) && Array.isArray(localArr)) {
-                      if (key === 'offerbell_activity_days') {
-                        // String set union
-                        const merged = [...new Set([...localArr, ...cloudArr])];
-                        localStorage.setItem(key, JSON.stringify(merged));
-                      } else {
-                        // Object array — dedup by id
-                        const hasId = cloudArr.length > 0 && typeof cloudArr[0] === 'object' && 'id' in (cloudArr[0] || {});
-                        if (hasId) {
-                          const seen = new Set<string>();
-                          const combined = [];
-                          for (const item of [...localArr, ...cloudArr]) {
-                            if (item.id && !seen.has(item.id)) { seen.add(item.id); combined.push(item); }
-                          }
-                          localStorage.setItem(key, JSON.stringify(combined));
-                        } else {
-                          // Use whichever is longer
-                          localStorage.setItem(key, localArr.length >= cloudArr.length ? localVal : val);
-                        }
-                      }
-                      continue;
-                    }
-                  } catch {}
-                }
-                // For perf keys, use whichever has more "seen"
-                if (key.startsWith('offerbell_flash_perf_') && localVal) {
-                  try {
-                    const cloudPerf = JSON.parse(val);
-                    const localPerf = JSON.parse(localVal);
-                    if ((localPerf.seen || 0) >= (cloudPerf.seen || 0)) continue; // keep local
-                  } catch {}
-                }
-                // Default: cloud wins (unless local has data and cloud is empty/null)
-                if (!localVal || localVal === 'null' || localVal === '[]' || localVal === '{}') {
-                  localStorage.setItem(key, val);
-                } else if (val && val !== 'null' && val !== '[]' && val !== '{}') {
-                  localStorage.setItem(key, val);
-                }
-              }
-            }
-          }
-        } catch (e) {
-          console.error('Cloud restore failed:', e);
-        }
       }
       // Always go to dashboard
       router.push("/dashboard");

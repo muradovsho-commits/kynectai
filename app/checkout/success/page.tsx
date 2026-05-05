@@ -30,7 +30,7 @@ export default function CheckoutSuccessPage() {
       const userId = localStorage.getItem("offerbell_user_id");
       const promo = localStorage.getItem("offerbell_promo_code") || undefined;
       if (userId && upgradePlan) {
-        upgradePlan({ userId, promoCode: promo }).catch(() => {});
+        upgradePlan({ userId, promoCode: promo, plan: planTier }).catch(() => {});
       }
     } catch {}
 
