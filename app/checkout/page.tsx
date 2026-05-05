@@ -256,11 +256,10 @@ export default function CheckoutPage() {
                   'All diagnostic tracks',
                   'Interview prep guides',
                   'AI Coach (usage-based)',
-                  'Mock Interview (usage-based)',
+                  'Unlimited Mock Interviews',
                   'Resume Review (10/week)',
                   'Outreach Writer (20/week)',
                   'Unlimited outreach contacts',
-                  'Contact Finder',
                 ].map(f => (
                   <div key={f} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 12, color: 'var(--text-2)' }}>{CHECK}<span>{f}</span></div>
                 ))}

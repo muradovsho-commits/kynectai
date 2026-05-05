@@ -128,7 +128,8 @@ function FlashcardsContent() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!window.localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
-    setIsPro(localStorage.getItem('offerbell_plan') === 'pro');
+    const p = localStorage.getItem('offerbell_plan') || 'free';
+    setIsPro(p === 'pro' || p === 'elite');
     import('../lib/plan').then(({ isUserPro }) => { setIsPro(isUserPro()); });
     setBookmarks(loadBookmarks());
 

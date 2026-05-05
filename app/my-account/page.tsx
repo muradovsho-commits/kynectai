@@ -391,7 +391,7 @@ export default function MyAccountPage() {
                 </div>
                 <div>
                   <div style={{fontSize:15,fontWeight:700,color:'var(--text)',marginBottom:2}}>Free Plan</div>
-                  <div style={{fontSize:12,color:'var(--text-3)'}}>3 messages · 1 resume review · unlimited tracking</div>
+                  <div style={{fontSize:12,color:'var(--text-3)'}}>5 messages · 1 resume review/week · 3 mock interviews/week</div>
                 </div>
               </div>
               <div style={{display:'flex',alignItems:'center',gap:16}}>
