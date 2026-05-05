@@ -12,7 +12,7 @@ import '../contact-finder/contact-finder.css';
 
 const SCHOOLS = ["Adelphi University","American University","Appalachian State University","Arizona State University","Auburn University","Babson College","Baruch College","Baylor University","Bentley University","Binghamton University","Boston College","Boston University","Bridgewater State University","Brigham Young University","Brown University","Bryant University","Bucknell University","Carnegie Mellon University","Case Western Reserve University","Catholic University of America","Champlain College","Christopher Newport University","Clark University","Clemson University","Colgate University","Columbia University","Cornell University","Creighton University","Dartmouth College","DePaul University","Dickinson College","Drexel University","Duke University","East Carolina University","Elizabethtown College","Elon University","Emerson College","Emory University","Fairfield University","Fairleigh Dickinson University","Fashion Institute of Technology","Florida International University","Florida State University","Fordham University","Franklin & Marshall College","George Mason University","George Washington University","Georgetown University","Georgia Institute of Technology","Gettysburg College","Hamilton College","Harvard University","High Point University","Hofstra University","Hobart and William Smith Colleges","Howard University","Indiana University","Iona University","Iowa State University","Ithaca College","James Madison University","Johns Hopkins University","Johnson & Wales University","Kansas State University","Kean University","King's College PA","La Selle University","Lafayette College","Lehigh University","Liberty University","Long Island University","Longwood University","Louisiana State University","Loyola University Chicago","Loyola University Maryland","Manhattan College","Marist College","Marquette University","Massachusetts Institute of Technology","Merrimack College","Miami University of Ohio","Middlebury College","Misericordia University","Mississippi State University","Monmouth University","Montana State University","Montclair State University","Moravian University","Muhlenberg College","NC State University","New York University","Northeastern University","Northwestern University","Norwich University","Ohio State University","Ohio University","Oklahoma State University","Old Dominion University","Oregon State University","Pace University","Penn State University","Princeton University","Providence College","Purdue University","Quinnipiac University","Radford University","Ramapo College","Rensselaer Polytechnic Institute","Rice University","Rider University","Rochester Institute of Technology","Roger Williams University","Rowan University","Rutgers University","Sacred Heart University","Saint Anselm College","Saint Francis University PA","Saint Joseph's University","Salve Regina University","Seton Hall University","Simmons University","Skidmore College","Slippery Rock University","Southern Methodist University","St. Lawrence University","Stanford University","Stockton University","Stony Brook University","Suffolk University","Susquehanna University","Syracuse University","Temple University","Texas A&M University","Texas Christian University","Texas Tech University","The College of New Jersey","The New School","Towson University","Tufts University","Tulane University","UMass Boston","UMass Dartmouth","UMass Lowell","UNC Charlotte","UCLA","Union College","University at Albany","University at Buffalo","University of Alabama","University of Arizona","University of Arkansas","University of Baltimore","University of California Berkeley","University of Cincinnati","University of Colorado Boulder","University of Connecticut","University of Central Florida","University of Delaware","University of Florida","University of Georgia","University of Houston","University of Idaho","University of Illinois Urbana-Champaign","University of Iowa","University of Kansas","University of Kentucky","University of Louisville","University of Maryland","University of Massachusetts Amherst","University of Memphis","University of Miami","University of Michigan","University of Minnesota","University of Mississippi","University of Missouri","University of Montana","University of Nebraska","University of Nevada Las Vegas","University of Nevada Reno","University of New Hampshire","University of New Mexico","University of North Carolina at Chapel Hill","University of North Texas","University of Notre Dame","University of Oklahoma","University of Oregon","University of Pennsylvania","University of Pittsburgh","University of Rhode Island","University of Richmond","University of Rochester","University of South Carolina","University of South Florida","University of Southern California","University of Tennessee","University of Texas at Austin","University of Tulsa","University of Utah","University of Vermont","University of Virginia","University of Washington","University of Wisconsin Madison","University of Wyoming","Vanderbilt University","Villanova University","Virginia Commonwealth University","Virginia Tech","Wake Forest University","Washington University in St. Louis","Wheaton College MA","Wichita State University","Widener University","Wilkes University","William & Mary","Worcester Polytechnic Institute","Yale University"];
 
-const VERTICALS = ["Investment Banking","Private Equity","Hedge Fund","Venture Capital","Growth Equity","Sales & Trading","Equity Research","Asset Management","Consulting","Accounting / Audit / Tax","Corporate Finance / FP&A","Corporate Development","Real Estate","Credit / Debt","Restructuring","Family Office","Endowment / Pension"];
+const VERTICALS = ["Investment Banking","Private Equity","Venture Capital","Consulting","Accounting & Audit","Asset Management","Sales & Trading","Equity Research","Real Estate","Restructuring","Growth Equity"];
 
 const YEARS = ["Class of 2025","Class of 2026","Class of 2027","Class of 2028","Class of 2029","Class of 2030"];
 
@@ -21,8 +21,6 @@ export default function MyAccountPage() {
   const deleteAccountMutation = useMutation(api.auth.deleteAccount);
   const downgradePlanMutation = useMutation(api.auth.downgradePlan);
   const [isDark, setIsDark] = useState(false);
-  const [dirty, setDirty] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [modal, setModal] = useState<{ title: string; desc: string; confirmLabel: string; onConfirm: () => void } | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
@@ -151,28 +149,26 @@ export default function MyAccountPage() {
     localStorage.removeItem('offerbell_profile_pic');
   }
 
-  function mark() { setDirty(true); setSaved(false); }
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  function saveChanges() {
-    // Write back to offerbell_onboarding_profile
-    try {
-      const raw = localStorage.getItem('offerbell_onboarding_profile');
-      const existing = raw ? JSON.parse(raw) : {};
-      const updated = {
-        ...existing,
-        firstName,
-        lastName,
-        email,
-        university: school,
-        year: year.replace('Class of ', ''),
-        targetRoles: [targetRole, ...(existing.targetRoles || []).filter((r: string) => r !== targetRole)],
-      };
-      localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(updated));
-    } catch (e) {}
-
-    setDirty(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  function autoSave() {
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      try {
+        const raw = localStorage.getItem('offerbell_onboarding_profile');
+        const existing = raw ? JSON.parse(raw) : {};
+        const updated = {
+          ...existing,
+          firstName,
+          lastName,
+          email,
+          university: school,
+          year: year.replace('Class of ', ''),
+          targetRoles: [targetRole, ...(existing.targetRoles || []).filter((r: string) => r !== targetRole)],
+        };
+        localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(updated));
+      } catch {}
+    }, 600);
   }
 
   const initials = ((firstName[0] || '') + (lastName[0] || '')).toUpperCase();
@@ -238,7 +234,6 @@ export default function MyAccountPage() {
             </div>
           </div>
           <div style={{display:'flex',flexDirection:'column',gap:8,alignItems:'flex-end'}}>
-            <button onClick={saveChanges} type="button" style={{background:'var(--text)',color:'var(--surface)',padding:'9px 20px',borderRadius:10,fontSize:13,fontWeight:700,border:'none',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Save Changes</button>
             <button type="button" onClick={async () => {
               // Save all data to cloud before wiping localStorage
               try {
@@ -301,33 +296,33 @@ export default function MyAccountPage() {
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
             <div style={{display:'flex',flexDirection:'column',gap:6}}>
               <label style={{fontSize:12,fontWeight:700,color:'var(--text)'}}>First name</label>
-              <input style={inp} type="text" value={firstName} onChange={e=>{setFirstName(e.target.value);mark();}} placeholder="First name"/>
+              <input style={inp} type="text" value={firstName} onChange={e=>{setFirstName(e.target.value);autoSave();}} placeholder="First name"/>
             </div>
             <div style={{display:'flex',flexDirection:'column',gap:6}}>
               <label style={{fontSize:12,fontWeight:700,color:'var(--text)'}}>Last name</label>
-              <input style={inp} type="text" value={lastName} onChange={e=>{setLastName(e.target.value);mark();}} placeholder="Last name"/>
+              <input style={inp} type="text" value={lastName} onChange={e=>{setLastName(e.target.value);autoSave();}} placeholder="Last name"/>
             </div>
             <div style={{display:'flex',flexDirection:'column',gap:6}}>
               <label style={{fontSize:12,fontWeight:700,color:'var(--text)'}}>Email</label>
-              <input style={inp} type="email" value={email} onChange={e=>{setEmail(e.target.value);mark();}} placeholder="your@email.com"/>
+              <input style={inp} type="email" value={email} onChange={e=>{setEmail(e.target.value);autoSave();}} placeholder="your@email.com"/>
             </div>
             <div style={{display:'flex',flexDirection:'column',gap:6}}>
               <label style={{fontSize:12,fontWeight:700,color:'var(--text)'}}>School</label>
-              <select style={inp} value={school} onChange={e=>{setSchool(e.target.value);mark();}}>
+              <select style={inp} value={school} onChange={e=>{setSchool(e.target.value);autoSave();}}>
                 <option value="">Select school...</option>
                 {SCHOOLS.map(s=><option key={s}>{s}</option>)}
               </select>
             </div>
             <div style={{display:'flex',flexDirection:'column',gap:6}}>
               <label style={{fontSize:12,fontWeight:700,color:'var(--text)'}}>Graduation Year</label>
-              <select style={inp} value={year} onChange={e=>{setYear(e.target.value);mark();}}>
+              <select style={inp} value={year} onChange={e=>{setYear(e.target.value);autoSave();}}>
                 <option value="">Select year...</option>
                 {YEARS.map(y=><option key={y}>{y}</option>)}
               </select>
             </div>
             <div style={{display:'flex',flexDirection:'column',gap:6}}>
               <label style={{fontSize:12,fontWeight:700,color:'var(--text)'}}>Target Role</label>
-              <select style={inp} value={targetRole} onChange={e=>{setTargetRole(e.target.value);mark();}}>
+              <select style={inp} value={targetRole} onChange={e=>{setTargetRole(e.target.value);autoSave();}}>
                 <option value="">Select role...</option>
                 {VERTICALS.map(v=><option key={v}>{v}</option>)}
               </select>
@@ -418,12 +413,6 @@ export default function MyAccountPage() {
         </div>
 
       </main>
-
-      {/* Save bar */}
-      <div style={{position:'fixed',bottom:24,left:'50%',transform:`translateX(-50%) translateY(${dirty||saved?'0':'80px'})`,background:'var(--text)',color:'var(--surface)',padding:'12px 24px',borderRadius:100,fontSize:13,fontWeight:600,zIndex:200,transition:'transform .3s ease',display:'flex',alignItems:'center',gap:12,boxShadow:'0 4px 24px rgba(0,0,0,.2)',whiteSpace:'nowrap'}}>
-        {saved ? 'Saved!' : 'Changes unsaved'}
-        {!saved && <button onClick={saveChanges} type="button" style={{background:'var(--surface)',color:'var(--text)',padding:'6px 16px',borderRadius:100,fontSize:12,fontWeight:700,border:'none',cursor:'pointer',fontFamily:"'Sora',sans-serif"}}>Save now</button>}
-      </div>
 
       {showTutorial && (
         <TutorialOverlay
