@@ -243,13 +243,48 @@ function FlashcardsContent() {
             <div className="flash-landing-title">Interview <em>Flashcards</em></div>
             <div className="flash-landing-sub">Master every technical concept with curated interview questions reported in actual interviews across top firms. Filter by topic and difficulty, then drill one card at a time.</div>
             {(() => {
+              // Map Target Role (from settings) to diagnostic track key
+              const roleToTrack: Record<string, string> = {
+                'Investment Banking': 'ib', 'Private Equity': 'pe', 'Venture Capital': 'vc',
+                'Consulting': 'consulting', 'Accounting & Audit': 'accounting',
+                'Asset Management': 'am', 'Sales & Trading': 'st', 'Equity Research': 'er',
+                'Real Estate': 're', 'Restructuring': 'rx', 'Growth Equity': 'ge',
+              };
+              let targetTrack = '';
+              try {
+                const prof = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}');
+                const role = Array.isArray(prof.targetRoles) && prof.targetRoles.length > 0 ? prof.targetRoles[0] : '';
+                targetTrack = roleToTrack[role] || '';
+              } catch {}
+
               let diagScore = 0;
-              try { const h = JSON.parse(localStorage.getItem('offerbell_diag_history') || '[]'); if (h.length > 0) diagScore = Math.max(...h.map((d: any) => d.score || 0)); } catch {}
+              let trackLabel = '';
+              try {
+                const h = JSON.parse(localStorage.getItem('offerbell_diag_history') || '[]');
+                if (h.length > 0 && targetTrack) {
+                  const trackDiags = h.filter((d: any) => d.track === targetTrack);
+                  if (trackDiags.length > 0) {
+                    diagScore = Math.max(...trackDiags.map((d: any) => d.score || 0));
+                    trackLabel = trackDiags[0].track;
+                  }
+                } else if (h.length > 0) {
+                  // Fallback: use most recent diagnostic if no target role set
+                  diagScore = h[0].score || 0;
+                  trackLabel = h[0].track;
+                }
+              } catch {}
+
+              const trackName = targetTrack ? Object.entries(roleToTrack).find(([, v]) => v === targetTrack)?.[0] || '' : '';
+
               if (diagScore >= 70) return (
-                <div style={{fontSize:12,color:'#16a34a',fontWeight:600,marginBottom:6,marginTop:-4}}>Your diagnostic scores are strong - go through every question below to lock it in.</div>
+                <div style={{fontSize:12,color:'#16a34a',fontWeight:600,marginBottom:6,marginTop:-4}}>
+                  Your {trackName} diagnostic score is strong ({diagScore}%) - go through every question below to lock it in.
+                </div>
               );
               if (diagScore > 0) return (
-                <div style={{fontSize:12,color:'var(--text-3)',marginBottom:6,marginTop:-4}}>You're at {diagScore}% on diagnostics. We recommend hitting 70%+ on <a href="/diagnostic-review" style={{color:'var(--text)',fontWeight:600,textDecoration:'underline'}}>Diagnostic Review</a> before deep-diving here.</div>
+                <div style={{fontSize:12,color:'var(--text-3)',marginBottom:6,marginTop:-4}}>
+                  You are at {diagScore}% on your {trackName} diagnostic. We recommend hitting 70%+ on <a href="/diagnostic-review" style={{color:'var(--text)',fontWeight:600,textDecoration:'underline'}}>Diagnostic Review</a> before deep-diving here.
+                </div>
               );
               return (
                 <div style={{fontSize:12,color:'var(--text-3)',marginBottom:6,marginTop:-4}}>Tip: Start with <a href="/learn" style={{color:'var(--text)',fontWeight:600,textDecoration:'underline'}}>Prep Guides</a> and <a href="/concept-drills" style={{color:'var(--text)',fontWeight:600,textDecoration:'underline'}}>Concept Drills</a> first, then come back here.</div>
