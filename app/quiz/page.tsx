@@ -165,6 +165,16 @@ export default function QuizPage() {
   const [currentQ, setCurrentQ] = useState(0);
   const [scores, setScores] = useState<Record<string, number>>(Object.fromEntries(ALL_KEYS.map(k => [k, 0])));
   const [showResult, setShowResult] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
+
+  useEffect(() => {
+    try {
+      const plan = localStorage.getItem('offerbell_plan') || 'free';
+      const prof = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}');
+      const effective = prof.plan || plan;
+      setIsPaid(effective === 'pro' || effective === 'elite');
+    } catch {}
+  }, []);
 
   const handleSelect = (weights: Record<string, number>) => {
     const next = { ...scores };
@@ -239,8 +249,8 @@ export default function QuizPage() {
                 <div className="quiz-top-badge">Your Strongest Fit</div>
                 <div className="quiz-top-title" style={{ color: CAREERS[topCareer.key].color }}>{CAREERS[topCareer.key].title}</div>
                 <p className="quiz-top-desc">{DESCS[topCareer.key]}</p>
-                <Link href={CAREERS[topCareer.key].href} className="quiz-top-cta" style={{ background: CAREERS[topCareer.key].color }}>
-                  Start Preparing →
+                <Link href={isPaid ? CAREERS[topCareer.key].href : '/checkout'} className="quiz-top-cta" style={{ background: CAREERS[topCareer.key].color }}>
+                  {isPaid ? 'Start Preparing →' : 'Unlock Prep Guide →'}
                 </Link>
               </div>
 
@@ -252,7 +262,7 @@ export default function QuizPage() {
                     {strongFit.slice(1).map(s => {
                       const c = CAREERS[s.key];
                       return (
-                        <Link key={s.key} href={c.href} className="quiz-tier-card" style={{ borderColor: c.color + '30' }}>
+                        <Link key={s.key} href={isPaid ? c.href : '/checkout'} className="quiz-tier-card" style={{ borderColor: c.color + '30' }}>
                           <div className="quiz-tc-bar" style={{ background: c.color, width: `${s.strength}%` }} />
                           <div className="quiz-tc-name">{c.title}</div>
                           <div className="quiz-tc-strength" style={{ color: c.color }}>{s.strength}%</div>
@@ -277,7 +287,7 @@ export default function QuizPage() {
                             <div className="quiz-tr-bar" style={{ width: `${s.strength}%`, background: c.color }} />
                           </div>
                           <div className="quiz-tr-strength">{s.strength}%</div>
-                          <Link href={c.href} className="quiz-tr-link">Explore →</Link>
+                          <Link href={isPaid ? c.href : '/checkout'} className="quiz-tr-link">{isPaid ? 'Explore →' : 'Unlock →'}</Link>
                         </div>
                       );
                     })}

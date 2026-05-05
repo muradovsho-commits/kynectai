@@ -42,7 +42,9 @@ export default function AccountingInterviewPrepPage() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    if (!window.localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); }
+    if (!window.localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
+    const plan = localStorage.getItem('offerbell_plan') || 'free';
+    try { const p = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}'); if ((p.plan || plan) !== 'pro' && (p.plan || plan) !== 'elite') { router.replace('/checkout'); return; } } catch { router.replace('/checkout'); }
   }, [router]);
 
   const [isDark, setIsDark] = useState(false);

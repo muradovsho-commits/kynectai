@@ -45,8 +45,13 @@ export default function PEInterviewPrepPage() {
     try {
       const plan = localStorage.getItem('offerbell_plan') || 'free';
       const prof = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}');
-      setUserPlan(prof.plan || plan);
-    } catch { setUserPlan('free'); }
+      const effectivePlan = prof.plan || plan;
+      setUserPlan(effectivePlan);
+      if (effectivePlan !== 'pro' && effectivePlan !== 'elite') {
+        router.replace('/checkout');
+        return;
+      }
+    } catch { setUserPlan('free'); router.replace('/checkout'); }
   }, []);
 
   useEffect(() => {

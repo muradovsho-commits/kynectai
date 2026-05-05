@@ -40,7 +40,7 @@ export default function VCInterviewPrepPage() {
   const contentRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  useEffect(() => { if (typeof window === 'undefined') return; if (!window.localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); } }, [router]);
+  useEffect(() => { if (typeof window === 'undefined') return; if (!window.localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; } const plan = localStorage.getItem('offerbell_plan') || 'free'; try { const p = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}'); if ((p.plan || plan) !== 'pro' && (p.plan || plan) !== 'elite') { router.replace('/checkout'); return; } } catch { router.replace('/checkout'); } }, [router]);
   const [isDark, setIsDark] = useState(false);
   useEffect(() => { if (typeof window === 'undefined') return; const saved = localStorage.getItem('offerbell-theme'); if (saved) { document.documentElement.setAttribute('data-theme', saved); setIsDark(saved === 'dark'); } }, []);
 
