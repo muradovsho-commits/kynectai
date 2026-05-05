@@ -59,6 +59,35 @@ const ARROW_R = <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stro
 
 import { getUserPlan, PLAN_LIMITS } from '../lib/plan';
 
+const PROGRESS_KEY = 'offerbell_diag_in_progress';
+
+type InProgressState = {
+  trackKey: string;
+  questions: MCQ[];
+  idx: number;
+  catResults: Record<string, CatResult>;
+  totalCorrect: number;
+  totalAnswered: number;
+  missed: { q: string; explanation: string; category: string }[];
+  savedAt: number;
+};
+
+function saveInProgress(state: InProgressState | null) {
+  if (state) localStorage.setItem(PROGRESS_KEY, JSON.stringify(state));
+  else localStorage.removeItem(PROGRESS_KEY);
+}
+
+function loadInProgress(): InProgressState | null {
+  try {
+    const raw = localStorage.getItem(PROGRESS_KEY);
+    if (!raw) return null;
+    const state = JSON.parse(raw);
+    // Expire after 24 hours
+    if (Date.now() - state.savedAt > 24 * 60 * 60 * 1000) { localStorage.removeItem(PROGRESS_KEY); return null; }
+    return state;
+  } catch { return null; }
+}
+
 export default function DiagnosticReviewPage() {
   const [phase, setPhase] = useState<Phase>('home');
   const [trackKey, setTrackKey] = useState('');
@@ -74,6 +103,7 @@ export default function DiagnosticReviewPage() {
   const [history, setHistory] = useState<DiagResult[]>([]);
   const [viewTrack, setViewTrack] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<string>('free');
+  const [savedProgress, setSavedProgress] = useState<InProgressState | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -82,6 +112,7 @@ export default function DiagnosticReviewPage() {
     if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
     setHistory(loadHistory());
     setUserPlan(getUserPlan());
+    setSavedProgress(loadInProgress());
   }, []);
 
   useEffect(() => {
@@ -108,6 +139,28 @@ export default function DiagnosticReviewPage() {
     setQuestions(qs); setIdx(0); setSelected(null); setShowExp(false); setTimer(TIME_PER_Q);
     setCatResults({}); setTotalCorrect(0); setTotalAnswered(0); setMissed([]);
     setPhase('assess');
+    setSavedProgress(null);
+    // Save initial state
+    saveInProgress({ trackKey, questions: qs, idx: 0, catResults: {}, totalCorrect: 0, totalAnswered: 0, missed: [], savedAt: Date.now() });
+  };
+
+  const resumeAssessment = () => {
+    if (!savedProgress) return;
+    setTrackKey(savedProgress.trackKey);
+    setQuestions(savedProgress.questions);
+    setIdx(savedProgress.idx);
+    setCatResults(savedProgress.catResults);
+    setTotalCorrect(savedProgress.totalCorrect);
+    setTotalAnswered(savedProgress.totalAnswered);
+    setMissed(savedProgress.missed);
+    setSelected(null); setShowExp(false); setTimer(TIME_PER_Q);
+    setPhase('assess');
+    setSavedProgress(null);
+  };
+
+  const discardProgress = () => {
+    saveInProgress(null);
+    setSavedProgress(null);
   };
 
   const handleSelect = (ci: number) => {
@@ -133,7 +186,15 @@ export default function DiagnosticReviewPage() {
 
   const nextQ = () => {
     if (idx + 1 >= questions.length) { finishAssessment(); return; }
-    setIdx(i => i + 1); setSelected(null); setShowExp(false); setTimer(TIME_PER_Q);
+    const nextIdx = idx + 1;
+    setIdx(nextIdx); setSelected(null); setShowExp(false); setTimer(TIME_PER_Q);
+    // Save progress so user can resume if they navigate away
+    saveInProgress({
+      trackKey, questions, idx: nextIdx,
+      catResults: { ...catResults },
+      totalCorrect, totalAnswered, missed: [...missed],
+      savedAt: Date.now(),
+    });
   };
 
   const finishAssessment = () => {
@@ -145,6 +206,7 @@ export default function DiagnosticReviewPage() {
     };
     const updated = [result, ...history].slice(0, 50);
     setHistory(updated); saveHistory(updated);
+    saveInProgress(null); // Clear saved progress
     setPhase('results');
   };
 
@@ -407,6 +469,37 @@ export default function DiagnosticReviewPage() {
                 <div className="diag-hero-stat-sub">Ready to assess</div>
               </div>
             </div>
+
+            {/* Resume in-progress diagnostic */}
+            {savedProgress && TRACKS[savedProgress.trackKey] && (
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '16px 20px', marginBottom: 20,
+                background: 'var(--surface)', border: '1.5px solid var(--border)',
+                borderRadius: 14, gap: 16,
+              }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>
+                    Resume: {TRACKS[savedProgress.trackKey].title} Diagnostic
+                  </div>
+                  <div style={{ fontSize: 11, color: 'var(--text-3)' }}>
+                    Question {savedProgress.idx + 1} of {savedProgress.questions.length} &middot; {savedProgress.totalCorrect}/{savedProgress.totalAnswered} correct
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                  <button onClick={discardProgress} type="button" style={{
+                    padding: '8px 14px', borderRadius: 8, fontSize: 11, fontWeight: 600,
+                    background: 'none', border: '1.5px solid var(--border)', color: 'var(--text-3)',
+                    cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+                  }}>Discard</button>
+                  <button onClick={resumeAssessment} type="button" style={{
+                    padding: '8px 18px', borderRadius: 8, fontSize: 11, fontWeight: 700,
+                    background: 'var(--text)', color: 'var(--surface)', border: 'none',
+                    cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+                  }}>Resume</button>
+                </div>
+              </div>
+            )}
 
             {/* Track list */}
             <div className="diag-section-head">
