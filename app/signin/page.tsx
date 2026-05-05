@@ -11,6 +11,7 @@ function SigninContent() {
   const router = useRouter();
   const signIn = useMutation((api as any).auth?.signIn);
   const generateVerificationToken = useMutation((api as any).auth?.generateVerificationToken);
+  const repairPlan = useMutation((api as any).auth?.repairPlan);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -54,6 +55,7 @@ function SigninContent() {
         }
 
         // ── Restore cloud progress data (NOT plan — DB is source of truth for plan) ──
+        let cloudPlan = '';
         try {
           const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
           if (convexUrl) {
@@ -66,10 +68,26 @@ function SigninContent() {
                   localStorage.setItem(key, val);
                 }
               }
+              cloudPlan = cloud['offerbell_plan'] || '';
             }
           }
         } catch (e) {
           console.error('Cloud restore failed:', e);
+        }
+
+        // If cloud has a higher plan than DB (e.g. user bought Elite but
+        // old bug stored 'pro' in DB), repair the DB and use cloud plan
+        const planRank: Record<string, number> = { free: 0, pro: 1, elite: 2 };
+        if (cloudPlan && (planRank[cloudPlan] || 0) > (planRank[dbPlan] || 0)) {
+          try {
+            if (repairPlan) await repairPlan({ userId: id, plan: cloudPlan });
+          } catch {}
+          window.localStorage.setItem("offerbell_plan", cloudPlan);
+          // Update the onboarding profile too
+          try {
+            const raw = localStorage.getItem('offerbell_onboarding_profile');
+            if (raw) { const p = JSON.parse(raw); p.plan = cloudPlan; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(p)); }
+          } catch {}
         }
 
         // DB is the source of truth for the user's current plan.

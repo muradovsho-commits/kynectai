@@ -254,3 +254,16 @@ export const downgradePlan = mutation({
     return { success: true };
   },
 });
+
+export const repairPlan = mutation({
+  args: { userId: v.string(), plan: v.string() },
+  handler: async (ctx, args) => {
+    const users = await ctx.db.query("users").collect();
+    const user = users.find((u) => u._id.toString() === args.userId);
+    if (!user) return { success: false };
+    if (args.plan === 'pro' || args.plan === 'elite') {
+      await ctx.db.patch(user._id, { plan: args.plan, planActivatedAt: user.planActivatedAt || Date.now() });
+    }
+    return { success: true };
+  },
+});
