@@ -53,9 +53,7 @@ function SigninContent() {
           window.localStorage.setItem("offerbell_promo_code", result.promoCode);
         }
 
-        // ── Restore cloud progress data BEFORE setting plan ──
-        // Cloud data may have the correct plan if DB is stale
-        let cloudPlan = 'free';
+        // ── Restore cloud progress data (NOT plan — DB is source of truth for plan) ──
         try {
           const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
           if (convexUrl) {
@@ -64,24 +62,22 @@ function SigninContent() {
             if (cloudResult && cloudResult.data) {
               const cloud: Record<string, string> = JSON.parse(cloudResult.data);
               for (const [key, val] of Object.entries(cloud)) {
-                if (key && val && key !== 'offerbell_user_id' && key !== 'offerbell_plan') {
+                if (key && val && key !== 'offerbell_user_id' && key !== 'offerbell_plan' && key !== 'offerbell_onboarding_profile') {
                   localStorage.setItem(key, val);
                 }
               }
-              if (cloud['offerbell_plan']) cloudPlan = cloud['offerbell_plan'];
             }
           }
         } catch (e) {
           console.error('Cloud restore failed:', e);
         }
 
-        // Use the BEST plan: whichever is higher tier wins
-        // (handles case where DB says 'free' but cloud has 'elite')
-        const planRank: Record<string, number> = { free: 0, pro: 1, elite: 2 };
-        const bestPlan = (planRank[cloudPlan] || 0) >= (planRank[dbPlan] || 0) ? cloudPlan : dbPlan;
-        window.localStorage.setItem("offerbell_plan", bestPlan);
+        // DB is the source of truth for the user's current plan.
+        // Cloud data is only used for progress (contacts, flashcard
+        // perf, coach history, etc.) — never for plan status.
+        window.localStorage.setItem("offerbell_plan", dbPlan);
 
-        // Create onboarding profile with the correct plan
+        // Create onboarding profile with the DB plan
         const nm = result?.name || "";
         const pts = nm.split(" ");
         const onboardingDone = result?.onboardingComplete || false;
@@ -95,7 +91,7 @@ function SigninContent() {
           year: "",
           recruitYear: "",
           email: email,
-          plan: bestPlan,
+          plan: dbPlan,
           tutorialComplete: onboardingDone,
         }));
         if (onboardingDone) {
