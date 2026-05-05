@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import "../contact-finder/contact-finder.css";
 import { getUserPlan } from "../lib/plan";
 import type { PlanTier } from "../lib/plan";
@@ -71,6 +73,8 @@ export default function CheckoutPage() {
   const [currentPlan, setCurrentPlan] = useState<PlanTier>('free');
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
   const [currentCycle, setCurrentCycle] = useState<string | null>(null);
+  const downgradePlan = useMutation((api as any).auth?.downgradePlan);
+  const changePlan = useMutation((api as any).auth?.upgradePlan);
 
   useEffect(() => {
     const theme = localStorage.getItem("offerbell-theme");
@@ -101,8 +105,13 @@ export default function CheckoutPage() {
     } catch { setLoading(null); alert("Something went wrong. Please try again."); }
   };
 
-  const handleDowngrade = () => {
-    if (!confirm('Switch to Free? You will lose all paid features.')) return;
+  const handleDowngrade = async () => {
+    if (!confirm('Cancel your subscription and switch to Free? You will keep access until the end of your current billing period.')) return;
+    setLoading('downgrade');
+    const userId = localStorage.getItem('offerbell_user_id');
+    if (userId && downgradePlan) {
+      try { await downgradePlan({ userId }); } catch {}
+    }
     localStorage.setItem('offerbell_plan', 'free');
     try { const p = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}'); p.plan = 'free'; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(p)); } catch {}
     localStorage.removeItem('offerbell_plan_activated_at');
@@ -110,15 +119,22 @@ export default function CheckoutPage() {
     window.location.href = '/dashboard';
   };
 
-  const handleSwitch = (from: string, to: 'pro' | 'elite') => {
+  const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
     if (from === to) return;
+    // Downgrading from elite to pro
     if (from === 'elite' && to === 'pro') {
-      if (!confirm('Switch to Pro? You will lose Elite perks like higher AI limits and priority support.')) return;
+      if (!confirm('Switch to Pro? The change takes effect at your next billing cycle. You will keep Elite access until then.')) return;
+      setLoading('switch');
+      const userId = localStorage.getItem('offerbell_user_id');
+      if (userId && changePlan) {
+        try { await changePlan({ userId, plan: 'pro' }); } catch {}
+      }
       localStorage.setItem('offerbell_plan', 'pro');
       try { const p = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}'); p.plan = 'pro'; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(p)); } catch {}
       window.location.href = '/dashboard';
       return;
     }
+    // Upgrading
     handleCheckout(to);
   };
 
