@@ -194,7 +194,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
           <div className="nav-group">
             <span className="nav-group-label">Networking</span>
             <Link className={cls('outreach-tracker')} href="/outreach-tracker"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Outreach Tracker</Link>
-            <Link className={cls('outreach-writer')} href="/outreach-writer"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Outreach Writer{userPlan === 'free' && <span className="nav-pill pill-count">{Math.max(0, 3 - messagesSent)} left</span>}</Link>
+            <Link className={cls('outreach-writer')} href="/outreach-writer"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Outreach Writer</Link>
             <Link className={cls('referral-map')} href="/referral-map"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="5" cy="6" r="3"/><circle cx="19" cy="6" r="3"/><circle cx="12" cy="18" r="3"/><path d="M5 9v3a4 4 0 0 0 4 4h2"/><path d="M19 9v3a4 4 0 0 1-4 4h-2"/></svg>Referral Map</Link>
           </div>
           <div className="nav-group">
