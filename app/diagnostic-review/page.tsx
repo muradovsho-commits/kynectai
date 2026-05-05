@@ -57,6 +57,8 @@ const ARROW = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke
 const BACK_ARROW = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>;
 const ARROW_R = <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 6l6 6-6 6"/></svg>;
 
+import { getUserPlan, PLAN_LIMITS } from '../lib/plan';
+
 export default function DiagnosticReviewPage() {
   const [phase, setPhase] = useState<Phase>('home');
   const [trackKey, setTrackKey] = useState('');
@@ -71,6 +73,7 @@ export default function DiagnosticReviewPage() {
   const [missed, setMissed] = useState<{ q: string; explanation: string; category: string }[]>([]);
   const [history, setHistory] = useState<DiagResult[]>([]);
   const [viewTrack, setViewTrack] = useState<string | null>(null);
+  const [userPlan, setUserPlan] = useState<string>('free');
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -78,6 +81,7 @@ export default function DiagnosticReviewPage() {
     const theme = localStorage.getItem('offerbell-theme');
     if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
     setHistory(loadHistory());
+    setUserPlan(getUserPlan());
   }, []);
 
   useEffect(() => {
@@ -414,8 +418,9 @@ export default function DiagnosticReviewPage() {
               {allStats.map(({ k, t, st }, i) => {
                 const scoreColor = st.avgScore >= 80 ? '#16a34a' : st.avgScore >= 55 ? '#d97706' : st.avgScore > 0 ? '#dc2626' : 'var(--text-3)';
                 const recent = st.history.slice(0, 6).reverse();
+                const isLocked = userPlan === 'free' && i >= (PLAN_LIMITS.diagnosticTracks.free as number);
                 return (
-                  <div key={k} className="diag-track-row" onClick={() => setViewTrack(k)}>
+                  <div key={k} className="diag-track-row" onClick={() => { if (isLocked) { window.location.href = '/checkout'; return; } setViewTrack(k); }} style={isLocked ? { opacity: 0.5, cursor: 'not-allowed' } : {}}>
                     <span className="diag-tr-num">{String(i + 1).padStart(2, '0')}</span>
                     <div>
                       <div className="diag-tr-name">{t.title}</div>

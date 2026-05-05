@@ -29,12 +29,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing prompt" }, { status: 400, headers: corsHeaders });
     }
 
-    // Enforce limits
+    // Enforce limits — free: 5 lifetime, pro: 20/week, elite: 30/week
     const count = typeof messagesSent === "number" ? messagesSent : 0;
     const userPlan = plan || "free";
-    if (userPlan !== "pro" && count >= 3) {
+    if (userPlan !== "pro" && userPlan !== "elite" && count >= 5) {
       return NextResponse.json(
-        { error: "limit_reached", message: "You've used all 3 free messages. Upgrade to Pro for unlimited." },
+        { error: "limit_reached", message: "You've used all 5 free messages. Upgrade to Pro for 20/week." },
         { status: 403, headers: corsHeaders }
       );
     }

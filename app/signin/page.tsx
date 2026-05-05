@@ -101,8 +101,52 @@ function SigninContent() {
             const result = await httpClient.query(api.progress.loadProgress, { userId: id });
             if (result && result.data) {
               const cloud: Record<string, string> = JSON.parse(result.data);
+              // Smart merge: for array keys, union instead of overwrite
+              const ARRAY_MERGE_KEYS = new Set(['offerbell_activity_days', 'offerbell_flash_bookmarks', 'offerbell_diag_history', 'offerbell_mock_responses', 'offerbell_outreach_saved', 'offerbell_tracker_v3', 'offerbell_referral_nodes_v3']);
               for (const [key, val] of Object.entries(cloud)) {
-                if (key && val && key !== 'offerbell_user_id') {
+                if (!key || !val || key === 'offerbell_user_id') continue;
+                const localVal = localStorage.getItem(key);
+                if (ARRAY_MERGE_KEYS.has(key) && localVal) {
+                  // Merge arrays
+                  try {
+                    const cloudArr = JSON.parse(val);
+                    const localArr = JSON.parse(localVal);
+                    if (Array.isArray(cloudArr) && Array.isArray(localArr)) {
+                      if (key === 'offerbell_activity_days') {
+                        // String set union
+                        const merged = [...new Set([...localArr, ...cloudArr])];
+                        localStorage.setItem(key, JSON.stringify(merged));
+                      } else {
+                        // Object array — dedup by id
+                        const hasId = cloudArr.length > 0 && typeof cloudArr[0] === 'object' && 'id' in (cloudArr[0] || {});
+                        if (hasId) {
+                          const seen = new Set<string>();
+                          const combined = [];
+                          for (const item of [...localArr, ...cloudArr]) {
+                            if (item.id && !seen.has(item.id)) { seen.add(item.id); combined.push(item); }
+                          }
+                          localStorage.setItem(key, JSON.stringify(combined));
+                        } else {
+                          // Use whichever is longer
+                          localStorage.setItem(key, localArr.length >= cloudArr.length ? localVal : val);
+                        }
+                      }
+                      continue;
+                    }
+                  } catch {}
+                }
+                // For perf keys, use whichever has more "seen"
+                if (key.startsWith('offerbell_flash_perf_') && localVal) {
+                  try {
+                    const cloudPerf = JSON.parse(val);
+                    const localPerf = JSON.parse(localVal);
+                    if ((localPerf.seen || 0) >= (cloudPerf.seen || 0)) continue; // keep local
+                  } catch {}
+                }
+                // Default: cloud wins (unless local has data and cloud is empty/null)
+                if (!localVal || localVal === 'null' || localVal === '[]' || localVal === '{}') {
+                  localStorage.setItem(key, val);
+                } else if (val && val !== 'null' && val !== '[]' && val !== '{}') {
                   localStorage.setItem(key, val);
                 }
               }

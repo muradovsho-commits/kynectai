@@ -3,6 +3,7 @@
 import Sidebar from "../components/Sidebar";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { PLAN_LIMITS } from '../lib/plan';
 import '../contact-finder/contact-finder.css';
 import RemindersPanel from './RemindersPanel';
 
@@ -251,10 +252,10 @@ export default function OutreachTrackerPage() {
 
   function saveAdd() {
     if (!aFname.trim()) return;
-    // Free users: max 5 contacts
+    // Free users: limited contacts
     const plan = userPlan;
-    if (plan !== 'pro' && plan !== 'elite' && contacts.length >= 5) {
-      showToast('Free plan allows 5 contacts. Upgrade to Pro for unlimited.');
+    if (plan !== 'pro' && plan !== 'elite' && contacts.length >= PLAN_LIMITS.outreachContacts.free) {
+      showToast(`Free plan allows ${PLAN_LIMITS.outreachContacts.free} contacts. Upgrade to Pro for unlimited.`);
       return;
     }
     const name = aFname.trim();
@@ -394,7 +395,7 @@ export default function OutreachTrackerPage() {
               background: 'var(--surface)', border: '1.5px solid var(--border)',
               borderRadius: 10, fontSize: 12, color: 'var(--text-3)',
             }}>
-              <span><strong style={{ color: 'var(--text)' }}>{contacts.length}</strong> of <strong style={{ color: 'var(--text)' }}>5</strong> contacts used. Upgrade for unlimited contacts and full pipeline tracking.</span>
+              <span><strong style={{ color: 'var(--text)' }}>{contacts.length}</strong> of <strong style={{ color: 'var(--text)' }}>{PLAN_LIMITS.outreachContacts.free}</strong> contacts used. Upgrade for unlimited contacts and full pipeline tracking.</span>
               <a href="/checkout" style={{ padding: '5px 12px', borderRadius: 7, fontSize: 11, fontWeight: 700, background: 'var(--text)', color: 'var(--surface)', textDecoration: 'none', fontFamily: "'Sora', sans-serif", flexShrink: 0, marginLeft: 12 }}>Upgrade</a>
             </div>
           )}

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
+import { PLAN_LIMITS } from '../lib/plan';
 import './referral-map.css';
 import { US_STATES } from './us-states';
 import { US_PATHS } from './us-paths';
@@ -473,8 +474,8 @@ export default function ReferralMapPage() {
     // Free users: max 5 contacts
     if (isNew) {
       const plan = localStorage.getItem('offerbell_plan') || 'free';
-      if (plan !== 'pro' && plan !== 'elite' && contacts.length >= 5) {
-        alert('Free plan allows 5 referral contacts. Upgrade to Pro for unlimited.');
+      if (plan !== 'pro' && plan !== 'elite' && contacts.length >= PLAN_LIMITS.referralContacts.free) {
+        alert('Free plan allows ' + PLAN_LIMITS.referralContacts.free + ' referral contacts. Upgrade to Pro for unlimited.');
         return;
       }
     }
@@ -493,10 +494,10 @@ export default function ReferralMapPage() {
     const isPaid = plan === 'pro' || plan === 'elite';
     let toAdd = impList.filter(c => c.sel).map(c => ({ id: `imp_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`, name: `${c.fname} ${c.lname}`.trim(), firm: c.firm || '', role: c.role || '', referredBy: 'you', note: '', addedAt: Date.now() }));
     if (!isPaid) {
-      const remaining = Math.max(0, 5 - contacts.length);
+      const remaining = Math.max(0, PLAN_LIMITS.referralContacts.free - contacts.length);
       if (toAdd.length > remaining) {
         toAdd = toAdd.slice(0, remaining);
-        alert(`Free plan allows 5 contacts. Only ${remaining} imported. Upgrade for unlimited.`);
+        alert(`Free plan allows ${PLAN_LIMITS.referralContacts.free} contacts. Only ${remaining} imported. Upgrade for unlimited.`);
       }
     }
     setContacts(prev => [...prev, ...toAdd]); setModal(null);

@@ -229,7 +229,13 @@ export default function CoachPage() {
 
   // Usage-based limiting — rolling window
   const USAGE_KEY = 'offerbell_coach_pro_usage';
-  const MAX_TOKENS = 40;
+  const MAX_TOKENS = (() => {
+    try {
+      const plan = localStorage.getItem('offerbell_plan') || 'free';
+      if (plan === 'elite') return 80;
+      return 40;
+    } catch { return 40; }
+  })();
   const RESET_HOURS = 8;
   const [usageTokens, setUsageTokens] = useState(0);
   const [usageResetAt, setUsageResetAt] = useState<number>(0);
