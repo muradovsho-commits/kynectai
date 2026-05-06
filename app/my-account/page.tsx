@@ -23,13 +23,12 @@ export default function MyAccountPage() {
   const router = useRouter();
   const deleteAccountMutation = useMutation(api.auth.deleteAccount);
   const downgradePlanMutation = useMutation(api.auth.downgradePlan);
- const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
+const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
   const [userId, setUserId] = useState('');
   const dbUser = useQuery(
     (api as any).users?.getUser,
     userId ? { userId } : 'skip'
   ) as any;
-  const [userId, setUserId] = useState('');
   const [isDark, setIsDark] = useState(false);
   const [modal, setModal] = useState<{ title: string; desc: string; confirmLabel: string; onConfirm: () => void } | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
