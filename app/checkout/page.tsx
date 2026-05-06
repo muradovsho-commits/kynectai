@@ -94,7 +94,7 @@ export default function CheckoutPage() {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, plan, billing: billingCycle }),
+       body: JSON.stringify({ email, plan, billing: billingCycle, userId: localStorage.getItem('offerbell_user_id') || '' }),
       });
       const data = await res.json();
       if (data.url) {
