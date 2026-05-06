@@ -120,55 +120,60 @@ export default function MyAccountPage() {
     try { const pic = localStorage.getItem('offerbell_profile_pic'); if (pic) setProfilePic(pic); } catch {}
 
     // Now load from DB (source of truth) and overwrite localStorage fallback
+   // Just record the userId. The reactive `dbUser` useQuery handles the
+    // actual DB load via the dedicated effect below — using one source of
+    // truth instead of a parallel HTTP fetch eliminates the rehydration
+    // flicker.
     const uid = localStorage.getItem('offerbell_user_id') || '';
     setUserId(uid);
-    if (uid) {
-      const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
-      if (convexUrl) {
-        import('convex/browser').then(({ ConvexHttpClient }) => {
-          const client = new ConvexHttpClient(convexUrl);
-         client.query((api as any).users.getUser, { userId: uid }).then((user: any) => {
-            if (user && user.found) {
-              // DB is source of truth — apply ALL fields including empties.
-              // Empty in DB means "user cleared this", not "fall back to cache".
-              setFirstName(user.firstName || '');
-              setLastName(user.lastName || '');
-              if (user.email) setEmail(user.email);
-              setSchool(user.university || '');
-              if (user.graduationYear) {
-                const classOf = user.graduationYear.startsWith('Class of') ? user.graduationYear : `Class of ${user.graduationYear}`;
-                setYear(classOf);
-              } else {
-                setYear('');
-              }
-              setTargetRole((user.targetRoles && user.targetRoles.length > 0) ? user.targetRoles[0] : '');
-              if (user.profilePic) setProfilePic(user.profilePic);
-              // Sync DB data back to localStorage so other pages see it
-              try {
-                const raw = localStorage.getItem('offerbell_onboarding_profile');
-                const existing = raw ? JSON.parse(raw) : {};
-                const updated = {
-                  ...existing,
-                  firstName: user.firstName || existing.firstName,
-                  lastName: user.lastName || existing.lastName,
-                  email: user.email || existing.email,
-                  university: user.university || existing.university,
-                  year: user.graduationYear || existing.year,
-                  targetRoles: (user.targetRoles && user.targetRoles.length > 0) ? user.targetRoles : existing.targetRoles,
-                };
-                localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(updated));
-              } catch {}
-              setProfileLoaded(true);
-            }
-          }).catch(() => { setProfileLoaded(true); });
-        }).catch(() => { setProfileLoaded(true); });
-      } else {
-        setProfileLoaded(true);
-      }
-    } else {
-      setProfileLoaded(true);
-    }
+    if (!uid) setProfileLoaded(true);
   }, []);
+
+  // Hydrate from DB exactly ONCE, the first time `dbUser` resolves with a
+  // real record. After that, the user's typing owns the form state and we
+  // never overwrite it — even if the reactive query re-fires from autoSave
+  // round-tripping through Convex.
+  const hasHydratedFromDb = useRef(false);
+  useEffect(() => {
+    if (hasHydratedFromDb.current) return;
+    if (!dbUser || !dbUser.found) return;
+    hasHydratedFromDb.current = true;
+
+    if (dbUser.firstName) setFirstName(dbUser.firstName);
+    if (dbUser.lastName) setLastName(dbUser.lastName);
+    if (dbUser.email) setEmail(dbUser.email);
+    if (dbUser.university) setSchool(dbUser.university);
+    if (dbUser.graduationYear) {
+      const classOf = dbUser.graduationYear.startsWith('Class of')
+        ? dbUser.graduationYear
+        : `Class of ${dbUser.graduationYear}`;
+      setYear(classOf);
+    }
+    if (dbUser.targetRoles && dbUser.targetRoles.length > 0) {
+      setTargetRole(dbUser.targetRoles[0]);
+    }
+    if (dbUser.profilePic) setProfilePic(dbUser.profilePic);
+
+    // Sync DB → localStorage cache once on hydration so sidebar etc. see truth.
+    try {
+      const raw = localStorage.getItem('offerbell_onboarding_profile');
+      const existing = raw ? JSON.parse(raw) : {};
+      const updated = {
+        ...existing,
+        firstName: dbUser.firstName || existing.firstName,
+        lastName: dbUser.lastName || existing.lastName,
+        email: dbUser.email || existing.email,
+        university: dbUser.university || existing.university,
+        year: dbUser.graduationYear || existing.year,
+        targetRoles: (dbUser.targetRoles && dbUser.targetRoles.length > 0)
+          ? dbUser.targetRoles
+          : existing.targetRoles,
+      };
+      localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(updated));
+    } catch {}
+
+    setProfileLoaded(true);
+  }, [dbUser]);
 
   function toggleTheme() {
     const next = isDark ? 'light' : 'dark';
