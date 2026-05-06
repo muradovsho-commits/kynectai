@@ -17,8 +17,7 @@ export default defineSchema({
     promoCode: v.optional(v.string()),
     onboardingStep: v.optional(v.number()),
     onboardingComplete: v.optional(v.boolean()),
-    // Profile fields (added for cross-session persistence).
-    // All optional so existing user rows remain valid.
+    // Profile fields
     firstName: v.optional(v.string()),
     lastName: v.optional(v.string()),
     university: v.optional(v.string()),
@@ -28,9 +27,31 @@ export default defineSchema({
     recruitYear: v.optional(v.string()),
     targetFirms: v.optional(v.array(v.string())),
     profilePic: v.optional(v.string()),
+    // Stripe / subscription fields. All optional — populated by webhook on
+    // first successful checkout, or remain unset for users who never paid.
+    stripeCustomerId: v.optional(v.string()),
+    stripeSubscriptionId: v.optional(v.string()),
+    // Stripe subscription status: 'active' | 'past_due' | 'canceled' |
+    // 'incomplete' | 'incomplete_expired' | 'trialing' | 'unpaid'. We mirror
+    // Stripe's value verbatim so it's unambiguous what state the sub is in.
+    subscriptionStatus: v.optional(v.string()),
+    // Unix ms timestamp of when the current paid period ends. After this,
+    // either the sub renews (status stays 'active') or transitions to
+    // 'canceled' if cancel_at_period_end was set.
+    subscriptionCurrentPeriodEnd: v.optional(v.number()),
+    // If the user has scheduled a downgrade or cancellation to take effect
+    // at period end, this captures the intent. Cleared by webhook when the
+    // change actually takes effect. Shape:
+    //   { targetPlan: 'pro' | 'free', effectiveAt: number }
+    pendingPlanChange: v.optional(v.object({
+      targetPlan: v.string(),
+      effectiveAt: v.number(),
+    })),
   }).index("by_email", ["email"])
     .index("by_verificationToken", ["verificationToken"])
-    .index("by_resetToken", ["resetToken"]),
+    .index("by_resetToken", ["resetToken"])
+    .index("by_stripeCustomerId", ["stripeCustomerId"])
+    .index("by_stripeSubscriptionId", ["stripeSubscriptionId"]),
 
   outreachMessages: defineTable({
     userId: v.id("users"),
@@ -137,7 +158,7 @@ export default defineSchema({
 
   userProgress: defineTable({
     userId: v.string(),
-    data: v.string(), // JSON blob of all progress data
+    data: v.string(),
     updatedAt: v.number(),
   }).index("by_userId", ["userId"]),
 });
