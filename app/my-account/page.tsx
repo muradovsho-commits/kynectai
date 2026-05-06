@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar";
 import TutorialOverlay from "../components/TutorialOverlay";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useMutation } from 'convex/react';
+import { useMutation, useQuery } from 'convex/react';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../../convex/_generated/api';
 
@@ -23,7 +23,12 @@ export default function MyAccountPage() {
   const router = useRouter();
   const deleteAccountMutation = useMutation(api.auth.deleteAccount);
   const downgradePlanMutation = useMutation(api.auth.downgradePlan);
-  const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
+ const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
+  const [userId, setUserId] = useState('');
+  const dbUser = useQuery(
+    (api as any).users?.getUser,
+    userId ? { userId } : 'skip'
+  ) as any;
   const [userId, setUserId] = useState('');
   const [isDark, setIsDark] = useState(false);
   const [modal, setModal] = useState<{ title: string; desc: string; confirmLabel: string; onConfirm: () => void } | null>(null);
