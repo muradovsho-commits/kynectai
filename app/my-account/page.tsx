@@ -96,13 +96,16 @@ export default function MyAccountPage() {
     try { const bc = localStorage.getItem('offerbell_billing_cycle'); if (bc) setBillingCycle(bc); } catch {}
 
     // Load profile from onboarding localStorage as initial fallback
+    // Load profile from onboarding localStorage as initial fallback. We only
+    // use these values until the DB query below resolves, then DB wins for
+    // every field unconditionally (including empties — the DB is truth).
     try {
       const raw = localStorage.getItem('offerbell_onboarding_profile');
       if (raw) {
         const profile = JSON.parse(raw);
-        setFirstName(profile.firstName || '');
-        setLastName(profile.lastName || '');
-        setEmail(profile.email || '');
+        if (profile.firstName) setFirstName(profile.firstName);
+        if (profile.lastName) setLastName(profile.lastName);
+        if (profile.email) setEmail(profile.email);
         if (profile.university) setSchool(profile.university);
         if (profile.year) {
           const classOf = profile.year.startsWith('Class of') ? profile.year : `Class of ${profile.year}`;
