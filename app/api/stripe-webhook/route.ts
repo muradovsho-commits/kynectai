@@ -122,16 +122,16 @@ export async function POST(request: NextRequest) {
         const plan = tierFromSubscription(sub) || undefined;
         const periodEndMs = (sub as any).current_period_end ? (sub as any).current_period_end * 1000 : undefined;
 
+        // Do NOT clear pendingPlanChange here. Routine updates (cancel_at_
+        // period_end flipping, payment status changes, etc.) must not wipe
+        // the user's intent — the change has not yet taken effect.
+        // The .deleted handler clears it explicitly when a cancel finalizes.
         await convex.mutation((api as any).auth.applyStripeSubscriptionUpdate, {
           stripeSubscriptionId: sub.id,
           subscriptionStatus: sub.status,
           subscriptionCurrentPeriodEnd: periodEndMs,
           plan,
-          // Clear any pending change once the sub reflects it. We err on the
-          // side of clearing — if a stale pendingPlanChange ever sticks
-          // around, the UI lies; clearing on every update is safer than
-          // trying to perfectly diff intent.
-          clearPendingChange: true,
+          clearPendingChange: false,
         });
         console.log('[stripe-webhook]', event.type, sub.id, 'status:', sub.status, 'plan:', plan);
         break;
