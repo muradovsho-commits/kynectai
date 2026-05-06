@@ -64,8 +64,12 @@ const SYNC_KEYS = [
 // Profile data is owned by the users table (firstName, university, etc.) via
 // updateUserProfile, NOT by this JSON-blob sync. Excluding it here prevents
 // the blob from clobbering fresh profile edits with stale cloud data.
-const EXCLUDE_FROM_SYNC = new Set(['offerbell_onboarding_profile']);
-
+const EXCLUDE_FROM_SYNC = new Set([
+  'offerbell_onboarding_profile',
+  'offerbell_plan',
+  'offerbell_plan_activated_at',
+  'offerbell_promo_code',
+]);
 function gatherLocalData(): Record<string, string> {
   const data: Record<string, string> = {};
   for (const key of SYNC_KEYS) {
