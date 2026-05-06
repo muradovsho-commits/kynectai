@@ -267,3 +267,148 @@ export const repairPlan = mutation({
     return { success: true };
   },
 });
+// ─────────────────────────────────────────────────────────────────────────────
+// Stripe webhook mutations. Called only from the Stripe webhook handler at
+// /api/stripe-webhook after signature verification. Each is a small, focused
+// patch — never a multi-field overwrite — so a webhook firing out-of-order
+// can't blow away unrelated state.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Set Stripe IDs and subscription state when a checkout completes or the sub
+// is first created/linked. Looks up the user by userId (passed via Stripe
+// metadata) so we can attribute Stripe events back to a Convex user.
+export const setStripeSubscription = mutation({
+  args: {
+    userId: v.string(),
+    stripeCustomerId: v.string(),
+    stripeSubscriptionId: v.string(),
+    subscriptionStatus: v.string(),
+    subscriptionCurrentPeriodEnd: v.optional(v.number()),
+    plan: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const users = await ctx.db.query("users").collect();
+    const user = users.find((u) => u._id.toString() === args.userId);
+    if (!user) {
+      console.error('[setStripeSubscription] user not found for userId:', args.userId);
+      return { success: false };
+    }
+    const patch: any = {
+      stripeCustomerId: args.stripeCustomerId,
+      stripeSubscriptionId: args.stripeSubscriptionId,
+      subscriptionStatus: args.subscriptionStatus,
+    };
+    if (args.subscriptionCurrentPeriodEnd !== undefined) {
+      patch.subscriptionCurrentPeriodEnd = args.subscriptionCurrentPeriodEnd;
+    }
+    if (args.plan) {
+      patch.plan = args.plan;
+      patch.planActivatedAt = Date.now();
+    }
+    await ctx.db.patch(user._id, patch);
+    return { success: true };
+  },
+});
+
+// Apply a subscription update from Stripe. Used for renewals, status changes
+// (active → past_due → canceled), period end shifts, and tier changes that
+// took effect (when Stripe finishes a scheduled tier swap). Looks up the
+// user by stripeSubscriptionId since the webhook gives us that, not userId.
+export const applyStripeSubscriptionUpdate = mutation({
+  args: {
+    stripeSubscriptionId: v.string(),
+    subscriptionStatus: v.string(),
+    subscriptionCurrentPeriodEnd: v.optional(v.number()),
+    plan: v.optional(v.string()),
+    clearPendingChange: v.optional(v.boolean()),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_stripeSubscriptionId", (q) =>
+        q.eq("stripeSubscriptionId", args.stripeSubscriptionId)
+      )
+      .first();
+    if (!user) {
+      console.error('[applyStripeSubscriptionUpdate] no user for sub:', args.stripeSubscriptionId);
+      return { success: false };
+    }
+    const patch: any = { subscriptionStatus: args.subscriptionStatus };
+    if (args.subscriptionCurrentPeriodEnd !== undefined) {
+      patch.subscriptionCurrentPeriodEnd = args.subscriptionCurrentPeriodEnd;
+    }
+    if (args.plan) {
+      patch.plan = args.plan;
+      patch.planActivatedAt = Date.now();
+    }
+    if (args.clearPendingChange) {
+      patch.pendingPlanChange = undefined;
+    }
+    await ctx.db.patch(user._id, patch);
+    return { success: true };
+  },
+});
+
+// Apply a final cancellation. Stripe fires customer.subscription.deleted when
+// a sub ends (period rollover after cancel_at_period_end, or hard cancel).
+// We flip the user to free and clear the Stripe IDs so a future re-subscribe
+// gets a clean slate.
+export const applyStripeSubscriptionCanceled = mutation({
+  args: {
+    stripeSubscriptionId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_stripeSubscriptionId", (q) =>
+        q.eq("stripeSubscriptionId", args.stripeSubscriptionId)
+      )
+      .first();
+    if (!user) {
+      console.error('[applyStripeSubscriptionCanceled] no user for sub:', args.stripeSubscriptionId);
+      return { success: false };
+    }
+    await ctx.db.patch(user._id, {
+      plan: 'free',
+      subscriptionStatus: 'canceled',
+      pendingPlanChange: undefined,
+    });
+    return { success: true };
+  },
+});
+
+// Record an intent: user has scheduled a downgrade/cancel at period end.
+// The actual plan change happens later via webhook. UI uses this to show
+// "Scheduled to downgrade to X on [date]" until then.
+export const setPendingPlanChange = mutation({
+  args: {
+    userId: v.string(),
+    targetPlan: v.string(),
+    effectiveAt: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const users = await ctx.db.query("users").collect();
+    const user = users.find((u) => u._id.toString() === args.userId);
+    if (!user) return { success: false };
+    await ctx.db.patch(user._id, {
+      pendingPlanChange: {
+        targetPlan: args.targetPlan,
+        effectiveAt: args.effectiveAt,
+      },
+    });
+    return { success: true };
+  },
+});
+
+// Clear a pending plan change (user changed their mind, e.g. clicked "Keep
+// my plan" before the scheduled change took effect).
+export const clearPendingPlanChange = mutation({
+  args: { userId: v.string() },
+  handler: async (ctx, args) => {
+    const users = await ctx.db.query("users").collect();
+    const user = users.find((u) => u._id.toString() === args.userId);
+    if (!user) return { success: false };
+    await ctx.db.patch(user._id, { pendingPlanChange: undefined });
+    return { success: true };
+  },
+});
