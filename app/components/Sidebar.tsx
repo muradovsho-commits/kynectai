@@ -2,6 +2,8 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 
 interface SidebarProps {
   activePage: string;
@@ -26,6 +28,20 @@ export default function Sidebar({ activePage }: SidebarProps) {
     if (typeof window === 'undefined') return 'free';
     return localStorage.getItem('offerbell_plan') || 'free';
   });
+  // Reactive plan from DB. Source of truth — overrides localStorage cache
+  // whenever it resolves. Means buying Elite or downgrading propagates here
+  // without a refresh, and a stale localStorage value can never linger.
+  const sidebarUserId = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
+  const sidebarDbUser = useQuery(
+    (api as any).users?.getUser,
+    sidebarUserId ? { userId: sidebarUserId } : 'skip'
+  ) as any;
+  useEffect(() => {
+    if (!sidebarDbUser || !sidebarDbUser.found) return;
+    const dbPlan = sidebarDbUser.plan || 'free';
+    setUserPlan(dbPlan);
+    try { localStorage.setItem('offerbell_plan', dbPlan); } catch {}
+  }, [sidebarDbUser]);
   const [messagesSent, setMessagesSent] = useState(() => {
     if (typeof window === 'undefined') return 0;
     try { return parseInt(localStorage.getItem('offerbell_messages_sent') || '0', 10); } catch { return 0; }
