@@ -127,17 +127,21 @@ export default function MyAccountPage() {
       if (convexUrl) {
         import('convex/browser').then(({ ConvexHttpClient }) => {
           const client = new ConvexHttpClient(convexUrl);
-          client.query((api as any).users.getUser, { userId: uid }).then((user: any) => {
+         client.query((api as any).users.getUser, { userId: uid }).then((user: any) => {
             if (user && user.found) {
-              if (user.firstName) setFirstName(user.firstName);
-              if (user.lastName) setLastName(user.lastName);
+              // DB is source of truth — apply ALL fields including empties.
+              // Empty in DB means "user cleared this", not "fall back to cache".
+              setFirstName(user.firstName || '');
+              setLastName(user.lastName || '');
               if (user.email) setEmail(user.email);
-              if (user.university) setSchool(user.university);
+              setSchool(user.university || '');
               if (user.graduationYear) {
                 const classOf = user.graduationYear.startsWith('Class of') ? user.graduationYear : `Class of ${user.graduationYear}`;
                 setYear(classOf);
+              } else {
+                setYear('');
               }
-              if (user.targetRoles && user.targetRoles.length > 0) setTargetRole(user.targetRoles[0]);
+              setTargetRole((user.targetRoles && user.targetRoles.length > 0) ? user.targetRoles[0] : '');
               if (user.profilePic) setProfilePic(user.profilePic);
               // Sync DB data back to localStorage so other pages see it
               try {
