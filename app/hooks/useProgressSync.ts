@@ -7,7 +7,6 @@ import { api } from '../../convex/_generated/api';
 // All localStorage keys that should sync across devices/sessions
 const SYNC_KEYS = [
   // Profile & account
-  'offerbell_onboarding_profile',
   'offerbell_plan',
   'offerbell_plan_activated_at',
   'offerbell_plan_migrated_v2',
