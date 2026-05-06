@@ -9,6 +9,17 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}));
     const email = typeof body.email === "string" ? body.email : undefined;
+    // Critical: userId is what the webhook uses to attribute the resulting
+    // subscription back to a Convex user. If this is missing, the user pays
+    // but their plan never updates in our DB. Hard-fail rather than silently
+    // create an orphan subscription.
+    const userId = typeof body.userId === "string" ? body.userId : undefined;
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Missing userId. Please refresh and sign in again." },
+        { status: 400 }
+      );
+    }
     const plan = body.plan === "elite" ? "elite" : "pro";
     const billing = body.billing === "annual" ? "annual" : body.billing === "6month" ? "6month" : "monthly";
 
@@ -45,6 +56,14 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
+      // Metadata flows into the webhook's checkout.session.completed event,
+      // so the webhook can look up the right Convex user and attach the
+      // newly-created subscription. Also stamped on the subscription itself
+      // so future subscription.updated/deleted events still know the user.
+      metadata: { userId, plan, billing },
+      subscription_data: {
+        metadata: { userId, plan, billing },
+      },
       success_url: `${request.nextUrl.origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}&plan=${plan}&billing=${billing}`,
       cancel_url: `${request.nextUrl.origin}/checkout`,
       allow_promotion_codes: true,
