@@ -23,6 +23,8 @@ export default function MyAccountPage() {
   const router = useRouter();
   const deleteAccountMutation = useMutation(api.auth.deleteAccount);
   const downgradePlanMutation = useMutation(api.auth.downgradePlan);
+  const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
+  const [userId, setUserId] = useState('');
   const [isDark, setIsDark] = useState(false);
   const [modal, setModal] = useState<{ title: string; desc: string; confirmLabel: string; onConfirm: () => void } | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
@@ -44,6 +46,7 @@ export default function MyAccountPage() {
   const [promoCode, setPromoCode] = useState<string | null>(null);
   const [billingCycle, setBillingCycle] = useState<string>('monthly');
   const [profilePic, setProfilePic] = useState<string | null>(null);
+  const [profileLoaded, setProfileLoaded] = useState(false);
   const picInputRef = useRef<HTMLInputElement>(null);
   const saveProgressMut = useMutation((api as any).progress?.saveProgress);
 
@@ -92,7 +95,7 @@ export default function MyAccountPage() {
     try { const pc = localStorage.getItem('offerbell_promo_code'); if (pc) setPromoCode(pc); } catch {}
     try { const bc = localStorage.getItem('offerbell_billing_cycle'); if (bc) setBillingCycle(bc); } catch {}
 
-    // Load profile from onboarding localStorage
+    // Load profile from onboarding localStorage as initial fallback
     try {
       const raw = localStorage.getItem('offerbell_onboarding_profile');
       if (raw) {
@@ -100,15 +103,11 @@ export default function MyAccountPage() {
         setFirstName(profile.firstName || '');
         setLastName(profile.lastName || '');
         setEmail(profile.email || '');
-        if (profile.university) {
-          setSchool(profile.university);
-        }
-        // Map onboarding "year" field (e.g. "2026") to display format "Class of 2026"
+        if (profile.university) setSchool(profile.university);
         if (profile.year) {
           const classOf = profile.year.startsWith('Class of') ? profile.year : `Class of ${profile.year}`;
           setYear(classOf);
         }
-        // targetRoles is an array in onboarding; use first one
         if (profile.targetRoles && Array.isArray(profile.targetRoles) && profile.targetRoles.length > 0) {
           setTargetRole(profile.targetRoles[0]);
         }
@@ -116,6 +115,52 @@ export default function MyAccountPage() {
     } catch (e) {}
     // Load profile picture
     try { const pic = localStorage.getItem('offerbell_profile_pic'); if (pic) setProfilePic(pic); } catch {}
+
+    // Now load from DB (source of truth) and overwrite localStorage fallback
+    const uid = localStorage.getItem('offerbell_user_id') || '';
+    setUserId(uid);
+    if (uid) {
+      const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+      if (convexUrl) {
+        import('convex/browser').then(({ ConvexHttpClient }) => {
+          const client = new ConvexHttpClient(convexUrl);
+          client.query((api as any).users.getUser, { userId: uid }).then((user: any) => {
+            if (user && user.found) {
+              if (user.firstName) setFirstName(user.firstName);
+              if (user.lastName) setLastName(user.lastName);
+              if (user.email) setEmail(user.email);
+              if (user.university) setSchool(user.university);
+              if (user.graduationYear) {
+                const classOf = user.graduationYear.startsWith('Class of') ? user.graduationYear : `Class of ${user.graduationYear}`;
+                setYear(classOf);
+              }
+              if (user.targetRoles && user.targetRoles.length > 0) setTargetRole(user.targetRoles[0]);
+              if (user.profilePic) setProfilePic(user.profilePic);
+              // Sync DB data back to localStorage so other pages see it
+              try {
+                const raw = localStorage.getItem('offerbell_onboarding_profile');
+                const existing = raw ? JSON.parse(raw) : {};
+                const updated = {
+                  ...existing,
+                  firstName: user.firstName || existing.firstName,
+                  lastName: user.lastName || existing.lastName,
+                  email: user.email || existing.email,
+                  university: user.university || existing.university,
+                  year: user.graduationYear || existing.year,
+                  targetRoles: (user.targetRoles && user.targetRoles.length > 0) ? user.targetRoles : existing.targetRoles,
+                };
+                localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(updated));
+              } catch {}
+              setProfileLoaded(true);
+            }
+          }).catch(() => { setProfileLoaded(true); });
+        }).catch(() => { setProfileLoaded(true); });
+      } else {
+        setProfileLoaded(true);
+      }
+    } else {
+      setProfileLoaded(true);
+    }
   }, []);
 
   function toggleTheme() {
@@ -157,6 +202,7 @@ export default function MyAccountPage() {
   function autoSave() {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
+      // Save to localStorage (for sidebar and other pages)
       try {
         const raw = localStorage.getItem('offerbell_onboarding_profile');
         const existing = raw ? JSON.parse(raw) : {};
@@ -167,10 +213,23 @@ export default function MyAccountPage() {
           email,
           university: school,
           year: year.replace('Class of ', ''),
-          targetRoles: [targetRole, ...(existing.targetRoles || []).filter((r: string) => r !== targetRole)],
+          targetRoles: [targetRole, ...(existing.targetRoles || []).filter((r: string) => r !== targetRole)].filter(Boolean),
         };
         localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(updated));
       } catch {}
+
+      // Save to Convex DB (source of truth)
+      const uid = userId || localStorage.getItem('offerbell_user_id') || '';
+      if (uid && updateProfileMut) {
+        updateProfileMut({
+          userId: uid,
+          firstName: firstName,
+          lastName: lastName,
+          university: school,
+          graduationYear: year.replace('Class of ', ''),
+          targetRoles: [targetRole].filter(Boolean),
+        }).catch(() => {});
+      }
     }, 600);
   }
 
