@@ -17,6 +17,17 @@ export default defineSchema({
     promoCode: v.optional(v.string()),
     onboardingStep: v.optional(v.number()),
     onboardingComplete: v.optional(v.boolean()),
+    // Profile fields (added for cross-session persistence).
+    // All optional so existing user rows remain valid.
+    firstName: v.optional(v.string()),
+    lastName: v.optional(v.string()),
+    university: v.optional(v.string()),
+    major: v.optional(v.string()),
+    graduationYear: v.optional(v.string()),
+    targetRoles: v.optional(v.array(v.string())),
+    recruitYear: v.optional(v.string()),
+    targetFirms: v.optional(v.array(v.string())),
+    profilePic: v.optional(v.string()),
   }).index("by_email", ["email"])
     .index("by_verificationToken", ["verificationToken"])
     .index("by_resetToken", ["resetToken"]),
