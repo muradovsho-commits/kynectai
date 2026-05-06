@@ -206,10 +206,19 @@ export default function ProfilePage() {
   };
 
   const persistProfile = async (next: ProfileState) => {
+    // Always update the localStorage cache first so the UI is immediately
+    // consistent and offline-tolerant.
     if (typeof window !== "undefined") {
       window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(next));
     }
-    await updateProfile({
+    // Pull the real userId set at signin. If we don't have one (or we have
+    // the legacy "demo-user" placeholder), the mutation no-ops on the server
+    // and we still keep the localStorage cache — so nothing regresses for
+    // users in the legacy state.
+    const uid = typeof window !== "undefined"
+      ? (window.localStorage.getItem("offerbell_user_id") || "")
+      : "";
+    const payload: any = {
       firstName: next.firstName,
       lastName: next.lastName,
       university: next.university,
@@ -218,7 +227,9 @@ export default function ProfilePage() {
       targetRoles: next.targetRoles,
       recruitYear: next.recruitYear,
       targetFirms: next.targetFirms,
-    });
+    };
+    if (uid && uid !== "demo-user") payload.userId = uid;
+    await updateProfile(payload);
   };
 
   const saveSection = async (section: SectionKey) => {
