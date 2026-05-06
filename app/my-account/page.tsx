@@ -204,23 +204,35 @@ export default function MyAccountPage() {
     localStorage.removeItem('offerbell_profile_pic');
   }
 
+ // Mirror form state into a ref so autoSave always reads the freshest values,
+  // independent of React render timing. Without this, saves are one keystroke
+  // behind because onChange's setX schedules a re-render but autoSave runs
+  // before the new state is committed.
+  const valuesRef = useRef({ firstName, lastName, email, school, year, targetRole });
+  useEffect(() => {
+    valuesRef.current = { firstName, lastName, email, school, year, targetRole };
+  }, [firstName, lastName, email, school, year, targetRole]);
+
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function autoSave() {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
-      // Save to localStorage (for sidebar and other pages)
+      const v = valuesRef.current;
+      // Save to localStorage (cache for sidebar / other pages)
       try {
         const raw = localStorage.getItem('offerbell_onboarding_profile');
         const existing = raw ? JSON.parse(raw) : {};
         const updated = {
           ...existing,
-          firstName,
-          lastName,
-          email,
-          university: school,
-          year: year.replace('Class of ', ''),
-          targetRoles: [targetRole, ...(existing.targetRoles || []).filter((r: string) => r !== targetRole)].filter(Boolean),
+          firstName: v.firstName,
+          lastName: v.lastName,
+          email: v.email,
+          university: v.school,
+          year: v.year.replace('Class of ', ''),
+          targetRoles: v.targetRole
+            ? [v.targetRole, ...((existing.targetRoles || []).filter((r: string) => r !== v.targetRole))]
+            : (existing.targetRoles || []),
         };
         localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(updated));
       } catch {}
@@ -230,12 +242,15 @@ export default function MyAccountPage() {
       if (uid && updateProfileMut) {
         updateProfileMut({
           userId: uid,
-          firstName: firstName,
-          lastName: lastName,
-          university: school,
-          graduationYear: year.replace('Class of ', ''),
-          targetRoles: [targetRole].filter(Boolean),
-}).then(()=>console.log('[save] OK')).catch((e:any)=>console.error('[save] FAILED:', e?.message||e, e));      }
+          firstName: v.firstName,
+          lastName: v.lastName,
+          university: v.school,
+          graduationYear: v.year.replace('Class of ', ''),
+          targetRoles: v.targetRole ? [v.targetRole] : [],
+        })
+          .then(() => console.log('[save] OK'))
+          .catch((e: any) => console.error('[save] FAILED:', e?.message || e, e));
+      }
     }, 600);
   }
 
