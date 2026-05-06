@@ -182,11 +182,39 @@ export default function OnboardingPage() {
   const handleFinish = async () => {
     if (!validateStep3()) return;
     try {
-      const payload = { firstName: form.firstName, lastName: form.lastName, university: form.university, major: form.major, graduationYear: form.year, targetRoles: form.targetRoles, recruitYear: form.recruitYear, targetFirms: form.targetFirms };
-      const result = await updateProfile(payload);
+      // Pull the real userId set by signup/signin. This is the source of truth.
+      // Onboarding must NEVER overwrite it with a value returned from the server.
+      let existingUserId: string | undefined;
+      if (typeof window !== "undefined") {
+        const fromStorage = window.localStorage.getItem("offerbell_user_id") || window.localStorage.getItem("userId") || "";
+        // Treat the legacy "demo-user" placeholder as not-set so we don't keep using it.
+        if (fromStorage && fromStorage !== "demo-user") existingUserId = fromStorage;
+      }
+
+      const payload: any = {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        university: form.university,
+        major: form.major,
+        graduationYear: form.year,
+        targetRoles: form.targetRoles,
+        recruitYear: form.recruitYear,
+        targetFirms: form.targetFirms,
+      };
+      if (existingUserId) payload.userId = existingUserId;
+
+      // Persist to the database (when we have a real userId). The mutation is
+      // backwards-compatible: without userId, it no-ops and returns demo-user.
+      await updateProfile(payload);
+
       if (typeof window !== "undefined") {
         const now = Date.now();
-        const profileData: any = { firstName: form.firstName, lastName: form.lastName, university: form.university, major: form.major, year: form.year, targetRoles: form.targetRoles, recruitYear: form.recruitYear, targetFirms: form.targetFirms, email: form.email, plan: selectedPlan };
+        const profileData: any = {
+          firstName: form.firstName, lastName: form.lastName,
+          university: form.university, major: form.major, year: form.year,
+          targetRoles: form.targetRoles, recruitYear: form.recruitYear,
+          targetFirms: form.targetFirms, email: form.email, plan: selectedPlan,
+        };
         if (promoApplied && promoCode.trim()) {
           profileData.promoCode = promoCode.trim();
           profileData.promoApplied = true;
@@ -195,15 +223,14 @@ export default function OnboardingPage() {
           window.localStorage.setItem("offerbell_plan_activated_at", String(now));
           window.localStorage.setItem("offerbell_promo_code", promoCode.trim());
         }
+        // Keep the local cache as a write-through copy. DB is source of truth,
+        // but this keeps the UI snappy on next render before getUser resolves.
         window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profileData));
       }
-      const userId = (result && (result.userId ?? result.id ?? result)) ?? undefined;
-      if (typeof window !== "undefined" && userId) {
-        const id = String(userId);
-        window.localStorage.setItem("offerbell_user_id", id);
-        window.localStorage.setItem("userId", id);
-        document.cookie = `offerbell_user_id=${encodeURIComponent(id)}; path=/; max-age=${60 * 60 * 24 * 30}`;
-      }
+
+      // Intentionally NOT writing offerbell_user_id from the mutation result.
+      // The real userId was set at signup/signin and must remain untouched.
+
       router.push(selectedPlan === "pro" && !promoApplied ? "/checkout" : "/dashboard");
     } catch (error) { console.error("Failed to update profile", error); }
   };
