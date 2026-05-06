@@ -3,12 +3,12 @@ import { v } from "convex/values";
 
 const DEMO_USER_ID = "demo-user";
 
-// Helper: resolve a user record from a string userId (the Convex _id).
-// Returns null if not found or if the id is the legacy demo placeholder.
+// Helper: resolve a user record from a string userId. Callers throughout the
+// app pass plain strings (from localStorage), so we accept that and try a
+// direct .get() first, then fall back to scanning if the id format isn't a
+// valid Convex Id. Returns null for missing / legacy demo placeholder.
 async function findUserByStringId(ctx: any, userId: string | undefined) {
   if (!userId || userId === DEMO_USER_ID) return null;
-  // Convex .get() requires a typed Id; iterate as a fallback for robustness
-  // since callers pass plain strings throughout the app.
   try {
     const direct = await ctx.db.get(userId as any);
     if (direct && (direct as any).email !== undefined) return direct;
@@ -19,11 +19,12 @@ async function findUserByStringId(ctx: any, userId: string | undefined) {
   return all.find((u: any) => u._id.toString() === userId) ?? null;
 }
 
+// Onboarding-finish payload. userId is OPTIONAL so older clients (or the
+// /profile page, which doesn't pass it) continue to work without throwing.
+// When userId is absent or is the legacy demo placeholder, this mutation
+// behaves like the old stub: it returns demo-user and writes nothing.
 export const updateProfile = mutation({
   args: {
-    // userId is OPTIONAL so older clients (without this field) don't crash.
-    // When absent, this mutation behaves like the old stub: it returns the
-    // legacy demo id and writes nothing. Newer clients pass the real userId.
     userId: v.optional(v.string()),
     firstName: v.string(),
     lastName: v.string(),
@@ -41,16 +42,11 @@ export const updateProfile = mutation({
     targetFirms: v.array(v.string()),
   },
   handler: async (ctx, args) => {
-    // Backwards-compat: no userId supplied -> behave like legacy stub.
     if (!args.userId || args.userId === DEMO_USER_ID) {
       return { userId: DEMO_USER_ID };
     }
-
     const user = await findUserByStringId(ctx, args.userId);
-    if (!user) {
-      // Don't throw — keep frontend resilient. Just behave like legacy.
-      return { userId: DEMO_USER_ID };
-    }
+    if (!user) return { userId: DEMO_USER_ID };
 
     await ctx.db.patch(user._id, {
       firstName: args.firstName,
@@ -62,17 +58,51 @@ export const updateProfile = mutation({
       recruitYear: args.recruitYear,
       targetFirms: args.targetFirms,
     });
-
     return { userId: user._id.toString() };
   },
 });
 
-// New mutation: dedicated profile-pic save (separate from main onboarding payload)
-export const updateProfilePic = mutation({
+// Settings-page partial update. All profile fields optional so any subset
+// can be patched without overwriting unrelated fields.
+export const updateUserProfile = mutation({
   args: {
     userId: v.string(),
-    profilePic: v.string(),
+    firstName: v.optional(v.string()),
+    lastName: v.optional(v.string()),
+    university: v.optional(v.string()),
+    major: v.optional(v.string()),
+    graduationYear: v.optional(v.string()),
+    targetRoles: v.optional(v.array(v.string())),
+    recruitYear: v.optional(v.string()),
+    targetFirms: v.optional(v.array(v.string())),
+    profilePic: v.optional(v.string()),
   },
+  handler: async (ctx, args) => {
+    if (!args.userId || args.userId === DEMO_USER_ID) return { success: false };
+    const user = await findUserByStringId(ctx, args.userId);
+    if (!user) return { success: false };
+
+    const patch: any = {};
+    if (args.firstName !== undefined) patch.firstName = args.firstName;
+    if (args.lastName !== undefined) patch.lastName = args.lastName;
+    if (args.university !== undefined) patch.university = args.university;
+    if (args.major !== undefined) patch.major = args.major;
+    if (args.graduationYear !== undefined) patch.graduationYear = args.graduationYear;
+    if (args.targetRoles !== undefined) patch.targetRoles = args.targetRoles;
+    if (args.recruitYear !== undefined) patch.recruitYear = args.recruitYear;
+    if (args.targetFirms !== undefined) patch.targetFirms = args.targetFirms;
+    if (args.profilePic !== undefined) patch.profilePic = args.profilePic;
+    if (Object.keys(patch).length > 0) {
+      await ctx.db.patch(user._id, patch);
+    }
+    return { success: true };
+  },
+});
+
+// Dedicated profile-pic save (kept separate so it can be called without
+// touching other profile fields).
+export const updateProfilePic = mutation({
+  args: { userId: v.string(), profilePic: v.string() },
   handler: async (ctx, args) => {
     const user = await findUserByStringId(ctx, args.userId);
     if (!user) return { success: false };
@@ -81,17 +111,17 @@ export const updateProfilePic = mutation({
   },
 });
 
+// Read user profile. Returns `found: true` with real fields when resolved,
+// `found: false` with empty defaults otherwise. Callers (e.g. my-account)
+// gate hydration on `found`, so empty fallback never overwrites the user's
+// already-rendered values.
 export const getUser = query({
-  args: {
-    userId: v.string(),
-  },
+  args: { userId: v.string() },
   handler: async (ctx, args) => {
     const user = await findUserByStringId(ctx, args.userId);
-
-    // Backwards-compat fallback: if no real user resolved, return the legacy
-    // hardcoded shape so any existing UI rendering against it doesn't crash.
     if (!user) {
       return {
+        found: false,
         id: DEMO_USER_ID,
         firstName: "",
         lastName: "",
@@ -109,8 +139,8 @@ export const getUser = query({
         profilePic: "",
       };
     }
-
     return {
+      found: true,
       id: user._id.toString(),
       firstName: user.firstName ?? "",
       lastName: user.lastName ?? "",
