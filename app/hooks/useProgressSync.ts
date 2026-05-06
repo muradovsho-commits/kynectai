@@ -78,6 +78,7 @@ function gatherLocalData(): Record<string, string> {
 
 function applyCloudData(cloud: Record<string, string>) {
   for (const [key, val] of Object.entries(cloud)) {
+    if (EXCLUDE_FROM_SYNC.has(key)) continue;
     if (val !== null && val !== undefined) {
       localStorage.setItem(key, val);
     }
