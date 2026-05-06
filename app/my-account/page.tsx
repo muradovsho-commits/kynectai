@@ -156,8 +156,12 @@ const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
     if (dbUser.targetRoles && dbUser.targetRoles.length > 0) {
       setTargetRole(dbUser.targetRoles[0]);
     }
-    if (dbUser.profilePic) setProfilePic(dbUser.profilePic);
-
+if (dbUser.profilePic) setProfilePic(dbUser.profilePic);
+    // Plan: DB is source of truth. Always reflect it (including 'free').
+    setUserPlan(dbUser.plan || 'free');
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('offerbell_plan', dbUser.plan || 'free');
+    }
     // Sync DB → localStorage cache once on hydration so sidebar etc. see truth.
     try {
       const raw = localStorage.getItem('offerbell_onboarding_profile');
