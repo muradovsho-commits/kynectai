@@ -105,36 +105,123 @@ export default function CheckoutPage() {
     } catch { setLoading(null); alert("Something went wrong. Please try again."); }
   };
 
-  const handleDowngrade = async () => {
-    if (!confirm('Cancel your subscription and switch to Free? You will keep access until the end of your current billing period.')) return;
+const handleDowngrade = async () => {
+    if (!confirm('Cancel your subscription? You will keep your current plan until the end of your billing period, then switch to Free. You will not be charged again.')) return;
     setLoading('downgrade');
-    const userId = localStorage.getItem('offerbell_user_id');
-    if (userId && downgradePlan) {
-      try { await downgradePlan({ userId }); } catch {}
+    try {
+      const userId = localStorage.getItem('offerbell_user_id');
+      if (!userId) {
+        alert('You must be signed in to cancel.');
+        setLoading(null);
+        return;
+      }
+
+      // Look up the user's stripeSubscriptionId from the DB. Without it we
+      // can't tell Stripe what to cancel — and we MUST tell Stripe, because
+      // they're the ones charging the card.
+      const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+      let subscriptionId: string | undefined;
+      if (convexUrl) {
+        const { ConvexHttpClient } = await import('convex/browser');
+        const client = new ConvexHttpClient(convexUrl);
+        const user = await client.query((api as any).users.getUser, { userId });
+        subscriptionId = user?.stripeSubscriptionId || undefined;
+      }
+      if (!subscriptionId) {
+        alert('We could not find an active subscription on your account. If you believe this is a mistake, please contact support.');
+        setLoading(null);
+        return;
+      }
+
+      const res = await fetch('/api/stripe-cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, subscriptionId }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        alert(`Could not cancel: ${data.error || 'Unknown error'}. Please try again or contact support.`);
+        setLoading(null);
+        return;
+      }
+
+      // Do NOT touch localStorage.offerbell_plan or any plan flags here —
+      // the user keeps their current plan until period end. The webhook
+      // will flip them to free when Stripe finalizes the cancellation.
+      const when = data.effectiveAt ? new Date(data.effectiveAt).toLocaleDateString() : 'the end of your billing period';
+      alert(`Your subscription is scheduled to cancel on ${when}. You'll keep full access until then.`);
+      window.location.href = '/my-account';
+    } catch (e: any) {
+      console.error('[downgrade] failed:', e);
+      alert('Something went wrong. Please try again or contact support.');
+      setLoading(null);
     }
-    localStorage.setItem('offerbell_plan', 'free');
-    try { const p = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}'); p.plan = 'free'; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(p)); } catch {}
-    localStorage.removeItem('offerbell_plan_activated_at');
-    localStorage.removeItem('offerbell_billing_cycle');
-    window.location.href = '/dashboard';
   };
 
-  const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
+const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
     if (from === to) return;
-    // Downgrading from elite to pro
-    if (from === 'elite' && to === 'pro') {
-      if (!confirm('Switch to Pro? The change takes effect at your next billing cycle. You will keep Elite access until then.')) return;
+
+    // Going from a paid plan to another paid plan: route through Stripe.
+    // Upgrades happen instantly with proration; downgrades are scheduled.
+    if ((from === 'pro' || from === 'elite') && (to === 'pro' || to === 'elite')) {
+      const isUpgrade = from === 'pro' && to === 'elite';
+      const message = isUpgrade
+        ? 'Upgrade to Elite now? You will be charged the prorated difference for your current billing period.'
+        : 'Switch to Pro? The change takes effect at your next billing cycle — you will keep Elite access until then.';
+      if (!confirm(message)) return;
+
       setLoading('switch');
-      const userId = localStorage.getItem('offerbell_user_id');
-      if (userId && changePlan) {
-        try { await changePlan({ userId, plan: 'pro' }); } catch {}
+      try {
+        const userId = localStorage.getItem('offerbell_user_id');
+        if (!userId) { alert('You must be signed in.'); setLoading(null); return; }
+
+        const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+        let subscriptionId: string | undefined;
+        if (convexUrl) {
+          const { ConvexHttpClient } = await import('convex/browser');
+          const client = new ConvexHttpClient(convexUrl);
+          const user = await client.query((api as any).users.getUser, { userId });
+          subscriptionId = user?.stripeSubscriptionId || undefined;
+        }
+        if (!subscriptionId) {
+          // No active subscription — fall through to a fresh checkout. This
+          // covers users who somehow have a paid `plan` in DB without a
+          // Stripe subscription (legacy promo accounts, manual edits, etc.).
+          handleCheckout(to);
+          return;
+        }
+
+        const res = await fetch('/api/stripe-change-plan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, subscriptionId, targetPlan: to }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          alert(`Could not change plan: ${data.error || 'Unknown error'}.`);
+          setLoading(null);
+          return;
+        }
+
+        if (data.immediate) {
+          // Upgrade took effect now. Webhook will catch up the DB.
+          alert(`You're now on ${to === 'elite' ? 'Elite' : 'Pro'}.`);
+        } else {
+          const when = data.effectiveAt ? new Date(data.effectiveAt).toLocaleDateString() : 'the end of your current period';
+          alert(`Your switch to ${to === 'elite' ? 'Elite' : 'Pro'} is scheduled for ${when}. You'll keep your current plan until then.`);
+        }
+        // Don't touch localStorage plan keys. The webhook handles DB state.
+        // Sidebar/my-account will reflect changes via their reactive query.
+        window.location.href = '/my-account';
+      } catch (e: any) {
+        console.error('[switch] failed:', e);
+        alert('Something went wrong. Please try again.');
+        setLoading(null);
       }
-      localStorage.setItem('offerbell_plan', 'pro');
-      try { const p = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}'); p.plan = 'pro'; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(p)); } catch {}
-      window.location.href = '/dashboard';
       return;
     }
-    // Upgrading
+
+    // Going from free → paid: send through fresh Stripe Checkout.
     handleCheckout(to);
   };
 
