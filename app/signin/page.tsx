@@ -55,6 +55,7 @@ function SigninContent() {
         }
 
         // ── Restore cloud progress data ──
+        let cloudProfile: Record<string, any> | null = null;
         try {
           const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
           if (convexUrl) {
@@ -63,14 +64,15 @@ function SigninContent() {
             if (cloudResult && cloudResult.data) {
               const cloud: Record<string, string> = JSON.parse(cloudResult.data);
               for (const [key, val] of Object.entries(cloud)) {
-                // Restore all progress data except plan/profile (DB owns those)
-                if (key && val && key !== 'offerbell_user_id' && key !== 'offerbell_plan' && key !== 'offerbell_onboarding_profile') {
-                  localStorage.setItem(key, val);
+                if (key && val && key !== 'offerbell_user_id' && key !== 'offerbell_plan') {
+                  if (key === 'offerbell_onboarding_profile') {
+                    try { cloudProfile = JSON.parse(val); } catch {}
+                  } else {
+                    localStorage.setItem(key, val);
+                  }
                 }
               }
-              // One-time repair: if the DB has a LOWER plan than cloud
-              // (caused by old upgradePlan bug that hardcoded 'pro'),
-              // fix the DB to match what the user actually purchased.
+              // One-time repair: if cloud has higher plan than DB
               const cloudPlan = cloud['offerbell_plan'] || '';
               const planRank: Record<string, number> = { free: 0, pro: 1, elite: 2 };
               if (cloudPlan && (planRank[cloudPlan] || 0) > (planRank[finalPlan] || 0)) {
@@ -83,27 +85,28 @@ function SigninContent() {
           console.error('Cloud restore failed:', e);
         }
 
-        // ── Set the final plan (DB value, or repaired value) ──
+        // ── Set the final plan ──
         window.localStorage.setItem("offerbell_plan", finalPlan);
 
-        // Create onboarding profile
+        // ── Build onboarding profile: cloud data first, then fill gaps from DB ──
         const nm = result?.name || "";
         const pts = nm.split(" ");
         const onboardingDone = result?.onboardingComplete || false;
-        window.localStorage.setItem("offerbell_onboarding_profile", JSON.stringify({
-          firstName: pts[0] || "",
-          lastName: pts.slice(1).join(" ") || "",
-          university: "",
-          targetRoles: [],
-          targetFirms: [],
-          major: "",
-          year: "",
-          recruitYear: "",
+        const profile = {
+          firstName: cloudProfile?.firstName || pts[0] || "",
+          lastName: cloudProfile?.lastName || pts.slice(1).join(" ") || "",
+          university: cloudProfile?.university || "",
+          targetRoles: cloudProfile?.targetRoles || [],
+          targetFirms: cloudProfile?.targetFirms || [],
+          major: cloudProfile?.major || "",
+          year: cloudProfile?.year || "",
+          recruitYear: cloudProfile?.recruitYear || "",
           email: email,
           plan: finalPlan,
-          tutorialComplete: onboardingDone,
-        }));
-        if (onboardingDone) {
+          tutorialComplete: onboardingDone || cloudProfile?.tutorialComplete || false,
+        };
+        window.localStorage.setItem("offerbell_onboarding_profile", JSON.stringify(profile));
+        if (onboardingDone || profile.tutorialComplete) {
           window.localStorage.setItem("offerbell_tutorial_complete", "true");
         }
 

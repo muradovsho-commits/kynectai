@@ -96,18 +96,17 @@ export default function MyAccountPage() {
         setFirstName(profile.firstName || '');
         setLastName(profile.lastName || '');
         setEmail(profile.email || '');
-        if (profile.university && SCHOOLS.includes(profile.university)) {
+        if (profile.university) {
           setSchool(profile.university);
         }
         // Map onboarding "year" field (e.g. "2026") to display format "Class of 2026"
         if (profile.year) {
           const classOf = profile.year.startsWith('Class of') ? profile.year : `Class of ${profile.year}`;
-          if (YEARS.includes(classOf)) setYear(classOf);
+          setYear(classOf);
         }
-        // targetRoles is an array in onboarding; use first one if it matches
+        // targetRoles is an array in onboarding; use first one
         if (profile.targetRoles && Array.isArray(profile.targetRoles) && profile.targetRoles.length > 0) {
-          const first = profile.targetRoles[0];
-          if (VERTICALS.includes(first)) setTargetRole(first);
+          setTargetRole(profile.targetRoles[0]);
         }
       }
     } catch (e) {}
@@ -310,6 +309,7 @@ export default function MyAccountPage() {
               <label style={{fontSize:12,fontWeight:700,color:'var(--text)'}}>School</label>
               <select style={inp} value={school} onChange={e=>{setSchool(e.target.value);autoSave();}}>
                 <option value="">Select school...</option>
+                {school && !SCHOOLS.includes(school) && <option key={school}>{school}</option>}
                 {SCHOOLS.map(s=><option key={s}>{s}</option>)}
               </select>
             </div>
@@ -317,6 +317,7 @@ export default function MyAccountPage() {
               <label style={{fontSize:12,fontWeight:700,color:'var(--text)'}}>Graduation Year</label>
               <select style={inp} value={year} onChange={e=>{setYear(e.target.value);autoSave();}}>
                 <option value="">Select year...</option>
+                {year && !YEARS.includes(year) && <option key={year}>{year}</option>}
                 {YEARS.map(y=><option key={y}>{y}</option>)}
               </select>
             </div>
@@ -324,6 +325,7 @@ export default function MyAccountPage() {
               <label style={{fontSize:12,fontWeight:700,color:'var(--text)'}}>Target Role</label>
               <select style={inp} value={targetRole} onChange={e=>{setTargetRole(e.target.value);autoSave();}}>
                 <option value="">Select role...</option>
+                {targetRole && !VERTICALS.includes(targetRole) && <option key={targetRole}>{targetRole}</option>}
                 {VERTICALS.map(v=><option key={v}>{v}</option>)}
               </select>
             </div>
