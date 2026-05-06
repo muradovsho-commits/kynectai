@@ -228,8 +228,7 @@ export default function MyAccountPage() {
           university: school,
           graduationYear: year.replace('Class of ', ''),
           targetRoles: [targetRole].filter(Boolean),
-        }).catch(() => {});
-      }
+}).then(()=>console.log('[save] OK')).catch((e:any)=>console.error('[save] FAILED:', e?.message||e, e));      }
     }, 600);
   }
 
