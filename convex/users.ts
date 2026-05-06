@@ -112,9 +112,9 @@ export const updateProfilePic = mutation({
 });
 
 // Read user profile. Returns `found: true` with real fields when resolved,
-// `found: false` with empty defaults otherwise. Callers (e.g. my-account)
-// gate hydration on `found`, so empty fallback never overwrites the user's
-// already-rendered values.
+// `found: false` with empty defaults otherwise. Now also returns the Stripe
+// subscription fields so the cancel/switch UI can work without a separate
+// query.
 export const getUser = query({
   args: { userId: v.string() },
   handler: async (ctx, args) => {
@@ -137,6 +137,11 @@ export const getUser = query({
         recruitYear: "",
         targetFirms: [] as string[],
         profilePic: "",
+        stripeCustomerId: "",
+        stripeSubscriptionId: "",
+        subscriptionStatus: "",
+        subscriptionCurrentPeriodEnd: null as number | null,
+        pendingPlanChange: null as { targetPlan: string; effectiveAt: number } | null,
       };
     }
     return {
@@ -156,6 +161,11 @@ export const getUser = query({
       recruitYear: user.recruitYear ?? "",
       targetFirms: user.targetFirms ?? [],
       profilePic: user.profilePic ?? "",
+      stripeCustomerId: user.stripeCustomerId ?? "",
+      stripeSubscriptionId: user.stripeSubscriptionId ?? "",
+      subscriptionStatus: user.subscriptionStatus ?? "",
+      subscriptionCurrentPeriodEnd: user.subscriptionCurrentPeriodEnd ?? null,
+      pendingPlanChange: user.pendingPlanChange ?? null,
     };
   },
 });
