@@ -31,9 +31,15 @@ export async function POST(request: NextRequest) {
     // Record the user's intent in our DB so the UI can show "Scheduled to
     // cancel on [date]". The webhook will clear this when the actual change
     // takes effect.
-    const periodEndMs = (updated as any).current_period_end
-      ? (updated as any).current_period_end * 1000
-      : Date.now();
+   // In newer Stripe API versions, current_period_end lives on the
+    // subscription item, not the subscription. Try the item first, fall
+    // back to the subscription object, then a sane default.
+    const item = (updated as any).items?.data?.[0];
+    const periodEndSec =
+      item?.current_period_end ??
+      (updated as any).current_period_end ??
+      null;
+    const periodEndMs = periodEndSec ? periodEndSec * 1000 : Date.now();
 
     const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
     await convex.mutation((api as any).auth.setPendingPlanChange, {
