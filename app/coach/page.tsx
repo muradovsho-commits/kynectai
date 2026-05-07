@@ -479,10 +479,14 @@ export default function CoachPage() {
         let wk = raw ? JSON.parse(raw) : { week, count: 0 };
         if (wk.week !== week) wk = { week, count: 0 };
         if (wk.count >= 1) {
-          setMessages(prev => [...prev,
-            { role: 'user', content: text.trim(), time: Date.now() },
-            { role: 'assistant', content: 'You\'ve used your free coach message this week. Resets every Monday.<br/><br/><a href="/checkout" style="display:inline-block;padding:8px 20px;border-radius:8px;background:#0a0a0a;color:#fff;font-size:13px;font-weight:700;text-decoration:none;font-family:Sora,sans-serif">Upgrade to Pro</a>', time: Date.now() }
-          ]);
+          // Only show the limit message once, not on every spam attempt
+          const lastMsg = messages[messages.length - 1];
+          if (!lastMsg || !lastMsg.content.includes('Upgrade to Pro')) {
+            setMessages(prev => [...prev,
+              { role: 'user', content: text.trim(), time: Date.now() },
+              { role: 'assistant', content: 'You\'ve used your free coach message this week. Resets every Monday.<br/><br/><a href="/checkout" style="display:inline-block;padding:8px 20px;border-radius:8px;background:#0a0a0a;color:#fff;font-size:13px;font-weight:700;text-decoration:none;font-family:Sora,sans-serif">Upgrade to Pro</a>', time: Date.now() }
+            ]);
+          }
           return;
         }
       } catch {}
