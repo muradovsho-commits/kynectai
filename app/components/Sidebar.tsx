@@ -2,18 +2,29 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useQuery } from 'convex/react';
+import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../../convex/_generated/api';
 
 interface SidebarProps {
   activePage: string;
 }
 
+// Reads localStorage for the user's plan as the primary source. Once per
+// mount, also fetches from the DB via a one-time HTTP call to refresh the
+// cache — this catches plan changes from webhooks (cancellations, tier
+// changes, payment failures) without using a live useQuery subscription
+// that re-receives the entire user record on every system-wide write.
+//
+// Trade-off: a plan change that lands while the user is sitting on a
+// non-/my-account page will not appear until they navigate. Plan changes
+// happen rarely and almost always involve a navigation anyway, so this
+// trades a tiny UX edge case for a roughly 10× bandwidth reduction.
+
 export default function Sidebar({ activePage }: SidebarProps) {
   // Dark mode: read from DOM, not state. The blocking <script> in layout.tsx
   // already sets data-theme="dark" before React hydrates, so the DOM is the
   // source of truth. Using React state causes flicker on navigation.
-  const [darkKey, setDarkKey] = useState(0); // force re-render after toggle
+  const [darkKey, setDarkKey] = useState(0);
   const isDark = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'dark';
 
   const [userName, setUserName] = useState(() => {
@@ -28,20 +39,32 @@ export default function Sidebar({ activePage }: SidebarProps) {
     if (typeof window === 'undefined') return 'free';
     return localStorage.getItem('offerbell_plan') || 'free';
   });
-  // Reactive plan from DB. Source of truth — overrides localStorage cache
-  // whenever it resolves. Means buying Elite or downgrading propagates here
-  // without a refresh, and a stale localStorage value can never linger.
-  const sidebarUserId = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
-  const sidebarDbUser = useQuery(
-    (api as any).users?.getUser,
-    sidebarUserId ? { userId: sidebarUserId } : 'skip'
-  ) as any;
+
+  // One-time DB plan refresh on mount. No live subscription. Updates the
+  // localStorage cache so subsequent mounts on other pages render instantly.
   useEffect(() => {
-    if (!sidebarDbUser || !sidebarDbUser.found) return;
-    const dbPlan = sidebarDbUser.plan || 'free';
-    setUserPlan(dbPlan);
-    try { localStorage.setItem('offerbell_plan', dbPlan); } catch {}
-  }, [sidebarDbUser]);
+    if (typeof window === 'undefined') return;
+    const uid = localStorage.getItem('offerbell_user_id');
+    if (!uid) return;
+    const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+    if (!url) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const client = new ConvexHttpClient(url);
+        const u = await client.query((api as any).users.getUser, { userId: uid });
+        if (cancelled) return;
+        if (!u || !u.found) return;
+        const dbPlan = u.plan || 'free';
+        setUserPlan(dbPlan);
+        try { localStorage.setItem('offerbell_plan', dbPlan); } catch {}
+      } catch {
+        // Network error / not signed in — keep using the localStorage cache.
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
   const [messagesSent, setMessagesSent] = useState(() => {
     if (typeof window === 'undefined') return 0;
     try { return parseInt(localStorage.getItem('offerbell_messages_sent') || '0', 10); } catch { return 0; }
@@ -54,7 +77,6 @@ export default function Sidebar({ activePage }: SidebarProps) {
   const picInputRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
 
-  // Side effects only - state is already initialized synchronously above
   useEffect(() => {
     // One-time migration for old pro users
     try {
@@ -95,14 +117,13 @@ export default function Sidebar({ activePage }: SidebarProps) {
     const next = isDark ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('offerbell-theme', next);
-    setDarkKey(k => k + 1); // force re-render to pick up new DOM attribute
+    setDarkKey(k => k + 1);
   }
 
   function handlePicUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) return;
-    // Resize to 128x128 to keep localStorage small
     const reader = new FileReader();
     reader.onload = () => {
       const img = new Image();
@@ -112,7 +133,6 @@ export default function Sidebar({ activePage }: SidebarProps) {
         canvas.height = 128;
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
-        // Center-crop to square
         const size = Math.min(img.width, img.height);
         const sx = (img.width - size) / 2;
         const sy = (img.height - size) / 2;
@@ -130,13 +150,11 @@ export default function Sidebar({ activePage }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile hamburger button - hidden on desktop via both inline + CSS */}
       <button className="mobile-hamburger" onClick={() => setMobileOpen(true)} type="button" aria-label="Open menu"
         style={{ display: 'none' }}>
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
 
-      {/* Mobile overlay */}
       {mobileOpen && <div className="mobile-overlay" onClick={() => setMobileOpen(false)} />}
 
       <aside className={`sidebar${mobileOpen ? ' mobile-open' : ''}`}>
@@ -179,11 +197,8 @@ export default function Sidebar({ activePage }: SidebarProps) {
           <div><div style={{fontSize:13,fontWeight:600,color:'var(--text)'}}>{displayName}</div><div style={{fontSize:11,color: userPlan === 'elite' ? '#2563eb' : userPlan === 'pro' ? '#16a34a' : 'var(--text-3)',fontWeight: userPlan !== 'free' ? 600 : 400}}>{userPlan === 'elite' ? 'Elite plan' : userPlan === 'pro' ? 'Pro plan' : 'Free plan'}</div></div>
         </div>
         <style dangerouslySetInnerHTML={{__html: `
-          /* Completely hide scrollbars */
           .sidebar::-webkit-scrollbar { display: none !important; }
           .sidebar { -ms-overflow-style: none !important; scrollbar-width: none !important; overflow-y: hidden !important; }
-          
-          /* Unconditionally compact spacing to ensure everything fits */
           .sidebar .sidebar-logo { padding: 14px 16px 12px !important; }
           .sidebar .sidebar-user { padding: 8px 16px !important; }
           .sidebar .nav { padding: 4px 10px !important; }
