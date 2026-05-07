@@ -127,58 +127,62 @@ export default function DashboardPage() {
     } catch {}
   }, []);
 
-  // Load activity data - refresh on mount AND on window focus
+ // Load activity data - refresh on mount AND on window focus.
+  // All date math uses LOCAL time, not UTC. The previous version mixed
+  // toISOString() (UTC date) with getDay()/getDate() (local), which caused
+  // off-by-one streak errors after ~6pm Central — opening the dashboard at
+  // night logged "tomorrow's" date in UTC and skipped a real day.
   const loadStats = useCallback(() => {
+    const localDateStr = (d: Date) =>
+      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
     // Account creation date
     let created = localStorage.getItem('offerbell_account_created');
     if (!created) {
-      created = new Date().toISOString().split('T')[0];
+      created = localDateStr(new Date());
       localStorage.setItem('offerbell_account_created', created);
     }
     setAccountCreatedAt(created);
 
     // Streak / activity tracking
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const todayDate = new Date();
+      const today = localDateStr(todayDate);
       const raw = localStorage.getItem('offerbell_activity_days');
       let days: string[] = raw ? JSON.parse(raw) : [];
-      // Log today if not already logged
       if (!days.includes(today)) {
         days.push(today);
         // Keep only last 90 days for calendar view
-        const cutoff = new Date(Date.now() - 90 * 864e5).toISOString().split('T')[0];
+        const cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() - 90);
+        const cutoff = localDateStr(cutoffDate);
         days = days.filter(d => d >= cutoff);
         localStorage.setItem('offerbell_activity_days', JSON.stringify(days));
       }
       setActivityDaysSet(new Set(days));
-      // Build this-week array (Mon-Sun)
-      const now = new Date();
-      const dayOfWeek = now.getDay(); // 0=Sun
+
+      // Build this-week array (Mon-Sun) using local dates throughout.
+      const dayOfWeek = todayDate.getDay(); // 0=Sun
       const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-      const monday = new Date(now);
-      monday.setDate(now.getDate() - mondayOffset);
+      const monday = new Date(todayDate);
+      monday.setDate(todayDate.getDate() - mondayOffset);
       monday.setHours(0, 0, 0, 0);
       const weekDays: boolean[] = [];
       for (let i = 0; i < 7; i++) {
         const d = new Date(monday);
         d.setDate(monday.getDate() + i);
-        const ds = d.toISOString().split('T')[0];
-        weekDays.push(days.includes(ds));
+        weekDays.push(days.includes(localDateStr(d)));
       }
       setStreakDays(weekDays);
-      // Calculate consecutive streak ending today
-      const sorted = [...days].sort().reverse();
+
+      // Consecutive streak ending today.
+      const dayset = new Set(days);
       let streak = 0;
-      let check = new Date();
+      const check = new Date(todayDate);
       check.setHours(0, 0, 0, 0);
-      for (const d of sorted) {
-        const ds = check.toISOString().split('T')[0];
-        if (d === ds) {
-          streak++;
-          check.setDate(check.getDate() - 1);
-        } else if (d < ds) {
-          break;
-        }
+      while (dayset.has(localDateStr(check))) {
+        streak++;
+        check.setDate(check.getDate() - 1);
       }
       setCurrentStreak(streak);
     } catch {}
@@ -253,11 +257,14 @@ export default function DashboardPage() {
 
         {/* ── Activity Streak ── */}
         {(() => {
-          const dow = new Date().getDay();
+          const localDateStr = (d: Date) =>
+            `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+          const now = new Date();
+          const dow = now.getDay();
           const todayIdx = dow === 0 ? 6 : dow - 1;
-          const today = new Date().toISOString().split('T')[0];
+          const today = localDateStr(now);
 
-          // Build 90-day history for the expanded view
+          // Build 90-day history for the expanded view (local dates)
           const allDays: { date: string; active: boolean; isToday: boolean; isFuture: boolean; day: number; month: number; year: number }[] = [];
           const histStart = new Date();
           histStart.setHours(0,0,0,0);
@@ -265,7 +272,7 @@ export default function DashboardPage() {
           for (let i = 0; i < 90; i++) {
             const d = new Date(histStart);
             d.setDate(histStart.getDate() + i);
-            const ds = d.toISOString().split('T')[0];
+            const ds = localDateStr(d);
             allDays.push({ date: ds, active: activityDaysSet.has(ds), isToday: ds === today, isFuture: ds > today, day: d.getDate(), month: d.getMonth(), year: d.getFullYear() });
           }
 
