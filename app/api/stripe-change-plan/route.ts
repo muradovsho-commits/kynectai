@@ -84,7 +84,14 @@ export async function POST(request: NextRequest) {
     // Downgrade — schedule the change at period end. We do this via a
     // Subscription Schedule: phase 1 is the current sub, phase 2 starts at
     // current_period_end with the new price.
-    const periodEnd = (sub as any).current_period_end as number;
+    // Downgrade — schedule the change at period end. We do this via a
+    // Subscription Schedule: phase 1 is the current sub, phase 2 starts at
+    // current_period_end with the new price.
+    // In newer Stripe API versions, current_period_end lives on the
+    // subscription item, not the subscription object. Try item first.
+    const periodEnd = (currentItem as any).current_period_end
+      ?? (sub as any).current_period_end
+      ?? null;
     if (!periodEnd) {
       return NextResponse.json({ error: "Subscription has no current_period_end" }, { status: 400 });
     }
