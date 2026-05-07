@@ -84,9 +84,6 @@ export async function POST(request: NextRequest) {
     // Downgrade — schedule the change at period end. We do this via a
     // Subscription Schedule: phase 1 is the current sub, phase 2 starts at
     // current_period_end with the new price.
-    // Downgrade — schedule the change at period end. We do this via a
-    // Subscription Schedule: phase 1 is the current sub, phase 2 starts at
-    // current_period_end with the new price.
     // In newer Stripe API versions, current_period_end lives on the
     // subscription item, not the subscription object. Try item first.
     const periodEnd = (currentItem as any).current_period_end
@@ -94,6 +91,28 @@ export async function POST(request: NextRequest) {
       ?? null;
     if (!periodEnd) {
       return NextResponse.json({ error: "Subscription has no current_period_end" }, { status: 400 });
+    }
+
+    // Pull any active discounts on the current subscription so we can carry
+    // them onto the new phases. Without this, schedule phases drop the
+    // existing coupon/promo and the user gets billed full price at the next
+    // invoice — bad for promo'd founder accounts and any future discounted
+    // customers.
+    const subDiscounts: { coupon?: string; promotion_code?: string }[] = [];
+    const rawDiscounts = (sub as any).discounts;
+    if (Array.isArray(rawDiscounts)) {
+      for (const d of rawDiscounts) {
+        const discountObj = typeof d === 'string' ? null : d;
+        const couponId = discountObj?.coupon?.id || (typeof d === 'object' && d?.coupon ? (typeof d.coupon === 'string' ? d.coupon : d.coupon.id) : undefined);
+        const promoId = discountObj?.promotion_code?.id || (typeof d === 'object' && d?.promotion_code ? (typeof d.promotion_code === 'string' ? d.promotion_code : d.promotion_code.id) : undefined);
+        if (couponId) subDiscounts.push({ coupon: couponId });
+        else if (promoId) subDiscounts.push({ promotion_code: promoId });
+      }
+    }
+    // Older Stripe shape: top-level `discount` (singular). Keep as a fallback.
+    const legacyDiscount = (sub as any).discount;
+    if (subDiscounts.length === 0 && legacyDiscount?.coupon?.id) {
+      subDiscounts.push({ coupon: legacyDiscount.coupon.id });
     }
 
     // If a schedule already exists for this sub, release it first to start clean.
@@ -111,9 +130,10 @@ export async function POST(request: NextRequest) {
 
     await stripe.subscriptionSchedules.update(schedule.id, {
       end_behavior: 'release',
-     phases: [
+      phases: [
         // Phase 1: current state, ends at period end. Re-uses the existing
-        // Product and matches the current price exactly.
+        // Product and matches the current price exactly. Carries existing
+        // discounts so the user isn't double-charged before the swap.
         {
           items: [{
             price_data: {
@@ -132,14 +152,15 @@ export async function POST(request: NextRequest) {
           start_date: (schedule.phases[0]?.start_date) as any,
           end_date: periodEnd,
           proration_behavior: 'none',
+          discounts: subDiscounts.length > 0 ? subDiscounts : undefined,
         } as any,
         // Phase 2: new tier kicks in at period end. Stripe Subscription
         // Schedules don't accept `product_data` for inline product creation
         // — they need an existing Product ID. We reuse the current sub's
-        // Product (since both Pro and Elite are inline-created products
-        // anyway) and just change the unit_amount and a name update.
-        // The webhook's tierFromAmount() resolves the actual tier on the
-        // resulting subscription.updated event by reading unit_amount.
+        // Product and just change the unit_amount. The webhook's
+        // tierFromAmount() resolves the actual tier on the resulting
+        // subscription.updated event by reading unit_amount.
+        // Discounts carry over so promos persist past tier changes.
         {
           items: [{
             price_data: {
@@ -153,6 +174,7 @@ export async function POST(request: NextRequest) {
             quantity: 1,
           }],
           proration_behavior: 'none',
+          discounts: subDiscounts.length > 0 ? subDiscounts : undefined,
           metadata: { userId, plan: targetPlan, billing },
         } as any,
       ],
