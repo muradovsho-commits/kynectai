@@ -50,6 +50,8 @@ const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
   const [promoCode, setPromoCode] = useState<string | null>(null);
   const [billingCycle, setBillingCycle] = useState<string>('monthly');
   const [profilePic, setProfilePic] = useState<string | null>(null);
+  const [pendingPlanChange, setPendingPlanChange] = useState<{ targetPlan: string; effectiveAt: number } | null>(null);
+  const [resumingPlan, setResumingPlan] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
   const picInputRef = useRef<HTMLInputElement>(null);
   const saveProgressMut = useMutation((api as any).progress?.saveProgress);
@@ -162,6 +164,8 @@ if (dbUser.profilePic) setProfilePic(dbUser.profilePic);
     if (typeof window !== 'undefined') {
       localStorage.setItem('offerbell_plan', dbUser.plan || 'free');
     }
+    setPendingPlanChange(dbUser.pendingPlanChange ?? null);
+    // Sync DB → localStorage cache once on hydration so sidebar etc. see truth.
     // Sync DB → localStorage cache once on hydration so sidebar etc. see truth.
     try {
       const raw = localStorage.getItem('offerbell_onboarding_profile');
@@ -215,6 +219,43 @@ if (dbUser.profilePic) setProfilePic(dbUser.profilePic);
   function removePic() {
     setProfilePic(null);
     localStorage.removeItem('offerbell_profile_pic');
+  }
+  async function handleKeepPlan() {
+    if (!pendingPlanChange) return;
+    setResumingPlan(true);
+    try {
+      const uid = localStorage.getItem('offerbell_user_id') || '';
+      const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+      let subscriptionId: string | undefined;
+      if (convexUrl) {
+        const { ConvexHttpClient } = await import('convex/browser');
+        const client = new ConvexHttpClient(convexUrl);
+        const u = await client.query((api as any).users.getUser, { userId: uid });
+        subscriptionId = u?.stripeSubscriptionId || undefined;
+      }
+      if (!uid || !subscriptionId) {
+        alert('Could not undo the change. Please contact support.');
+        setResumingPlan(false);
+        return;
+      }
+      const res = await fetch('/api/stripe-resume', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: uid, subscriptionId }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        alert(`Could not undo: ${data.error || 'Unknown error'}.`);
+        setResumingPlan(false);
+        return;
+      }
+      setPendingPlanChange(null);
+      alert('Your plan will continue as normal. No changes will take effect.');
+    } catch (e) {
+      console.error('[keep-plan] failed:', e);
+      alert('Something went wrong. Please try again.');
+      setResumingPlan(false);
+    }
   }
 
  // Mirror form state into a ref so autoSave always reads the freshest values,
@@ -388,7 +429,51 @@ if (dbUser.profilePic) setProfilePic(dbUser.profilePic);
             ))}
           </div>
         </div>
-
+{/* Pending plan-change banner. Shown only when the user has
+            scheduled a cancel/downgrade that hasn't taken effect yet. */}
+        {pendingPlanChange && (
+          <div style={{
+            marginBottom: 24,
+            padding: '14px 18px',
+            borderRadius: 12,
+            background: 'var(--surface-2, #fff7ed)',
+            border: '1.5px solid #fb923c',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 16,
+            flexWrap: 'wrap',
+          }}>
+            <div style={{ flex: 1, minWidth: 220 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
+                {pendingPlanChange.targetPlan === 'free'
+                  ? 'Your subscription is scheduled to cancel'
+                  : `Your plan is scheduled to switch to ${pendingPlanChange.targetPlan === 'pro' ? 'Pro' : pendingPlanChange.targetPlan}`}
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--text-2, #636160)' }}>
+                Effective {new Date(pendingPlanChange.effectiveAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}. You'll keep your current plan until then.
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleKeepPlan}
+              disabled={resumingPlan}
+              style={{
+                padding: '8px 16px',
+                borderRadius: 8,
+                border: '1.5px solid var(--border-2)',
+                background: 'var(--bg)',
+                color: 'var(--text)',
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: resumingPlan ? 'not-allowed' : 'pointer',
+                opacity: resumingPlan ? 0.6 : 1,
+                fontFamily: "'Sora', sans-serif",
+              }}
+            >
+              {resumingPlan ? 'Working…' : 'Keep my plan'}
+            </button>
+          </div>
+        )}
         {/* Profile Form */}
         <div data-tutorial="profile-section" style={{marginBottom:28}}>
           <div style={{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:14,display:'flex',alignItems:'center',gap:8}}>Profile<div style={{flex:1,height:1,background:'var(--border)'}}/></div>
