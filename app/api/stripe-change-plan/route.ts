@@ -13,9 +13,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-02-25.clover" as any,
 });
 
-// Same price tables as /api/checkout — kept in this file to keep the route
-// self-contained. If you ever migrate to fixed Stripe Price IDs, this is
-// the second place to update (the first is /api/checkout/route.ts).
 const PRICES: Record<string, Record<string, { amount: number; name: string; desc: string; interval: 'month' | 'year'; intervalCount: number }>> = {
   pro: {
     monthly: { amount: 2000, name: "OfferBell Pro - Monthly", desc: "Pro plan, monthly billing", interval: "month", intervalCount: 1 },
@@ -45,9 +42,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing userId, subscriptionId, or targetPlan" }, { status: 400 });
     }
 
-    // Look up the current sub to find its billing cadence and current item
-    // — we need both to construct the right new price object.
-    const sub = await stripe.subscriptions.retrieve(subscriptionId);
+    // Retrieve the sub WITH discounts expanded so we get full discount
+    // objects rather than bare ID strings. Without expansion, sub.discounts
+    // is an array of di_xxx strings and our extraction silently returns
+    // empty — which is why prior downgrades dropped the founder coupon.
+    const sub = await stripe.subscriptions.retrieve(subscriptionId, {
+      expand: ['discounts'],
+    });
     const currentItem = sub.items?.data?.[0];
     if (!currentItem) {
       return NextResponse.json({ error: "Subscription has no items" }, { status: 400 });
@@ -57,12 +58,11 @@ export async function POST(request: NextRequest) {
     const billing = billingFromInterval(currentInterval, currentIntervalCount);
     const newPriceCfg = PRICES[targetPlan][billing];
 
-    // Determine direction.
     const currentAmount = currentItem.price?.unit_amount || 0;
     const isUpgrade = newPriceCfg.amount > currentAmount;
 
     if (isUpgrade) {
-      // Instant upgrade. Stripe prorates and charges the difference now.
+      // Instant upgrade. Stripe prorates and charges the diff.
       await stripe.subscriptions.update(subscriptionId, {
         items: [{
           id: currentItem.id,
@@ -76,16 +76,10 @@ export async function POST(request: NextRequest) {
         proration_behavior: 'always_invoice',
         metadata: { userId, plan: targetPlan, billing },
       });
-      // Don't touch DB — webhook will reflect the new plan via the
-      // resulting customer.subscription.updated event.
       return NextResponse.json({ success: true, immediate: true });
     }
 
-    // Downgrade — schedule the change at period end. We do this via a
-    // Subscription Schedule: phase 1 is the current sub, phase 2 starts at
-    // current_period_end with the new price.
-    // In newer Stripe API versions, current_period_end lives on the
-    // subscription item, not the subscription object. Try item first.
+    // Downgrade — schedule the change at period end.
     const periodEnd = (currentItem as any).current_period_end
       ?? (sub as any).current_period_end
       ?? null;
@@ -93,37 +87,43 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Subscription has no current_period_end" }, { status: 400 });
     }
 
-    // Pull any active discounts on the current subscription so we can carry
-    // them onto the new phases. Without this, schedule phases drop the
-    // existing coupon/promo and the user gets billed full price at the next
-    // invoice — bad for promo'd founder accounts and any future discounted
-    // customers.
+    // Extract discounts from the current sub. With `expand: ['discounts']`
+    // each entry is a Discount object with `coupon` (full object) and
+    // optionally `promotion_code` (string ID). We prefer promotion_code
+    // when present so the "via this promo" link is preserved on the new
+    // phases, otherwise fall back to the raw coupon ID.
     const subDiscounts: { coupon?: string; promotion_code?: string }[] = [];
     const rawDiscounts = (sub as any).discounts;
     if (Array.isArray(rawDiscounts)) {
       for (const d of rawDiscounts) {
-        const discountObj = typeof d === 'string' ? null : d;
-        const couponId = discountObj?.coupon?.id || (typeof d === 'object' && d?.coupon ? (typeof d.coupon === 'string' ? d.coupon : d.coupon.id) : undefined);
-        const promoId = discountObj?.promotion_code?.id || (typeof d === 'object' && d?.promotion_code ? (typeof d.promotion_code === 'string' ? d.promotion_code : d.promotion_code.id) : undefined);
-        if (couponId) subDiscounts.push({ coupon: couponId });
-        else if (promoId) subDiscounts.push({ promotion_code: promoId });
+        if (!d || typeof d === 'string') continue; // unexpanded — skip
+        const promoId = typeof d.promotion_code === 'string'
+          ? d.promotion_code
+          : d.promotion_code?.id;
+        const couponId = typeof d.coupon === 'string'
+          ? d.coupon
+          : d.coupon?.id;
+        if (promoId) subDiscounts.push({ promotion_code: promoId });
+        else if (couponId) subDiscounts.push({ coupon: couponId });
       }
     }
-    // Older Stripe shape: top-level `discount` (singular). Keep as a fallback.
+    // Legacy fallback: older Stripe API used a singular `discount` field.
     const legacyDiscount = (sub as any).discount;
     if (subDiscounts.length === 0 && legacyDiscount?.coupon?.id) {
       subDiscounts.push({ coupon: legacyDiscount.coupon.id });
     }
+    console.log('[stripe-change-plan] Carrying discounts onto schedule:', subDiscounts);
 
-    // If a schedule already exists for this sub, release it first to start clean.
-    const existingSchedules = await stripe.subscriptionSchedules.list({ customer: typeof sub.customer === 'string' ? sub.customer : sub.customer.id, limit: 10 });
+    // Release any existing schedule on this sub so we start clean.
+    const customerId = typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
+    const existingSchedules = await stripe.subscriptionSchedules.list({ customer: customerId, limit: 10 });
     for (const sched of existingSchedules.data) {
       if (sched.subscription === subscriptionId && (sched.status === 'active' || sched.status === 'not_started')) {
         try { await stripe.subscriptionSchedules.release(sched.id); } catch {}
       }
     }
 
-    // Create a schedule from the existing subscription, then update its phases.
+    // Create a schedule from the existing sub, then update its phases.
     const schedule = await stripe.subscriptionSchedules.create({
       from_subscription: subscriptionId,
     });
@@ -131,9 +131,7 @@ export async function POST(request: NextRequest) {
     await stripe.subscriptionSchedules.update(schedule.id, {
       end_behavior: 'release',
       phases: [
-        // Phase 1: current state, ends at period end. Re-uses the existing
-        // Product and matches the current price exactly. Carries existing
-        // discounts so the user isn't double-charged before the swap.
+        // Phase 1: current state until period end.
         {
           items: [{
             price_data: {
@@ -154,13 +152,11 @@ export async function POST(request: NextRequest) {
           proration_behavior: 'none',
           discounts: subDiscounts.length > 0 ? subDiscounts : undefined,
         } as any,
-        // Phase 2: new tier kicks in at period end. Stripe Subscription
-        // Schedules don't accept `product_data` for inline product creation
-        // — they need an existing Product ID. We reuse the current sub's
-        // Product and just change the unit_amount. The webhook's
-        // tierFromAmount() resolves the actual tier on the resulting
-        // subscription.updated event by reading unit_amount.
-        // Discounts carry over so promos persist past tier changes.
+        // Phase 2: new tier kicks in at period end. Stripe's schedule API
+        // doesn't accept inline `product_data` here — it needs an existing
+        // Product ID. We reuse the current sub's Product and just change
+        // unit_amount. The webhook reads unit_amount to determine the
+        // resulting tier. Discounts carry over so promos persist.
         {
           items: [{
             price_data: {
@@ -181,8 +177,6 @@ export async function POST(request: NextRequest) {
       metadata: { userId, targetPlan, billing },
     });
 
-    // Record the pending change in our DB so the UI shows "Scheduled to
-    // switch to Pro on [date]" until the webhook fires.
     const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
     await convex.mutation((api as any).auth.setPendingPlanChange, {
       userId,
