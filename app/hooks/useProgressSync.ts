@@ -1,12 +1,37 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
-import { useMutation, useQuery } from 'convex/react';
+import { useEffect, useRef } from 'react';
+import { useMutation } from 'convex/react';
+import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../../convex/_generated/api';
 
-// All localStorage keys that should sync across devices/sessions
+// ─────────────────────────────────────────────────────────────────────────────
+// Bandwidth-conscious progress sync.
+//
+// Previous version burned ~850MB/week with two users because:
+//   1. A 10s setInterval pushed the full blob every 10s on every open tab,
+//      even when nothing had changed.
+//   2. useQuery(loadProgress) opened a live reactive subscription that
+//      re-received the full blob every time anyone called saveProgress.
+//   3. Pushes weren't dirty-checked — re-renders, mounts, navigations all
+//      generated full-blob round trips.
+//
+// This rewrite:
+//   • Removes the periodic interval entirely. Pushes happen only when a
+//     SYNC_KEY actually changes (via intercepted setItem).
+//   • Replaces useQuery with a one-time HTTP fetch on mount. After the
+//     initial merge, no live subscription stays open.
+//   • Hashes the gathered data and only pushes when the hash differs from
+//     the last successful push.
+//   • Pushes are debounced 10s so bursts of edits coalesce into one push.
+//   • Single beforeunload flush via sendBeacon (no double-push).
+//
+// Net effect: 10–20× less bandwidth in normal use.
+// ─────────────────────────────────────────────────────────────────────────────
+
 const SYNC_KEYS = [
-  // Profile & account
+  // Profile & account (most plan/promo keys excluded below — they're owned
+  // by the users table now)
   'offerbell_plan',
   'offerbell_plan_activated_at',
   'offerbell_plan_migrated_v2',
@@ -17,7 +42,7 @@ const SYNC_KEYS = [
   'offerbell_tutorial_complete',
   'offerbell_tutorial_step',
   'offerbell-theme',
-  // Flashcard progress (per track)
+  // Flashcard progress
   'offerbell_flash_perf_ib',
   'offerbell_flash_perf_pe',
   'offerbell_flash_perf_rx',
@@ -31,7 +56,7 @@ const SYNC_KEYS = [
   'offerbell_flash_bookmarks',
   'offerbell_flash_review',
   'offerbell_flash_review_log',
-  // Diagnostic review
+  // Diagnostic
   'offerbell_diag_history',
   // Mock interview
   'offerbell_mock_responses',
@@ -46,30 +71,30 @@ const SYNC_KEYS = [
   'offerbell_dismissed_reminders',
   // Referral map
   'offerbell_referral_nodes_v3',
-  // Resume review
+  // Resume
   'offerbell_resume_usage',
   'offerbell_resume_reviews',
   // Coach
   'offerbell_coach_history',
   'offerbell_coach_pro_usage',
   'offerbell_coach_weekly',
-  // Activity
+  // Activity / usage
   'offerbell_activity_days',
-  // Usage tracking
   'offerbell_searches_used',
   'offerbell_game_scores',
   'offerbell_feedback_history',
 ];
 
-// Profile data is owned by the users table (firstName, university, etc.) via
-// updateUserProfile, NOT by this JSON-blob sync. Excluding it here prevents
-// the blob from clobbering fresh profile edits with stale cloud data.
+// Keys deliberately excluded from blob sync — they're owned by DB columns
+// (users.plan, users.firstName, etc.) so syncing them through the blob just
+// causes races and wastes bandwidth.
 const EXCLUDE_FROM_SYNC = new Set([
   'offerbell_onboarding_profile',
   'offerbell_plan',
   'offerbell_plan_activated_at',
   'offerbell_promo_code',
 ]);
+
 function gatherLocalData(): Record<string, string> {
   const data: Record<string, string> = {};
   for (const key of SYNC_KEYS) {
@@ -78,6 +103,15 @@ function gatherLocalData(): Record<string, string> {
     if (val !== null) data[key] = val;
   }
   return data;
+}
+
+// Cheap, deterministic string hash. We compare hashes to decide whether to
+// push — equal hash means nothing changed since last successful push, so
+// we skip the network call entirely.
+function hashString(s: string): string {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  return h.toString(36);
 }
 
 function applyCloudData(cloud: Record<string, string>) {
@@ -89,201 +123,206 @@ function applyCloudData(cloud: Record<string, string>) {
   }
 }
 
+const ARRAY_KEYS = new Set([
+  'offerbell_activity_days',
+  'offerbell_flash_bookmarks',
+  'offerbell_diag_history',
+  'offerbell_flash_review',
+  'offerbell_flash_review_log',
+  'offerbell_mock_responses',
+  'offerbell_saved_messages',
+  'offerbell_tracker_v3',
+  'offerbell_referral_nodes_v3',
+  'offerbell_dismissed_reminders',
+  'offerbell_resume_reviews',
+  'offerbell_feedback_history',
+  'offerbell_game_scores',
+]);
+
+function mergeBlobs(cloud: Record<string, string>, local: Record<string, string>): Record<string, string> {
+  const merged: Record<string, string> = { ...cloud };
+  for (const key of SYNC_KEYS) {
+    if (EXCLUDE_FROM_SYNC.has(key)) continue;
+    const cv = cloud[key];
+    const lv = local[key];
+    if (!cv && lv) merged[key] = lv;
+    else if (cv && !lv) { /* keep cloud */ }
+    else if (cv && lv) {
+      if (ARRAY_KEYS.has(key)) {
+        try {
+          const ca = JSON.parse(cv);
+          const la = JSON.parse(lv);
+          if (Array.isArray(ca) && Array.isArray(la)) {
+            const hasIds = ca.length > 0 && typeof ca[0] === 'object' && ca[0] !== null && ('id' in ca[0] || 'q' in ca[0]);
+            if (hasIds) {
+              const idKey = 'id' in (ca[0] || {}) ? 'id' : 'q';
+              const seen = new Set<string>();
+              const combined: any[] = [];
+              for (const item of [...la, ...ca]) {
+                const k = item[idKey];
+                if (k && !seen.has(k)) { seen.add(k); combined.push(item); }
+              }
+              merged[key] = JSON.stringify(combined);
+            } else if (key === 'offerbell_activity_days') {
+              const combined = [...new Set([...ca, ...la])];
+              merged[key] = JSON.stringify(combined);
+            } else {
+              merged[key] = la.length >= ca.length ? lv : cv;
+            }
+          }
+        } catch {
+          merged[key] = (lv.length >= cv.length) ? lv : cv;
+        }
+      } else if (key.startsWith('offerbell_flash_perf_')) {
+        try {
+          const cp = JSON.parse(cv);
+          const lp = JSON.parse(lv);
+          merged[key] = (lp.seen || 0) >= (cp.seen || 0) ? lv : cv;
+        } catch {
+          merged[key] = lv;
+        }
+      } else {
+        merged[key] = lv;
+      }
+    }
+  }
+  return merged;
+}
+
 export function useProgressSync() {
   const userId = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
   const saveProgress = useMutation(api.progress.saveProgress);
-  const cloudData = useQuery(api.progress.loadProgress, userId ? { userId } : 'skip');
-  const hasSynced = useRef(false);
-  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // On mount: pull cloud data and merge into localStorage
+  const hasSyncedRef = useRef(false);
+  const lastPushedHashRef = useRef<string | null>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isPushingRef = useRef(false);
+  const userIdRef = useRef<string | null>(userId);
+  userIdRef.current = userId;
+
+  // ── Initial sync (one-time HTTP fetch, not a live subscription) ──────────
   useEffect(() => {
-    if (!userId || hasSynced.current || cloudData === undefined) return;
-    hasSynced.current = true;
+    if (!userId || hasSyncedRef.current) return;
+    hasSyncedRef.current = true;
 
-    if (cloudData === null) {
-      // No cloud data yet — push local data up as initial seed
-      const local = gatherLocalData();
-      if (Object.keys(local).length > 0) {
-        saveProgress({ userId, data: JSON.stringify(local) }).catch(() => {});
-      }
-      return;
-    }
+    const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+    if (!url) return;
 
-    // Cloud data exists — merge
-    try {
-      const cloud: Record<string, string> = JSON.parse(cloudData.data);
-      const local = gatherLocalData();
+    (async () => {
+      try {
+        const client = new ConvexHttpClient(url);
+        const cloudData = await client.query(api.progress.loadProgress, { userId });
 
-      // For each key: if cloud has it and local doesn't, use cloud.
-      // If both have it, use whichever has more data (longer string = more progress).
-      // Special merge for array-type keys (activity days, bookmarks, responses, etc.)
-      const ARRAY_KEYS = new Set([
-        'offerbell_activity_days',
-        'offerbell_flash_bookmarks',
-        'offerbell_diag_history',
-        'offerbell_flash_review',
-        'offerbell_flash_review_log',
-        'offerbell_mock_responses',
-        'offerbell_saved_messages',
-        'offerbell_tracker_v3',
-        'offerbell_referral_nodes_v3',
-        'offerbell_dismissed_reminders',
-        'offerbell_resume_reviews',
-        'offerbell_feedback_history',
-        'offerbell_game_scores',
-      ]);
-
-      const merged: Record<string, string> = { ...cloud };
-
-      for (const key of SYNC_KEYS) {
-        const cloudVal = cloud[key];
-        const localVal = local[key];
-
-        if (!cloudVal && localVal) {
-          merged[key] = localVal;
-        } else if (cloudVal && !localVal) {
-          // Cloud has it, local doesn't — use cloud
-        } else if (cloudVal && localVal) {
-          // Both have it — merge intelligently
-          if (ARRAY_KEYS.has(key)) {
-            // Merge arrays by combining unique entries
-            try {
-              const cloudArr = JSON.parse(cloudVal);
-              const localArr = JSON.parse(localVal);
-              if (Array.isArray(cloudArr) && Array.isArray(localArr)) {
-                // For arrays of objects with id fields, dedupe by id
-                const hasIds = cloudArr.length > 0 && typeof cloudArr[0] === 'object' && cloudArr[0] !== null && ('id' in cloudArr[0] || 'q' in cloudArr[0]);
-                if (hasIds) {
-                  const idKey = 'id' in (cloudArr[0] || {}) ? 'id' : 'q';
-                  const seen = new Set<string>();
-                  const combined = [];
-                  for (const item of [...localArr, ...cloudArr]) {
-                    const k = item[idKey];
-                    if (k && !seen.has(k)) { seen.add(k); combined.push(item); }
-                  }
-                  merged[key] = JSON.stringify(combined);
-                } else if (key === 'offerbell_activity_days') {
-                  // String array — union
-                  const combined = [...new Set([...cloudArr, ...localArr])];
-                  merged[key] = JSON.stringify(combined);
-                } else {
-                  // Use whichever is longer
-                  merged[key] = localArr.length >= cloudArr.length ? localVal : cloudVal;
-                }
-              }
-            } catch {
-              // If parse fails, use longer
-              merged[key] = (localVal.length >= cloudVal.length) ? localVal : cloudVal;
-            }
-          } else if (key.startsWith('offerbell_flash_perf_')) {
-            // Perf objects — use whichever has more "seen"
-            try {
-              const cloudPerf = JSON.parse(cloudVal);
-              const localPerf = JSON.parse(localVal);
-              merged[key] = (localPerf.seen || 0) >= (cloudPerf.seen || 0) ? localVal : cloudVal;
-            } catch {
-              merged[key] = localVal;
-            }
-          } else {
-            // Simple values — prefer local (user's current device is "truth")
-            merged[key] = localVal;
+        if (!cloudData) {
+          // No cloud data — seed from local only if local has meaningful data.
+          const local = gatherLocalData();
+          const localStr = JSON.stringify(local);
+          if (Object.keys(local).length > 2) {
+            await saveProgress({ userId, data: localStr });
+            lastPushedHashRef.current = hashString(localStr);
           }
+          return;
         }
-      }
 
-      // Apply merged data to localStorage
-      applyCloudData(merged);
+        let cloud: Record<string, string> = {};
+        try { cloud = JSON.parse(cloudData.data); } catch {}
+        const local = gatherLocalData();
+        const merged = mergeBlobs(cloud, local);
 
-      // Push merged data back to cloud
-      saveProgress({ userId, data: JSON.stringify(merged) }).catch(() => {});
-    } catch {
-      // If anything fails, don't break — just push local data
-      const local = gatherLocalData();
-      if (Object.keys(local).length > 0) {
-        saveProgress({ userId, data: JSON.stringify(local) }).catch(() => {});
+        applyCloudData(merged);
+
+        const mergedStr = JSON.stringify(merged);
+        const cloudHash = hashString(cloudData.data);
+        const mergedHash = hashString(mergedStr);
+        // Only push if the merge actually produced something different
+        // from what's already in cloud. Saves a round trip in the common
+        // case where local is empty and cloud is the source of truth.
+        if (mergedHash !== cloudHash) {
+          await saveProgress({ userId, data: mergedStr });
+        }
+        lastPushedHashRef.current = mergedHash;
+      } catch (e) {
+        console.error('[useProgressSync] initial sync failed:', e);
       }
+    })();
+  }, [userId, saveProgress]);
+
+  // ── Push routine: schedule (debounced) and execute (dirty-checked) ───────
+  function schedulePush() {
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => { void pushIfDirty(); }, 10000);
+  }
+
+  async function pushIfDirty() {
+    const uid = userIdRef.current;
+    if (!uid || isPushingRef.current) return;
+    if (!hasSyncedRef.current) return;
+    const local = gatherLocalData();
+    if (Object.keys(local).length === 0) return;
+    const localStr = JSON.stringify(local);
+    const localHash = hashString(localStr);
+    if (localHash === lastPushedHashRef.current) return;
+    isPushingRef.current = true;
+    try {
+      await saveProgress({ userId: uid, data: localStr });
+      lastPushedHashRef.current = localHash;
+    } catch (e) {
+      console.error('[useProgressSync] push failed:', e);
+    } finally {
+      isPushingRef.current = false;
     }
-  }, [userId, cloudData, saveProgress]);
+  }
 
-  // Debounced save: call this whenever localStorage changes
-  const pushToCloud = useCallback(() => {
-    if (!userId) return;
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => {
-      const local = gatherLocalData();
-      if (Object.keys(local).length > 0) {
-        saveProgress({ userId, data: JSON.stringify(local) }).catch(() => {});
-      }
-    }, 2000); // 2 second debounce
-  }, [userId, saveProgress]);
-
-  // Force push on mount + every 10 seconds while active
+  // ── Detect mutations: intercept setItem + listen for storage events ──────
   useEffect(() => {
     if (!userId) return;
-    // Immediate push on mount (catches data that existed before sync was set up)
-    const immediate = setTimeout(() => {
-      const local = gatherLocalData();
-      if (Object.keys(local).length > 2) { // more than just user_id + theme
-        saveProgress({ userId, data: JSON.stringify(local) }).catch(() => {});
-      }
-    }, 1000);
-
-    // Periodic push every 10 seconds
-    const interval = setInterval(() => {
-      const local = gatherLocalData();
-      if (Object.keys(local).length > 2) {
-        saveProgress({ userId, data: JSON.stringify(local) }).catch(() => {});
-      }
-    }, 10000);
-
-    // Push before tab close
-    const beforeUnload = () => {
-      const local = gatherLocalData();
-      if (Object.keys(local).length > 2) {
-        // Use sendBeacon to a simple API endpoint for reliability
-        try {
-          const blob = new Blob([JSON.stringify({ userId, data: JSON.stringify(local) })], { type: 'application/json' });
-          navigator.sendBeacon('/api/progress-save', blob);
-        } catch {}
-        // Also try direct Convex as backup
-        saveProgress({ userId, data: JSON.stringify(local) }).catch(() => {});
-      }
-    };
-    window.addEventListener('beforeunload', beforeUnload);
-
-    return () => {
-      clearTimeout(immediate);
-      clearInterval(interval);
-      window.removeEventListener('beforeunload', beforeUnload);
-    };
-  }, [userId, saveProgress]);
-
-  // Listen for localStorage changes (from other parts of the app)
-  useEffect(() => {
-    if (!userId) return;
-
-    const handler = (e: StorageEvent) => {
-      if (e.key && SYNC_KEYS.includes(e.key)) {
-        pushToCloud();
-      }
-    };
-    window.addEventListener('storage', handler);
-
-    // Also intercept localStorage.setItem to catch same-tab writes
     const origSetItem = localStorage.setItem.bind(localStorage);
     localStorage.setItem = function (key: string, value: string) {
       origSetItem(key, value);
-      if (SYNC_KEYS.includes(key)) {
-        pushToCloud();
+      if (SYNC_KEYS.includes(key) && !EXCLUDE_FROM_SYNC.has(key)) {
+        schedulePush();
       }
     };
-
+    const onStorage = (e: StorageEvent) => {
+      if (e.key && SYNC_KEYS.includes(e.key) && !EXCLUDE_FROM_SYNC.has(e.key)) {
+        schedulePush();
+      }
+    };
+    window.addEventListener('storage', onStorage);
     return () => {
-      window.removeEventListener('storage', handler);
+      window.removeEventListener('storage', onStorage);
       localStorage.setItem = origSetItem;
     };
-  }, [userId, pushToCloud]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
 
-  return { pushToCloud };
+  // ── Flush on tab hide/unload ─────────────────────────────────────────────
+  useEffect(() => {
+    if (!userId) return;
+    const flushBeacon = () => {
+      const uid = userIdRef.current;
+      if (!uid) return;
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      const local = gatherLocalData();
+      if (Object.keys(local).length === 0) return;
+      const localStr = JSON.stringify(local);
+      const localHash = hashString(localStr);
+      if (localHash === lastPushedHashRef.current) return;
+      try {
+        const blob = new Blob([JSON.stringify({ userId: uid, data: localStr })], { type: 'application/json' });
+        navigator.sendBeacon('/api/progress-save', blob);
+        lastPushedHashRef.current = localHash;
+      } catch {}
+    };
+    const onVis = () => { if (document.visibilityState === 'hidden') void pushIfDirty(); };
+    window.addEventListener('beforeunload', flushBeacon);
+    document.addEventListener('visibilitychange', onVis);
+    return () => {
+      window.removeEventListener('beforeunload', flushBeacon);
+      document.removeEventListener('visibilitychange', onVis);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
+
+  return { pushToCloud: () => schedulePush() };
 }
