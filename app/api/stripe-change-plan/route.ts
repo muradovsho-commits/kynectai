@@ -111,8 +111,9 @@ export async function POST(request: NextRequest) {
 
     await stripe.subscriptionSchedules.update(schedule.id, {
       end_behavior: 'release',
-      phases: [
-        // Phase 1: current state, ends at period end.
+     phases: [
+        // Phase 1: current state, ends at period end. Re-uses the existing
+        // Product and matches the current price exactly.
         {
           items: [{
             price_data: {
@@ -132,12 +133,20 @@ export async function POST(request: NextRequest) {
           end_date: periodEnd,
           proration_behavior: 'none',
         } as any,
-        // Phase 2: new tier, kicks in at period end.
+        // Phase 2: new tier kicks in at period end. Stripe Subscription
+        // Schedules don't accept `product_data` for inline product creation
+        // — they need an existing Product ID. We reuse the current sub's
+        // Product (since both Pro and Elite are inline-created products
+        // anyway) and just change the unit_amount and a name update.
+        // The webhook's tierFromAmount() resolves the actual tier on the
+        // resulting subscription.updated event by reading unit_amount.
         {
           items: [{
             price_data: {
               currency: 'usd',
-              product_data: { name: newPriceCfg.name, description: newPriceCfg.desc },
+              product: typeof currentItem.price?.product === 'string'
+                ? currentItem.price.product
+                : (currentItem.price?.product as any)?.id,
               unit_amount: newPriceCfg.amount,
               recurring: { interval: newPriceCfg.interval, interval_count: newPriceCfg.intervalCount },
             } as any,
