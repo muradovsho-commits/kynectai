@@ -61,21 +61,32 @@ function SignupContent() {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", background: "#0a0a0a" }}>
-      <div style={{ width: 420, background: "#0a0a0a", color: "#fff", padding: "48px 40px", display: "flex", flexDirection: "column", justifyContent: "space-between", flexShrink: 0 }}>
-        <div>
-          <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, letterSpacing: "-.5px", marginBottom: 64 }}><a href="/" style={{ color: "#fff", textDecoration: "none" }}>OfferBell<em style={{ fontStyle: "italic" }}>.</em></a></div>
-          <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 38, lineHeight: 1.15, letterSpacing: "-1px", marginBottom: 16 }}>Start your recruiting <em style={{ fontStyle: "italic" }}>journey.</em></div>
-          <div style={{ fontSize: 14, color: "rgba(255,255,255,.45)", lineHeight: 1.7, marginBottom: 40 }}>Join thousands of finance students using OfferBell to land offers at top firms.</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            {["AI-powered outreach that gets replies", "Track every networking conversation", "Interview prep for IB, PE, consulting & more", "Give Back Initiative - mentorship coming soon"].map((t, i) => (
-              <div key={i} style={{ display: "flex", gap: 10, alignItems: "center", fontSize: 13, color: "rgba(255,255,255,.55)" }}>
-                <svg width="16" height="16" fill="none" stroke="#16a34a" strokeWidth="2" viewBox="0 0 24 24" style={{ flexShrink: 0 }}><polyline points="20 6 9 17 4 12"/></svg>
-                {t}
-              </div>
-            ))}
+      <div style={{ width: 480, position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=960&h=1200&fit=crop&crop=faces" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.3) saturate(0.8)' }} />
+        <div style={{ position: 'relative', zIndex: 1, padding: "48px 44px", display: "flex", flexDirection: "column", justifyContent: "space-between", height: '100%' }}>
+          <div>
+            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, letterSpacing: "-.5px", marginBottom: 64 }}><a href="/" style={{ color: "#fff", textDecoration: "none" }}>OfferBell<em style={{ fontStyle: "italic" }}>.</em></a></div>
+            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 42, lineHeight: 1.1, letterSpacing: "-1.2px", color: '#fff', marginBottom: 16 }}>Start your recruiting <em style={{ fontStyle: "italic" }}>journey.</em></div>
+            <div style={{ fontSize: 14, color: "rgba(255,255,255,.55)", lineHeight: 1.7, maxWidth: 340, marginBottom: 36 }}>Join thousands of finance students using OfferBell to land offers at top firms.</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {["AI-powered outreach that gets replies", "Track every networking conversation", "Interview prep for IB, PE, consulting & more", "Resume review, mock interviews, and coaching"].map((t, i) => (
+                <div key={i} style={{ display: "flex", gap: 10, alignItems: "center", fontSize: 13, color: "rgba(255,255,255,.6)" }}>
+                  <div style={{ width: 20, height: 20, borderRadius: 5, background: 'rgba(22,163,74,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="12" height="12" fill="none" stroke="#22c55e" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  {t}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '16px 18px', marginBottom: 20 }}>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', fontStyle: 'italic', lineHeight: 1.6, marginBottom: 8 }}>"OfferBell helped me go from confused to confident."</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>— Wharton '25</div>
+            </div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,.25)" }}>officialofferbell@gmail.com</div>
           </div>
         </div>
-        <div style={{ fontSize: 12, color: "rgba(255,255,255,.2)" }}>officialofferbell@gmail.com</div>
       </div>
 
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", background: "#f8f8f7", padding: 40 }}>
