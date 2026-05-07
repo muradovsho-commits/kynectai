@@ -172,11 +172,11 @@ export default function Sidebar({ activePage }: SidebarProps) {
                 displayInitials
               )}
             </div>
-            {(userPlan === 'pro' || userPlan === 'elite') && <div style={{position:'absolute',bottom:-1,right:-1,width:12,height:12,borderRadius:'50%',background: userPlan === 'elite' ? '#7c3aed' : '#16a34a',border:'2px solid var(--surface)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+            {(userPlan === 'pro' || userPlan === 'elite') && <div style={{position:'absolute',bottom:-1,right:-1,width:12,height:12,borderRadius:'50%',background: userPlan === 'elite' ? '#2563eb' : '#16a34a',border:'2px solid var(--surface)',display:'flex',alignItems:'center',justifyContent:'center'}}>
               <svg width="7" height="7" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
             </div>}
           </div>
-          <div><div style={{fontSize:13,fontWeight:600,color:'var(--text)'}}>{displayName}</div><div style={{fontSize:11,color: userPlan === 'elite' ? '#7c3aed' : userPlan === 'pro' ? '#16a34a' : 'var(--text-3)',fontWeight: userPlan !== 'free' ? 600 : 400}}>{userPlan === 'elite' ? 'Elite plan' : userPlan === 'pro' ? 'Pro plan' : 'Free plan'}</div></div>
+          <div><div style={{fontSize:13,fontWeight:600,color:'var(--text)'}}>{displayName}</div><div style={{fontSize:11,color: userPlan === 'elite' ? '#2563eb' : userPlan === 'pro' ? '#16a34a' : 'var(--text-3)',fontWeight: userPlan !== 'free' ? 600 : 400}}>{userPlan === 'elite' ? 'Elite plan' : userPlan === 'pro' ? 'Pro plan' : 'Free plan'}</div></div>
         </div>
         <style dangerouslySetInnerHTML={{__html: `
           /* Completely hide scrollbars */
