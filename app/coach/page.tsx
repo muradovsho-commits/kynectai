@@ -304,6 +304,7 @@ export default function CoachPage() {
   const [inputVal, setInputVal] = useState('');
   const [userName, setUserName] = useState({ first: '', last: '' });
   const [isPro, setIsPro] = useState(false);
+  const [freeLimitHit, setFreeLimitHit] = useState(false);
   const [planLoaded, setPlanLoaded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -389,8 +390,20 @@ export default function CoachPage() {
     try { const prof = JSON.parse(window.localStorage.getItem('offerbell_onboarding_profile') || '{}'); profilePlan = prof.plan || 'free'; } catch {}
     // Check Pro status including cancelled-but-not-expired
     const { isUserPro } = await import('../lib/plan');
-    setIsPro(isUserPro());
+    const pro = isUserPro();
+    setIsPro(pro);
     setPlanLoaded(true);
+    // Check if free user already at limit
+    if (!pro) {
+      try {
+        const now = new Date(); const day = now.getDay(); const diff = day === 0 ? 6 : day - 1;
+        const mon = new Date(now); mon.setDate(now.getDate() - diff); mon.setHours(0,0,0,0);
+        const week = mon.toISOString().split('T')[0];
+        const raw = localStorage.getItem('offerbell_coach_weekly');
+        const wk = raw ? JSON.parse(raw) : { week, count: 0 };
+        if (wk.week === week && wk.count >= 1) setFreeLimitHit(true);
+      } catch {}
+    }
     // Load saved conversations
     setConvos(loadConvos());
     // Use saved theme preference
@@ -479,14 +492,7 @@ export default function CoachPage() {
         let wk = raw ? JSON.parse(raw) : { week, count: 0 };
         if (wk.week !== week) wk = { week, count: 0 };
         if (wk.count >= 1) {
-          // Only show the limit message once, not on every spam attempt
-          const lastMsg = messages[messages.length - 1];
-          if (!lastMsg || !lastMsg.content.includes('Upgrade to Pro')) {
-            setMessages(prev => [...prev,
-              { role: 'user', content: text.trim(), time: Date.now() },
-              { role: 'assistant', content: 'You\'ve used your free coach message this week. Resets every Monday.<br/><br/><a href="/checkout" style="display:inline-block;padding:8px 20px;border-radius:8px;background:#0a0a0a;color:#fff;font-size:13px;font-weight:700;text-decoration:none;font-family:Sora,sans-serif">Upgrade to Pro</a>', time: Date.now() }
-            ]);
-          }
+          setFreeLimitHit(true);
           return;
         }
       } catch {}
@@ -525,6 +531,7 @@ export default function CoachPage() {
             if (wk.week !== week) wk = { week, count: 0 };
             wk.count++;
             localStorage.setItem('offerbell_coach_weekly', JSON.stringify(wk));
+            if (wk.count >= 1) setFreeLimitHit(true);
           } catch {}
         }
       }
@@ -751,13 +758,15 @@ export default function CoachPage() {
                 <textarea
                   ref={textareaRef}
                   className="coach-chat-input"
-                  placeholder="Type your strategic response..."
+                  placeholder={freeLimitHit ? "Weekly limit reached. Resets Monday." : "Type your strategic response..."}
                   rows={1}
                   value={inputVal}
                   onChange={e => { setInputVal(e.target.value); autoResize(e.target); }}
                   onKeyDown={handleKey}
+                  disabled={freeLimitHit}
+                  style={freeLimitHit ? { opacity: 0.4, cursor: 'not-allowed' } : undefined}
                 />
-                <button className="coach-send-btn" onClick={() => sendMessage(inputVal)} disabled={isLoading || !inputVal.trim()} type="button">
+                <button className="coach-send-btn" onClick={() => sendMessage(inputVal)} disabled={isLoading || !inputVal.trim() || freeLimitHit} type="button">
                   {isLoading ? <div className="coach-spinner" /> : <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                 </button>
               </div>
@@ -767,6 +776,51 @@ export default function CoachPage() {
           )}
         </div>
       </div>
+
+      {/* Free limit overlay */}
+      {freeLimitHit && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 400,
+          background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(12px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          animation: 'fadeIn 0.25s ease',
+        }}>
+          <div style={{
+            background: 'var(--surface)', border: '1.5px solid var(--border)',
+            borderRadius: 20, padding: '48px 44px', maxWidth: 420, width: '100%',
+            textAlign: 'center', boxShadow: '0 24px 80px rgba(0,0,0,0.2)',
+          }}>
+            <div style={{
+              width: 56, height: 56, borderRadius: '50%', background: 'var(--surface-2)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              margin: '0 auto 20px',
+            }}>
+              <svg width="24" height="24" fill="none" stroke="var(--text-3)" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 26, color: 'var(--text)', letterSpacing: '-0.5px', marginBottom: 8 }}>
+              Weekly limit <em style={{ fontStyle: 'italic' }}>reached</em>
+            </div>
+            <div style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.7, marginBottom: 28 }}>
+              You have used your free coach message for this week. Your limit resets every Monday.
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <a href="/checkout" style={{
+                display: 'block', padding: '13px 0', borderRadius: 10,
+                background: 'var(--text)', color: 'var(--surface)',
+                fontSize: 14, fontWeight: 700, textDecoration: 'none',
+                fontFamily: "'Sora', sans-serif",
+              }}>Upgrade to Pro</a>
+              <button onClick={() => setFreeLimitHit(false)} type="button" style={{
+                padding: '12px 0', borderRadius: 10,
+                background: 'none', border: '1.5px solid var(--border)',
+                color: 'var(--text-2)', fontSize: 13, fontWeight: 600,
+                cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+              }}>Wait for Reset</button>
+            </div>
+          </div>
+        </div>
+      )}
+      <style>{`@keyframes fadeIn{from{opacity:0}to{opacity:1}}`}</style>
     </div>
   );
 }
