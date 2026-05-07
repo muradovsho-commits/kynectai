@@ -112,7 +112,10 @@ export async function POST(request: NextRequest) {
     if (subDiscounts.length === 0 && legacyDiscount?.coupon?.id) {
       subDiscounts.push({ coupon: legacyDiscount.coupon.id });
     }
-    console.log('[stripe-change-plan] Carrying discounts onto schedule:', subDiscounts);
+   console.log('[stripe-change-plan] Carrying discounts onto schedule:', subDiscounts);
+    console.log('[stripe-change-plan] DEBUG sub.discounts raw:', JSON.stringify((sub as any).discounts));
+    console.log('[stripe-change-plan] DEBUG sub.discount (legacy):', JSON.stringify((sub as any).discount));
+    console.log('[stripe-change-plan] DEBUG customer discount:', JSON.stringify((sub.customer as any)?.discount));
 
     // Release any existing schedule on this sub so we start clean.
     const customerId = typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
