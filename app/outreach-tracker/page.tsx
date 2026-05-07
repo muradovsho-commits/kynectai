@@ -657,7 +657,7 @@ export default function OutreachTrackerPage() {
               <svg width="16" height="16" fill="none" stroke="var(--text)" strokeWidth="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
           </div>
-          <div onClick={e => e.stopPropagation()} style={{ flex: 1, margin: 20, borderRadius: 20, background: 'var(--surface)', border: '1.5px solid var(--border)', overflow: 'hidden', display: 'flex', flexDirection: 'column', maxWidth: 700, marginLeft: 'auto', marginRight: 'auto', width: '100%' }}>
+          <div onClick={e => e.stopPropagation()} style={{ flex: 1, margin: 20, borderRadius: 20, background: 'var(--surface)', border: '1.5px solid var(--border)', overflow: 'hidden', display: 'flex', flexDirection: 'column', maxWidth: 1200, marginLeft: 'auto', marginRight: 'auto', width: '100%' }}>
             {/* Header */}
             <div style={{ padding: '20px 28px', borderBottom: '2px solid var(--text)', display: 'flex', alignItems: 'center', gap: 14 }}>
               <svg width="18" height="18" fill="none" stroke="var(--text)" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
@@ -667,7 +667,9 @@ export default function OutreachTrackerPage() {
               </div>
             </div>
 
-            <div style={{ flex: 1, overflowY: 'auto', padding: '28px 28px' }}>
+            <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+              {/* Left: Controls */}
+              <div style={{ flex: '0 0 420px', overflowY: 'auto', padding: '28px 28px', borderRight: '1px solid var(--border)' }}>
               {/* ── Column Visibility ── */}
               <div style={{ marginBottom: 36 }}>
                 <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 14 }}>Visible Columns</div>
@@ -806,6 +808,52 @@ export default function OutreachTrackerPage() {
                   <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
                   Reset to Defaults
                 </button>
+              </div>
+            </div>
+
+              {/* Right: Live Preview */}
+              <div style={{ flex: 1, overflowY: 'auto', padding: '28px 24px', background: 'var(--bg)', minWidth: 0 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 14 }}>Preview</div>
+                <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: 'var(--surface-2)', borderBottom: '1px solid var(--border)' }}>
+                        {config.columns.filter(c => c.visible).map(h => (
+                          <th key={h.key} style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px', color: 'var(--text-3)', padding: '10px 10px', textAlign: 'left', whiteSpace: 'nowrap' }}>{h.label}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { name: 'Emily Zhang', firm: 'Goldman Sachs', role: 'Analyst', status: 'sent', angle: 'Alumni', linkedin: true, date: '3d ago', quality: 'A', notes: 'Great call' },
+                        { name: 'Marcus Li', firm: 'Blackstone', role: 'Associate', status: 'fu1', angle: 'Deal Ref', linkedin: true, date: '5d ago', quality: 'B', notes: '' },
+                        { name: 'Sarah Kim', firm: 'JPMorgan', role: 'VP', status: 'spoken', angle: 'Cold', linkedin: false, date: '1d ago', quality: 'A+', notes: 'Coffee chat scheduled' },
+                        { name: 'Alex Chen', firm: 'Evercore', role: 'Analyst', status: 'drafted', angle: 'Mutual', linkedin: true, date: 'Today', quality: '', notes: 'Need to send' },
+                      ].map((row, ri) => {
+                        const st = config.statuses.find(s => s.key === row.status) || { label: row.status, cls: 'b-drafted' };
+                        const visCols = config.columns.filter(c => c.visible);
+                        return (
+                          <tr key={ri} style={{ borderBottom: ri < 3 ? '1px solid var(--border)' : 'none' }}>
+                            {visCols.map(col => {
+                              let content: React.ReactNode = '-';
+                              if (col.key === 'name') content = <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}><div style={{ width: 24, height: 24, borderRadius: 6, background: ['#3b82f6','#8b5cf6','#ec4899','#16a34a'][ri], display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: '#fff', flexShrink: 0 }}>{row.name.split(' ').map(n => n[0]).join('')}</div><span style={{ fontSize: 11, fontWeight: 700 }}>{row.name}</span></div>;
+                              else if (col.key === 'firmRole') content = <div><div style={{ fontSize: 11, fontWeight: 600 }}>{row.firm}</div><div style={{ fontSize: 9, color: 'var(--text-3)' }}>{row.role}</div></div>;
+                              else if (col.key === 'status') content = <span className={`badge ${st.cls}`} style={{ display: 'inline-flex', padding: '3px 8px', borderRadius: 100, fontSize: 8, fontWeight: 700, whiteSpace: 'nowrap' }}>{st.label}</span>;
+                              else if (col.key === 'angle') content = row.angle ? <span style={{ fontSize: 8, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: 'var(--surface-2)', color: 'var(--text-3)' }}>{row.angle}</span> : '-';
+                              else if (col.key === 'linkedin') content = row.linkedin ? <span style={{ fontSize: 9, color: '#0a66c2', fontWeight: 600 }}>Profile</span> : <span style={{ color: 'var(--text-3)', fontSize: 9 }}>-</span>;
+                              else if (col.key === 'dateAdded') content = <span style={{ fontSize: 9, color: 'var(--text-3)' }}>{row.date}</span>;
+                              else if (col.key === 'daysSince') content = <span style={{ fontSize: 9, color: 'var(--text-3)' }}>{row.date}</span>;
+                              else if (col.key === 'quality') content = row.quality ? <span style={{ fontSize: 9, fontWeight: 700 }}>{row.quality}</span> : '-';
+                              else if (col.key === 'notes') content = <span style={{ fontSize: 9, color: 'var(--text-3)' }}>{row.notes || '-'}</span>;
+                              return <td key={col.key} style={{ padding: '10px 10px', fontSize: 11, color: 'var(--text)' }}>{content}</td>;
+                            })}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 12, textAlign: 'center', fontStyle: 'italic' }}>Live preview with sample data</div>
               </div>
             </div>
 
