@@ -378,10 +378,11 @@ export default function OutreachTrackerPage() {
               </div>
             </div>
             <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-              <button onClick={() => setDevMode(true)} type="button" title="Customize tracker" style={{ width: 38, height: 38, borderRadius: 10, border: '1.5px solid var(--border)', background: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'border-color 0.15s' }}
+              <button onClick={() => setDevMode(true)} type="button" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10, border: '1.5px solid var(--border)', background: 'var(--surface)', cursor: 'pointer', transition: 'border-color 0.15s', fontSize: 12, fontWeight: 600, color: 'var(--text-2)', fontFamily: "'Sora', sans-serif" }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--text)')}
                 onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}>
-                <svg width="16" height="16" fill="none" stroke="var(--text-2)" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                Customize
               </button>
               <button onClick={() => setModalOpen(true)} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 10, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif' }}>+ Add Contact</button>
             </div>
@@ -452,11 +453,12 @@ export default function OutreachTrackerPage() {
                   {visibleColumns.map(h => (
                     <th key={h.key} style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-3)', padding: '12px 14px', textAlign: 'left', whiteSpace: 'nowrap' }}>{h.label}</th>
                   ))}
+                  <th style={{ width: 40, padding: '12px 8px' }}></th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={visibleColumns.length} style={{ padding: '60px 20px', textAlign: 'center' }}>
+                  <tr><td colSpan={visibleColumns.length + 1} style={{ padding: '60px 20px', textAlign: 'center' }}>
                     <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 20, fontStyle: 'italic', color: 'var(--text)', marginBottom: 8 }}>No contacts here yet</div>
                     <div style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 20 }}>Add your first contact to start tracking.</div>
                     <button onClick={() => setModalOpen(true)} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif' }}>+ Add Contact</button>
@@ -525,6 +527,13 @@ export default function OutreachTrackerPage() {
                       {visibleColumns.map(col => (
                         <td key={col.key} style={{ padding: '12px 14px' }}>{cellRenderers[col.key]}</td>
                       ))}
+                      <td style={{ padding: '8px 8px', textAlign: 'center', width: 40 }}>
+                        <button onClick={e => { e.stopPropagation(); if (confirm('Remove ' + c.fname + ' ' + c.lname + '?')) { const updated = contacts.filter(x => x.id !== c.id); setContacts(updated); persist(updated); showToast('Removed'); } }} type="button" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--border-2)', padding: 4, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s' }}
+                          onMouseEnter={e => (e.currentTarget.style.color = '#dc2626')}
+                          onMouseLeave={e => (e.currentTarget.style.color = 'var(--border-2)')}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                      </td>
                     </tr>
                   );
                 })}
