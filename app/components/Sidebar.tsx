@@ -195,6 +195,27 @@ export default function Sidebar({ activePage }: SidebarProps) {
             </div>}
           </div>
           <div><div style={{fontSize:13,fontWeight:600,color:'var(--text)'}}>{displayName}</div><div style={{fontSize:11,color: userPlan === 'elite' ? '#2563eb' : userPlan === 'pro' ? '#16a34a' : 'var(--text-3)',fontWeight: userPlan !== 'free' ? 600 : 400}}>{userPlan === 'elite' ? 'Elite plan' : userPlan === 'pro' ? 'Pro plan' : 'Free plan'}</div></div>
+          <button
+            onClick={() => {
+              const keys: string[] = [];
+              for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('offerbell') && k !== 'offerbell-theme') keys.push(k); }
+              keys.forEach(k => localStorage.removeItem(k));
+              localStorage.removeItem('userId');
+              document.cookie = 'offerbell_user_id=; path=/; max-age=0';
+              window.location.href = '/';
+            }}
+            type="button"
+            title="Sign out"
+            style={{
+              marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer',
+              padding: 6, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'var(--text-3)', transition: 'color 0.15s',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--text)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-3)')}
+          >
+            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
         </div>
         <style dangerouslySetInnerHTML={{__html: `
           .sidebar::-webkit-scrollbar { display: none !important; }
