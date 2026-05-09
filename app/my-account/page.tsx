@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar";
 import TutorialOverlay from "../components/TutorialOverlay";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useMutation, useQuery } from 'convex/react';
+import { useMutation } from 'convex/react';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../../convex/_generated/api';
 
@@ -25,10 +25,8 @@ export default function MyAccountPage() {
   const downgradePlanMutation = useMutation(api.auth.downgradePlan);
 const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
   const [userId, setUserId] = useState('');
-  const dbUser = useQuery(
-    (api as any).users?.getUser,
-    userId ? { userId } : 'skip'
-  ) as any;
+  // Replaces a reactive useQuery — see below for one-time HTTP fetch.
+  const [dbUser, setDbUser] = useState<any>(null);
   const [isDark, setIsDark] = useState(false);
   const [modal, setModal] = useState<{ title: string; desc: string; confirmLabel: string; onConfirm: () => void } | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
@@ -135,57 +133,70 @@ const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
     if (!uid) setProfileLoaded(true);
   }, []);
 
-  // Hydrate from DB exactly ONCE, the first time `dbUser` resolves with a
-  // real record. After that, the user's typing owns the form state and we
-  // never overwrite it — even if the reactive query re-fires from autoSave
-  // round-tripping through Convex.
+ // One-time HTTP fetch + hydrate. We deliberately DO NOT use a reactive
+  // useQuery here — it sets up a live subscription that re-receives the
+  // entire user record every time anyone calls updateUserProfile (which
+  // happens on every settings autoSave keystroke), burning bandwidth.
+  // Plan/profile changes from webhooks propagate on the next page mount.
   const hasHydratedFromDb = useRef(false);
   useEffect(() => {
+    if (!userId) return;
     if (hasHydratedFromDb.current) return;
-    if (!dbUser || !dbUser.found) return;
-    hasHydratedFromDb.current = true;
+    const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+    if (!url) { setProfileLoaded(true); return; }
+    let cancelled = false;
+    (async () => {
+      try {
+        const client = new ConvexHttpClient(url);
+        const u = await client.query((api as any).users.getUser, { userId });
+        if (cancelled) return;
+        setDbUser(u);
+        if (!u || !u.found) { setProfileLoaded(true); return; }
+        hasHydratedFromDb.current = true;
 
-    if (dbUser.firstName) setFirstName(dbUser.firstName);
-    if (dbUser.lastName) setLastName(dbUser.lastName);
-    if (dbUser.email) setEmail(dbUser.email);
-    if (dbUser.university) setSchool(dbUser.university);
-    if (dbUser.graduationYear) {
-      const classOf = dbUser.graduationYear.startsWith('Class of')
-        ? dbUser.graduationYear
-        : `Class of ${dbUser.graduationYear}`;
-      setYear(classOf);
-    }
-    if (dbUser.targetRoles && dbUser.targetRoles.length > 0) {
-      setTargetRole(dbUser.targetRoles[0]);
-    }
-if (dbUser.profilePic) setProfilePic(dbUser.profilePic);
-    // Plan: DB is source of truth. Always reflect it (including 'free').
-    setUserPlan(dbUser.plan || 'free');
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('offerbell_plan', dbUser.plan || 'free');
-    }
-    setPendingPlanChange(dbUser.pendingPlanChange ?? null);
-    // Sync DB → localStorage cache once on hydration so sidebar etc. see truth.
-    // Sync DB → localStorage cache once on hydration so sidebar etc. see truth.
-    try {
-      const raw = localStorage.getItem('offerbell_onboarding_profile');
-      const existing = raw ? JSON.parse(raw) : {};
-      const updated = {
-        ...existing,
-        firstName: dbUser.firstName || existing.firstName,
-        lastName: dbUser.lastName || existing.lastName,
-        email: dbUser.email || existing.email,
-        university: dbUser.university || existing.university,
-        year: dbUser.graduationYear || existing.year,
-        targetRoles: (dbUser.targetRoles && dbUser.targetRoles.length > 0)
-          ? dbUser.targetRoles
-          : existing.targetRoles,
-      };
-      localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(updated));
-    } catch {}
+        if (u.firstName) setFirstName(u.firstName);
+        if (u.lastName) setLastName(u.lastName);
+        if (u.email) setEmail(u.email);
+        if (u.university) setSchool(u.university);
+        if (u.graduationYear) {
+          const classOf = u.graduationYear.startsWith('Class of')
+            ? u.graduationYear
+            : `Class of ${u.graduationYear}`;
+          setYear(classOf);
+        }
+        if (u.targetRoles && u.targetRoles.length > 0) {
+          setTargetRole(u.targetRoles[0]);
+        }
+        if (u.profilePic) setProfilePic(u.profilePic);
+        setUserPlan(u.plan || 'free');
+        try { localStorage.setItem('offerbell_plan', u.plan || 'free'); } catch {}
+        setPendingPlanChange(u.pendingPlanChange ?? null);
 
-    setProfileLoaded(true);
-  }, [dbUser]);
+        // Sync DB → localStorage cache so sidebar / other pages see truth.
+        try {
+          const raw = localStorage.getItem('offerbell_onboarding_profile');
+          const existing = raw ? JSON.parse(raw) : {};
+          const updated = {
+            ...existing,
+            firstName: u.firstName || existing.firstName,
+            lastName: u.lastName || existing.lastName,
+            email: u.email || existing.email,
+            university: u.university || existing.university,
+            year: u.graduationYear || existing.year,
+            targetRoles: (u.targetRoles && u.targetRoles.length > 0)
+              ? u.targetRoles
+              : existing.targetRoles,
+          };
+          localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(updated));
+        } catch {}
+        setProfileLoaded(true);
+      } catch (e) {
+        console.error('[my-account] hydration fetch failed:', e);
+        setProfileLoaded(true);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [userId]);
 
   function toggleTheme() {
     const next = isDark ? 'light' : 'dark';
