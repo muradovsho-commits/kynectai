@@ -5,7 +5,7 @@ import { api } from "../../../convex/_generated/api";
 
 // Webhook handler for Stripe subscription events. This is the source of truth
 // for "what plan does the user actually have right now." Our app NEVER flips
-// plan state on its own — every change to plan, subscriptionStatus, or
+// plan state on its own - every change to plan, subscriptionStatus, or
 // subscriptionCurrentPeriodEnd flows through here from a verified Stripe event.
 
 // Stripe sends webhook events as raw bodies that must be verified by signature.
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
 
         // Do NOT clear pendingPlanChange here. Routine updates (cancel_at_
         // period_end flipping, payment status changes, etc.) must not wipe
-        // the user's intent — the change has not yet taken effect.
+        // the user's intent - the change has not yet taken effect.
         // The .deleted handler clears it explicitly when a cancel finalizes.
         await convex.mutation((api as any).auth.applyStripeSubscriptionUpdate, {
           stripeSubscriptionId: sub.id,
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
       // ──────────────────────────────────────────────────────────────────────
       // Payment failed. Stripe will retry on its own (per your retry policy
       // in the dashboard). We mark the user past_due so the UI can warn them
-      // but we don't yank their plan yet — Stripe decides when to give up
+      // but we don't yank their plan yet - Stripe decides when to give up
       // and fire subscription.deleted.
       // ──────────────────────────────────────────────────────────────────────
       case 'invoice.payment_failed': {
@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        // Ignore other events — we only care about subscription lifecycle.
+        // Ignore other events - we only care about subscription lifecycle.
         break;
     }
   } catch (e: any) {

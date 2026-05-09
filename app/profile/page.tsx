@@ -213,7 +213,7 @@ export default function ProfilePage() {
     }
     // Pull the real userId set at signin. If we don't have one (or we have
     // the legacy "demo-user" placeholder), the mutation no-ops on the server
-    // and we still keep the localStorage cache — so nothing regresses for
+    // and we still keep the localStorage cache - so nothing regresses for
     // users in the legacy state.
     const uid = typeof window !== "undefined"
       ? (window.localStorage.getItem("offerbell_user_id") || "")

@@ -6,7 +6,7 @@ import { api } from "../../../convex/_generated/api";
 // Schedules a subscription to cancel at period end. Stripe will keep billing
 // access (paid features) intact until the period rolls over, then fire
 // customer.subscription.deleted, which our webhook handles to flip the user
-// to free in the DB. We do NOT change the DB plan here — only Stripe does
+// to free in the DB. We do NOT change the DB plan here - only Stripe does
 // (via webhook). This is the entire point of routing through Stripe.
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {

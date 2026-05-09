@@ -130,7 +130,7 @@ export default function DashboardPage() {
  // Load activity data - refresh on mount AND on window focus.
   // All date math uses LOCAL time, not UTC. The previous version mixed
   // toISOString() (UTC date) with getDay()/getDate() (local), which caused
-  // off-by-one streak errors after ~6pm Central — opening the dashboard at
+  // off-by-one streak errors after ~6pm Central - opening the dashboard at
   // night logged "tomorrow's" date in UTC and skipped a real day.
   const loadStats = useCallback(() => {
     const localDateStr = (d: Date) =>

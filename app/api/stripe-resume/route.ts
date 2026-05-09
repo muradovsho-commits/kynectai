@@ -25,14 +25,14 @@ export async function POST(request: NextRequest) {
 
     const sub = await stripe.subscriptions.retrieve(subscriptionId);
 
-    // Case 1: scheduled cancel — undo by setting cancel_at_period_end false.
+    // Case 1: scheduled cancel - undo by setting cancel_at_period_end false.
     if ((sub as any).cancel_at_period_end) {
       await stripe.subscriptions.update(subscriptionId, {
         cancel_at_period_end: false,
       });
     }
 
-    // Case 2: scheduled tier change — release any active subscription
+    // Case 2: scheduled tier change - release any active subscription
     // schedule pointing at this sub. release() removes the schedule but
     // keeps the underlying sub intact at its current phase.
     const customerId = typeof sub.customer === 'string' ? sub.customer : sub.customer?.id;

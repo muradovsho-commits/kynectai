@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing prompt" }, { status: 400, headers: corsHeaders });
     }
 
-    // Enforce limits — free: 5 lifetime, pro: 20/week, elite: 30/week
+    // Enforce limits - free: 5 lifetime, pro: 20/week, elite: 30/week
     const count = typeof messagesSent === "number" ? messagesSent : 0;
     const userPlan = plan || "free";
     if (userPlan !== "pro" && userPlan !== "elite" && count >= 5) {

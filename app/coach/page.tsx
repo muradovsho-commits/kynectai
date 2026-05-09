@@ -227,7 +227,7 @@ export default function CoachPage() {
   const [activeConvoId, setActiveConvoId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Usage-based limiting — rolling window
+  // Usage-based limiting - rolling window
   const USAGE_KEY = 'offerbell_coach_pro_usage';
   const MAX_TOKENS = (() => {
     try {

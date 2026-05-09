@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     // Retrieve the sub WITH discounts expanded so we get full discount
     // objects rather than bare ID strings. Without expansion, sub.discounts
     // is an array of di_xxx strings and our extraction silently returns
-    // empty — which is why prior downgrades dropped the founder coupon.
+    // empty - which is why prior downgrades dropped the founder coupon.
     const sub = await stripe.subscriptions.retrieve(subscriptionId, {
       expand: ['discounts'],
     });
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, immediate: true });
     }
 
-    // Downgrade — schedule the change at period end.
+    // Downgrade - schedule the change at period end.
     const periodEnd = (currentItem as any).current_period_end
       ?? (sub as any).current_period_end
       ?? null;
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
     const rawDiscounts = (sub as any).discounts;
     if (Array.isArray(rawDiscounts)) {
       for (const d of rawDiscounts) {
-        if (!d || typeof d === 'string') continue; // unexpanded — skip
+        if (!d || typeof d === 'string') continue; // unexpanded - skip
         const promoId = typeof d.promotion_code === 'string'
           ? d.promotion_code
           : d.promotion_code?.id;
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
           discounts: subDiscounts.length > 0 ? subDiscounts : undefined,
         } as any,
         // Phase 2: new tier kicks in at period end. Stripe's schedule API
-        // doesn't accept inline `product_data` here — it needs an existing
+        // doesn't accept inline `product_data` here - it needs an existing
         // Product ID. We reuse the current sub's Product and just change
         // unit_amount. The webhook reads unit_amount to determine the
         // resulting tier. Discounts carry over so promos persist.

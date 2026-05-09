@@ -25,7 +25,7 @@ export default function MyAccountPage() {
   const downgradePlanMutation = useMutation(api.auth.downgradePlan);
 const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
   const [userId, setUserId] = useState('');
-  // Replaces a reactive useQuery — see below for one-time HTTP fetch.
+  // Replaces a reactive useQuery - see below for one-time HTTP fetch.
   const [dbUser, setDbUser] = useState<any>(null);
   const [isDark, setIsDark] = useState(false);
   const [modal, setModal] = useState<{ title: string; desc: string; confirmLabel: string; onConfirm: () => void } | null>(null);
@@ -102,7 +102,7 @@ const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
     // Load profile from onboarding localStorage as initial fallback
     // Load profile from onboarding localStorage as initial fallback. We only
     // use these values until the DB query below resolves, then DB wins for
-    // every field unconditionally (including empties — the DB is truth).
+    // every field unconditionally (including empties - the DB is truth).
     try {
       const raw = localStorage.getItem('offerbell_onboarding_profile');
       if (raw) {
@@ -125,7 +125,7 @@ const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
 
     // Now load from DB (source of truth) and overwrite localStorage fallback
    // Just record the userId. The reactive `dbUser` useQuery handles the
-    // actual DB load via the dedicated effect below — using one source of
+    // actual DB load via the dedicated effect below - using one source of
     // truth instead of a parallel HTTP fetch eliminates the rehydration
     // flicker.
     const uid = localStorage.getItem('offerbell_user_id') || '';
@@ -134,7 +134,7 @@ const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
   }, []);
 
  // One-time HTTP fetch + hydrate. We deliberately DO NOT use a reactive
-  // useQuery here — it sets up a live subscription that re-receives the
+  // useQuery here - it sets up a live subscription that re-receives the
   // entire user record every time anyone calls updateUserProfile (which
   // happens on every settings autoSave keystroke), burning bandwidth.
   // Plan/profile changes from webhooks propagate on the next page mount.

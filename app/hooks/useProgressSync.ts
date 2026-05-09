@@ -13,7 +13,7 @@ import { api } from '../../convex/_generated/api';
 //      even when nothing had changed.
 //   2. useQuery(loadProgress) opened a live reactive subscription that
 //      re-received the full blob every time anyone called saveProgress.
-//   3. Pushes weren't dirty-checked — re-renders, mounts, navigations all
+//   3. Pushes weren't dirty-checked - re-renders, mounts, navigations all
 //      generated full-blob round trips.
 //
 // This rewrite:
@@ -26,11 +26,11 @@ import { api } from '../../convex/_generated/api';
 //   • Pushes are debounced 10s so bursts of edits coalesce into one push.
 //   • Single beforeunload flush via sendBeacon (no double-push).
 //
-// Net effect: 10–20× less bandwidth in normal use.
+// Net effect: 10-20× less bandwidth in normal use.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SYNC_KEYS = [
-  // Profile & account (most plan/promo keys excluded below — they're owned
+  // Profile & account (most plan/promo keys excluded below - they're owned
   // by the users table now)
   'offerbell_plan',
   'offerbell_plan_activated_at',
@@ -85,7 +85,7 @@ const SYNC_KEYS = [
   'offerbell_feedback_history',
 ];
 
-// Keys deliberately excluded from blob sync — they're owned by DB columns
+// Keys deliberately excluded from blob sync - they're owned by DB columns
 // (users.plan, users.firstName, etc.) so syncing them through the blob just
 // causes races and wastes bandwidth.
 const EXCLUDE_FROM_SYNC = new Set([
@@ -106,7 +106,7 @@ function gatherLocalData(): Record<string, string> {
 }
 
 // Cheap, deterministic string hash. We compare hashes to decide whether to
-// push — equal hash means nothing changed since last successful push, so
+// push - equal hash means nothing changed since last successful push, so
 // we skip the network call entirely.
 function hashString(s: string): string {
   let h = 0;
@@ -214,7 +214,7 @@ export function useProgressSync() {
         const cloudData = await client.query(api.progress.loadProgress, { userId });
 
         if (!cloudData) {
-          // No cloud data — seed from local only if local has meaningful data.
+          // No cloud data - seed from local only if local has meaningful data.
           const local = gatherLocalData();
           const localStr = JSON.stringify(local);
           if (Object.keys(local).length > 2) {

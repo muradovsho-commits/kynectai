@@ -11,7 +11,7 @@ interface SidebarProps {
 
 // Reads localStorage for the user's plan as the primary source. Once per
 // mount, also fetches from the DB via a one-time HTTP call to refresh the
-// cache — this catches plan changes from webhooks (cancellations, tier
+// cache - this catches plan changes from webhooks (cancellations, tier
 // changes, payment failures) without using a live useQuery subscription
 // that re-receives the entire user record on every system-wide write.
 //
@@ -59,7 +59,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
         setUserPlan(dbPlan);
         try { localStorage.setItem('offerbell_plan', dbPlan); } catch {}
       } catch {
-        // Network error / not signed in — keep using the localStorage cache.
+        // Network error / not signed in - keep using the localStorage cache.
       }
     })();
     return () => { cancelled = true; };

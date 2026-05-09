@@ -263,7 +263,7 @@ export default function DiagnosticReviewPage() {
 
                 <div className="diag-mega-score-row">
                   <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-                    <span className={`diag-mega-score ${scoreCls}`}>{st.diagsTaken > 0 ? readinessScore : '—'}</span>
+                    <span className={`diag-mega-score ${scoreCls}`}>{st.diagsTaken > 0 ? readinessScore : '-'}</span>
                     {st.diagsTaken > 0 && <span className="diag-mega-sign">%</span>}
                   </div>
                   <div className="diag-mega-label">
@@ -272,7 +272,7 @@ export default function DiagnosticReviewPage() {
                   </div>
                   <div className="diag-mega-meta">
                     <div className="diag-mega-meta-item">
-                      <div className="diag-mega-meta-val">{st.bestScore || '—'}{st.bestScore > 0 ? '%' : ''}</div>
+                      <div className="diag-mega-meta-val">{st.bestScore || '-'}{st.bestScore > 0 ? '%' : ''}</div>
                       <div className="diag-mega-meta-label">Best</div>
                     </div>
                     <div className="diag-mega-meta-item">
@@ -288,7 +288,7 @@ export default function DiagnosticReviewPage() {
                 <div className="diag-pullquote">
                   <div className="diag-pullquote-eyebrow">Recommendation</div>
                   <div className="diag-pullquote-text">
-                    Strong scores on {t.title} diagnostics. To solidify, drill <a href="/flashcards">Interview Flashcards</a> — the more cards, the sharper you'll be under pressure.
+                    Strong scores on {t.title} diagnostics. To solidify, drill <a href="/flashcards">Interview Flashcards</a> - the more cards, the sharper you'll be under pressure.
                   </div>
                 </div>
               )}
@@ -416,7 +416,7 @@ export default function DiagnosticReviewPage() {
       );
     }
 
-    // Main landing — all tracks
+    // Main landing - all tracks
     const allLatest = history.slice(0, 20);
     const totalDiagnostics = history.length;
     const allTrackEntries = Object.entries(TRACKS);
@@ -439,7 +439,7 @@ export default function DiagnosticReviewPage() {
                 <div>
                   <div className="diag-hero-stat-label">Overall Average</div>
                   <div className="diag-hero-stat-num">
-                    {totalDiagnostics > 0 ? overallAvg : '—'}
+                    {totalDiagnostics > 0 ? overallAvg : '-'}
                     {totalDiagnostics > 0 && <span style={{ fontSize: 28, color: 'var(--text-3)', fontStyle: 'italic' }}>%</span>}
                   </div>
                 </div>
@@ -456,7 +456,7 @@ export default function DiagnosticReviewPage() {
                 <div>
                   <div className="diag-hero-stat-label">Best Track</div>
                   <div className="diag-hero-stat-num" style={{ fontSize: bestTrackOverall ? 26 : 52 }}>
-                    {bestTrackOverall ? bestTrackOverall.t.title.split(' ')[0] : '—'}
+                    {bestTrackOverall ? bestTrackOverall.t.title.split(' ')[0] : '-'}
                   </div>
                 </div>
                 <div className="diag-hero-stat-sub">{bestTrackOverall ? `${bestTrackOverall.st.bestScore}% best` : 'No data'}</div>
@@ -524,7 +524,7 @@ export default function DiagnosticReviewPage() {
                       {st.diagsTaken > 0 ? (
                         <div className="diag-tr-val" style={{ color: scoreColor }}>{st.avgScore}<span style={{ fontSize: 12, color: 'var(--text-3)', fontStyle: 'italic' }}>%</span></div>
                       ) : (
-                        <div className="diag-tr-val-none">—</div>
+                        <div className="diag-tr-val-none">-</div>
                       )}
                     </div>
                     <div>
@@ -532,7 +532,7 @@ export default function DiagnosticReviewPage() {
                       {st.diagsTaken > 0 ? (
                         <div className="diag-tr-val">{st.bestScore}<span style={{ fontSize: 12, color: 'var(--text-3)', fontStyle: 'italic' }}>%</span></div>
                       ) : (
-                        <div className="diag-tr-val-none">—</div>
+                        <div className="diag-tr-val-none">-</div>
                       )}
                     </div>
                     <div>
@@ -540,7 +540,7 @@ export default function DiagnosticReviewPage() {
                       <div className="diag-tr-spark">
                         {recent.length > 0 ? recent.map((h, j) => (
                           <div key={j} className="diag-spark-bar" style={{ height: `${Math.max(4, (h.score / 100) * 28)}px`, background: h.score >= 70 ? '#16a34a' : h.score >= 50 ? '#d97706' : '#dc2626', opacity: 0.85 }} />
-                        )) : <div style={{ fontSize: 18, color: 'var(--border-2)', fontStyle: 'italic', fontFamily: "'Instrument Serif', serif" }}>—</div>}
+                        )) : <div style={{ fontSize: 18, color: 'var(--border-2)', fontStyle: 'italic', fontFamily: "'Instrument Serif', serif" }}>-</div>}
                       </div>
                     </div>
                     <div className="diag-tr-arrow">{ARROW_R}</div>
@@ -636,7 +636,7 @@ export default function DiagnosticReviewPage() {
           {overallPct >= 70 && (
             <div className="diag-pullquote">
               <div className="diag-pullquote-eyebrow">Next Step</div>
-              <div className="diag-pullquote-text">Nice work — you're building momentum. Drill <a href="/flashcards">Interview Flashcards</a> to lock in this knowledge before real interviews.</div>
+              <div className="diag-pullquote-text">Nice work - you're building momentum. Drill <a href="/flashcards">Interview Flashcards</a> to lock in this knowledge before real interviews.</div>
             </div>
           )}
 

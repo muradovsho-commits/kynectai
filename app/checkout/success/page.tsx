@@ -25,7 +25,7 @@ export default function CheckoutSuccessPage() {
       localStorage.removeItem("offerbell_checkout_plan");
     } catch {}
 
-   // Persist to database — surface failures loudly. If this silently fails
+   // Persist to database - surface failures loudly. If this silently fails
     // the DB stays at the old plan tier, so we'd see it on next signin as
     // a "downgrade" when the user reopens the site.
     try {
@@ -36,7 +36,7 @@ export default function CheckoutSuccessPage() {
           .then(() => console.log('[checkout] Plan persisted to DB:', planTier))
           .catch((e: any) => console.error('[checkout] upgradePlan FAILED:', e?.message || e, e));
       } else {
-        console.error('[checkout] Cannot persist plan — userId or mutation missing.', { userId, hasMutation: !!upgradePlan });
+        console.error('[checkout] Cannot persist plan - userId or mutation missing.', { userId, hasMutation: !!upgradePlan });
       }
     } catch (e) { console.error('[checkout] Persist threw:', e); }
 

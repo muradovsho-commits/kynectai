@@ -13,6 +13,7 @@ import type * as emailSync from "../emailSync.js";
 import type * as feedback from "../feedback.js";
 import type * as jobBoard from "../jobBoard.js";
 import type * as marketPosts from "../marketPosts.js";
+import type * as progress from "../progress.js";
 import type * as reminders from "../reminders.js";
 import type * as users from "../users.js";
 import type * as waitlist from "../waitlist.js";
@@ -29,6 +30,7 @@ declare const fullApi: ApiFromModules<{
   feedback: typeof feedback;
   jobBoard: typeof jobBoard;
   marketPosts: typeof marketPosts;
+  progress: typeof progress;
   reminders: typeof reminders;
   users: typeof users;
   waitlist: typeof waitlist;

@@ -117,7 +117,7 @@ const handleDowngrade = async () => {
       }
 
       // Look up the user's stripeSubscriptionId from the DB. Without it we
-      // can't tell Stripe what to cancel — and we MUST tell Stripe, because
+      // can't tell Stripe what to cancel - and we MUST tell Stripe, because
       // they're the ones charging the card.
       const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
       let subscriptionId: string | undefined;
@@ -145,7 +145,7 @@ const handleDowngrade = async () => {
         return;
       }
 
-      // Do NOT touch localStorage.offerbell_plan or any plan flags here —
+      // Do NOT touch localStorage.offerbell_plan or any plan flags here -
       // the user keeps their current plan until period end. The webhook
       // will flip them to free when Stripe finalizes the cancellation.
       const when = data.effectiveAt ? new Date(data.effectiveAt).toLocaleDateString() : 'the end of your billing period';
@@ -167,7 +167,7 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
       const isUpgrade = from === 'pro' && to === 'elite';
       const message = isUpgrade
         ? 'Upgrade to Elite now? You will be charged the prorated difference for your current billing period.'
-        : 'Switch to Pro? The change takes effect at your next billing cycle — you will keep Elite access until then.';
+        : 'Switch to Pro? The change takes effect at your next billing cycle - you will keep Elite access until then.';
       if (!confirm(message)) return;
 
       setLoading('switch');
@@ -184,7 +184,7 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
           subscriptionId = user?.stripeSubscriptionId || undefined;
         }
         if (!subscriptionId) {
-          // No active subscription — fall through to a fresh checkout. This
+          // No active subscription - fall through to a fresh checkout. This
           // covers users who somehow have a paid `plan` in DB without a
           // Stripe subscription (legacy promo accounts, manual edits, etc.).
           handleCheckout(to);
