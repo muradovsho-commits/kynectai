@@ -6,7 +6,7 @@ import Sidebar from '../components/Sidebar';
 import { REPS_TRACKS, REPS_SCENARIOS, type RepsTrackId, type Scenario, type Persona, type ArtifactSpec } from './reps-data';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Reps — career-simulator page.
+// Reps career-simulator page.
 //
 // Three top-level views:
 //   1. Track grid: pick one of 10 careers
@@ -76,12 +76,53 @@ const breadcrumbBtn: React.CSSProperties = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// PersonaAvatar — deterministic SVG generator
+// PersonaAvatar
 //
-// Hashes the persona's name to pick a palette (8 options) and pattern (3
-// options). Same persona always gets the same avatar. Initials sit on top
-// in Instrument Serif italic to match the rest of the brand.
+// Uses randomuser.me/api/portraits as the image host. Each named persona is
+// mapped to a specific stock headshot via PERSONA_PHOTOS below, chosen by
+// rough gender match to the name. If the image fails (offline service, ad
+// blocker), falls back to the geometric SVG with initials.
+//
+// Adding a new persona: append a name to PERSONA_PHOTOS with a chosen URL.
 // ═══════════════════════════════════════════════════════════════════════════
+
+const PERSONA_PHOTOS: Record<string, string> = {
+  // IB
+  'David Chen':        'https://randomuser.me/api/portraits/men/32.jpg',
+  'Priya Raman':       'https://randomuser.me/api/portraits/women/44.jpg',
+  'Marcus Whitfield':  'https://randomuser.me/api/portraits/men/45.jpg',
+  'Anna Liu':          'https://randomuser.me/api/portraits/women/21.jpg',
+  'Jordan Park':       'https://randomuser.me/api/portraits/men/22.jpg',
+  // PE
+  'Sam Garcia':        'https://randomuser.me/api/portraits/men/11.jpg',
+  'Rachel Kim':        'https://randomuser.me/api/portraits/women/56.jpg',
+  'Diane Mosse':       'https://randomuser.me/api/portraits/women/12.jpg',
+  // Consulting
+  'Marcus Bell':       'https://randomuser.me/api/portraits/men/67.jpg',
+  'Sara Patel':        'https://randomuser.me/api/portraits/women/73.jpg',
+  // Restructuring
+  'Eleanor Voss':      'https://randomuser.me/api/portraits/women/8.jpg',
+  'Daniel Reyes':      'https://randomuser.me/api/portraits/men/53.jpg',
+  'Mira Okonkwo':      'https://randomuser.me/api/portraits/women/39.jpg',
+  'Aaron Park':        'https://randomuser.me/api/portraits/men/89.jpg',
+  // S&T
+  'Mike Donato':       'https://randomuser.me/api/portraits/men/41.jpg',
+  // AM
+  'Karthik Rangan':    'https://randomuser.me/api/portraits/men/78.jpg',
+  // VC
+  'Yusuf Bakir':       'https://randomuser.me/api/portraits/men/64.jpg',
+  'Helene Marchetti':  'https://randomuser.me/api/portraits/women/60.jpg',
+  // RE
+  'Reese Tanaka':      'https://randomuser.me/api/portraits/men/16.jpg',
+  'Aaron Mitchell':    'https://randomuser.me/api/portraits/men/27.jpg',
+  'Devon Wright':      'https://randomuser.me/api/portraits/men/95.jpg',
+  // ER
+  'Carmen Holloway':   'https://randomuser.me/api/portraits/women/85.jpg',
+  // Audit
+  'Priya Mehta':       'https://randomuser.me/api/portraits/women/29.jpg',
+  'James Hartwell':    'https://randomuser.me/api/portraits/men/38.jpg',
+};
+
 const AVATAR_PALETTES = [
   { bg: '#1f2937', fg: '#fde68a', accent: 'rgba(253,230,138,0.18)' },
   { bg: '#1e3a8a', fg: '#fbbf24', accent: 'rgba(251,191,36,0.18)' },
@@ -100,6 +141,33 @@ function hashName(name: string): number {
 }
 
 function PersonaAvatar({ persona, size = 32 }: { persona: Persona; size?: number }) {
+  const [imgErrored, setImgErrored] = useState(false);
+  const photoUrl = PERSONA_PHOTOS[persona.name];
+
+  if (photoUrl && !imgErrored) {
+    return (
+      <img
+        src={photoUrl}
+        alt={persona.name}
+        width={size}
+        height={size}
+        loading="lazy"
+        onError={() => setImgErrored(true)}
+        style={{
+          borderRadius: '50%',
+          objectFit: 'cover',
+          flexShrink: 0,
+          display: 'block',
+          background: 'var(--bg)',
+        }}
+      />
+    );
+  }
+
+  return <InitialsAvatar persona={persona} size={size} />;
+}
+
+function InitialsAvatar({ persona, size }: { persona: Persona; size: number }) {
   const { palette, pattern } = useMemo(() => {
     const h = hashName(persona.name);
     return { palette: AVATAR_PALETTES[h % AVATAR_PALETTES.length], pattern: h % 3 };
@@ -136,7 +204,7 @@ function PersonaAvatar({ persona, size = 32 }: { persona: Persona; size?: number
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// WelcomeBanner — first-visit orientation above the track grid
+// WelcomeBanner
 // ═══════════════════════════════════════════════════════════════════════════
 function WelcomeBanner({ onDismiss }: { onDismiss: () => void }) {
   return (
@@ -156,11 +224,11 @@ function WelcomeBanner({ onDismiss }: { onDismiss: () => void }) {
       </button>
       <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 6 }}>How Reps work</div>
       <div style={{ fontSize: 14, color: 'var(--text)', lineHeight: 1.55, marginBottom: 16, maxWidth: 620 }}>
-        Reps put you in a junior seat on a real workday. Personas message you, you build the actual deliverable, and the AI grades the file on craft — citing specific cells, numbers, and lines.
+        Reps put you in a junior seat on a real workday. Personas message you, you build the actual deliverable, and the AI grades the file on craft, citing specific cells, numbers, and lines.
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
         {[
-          { n: '1', title: 'Pick a career', body: 'Choose from 10 finance careers — IB, PE, consulting, restructuring, S&T, AM, VC, RE, ER, audit.' },
+          { n: '1', title: 'Pick a career', body: 'Choose from 10 finance careers: IB, PE, consulting, restructuring, S&T, AM, VC, RE, ER, audit.' },
           { n: '2', title: 'Choose a scenario', body: 'Three workday scenarios per career, ranging from intro to advanced. Pick the one that matches where you are.' },
           { n: '3', title: 'Do the work', body: 'Build the deliverable in your own tools (Excel, Word, PowerPoint), upload it, and get graded on craft.' },
         ].map(s => (
@@ -176,7 +244,7 @@ function WelcomeBanner({ onDismiss }: { onDismiss: () => void }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// VIEW 1 — Track grid
+// VIEW 1: Track grid
 // ═══════════════════════════════════════════════════════════════════════════
 function TrackGrid({ onPick }: { onPick: (id: RepsTrackId) => void }) {
   const [showWelcome, setShowWelcome] = useState(false);
@@ -200,7 +268,7 @@ function TrackGrid({ onPick }: { onPick: (id: RepsTrackId) => void }) {
           Live a day in <em style={{ fontStyle: 'italic' }}>the career.</em>
         </h1>
         <p style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.65, maxWidth: 640, margin: 0 }}>
-          Drop into a realistic workday. Take pings from your MD, your client, your investment committee. Build the actual work — comps, models, memos, slides — and get graded on craft.
+          Drop into a realistic workday. Take pings from your MD, your client, your investment committee. Build the actual work, comps, models, memos, slides, and get graded on craft.
         </p>
       </header>
 
@@ -241,7 +309,7 @@ function TrackGrid({ onPick }: { onPick: (id: RepsTrackId) => void }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Helpers — derive "what you'll build" line from artifact labels
+// Helpers
 // ═══════════════════════════════════════════════════════════════════════════
 function whatYoullBuild(scenario: Scenario): string {
   const labels = scenario.artifacts.map(a => a.label);
@@ -270,10 +338,26 @@ function FormatPill({ format }: { format: string }) {
   );
 }
 
+const DIFFICULTY_ORDER: Record<string, number> = {
+  'Intro': 0,
+  'Intermediate': 1,
+  'Advanced': 2,
+};
+
 // ═══════════════════════════════════════════════════════════════════════════
-// VIEW 2 — Scenario list
+// VIEW 2: Scenario list
 // ═══════════════════════════════════════════════════════════════════════════
 function ScenarioList({ track, scenarios, onPick }: { track: typeof REPS_TRACKS[number]; scenarios: Scenario[]; onPick: (id: string) => void; }) {
+  // Sort by difficulty ascending (Intro first, Advanced last). Stable order
+  // within a difficulty preserves the source order from reps-data.ts.
+  const sortedScenarios = useMemo(() => {
+    return [...scenarios].sort((a, b) => {
+      const da = DIFFICULTY_ORDER[a.difficulty] ?? 99;
+      const db = DIFFICULTY_ORDER[b.difficulty] ?? 99;
+      return da - db;
+    });
+  }, [scenarios]);
+
   return (
     <>
       <header style={{ marginBottom: 28, paddingBottom: 22, borderBottom: '1px solid var(--border)' }}>
@@ -295,7 +379,7 @@ function ScenarioList({ track, scenarios, onPick }: { track: typeof REPS_TRACKS[
       </header>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {scenarios.map(s => (
+        {sortedScenarios.map(s => (
           <button
             key={s.id}
             type="button"
@@ -342,11 +426,11 @@ const dotSep: React.CSSProperties = { width: 3, height: 3, borderRadius: '50%', 
 function difficultyColor(d: string): string {
   if (d === 'Intro') return '#166534';
   if (d === 'Advanced') return '#991b1b';
-  return '#854d0e'; // Intermediate
+  return '#854d0e';
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// VIEW 3 — Live session
+// VIEW 3: Live session
 // ═══════════════════════════════════════════════════════════════════════════
 function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => void; }) {
   const [messages, setMessages] = useState<ChatMsg[]>([]);
@@ -360,7 +444,6 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
   const chatRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Show in-session helper card to first-time users.
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!localStorage.getItem('offerbell_reps_session_intro_seen')) setShowSessionHelper(true);
@@ -371,7 +454,6 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
     if (typeof window !== 'undefined') localStorage.setItem('offerbell_reps_session_intro_seen', '1');
   }
 
-  // Drop opening messages into the chat on mount.
   useEffect(() => {
     const opening: ChatMsg[] = scenario.opening.map((o, i) => ({
       id: `open-${i}`,
@@ -397,7 +479,6 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
   const activeIdx = activeArtifact ? scenario.artifacts.findIndex(a => a.id === activeArtifact.id) : -1;
   const requestingPersona = activeArtifact ? personaById(activeArtifact.requestedBy) : null;
 
-  // An artifact is unlocked if it's the first one OR all prior artifacts are completed.
   function isUnlocked(idx: number): boolean {
     if (idx === 0) return true;
     for (let i = 0; i < idx; i++) {
@@ -406,7 +487,6 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
     return true;
   }
 
-  // ── Send a chat message ─────────────────────────────────────────────────
   async function handleSend() {
     const text = input.trim();
     if (!text || sending) return;
@@ -444,7 +524,6 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
     }
   }
 
-  // ── Upload + grade an artifact ──────────────────────────────────────────
   async function handleFileUpload(file: File) {
     if (!activeArtifact) return;
     setUploadStatus('parsing');
@@ -485,7 +564,6 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
         scores: data.scores,
       }]);
 
-      // Auto-advance to the next deliverable if one exists.
       const nextIdx = activeIdx + 1;
       if (nextIdx < scenario.artifacts.length) {
         setTimeout(() => {
@@ -499,11 +577,10 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
     }
   }
 
-  // ── Render ──────────────────────────────────────────────────────────────
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', fontFamily: "'Sora',sans-serif" }}>
 
-      {/* LEFT PANE — chat */}
+      {/* LEFT PANE: chat */}
       <section style={{ flex: '0 0 480px', display: 'flex', flexDirection: 'column', borderRight: '1px solid var(--border)', background: 'var(--bg)' }}>
         <div style={{ padding: '18px 22px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ minWidth: 0 }}>
@@ -515,7 +592,7 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
           </div>
           <div style={{ display: 'flex', gap: 5 }}>
             {scenario.personas.map(p => (
-              <div key={p.id} title={`${p.name} — ${p.title}, ${p.firm}`}>
+              <div key={p.id} title={`${p.name}, ${p.title}, ${p.firm}`}>
                 <PersonaAvatar persona={p} size={30} />
               </div>
             ))}
@@ -559,7 +636,7 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
           {sending && (
             <div style={{ display: 'flex', gap: 10, alignItems: 'center', color: 'var(--text-3)', fontSize: 12 }}>
               <div style={{ width: 30, height: 30 }} />
-              <span>Typing…</span>
+              <span>Typing...</span>
             </div>
           )}
         </div>
@@ -570,7 +647,7 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-              placeholder="Ask a clarifying question, or upload your work on the right →"
+              placeholder="Ask a clarifying question, or upload your work on the right"
               rows={1}
               style={{
                 flex: 1, resize: 'none', padding: '10px 12px',
@@ -594,7 +671,7 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
         </div>
       </section>
 
-      {/* RIGHT PANE — artifact workspace */}
+      {/* RIGHT PANE: artifact workspace */}
       <section style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'var(--surface)' }}>
         <div style={{ padding: '18px 28px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -652,7 +729,7 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
                 </button>
                 <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 6 }}>How a session works</div>
                 <div style={{ fontSize: 12.5, color: 'var(--text-2)', lineHeight: 1.6, paddingRight: 20 }}>
-                  Read the chat on the left — your team is briefing you. Build the deliverable below in your own tools (Excel, Word, PowerPoint), then upload the file here. The persona who asked for it will review it in the chat. If you have clarifying questions, ask them in chat — they'll respond.
+                  Read the chat on the left, your team is briefing you. Build the deliverable below in your own tools (Excel, Word, PowerPoint), then upload the file here. The persona who asked for it will review it in the chat. If you have clarifying questions, ask them in chat and they'll respond.
                 </div>
               </div>
             )}
@@ -662,7 +739,6 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
             )}
             {activeArtifact && (
               <>
-                {/* Currently asking header */}
                 {requestingPersona && (
                   <div style={{
                     display: 'flex', alignItems: 'center', gap: 10,
@@ -705,7 +781,7 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// UploadBox — drag-and-drop file input + status display
+// UploadBox
 // ═══════════════════════════════════════════════════════════════════════════
 function UploadBox({ format, status, error, completed, onFile, fileInputRef }: {
   format: string; status: UploadStatus; error: string | null; completed: boolean;
@@ -721,9 +797,9 @@ function UploadBox({ format, status, error, completed, onFile, fileInputRef }: {
 
   const statusLabel = {
     idle: completed ? 'Resubmit revision' : 'Drop file or click to upload',
-    parsing: 'Parsing file…',
-    grading: 'Grading on craft…',
-    done: 'Graded — feedback in chat',
+    parsing: 'Parsing file...',
+    grading: 'Grading on craft...',
+    done: 'Graded, feedback in chat',
     error: 'Upload failed',
   }[status];
 
@@ -766,7 +842,7 @@ function UploadBox({ format, status, error, completed, onFile, fileInputRef }: {
           )}
         </div>
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>{statusLabel}</div>
-        <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{format.toUpperCase()} only · max 4 MB</div>
+        <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{format.toUpperCase()} only, max 4 MB</div>
         {error && <div style={{ marginTop: 10, fontSize: 12, color: '#dc2626' }}>{error}</div>}
       </div>
     </div>
