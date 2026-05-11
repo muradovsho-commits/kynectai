@@ -31,6 +31,7 @@ import {
   type EvaluationEvent,
   type SkillId,
   type FirmTier,
+  type DrillQuestion,
 } from '../career-data';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -752,7 +753,7 @@ function EventRenderer({ event, save, onComplete }: {
   switch (event.type) {
     case 'narrative':       return <NarrativeRenderer  event={event} onDone={() => onComplete(event.id, event.week, event.effects, event.title)} />;
     case 'quick_decision':  return <DecisionRenderer   event={event} onChoose={(opt) => onComplete(event.id, event.week, opt.effects, event.title)} />;
-    case 'training':        return <TrainingRenderer   event={event} onDone={() => onComplete(event.id, event.week, { skills: { [event.skill]: event.skillGain }, stamina: -event.staminaCost } as any, event.title)} />;
+    case 'training':        return <TrainingRenderer   event={event} onDone={(effects) => onComplete(event.id, event.week, effects, event.title)} />;
     case 'time_skip':       return <TimeSkipRenderer   event={event} onDone={() => onComplete(event.id, event.week + event.weeksAdvanced - 1, event.effects, event.title)} />;
     case 'evaluation':      return <EvaluationRenderer event={event} save={save} onDone={() => onComplete(event.id, event.week, undefined, event.title)} />;
     case 'major_deliverable': return <DeliverableRenderer event={event} save={save} onComplete={(passed) => onComplete(event.id, event.week, passed ? event.effectsOnPass : event.effectsOnFail, event.title)} />;
@@ -959,19 +960,186 @@ function DecisionRenderer({ event, onChoose }: { event: QuickDecisionEvent; onCh
 
 // ─── Training ───────────────────────────────────────────────────────────────
 
-function TrainingRenderer({ event, onDone }: { event: TrainingEvent; onDone: () => void }) {
+function TrainingRenderer({ event, onDone }: { event: TrainingEvent; onDone: (effects: any) => void }) {
+  // Two modes:
+  // 1. Interactive drill (event.questions present): walk through each question, score, scale skill gain.
+  // 2. Flavor drill (no questions): legacy click-to-complete, awards full maxSkillGain.
+
+  // ─── Flavor mode ─────────────────────────────────────────────────────────
+  if (!event.questions || event.questions.length === 0) {
+    return (
+      <EventChrome event={event}>
+        <div style={{ padding: '20px 22px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, marginBottom: 18 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 8 }}>Drill</div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 10 }}>{event.drillTitle}</div>
+          <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.65 }}>{event.drillDescription}</div>
+        </div>
+        <div style={{ padding: '14px 16px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, marginBottom: 22 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 8 }}>What you'll gain</div>
+          <EffectsSummary effects={{ skills: { [event.skill]: event.maxSkillGain } as any, stamina: -event.staminaCost }} />
+        </div>
+        <button type="button" onClick={() => onDone({ skills: { [event.skill]: event.maxSkillGain }, stamina: -event.staminaCost })} style={nextButtonStyle}>Complete drill</button>
+      </EventChrome>
+    );
+  }
+
+  // ─── Interactive drill mode ──────────────────────────────────────────────
+  const questions = event.questions;
+  const [phase, setPhase] = useState<'intro' | 'question' | 'result'>('intro');
+  const [questionIdx, setQuestionIdx] = useState(0);
+  const [selectedChoiceId, setSelectedChoiceId] = useState<string | null>(null);
+  const [revealed, setRevealed] = useState(false);
+  const [correctCount, setCorrectCount] = useState(0);
+
+  const currentQ = questions[questionIdx];
+  const isLastQ = questionIdx === questions.length - 1;
+  const totalQs = questions.length;
+
+  function submitAnswer() {
+    if (!selectedChoiceId || revealed) return;
+    if (selectedChoiceId === currentQ.correctChoiceId) {
+      setCorrectCount(c => c + 1);
+    }
+    setRevealed(true);
+  }
+
+  function nextQuestion() {
+    if (isLastQ) {
+      setPhase('result');
+    } else {
+      setQuestionIdx(i => i + 1);
+      setSelectedChoiceId(null);
+      setRevealed(false);
+    }
+  }
+
+  function finishDrill() {
+    const scaledGain = Math.round((correctCount / totalQs) * event.maxSkillGain);
+    onDone({ skills: { [event.skill]: scaledGain }, stamina: -event.staminaCost });
+  }
+
+  // ─── Intro screen ────────────────────────────────────────────────────────
+  if (phase === 'intro') {
+    return (
+      <EventChrome event={event}>
+        <div style={{ padding: '20px 22px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, marginBottom: 18 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 8 }}>Drill</div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 10 }}>{event.drillTitle}</div>
+          <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.65 }}>{event.drillDescription}</div>
+        </div>
+        <div style={{ padding: '14px 16px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, marginBottom: 22 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 8 }}>Format</div>
+          <div style={{ fontSize: 12.5, color: 'var(--text-2)', lineHeight: 1.65 }}>
+            {totalQs} questions. Multiple choice. Skill gain scales with score: a perfect run earns +{event.maxSkillGain} {SKILL_LABELS[event.skill]}. Stamina cost is {event.staminaCost} regardless.
+          </div>
+        </div>
+        <button type="button" onClick={() => setPhase('question')} style={nextButtonStyle}>Begin drill</button>
+      </EventChrome>
+    );
+  }
+
+  // ─── Result screen ───────────────────────────────────────────────────────
+  if (phase === 'result') {
+    const scaledGain = Math.round((correctCount / totalQs) * event.maxSkillGain);
+    const verdict =
+      correctCount === totalQs ? 'Perfect run.' :
+      correctCount >= Math.ceil(totalQs * 0.6) ? 'Solid.' :
+      correctCount > 0 ? 'Below the bar.' :
+      'You bombed it.';
+    return (
+      <EventChrome event={event}>
+        <div style={{ padding: '24px 26px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 14, marginBottom: 22 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 8 }}>Result</div>
+          <h3 style={{ fontFamily: "'Instrument Serif',serif", fontSize: 28, lineHeight: 1.1, color: 'var(--text)', margin: 0, marginBottom: 12 }}>
+            {verdict}
+          </h3>
+          <div style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.6, marginBottom: 16 }}>
+            {correctCount} of {totalQs} correct.
+          </div>
+          <EffectsSummary effects={{ skills: { [event.skill]: scaledGain }, stamina: -event.staminaCost }} />
+        </div>
+        <button type="button" onClick={finishDrill} style={nextButtonStyle}>Continue</button>
+      </EventChrome>
+    );
+  }
+
+  // ─── Question screen ─────────────────────────────────────────────────────
   return (
     <EventChrome event={event}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+        <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase' }}>Question {questionIdx + 1} of {totalQs}</span>
+        <span style={{ fontSize: 10, color: 'var(--text-3)' }}>·</span>
+        <span style={{ fontSize: 10, color: 'var(--text-3)' }}>Correct so far: {correctCount}/{questionIdx + (revealed ? 1 : 0)}</span>
+      </div>
+
       <div style={{ padding: '20px 22px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, marginBottom: 18 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 8 }}>Drill</div>
-        <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 10 }}>{event.drillTitle}</div>
-        <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.65 }}>{event.drillDescription}</div>
+        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', lineHeight: 1.55, marginBottom: currentQ.context ? 14 : 0 }}>
+          {currentQ.prompt}
+        </div>
+        {currentQ.context && (
+          <pre style={{ margin: 0, padding: '12px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, fontFamily: "'Courier New', monospace", fontSize: 12, color: 'var(--text-2)', lineHeight: 1.55, overflowX: 'auto', whiteSpace: 'pre' }}>
+            {currentQ.context}
+          </pre>
+        )}
       </div>
-      <div style={{ padding: '14px 16px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, marginBottom: 22 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 8 }}>What you'll gain</div>
-        <EffectsSummary effects={{ skills: { [event.skill]: event.skillGain } as any, stamina: -event.staminaCost }} />
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 18 }}>
+        {currentQ.choices.map(c => {
+          const isSelected = selectedChoiceId === c.id;
+          const isCorrect = c.id === currentQ.correctChoiceId;
+          let bg = 'var(--surface)';
+          let border = 'var(--border)';
+          let textColor = 'var(--text)';
+          if (revealed) {
+            if (isCorrect) { bg = '#dcfce7'; border = '#16a34a'; textColor = '#14532d'; }
+            else if (isSelected && !isCorrect) { bg = '#fee2e2'; border = '#dc2626'; textColor = '#7f1d1d'; }
+          } else if (isSelected) {
+            bg = 'var(--bg)'; border = 'var(--text)';
+          }
+          return (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => !revealed && setSelectedChoiceId(c.id)}
+              disabled={revealed}
+              style={{
+                textAlign: 'left', padding: '12px 16px',
+                border: `1.5px solid ${border}`, background: bg,
+                borderRadius: 10, cursor: revealed ? 'default' : 'pointer',
+                fontFamily: c.label.startsWith('=') ? "'Courier New', monospace" : "'Sora',sans-serif",
+                fontSize: 13, color: textColor, lineHeight: 1.5,
+                display: 'flex', alignItems: 'flex-start', gap: 10,
+              }}
+            >
+              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', minWidth: 14, paddingTop: 1 }}>{c.id}</span>
+              <span style={{ flex: 1 }}>{c.label}</span>
+              {revealed && isCorrect && <span style={{ fontSize: 14, color: '#16a34a' }}>✓</span>}
+              {revealed && isSelected && !isCorrect && <span style={{ fontSize: 14, color: '#dc2626' }}>✗</span>}
+            </button>
+          );
+        })}
       </div>
-      <button type="button" onClick={onDone} style={nextButtonStyle}>Complete drill</button>
+
+      {revealed && (
+        <div style={{ padding: '14px 16px', background: 'var(--bg)', border: '1.5px solid var(--border)', borderRadius: 10, marginBottom: 18 }}>
+          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 6 }}>Explanation</div>
+          <div style={{ fontSize: 12.5, color: 'var(--text-2)', lineHeight: 1.65 }}>{currentQ.explanation}</div>
+        </div>
+      )}
+
+      <div>
+        {!revealed && (
+          <button type="button" onClick={submitAnswer} disabled={!selectedChoiceId}
+            style={{ ...nextButtonStyle, opacity: selectedChoiceId ? 1 : 0.4, cursor: selectedChoiceId ? 'pointer' : 'not-allowed' }}>
+            Submit answer
+          </button>
+        )}
+        {revealed && (
+          <button type="button" onClick={nextQuestion} style={nextButtonStyle}>
+            {isLastQ ? 'See results' : 'Next question'}
+          </button>
+        )}
+      </div>
     </EventChrome>
   );
 }
