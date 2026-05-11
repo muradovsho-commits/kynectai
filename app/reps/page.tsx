@@ -568,7 +568,33 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
     if (typeof window !== 'undefined') localStorage.setItem('offerbell_reps_session_intro_seen', '1');
   }
 
+  // Session persistence. On mount: try to restore from localStorage. Falls
+  // back to the scenario's opening messages if no prior session or if the
+  // stored state is corrupted or older than 90 days. State is keyed per
+  // scenarioId so each scenario maintains its own progress.
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const storageKey = `offerbell_reps_session_${scenario.id}`;
+    const stored = localStorage.getItem(storageKey);
+
+    if (stored) {
+      try {
+        const data = JSON.parse(stored);
+        const fresh = Date.now() - (data.updatedAt || 0) < 90 * 24 * 60 * 60 * 1000;
+        if (fresh && Array.isArray(data.messages) && data.messages.length > 0) {
+          setMessages(data.messages);
+          setCompletedArtifacts(new Set(Array.isArray(data.completedArtifacts) ? data.completedArtifacts : []));
+          if (data.activeArtifactId && scenario.artifacts.some(a => a.id === data.activeArtifactId)) {
+            setActiveArtifactId(data.activeArtifactId);
+          }
+          return;
+        }
+      } catch {
+        // Corrupted state, fall through to fresh init.
+      }
+    }
+
+    // Fresh session: seed with the scenario's opening messages.
     const opening: ChatMsg[] = scenario.opening.map((o, i) => ({
       id: `open-${i}`,
       from: 'persona',
@@ -576,7 +602,29 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
       text: o.text,
     }));
     setMessages(opening);
+    setCompletedArtifacts(new Set());
+    setActiveArtifactId(scenario.artifacts[0]?.id ?? null);
   }, [scenario]);
+
+  // Save session state to localStorage on every change. Debouncing isn't
+  // strictly necessary at this scale, and localStorage writes are sync, but
+  // we skip empty-state writes to avoid clobbering a real session during the
+  // brief moment between mount and the restore-or-init effect above.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (messages.length === 0) return;
+    const storageKey = `offerbell_reps_session_${scenario.id}`;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify({
+        messages,
+        completedArtifacts: Array.from(completedArtifacts),
+        activeArtifactId,
+        updatedAt: Date.now(),
+      }));
+    } catch {
+      // Quota exceeded or storage unavailable. Silently drop.
+    }
+  }, [messages, completedArtifacts, activeArtifactId, scenario.id]);
 
   useEffect(() => {
     if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
@@ -643,6 +691,14 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
     setUploadStatus('parsing');
     setUploadError(null);
 
+    // Record the upload in chat history so when the user returns to this
+    // session they can see what they submitted (filename only, no binary).
+    setMessages(prev => [...prev, {
+      id: `upload-${Date.now()}`,
+      from: 'student',
+      text: `Uploaded: ${file.name}`,
+    }]);
+
     try {
       const fd = new FormData();
       fd.append('file', file);
@@ -663,11 +719,14 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
 
       setUploadStatus('done');
       const justCompletedId = activeArtifact.id;
-      setCompletedArtifacts(prev => {
-        const next = new Set(prev);
-        next.add(justCompletedId);
-        return next;
-      });
+      const scores: Record<string, number> = data.scores || {};
+
+      // Pass threshold: average score across all rubric dimensions must be
+      // 6 or higher. Below that, the artifact stays open for revision, the
+      // checkmark doesn't appear, and the workspace doesn't auto-advance.
+      const scoreValues = Object.values(scores).filter((v): v is number => typeof v === 'number');
+      const avgScore = scoreValues.length > 0 ? scoreValues.reduce((a, b) => a + b, 0) / scoreValues.length : 0;
+      const passed = avgScore >= 6;
 
       setMessages(prev => [...prev, {
         id: `g-${Date.now()}`,
@@ -675,20 +734,51 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
         personaId: activeArtifact.requestedBy,
         text: data.feedback,
         artifactId: activeArtifact.id,
-        scores: data.scores,
+        scores,
       }]);
 
-      const nextIdx = activeIdx + 1;
-      if (nextIdx < scenario.artifacts.length) {
-        setTimeout(() => {
-          setActiveArtifactId(scenario.artifacts[nextIdx].id);
-          setUploadStatus('idle');
-        }, 1200);
+      if (passed) {
+        setCompletedArtifacts(prev => {
+          const next = new Set(prev);
+          next.add(justCompletedId);
+          return next;
+        });
+        const nextIdx = activeIdx + 1;
+        if (nextIdx < scenario.artifacts.length) {
+          setTimeout(() => {
+            setActiveArtifactId(scenario.artifacts[nextIdx].id);
+            setUploadStatus('idle');
+          }, 1200);
+        }
+      } else {
+        // Failed grade: stay on this artifact, let the user revise and resubmit.
+        setTimeout(() => setUploadStatus('idle'), 800);
       }
     } catch (e: any) {
       setUploadStatus('error');
       setUploadError(e?.message || 'Upload failed.');
     }
+  }
+
+  function resetSession() {
+    if (typeof window === 'undefined') return;
+    if (!window.confirm('Reset this scenario? Your chat history and progress will be cleared.')) return;
+    try {
+      localStorage.removeItem(`offerbell_reps_session_${scenario.id}`);
+    } catch {
+      // ignore
+    }
+    const opening: ChatMsg[] = scenario.opening.map((o, i) => ({
+      id: `open-${i}`,
+      from: 'persona',
+      personaId: o.personaId,
+      text: o.text,
+    }));
+    setMessages(opening);
+    setCompletedArtifacts(new Set());
+    setActiveArtifactId(scenario.artifacts[0]?.id ?? null);
+    setUploadStatus('idle');
+    setUploadError(null);
   }
 
   return (
@@ -698,10 +788,16 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
       <section style={{ flex: '0 0 480px', display: 'flex', flexDirection: 'column', borderRight: '1px solid var(--border)', background: 'var(--bg)' }}>
         <div style={{ padding: '18px 22px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ minWidth: 0 }}>
-            <button type="button" onClick={onExit} style={{ background: 'none', border: 'none', color: 'var(--text-3)', fontSize: 11, cursor: 'pointer', padding: 0, fontFamily: "'Sora',sans-serif", display: 'flex', alignItems: 'center', gap: 4, marginBottom: 3 }}>
-              <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6" /></svg>
-              Exit session
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
+              <button type="button" onClick={onExit} style={{ background: 'none', border: 'none', color: 'var(--text-3)', fontSize: 11, cursor: 'pointer', padding: 0, fontFamily: "'Sora',sans-serif", display: 'flex', alignItems: 'center', gap: 4 }}>
+                <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6" /></svg>
+                Exit session
+              </button>
+              <span style={{ color: 'var(--text-3)', fontSize: 11 }}>·</span>
+              <button type="button" onClick={resetSession} title="Clear chat history and progress for this scenario" style={{ background: 'none', border: 'none', color: 'var(--text-3)', fontSize: 11, cursor: 'pointer', padding: 0, fontFamily: "'Sora',sans-serif" }}>
+                Reset
+              </button>
+            </div>
             <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{scenario.title}</div>
           </div>
           <div style={{ display: 'flex', gap: 5 }}>
