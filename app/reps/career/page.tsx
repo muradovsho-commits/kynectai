@@ -9,8 +9,10 @@ import {
   IB_YEAR_1_EVENTS,
   IB_PERSONA_PROFILE,
   SCHOOLS,
+  US_STATES,
   BACKGROUNDS,
   FIRMS_BY_CAREER,
+  FIRM_TIER_LABELS,
   SKILL_LABELS,
   SKILL_DESCRIPTIONS,
   getStartingSkills,
@@ -28,7 +30,7 @@ import {
   type TimeSkipEvent,
   type EvaluationEvent,
   type SkillId,
-  type Skills,
+  type FirmTier,
 } from '../career-data';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -190,7 +192,7 @@ export default function CareerPage() {
 // ═════════════════════════════════════════════════════════════════════════════
 
 const CAREER_TILES: { id: CareerId; title: string; tagline: string; available: boolean; accent: string }[] = [
-  { id: 'ib',         title: 'Investment Banking', tagline: 'Two years of analyst life, leading into on-cycle PE and lateral decisions.', available: true,  accent: '#1f2937' },
+  { id: 'ib',         title: 'Investment Banking (M&A)', tagline: 'M&A advisory career. Comp sheets, LBOs, IC memos, all-nighters. Year 1 analyst through on-cycle PE.', available: true,  accent: '#1f2937' },
   { id: 'pe',         title: 'Private Equity',     tagline: 'Post-banking buyside arc. Sourcing, diligence, IC defense.',                 available: false, accent: '#1d4ed8' },
   { id: 'consulting', title: 'Consulting',         tagline: 'Strategy generalist track. Engagement to engagement, partner path.',         available: false, accent: '#0891b2' },
   { id: 'rx',         title: 'Restructuring',      tagline: 'Crisis-first banking. Distressed mandates, sponsor calls, lender battles.',  available: false, accent: '#7c2d12' },
@@ -319,8 +321,38 @@ function PlayerCreation({ career, onCreate, onCancel }: {
   const [backgroundId, setBackgroundId] = useState('');
   const [firmName, setFirmName] = useState('');
 
+  // Autofill name from whatever the user already gave us elsewhere in the app.
+  // Tries common storage keys; falls through to empty if none found.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const tryKeys = [
+      'offerbell_user_name',
+      'offerbell_name',
+      'offerbell_full_name',
+      'offerbell_display_name',
+      'offerbell_first_name',
+    ];
+    for (const k of tryKeys) {
+      const v = localStorage.getItem(k);
+      if (v && v.trim()) { setName(v.trim()); return; }
+    }
+  }, []);
+
   const firmOptions = FIRMS_BY_CAREER[career];
   const selectedFirm = firmOptions.find(f => f.name === firmName);
+
+  // Group firms by tier for the picker UI.
+  const firmsByTier = useMemo(() => {
+    const groups: Record<string, typeof firmOptions> = {};
+    for (const f of firmOptions) {
+      const tier = f.tier || 'specialist';
+      if (!groups[tier]) groups[tier] = [];
+      groups[tier].push(f);
+    }
+    return groups;
+  }, [firmOptions]);
+
+  const tierOrder: FirmTier[] = ['bulge_bracket', 'elite_boutique', 'middle_market', 'specialist'];
 
   const finalSkills = useMemo(() => applyBackgroundBonus(getStartingSkills(), backgroundId), [backgroundId]);
 
@@ -330,7 +362,7 @@ function PlayerCreation({ career, onCreate, onCancel }: {
       career,
       playerName: name.trim() || 'Unnamed Analyst',
       playerSchool: school || 'Other',
-      playerHometown: hometown.trim() || 'Somewhere, USA',
+      playerHometown: hometown || 'International',
       playerBackgroundId: backgroundId,
       firmName: firmName || firmOptions[0].name,
       currentYear: 1,
@@ -349,7 +381,7 @@ function PlayerCreation({ career, onCreate, onCancel }: {
   }
 
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto' }}>
+    <div style={{ maxWidth: 760, margin: '0 auto' }}>
       <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center', gap: 10 }}>
         <button type="button" onClick={onCancel} style={{ background: 'none', border: 'none', color: 'var(--text-3)', fontSize: 12, cursor: 'pointer', padding: 0, fontFamily: "'Sora',sans-serif", display: 'flex', alignItems: 'center', gap: 4 }}>
           <svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6" /></svg>
@@ -363,16 +395,16 @@ function PlayerCreation({ career, onCreate, onCancel }: {
         </div>
         <h1 style={{ fontFamily: "'Instrument Serif',serif", fontSize: 38, lineHeight: 1.08, color: 'var(--text)', margin: 0, marginBottom: 6 }}>
           {step === 1 && 'Who are you?'}
-          {step === 2 && 'Where do you come from?'}
-          {step === 3 && 'What did you do in college?'}
-          {step === 4 && 'Where did you sign?'}
+          {step === 2 && 'Where are you from?'}
+          {step === 3 && "What's your background?"}
+          {step === 4 && 'Where are you starting?'}
           {step === 5 && <>Welcome to <em style={{ fontStyle: 'italic' }}>{firmName}</em>.</>}
         </h1>
         <p style={{ fontSize: 13, color: 'var(--text-3)', margin: 0, lineHeight: 1.6 }}>
-          {step === 1 && 'Pick a name and school. These show up everywhere in the game.'}
-          {step === 2 && 'Hometown is just for flavor. It will come up.'}
-          {step === 3 && "Background gives you a small skill bonus to start. Pick what's closest to who you actually were."}
-          {step === 4 && "Pick your firm. Each one has a real personality. The choice shapes your culture, your deal flow, and what your seniors care about."}
+          {step === 1 && 'Your name and school. Both show up in the game.'}
+          {step === 2 && 'Pick your home state. Comes up in narrative later.'}
+          {step === 3 && "Background gives you a small starting skill bonus. Pick what's closest to who you were in school."}
+          {step === 4 && "You're choosing the firm where you accepted your offer. This is an M&A simulation, so the list is M&A-focused. Each firm has a real personality. Read the taglines."}
           {step === 5 && 'Confirm and start your career.'}
         </p>
       </div>
@@ -382,6 +414,7 @@ function PlayerCreation({ career, onCreate, onCancel }: {
           <div>
             <label style={fieldLabelStyle}>Your name</label>
             <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Alex Chen" style={fieldInputStyle} autoFocus />
+            {name && <div style={{ marginTop: 6, fontSize: 10.5, color: 'var(--text-3)' }}>Autofilled from your account. Edit if you want to play as someone else.</div>}
 
             <label style={{ ...fieldLabelStyle, marginTop: 18 }}>Your school</label>
             <select value={school} onChange={e => setSchool(e.target.value)} style={fieldInputStyle}>
@@ -394,7 +427,11 @@ function PlayerCreation({ career, onCreate, onCancel }: {
         {step === 2 && (
           <div>
             <label style={fieldLabelStyle}>Hometown</label>
-            <input type="text" value={hometown} onChange={e => setHometown(e.target.value)} placeholder="e.g. Cleveland, OH" style={fieldInputStyle} autoFocus />
+            <select value={hometown} onChange={e => setHometown(e.target.value)} style={fieldInputStyle} autoFocus>
+              <option value="">Pick a state</option>
+              {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+            <div style={{ marginTop: 6, fontSize: 10.5, color: 'var(--text-3)' }}>State-level is enough. It comes up in narrative ("Yeah, grew up in {hometown || 'somewhere'}").</div>
           </div>
         )}
 
@@ -418,29 +455,38 @@ function PlayerCreation({ career, onCreate, onCancel }: {
         )}
 
         {step === 4 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {firmOptions.map(f => (
-              <button key={f.name} type="button" onClick={() => setFirmName(f.name)} style={{
-                textAlign: 'left', padding: '14px 18px',
-                border: '1.5px solid ' + (firmName === f.name ? 'var(--text)' : 'var(--border)'),
-                background: firmName === f.name ? 'var(--bg)' : 'transparent',
-                borderRadius: 10, cursor: 'pointer', fontFamily: "'Sora',sans-serif",
-                display: 'flex', alignItems: 'flex-start', gap: 14,
-              }}>
-                <div style={{
-                  flexShrink: 0,
-                  width: 44, height: 44, borderRadius: 10,
-                  background: f.accent, color: '#fff',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontFamily: "'Instrument Serif',serif", fontStyle: 'italic', fontSize: 18,
-                }}>
-                  {f.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+          <div>
+            {tierOrder.filter(t => firmsByTier[t]?.length).map(tier => (
+              <div key={tier} style={{ marginBottom: 18 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.6px', textTransform: 'uppercase', marginBottom: 10 }}>
+                  {FIRM_TIER_LABELS[tier]}
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>{f.name}</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.55 }}>{f.tagline}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {firmsByTier[tier].map(f => (
+                    <button key={f.name} type="button" onClick={() => setFirmName(f.name)} style={{
+                      textAlign: 'left', padding: '12px 16px',
+                      border: '1.5px solid ' + (firmName === f.name ? 'var(--text)' : 'var(--border)'),
+                      background: firmName === f.name ? 'var(--bg)' : 'transparent',
+                      borderRadius: 10, cursor: 'pointer', fontFamily: "'Sora',sans-serif",
+                      display: 'flex', alignItems: 'flex-start', gap: 12,
+                    }}>
+                      <div style={{
+                        flexShrink: 0,
+                        width: 40, height: 40, borderRadius: 9,
+                        background: f.accent, color: '#fff',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontFamily: "'Instrument Serif',serif", fontStyle: 'italic', fontSize: 16,
+                      }}>
+                        {f.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>{f.name}</div>
+                        <div style={{ fontSize: 11.5, color: 'var(--text-3)', lineHeight: 1.5 }}>{f.tagline}</div>
+                      </div>
+                    </button>
+                  ))}
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         )}
@@ -450,8 +496,8 @@ function PlayerCreation({ career, onCreate, onCancel }: {
             <div style={{ marginBottom: 18, padding: '16px 18px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 8 }}>Player card</div>
               <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>{name || 'Unnamed Analyst'}</div>
-              <div style={{ fontSize: 12, color: 'var(--text-2)', marginBottom: 2 }}>{school || 'Other'} · {hometown || 'Somewhere, USA'}</div>
-              <div style={{ fontSize: 12, color: 'var(--text-2)' }}>{firmName} · Year 1 IB Analyst</div>
+              <div style={{ fontSize: 12, color: 'var(--text-2)', marginBottom: 2 }}>{school || 'Other'} · From {hometown || 'International'}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-2)' }}>{firmName} · Year 1 M&A Analyst</div>
               {selectedFirm && (
                 <div style={{ fontSize: 11.5, color: 'var(--text-3)', lineHeight: 1.55, marginTop: 8, paddingTop: 8, borderTop: '1px solid var(--border)', fontStyle: 'italic' }}>
                   {selectedFirm.tagline}
@@ -481,7 +527,7 @@ function PlayerCreation({ career, onCreate, onCancel }: {
           <button type="button" onClick={() => setStep(s => (s + 1) as Step)}
             disabled={
               (step === 1 && (!name.trim() || !school)) ||
-              (step === 2 && !hometown.trim()) ||
+              (step === 2 && !hometown) ||
               (step === 3 && !backgroundId) ||
               (step === 4 && !firmName)
             }
@@ -774,65 +820,139 @@ function NarrativeRenderer({ event, onDone }: { event: NarrativeEvent; onDone: (
 
 // ─── Quick decision ─────────────────────────────────────────────────────────
 
-function DecisionRenderer({ event, onChoose }: { event: QuickDecisionEvent; onChoose: (opt: QuickDecisionEvent['options'][number]) => void }) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [showConsequence, setShowConsequence] = useState(false);
-  const selected = event.options.find(o => o.id === selectedId);
+function DecisionRenderer({ event, onChoose }: { event: QuickDecisionEvent; onChoose: (outcome: QuickDecisionEvent['outcomes'][number]) => void }) {
+  const [userInput, setUserInput] = useState('');
+  const [submittedInput, setSubmittedInput] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<{ outcome: QuickDecisionEvent['outcomes'][number]; personaReply: string } | null>(null);
+
+  const personaPhotoKey = event.speakerPersonaKey
+    ? IB_PERSONA_PROFILE[event.speakerPersonaKey]?.photoKey || event.speaker
+    : event.speaker;
+
+  async function submit() {
+    if (!userInput.trim() || submitting) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/career/decision', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          setup: event.setup,
+          speakerName: event.speaker,
+          speakerTitle: event.speakerTitle,
+          prompt: event.prompt,
+          userResponse: userInput,
+          recommendedApproach: event.recommendedApproach,
+          outcomes: event.outcomes.map(o => ({ key: o.key, description: o.description })),
+          careerContext: 'Year 1 IB Analyst',
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Something went wrong');
+        setSubmitting(false);
+        return;
+      }
+      const outcome = event.outcomes.find(o => o.key === data.outcomeKey) || event.outcomes[event.outcomes.length - 1];
+      setSubmittedInput(userInput);
+      setResult({ outcome, personaReply: data.personaReply || '' });
+      setSubmitting(false);
+    } catch (e: any) {
+      setError(e?.message || 'Network error');
+      setSubmitting(false);
+    }
+  }
 
   return (
     <EventChrome event={event}>
-      <div style={{ padding: '14px 18px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, marginBottom: 18, fontSize: 13.5, color: 'var(--text-2)', lineHeight: 1.65 }}>{event.setup}</div>
+      {/* Setup context */}
+      <div style={{ padding: '14px 18px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, marginBottom: 18, fontSize: 13.5, color: 'var(--text-2)', lineHeight: 1.65 }}>
+        {event.setup}
+      </div>
 
-      {event.speaker && (
-        <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 22 }}>
-          <PersonaPhoto name={event.speakerPersonaKey ? IB_PERSONA_PROFILE[event.speakerPersonaKey]?.photoKey || event.speaker : event.speaker} size={36} />
+      {/* Persona prompt */}
+      <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 18 }}>
+        <PersonaPhoto name={personaPhotoKey} size={36} />
+        <div style={{ flex: 1, padding: '12px 16px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 4 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{event.speaker}</span>
+            {event.speakerTitle && <span style={{ fontSize: 10, color: 'var(--text-3)' }}>{event.speakerTitle}</span>}
+          </div>
+          <div style={{ fontSize: 13.5, color: 'var(--text)', lineHeight: 1.65 }}>{event.prompt}</div>
+        </div>
+      </div>
+
+      {/* User's submitted response, shown as right-aligned chat bubble after submit */}
+      {result && submittedInput && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 18 }}>
+          <div style={{ maxWidth: '78%', background: 'var(--text)', color: 'var(--surface)', padding: '10px 14px', borderRadius: '14px 14px 4px 14px', fontSize: 13, lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>
+            {submittedInput}
+          </div>
+        </div>
+      )}
+
+      {/* Persona's reaction */}
+      {result && result.personaReply && (
+        <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 18 }}>
+          <PersonaPhoto name={personaPhotoKey} size={36} />
           <div style={{ flex: 1, padding: '12px 16px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 4 }}>
               <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{event.speaker}</span>
               {event.speakerTitle && <span style={{ fontSize: 10, color: 'var(--text-3)' }}>{event.speakerTitle}</span>}
             </div>
-            <div style={{ fontSize: 13.5, color: 'var(--text)', lineHeight: 1.65 }}>{event.prompt}</div>
+            <div style={{ fontSize: 13.5, color: 'var(--text)', lineHeight: 1.65 }}>{result.personaReply}</div>
           </div>
         </div>
       )}
 
-      {!showConsequence && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {event.options.map(opt => (
-            <button key={opt.id} type="button" onClick={() => setSelectedId(opt.id)} style={{
-              textAlign: 'left', padding: '14px 18px',
-              border: '1.5px solid ' + (selectedId === opt.id ? 'var(--text)' : 'var(--border)'),
-              background: selectedId === opt.id ? 'var(--bg)' : 'var(--surface)',
-              borderRadius: 10, cursor: 'pointer', fontFamily: "'Sora',sans-serif",
-              fontSize: 13.5, color: 'var(--text)', lineHeight: 1.5,
-            }}>
-              {opt.label}
+      {/* Outcome narrative + effects */}
+      {result && (
+        <div style={{ padding: '16px 18px', background: 'var(--bg)', border: '1.5px solid var(--border)', borderRadius: 10, marginBottom: 18 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 8 }}>Consequence</div>
+          <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.65, marginBottom: 14 }}>{result.outcome.narrative}</div>
+          <EffectsSummary effects={result.outcome.effects} />
+        </div>
+      )}
+
+      {/* Input area (only shown before submitting) */}
+      {!result && (
+        <div>
+          <div style={{ padding: '12px 14px', background: '#fef3c7', border: '1px solid #fbbf24', borderRadius: 8, marginBottom: 12, fontSize: 11.5, color: '#854d0e', lineHeight: 1.65 }}>
+            <div style={{ fontSize: 10, fontWeight: 800, color: '#854d0e', letterSpacing: '.4px', textTransform: 'uppercase', marginBottom: 4 }}>Recommended approach</div>
+            {event.recommendedApproach}
+          </div>
+          <textarea
+            value={userInput}
+            onChange={e => setUserInput(e.target.value)}
+            placeholder="Type your response..."
+            rows={3}
+            disabled={submitting}
+            style={{
+              width: '100%', padding: '12px 14px', border: '1.5px solid var(--border)', borderRadius: 10,
+              background: 'var(--bg)', color: 'var(--text)', fontSize: 13, fontFamily: "'Sora',sans-serif",
+              resize: 'vertical', minHeight: 88, outline: 'none', boxSizing: 'border-box', lineHeight: 1.55,
+            }}
+          />
+          {error && <div style={{ marginTop: 8, fontSize: 12, color: '#dc2626' }}>{error}</div>}
+          <div style={{ marginTop: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+            <span style={{ fontSize: 10.5, color: 'var(--text-3)', lineHeight: 1.5 }}>Your response will be evaluated on craft. The persona will read what you actually wrote.</span>
+            <button type="button" onClick={submit} disabled={!userInput.trim() || submitting}
+              style={{ ...nextButtonStyle, opacity: userInput.trim() && !submitting ? 1 : 0.4, cursor: userInput.trim() && !submitting ? 'pointer' : 'not-allowed', whiteSpace: 'nowrap' }}>
+              {submitting ? 'Evaluating...' : 'Send response'}
             </button>
-          ))}
+          </div>
         </div>
       )}
 
-      {showConsequence && selected && (
-        <div style={{ padding: '16px 18px', background: 'var(--bg)', border: '1.5px solid var(--border)', borderRadius: 10 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 8 }}>You chose</div>
-          <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 10 }}>{selected.label}</div>
-          <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.65, marginBottom: 14 }}>{selected.consequence}</div>
-          <EffectsSummary effects={selected.effects} />
-        </div>
+      {/* Continue button after result */}
+      {result && (
+        <button type="button" onClick={() => onChoose(result.outcome)} style={nextButtonStyle}>
+          Continue
+        </button>
       )}
-
-      <div style={{ marginTop: 22 }}>
-        {!showConsequence && (
-          <button type="button" disabled={!selectedId} onClick={() => setShowConsequence(true)} style={{ ...nextButtonStyle, opacity: selectedId ? 1 : 0.4, cursor: selectedId ? 'pointer' : 'not-allowed' }}>
-            Confirm choice
-          </button>
-        )}
-        {showConsequence && selected && (
-          <button type="button" onClick={() => onChoose(selected)} style={nextButtonStyle}>
-            Continue
-          </button>
-        )}
-      </div>
     </EventChrome>
   );
 }
