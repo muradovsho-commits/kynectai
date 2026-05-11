@@ -83,11 +83,106 @@ export type PlayerSave = {
 
 // ─── Player creation choices ─────────────────────────────────────────────────
 
+// Comprehensive school list, alphabetical. Includes the main schools that
+// recruit into M&A IB programs, plus a wide tail. If the user's school isn't
+// here they should pick "Other".
 export const SCHOOLS = [
-  'Wharton', 'Harvard', 'Stanford', 'NYU Stern', 'Columbia', 'MIT Sloan',
-  'Chicago Booth', 'Yale', 'Cornell Dyson', 'Michigan Ross', 'Berkeley Haas',
-  'Georgetown McDonough', 'Duke Fuqua', 'UVA McIntire', 'UNC Kenan-Flagler',
-  'Notre Dame Mendoza', 'Ohio State Fisher', 'UT Austin McCombs', 'Other',
+  'Amherst College',
+  'Babson College',
+  'Bates College',
+  'Baylor University',
+  'Berkeley Haas',
+  'Boston College Carroll',
+  'Boston University Questrom',
+  'Bowdoin College',
+  'Brown University',
+  'Bucknell University',
+  'Carnegie Mellon University',
+  'Claremont McKenna',
+  'Colgate University',
+  'College of William & Mary',
+  'Columbia University',
+  'Cornell Dyson',
+  'Cornell University',
+  'Dartmouth College',
+  'Davidson College',
+  'Duke Fuqua',
+  'Duke University',
+  'Emory Goizueta',
+  'Florida Warrington',
+  'Fordham University',
+  'Georgetown McDonough',
+  'Georgia Institute of Technology',
+  'Hamilton College',
+  'Harvard University',
+  'Howard University',
+  'Indiana Kelley',
+  'Johns Hopkins University',
+  'Lafayette College',
+  'Lehigh University',
+  'MIT Sloan',
+  'MIT',
+  'Michigan Ross',
+  'Middlebury College',
+  'Morehouse College',
+  'New York University',
+  'NYU Stern',
+  'Northeastern University',
+  'Northwestern Kellogg',
+  'Northwestern University',
+  'Notre Dame Mendoza',
+  'Ohio State Fisher',
+  'Penn State Smeal',
+  'Pomona College',
+  'Princeton University',
+  'Rice University',
+  'Rutgers University',
+  'SMU Cox',
+  'Spelman College',
+  'Stanford GSB',
+  'Stanford University',
+  'Tufts University',
+  'Tulane Freeman',
+  'UCLA Anderson',
+  'UCLA',
+  'UNC Kenan-Flagler',
+  'USC Marshall',
+  'UT Austin McCombs',
+  'UVA McIntire',
+  'University of Chicago Booth',
+  'University of Chicago',
+  'University of Florida',
+  'University of Illinois',
+  'University of Michigan',
+  'University of Minnesota Carlson',
+  'University of Pennsylvania',
+  'University of Virginia',
+  'University of Wisconsin',
+  'Vanderbilt University',
+  'Villanova University',
+  'Wake Forest University',
+  'Washington University in St. Louis',
+  'Wellesley College',
+  'Wharton School',
+  'Williams College',
+  'Yale University',
+  'Other',
+];
+
+// US states for the hometown dropdown. A state is specific enough to feel
+// personal in narrative ("Yeah, grew up in Ohio") without forcing a giant
+// cities list. International + Other catch everyone else.
+export const US_STATES = [
+  'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado',
+  'Connecticut', 'Delaware', 'District of Columbia', 'Florida', 'Georgia',
+  'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
+  'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
+  'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
+  'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
+  'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
+  'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
+  'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming',
+  'International',
 ];
 
 export type Background = {
@@ -133,92 +228,130 @@ export const BACKGROUNDS: Background[] = [
 // ─── Firms by career ─────────────────────────────────────────────────────────
 
 // Firms with character. Tagline is shown during player creation so the choice
-// feels meaningful. Order within each career roughly mirrors street reputation
-// but isn't prescriptive; players should pick the firm whose vibe they want.
+// feels meaningful. The IB list is M&A-focused (S&T and Rx are their own
+// careers). Tier groups firms in the UI under section headers.
+
+export type FirmTier = 'bulge_bracket' | 'elite_boutique' | 'middle_market' | 'specialist';
+
+export const FIRM_TIER_LABELS: Record<FirmTier, string> = {
+  bulge_bracket: 'Bulge Bracket',
+  elite_boutique: 'Elite Boutique',
+  middle_market: 'Middle Market',
+  specialist: 'Specialist / Industry',
+};
 
 export type FirmOption = {
   name: string;
   tagline: string;
   accent: string;
+  tier?: FirmTier;
 };
 
 export const FIRMS_BY_CAREER: Record<CareerId, FirmOption[]> = {
+  // IB MyCareer is an M&A simulation. Firm list reflects that.
   ib: [
-    { name: 'Goldman Sachs',       tagline: 'The brand. Big deals, deep bench, a culture that\'s as much a religion as a job.',                    accent: '#7c2d12' },
-    { name: 'Morgan Stanley',      tagline: 'Bulge bracket counterweight to Goldman. Strong M&A, strong tech coverage, slightly more humane.',       accent: '#1e40af' },
-    { name: 'JPMorgan',            tagline: 'The biggest balance sheet on the street. Lev fin and M&A both heavy. The institution that won 2008.',  accent: '#1f2937' },
-    { name: 'Evercore',            tagline: 'Top advisory boutique. M&A focus, smaller class sizes, more direct senior banker exposure.',           accent: '#365314' },
-    { name: 'Centerview Partners', tagline: 'Lean elite. ~80 partners. The pay is mythical and the hours are too. You get smart fast.',             accent: '#1e3a8a' },
-    { name: 'Lazard',              tagline: 'The old-money advisory house. Restructuring expertise, European reach, cerebral culture.',             accent: '#581c87' },
-    { name: 'PJT Partners',        tagline: 'Spin-out from Blackstone. Strong restructuring and strategic advisory. Newer brand, sharp culture.',   accent: '#0c4a6e' },
-    { name: 'Moelis & Company',    tagline: 'M&A-heavy advisory boutique. Lean teams, founder-led, deals get done.',                                accent: '#7e22ce' },
+    // Bulge Bracket
+    { name: 'Goldman Sachs',             tier: 'bulge_bracket', accent: '#7c2d12', tagline: 'The brand. M&A league table mainstay, deep client roster, a culture that\'s as much a religion as a job.' },
+    { name: 'Morgan Stanley',            tier: 'bulge_bracket', accent: '#1e40af', tagline: 'Bulge bracket counterweight to Goldman. Strong M&A, top tech coverage, slightly more humane culture.' },
+    { name: 'JPMorgan',                  tier: 'bulge_bracket', accent: '#1f2937', tagline: 'The biggest balance sheet on the street. M&A heavy, healthcare and industrials especially dominant.' },
+    { name: 'Bank of America',           tier: 'bulge_bracket', accent: '#dc2626', tagline: 'Full-service bulge bracket. Strong leveraged finance, growing M&A advisory, deep corporate client list.' },
+    { name: 'Citi',                      tier: 'bulge_bracket', accent: '#0c4a6e', tagline: 'Global footprint, EM and cross-border M&A strength, scrappier US franchise.' },
+    { name: 'Barclays',                  tier: 'bulge_bracket', accent: '#1e3a8a', tagline: 'Strong natural resources and industrials M&A. UK-rooted balance sheet, US ambitions.' },
+    { name: 'UBS',                       tier: 'bulge_bracket', accent: '#7c2d12', tagline: 'Wealth management arm gives unique client access. Restructuring after Credit Suisse acquisition.' },
+    { name: 'Deutsche Bank',             tier: 'bulge_bracket', accent: '#1e40af', tagline: 'Smaller US M&A footprint than peers, but solid TMT and industrials coverage.' },
+    { name: 'RBC Capital Markets',       tier: 'bulge_bracket', accent: '#0c4a6e', tagline: 'Canadian bank with strong US energy, mining, and industrial coverage. Growing M&A practice.' },
+    { name: 'Wells Fargo Securities',    tier: 'bulge_bracket', accent: '#dc2626', tagline: 'Massive US corporate banking footprint. Growing M&A advisory, still building street rep.' },
+
+    // Elite Boutique
+    { name: 'Centerview Partners',       tier: 'elite_boutique', accent: '#1e3a8a', tagline: 'Lean elite. ~80 partners. The pay is mythical and the hours are too. You get smart fast.' },
+    { name: 'Evercore',                  tier: 'elite_boutique', accent: '#365314', tagline: 'Top advisory boutique. M&A focus, smaller class sizes, more direct senior banker exposure.' },
+    { name: 'Lazard',                    tier: 'elite_boutique', accent: '#581c87', tagline: 'The old-money advisory house. Top financial advisory, European reach, cerebral culture.' },
+    { name: 'PJT Partners',              tier: 'elite_boutique', accent: '#0c4a6e', tagline: 'Spin-out from Blackstone. Strong strategic advisory, restructuring, and capital advisory.' },
+    { name: 'Moelis & Company',          tier: 'elite_boutique', accent: '#7e22ce', tagline: 'M&A-heavy advisory boutique. Lean teams, founder-led, deals get done.' },
+    { name: 'Guggenheim Partners',       tier: 'elite_boutique', accent: '#1f2937', tagline: 'Independent advisory with healthcare, media, and consumer M&A strength.' },
+    { name: 'Perella Weinberg Partners', tier: 'elite_boutique', accent: '#7c2d12', tagline: 'Lean elite advisory firm. Energy and financial sponsors M&A both notable.' },
+    { name: 'Greenhill & Co.',           tier: 'elite_boutique', accent: '#365314', tagline: 'Pure-play independent advisory. Smaller now but the legacy M&A pedigree is real.' },
+    { name: 'Qatalyst Partners',         tier: 'specialist',     accent: '#581c87', tagline: 'Pure tech M&A boutique. Founded by Frank Quattrone. Largest tech sell-side mandates.' },
+    { name: 'Allen & Company',           tier: 'specialist',     accent: '#1e3a8a', tagline: 'Media and entertainment M&A specialist. Famously private, famously connected.' },
+
+    // Middle Market
+    { name: 'Houlihan Lokey',            tier: 'middle_market',  accent: '#365314', tagline: 'Mid-market M&A king. Volume play, more deals than anyone, plus strong restructuring.' },
+    { name: 'Jefferies',                 tier: 'middle_market',  accent: '#0c4a6e', tagline: 'Aggressive middle-market and growth M&A. Building bulge-bracket ambitions.' },
+    { name: 'William Blair',             tier: 'middle_market',  accent: '#1e40af', tagline: 'Chicago-based mid-market specialist. Healthcare, tech, and consumer M&A focus.' },
+    { name: 'Piper Sandler',             tier: 'middle_market',  accent: '#7c2d12', tagline: 'Strong healthcare, financials, and energy M&A in the middle market.' },
+    { name: 'Stifel',                    tier: 'middle_market',  accent: '#581c87', tagline: 'Diversified mid-market platform with growing M&A advisory across sectors.' },
+    { name: 'Raymond James',             tier: 'middle_market',  accent: '#1f2937', tagline: 'Mid-market and lower middle market M&A. Conservative culture, broad reach.' },
+    { name: 'Robert W. Baird',           tier: 'middle_market',  accent: '#365314', tagline: 'Mid-market generalist. Industrials and consumer M&A especially strong.' },
+    { name: 'Rothschild & Co',           tier: 'elite_boutique', accent: '#7c2d12', tagline: 'European M&A heritage. Independent advisory, strong cross-border deal flow.' },
+    { name: 'Harris Williams',           tier: 'middle_market',  accent: '#0c4a6e', tagline: 'Owned by PNC. Pure-play sell-side M&A advisory. Lower middle market focus.' },
+    { name: 'Lincoln International',     tier: 'middle_market',  accent: '#1e3a8a', tagline: 'Mid-market M&A advisory with strong financial sponsor relationships.' },
   ],
   pe: [
-    { name: 'KKR',             tagline: 'Mega-fund. Industrials and tech heavy. The original buyout shop.',           accent: '#1f2937' },
-    { name: 'Blackstone',      tagline: 'Largest alternative asset manager on earth. Real estate, PE, credit, all of it.', accent: '#1e3a8a' },
-    { name: 'Apollo',          tagline: 'Distressed and credit DNA. Aggressive, contrarian, value-oriented.',           accent: '#7c2d12' },
-    { name: 'Carlyle',         tagline: 'Washington-rooted. Aerospace, defense, government-adjacent exposure.',         accent: '#365314' },
-    { name: 'Bain Capital',    tagline: 'Spun out of Bain & Co. Consulting-heavy diligence culture.',                    accent: '#7e22ce' },
-    { name: 'TPG',             tagline: 'Mid-market and growth equity strong. Bay Area-leaning, healthcare/tech tilt.', accent: '#0c4a6e' },
-    { name: 'Warburg Pincus',  tagline: 'Growth-focused, longer hold periods. Healthcare and financial services depth.', accent: '#581c87' },
-    { name: 'Vista Equity',    tagline: 'B2B software specialist. Operationally intense, data-driven post-close.',      accent: '#7c3aed' },
+    { name: 'KKR',             accent: '#1f2937', tagline: 'Mega-fund. Industrials and tech heavy. The original buyout shop.' },
+    { name: 'Blackstone',      accent: '#1e3a8a', tagline: 'Largest alternative asset manager on earth. Real estate, PE, credit, all of it.' },
+    { name: 'Apollo',          accent: '#7c2d12', tagline: 'Distressed and credit DNA. Aggressive, contrarian, value-oriented.' },
+    { name: 'Carlyle',         accent: '#365314', tagline: 'Washington-rooted. Aerospace, defense, government-adjacent exposure.' },
+    { name: 'Bain Capital',    accent: '#7e22ce', tagline: 'Spun out of Bain & Co. Consulting-heavy diligence culture.' },
+    { name: 'TPG',             accent: '#0c4a6e', tagline: 'Mid-market and growth equity strong. Bay Area-leaning, healthcare/tech tilt.' },
+    { name: 'Warburg Pincus',  accent: '#581c87', tagline: 'Growth-focused, longer hold periods. Healthcare and financial services depth.' },
+    { name: 'Vista Equity',    accent: '#7c3aed', tagline: 'B2B software specialist. Operationally intense, data-driven post-close.' },
   ],
   consulting: [
-    { name: 'McKinsey',         tagline: 'The brand. Generalist firm, every industry, the broadest senior partner network.',         accent: '#0c4a6e' },
-    { name: 'Bain & Company',   tagline: 'PE-adjacent culture. Results-oriented, smaller, tighter, friendlier than McK or BCG.',     accent: '#dc2626' },
-    { name: 'BCG',              tagline: 'Strategy-heavy. Tech and digital practice especially strong, more intellectual culture.',  accent: '#16a34a' },
-    { name: 'Oliver Wyman',     tagline: 'Financial services specialist. Lean teams, deep technical work.',                          accent: '#1e3a8a' },
-    { name: 'L.E.K. Consulting',tagline: 'Healthcare and life sciences depth. Smaller than MBB, sharper focus.',                     accent: '#7c2d12' },
+    { name: 'McKinsey',          accent: '#0c4a6e', tagline: 'The brand. Generalist firm, every industry, the broadest senior partner network.' },
+    { name: 'Bain & Company',    accent: '#dc2626', tagline: 'PE-adjacent culture. Results-oriented, smaller, tighter, friendlier than McK or BCG.' },
+    { name: 'BCG',               accent: '#16a34a', tagline: 'Strategy-heavy. Tech and digital practice especially strong, more intellectual culture.' },
+    { name: 'Oliver Wyman',      accent: '#1e3a8a', tagline: 'Financial services specialist. Lean teams, deep technical work.' },
+    { name: 'L.E.K. Consulting', accent: '#7c2d12', tagline: 'Healthcare and life sciences depth. Smaller than MBB, sharper focus.' },
   ],
   rx: [
-    { name: 'Lazard Restructuring',     tagline: 'The legacy debtor advisor. Largest, most established, every major bankruptcy.', accent: '#581c87' },
-    { name: 'PJT RSSG',                 tagline: 'Aggressive new entrant. Picked up share fast. Sharp, ambitious team.',           accent: '#0c4a6e' },
-    { name: 'Houlihan Lokey',           tagline: 'Mid-market restructuring king. Volume play, more deals than anyone.',           accent: '#365314' },
-    { name: 'Centerview Restructuring', tagline: 'Lean elite, creditor-side focus, top-tier creditor advisory.',                   accent: '#1e3a8a' },
-    { name: 'Moelis Rx',                tagline: 'Strong sponsor and creditor work. Founder-led culture extends here too.',       accent: '#7e22ce' },
+    { name: 'Lazard Restructuring',     accent: '#581c87', tagline: 'The legacy debtor advisor. Largest, most established, every major bankruptcy.' },
+    { name: 'PJT RSSG',                 accent: '#0c4a6e', tagline: 'Aggressive new entrant. Picked up share fast. Sharp, ambitious team.' },
+    { name: 'Houlihan Lokey',           accent: '#365314', tagline: 'Mid-market restructuring king. Volume play, more deals than anyone.' },
+    { name: 'Centerview Restructuring', accent: '#1e3a8a', tagline: 'Lean elite, creditor-side focus, top-tier creditor advisory.' },
+    { name: 'Moelis Rx',                accent: '#7e22ce', tagline: 'Strong sponsor and creditor work. Founder-led culture extends here too.' },
   ],
   st: [
-    { name: 'Goldman Sachs S&T',         tagline: 'The flow shop. Massive footprint across every product.',              accent: '#7c2d12' },
-    { name: 'Morgan Stanley S&T',        tagline: 'Equities-strong. Prime brokerage, derivatives, more cerebral.',       accent: '#1e40af' },
-    { name: 'JPMorgan Markets',          tagline: 'Rates and credit dominant. Largest dealer across most products.',     accent: '#1f2937' },
-    { name: 'Citi Markets',              tagline: 'Global footprint, EM and FX strength, scrappier US presence.',        accent: '#0c4a6e' },
-    { name: 'Bank of America Securities',tagline: 'Credit strong, growing equities, balance sheet behind you.',          accent: '#581c87' },
+    { name: 'Goldman Sachs S&T',          accent: '#7c2d12', tagline: 'The flow shop. Massive footprint across every product.' },
+    { name: 'Morgan Stanley S&T',         accent: '#1e40af', tagline: 'Equities-strong. Prime brokerage, derivatives, more cerebral.' },
+    { name: 'JPMorgan Markets',           accent: '#1f2937', tagline: 'Rates and credit dominant. Largest dealer across most products.' },
+    { name: 'Citi Markets',               accent: '#0c4a6e', tagline: 'Global footprint, EM and FX strength, scrappier US presence.' },
+    { name: 'Bank of America Securities', accent: '#581c87', tagline: 'Credit strong, growing equities, balance sheet behind you.' },
   ],
   am: [
-    { name: 'BlackRock',           tagline: 'Largest asset manager on the planet. Passive and active, ETF dominance.',  accent: '#1f2937' },
-    { name: 'Fidelity',            tagline: 'Mutual fund and active equity stronghold. Long-tenured PMs, less politics.', accent: '#16a34a' },
-    { name: 'T. Rowe Price',       tagline: 'Active management traditionalist. Research-driven, lower turnover culture.', accent: '#7c2d12' },
-    { name: 'Capital Group',       tagline: 'Multi-manager system. American Funds. Private, partnership culture.',       accent: '#1e3a8a' },
-    { name: 'Wellington Management',tagline: 'Boston blue-blood. Long-only, deep research, employee-owned partnership.', accent: '#581c87' },
+    { name: 'BlackRock',            accent: '#1f2937', tagline: 'Largest asset manager on the planet. Passive and active, ETF dominance.' },
+    { name: 'Fidelity',             accent: '#16a34a', tagline: 'Mutual fund and active equity stronghold. Long-tenured PMs, less politics.' },
+    { name: 'T. Rowe Price',        accent: '#7c2d12', tagline: 'Active management traditionalist. Research-driven, lower turnover culture.' },
+    { name: 'Capital Group',        accent: '#1e3a8a', tagline: 'Multi-manager system. American Funds. Private, partnership culture.' },
+    { name: 'Wellington Management',accent: '#581c87', tagline: 'Boston blue-blood. Long-only, deep research, employee-owned partnership.' },
   ],
   vc: [
-    { name: 'Sequoia Capital',         tagline: 'The dynasty. Seed to growth. Every legendary outcome of the last 40 years.',  accent: '#dc2626' },
-    { name: 'Andreessen Horowitz',     tagline: 'Crypto, infrastructure, and platform plays. Big bets, public personalities.', accent: '#1e3a8a' },
-    { name: 'Benchmark',               tagline: 'Five-partner shop. Equal economics. Smaller fund sizes by design.',           accent: '#1f2937' },
-    { name: 'Accel',                   tagline: 'SaaS and enterprise. Series A specialist, long history, top of the league tables.', accent: '#365314' },
-    { name: 'Lightspeed Venture Partners', tagline: 'Multi-stage, consumer and enterprise both. Global reach.',                accent: '#7e22ce' },
-    { name: 'Insight Partners',        tagline: 'Growth equity at scale. Software-only, hands-on portfolio operations.',       accent: '#0c4a6e' },
+    { name: 'Sequoia Capital',             accent: '#dc2626', tagline: 'The dynasty. Seed to growth. Every legendary outcome of the last 40 years.' },
+    { name: 'Andreessen Horowitz',         accent: '#1e3a8a', tagline: 'Crypto, infrastructure, and platform plays. Big bets, public personalities.' },
+    { name: 'Benchmark',                   accent: '#1f2937', tagline: 'Five-partner shop. Equal economics. Smaller fund sizes by design.' },
+    { name: 'Accel',                       accent: '#365314', tagline: 'SaaS and enterprise. Series A specialist, long history, top of the league tables.' },
+    { name: 'Lightspeed Venture Partners', accent: '#7e22ce', tagline: 'Multi-stage, consumer and enterprise both. Global reach.' },
+    { name: 'Insight Partners',            accent: '#0c4a6e', tagline: 'Growth equity at scale. Software-only, hands-on portfolio operations.' },
   ],
   re: [
-    { name: 'Blackstone Real Estate', tagline: 'Largest CRE investor in the world. Across every property type.',            accent: '#1e3a8a' },
-    { name: 'Brookfield',             tagline: 'Real assets generalist. Real estate, infrastructure, renewables.',          accent: '#365314' },
-    { name: 'Starwood Capital',       tagline: 'Opportunistic capital, hotels and multifamily expertise.',                  accent: '#7c2d12' },
-    { name: 'KKR Real Estate',        tagline: 'Newer entrant but moving fast. Aggressive acquisitions in core-plus space.', accent: '#1f2937' },
-    { name: 'Carlyle Real Estate',    tagline: 'Smaller real estate platform inside a mega-PE. Focused, less crowded.',     accent: '#581c87' },
+    { name: 'Blackstone Real Estate', accent: '#1e3a8a', tagline: 'Largest CRE investor in the world. Across every property type.' },
+    { name: 'Brookfield',             accent: '#365314', tagline: 'Real assets generalist. Real estate, infrastructure, renewables.' },
+    { name: 'Starwood Capital',       accent: '#7c2d12', tagline: 'Opportunistic capital, hotels and multifamily expertise.' },
+    { name: 'KKR Real Estate',        accent: '#1f2937', tagline: 'Newer entrant but moving fast. Aggressive acquisitions in core-plus space.' },
+    { name: 'Carlyle Real Estate',    accent: '#581c87', tagline: 'Smaller real estate platform inside a mega-PE. Focused, less crowded.' },
   ],
   er: [
-    { name: 'Goldman Sachs Research',   tagline: 'Top-ranked across most sectors. The franchise that sets the tone.',           accent: '#7c2d12' },
-    { name: 'Morgan Stanley Research',  tagline: 'Tech and global macro especially strong. Slightly more cerebral house.',      accent: '#1e40af' },
-    { name: 'JPMorgan Research',        tagline: 'Broad coverage, banks and consumer dominant. Institutional client breadth.',  accent: '#1f2937' },
-    { name: 'Wells Fargo Securities',   tagline: 'Solid mid-tier sellside. Energy, REITs, financials core.',                    accent: '#dc2626' },
-    { name: 'Evercore ISI',             tagline: 'Independent advisory firm with a top-ranked research arm. Lean, well-paid.',  accent: '#365314' },
+    { name: 'Goldman Sachs Research',  accent: '#7c2d12', tagline: 'Top-ranked across most sectors. The franchise that sets the tone.' },
+    { name: 'Morgan Stanley Research', accent: '#1e40af', tagline: 'Tech and global macro especially strong. Slightly more cerebral house.' },
+    { name: 'JPMorgan Research',       accent: '#1f2937', tagline: 'Broad coverage, banks and consumer dominant. Institutional client breadth.' },
+    { name: 'Wells Fargo Securities',  accent: '#dc2626', tagline: 'Solid mid-tier sellside. Energy, REITs, financials core.' },
+    { name: 'Evercore ISI',            accent: '#365314', tagline: 'Independent advisory firm with a top-ranked research arm. Lean, well-paid.' },
   ],
   audit: [
-    { name: 'Deloitte',       tagline: 'Largest of the Big Four by revenue. Broad practice across audit, tax, consulting.', accent: '#16a34a' },
-    { name: 'PwC',            tagline: 'Audits roughly half the Fortune 500. Brand consistency, large global engagements.', accent: '#7c2d12' },
-    { name: 'EY',             tagline: 'Building consulting fast. Strong financial services and tech audit practices.',     accent: '#1e3a8a' },
-    { name: 'KPMG',           tagline: 'Often considered the smallest of the Big Four. Strong banking and insurance audit.', accent: '#0c4a6e' },
-    { name: 'Grant Thornton', tagline: 'Mid-market specialist. Less prestige, smaller engagements, faster career mobility.', accent: '#581c87' },
+    { name: 'Deloitte',       accent: '#16a34a', tagline: 'Largest of the Big Four by revenue. Broad practice across audit, tax, consulting.' },
+    { name: 'PwC',            accent: '#7c2d12', tagline: 'Audits roughly half the Fortune 500. Brand consistency, large global engagements.' },
+    { name: 'EY',             accent: '#1e3a8a', tagline: 'Building consulting fast. Strong financial services and tech audit practices.' },
+    { name: 'KPMG',           accent: '#0c4a6e', tagline: 'Often considered the smallest of the Big Four. Strong banking and insurance audit.' },
+    { name: 'Grant Thornton', accent: '#581c87', tagline: 'Mid-market specialist. Less prestige, smaller engagements, faster career mobility.' },
   ],
 };
 
@@ -252,15 +385,24 @@ export type NarrativeEvent = EventBase & {
 export type QuickDecisionEvent = EventBase & {
   type: 'quick_decision';
   setup: string;
-  speaker?: string;
+  speaker: string;
   speakerTitle?: string;
   speakerPersonaKey?: string;
+  /** What the persona says to open the conversation. */
   prompt: string;
-  options: {
-    id: string;
-    label: string;
-    consequence: string;
-    effects?: EventEffects;
+  /** Shown to the player above the response input as a hint. */
+  recommendedApproach: string;
+  /**
+   * Possible outcomes. The AI picks exactly one based on the player's typed
+   * response. Each outcome has its own narrative + effects. Order them from
+   * best to worst, but the player doesn't see this; the AI just matches by
+   * description.
+   */
+  outcomes: {
+    key: string;
+    description: string;        // For the AI to match against
+    narrative: string;          // Shown to the player as the consequence
+    effects: EventEffects;
   }[];
   defining?: boolean;
 };
@@ -401,36 +543,31 @@ export const IB_YEAR_1_EVENTS: CareerEvent[] = [
     speakerTitle: 'Staffer',
     speakerPersonaKey: 'staffer',
     prompt: "Got a quick one for you. David is out at a dentist appointment. Marcus needs a one-page market update on industrial coatings for a pitch tomorrow morning. Two hours of work. Can you cover?",
-    options: [
+    recommendedApproach: "Say yes clearly and ideally ask one sharp clarifying question (scope, format, intended audience). Don't lead with conflicting commitments or hedge. This is your first ping and Anna is gauging how you handle inbound work.",
+    outcomes: [
       {
-        id: 'eager',
-        label: '"On it. Send me what you have."',
-        consequence: "You take the work. Anna sends the materials. You work until 9pm and turn in something serviceable. Marcus glances at it, nods, and moves on. Anna remembers you said yes fast.",
-        effects: {
-          skills: { memo: 1 },
-          stamina: -8,
-          reputations: { staffer: 4, md: 1 },
-        },
+        key: 'eager-clarifying',
+        description: 'Said yes clearly AND asked a useful clarifying question about scope, format, or detail level',
+        narrative: "Anna sends the materials with the answer to your question. Your one-pager lands closer to what Marcus actually wanted. Priya notices the question.",
+        effects: { skills: { memo: 2, voice: 1 }, stamina: -8, reputations: { staffer: 3, vp: 2, md: 1 } },
       },
       {
-        id: 'clarify',
-        label: '"Yes. Quick question: what level of detail does Marcus want? Two pages with comps or a one-pager?"',
-        consequence: "You ask the right clarifying question. Anna gives you the answer. Your one-pager lands closer to what Marcus actually wanted. Priya notices the question.",
-        effects: {
-          skills: { memo: 2, voice: 1 },
-          stamina: -8,
-          reputations: { staffer: 3, vp: 2, md: 1 },
-        },
+        key: 'eager',
+        description: 'Said yes confidently but did not ask for any clarification on scope or format',
+        narrative: "You take the work without asking for context. Anna sends the materials. You work until 9pm and turn in something serviceable. Marcus glances at it, nods, and moves on. Anna remembers you said yes fast.",
+        effects: { skills: { memo: 1 }, stamina: -8, reputations: { staffer: 4, md: 1 } },
       },
       {
-        id: 'deflect',
-        label: '"I have a training session at 6pm I was planning to attend, but I can squeeze it in after."',
-        consequence: "You technically said yes but you led with a hedge. Anna sighs. The work gets done late and Marcus is mildly irritated. Anna files you mentally under 'needs management.'",
-        effects: {
-          skills: { memo: 1 },
-          stamina: -6,
-          reputations: { staffer: -3 },
-        },
+        key: 'hedging',
+        description: 'Said yes but with hedging, mentioned conflicting commitments, or wasted time before committing',
+        narrative: "You technically said yes but you led with a hedge. Anna sighs. The work gets done late and Marcus is mildly irritated. Anna files you mentally under needs management.",
+        effects: { skills: { memo: 1 }, stamina: -6, reputations: { staffer: -3 } },
+      },
+      {
+        key: 'refused',
+        description: 'Said no, declined the work, or refused to take it',
+        narrative: "Anna stares at her screen for a long moment. 'OK, I'll find someone else.' She doesn't say it warmly. The staffer remembers.",
+        effects: { reputations: { staffer: -8, vp: -3 } },
       },
     ],
     defining: true,
@@ -497,31 +634,31 @@ export const IB_YEAR_1_EVENTS: CareerEvent[] = [
     speakerTitle: 'Vice President',
     speakerPersonaKey: 'vp',
     prompt: "You're three weeks in. What do you think you're good at, and what do you think you need to work on? Be honest. I'd rather hear it from you than tell you.",
-    options: [
+    recommendedApproach: "Be specific on both sides. Cite a real strength (something tangible you've done) and a real weakness (a recent mistake or area you're actively working on). Avoid humble-brags like 'I work too hard.' Avoid deflection like 'still getting up to speed.'",
+    outcomes: [
       {
-        id: 'self-aware',
-        label: 'Name a real weakness (a recent mistake) and a real strength (specific, not generic).',
-        consequence: "Priya nods. 'That's the right answer. Most people give me the 'I work too hard' bullshit. Keep doing what you said you're good at. Work on what you said you need to. Easy.'",
-        effects: {
-          skills: { voice: 3, commercial: 1 },
-          reputations: { vp: 6 },
-        },
+        key: 'self-aware',
+        description: 'Named a specific real weakness AND a specific real strength, demonstrating genuine reflection',
+        narrative: "Priya nods. 'That's the right answer. Most people give me the I-work-too-hard bullshit. Keep doing what you said you're good at. Work on what you said you need to. Easy.'",
+        effects: { skills: { voice: 3, commercial: 1 }, reputations: { vp: 6 } },
       },
       {
-        id: 'humble-brag',
-        label: '"I think I work really hard, sometimes too hard. Maybe my weakness is I struggle with work-life balance."',
-        consequence: "Priya sips her coffee. 'That's not a weakness. That's the entire job description. Try again next time.' She doesn't say it mean. She also doesn't say it nicely.",
-        effects: {
-          reputations: { vp: -2 },
-        },
+        key: 'partial',
+        description: 'Was specific on one side (strength OR weakness) but generic on the other',
+        narrative: "Priya gives a small nod. 'Half-credit. Work on the part you didn't have an answer for. Try me again in a few weeks.'",
+        effects: { skills: { voice: 1 }, reputations: { vp: 2 } },
       },
       {
-        id: 'deflect',
-        label: '"Honestly I think I\'m still getting up to speed. Hard to say yet."',
-        consequence: "Priya shrugs. 'Fair. Ask me in another month then.' She doesn't take you seriously after this.",
-        effects: {
-          reputations: { vp: -1 },
-        },
+        key: 'humble-brag',
+        description: 'Gave a humble-brag answer like work-life balance, or made it sound like a strength disguised as a weakness',
+        narrative: "Priya sips her coffee. 'That's not a weakness. That's the entire job description. Try again next time.' She doesn't say it mean. She also doesn't say it nicely.",
+        effects: { reputations: { vp: -2 } },
+      },
+      {
+        key: 'deflect',
+        description: 'Deflected, said too early to say, or gave a non-answer',
+        narrative: "Priya shrugs. 'Fair. Ask me in another month then.' She doesn't take you seriously after this.",
+        effects: { reputations: { vp: -1 } },
       },
     ],
   },
@@ -556,33 +693,25 @@ export const IB_YEAR_1_EVENTS: CareerEvent[] = [
     speakerTitle: 'Staffer',
     speakerPersonaKey: 'staffer',
     prompt: "Need someone on a new pitch. Hit-the-ground-running. Healthcare RCM, sell-side mandate. You'd be the second analyst. I know you're on Atlas. Want it or pass?",
-    options: [
+    recommendedApproach: "Be decisive either way. A clear yes shows hunger but stretches you thin and risks Atlas quality. A clear no shows judgment but signals risk aversion. Either real answer is better than 'I guess if you really need me' or hedging the decision back onto Anna.",
+    outcomes: [
       {
-        id: 'take-both',
-        label: '"Take it. I can handle both."',
-        consequence: "You take both deals. You stop sleeping for the next two weeks. Atlas suffers a little. The pitch goes fine. Anna marks you as someone who says yes.",
-        effects: {
-          stamina: -25,
-          reputations: { staffer: 5, vp: -1 },
-          skills: { commercial: 1 },
-        },
+        key: 'decisive-yes',
+        description: 'Said yes clearly, took the second deal, owned the workload',
+        narrative: "You take both deals. You stop sleeping for the next two weeks. Atlas suffers a little. The pitch goes fine. Anna marks you as someone who says yes.",
+        effects: { stamina: -25, reputations: { staffer: 5, vp: -1 }, skills: { commercial: 1 } },
       },
       {
-        id: 'pass-honest',
-        label: '"Pass. Atlas is heating up and I want to do it well, not split focus."',
-        consequence: "Anna respects the answer. Priya later mentions it offhand: 'Good call. Most first-years take everything. The ones who survive learn to say no.' You stay focused on Atlas.",
-        effects: {
-          reputations: { staffer: 1, vp: 4 },
-        },
+        key: 'decisive-no',
+        description: 'Said no clearly with a reasonable rationale (Atlas focus, quality, capacity)',
+        narrative: "Anna respects the answer. Priya later mentions it offhand: 'Good call. Most first-years take everything. The ones who survive learn to say no.'",
+        effects: { reputations: { staffer: 1, vp: 4 } },
       },
       {
-        id: 'pass-soft',
-        label: '"I can if you really need me, but I\'m worried about Atlas quality."',
-        consequence: "Anna decides for you. She puts you on it. Now you're on both. You weren't decisive. The next staffing she'll make the call without asking.",
-        effects: {
-          stamina: -20,
-          reputations: { staffer: -1, vp: -2 },
-        },
+        key: 'wavering',
+        description: 'Did not pick a clear direction, hedged, or put the decision back on Anna',
+        narrative: "Anna decides for you. She puts you on it. Now you're on both. You weren't decisive. The next staffing she'll make the call without asking.",
+        effects: { stamina: -20, reputations: { staffer: -1, vp: -2 } },
       },
     ],
     defining: true,
@@ -623,44 +752,35 @@ export const IB_YEAR_1_EVENTS: CareerEvent[] = [
     shortLabel: 'How to weekend',
     type: 'quick_decision',
     setup: "The deck shipped. Atlas is in a quiet stretch. Jordan tells you to take the weekend.",
-    prompt: "What do you do with the first real weekend in eight weeks?",
-    options: [
+    speaker: 'Jordan Park',
+    speakerTitle: 'Associate',
+    speakerPersonaKey: 'assoc',
+    prompt: "Take the weekend. You earned it. What are you actually going to do with it?",
+    recommendedApproach: "There's no universally right answer. Rest restores stamina. Networking builds rep with peers. Technical refresh builds skills. Quietly working through the weekend builds nothing but anxiety and a flag with the VP.",
+    outcomes: [
       {
-        id: 'recover',
-        label: 'Sleep, walk in the park, do absolutely nothing finance-related.',
-        consequence: "You recover. Sunday night you feel human again. Monday you show up sharp.",
-        effects: {
-          stamina: 30,
-        },
+        key: 'recover',
+        description: 'Resting, sleeping, doing non-work activities to recharge',
+        narrative: "You recover. Sunday night you feel human again. Monday you show up sharp.",
+        effects: { stamina: 30 },
       },
       {
-        id: 'networking',
-        label: 'Grab drinks with two associates from another group on Saturday night.',
-        consequence: "You spend three hours at a bar in Tribeca learning what the M&A group is really like. One of them flags an opening that might come up next quarter. You file it.",
-        effects: {
-          stamina: 15,
-          skills: { voice: 2, commercial: 1 },
-          reputations: { analyst_class: 4 },
-        },
+        key: 'networking',
+        description: 'Drinks, social, or networking with other bankers, associates, or peers',
+        narrative: "You spend a few hours at a bar in Tribeca learning what other groups are really like. One person flags an opening that might come up next quarter. You file it.",
+        effects: { stamina: 15, skills: { voice: 2, commercial: 1 }, reputations: { analyst_class: 4 } },
       },
       {
-        id: 'study',
-        label: 'Spend Saturday going through accounting / modeling refreshers.',
-        consequence: "You're sharper on the technicals Monday morning. But you didn't really rest.",
-        effects: {
-          stamina: 5,
-          skills: { modeling: 3, memo: 1 },
-        },
+        key: 'study',
+        description: 'Working on technical, modeling, or accounting refresh / studying',
+        narrative: "You're sharper on the technicals Monday morning. But you didn't really rest.",
+        effects: { stamina: 5, skills: { modeling: 3, memo: 1 } },
       },
       {
-        id: 'work-ahead',
-        label: 'Quietly work on Atlas, even though Jordan said you didn\'t have to.',
-        consequence: "You make some progress. Monday Jordan notices. He doesn't say anything but he notices. Priya later asks why you didn't take the weekend. You don't have a good answer.",
-        effects: {
-          stamina: -8,
-          skills: { modeling: 2 },
-          reputations: { assoc: 1, vp: -2 },
-        },
+        key: 'work-ahead',
+        description: 'Quietly working on Atlas or current deal work despite being told to take the weekend',
+        narrative: "You make some progress. Monday Jordan notices. He doesn't say anything but he notices. Priya later asks why you didn't take the weekend. You don't have a good answer.",
+        effects: { stamina: -8, skills: { modeling: 2 }, reputations: { assoc: 1, vp: -2 } },
       },
     ],
   },
