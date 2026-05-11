@@ -239,6 +239,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
           </div>
           <div className="nav-group">
             <span className="nav-group-label">Prep</span>
+            <Link className={cls('reps')} href="/reps"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Reps</Link>
             <Link className={cls('coach')} href="/coach"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Coach</Link>
             <Link className={cls('flashcards')} href="/flashcards"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>Interview Flashcards</Link>
             <Link className={cls('mock-interview')} href="/mock-interview"><svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Mock Interview</Link>
