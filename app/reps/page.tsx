@@ -29,20 +29,57 @@ type ChatMsg = {
 
 type UploadStatus = 'idle' | 'parsing' | 'grading' | 'done' | 'error';
 
+// Plan-gate state. 'loading' is the first paint after mount, before we've
+// inspected localStorage. 'elite' renders the full Reps experience. Anything
+// else renders the paywall. Loading guard prevents a flash of paywall for
+// Elite users on every Reps navigation.
+type PlanStatus = 'loading' | 'elite' | 'gated';
+
 export default function RepsPage() {
   const router = useRouter();
   const [activeTrack, setActiveTrack] = useState<RepsTrackId | null>(null);
   const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null);
+  const [planStatus, setPlanStatus] = useState<PlanStatus>('loading');
+  const [currentPlan, setCurrentPlan] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    if (!localStorage.getItem('offerbell_user_id')) router.replace('/signin');
+    if (!localStorage.getItem('offerbell_user_id')) {
+      router.replace('/signin');
+      return;
+    }
+    const plan = (localStorage.getItem('offerbell_plan') || 'free').toLowerCase();
+    setCurrentPlan(plan);
+    setPlanStatus(plan === 'elite' ? 'elite' : 'gated');
   }, [router]);
 
   const track = activeTrack ? REPS_TRACKS.find(t => t.id === activeTrack) : null;
   const scenarios = activeTrack ? REPS_SCENARIOS[activeTrack] : [];
   const scenario = activeScenarioId ? scenarios.find(s => s.id === activeScenarioId) : null;
 
+  // Loading state: render shell to avoid layout shift, no content.
+  if (planStatus === 'loading') {
+    return (
+      <div className="app">
+        <Sidebar activePage="reps" />
+        <main className="main" style={{ padding: '32px 36px', maxWidth: 1200 }} />
+      </div>
+    );
+  }
+
+  // Paywall: anything that isn't Elite.
+  if (planStatus === 'gated') {
+    return (
+      <div className="app">
+        <Sidebar activePage="reps" />
+        <main className="main" style={{ padding: '32px 36px', maxWidth: 1200 }}>
+          <ElitePaywall currentPlan={currentPlan} />
+        </main>
+      </div>
+    );
+  }
+
+  // Elite: full experience.
   return (
     <div className="app">
       <Sidebar activePage="reps" />
@@ -66,6 +103,82 @@ export default function RepsPage() {
           <SessionView key={scenario.id} scenario={scenario} onExit={() => setActiveScenarioId(null)} />
         )}
       </main>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ElitePaywall: rendered when the user is on free or pro. Shows what Reps is
+// and a single CTA into the upgrade flow.
+// ═══════════════════════════════════════════════════════════════════════════
+function ElitePaywall({ currentPlan }: { currentPlan: string | null }) {
+  const isPro = currentPlan === 'pro';
+
+  return (
+    <div style={{ maxWidth: 620, padding: '40px 0' }}>
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 11px', background: '#1e3a8a', color: '#fde68a', borderRadius: 999, fontSize: 10, fontWeight: 700, letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 18 }}>
+        Elite plan
+      </div>
+
+      <h1 style={{ fontFamily: "'Instrument Serif',serif", fontSize: 46, lineHeight: 1.05, letterSpacing: '-0.5px', color: 'var(--text)', margin: 0, marginBottom: 14 }}>
+        Reps is part of <em style={{ fontStyle: 'italic' }}>Elite</em>.
+      </h1>
+
+      <p style={{ fontSize: 14.5, color: 'var(--text-2)', lineHeight: 1.65, margin: 0, marginBottom: 26, maxWidth: 560 }}>
+        {isPro
+          ? "You're on Pro, which covers Coach, Mock Interviews, Resume Review, and Outreach. Reps sits one tier up. It drops you into a junior seat on a real workday, personas message you, you build the actual deliverable (Excel, Word, PowerPoint), and the AI grades it on craft, citing specific cells and lines."
+          : 'Reps drops you into a junior seat on a real workday. Personas message you, you build the actual deliverable in your own tools (Excel, Word, PowerPoint), and the AI grades it on craft, citing specific cells, numbers, and lines.'}
+      </p>
+
+      <div style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '22px 26px', marginBottom: 28 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 14 }}>
+          What's included
+        </div>
+        <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {[
+            { title: '10 careers, 30 scenarios', body: 'IB, PE, consulting, restructuring, S&T, AM, VC, RE, ER, audit. Intro, intermediate, and advanced workdays in each.' },
+            { title: 'Real deliverables, real grading', body: 'Build the comp sheet, the LBO, the IC memo, the DCF in Excel, Word, or PowerPoint. Upload it, the AI grades the file itself, line by line.' },
+            { title: 'Multi-persona pings', body: 'MDs, partners, VPs, senior associates message you in the voice of the seat. Push back, ask questions, defend your numbers.' },
+          ].map(item => (
+            <li key={item.title} style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+              <div style={{ flexShrink: 0, width: 16, height: 16, borderRadius: '50%', background: 'var(--text)', color: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 2 }}>
+                <svg width="9" height="9" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" /></svg>
+              </div>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>{item.title}</div>
+                <div style={{ fontSize: 12.5, color: 'var(--text-3)', lineHeight: 1.55 }}>{item.body}</div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+        <button
+          type="button"
+          onClick={() => { window.location.href = '/checkout?plan=elite'; }}
+          style={{
+            background: 'var(--text)', color: 'var(--surface)',
+            border: 'none', padding: '13px 24px', borderRadius: 10,
+            fontSize: 13.5, fontWeight: 700, cursor: 'pointer',
+            fontFamily: "'Sora',sans-serif",
+          }}
+        >
+          Upgrade to Elite
+        </button>
+        <button
+          type="button"
+          onClick={() => { window.location.href = '/checkout'; }}
+          style={{
+            background: 'transparent', color: 'var(--text-2)',
+            border: '1.5px solid var(--border)', padding: '13px 20px', borderRadius: 10,
+            fontSize: 13, fontWeight: 600, cursor: 'pointer',
+            fontFamily: "'Sora',sans-serif",
+          }}
+        >
+          Compare plans
+        </button>
+      </div>
     </div>
   );
 }
