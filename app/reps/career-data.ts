@@ -421,13 +421,36 @@ export type MajorDeliverableEvent = EventBase & {
   defining?: boolean;
 };
 
+export type DrillQuestion = {
+  id: string;
+  /** The question prompt. */
+  prompt: string;
+  /** Optional setup shown in a fixed-width box above the question. Useful for showing a small table for INDEX/MATCH style questions. */
+  context?: string;
+  choices: { id: string; label: string }[];
+  correctChoiceId: string;
+  /** Shown after the user answers, regardless of correct/incorrect. Teach the concept. */
+  explanation: string;
+};
+
 export type TrainingEvent = EventBase & {
   type: 'training';
   skill: SkillId;
   drillTitle: string;
   drillDescription: string;
   staminaCost: number;
-  skillGain: number;
+  /**
+   * Skill gain if the player gets EVERY question right. For interactive drills,
+   * actual skill gain scales with score: (correct / total) * maxSkillGain, rounded.
+   * For flavor drills with no questions, the full amount is awarded on completion.
+   */
+  maxSkillGain: number;
+  /**
+   * Optional interactive questions. If present, the drill plays as a multiple-choice
+   * skill challenge and the skill gain scales with score. If absent, the drill is a
+   * flavor cutscene that awards the full maxSkillGain on click (use sparingly).
+   */
+  questions?: DrillQuestion[];
 };
 
 export type TimeSkipEvent = EventBase & {
@@ -523,10 +546,73 @@ export const IB_YEAR_1_EVENTS: CareerEvent[] = [
     shortLabel: 'Excel drill',
     type: 'training',
     skill: 'modeling',
-    drillTitle: 'Modeling fundamentals: index/match, INDIRECT, sensitivity tables',
-    drillDescription: "Two days of timed exercises in a windowless conference room. The instructor is an ex-VP who left for a hedge fund and came back to teach because he 'missed the rhythm.' You don't believe him.",
+    drillTitle: 'Modeling fundamentals: INDEX/MATCH, INDIRECT, sensitivity tables',
+    drillDescription: "Two days of timed exercises in a windowless conference room. The instructor is an ex-VP who left for a hedge fund and came back to teach because he 'missed the rhythm.' You don't believe him. Five questions on the fundamentals every analyst needs cold.",
     staminaCost: 10,
-    skillGain: 4,
+    maxSkillGain: 6,
+    questions: [
+      {
+        id: 'q1-vlookup-vs-index',
+        prompt: 'Why do IB analysts prefer INDEX/MATCH over VLOOKUP?',
+        choices: [
+          { id: 'a', label: 'INDEX/MATCH executes faster on large datasets' },
+          { id: 'b', label: 'INDEX/MATCH can look up to the left of the key column' },
+          { id: 'c', label: "INDEX/MATCH doesn't break when columns are inserted or deleted between the key and the return column" },
+          { id: 'd', label: 'Both B and C' },
+        ],
+        correctChoiceId: 'd',
+        explanation: 'Both. VLOOKUP requires the return column to be to the right of the lookup column and hardcodes a column index, so inserting a column above breaks every formula referencing it. INDEX/MATCH is bidirectional and references column ranges by name, so it survives column shuffling. Speed is a tiny consideration on large models but not the main reason.',
+      },
+      {
+        id: 'q2-index-match-application',
+        prompt: 'Given the table below, which formula returns the company name for ticker "MSFT"?',
+        context: '       A             B          C\n1      Company       Ticker     Price\n2      Apple         AAPL       180\n3      Microsoft     MSFT       420\n4      Alphabet      GOOGL      155',
+        choices: [
+          { id: 'a', label: '=VLOOKUP("MSFT", A2:B4, 1, FALSE)' },
+          { id: 'b', label: '=INDEX(A2:A4, MATCH("MSFT", B2:B4, 0))' },
+          { id: 'c', label: '=INDEX(B2:B4, MATCH("MSFT", A2:A4, 0))' },
+          { id: 'd', label: '=MATCH("MSFT", B2:B4, 0)' },
+        ],
+        correctChoiceId: 'b',
+        explanation: 'INDEX(A2:A4, MATCH("MSFT", B2:B4, 0)) finds the row where "MSFT" appears in the ticker column (B), then returns the value at that row in the company column (A). VLOOKUP cannot look to the left. Option C inverts the columns. Option D returns the position number, not the company.',
+      },
+      {
+        id: 'q3-indirect-purpose',
+        prompt: 'What does the INDIRECT function do?',
+        choices: [
+          { id: 'a', label: 'Returns the value of an indirect (calculated) cell' },
+          { id: 'b', label: 'Converts a text string into a cell or range reference' },
+          { id: 'c', label: 'Calculates indirect costs in a model' },
+          { id: 'd', label: 'Creates a hyperlink between sheets' },
+        ],
+        correctChoiceId: 'b',
+        explanation: 'INDIRECT takes a text string like "Sheet2!B5" or "A" & ROW() and converts it into a live reference. It is mostly used in IB to dynamically reference scenario sheets ("=INDIRECT($B$1 & \\"!C10\\")" picks the value from whichever sheet name is in B1). Powerful but volatile, so use sparingly.',
+      },
+      {
+        id: 'q4-indirect-application',
+        prompt: 'Cell A1 contains the text string "Sheet2!B5". Sheet2 cell B5 contains the number 100. What does =INDIRECT(A1) return?',
+        choices: [
+          { id: 'a', label: 'The text string "Sheet2!B5"' },
+          { id: 'b', label: '100' },
+          { id: 'c', label: '#REF! error' },
+          { id: 'd', label: 'The cell address as a clickable link' },
+        ],
+        correctChoiceId: 'b',
+        explanation: 'INDIRECT resolves the text in A1 ("Sheet2!B5") into a live reference, then returns the value at that reference. Sheet2!B5 = 100, so INDIRECT returns 100. This is the basis for scenario toggles, where a dropdown changes the sheet name and the model pulls from the matching scenario sheet.',
+      },
+      {
+        id: 'q5-sensitivity-table',
+        prompt: 'In an LBO model, a 2-variable sensitivity table on equity returns is most commonly built around:',
+        choices: [
+          { id: 'a', label: 'Revenue growth and EBITDA margin' },
+          { id: 'b', label: 'Entry multiple and exit multiple' },
+          { id: 'c', label: 'Tax rate and depreciation method' },
+          { id: 'd', label: 'Working capital and capex' },
+        ],
+        correctChoiceId: 'b',
+        explanation: 'Entry and exit multiples are the two biggest drivers of LBO equity returns. The classic LBO sensitivity table has entry multiple along one axis (typically the rows) and exit multiple along the other (columns), with MOIC or IRR populating the cells. Revenue growth and margins matter but feed indirectly through EBITDA; multiples directly determine purchase price and sale proceeds.',
+      },
+    ],
   },
 
   // ════════ Week 3: FIRST PING ════════
