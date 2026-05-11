@@ -649,6 +649,29 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
     return true;
   }
 
+  // Build a workspace-state addendum the chat API sees as part of the
+  // scenarioContext. This is what stops the AI from telling the student
+  // "doesn't matter, pick whichever" when the UI actually requires sequential
+  // completion. Only included for multi-artifact scenarios.
+  function buildEnrichedContext(): string {
+    if (scenario.artifacts.length <= 1) return scenario.context;
+    const current = activeArtifact?.label || 'none';
+    const locked = scenario.artifacts
+      .filter(a => !completedArtifacts.has(a.id) && a.id !== activeArtifactId)
+      .map(a => a.label);
+    const completed = Array.from(completedArtifacts)
+      .map(id => scenario.artifacts.find(a => a.id === id)?.label)
+      .filter((s): s is string => !!s);
+    return scenario.context + `
+
+CURRENT WORKSPACE STATE (the student sees this in the UI on the right side):
+- Currently working on: ${current}
+- Locked deliverables (the student cannot start these until they pass the current one): ${locked.length > 0 ? locked.join(', ') : 'none'}
+- Already completed: ${completed.length > 0 ? completed.join(', ') : 'none'}
+
+The student must complete deliverables sequentially in this scenario. If they ask which one to do first, or whether the order matters, stay in your persona and redirect them to focus on the current deliverable (${current}). Do not say "pick whichever" or "doesn't matter, do them in any order." The system enforces this order.`;
+  }
+
   async function handleSend() {
     const text = input.trim();
     if (!text || sending) return;
@@ -661,7 +684,7 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          scenarioContext: scenario.context,
+          scenarioContext: buildEnrichedContext(),
           personas: scenario.personas,
           history: messages.map(m => ({ from: m.from, personaId: m.personaId, text: m.text })),
           userMessage: text,
