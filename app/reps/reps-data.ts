@@ -55,7 +55,7 @@ export type RepsTrack = {
 
 export const REPS_TRACKS: RepsTrack[] = [
   { id: 'ib', title: 'Investment Banking', abbr: 'IB', tagline: 'Live deal flow. Live MD pings. Live decks.', description: 'Sit in an analyst seat on a live deal. The staffing associate pings, the MD calls with a quick ask, the VP marks up your work. Build comps, draft one-pagers, defend your numbers.', accent: '#1f2937' },
-  { id: 'pe', title: 'Private Equity', abbr: 'PE', tagline: 'CIM lands. Run the LBO. Defend it at IC.', description: 'You\'re an associate at a fund. A CIM hits your inbox. Read it, run a paper LBO, sit through management presentations, write the IC memo, defend the deal in front of partners.', accent: '#1d4ed8' },
+  { id: 'pe', title: 'Private Equity', abbr: 'PE', tagline: 'Deal lands. Run the LBO. Defend it at IC.', description: 'You\'re an associate at a fund. A deal brief hits your inbox. Read it, run a paper LBO, sit through management presentations, write the IC memo, defend the deal in front of partners.', accent: '#1d4ed8' },
   { id: 'consulting', title: 'Consulting', abbr: 'C', tagline: 'Partner drops a question. You structure it.', description: 'You\'re on a client engagement. The partner hands you a slice of the case. Structure the problem, interview a client stakeholder, build slides, defend your recommendation under pushback.', accent: '#0891b2' },
   { id: 'rx', title: 'Restructuring', abbr: 'Rx', tagline: 'Covenant breach overnight. Sponsor on the line.', description: 'Crisis mode at Lazard, PJT, Houlihan. Sponsor calls because their portfolio company tripped a covenant. Build a situation overview, walk through cap stack options, prep for an angry lender meeting.', accent: '#7c2d12' },
   { id: 'st', title: 'Sales & Trading', abbr: 'ST', tagline: 'Market opens. RFQs flow. P&L moves.', description: 'A morning at a bank\'s trading desk. Sit in on the morning meeting, manage your axe sheet as the market opens, price client RFQs in real time, defend your book at the end-of-day P&L review.', accent: '#dc2626' },
@@ -88,6 +88,7 @@ const IB_1: Scenario = {
     { personaId: 'md', text: `Peer set the team agreed on: Veeva ($VEEV), Doximity ($DOCS), HealthEquity ($HQY), Phreesia ($PHR), Evolent Health ($EVH), Definitive Healthcare ($DH). EV/Rev and EV/EBITDA, NTM, calendarized.` },
     { personaId: 'md', text: `Send when ready. I want eyes on it before Priya marks it up.` },
     { personaId: 'vp', text: `Start with the comp sheet, that's the priority. Reminders: EV is market cap plus net debt, no shortcuts. Source row at the bottom. Clean alignment.` },
+    { personaId: 'vp', text: `Data source: this is all public. Pull market caps and balance sheet items from each company's most recent 10-Q (SEC filings on sec.gov or each company's IR page), revenue and EBITDA from earnings releases. For NTM consensus, use Yahoo Finance or whatever you have access to; if you can't get clean consensus, calendarize off LTM plus mid-point of company guidance and document it in the source row.` },
     { personaId: 'vp', text: `Once the comps clear, the one-pager teaser is next: company overview, growth metrics, why now, three investment highlights. We'll talk after I see your comps.` },
   ],
   artifacts: [
@@ -187,7 +188,7 @@ const IB_2: Scenario = {
   timeframe: 'All-nighter',
   duration: '45 min',
   difficulty: 'Advanced',
-  context: `Elite boutique (Centerview-style) M&A team rendering a fairness opinion on a $4.8B take-private of MedTech Holdings, a diversified medical devices company. Think a mid-cap player in the space of Hologic ($HOLX), Globus Medical ($GMED), or Integra LifeSciences ($IART), with a cardiovascular segment exposed to FDA review. Board meets Friday 9am to vote. The DCF the team has been running uses ~6% revenue growth declining to 3%, 22% EBITDA margins, 9.0% WACC, 2.5% terminal growth. The MD just called from the airport: he now thinks the bear case should reflect a regulatory overhang on the cardiovascular segment (~35% of revenue) and wants the football field re-anchored to show downside more visibly. Student is the first-year analyst running the DCF in Excel and the football field in PowerPoint.`,
+  context: `Elite boutique (Centerview-style) M&A team rendering a fairness opinion on a $4.8B take-private of MedTech Holdings, a diversified medical devices company. Think a mid-cap player in the space of Hologic ($HOLX), Globus Medical ($GMED), or Integra LifeSciences ($IART), with a cardiovascular segment exposed to FDA review. Board meets Friday 9am to vote. Base case assumptions for this deal: ~6% revenue growth declining to 3%, 22% EBITDA margins, 9.0% WACC, 2.5% terminal growth. The MD just called from the airport: he now thinks the bear case should reflect a regulatory overhang on the cardiovascular segment (~35% of revenue) and wants the football field re-anchored to show downside more visibly. Student is the first-year analyst running the DCF in Excel and the football field in PowerPoint. All the assumptions and figures you need are in this scenario; no proprietary model or terminal data needed.`,
   personas: [
     { id: 'md', name: 'Marcus Whitfield', title: 'Managing Director', firm: 'Centerview', style: 'Old-school, demanding. Speaks in fully-formed paragraphs even at 9pm. Cares deeply about defensibility, every assumption must have a source. Won\'t accept "industry consensus" as a defense.', voice: 'demanding-defensible', initials: 'MW' },
     { id: 'vp', name: 'Anna Liu', title: 'VP', firm: 'Centerview', style: 'Calm, methodical, mid-pace. The one who actually catches errors. Will ask "what\'s your downside?" and expect a number with a reason behind it.', voice: 'methodical', initials: 'AL' },
@@ -416,18 +417,18 @@ End with verdict in Jordan's voice (under 60 words). Cite the IRR/MOIC they got 
 const PE_1: Scenario = {
   id: 'pe-1',
   trackId: 'pe',
-  title: 'Paper LBO, CIM just landed',
-  summary: 'A consumer CIM hit the inbox at 10am. Senior associate wants a paper LBO and a one-page take by EOD.',
+  title: 'Paper LBO, new deal brief',
+  summary: 'A consumer deal brief hit the inbox at 10am. Senior associate wants a paper LBO and a one-page take by EOD.',
   timeframe: 'EOD ask',
   duration: '40 min',
   difficulty: 'Intermediate',
-  context: `Middle-market PE fund ($2B AUM). The CIM that landed is for Project Summit: a DTC outdoor-apparel brand. Think a private brand at the scale of an early Allbirds, Cotopaxi, or Outdoor Voices: $180M LTM revenue, 12% YoY growth, $35M LTM EBITDA (19% margin), founder-led, 70% repeat customers. Banker is running a process; first-round bids due in 3 weeks. Sponsor target entry: 10.5x LTM EBITDA. Standard mid-market structure: ~55% debt at SOFR+475 (assume SOFR 5.0%), 5-year hold, exit at same multiple. The deal lead (Principal) wants a quick paper LBO and a one-page take memo by EOD, should we keep going or pass.`,
+  context: `Middle-market PE fund ($2B AUM). The deal under consideration is Project Summit: a DTC outdoor-apparel brand. Think a private brand at the scale of an early Allbirds, Cotopaxi, or Outdoor Voices: $180M LTM revenue, 12% YoY growth, $35M LTM EBITDA (19% margin), founder-led, 70% repeat customers. Banker is running a process; first-round bids due in 3 weeks. Sponsor target entry: 10.5x LTM EBITDA. Standard mid-market structure: ~55% debt at SOFR+475 (assume SOFR 5.0%), 5-year hold, exit at same multiple. The deal lead (Principal) wants a quick paper LBO and a one-page take memo by EOD, should we keep going or pass. All the data points you need are in this scenario, no proprietary CIM access required.`,
   personas: [
     { id: 'principal', name: 'Sam Garcia', title: 'Principal', firm: 'Crescent Equity Partners', style: 'Commercial, pattern-matches fast. Cares more about thesis than mechanics, but if the LBO math doesn\'t work, that\'s a no. Will ask "is this a 2.5x or a 3.5x deal?" and expect a number with a reason.', voice: 'commercial', initials: 'SG' },
     { id: 'sr-assoc', name: 'Rachel Kim', title: 'Senior Associate', firm: 'Crescent Equity Partners', style: 'Sharp on the model, will catch math errors instantly. Patient with new associates but expects them to do their own diligence before asking.', voice: 'sharp-modeler', initials: 'RK' },
   ],
   opening: [
-    { personaId: 'sr-assoc', text: `CIM for Project Summit is in the deal folder. DTC outdoor apparel brand, private, $180M revenue, $35M EBITDA, founder-led. Think Allbirds or Cotopaxi at the $180M scale, before any IPO chatter.` },
+    { personaId: 'sr-assoc', text: `Project Summit is a private DTC outdoor apparel brand. $180M revenue, $35M EBITDA, founder-led. Think Allbirds or Cotopaxi at the $180M scale, before any IPO chatter. Everything you need is in the scenario brief, no actual CIM to pull.` },
     { personaId: 'sr-assoc', text: `Sam wants two things by EOD. First, paper LBO with 3 cases. Then a one-pager take memo. Do the LBO first, the memo references the numbers.` },
     { personaId: 'sr-assoc', text: `LBO assumptions: 10.5x entry, 55% debt at SOFR+475 (SOFR = 5.0%), 5-year hold, exit at entry multiple. Base case: 8% revenue CAGR, hold EBITDA margin at 19%. Downside: 5% revenue, margin to 17%. Upside: 12% revenue, margin to 21%. MOIC and IRR on each.` },
     { personaId: 'sr-assoc', text: `One-pager is your call on what to flag. Sam reads them fast, lead with the answer. Both as separate files.` },
@@ -532,7 +533,7 @@ const PE_2: Scenario = {
   timeframe: 'Pre-IC',
   duration: '45 min',
   difficulty: 'Advanced',
-  context: `Same fund (Crescent Equity Partners), but now Project Summit has cleared first round and the team is heading into final IC next Tuesday. The full LBO is built, base 2.5x MOIC / 21% IRR, downside 1.7x / 11% IRR, upside 3.2x / 27% IRR. The deal team's recommendation is to go to LOI at 10.5x. The Principal wants the analyst to draft the "Key Risks & Mitigants" section of the IC memo AND prep for two specific partner questions: (1) what's our edge here vs. a strategic, (2) what's the bear case for ad-platform dependency given they're 65% Meta/Google.`,
+  context: `Same fund (Crescent Equity Partners), but now Project Summit has cleared first round and the team is heading into final IC next Tuesday. Use these LBO case outputs as given (you don't need to rebuild the model): base 2.5x MOIC / 21% IRR, downside 1.7x / 11% IRR, upside 3.2x / 27% IRR. The deal team's recommendation is to go to LOI at 10.5x. The Principal wants the analyst to draft the "Key Risks & Mitigants" section of the IC memo AND prep for two specific partner questions: (1) what's our edge here vs. a strategic, (2) what's the bear case for ad-platform dependency given they're 65% Meta/Google. All context for your work is in this scenario.`,
   personas: [
     { id: 'partner', name: 'Diane Mosse', title: 'Partner', firm: 'Crescent Equity Partners', style: 'Quiet, surgical. Asks one question, listens to the answer fully, then asks the question that exposes the weakness. Famous for spotting the unmitigated risk.', voice: 'surgical', initials: 'DM' },
     { id: 'principal', name: 'Sam Garcia', title: 'Principal', firm: 'Crescent Equity Partners', style: 'Same as PE-1, commercial, fast.', voice: 'commercial', initials: 'SG' },
@@ -595,7 +596,7 @@ const PE_3: Scenario = {
   timeframe: 'Diligence day',
   duration: '35 min',
   difficulty: 'Intermediate',
-  context: `Crescent Equity Partners, Project Summit deal team. Tomorrow's the management presentation: 90 minutes with Summit's CEO and CFO at their HQ. The deal team has already read the CIM and built the model. The analyst's job tonight: write a structured question list (15-20 questions across financial, commercial, organizational, and strategic) AND prep the takeaway template the team will fill in live during the meeting.`,
+  context: `Crescent Equity Partners, Project Summit deal team. Tomorrow's the management presentation: 90 minutes with Summit's CEO and CFO at their HQ. Given the brief on the deal (DTC outdoor apparel, $180M revenue, $35M EBITDA, founder-led, 70% repeat customers; Allbirds- or Cotopaxi-style at $180M scale), the analyst's job tonight: write a structured question list (15-20 questions across financial, commercial, organizational, and strategic) AND prep the takeaway template the team will fill in live during the meeting. All context you need is in this scenario.`,
   personas: [
     { id: 'sr-assoc', name: 'Rachel Kim', title: 'Senior Associate', firm: 'Crescent Equity Partners', style: 'Same as PE-1, sharp, patient, expects pre-work done.', voice: 'sharp-modeler', initials: 'RK' },
   ],
@@ -662,7 +663,7 @@ const CON_1: Scenario = {
   timeframe: 'Wednesday',
   duration: '40 min',
   difficulty: 'Intermediate',
-  context: `Bain-style consulting engagement. Client is NorthPeak Brewing Co., a $400M revenue regional craft brewer. Think a smaller regional version of Boston Beer Company ($SAM, the public craft brewer that owns Sam Adams and Truly), at the scale where multi-state distribution is the growth question. Operating margin compressed from 14% to 10% over the past 12 months and the CEO wants to know why before the board meeting in 3 weeks. Day 3 of the case. The team has access to: 24 months of P&L by SKU and channel, COGS detail (ingredients, packaging, freight, labor), volume data by region, pricing data by channel, competitive pricing benchmarks. The partner has assigned the student to own the diagnostic, build the issue tree, then put together a slide that lays out the top drivers with sizing.`,
+  context: `Bain-style consulting engagement. Client is NorthPeak Brewing Co., a $400M revenue regional craft brewer. Think a smaller regional version of Boston Beer Company ($SAM, the public craft brewer that owns Sam Adams and Truly), at the scale where multi-state distribution is the growth question. Operating margin compressed from 14% to 10% over the past 12 months and the CEO wants to know why before the board meeting in 3 weeks. Day 3 of the case. The data points the consulting team has gathered (for context only, you don't need the underlying files): 24 months of P&L by SKU and channel, COGS detail (ingredients, packaging, freight, labor), volume data by region, pricing data by channel, competitive pricing benchmarks. The partner has assigned the student to own the diagnostic, build the issue tree, then put together a slide that lays out the top drivers with sizing. The issue tree is a conceptual exercise, structure all possible drivers; you're not analyzing the actual P&L file.`,
   personas: [
     { id: 'partner', name: 'Marcus Bell', title: 'Partner', firm: 'Bain & Company', style: 'Pattern-recognizing, fast. Cares about "what\'s the answer in one sentence" and whether the structure holds up. Will probe MECE explicitly. Patient teaching mode unless the work is sloppy.', voice: 'pattern-fast', initials: 'MB' },
     { id: 'em', name: 'Sara Patel', title: 'Engagement Manager', firm: 'Bain & Company', style: 'Operational, exacting, structures everything. Will rebuild your issue tree on a whiteboard if it\'s not MECE.', voice: 'structured', initials: 'SP' },
@@ -670,7 +671,7 @@ const CON_1: Scenario = {
   opening: [
     { personaId: 'em', text: `You're owning the margin diagnostic for NorthPeak. Two deliverables by EOD.` },
     { personaId: 'em', text: `First, an issue tree. What are all the possible drivers of the 400bps compression, structured MECE.` },
-    { personaId: 'em', text: `Second, a single slide that lays out the top 3 drivers with rough sizing of each. Data is in the case folder. Marcus will look at both tomorrow morning.` },
+    { personaId: 'em', text: `Second, a single slide that lays out the top 3 drivers with rough sizing of each. You're not opening a data file, this is a conceptual exercise: hypothesize the drivers, size each from what's typical in craft brewing, and frame the slide for an exec audience. Marcus will look at both tomorrow morning.` },
     { personaId: 'partner', text: `Don't overthink the tree. Just make sure it's mutually exclusive and collectively exhaustive at each level. The slide is what matters. I want to see 'here are the top 3 drivers, here's how much each one explains, here's what we'd do about it.'` },
   ],
   artifacts: [
@@ -698,7 +699,7 @@ MECE, LEVEL 2 (1-10)
 - Common error: listing things at the wrong altitude (a sub-branch that's bigger than its parent).
 
 TESTABILITY (1-10)
-- Can each leaf be tested with the data the team has access to?
+- Can each leaf be tested in principle with typical data sources for a brewer (P&L by SKU/channel, COGS, volume)?
 - Bad leaf: "competitive pressure" with no specified test.
 - Good leaf: "Pack mix shift to lower-margin SKUs, testable via SKU-level GM trend."
 
@@ -1552,7 +1553,7 @@ const AM_2: Scenario = {
       id: 'position-brief',
       label: 'Position Monitoring Brief',
       format: 'docx',
-      prompt: `Write a half-page position monitoring brief on BSC.
+      prompt: `Write a half-page position monitoring brief on RPM.
 Required sections:
 • CURRENT READ (1 line): noise / yellow / red
 • WHAT WE'RE SEEING (3-4 bullets): the price action, the channel checks, the Arkema readthrough, anything else
@@ -1605,7 +1606,7 @@ const AM_3: Scenario = {
   timeframe: 'Pitch prep',
   duration: '45 min',
   difficulty: 'Advanced',
-  context: `Same long-only fund. The analyst has been working on PTC Inc. (PTC) for 6 weeks, a vertical SaaS name serving discrete manufacturing customers. Thesis: secular shift from on-prem MES (manufacturing execution systems) to cloud-native, VIS is the share gainer with the best customer references; pricing power is real (net retention 118%); margins expanding from 18% to mid-20s over 3 years. Risk: customer concentration (top 10 ~ 35% of revenue), valuation already at 9.5x NTM revenue (premium to comps avg ~7x). Recommended position size: 1.5% initial, 2.5% target on confirmation of Q4 print. PM meeting is Thursday, the 1-pager goes in the binder Wednesday EOD.`,
+  context: `Same long-only fund. The analyst has been working on PTC Inc. (PTC) for 6 weeks, a vertical SaaS name serving discrete manufacturing customers. Thesis: secular shift from on-prem MES (manufacturing execution systems) to cloud-native, PTC is the share gainer with the best customer references; pricing power is real (net retention 118%); margins expanding from 18% to mid-20s over 3 years. Risk: customer concentration (top 10 ~ 35% of revenue), valuation already at 9.5x NTM revenue (premium to comps avg ~7x). Recommended position size: 1.5% initial, 2.5% target on confirmation of Q4 print. PM meeting is Thursday, the 1-pager goes in the binder Wednesday EOD.`,
   personas: [
     { id: 'pm', name: 'Karthik Rangan', title: 'Portfolio Manager', firm: 'Quality-Growth LO Fund', style: 'Same.', voice: 'thesis-tester', initials: 'KR' },
   ],
@@ -1682,12 +1683,12 @@ const VC_1: Scenario = {
   timeframe: 'Triage day',
   duration: '40 min',
   difficulty: 'Intro',
-  context: `Stage-focused Series A fund ($400M AUM, B2B software focus, 15-18 investments per fund, 6-8 per year). A partner forwarded a deck at 9am from Lattice Robotics, a warehouse robotics-as-a-service startup. Think of it as a much earlier-stage attempt at the category Symbotic ($SYM) operates in publicly, or AutoStore (Norway-listed) at scale. Co-founders are ex-Amazon Robotics (2 years out), seed round was $5M led by Initialized 18 months ago. Currently raising $18M Series A at $80M pre. ARR ~$2.4M (12 enterprise pilots converted to paid), growing ~25% MoM over last 3 months, gross margin 38% (hardware-heavy), burn $700K/month, 12 months runway. Three named customers in deck. Partner: "Give me a quick take by lunch. Are we taking the founder call?"`,
+  context: `Stage-focused Series A fund ($400M AUM, B2B software focus, 15-18 investments per fund, 6-8 per year). The partner sent over a brief on Lattice Robotics this morning, a warehouse robotics-as-a-service startup. Think of it as a much earlier-stage attempt at the category Symbotic ($SYM) operates in publicly, or AutoStore (Norway-listed) at scale. Co-founders are ex-Amazon Robotics (2 years out), seed round was $5M led by Initialized 18 months ago. Currently raising $18M Series A at $80M pre. ARR ~$2.4M (12 enterprise pilots converted to paid), growing ~25% MoM over last 3 months, gross margin 38% (hardware-heavy), burn $700K/month, 12 months runway. Three named customers in the briefing. Partner: "Give me a quick take by lunch. Are we taking the founder call?" All details you need are in this scenario; no actual deck file to open.`,
   personas: [
     { id: 'partner', name: 'Yusuf Bakir', title: 'Partner', firm: 'Lateral Ventures', style: 'Pattern-matches across hundreds of decks. Reads founder takes in 60 seconds. Cares about (a) is this category-creating or me-too, (b) is the team unfair, (c) what would make me regret passing in 5 years.', voice: 'pattern-fast', initials: 'YB' },
   ],
   opening: [
-    { personaId: 'partner', text: `Lattice Robotics deck just landed.` },
+    { personaId: 'partner', text: `Brief on Lattice Robotics just landed. Everything we know is in the scenario above.` },
     { personaId: 'partner', text: `Series A, $18M at $80M pre. Warehouse RaaS, ex-Amazon team. $2.4M ARR growing 25% MoM.` },
     { personaId: 'partner', text: `By lunch I need a triage take. Half a page max. Your recommendation on whether we take the founder call, what you want to validate on the call. Be opinionated. I'd rather see a strong pass than a fence-sit.` },
   ],
@@ -1747,7 +1748,7 @@ const VC_2: Scenario = {
   timeframe: 'Pre-partner meeting',
   duration: '45 min',
   difficulty: 'Advanced',
-  context: `Same fund. After Round 1's triage, the team took the Lattice call. Founder calls cleared the bar. The team has spent 3 weeks on diligence: 11 customer references (8 positive, 2 neutral, 1 critical), 2 former Amazon Robotics colleagues vouching for the founders, gross margin path validated through Q3 projection (38% → 52% by end of Year 2 once software-revenue mix kicks in), $1.8M of the $2.4M ARR is from contracted multi-year deals (so true recurring, not one-off pilots). The fund's recommendation: lead the Series A at $18M / $80M pre, 22.5% ownership, board seat. Partner meeting Thursday. Memo due Wednesday EOD.`,
+  context: `Same fund. After Round 1's triage, the team took the Lattice call. Founder calls cleared the bar. The team has spent 3 weeks on diligence and the relevant outputs are summarized below (you don't need actual diligence files): 11 customer references (8 positive, 2 neutral, 1 critical), 2 former Amazon Robotics colleagues vouching for the founders, gross margin path validated through Q3 projection (38% → 52% by end of Year 2 once software-revenue mix kicks in), $1.8M of the $2.4M ARR is from contracted multi-year deals (so true recurring, not one-off pilots). The fund's recommendation: lead the Series A at $18M / $80M pre, 22.5% ownership, board seat. Partner meeting Thursday. Memo due Wednesday EOD. All information for your memo is in this scenario.`,
   personas: [
     { id: 'partner', name: 'Yusuf Bakir', title: 'Partner', firm: 'Lateral Ventures', style: 'Same as VC_1. In partner meetings, plays both sides, even when supportive he tests the case publicly.', voice: 'pattern-fast', initials: 'YB' },
     { id: 'gp', name: 'Helene Marchetti', title: 'General Partner', firm: 'Lateral Ventures', style: 'Quiet. Reads everything twice. Will sometimes say nothing all meeting and then ask one question that decides the vote. Cares about whether the writer ACTUALLY believes it.', voice: 'reads-twice', initials: 'HM' },
@@ -1897,7 +1898,7 @@ const RE_1: Scenario = {
   timeframe: 'New deal',
   duration: '45 min',
   difficulty: 'Intermediate',
-  context: `Value-add multifamily fund ($1.2B AUM, Sunbelt focus). Deal: Magnolia Pines, a 248-unit garden-style multifamily property in suburban Atlanta (Cobb County), built 2008. The asset sits in the same Sunbelt corridor where public multifamily REITs like Mid-America Apartment Communities ($MAA), Camden Property Trust ($CPT), and NexPoint Residential Trust ($NXRT) own significant portfolios, so their reported cap rates and rent comps are useful reference points. Seller's asking $58M ($233K/unit). Current avg rent $1,415/unit, occupancy 93.5%, T-12 NOI $2.78M. Comps for renovated units in submarket: $1,650-1,720. Sponsor's value-add plan: $14K/unit interior renovation budget over 24 months, push renovated rents to $1,650 ($235 premium), retain ~96% occupancy through reno. Submarket cap rates for 2008-vintage Class B in this area: 5.25-5.75% in-place, 5.50-6.00% on stabilized. Debt: agency loan 65% LTV at SOFR+185 fixed-rate equivalent ~6.35%, 30-year amort, 5-year IO then amortizing, 10-year term. 5-year hold target.`,
+  context: `Value-add multifamily fund ($1.2B AUM, Sunbelt focus). Deal: Magnolia Pines, a 248-unit garden-style multifamily property in suburban Atlanta (Cobb County), built 2008. The asset sits in the same Sunbelt corridor where public multifamily REITs like Mid-America Apartment Communities ($MAA), Camden Property Trust ($CPT), and NexPoint Residential Trust ($NXRT) own significant portfolios, so their reported cap rates and rent comps are useful reference points. Seller's asking $58M ($233K/unit). Current avg rent $1,415/unit, occupancy 93.5%, T-12 NOI $2.78M. Comps for renovated units in submarket: $1,650-1,720. Sponsor's value-add plan: $14K/unit interior renovation budget over 24 months, push renovated rents to $1,650 ($235 premium), retain ~96% occupancy through reno. Submarket cap rates for 2008-vintage Class B in this area: 5.25-5.75% in-place, 5.50-6.00% on stabilized. Debt: agency loan 65% LTV at SOFR+185 fixed-rate equivalent ~6.35%, 30-year amort, 5-year IO then amortizing, 10-year term. 5-year hold target. All deal data points you need are in this scenario; you don't need to open a rent roll or OM file.`,
   personas: [
     { id: 'principal', name: 'Reese Tanaka', title: 'Principal, Acquisitions', firm: 'Cardinal Real Estate Partners', style: 'Spreadsheet-disciplined, will catch any math error in the rent roll or expense build. Cares about whether the deal makes sense BOTH in-place and post-stabilization.', voice: 'rent-roll-strict', initials: 'RT' },
   ],
@@ -2106,7 +2107,7 @@ const RE_3: Scenario = {
   timeframe: 'Diligence',
   duration: '35 min',
   difficulty: 'Intro',
-  context: `Same fund. Considering a new acquisition in West Phoenix / Glendale submarket. This is core territory for the public Sunbelt multifamily REITs (Mid-America Apartment Communities $MAA, Camden Property Trust $CPT, NexPoint Residential $NXRT), so their published submarket commentary and the recent Phoenix-area transactions in RCA data are the right reference universe. Senior wants a comp set of the last 12 months of transactions in Class B 1990s-2000s vintage multifamily within a 5-mile radius. Analyst has access to RCA + Costar data. Universe of identified transactions (provided): 14 trades in the past 12 months ranging from 96-unit to 312-unit, $145K-$245K/unit, cap rates 4.85-5.95%. Senior wants the cleaned comp set (8-10 best comps), the criteria used for inclusion/exclusion, and the implied cap rate range for our target.`,
+  context: `Same fund. Considering a new acquisition in West Phoenix / Glendale submarket. This is core territory for the public Sunbelt multifamily REITs (Mid-America Apartment Communities $MAA, Camden Property Trust $CPT, NexPoint Residential $NXRT), so their published submarket commentary and recent Phoenix-area transactions are the right reference universe. Senior wants a comp set of the last 12 months of transactions in Class B 1990s-2000s vintage multifamily within a 5-mile radius. Universe of identified transactions (all 14 provided in this scenario, no subscription database needed): 14 trades in the past 12 months ranging from 96-unit to 312-unit, $145K-$245K/unit, cap rates 4.85-5.95%. Senior wants the cleaned comp set (8-10 best comps), the criteria used for inclusion/exclusion, and the implied cap rate range for our target.`,
   personas: [
     { id: 'sr', name: 'Devon Wright', title: 'Senior Associate, Acquisitions', firm: 'Cardinal Real Estate Partners', style: 'Direct, will challenge any comp inclusion that doesn\'t match the deal box.', voice: 'comp-strict', initials: 'DW' },
   ],
@@ -2324,7 +2325,7 @@ const ER_2: Scenario = {
   opening: [
     { personaId: 'sr-analyst', text: `Hartford Capital wants 30 min this afternoon. Their PM is going to push hard on two things.` },
     { personaId: 'sr-analyst', text: `One: Aerospace growth durability, is 14 to 16% sustainable through 2026. Two: is IA softness cyclical or share loss to MakerEdge and Schneider.` },
-    { personaId: 'sr-analyst', text: `Write me a prep doc. 5 to 7 anticipated questions, your best answer to each, where you'd say 'I don't know' honestly, and our house talking points. Don't bullshit. Hartford has been holding CRST for 6 years, they know it better than half our coverage team.` },
+    { personaId: 'sr-analyst', text: `Write me a prep doc. 5 to 7 anticipated questions, your best answer to each, where you'd say 'I don't know' honestly, and our house talking points. Don't bullshit. Hartford has been holding ITW for 6 years, they know it better than half our coverage team.` },
   ],
   artifacts: [
     {
