@@ -78,16 +78,17 @@ const IB_1: Scenario = {
   timeframe: 'Tuesday PM',
   duration: '40 min',
   difficulty: 'Intermediate',
-  context: `Bulge-bracket Healthcare IB team pitching a sell-side mandate to Project Lighthouse: a $2.0B EV vertical-SaaS healthcare RCM platform with $280M LTM revenue, ~25% YoY growth, ~18% adj. EBITDA margins, ~120% net dollar retention. Comparable trading universe: Veeva (VEEV), Doximity (DOCS), HealthEquity (HQY), Phreesia (PHR), Evolent (EVH), Definitive Healthcare (DH). The pitch is Wednesday 9am to Lighthouse's CEO and CFO. The student is the first-year analyst. The associate is on another deal so the analyst has limited cover.`,
+  context: `Bulge-bracket Healthcare IB team pitching a sell-side mandate to Project Lighthouse: a $2.0B EV vertical-SaaS healthcare RCM platform with $280M LTM revenue, ~25% YoY growth, ~18% adj. EBITDA margins, ~120% net dollar retention. Think a smaller version of R1 RCM (which was publicly traded under $RCM before its 2024 take-private by TowerBrook and CD&R) or a more mature Phreesia ($PHR). Comparable trading universe: Veeva (VEEV), Doximity (DOCS), HealthEquity (HQY), Phreesia (PHR), Evolent (EVH), Definitive Healthcare (DH). The pitch is Wednesday 9am to Lighthouse's CEO and CFO. The student is the first-year analyst. The associate is on another deal so the analyst has limited cover.`,
   personas: [
     { id: 'md', name: 'David Chen', title: 'Managing Director', firm: 'GS / Healthcare', style: 'Big-picture, time-poor, talks in headlines. Cares about the client narrative and whether the analyst can defend a number under pushback. Doesn\'t want the math, wants the answer. Often changes direction mid-conversation.', voice: 'big-picture', initials: 'DC' },
     { id: 'vp', name: 'Priya Raman', title: 'Vice President', firm: 'GS / Healthcare', style: 'Sharp, exacting, kind but unrelenting on quality. Marks up everything. Will flag formatting (alignment, decimals, sourcing) AND substance (peer selection, EV vs market cap) in the same breath. Wants the analyst to think two steps ahead.', voice: 'precise', initials: 'PR' },
   ],
   opening: [
-    { personaId: 'md', text: `Need a refreshed comp sheet for the Lighthouse pitch tomorrow. Healthcare RCM SaaS, $2B EV. The peer set the team agreed on: Veeva ($VEEV), Doximity ($DOCS), HealthEquity ($HQY), Phreesia ($PHR), Evolent Health ($EVH), Definitive Healthcare ($DH).` },
-    { personaId: 'md', text: `EV/Rev and EV/EBITDA, NTM, calendarized. Send when ready. I want eyes on it before Priya marks it up.` },
-    { personaId: 'vp', text: `I'll review the comps right when you send them. Quick reminders: EV is market cap plus net debt, no shortcuts. Source row at the bottom. Clean alignment.` },
-    { personaId: 'vp', text: `Once the comps clear, I'll need the one-pager teaser. Company overview, growth metrics, why now, three investment highlights. We can talk about that after I see the comps.` },
+    { personaId: 'md', text: `Need a refreshed comp sheet for the Lighthouse pitch tomorrow. Lighthouse is healthcare RCM SaaS, $2B EV. Think a smaller-scale R1 RCM (the one TowerBrook and CD&R just took private) or a more mature Phreesia.` },
+    { personaId: 'md', text: `Peer set the team agreed on: Veeva ($VEEV), Doximity ($DOCS), HealthEquity ($HQY), Phreesia ($PHR), Evolent Health ($EVH), Definitive Healthcare ($DH). EV/Rev and EV/EBITDA, NTM, calendarized.` },
+    { personaId: 'md', text: `Send when ready. I want eyes on it before Priya marks it up.` },
+    { personaId: 'vp', text: `Start with the comp sheet, that's the priority. Reminders: EV is market cap plus net debt, no shortcuts. Source row at the bottom. Clean alignment.` },
+    { personaId: 'vp', text: `Once the comps clear, the one-pager teaser is next: company overview, growth metrics, why now, three investment highlights. We'll talk after I see your comps.` },
   ],
   artifacts: [
     {
@@ -186,7 +187,7 @@ const IB_2: Scenario = {
   timeframe: 'All-nighter',
   duration: '45 min',
   difficulty: 'Advanced',
-  context: `Elite boutique (Centerview-style) M&A team rendering a fairness opinion on a $4.8B take-private of MedTech Holdings, a diversified medical devices company. Board meets Friday 9am to vote. The DCF the team has been running uses ~6% revenue growth declining to 3%, 22% EBITDA margins, 9.0% WACC, 2.5% terminal growth. The MD just called from the airport: he now thinks the bear case should reflect a regulatory overhang on the cardiovascular segment (~35% of revenue) and wants the football field re-anchored to show downside more visibly. Student is the first-year analyst running the DCF in Excel and the football field in PowerPoint.`,
+  context: `Elite boutique (Centerview-style) M&A team rendering a fairness opinion on a $4.8B take-private of MedTech Holdings, a diversified medical devices company. Think a mid-cap player in the space of Hologic ($HOLX), Globus Medical ($GMED), or Integra LifeSciences ($IART), with a cardiovascular segment exposed to FDA review. Board meets Friday 9am to vote. The DCF the team has been running uses ~6% revenue growth declining to 3%, 22% EBITDA margins, 9.0% WACC, 2.5% terminal growth. The MD just called from the airport: he now thinks the bear case should reflect a regulatory overhang on the cardiovascular segment (~35% of revenue) and wants the football field re-anchored to show downside more visibly. Student is the first-year analyst running the DCF in Excel and the football field in PowerPoint.`,
   personas: [
     { id: 'md', name: 'Marcus Whitfield', title: 'Managing Director', firm: 'Centerview', style: 'Old-school, demanding. Speaks in fully-formed paragraphs even at 9pm. Cares deeply about defensibility, every assumption must have a source. Won\'t accept "industry consensus" as a defense.', voice: 'demanding-defensible', initials: 'MW' },
     { id: 'vp', name: 'Anna Liu', title: 'VP', firm: 'Centerview', style: 'Calm, methodical, mid-pace. The one who actually catches errors. Will ask "what\'s your downside?" and expect a number with a reason behind it.', voice: 'methodical', initials: 'AL' },
@@ -300,22 +301,23 @@ const IB_3: Scenario = {
   timeframe: 'First week',
   duration: '35 min',
   difficulty: 'Intro',
-  context: `Middle-market IB at a Houlihan / Jefferies-style firm. First week on the desk. Associate hands you Project Atlas, a $400M EV vertical-SaaS construction software company. $80M LTM revenue, 30% growth, 15% EBITDA margins. Associate wants two things by EOD: (1) a clean trading comp set using PCTY, PAYC, ZD, BSY, NICE, AZPN, (2) a quick paper LBO assuming a sponsor pays 9.0x LTM EBITDA, 50% leverage at SOFR+500, 5-year hold, 10% revenue CAGR with 200bps of margin expansion. The associate is testing whether they can trust you with real work next week.`,
+  context: `Middle-market IB at a Houlihan / Jefferies-style firm. First week on the desk. Associate hands you Project Atlas, a $400M EV vertical-SaaS construction software company. Think a smaller version of Procore ($PCOR) or Bentley Systems ($BSY) at an earlier stage. $80M LTM revenue, 30% growth, 15% EBITDA margins (so roughly $12M LTM EBITDA). Associate wants two things by EOD: (1) a clean trading comp set using PCOR, BSY, AZPN, TRMB, ADSK, PTC, (2) a quick paper LBO assuming a sponsor pays 9.0x LTM EBITDA, 50% leverage at SOFR+500, 5-year hold, 10% revenue CAGR with 200bps of margin expansion. The associate is testing whether they can trust you with real work next week.`,
   personas: [
     { id: 'assoc', name: 'Jordan Park', title: 'Associate', firm: 'Houlihan / TMT', style: 'Direct, fair, will tell you exactly what\'s wrong. Cares about whether you check your own work before sending. Will respect you if you push back with a reason.', voice: 'direct-fair', initials: 'JP' },
   ],
   opening: [
-    { personaId: 'assoc', text: `Welcome to the desk. Two things by EOD.` },
-    { personaId: 'assoc', text: `First, comp set on Project Atlas. Peers: Paylocity ($PCTY), Paycom ($PAYC), Ziff Davis ($ZD), Bentley Systems ($BSY), NICE Ltd. ($NICE), Aspen Technology ($AZPN). EV/Rev and EV/EBITDA, NTM.` },
-    { personaId: 'assoc', text: `Second, paper LBO. Sponsor pays 9.0x LTM EBITDA on $12M. 50% debt at SOFR+500 (assume SOFR = 5.0%). 5-year hold, exit at the same multiple. 10% revenue CAGR, 200bps margin expansion linearly. Show MOIC and IRR.` },
-    { personaId: 'assoc', text: `Don't overthink it. Get the math right. Send them as separate files.` },
+    { personaId: 'assoc', text: `Welcome to the desk. Two things by EOD on Project Atlas.` },
+    { personaId: 'assoc', text: `Project Atlas is a $400M EV vertical-SaaS construction software company. Think a smaller-scale Procore ($PCOR). $80M LTM revenue, 30% growth, 15% EBITDA margins (roughly $12M LTM EBITDA).` },
+    { personaId: 'assoc', text: `Start with the comp set. Peers: Procore ($PCOR), Bentley Systems ($BSY), Aspen Technology ($AZPN), Trimble ($TRMB), Autodesk ($ADSK), PTC ($PTC). EV/Rev and EV/EBITDA, NTM. We need this for the cover, so do it first.` },
+    { personaId: 'assoc', text: `Then the paper LBO. Sponsor pays 9.0x LTM EBITDA on $12M (so $108M purchase price). 50% debt at SOFR+500 (assume SOFR = 5.0%). 5-year hold, exit at the same 9.0x. 10% revenue CAGR, 200bps margin expansion linearly. Show MOIC and IRR. For comp data and projections, just use reasonable estimates if you can't pull a terminal.` },
+    { personaId: 'assoc', text: `Both as separate Excel files, one tab each. Don't overthink it. Get the math right.` },
   ],
   artifacts: [
     {
       id: 'comp-set',
       label: 'Comp Set',
       format: 'xlsx',
-      prompt: `Build a trading comp set for Project Atlas using PCTY, PAYC, ZD, BSY, NICE, AZPN. Show:
+      prompt: `Build a trading comp set for Project Atlas using PCOR, BSY, AZPN, TRMB, ADSK, PTC. Show:
 • Market Cap, Net Debt, EV
 • NTM Revenue, NTM EBITDA
 • EV/NTM Revenue, EV/NTM EBITDA
@@ -410,15 +412,16 @@ const PE_1: Scenario = {
   timeframe: 'EOD ask',
   duration: '40 min',
   difficulty: 'Intermediate',
-  context: `Middle-market PE fund ($2B AUM). The CIM that landed is for Project Summit: a DTC outdoor-apparel brand. $180M LTM revenue, 12% YoY growth, $35M LTM EBITDA (19% margin), founder-led, 70% repeat customers. Banker is running a process; first-round bids due in 3 weeks. Sponsor target entry: 10.5x LTM EBITDA. Standard mid-market structure: ~55% debt at SOFR+475 (assume SOFR 5.0%), 5-year hold, exit at same multiple. The deal lead (Principal) wants a quick paper LBO and a one-page take memo by EOD, should we keep going or pass.`,
+  context: `Middle-market PE fund ($2B AUM). The CIM that landed is for Project Summit: a DTC outdoor-apparel brand. Think a private brand at the scale of an early Allbirds, Cotopaxi, or Outdoor Voices: $180M LTM revenue, 12% YoY growth, $35M LTM EBITDA (19% margin), founder-led, 70% repeat customers. Banker is running a process; first-round bids due in 3 weeks. Sponsor target entry: 10.5x LTM EBITDA. Standard mid-market structure: ~55% debt at SOFR+475 (assume SOFR 5.0%), 5-year hold, exit at same multiple. The deal lead (Principal) wants a quick paper LBO and a one-page take memo by EOD, should we keep going or pass.`,
   personas: [
     { id: 'principal', name: 'Sam Garcia', title: 'Principal', firm: 'Crescent Equity Partners', style: 'Commercial, pattern-matches fast. Cares more about thesis than mechanics, but if the LBO math doesn\'t work, that\'s a no. Will ask "is this a 2.5x or a 3.5x deal?" and expect a number with a reason.', voice: 'commercial', initials: 'SG' },
     { id: 'sr-assoc', name: 'Rachel Kim', title: 'Senior Associate', firm: 'Crescent Equity Partners', style: 'Sharp on the model, will catch math errors instantly. Patient with new associates but expects them to do their own diligence before asking.', voice: 'sharp-modeler', initials: 'RK' },
   ],
   opening: [
-    { personaId: 'sr-assoc', text: `CIM for Project Summit is in the deal folder. DTC outdoor apparel, $180M revenue, $35M EBITDA, founder-led.` },
-    { personaId: 'sr-assoc', text: `Sam wants a quick paper LBO and a one-pager by EOD. Assumptions: 10.5x entry, 55% debt at SOFR+475 (SOFR = 5.0%), 5-year hold, exit at entry multiple. Base case: 8% revenue CAGR, hold EBITDA margin at 19%.` },
-    { personaId: 'sr-assoc', text: `Then a downside (5% revenue, margin to 17%) and an upside (12% revenue, margin to 21%). MOIC and IRR on each. One-pager is your call on what to flag. Sam reads them fast, lead with the answer.` },
+    { personaId: 'sr-assoc', text: `CIM for Project Summit is in the deal folder. DTC outdoor apparel brand, private, $180M revenue, $35M EBITDA, founder-led. Think Allbirds or Cotopaxi at the $180M scale, before any IPO chatter.` },
+    { personaId: 'sr-assoc', text: `Sam wants two things by EOD. First, paper LBO with 3 cases. Then a one-pager take memo. Do the LBO first, the memo references the numbers.` },
+    { personaId: 'sr-assoc', text: `LBO assumptions: 10.5x entry, 55% debt at SOFR+475 (SOFR = 5.0%), 5-year hold, exit at entry multiple. Base case: 8% revenue CAGR, hold EBITDA margin at 19%. Downside: 5% revenue, margin to 17%. Upside: 12% revenue, margin to 21%. MOIC and IRR on each.` },
+    { personaId: 'sr-assoc', text: `One-pager is your call on what to flag. Sam reads them fast, lead with the answer. Both as separate files.` },
     { personaId: 'principal', text: `Don't overcomplicate this. I just want to know: at 10.5x, does this clear our hurdle in any reasonable case, and what's the one thing that could break it. Send when ready.` },
   ],
   artifacts: [
@@ -650,7 +653,7 @@ const CON_1: Scenario = {
   timeframe: 'Wednesday',
   duration: '40 min',
   difficulty: 'Intermediate',
-  context: `Bain-style consulting engagement. Client is NorthPeak Brewing Co., a $400M revenue regional craft brewer. Operating margin compressed from 14% to 10% over the past 12 months and the CEO wants to know why before the board meeting in 3 weeks. Day 3 of the case. The team has access to: 24 months of P&L by SKU and channel, COGS detail (ingredients, packaging, freight, labor), volume data by region, pricing data by channel, competitive pricing benchmarks. The partner has assigned the student to own the diagnostic, build the issue tree, then put together a slide that lays out the top drivers with sizing.`,
+  context: `Bain-style consulting engagement. Client is NorthPeak Brewing Co., a $400M revenue regional craft brewer. Think a smaller regional version of Boston Beer Company ($SAM, the public craft brewer that owns Sam Adams and Truly), at the scale where multi-state distribution is the growth question. Operating margin compressed from 14% to 10% over the past 12 months and the CEO wants to know why before the board meeting in 3 weeks. Day 3 of the case. The team has access to: 24 months of P&L by SKU and channel, COGS detail (ingredients, packaging, freight, labor), volume data by region, pricing data by channel, competitive pricing benchmarks. The partner has assigned the student to own the diagnostic, build the issue tree, then put together a slide that lays out the top drivers with sizing.`,
   personas: [
     { id: 'partner', name: 'Marcus Bell', title: 'Partner', firm: 'Bain & Company', style: 'Pattern-recognizing, fast. Cares about "what\'s the answer in one sentence" and whether the structure holds up. Will probe MECE explicitly. Patient teaching mode unless the work is sloppy.', voice: 'pattern-fast', initials: 'MB' },
     { id: 'em', name: 'Sara Patel', title: 'Engagement Manager', firm: 'Bain & Company', style: 'Operational, exacting, structures everything. Will rebuild your issue tree on a whiteboard if it\'s not MECE.', voice: 'structured', initials: 'SP' },
@@ -891,7 +894,7 @@ const RX_1: Scenario = {
   timeframe: 'Early AM',
   duration: '45 min',
   difficulty: 'Advanced',
-  context: `Lazard Restructuring. The client is Apex Sponsor Group, a mid-market PE fund. Their portfolio company, Cascade Industrial (industrial parts distribution, ~$400M revenue, ~$60M LTM EBITDA), tripped its 5.5x net leverage covenant at Q3, actual leverage came in at 6.2x. Capital structure: $250M Term Loan B at SOFR+450 (held by ~12 lenders, agent is BlackRock), $80M revolver (undrawn $30M of $80M capacity, agent JPM), $40M of sponsor equity-like preferred. EBITDA decline driven by ~15% volume drop in a key end-market (auto aftermarket) plus aluminum input cost spikes. Sponsor wants options on the table by 9am for a call with the TLB agent. The student is the analyst on the deal team.`,
+  context: `Lazard Restructuring. The client is Apex Sponsor Group, a mid-market PE fund. Their portfolio company, Cascade Industrial (industrial parts distribution, ~$400M revenue, ~$60M LTM EBITDA), tripped its 5.5x net leverage covenant at Q3, actual leverage came in at 6.2x. Think of the business as a smaller, leveraged version of MSC Industrial ($MSM) or Fastenal ($FAST), only in the auto aftermarket vertical and under sponsor ownership. Capital structure: $250M Term Loan B at SOFR+450 (held by ~12 lenders, agent is BlackRock), $80M revolver (undrawn $30M of $80M capacity, agent JPM), $40M of sponsor equity-like preferred. EBITDA decline driven by ~15% volume drop in a key end-market (auto aftermarket) plus aluminum input cost spikes. Sponsor wants options on the table by 9am for a call with the TLB agent. The student is the analyst on the deal team.`,
   personas: [
     { id: 'md', name: 'Eleanor Voss', title: 'Managing Director', firm: 'Lazard / Restructuring', style: 'Crisis-mode calm. Old-school. Will ask you to defend every number with a source within 30 seconds. Believes the best Rx bankers are the ones who can hold both sides of the table in their head simultaneously.', voice: 'crisis-calm', initials: 'EV' },
     { id: 'vp', name: 'Daniel Reyes', title: 'VP', firm: 'Lazard / Restructuring', style: 'Fast, exacting on numbers. Cap stack mistakes are unforgivable. Will say "show me the math" without warning.', voice: 'numbers-fast', initials: 'DR' },
@@ -1007,7 +1010,7 @@ const RX_2: Scenario = {
   timeframe: 'First week',
   duration: '40 min',
   difficulty: 'Intermediate',
-  context: `PJT Partners Restructuring. Mandate is debtor-side advisor for Marquee Apparel, a 240-store specialty retailer in voluntary Chapter 11. Pre-petition capital structure: $180M ABL (secured by inventory + receivables, ~$120M drawn at filing), $250M senior secured notes (4-year remaining tenor, 8.5% coupon, second lien on remaining collateral), $100M unsecured notes, $40M trade payables, $80M lease obligations capitalized. Enterprise value estimates: liquidation $185M, going-concern low $275M, going-concern high $380M. Analyst is building the recovery waterfall the team will use in the IC pre-read.`,
+  context: `PJT Partners Restructuring. Mandate is debtor-side advisor for Marquee Apparel, a 240-store specialty retailer in voluntary Chapter 11. Think Express ($EXPR before its April 2024 Ch. 11) or Forever 21: mall-anchored, mid-tier price point, hit by traffic decline and DTC pressure. Pre-petition capital structure: $180M ABL (secured by inventory + receivables, ~$120M drawn at filing), $250M senior secured notes (4-year remaining tenor, 8.5% coupon, second lien on remaining collateral), $100M unsecured notes, $40M trade payables, $80M lease obligations capitalized. Enterprise value estimates: liquidation $185M, going-concern low $275M, going-concern high $380M. Analyst is building the recovery waterfall the team will use in the IC pre-read.`,
   personas: [
     { id: 'principal', name: 'Mira Okonkwo', title: 'Principal', firm: 'PJT Partners', style: 'Sharp. Will read a waterfall and immediately ask "what happens to recoveries if the GC range moves down 15%?" Cares about the second-order sensitivity, not just the point estimate.', voice: 'sensitivity-driven', initials: 'MO' },
   ],
@@ -1085,7 +1088,7 @@ const RX_3: Scenario = {
   timeframe: 'Pre-filing prep',
   duration: '40 min',
   difficulty: 'Intermediate',
-  context: `Houlihan Lokey. Mandate is debtor-side for Drayton Manufacturing, an industrial fabrication company heading toward a likely Chapter 11 filing in ~30 days. The team is sizing DIP financing for a 13-week post-petition runway. Recent monthly data: revenue ~$24M/month declining, gross margin ~22%, operating cash burn (pre-restructuring costs) ~$3M/month, $8M cash on hand. Restructuring costs (professional fees, retention) expected at ~$2M/month. Critical vendor payments will be needed week 1 (~$5M) to avoid supply disruption. Customer concentration: top 5 = 60% of revenue, billing cycles 30-60 days. The senior associate wants a 13-week cash flow forecast that shows: weekly inflows, weekly outflows by category, ending cash, minimum DIP size to maintain $5M minimum operating cash. Analyst owns the build.`,
+  context: `Houlihan Lokey. Mandate is debtor-side for Drayton Manufacturing, an industrial fabrication company heading toward a likely Chapter 11 filing in ~30 days. Think a smaller, leveraged version of Olympic Steel ($ZEUS) or Insteel Industries ($IIIN) in metal fabrication, hit by demand cyclicality and a stretched balance sheet. The team is sizing DIP financing for a 13-week post-petition runway. Recent monthly data: revenue ~$24M/month declining, gross margin ~22%, operating cash burn (pre-restructuring costs) ~$3M/month, $8M cash on hand. Restructuring costs (professional fees, retention) expected at ~$2M/month. Critical vendor payments will be needed week 1 (~$5M) to avoid supply disruption. Customer concentration: top 5 = 60% of revenue, billing cycles 30-60 days. The senior associate wants a 13-week cash flow forecast that shows: weekly inflows, weekly outflows by category, ending cash, minimum DIP size to maintain $5M minimum operating cash. Analyst owns the build.`,
   personas: [
     { id: 'sr-assoc', name: 'Aaron Park', title: 'Senior Associate', firm: 'Houlihan Lokey', style: 'Methodical, will catch arithmetic errors in real time, will ask "why this week?" if line items look smooth.', voice: 'methodical', initials: 'AP' },
   ],
@@ -1338,7 +1341,7 @@ const ST_3: Scenario = {
   timeframe: 'Intraday',
   duration: '30 min',
   difficulty: 'Advanced',
-  context: `Same desk. 11:20am. A real-money asset manager just sent the desk an RFQ: they want a bid on $20M of MidwestTel 5.875% '30, an IG BBB-rated telecom name. Recent screen: bonds last traded at G+155 about 90 minutes ago. Comparable BBB telecom paper of similar maturity is currently trading G+150-160 with a slight widening bias today. Desk position: zero (not currently long or short the name). Bond duration ~5.2 years, current spread duration ~5.2 years. Senior trader is on a call and wants a memo with the proposed bid, the rationale, and the risk we'd be taking on if we win it. Has to be sent within 15 minutes, client gave a 30-minute window.`,
+  context: `Same desk. 11:20am. A real-money asset manager just sent the desk an RFQ: they want a bid on $20M of MidwestTel 5.875% '30, an IG BBB-rated telecom name. Think paper that trades alongside Verizon ($VZ) and AT&T ($T) but at a wider spread, more like Lumen ($LUMN) territory given the BBB rating and the bias toward widening. Recent screen: bonds last traded at G+155 about 90 minutes ago. Comparable BBB telecom paper of similar maturity is currently trading G+150-160 with a slight widening bias today. Desk position: zero (not currently long or short the name). Bond duration ~5.2 years, current spread duration ~5.2 years. Senior trader is on a call and wants a memo with the proposed bid, the rationale, and the risk we'd be taking on if we win it. Has to be sent within 15 minutes, client gave a 30-minute window.`,
   personas: [
     { id: 'sr-trader', name: 'Mike Donato', title: 'Senior Trader', firm: 'Bulge Bracket / IG Credit', style: 'Same as ST_1/ST_2. Wants a clear bid with a number and a defense in 5 minutes. Will ask "what\'s our edge here?", i.e., why win this trade at all if we don\'t have a buyer lined up.', voice: 'direct-trader', initials: 'MD' },
   ],
@@ -1407,12 +1410,12 @@ const AM_1: Scenario = {
   timeframe: 'Earnings day',
   duration: '40 min',
   difficulty: 'Intermediate',
-  context: `Long-only equity fund ($8B AUM, large-cap quality strategy). The portfolio holds a 3.2% position in Norden Logistics (NLG), a North American less-than-truckload (LTL) freight name. Q3 just printed AH: revenue $1.92B vs consensus $1.88B (+2% beat), operating ratio (key LTL metric, lower is better) 86.4% vs 86.8% expected (better), EPS $2.14 vs $2.05 expected. Guidance for Q4 raised: revenue +3-5% YoY (prior +2-4%), operating ratio expected to remain in mid-86s. Volume growth +2.1% YoY (decelerating from +3.5% last quarter), yield/pricing +3.8% YoY (accelerating). Stock initially trading +3% AH then drifted to +1.5%. The analyst's existing thesis: pricing power offsets volume softness; expanding margins despite freight recession; structural winner. The model needs updating: rebase Q4 to the raised guide, push out beyond, recompute fair value. PM wants a written brief by 7am tomorrow.`,
+  context: `Long-only equity fund ($8B AUM, large-cap quality strategy). The portfolio holds a 3.2% position in Old Dominion Freight Line (ODFL), a North American less-than-truckload (LTL) freight name. Q3 just printed AH: revenue $1.92B vs consensus $1.88B (+2% beat), operating ratio (key LTL metric, lower is better) 86.4% vs 86.8% expected (better), EPS $2.14 vs $2.05 expected. Guidance for Q4 raised: revenue +3-5% YoY (prior +2-4%), operating ratio expected to remain in mid-86s. Volume growth +2.1% YoY (decelerating from +3.5% last quarter), yield/pricing +3.8% YoY (accelerating). Stock initially trading +3% AH then drifted to +1.5%. The analyst's existing thesis: pricing power offsets volume softness; expanding margins despite freight recession; structural winner. The model needs updating: rebase Q4 to the raised guide, push out beyond, recompute fair value. PM wants a written brief by 7am tomorrow.`,
   personas: [
     { id: 'pm', name: 'Karthik Rangan', title: 'Portfolio Manager', firm: 'Quality-Growth LO Fund', style: 'Reads everything. Will challenge thesis drift. Wants to know what CHANGED in your view tonight vs. before the print, and what would change his mind. Doesn\'t care for a recap of the press release.', voice: 'thesis-tester', initials: 'KR' },
   ],
   opening: [
-    { personaId: 'pm', text: `Norden Logistics ($NLG) printed AH.` },
+    { personaId: 'pm', text: `Old Dominion Freight Line ($ODFL) printed AH.` },
     { personaId: 'pm', text: `By 7am I need two things. One, the model updated. Rebase Q4 to the new guide, push the outer years if anything changes, recompute fair value at current multiple and at the multiple you think the stock should trade.` },
     { personaId: 'pm', text: `Two, a 200-word brief. What changed in your view, what didn't, and your action recommendation (add, hold, trim). Don't recap the press release. Tell me what to do.` },
   ],
@@ -1421,7 +1424,7 @@ const AM_1: Scenario = {
       id: 'model-update',
       label: 'Updated Operating Model',
       format: 'xlsx',
-      prompt: `Update the Norden Logistics operating model with Q3 actuals and the raised Q4 guide.
+      prompt: `Update the Old Dominion Freight Line operating model with Q3 actuals and the raised Q4 guide.
 Required:
 • Replace Q3 actuals (revenue $1.92B, OR 86.4%, EPS $2.14)
 • Update Q4 estimate: revenue at midpoint of new +3-5% YoY guide, OR at ~86.5% midpoint
@@ -1467,7 +1470,7 @@ End with verdict in Karthik's voice (under 60 words): "Send me the brief, this i
       id: 'pm-brief',
       label: 'PM Brief (200 words)',
       format: 'docx',
-      prompt: `Write a 200-word brief on the Norden print for the PM. Required:
+      prompt: `Write a 200-word brief on the Old Dominion print for the PM. Required:
 • Recommendation in the FIRST sentence (add / hold / trim) with size
 • What CHANGED in your view tonight (1-2 things, max)
 • What DIDN'T change (1 line on thesis intact)
@@ -1515,12 +1518,12 @@ const AM_2: Scenario = {
   timeframe: 'Mid-week',
   duration: '35 min',
   difficulty: 'Intermediate',
-  context: `Same long-only fund. Position: 2.5% in Bristol Specialty Chemicals (BSC), a specialty chemicals name added 18 months ago. Thesis: pricing power in specialty resins for industrial coatings, expanding margins, durable share. Recent: stock -11% over the past two weeks vs sector -3%, no specific news, no earnings imminent. Channel checks today: two industrial coating customers indicated softer order volumes in early September. Competitor (Arkema) said on Q2 call last week that resin pricing was "more competitive than we expected", analyst flagged it but didn't escalate. PM has noticed the weakness, asking the analyst for a position monitoring brief, is this noise, an early signal, or a thesis break.`,
+  context: `Same long-only fund. Position: 2.5% in RPM International (RPM), a specialty chemicals name added 18 months ago. Thesis: pricing power in specialty resins for industrial coatings, expanding margins, durable share. Recent: stock -11% over the past two weeks vs sector -3%, no specific news, no earnings imminent. Channel checks today: two industrial coating customers indicated softer order volumes in early September. Competitor (Arkema) said on Q2 call last week that resin pricing was "more competitive than we expected", analyst flagged it but didn't escalate. PM has noticed the weakness, asking the analyst for a position monitoring brief, is this noise, an early signal, or a thesis break.`,
   personas: [
     { id: 'pm', name: 'Karthik Rangan', title: 'Portfolio Manager', firm: 'Quality-Growth LO Fund', style: 'Same as AM_1.', voice: 'thesis-tester', initials: 'KR' },
   ],
   opening: [
-    { personaId: 'pm', text: `Bristol Specialty Chemicals ($BSC) is down 11% in two weeks vs. sector down 3%. No earnings, no news.` },
+    { personaId: 'pm', text: `RPM International ($RPM) is down 11% in two weeks vs. sector down 3%. No earnings, no news.` },
     { personaId: 'pm', text: `Two of your channel checks today suggested softer order volumes. Arkema said pricing was tougher than they expected last week and you flagged it.` },
     { personaId: 'pm', text: `Position monitoring brief. Is this noise, an early signal, or a real thesis crack? Be honest. If you think we should trim now, say it. Half a page.` },
   ],
@@ -1582,12 +1585,12 @@ const AM_3: Scenario = {
   timeframe: 'Pitch prep',
   duration: '45 min',
   difficulty: 'Advanced',
-  context: `Same long-only fund. The analyst has been working on Vertex Industrial Software (VIS) for 6 weeks, a vertical SaaS name serving discrete manufacturing customers. Thesis: secular shift from on-prem MES (manufacturing execution systems) to cloud-native, VIS is the share gainer with the best customer references; pricing power is real (net retention 118%); margins expanding from 18% to mid-20s over 3 years. Risk: customer concentration (top 10 ~ 35% of revenue), valuation already at 9.5x NTM revenue (premium to comps avg ~7x). Recommended position size: 1.5% initial, 2.5% target on confirmation of Q4 print. PM meeting is Thursday, the 1-pager goes in the binder Wednesday EOD.`,
+  context: `Same long-only fund. The analyst has been working on PTC Inc. (PTC) for 6 weeks, a vertical SaaS name serving discrete manufacturing customers. Thesis: secular shift from on-prem MES (manufacturing execution systems) to cloud-native, VIS is the share gainer with the best customer references; pricing power is real (net retention 118%); margins expanding from 18% to mid-20s over 3 years. Risk: customer concentration (top 10 ~ 35% of revenue), valuation already at 9.5x NTM revenue (premium to comps avg ~7x). Recommended position size: 1.5% initial, 2.5% target on confirmation of Q4 print. PM meeting is Thursday, the 1-pager goes in the binder Wednesday EOD.`,
   personas: [
     { id: 'pm', name: 'Karthik Rangan', title: 'Portfolio Manager', firm: 'Quality-Growth LO Fund', style: 'Same.', voice: 'thesis-tester', initials: 'KR' },
   ],
   opening: [
-    { personaId: 'pm', text: `Send me the Vertex Industrial Software ($VIS) 1-pager for Thursday's meeting. Standard format. The thesis has to be on one page.` },
+    { personaId: 'pm', text: `Send me the PTC Inc. ($PTC) 1-pager for Thursday's meeting. Standard format. The thesis has to be on one page.` },
     { personaId: 'pm', text: `The thing I'm going to push on is the multiple. You have to defend why we pay up. Include your action proposal (size, entry plan) and what would kill the trade.` },
   ],
   artifacts: [
@@ -1595,7 +1598,7 @@ const AM_3: Scenario = {
       id: 'pitch-onepager',
       label: 'Pitch 1-Pager',
       format: 'docx',
-      prompt: `Write a one-page pitch on Vertex Industrial Software (VIS) for the PM meeting.
+      prompt: `Write a one-page pitch on PTC Inc. (PTC) for the PM meeting.
 Required structure:
 • HEADLINE + RECOMMENDATION (1 line): name, ticker, action (Initiate 1.5%, target 2.5%)
 • THESIS (3 bullets, ~1 sentence each): the 3 reasons to own
@@ -1659,7 +1662,7 @@ const VC_1: Scenario = {
   timeframe: 'Triage day',
   duration: '40 min',
   difficulty: 'Intro',
-  context: `Stage-focused Series A fund ($400M AUM, B2B software focus, 15-18 investments per fund, 6-8 per year). A partner forwarded a deck at 9am from Lattice Robotics, a warehouse robotics-as-a-service startup. Co-founders are ex-Amazon Robotics (2 years out), seed round was $5M led by Initialized 18 months ago. Currently raising $18M Series A at $80M pre. ARR ~$2.4M (12 enterprise pilots converted to paid), growing ~25% MoM over last 3 months, gross margin 38% (hardware-heavy), burn $700K/month, 12 months runway. Three named customers in deck. Partner: "Give me a quick take by lunch. Are we taking the founder call?"`,
+  context: `Stage-focused Series A fund ($400M AUM, B2B software focus, 15-18 investments per fund, 6-8 per year). A partner forwarded a deck at 9am from Lattice Robotics, a warehouse robotics-as-a-service startup. Think of it as a much earlier-stage attempt at the category Symbotic ($SYM) operates in publicly, or AutoStore (Norway-listed) at scale. Co-founders are ex-Amazon Robotics (2 years out), seed round was $5M led by Initialized 18 months ago. Currently raising $18M Series A at $80M pre. ARR ~$2.4M (12 enterprise pilots converted to paid), growing ~25% MoM over last 3 months, gross margin 38% (hardware-heavy), burn $700K/month, 12 months runway. Three named customers in deck. Partner: "Give me a quick take by lunch. Are we taking the founder call?"`,
   personas: [
     { id: 'partner', name: 'Yusuf Bakir', title: 'Partner', firm: 'Lateral Ventures', style: 'Pattern-matches across hundreds of decks. Reads founder takes in 60 seconds. Cares about (a) is this category-creating or me-too, (b) is the team unfair, (c) what would make me regret passing in 5 years.', voice: 'pattern-fast', initials: 'YB' },
   ],
@@ -1874,7 +1877,7 @@ const RE_1: Scenario = {
   timeframe: 'New deal',
   duration: '45 min',
   difficulty: 'Intermediate',
-  context: `Value-add multifamily fund ($1.2B AUM, Sunbelt focus). Deal: Magnolia Pines, a 248-unit garden-style multifamily property in suburban Atlanta (Cobb County), built 2008. Seller's asking $58M ($233K/unit). Current avg rent $1,415/unit, occupancy 93.5%, T-12 NOI $2.78M. Comps for renovated units in submarket: $1,650-1,720. Sponsor's value-add plan: $14K/unit interior renovation budget over 24 months, push renovated rents to $1,650 ($235 premium), retain ~96% occupancy through reno. Submarket cap rates for 2008-vintage Class B in this area: 5.25-5.75% in-place, 5.50-6.00% on stabilized. Debt: agency loan 65% LTV at SOFR+185 fixed-rate equivalent ~6.35%, 30-year amort, 5-year IO then amortizing, 10-year term. 5-year hold target.`,
+  context: `Value-add multifamily fund ($1.2B AUM, Sunbelt focus). Deal: Magnolia Pines, a 248-unit garden-style multifamily property in suburban Atlanta (Cobb County), built 2008. The asset sits in the same Sunbelt corridor where public multifamily REITs like Mid-America Apartment Communities ($MAA), Camden Property Trust ($CPT), and NexPoint Residential Trust ($NXRT) own significant portfolios, so their reported cap rates and rent comps are useful reference points. Seller's asking $58M ($233K/unit). Current avg rent $1,415/unit, occupancy 93.5%, T-12 NOI $2.78M. Comps for renovated units in submarket: $1,650-1,720. Sponsor's value-add plan: $14K/unit interior renovation budget over 24 months, push renovated rents to $1,650 ($235 premium), retain ~96% occupancy through reno. Submarket cap rates for 2008-vintage Class B in this area: 5.25-5.75% in-place, 5.50-6.00% on stabilized. Debt: agency loan 65% LTV at SOFR+185 fixed-rate equivalent ~6.35%, 30-year amort, 5-year IO then amortizing, 10-year term. 5-year hold target.`,
   personas: [
     { id: 'principal', name: 'Reese Tanaka', title: 'Principal, Acquisitions', firm: 'Cardinal Real Estate Partners', style: 'Spreadsheet-disciplined, will catch any math error in the rent roll or expense build. Cares about whether the deal makes sense BOTH in-place and post-stabilization.', voice: 'rent-roll-strict', initials: 'RT' },
   ],
@@ -2083,7 +2086,7 @@ const RE_3: Scenario = {
   timeframe: 'Diligence',
   duration: '35 min',
   difficulty: 'Intro',
-  context: `Same fund. Considering a new acquisition in West Phoenix / Glendale submarket. Senior wants a comp set of the last 12 months of transactions in Class B 1990s-2000s vintage multifamily within a 5-mile radius. Analyst has access to RCA + Costar data. Universe of identified transactions (provided): 14 trades in the past 12 months ranging from 96-unit to 312-unit, $145K-$245K/unit, cap rates 4.85-5.95%. Senior wants the cleaned comp set (8-10 best comps), the criteria used for inclusion/exclusion, and the implied cap rate range for our target.`,
+  context: `Same fund. Considering a new acquisition in West Phoenix / Glendale submarket. This is core territory for the public Sunbelt multifamily REITs (Mid-America Apartment Communities $MAA, Camden Property Trust $CPT, NexPoint Residential $NXRT), so their published submarket commentary and the recent Phoenix-area transactions in RCA data are the right reference universe. Senior wants a comp set of the last 12 months of transactions in Class B 1990s-2000s vintage multifamily within a 5-mile radius. Analyst has access to RCA + Costar data. Universe of identified transactions (provided): 14 trades in the past 12 months ranging from 96-unit to 312-unit, $145K-$245K/unit, cap rates 4.85-5.95%. Senior wants the cleaned comp set (8-10 best comps), the criteria used for inclusion/exclusion, and the implied cap rate range for our target.`,
   personas: [
     { id: 'sr', name: 'Devon Wright', title: 'Senior Associate, Acquisitions', firm: 'Cardinal Real Estate Partners', style: 'Direct, will challenge any comp inclusion that doesn\'t match the deal box.', voice: 'comp-strict', initials: 'DW' },
   ],
@@ -2155,12 +2158,12 @@ const ER_1: Scenario = {
   timeframe: 'Pre-market',
   duration: '45 min',
   difficulty: 'Intermediate',
-  context: `Sellside equity research at a bulge bracket. Coverage: large-cap industrials. Just printed AH: Crestwood Industries (CRST), a diversified industrial manufacturer. Reported revenue $4.85B vs consensus $4.72B (+2.8% beat), adj EBITDA $782M vs $755M expected, adj EPS $2.18 vs $2.09 expected. Segment detail: Aerospace +18% organic growth (vs +14% expected, strong), Industrial Automation +4% (vs +6% expected, weak), Power Solutions +9% (vs +8%, in line). Margin expansion driven by mix (Aerospace pulling up). Guidance raised: FY revenue +6-8% YoY (prior +5-7%), adj EPS $9.20-9.40 (prior $8.95-9.15). Stock indicated +4% in pre-market. Analyst rating is Outperform, $148 price target. Senior wants the client note + updated model by 7:30am.`,
+  context: `Sellside equity research at a bulge bracket. Coverage: large-cap industrials. Just printed AH: Illinois Tool Works (ITW), a diversified industrial manufacturer. Reported revenue $4.85B vs consensus $4.72B (+2.8% beat), adj EBITDA $782M vs $755M expected, adj EPS $2.18 vs $2.09 expected. Segment detail: Aerospace +18% organic growth (vs +14% expected, strong), Industrial Automation +4% (vs +6% expected, weak), Power Solutions +9% (vs +8%, in line). Margin expansion driven by mix (Aerospace pulling up). Guidance raised: FY revenue +6-8% YoY (prior +5-7%), adj EPS $9.20-9.40 (prior $8.95-9.15). Stock indicated +4% in pre-market. Analyst rating is Outperform, $148 price target. Senior wants the client note + updated model by 7:30am.`,
   personas: [
     { id: 'sr-analyst', name: 'Carmen Holloway', title: 'Senior Equity Research Analyst', firm: 'Bulge Bracket Research', style: 'Demanding on accuracy. Cares about whether the note has a CALL to action, what should clients DO with this?', voice: 'call-to-action', initials: 'CH' },
   ],
   opening: [
-    { personaId: 'sr-analyst', text: `Crestwood Industries ($CRST) printed.` },
+    { personaId: 'sr-analyst', text: `Illinois Tool Works ($ITW) printed.` },
     { personaId: 'sr-analyst', text: `Strong overall. $4.85B revenue (2.8% beat), EBITDA beat, EPS beat. Aerospace was the hero (+18% vs. +14% expected), Industrial Automation missed. Guide raised. Stock indicated +4% pre-market.` },
     { personaId: 'sr-analyst', text: `By 7:30am I need two things. One, updated model with Q3 actuals and the raised guide reflected. Two, a 300-word note for clients.` },
     { personaId: 'sr-analyst', text: `Call to action, key takes, what changes vs. prior view, price target update. Don't recap the press release.` },
@@ -2170,7 +2173,7 @@ const ER_1: Scenario = {
       id: 'earnings-model',
       label: 'Earnings Update Model',
       format: 'xlsx',
-      prompt: `Update the Crestwood (CRST) earnings model with Q3 actuals and the raised guide.
+      prompt: `Update the Illinois Tool Works (ITW) earnings model with Q3 actuals and the raised guide.
 
 Required:
 • Q3 actuals updated: revenue $4.85B, adj EBITDA $782M, adj EPS $2.18
@@ -2223,7 +2226,7 @@ End with verdict in Carmen's voice (under 60 words): "Send the note off the mode
       id: 'client-note',
       label: 'Pre-Market Client Note',
       format: 'docx',
-      prompt: `Write a 300-word client note on Crestwood's Q3 print.
+      prompt: `Write a 300-word client note on Illinois Tool Works's Q3 print.
 Required structure:
 • HEADLINE (1 line, bold): the action call (Reiterate Outperform / Raise PT / etc.) + 1-line read
 • KEY TAKES (3 bullets): what mattered in the print (Aerospace strength, IA softness, guide raise)
@@ -2279,7 +2282,7 @@ const ER_2: Scenario = {
   timeframe: 'Post-print',
   duration: '30 min',
   difficulty: 'Advanced',
-  context: `Same coverage, day after the Crestwood print. A top-3 client account, a $40B AUM long-only fund, wants 30 minutes with the analyst this afternoon. The PM is known for asking the hardest questions about Aerospace's growth durability and whether Industrial Automation's softness is cyclical or structural. The senior wants a prep doc: anticipated questions, the analyst's answers, the "I don't know" moments, and the firm's house view talking points.`,
+  context: `Same coverage, day after the Illinois Tool Works print. A top-3 client account, a $40B AUM long-only fund, wants 30 minutes with the analyst this afternoon. The PM is known for asking the hardest questions about Aerospace's growth durability and whether Industrial Automation's softness is cyclical or structural. The senior wants a prep doc: anticipated questions, the analyst's answers, the "I don't know" moments, and the firm's house view talking points.`,
   personas: [
     { id: 'sr-analyst', name: 'Carmen Holloway', title: 'Senior Equity Research Analyst', firm: 'Bulge Bracket Research', style: 'Same.', voice: 'call-to-action', initials: 'CH' },
   ],
@@ -2361,7 +2364,7 @@ const ER_3: Scenario = {
       id: 'rating-memo',
       label: 'Rating Decision Memo',
       format: 'docx',
-      prompt: `Write the rating decision memo on Crestwood.
+      prompt: `Write the rating decision memo on Illinois Tool Works.
 Required structure:
 • RECOMMENDATION (1 line): Stay Outperform / Upgrade to Buy / Downgrade to Market Perform, pick one and own it
 • UPSIDE MATH (1-2 lines): current price $156, new PT $162, implied upside 4%, total return potential including dividend
