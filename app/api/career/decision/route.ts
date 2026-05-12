@@ -15,6 +15,12 @@ export const dynamic = 'force-dynamic';
 type OutcomeStub = { key: string; description: string };
 
 export async function POST(req: NextRequest) {
+  // MyCareer is shelved. This endpoint is disabled until the feature is
+  // re-enabled. Return immediately so no Gemini call can fire even via direct
+  // POST. To re-enable, delete this block.
+  return Response.json({ error: 'Feature not available.' }, { status: 404 });
+
+  // eslint-disable-next-line no-unreachable
   try {
     const body = await req.json();
     const {
