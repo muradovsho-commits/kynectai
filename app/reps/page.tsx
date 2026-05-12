@@ -361,17 +361,12 @@ function WelcomeBanner({ onDismiss }: { onDismiss: () => void }) {
 // VIEW 1: Track grid
 // ═══════════════════════════════════════════════════════════════════════════
 function TrackGrid({ onPick }: { onPick: (id: RepsTrackId) => void }) {
-  const router = useRouter();
   const [showWelcome, setShowWelcome] = useState(false);
-  const [hasCareerSave, setHasCareerSave] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const dismissed = localStorage.getItem('offerbell_reps_welcomed');
     if (!dismissed) setShowWelcome(true);
-    // Detect any career save across all 10 careers.
-    const careers = ['ib', 'pe', 'consulting', 'rx', 'st', 'am', 'vc', 're', 'er', 'audit'];
-    setHasCareerSave(careers.some(c => localStorage.getItem(`offerbell_career_save_${c}`)));
   }, []);
 
   function dismissWelcome() {
@@ -387,74 +382,9 @@ function TrackGrid({ onPick }: { onPick: (id: RepsTrackId) => void }) {
           Live a day in <em style={{ fontStyle: 'italic' }}>the career.</em>
         </h1>
         <p style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.65, maxWidth: 640, margin: 0 }}>
-          Two ways to play. Pick a one-off workday in Practice, or build a long-form career in MyCareer.
+          Pick a career, pick a scenario, build the deliverable. Graded on craft against the rubric an MD would actually use.
         </p>
       </header>
-
-      {/* Mode picker: Practice vs MyCareer */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 16, marginBottom: 32 }}>
-        {/* Practice card */}
-        <div style={{
-          padding: '24px 28px',
-          background: 'var(--surface)',
-          border: '1.5px solid var(--border)',
-          borderRadius: 16,
-          fontFamily: "'Sora',sans-serif",
-          position: 'relative',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--text)', color: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><polyline points="12 7 12 12 15 14" /></svg>
-            </div>
-            <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase' }}>Practice mode</div>
-          </div>
-          <h3 style={{ fontFamily: "'Instrument Serif',serif", fontSize: 24, lineHeight: 1.15, color: 'var(--text)', margin: 0, marginBottom: 8 }}>One workday at a time</h3>
-          <p style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.6, margin: 0, marginBottom: 16 }}>
-            Pick a career, pick a scenario, build the deliverable. 30-60 minutes per session. No persistent state. Good for targeted prep.
-          </p>
-          <div style={{ fontSize: 11, color: 'var(--text-3)' }}>10 careers · 30 scenarios · pick any · play in any order</div>
-        </div>
-
-        {/* MyCareer card */}
-        <button
-          type="button"
-          onClick={() => router.push('/reps/career')}
-          style={{
-            textAlign: 'left',
-            padding: '24px 28px',
-            background: 'linear-gradient(135deg, #1e3a8a 0%, #1f2937 100%)',
-            border: '1.5px solid #1e3a8a',
-            borderRadius: 16,
-            cursor: 'pointer',
-            fontFamily: "'Sora',sans-serif",
-            color: '#fff',
-            position: 'relative',
-            transition: 'transform .15s, box-shadow .15s',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 28px rgba(30,58,138,0.25)'; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: '#fde68a', color: '#1e3a8a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polygon points="12 2 15 8 22 9 17 14 18 21 12 18 6 21 7 14 2 9 9 8 12 2" /></svg>
-            </div>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#fde68a', letterSpacing: '.5px', textTransform: 'uppercase' }}>MyCareer mode</div>
-            <span style={{ fontSize: 9, fontWeight: 700, color: '#1e3a8a', background: '#fde68a', padding: '2px 7px', borderRadius: 4, letterSpacing: '.3px', textTransform: 'uppercase' }}>New</span>
-          </div>
-          <h3 style={{ fontFamily: "'Instrument Serif',serif", fontSize: 24, lineHeight: 1.15, color: '#fff', margin: 0, marginBottom: 8 }}>
-            Build <em style={{ fontStyle: 'italic' }}>a career.</em>
-          </h3>
-          <p style={{ fontSize: 13, color: '#cbd5e1', lineHeight: 1.6, margin: 0, marginBottom: 16 }}>
-            Create your player, get drafted to a real firm, and live through the years. Skills and reputation compound, deals you'll remember, branching paths into PE, lateral, or out.
-          </p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 700, color: '#fde68a' }}>
-            <span>{hasCareerSave ? 'Resume your career' : 'Start a career'}</span>
-            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6" /></svg>
-          </div>
-        </button>
-      </div>
-
-      <div style={{ marginBottom: 18, fontSize: 11, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase' }}>Practice scenarios</div>
 
       {showWelcome && <WelcomeBanner onDismiss={dismissWelcome} />}
 
