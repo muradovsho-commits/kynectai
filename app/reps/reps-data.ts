@@ -193,26 +193,33 @@ const IB_2: Scenario = {
     { id: 'vp', name: 'Anna Liu', title: 'VP', firm: 'Centerview', style: 'Calm, methodical, mid-pace. The one who actually catches errors. Will ask "what\'s your downside?" and expect a number with a reason behind it.', voice: 'methodical', initials: 'AL' },
   ],
   opening: [
-    { personaId: 'md', text: `I'm at the airport, twenty minutes before my flight. Listen carefully on the MedTech bear case.` },
-    { personaId: 'md', text: `The cardiovascular regulatory risk is bigger than we've been modeling. I want the bear case to reflect a 15 to 20 percent revenue haircut on that segment for three years before recovery.` },
-    { personaId: 'md', text: `Rebuild the DCF, then update the football field so the bear scenario actually shows up visually. Both files on my desk before the 8am call tomorrow.` },
-    { personaId: 'vp', text: `Marcus's framing is right. When you rebuild, don't drop the growth rate uniformly. Segment it. Cardiovascular gets the haircut, other segments stay on plan.` },
-    { personaId: 'vp', text: `Show me bear, base, and bull on the DCF tab, clearly labeled. Send me the Excel first. I'll review while you work on the slide.` },
+    { personaId: 'md', text: `I'm at the airport, twenty minutes before my flight. Listen carefully. We're rendering a fairness opinion on the $4.8B take-private of MedTech Holdings.` },
+    { personaId: 'md', text: `MedTech is a diversified medical devices company. Think a smaller-scale Hologic ($HOLX) or Globus Medical ($GMED), with a cardiovascular segment exposed to FDA review.` },
+    { personaId: 'md', text: `New bear case: cardiovascular regulatory risk bigger than we've been modeling. 15-20% revenue haircut on that segment for years 1-3, then recovery. Other segments stay on plan.` },
+    { personaId: 'md', text: `Two deliverables by 8am tomorrow: (1) DCF in Excel showing bear / base / bull, (2) football field slide in PowerPoint showing the implied per-share price ranges from each valuation method. Both built from scratch, no starter files.` },
+    { personaId: 'vp', text: `I'll set up the framework so you know what to build. DCF first, slide second. The slide reads off your DCF outputs, so we need the model done first.` },
+    { personaId: 'vp', text: `For the DCF: segment revenue (cardiovascular ~35%, other ~65%) shown separately on one tab, then bear/base/bull side by side. WACC 9.0%, terminal growth 2.5%, shares out ~140M, net debt ~$200M. Show UFCF and implied per-share equity value for each case.` },
+    { personaId: 'vp', text: `For the football field: it's a horizontal bar chart, one bar per valuation method, x-axis is implied price per share. Methods: 52-week trading range, trading comps (EV/EBITDA), precedent transactions (EV/EBITDA), DCF bear / DCF base / DCF bull. Mark the $94 offer price with a vertical line across all bars.` },
+    { personaId: 'vp', text: `Send me the Excel first, I'll review while you work on the slide.` },
   ],
   artifacts: [
     {
       id: 'dcf-rebuild',
       label: 'DCF, Bear Case Update',
       format: 'xlsx',
-      prompt: `Update the DCF for MedTech Holdings to reflect a cardiovascular regulatory bear case. Required:
-• Segment revenue (cardiovascular ~35%, other ~65%), show separately
-• Bear case: cardiovascular revenue declines 15-20% for years 1-3, then recovers; other segments stay on base plan
-• Maintain base case alongside (don't overwrite)
-• Update EBITDA accordingly (cardiovascular margins similar to consolidated)
-• Show UFCF, terminal value, implied per-share equity value for both cases
-• WACC 9.0%, terminal growth 2.5%, shares out ~140M, net debt ~$200M
+      prompt: `Build the DCF for MedTech Holdings from scratch in Excel, with a cardiovascular regulatory bear case. Required:
+• Segment revenue (cardiovascular ~35% of company revenue, other ~65%), modeled separately on one tab
+• Three cases side by side: Bear, Base, Bull
+• Bear case: cardiovascular revenue declines 15-20% for years 1-3, then recovers; other segments stay on the base plan
+• Base case: ~6% revenue growth declining to 3% by year 5
+• Bull case: ~8% revenue growth holding longer
+• EBITDA: ~22% margin (cardiovascular margins similar to consolidated)
+• Discount UFCF: EBIT × (1 - tax) + D&A - CapEx - ΔWC
+• WACC 9.0%, terminal growth 2.5%, 5-year explicit forecast then terminal
+• Shares out ~140M, net debt ~$200M
+• Show UFCF, PV of UFCF, terminal value, enterprise value, equity value, implied $/share for each case
 
-Upload as .xlsx.`,
+You're building this from zero. No starter file. Upload as .xlsx.`,
       rubric: `Grade as the VP on a take-private fairness opinion. Score each 1-10:
 
 SEGMENT MODELING (1-10)
@@ -249,17 +256,19 @@ End with verdict in Anna's voice (under 80 words): "Send to Marcus.", "One more 
       id: 'football-field',
       label: 'Football Field Slide',
       format: 'pptx',
-      prompt: `Update the valuation football field slide to reflect the bear-base-bull DCF cases plus the trading and transaction comps.
-Required ranges (per share):
+      prompt: `Build the valuation football field slide from scratch in PowerPoint. A football field is a horizontal bar chart, one bar per valuation method, x-axis is implied price per share, with a vertical line marking the current offer.
+
+Required bars (per share, low to high):
 • 52-week trading: ~$58 - $84
 • Trading comps (EV/EBITDA): ~$72 - $95
-• Transaction comps (EV/EBITDA): ~$80 - $108
-• DCF, Bear: derive from your model
+• Precedent transaction comps (EV/EBITDA): ~$80 - $108
+• DCF, Bear: derive from your model (should extend lower than base)
 • DCF, Base: ~$85 - $102
 • DCF, Bull: ~$95 - $118
-• Current offer: $94/share (mark with a vertical line)
 
-Make sure the bear DCF case visibly extends downside. Upload as .pptx.`,
+Mark the current offer of $94/share with a vertical line that crosses all bars.
+
+Single slide. No starter file. Make sure the bear DCF case visibly extends downside so the board can see what we're warning them about. Upload as .pptx.`,
       rubric: `Grade as Marcus, the MD, reviewing the football field. Score each 1-10:
 
 RANGES PRESENT (1-10)
@@ -1415,8 +1424,9 @@ const AM_1: Scenario = {
     { id: 'pm', name: 'Karthik Rangan', title: 'Portfolio Manager', firm: 'Quality-Growth LO Fund', style: 'Reads everything. Will challenge thesis drift. Wants to know what CHANGED in your view tonight vs. before the print, and what would change his mind. Doesn\'t care for a recap of the press release.', voice: 'thesis-tester', initials: 'KR' },
   ],
   opening: [
-    { personaId: 'pm', text: `Old Dominion Freight Line ($ODFL) printed AH.` },
-    { personaId: 'pm', text: `By 7am I need two things. One, the model updated. Rebase Q4 to the new guide, push the outer years if anything changes, recompute fair value at current multiple and at the multiple you think the stock should trade.` },
+    { personaId: 'pm', text: `Old Dominion Freight Line ($ODFL) printed AH. Quick recap of what we got: revenue $1.92B (vs $1.88B consensus, beat), operating ratio 86.4% (better than 86.8% expected; lower is good in LTL), EPS $2.14 (vs $2.05). Q4 guide raised to +3-5% revenue YoY with OR in the mid-86s. Volume +2.1% (decelerating), yield/pricing +3.8% (accelerating).` },
+    { personaId: 'pm', text: `By 7am I need two things. One, build the operating model in Excel from scratch. Quarterly view, last 4 quarters of actuals plus Q4E and FY. You're not pulling from any prior file, build it clean. Use the numbers above and reasonable estimates for the prior quarters (this is a craft exercise, not a data audit).` },
+    { personaId: 'pm', text: `Show me revenue decomposed into yield × volume, operating ratio, operating income, EPS, and a fair value section: current price implied multiple, your view of fair multiple, and the gap. Variance vs. your prior view in a delta column.` },
     { personaId: 'pm', text: `Two, a 200-word brief. What changed in your view, what didn't, and your action recommendation (add, hold, trim). Don't recap the press release. Tell me what to do.` },
   ],
   artifacts: [
@@ -1424,14 +1434,24 @@ const AM_1: Scenario = {
       id: 'model-update',
       label: 'Updated Operating Model',
       format: 'xlsx',
-      prompt: `Update the Old Dominion Freight Line operating model with Q3 actuals and the raised Q4 guide.
-Required:
-• Replace Q3 actuals (revenue $1.92B, OR 86.4%, EPS $2.14)
-• Update Q4 estimate: revenue at midpoint of new +3-5% YoY guide, OR at ~86.5% midpoint
-• Update FY2025 outer year, incorporate any positive read-through from the Q4 guide (pricing strength, volume stabilization)
-• Show operating ratio, operating income, EPS quarterly
-• Fair value at: (a) current trailing multiple (assume ~22x), (b) your fair multiple given improved estimates
-• Variance to prior estimate clearly shown (delta column)
+      prompt: `Build the Old Dominion Freight Line operating model from scratch in Excel. You are starting from a blank file.
+
+Required structure:
+• Quarterly columns: Q1, Q2, Q3 (just printed), Q4E, FY total - minimum
+• Revenue decomposed into Yield × Volume (this is the key LTL framing; without it the model is a black box)
+• Operating Ratio (OR), Operating Income (revenue × (1 - OR)), Net Income, EPS
+• Variance column: your number now vs. your number before the print (delta)
+
+Numbers to use:
+• Q3 actuals: revenue $1.92B, OR 86.4%, EPS $2.14
+• Q4 guide: revenue +3-5% YoY (use midpoint, ~+4%), OR mid-86s (use 86.5%)
+• Prior quarters: estimate reasonably from the run rate. This is a craft exercise, not a data audit. Document your assumptions.
+• Volume +2.1% YoY trending down, yield/pricing +3.8% YoY trending up - use these as the next-quarter starting point
+
+Fair value section:
+• Implied multiple at the current price (assume ~22x P/E)
+• Your view of fair multiple given the print and trajectory
+• Implied price at your fair multiple, gap to current
 
 Upload as .xlsx.`,
       rubric: `Grade as a buyside PM reviewing an analyst's post-print model update. Score 1-10:
@@ -2163,30 +2183,45 @@ const ER_1: Scenario = {
     { id: 'sr-analyst', name: 'Carmen Holloway', title: 'Senior Equity Research Analyst', firm: 'Bulge Bracket Research', style: 'Demanding on accuracy. Cares about whether the note has a CALL to action, what should clients DO with this?', voice: 'call-to-action', initials: 'CH' },
   ],
   opening: [
-    { personaId: 'sr-analyst', text: `Illinois Tool Works ($ITW) printed.` },
-    { personaId: 'sr-analyst', text: `Strong overall. $4.85B revenue (2.8% beat), EBITDA beat, EPS beat. Aerospace was the hero (+18% vs. +14% expected), Industrial Automation missed. Guide raised. Stock indicated +4% pre-market.` },
-    { personaId: 'sr-analyst', text: `By 7:30am I need two things. One, updated model with Q3 actuals and the raised guide reflected. Two, a 300-word note for clients.` },
-    { personaId: 'sr-analyst', text: `Call to action, key takes, what changes vs. prior view, price target update. Don't recap the press release.` },
+    { personaId: 'sr-analyst', text: `Illinois Tool Works ($ITW) printed AH. Diversified industrial conglomerate, our coverage list. Current rating Outperform, $148 PT.` },
+    { personaId: 'sr-analyst', text: `Headline: strong beat. $4.85B revenue (vs $4.72B consensus, +2.8%), adj EBITDA $782M (beat), adj EPS $2.18 (vs $2.09). Segment color: Aerospace was the hero (+18% vs +14% expected), Industrial Automation missed (+4% vs +6%), Power Solutions in line (+9%). Guide raised: FY revenue +6-8% (prior +5-7%), adj EPS $9.20-9.40 (prior $8.95-9.15). Stock indicated +4% pre-market.` },
+    { personaId: 'sr-analyst', text: `By 7:30am I need two things. One, build the earnings model in Excel from scratch (no starter file). Quarterly view with segment detail, FY rolled to new guide, FY+1 adjusted, new PT calculated. Use the numbers above and reasonable estimates for prior quarters.` },
+    { personaId: 'sr-analyst', text: `Two, a 300-word client note. Call to action, key takes, what changed vs. prior view, PT update. Don't recap the press release.` },
   ],
   artifacts: [
     {
       id: 'earnings-model',
       label: 'Earnings Update Model',
       format: 'xlsx',
-      prompt: `Update the Illinois Tool Works (ITW) earnings model with Q3 actuals and the raised guide.
+      prompt: `Build the Illinois Tool Works (ITW) earnings model from scratch in Excel. No starter file.
 
-Required:
-• Q3 actuals updated: revenue $4.85B, adj EBITDA $782M, adj EPS $2.18
-• Segment revenue Y/Y growth shown: Aerospace +18%, Industrial Automation +4%, Power Solutions +9%
-• Variance vs consensus and vs your prior estimate shown
-• FY revenue rolled to mid-point of new guide (+7% YoY)
-• FY adj EPS rolled to mid-point of new guide ($9.30)
-• Outer year (FY+1) assumptions adjusted: Aerospace stays strong (model 14-16% growth, prior 12%), Industrial Automation softer near-term (model 5% vs prior 7%), Power Solutions steady
-• Updated price target calculation: target multiple × FY+1 EPS = new PT
-• Show old PT, new PT, % change
-• EPS sensitivity table: PT at 15x, 16x, 17x FY+1 EPS
+Required structure:
+• Quarterly columns: Q1, Q2, Q3 (just printed), Q4E, FY total, then FY+1
+• Segment rows: Aerospace, Industrial Automation, Power Solutions, Total
+• For each segment, row for revenue and Y/Y growth %
+• Below segment block: total revenue, adj EBITDA, adj EPS
+• Variance vs consensus AND vs your prior estimate shown in delta columns
 
-Upload as .xlsx.`,
+Q3 actuals to use:
+• Total revenue $4.85B, adj EBITDA $782M, adj EPS $2.18
+• Segment growth: Aerospace +18% Y/Y, Industrial Automation +4%, Power Solutions +9%
+
+FY rolls to new guide:
+• FY revenue +7% YoY midpoint
+• FY adj EPS $9.30 midpoint
+• Q4E = FY guide minus YTD (sense-check it)
+
+FY+1 outer year:
+• Aerospace 14-16% growth (was 12% prior)
+• Industrial Automation 5% (was 7% prior, softer near-term)
+• Power Solutions steady at +8%
+
+Price target section:
+• Target multiple × FY+1 EPS = new PT
+• Old PT $148, new PT, % change
+• Sensitivity table: PT at 15x, 16x, 17x FY+1 EPS
+
+For prior quarters, estimate reasonably from the run rate. This is a craft exercise - grading is on structure and logic, not the precise prior-period numbers. Upload as .xlsx.`,
       rubric: `Grade as a senior ER analyst reviewing an associate's post-print model update. Score 1-10:
 
 ACTUALS CAPTURED (1-10)
