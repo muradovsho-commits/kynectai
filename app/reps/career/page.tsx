@@ -110,6 +110,13 @@ export default function CareerPage() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    // MyCareer is shelved. Anyone hitting this URL gets sent back to /reps.
+    // The rest of this file is dead code until the feature is re-enabled;
+    // do not delete it, we want the architecture intact when we come back.
+    router.replace('/reps');
+    return;
+
+    // eslint-disable-next-line no-unreachable
     if (!localStorage.getItem('offerbell_user_id')) {
       router.replace('/signin');
       return;
