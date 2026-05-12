@@ -88,7 +88,7 @@ export default function RepsPage() {
 
         {!scenario && activeTrack && (
           <div style={{ marginBottom: 20, fontSize: 12, color: 'var(--text-3)', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button type="button" onClick={() => { setActiveTrack(null); setActiveScenarioId(null); }} style={breadcrumbBtn}>Reps</button>
+            <button type="button" onClick={() => { setActiveTrack(null); setActiveScenarioId(null); }} style={breadcrumbBtn}>The Desk</button>
             {track && <>
               <span>/</span>
               <span style={{ color: 'var(--text)' }}>{track.title}</span>
@@ -377,7 +377,7 @@ function TrackGrid({ onPick }: { onPick: (id: RepsTrackId) => void }) {
   return (
     <>
       <header style={{ marginBottom: 28, paddingBottom: 22, borderBottom: '1px solid var(--border)' }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 10 }}>Reps</div>
+        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 10 }}>The Desk</div>
         <h1 style={{ fontFamily: "'Instrument Serif',serif", fontSize: 46, lineHeight: 1.04, letterSpacing: '-0.6px', color: 'var(--text)', margin: 0, marginBottom: 12 }}>
           Live a day in <em style={{ fontStyle: 'italic' }}>the career.</em>
         </h1>
