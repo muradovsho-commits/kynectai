@@ -70,6 +70,11 @@ function scoreToGrade(avg: number): Grade {
 function gCls(g: Grade): string {
   return g === 'Great' ? 'great' : g === 'Good' ? 'good' : 'bad';
 }
+// Display label for grades. Internal data stays 'Great'|'Good'|'Bad';
+// users see Strong/Mid/Bad which is the language Divy prefers for these levels.
+function gradeLabel(g: Grade): string {
+  return g === 'Great' ? 'Strong' : g === 'Good' ? 'Mid' : 'Bad';
+}
 
 // ══════════════════════════════════════════════════════════════
 // COMPONENT
@@ -395,56 +400,115 @@ export default function MockInterviewPage() {
               </div>
             )}
 
-            {/* Track grid - 3 col responsive */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 12 }}>
-              {TRACKS.map(t => {
+            {/* Track list - wide rows, NOT a card grid (intentionally distinct from concept drills) */}
+            <div style={{
+              background: 'var(--surface)', border: '1.5px solid var(--border)',
+              borderRadius: 14, overflow: 'hidden',
+            }}>
+              <div style={{
+                display: 'grid', gridTemplateColumns: '56px 1fr 220px 84px 50px',
+                alignItems: 'center', gap: 16,
+                padding: '10px 20px',
+                background: 'var(--surface-2)', borderBottom: '1px solid var(--border)',
+                fontSize: 9.5, fontWeight: 700, letterSpacing: 1.2, textTransform: 'uppercase', color: 'var(--text-3)',
+              }} className="mi-list-head">
+                <span></span>
+                <span>Track</span>
+                <span>Progress</span>
+                <span style={{ textAlign: 'center' }}>Best</span>
+                <span></span>
+              </div>
+
+              {TRACKS.map((t, i) => {
                 const accent = TRACK_THEME[t.id] || 'var(--text-2)';
+                const total = t.cards.length;
                 const attemptedSet = new Set(allResponses.filter(r => r.questionId.startsWith(t.id + '::')).map(r => r.questionId));
                 const attempted = attemptedSet.size;
+                const pct = total > 0 ? Math.round((attempted / total) * 100) : 0;
                 const tResps = allResponses.filter(r => r.questionId.startsWith(t.id + '::'));
                 const tBest: Grade | null = tResps.length === 0 ? null : tResps.some(r => r.grade === 'Great') ? 'Great' : tResps.some(r => r.grade === 'Good') ? 'Good' : 'Bad';
                 const bestColor = tBest === 'Great' ? '#22c55e' : tBest === 'Good' ? '#f59e0b' : tBest === 'Bad' ? '#dc2626' : 'var(--text-3)';
+                const bestBg = tBest === 'Great' ? 'rgba(34, 197, 94, 0.10)' : tBest === 'Good' ? 'rgba(245, 158, 11, 0.10)' : tBest === 'Bad' ? 'rgba(220, 38, 38, 0.10)' : 'transparent';
                 return (
-                  <button
+                  <div
                     key={t.id}
                     onClick={() => openTrack(t)}
-                    type="button"
-                    className="mi-tile"
+                    className="mi-list-row"
                     style={{
-                      background: 'var(--surface)', border: '1.5px solid var(--border)',
-                      borderRadius: 12, padding: '16px 18px',
-                      cursor: 'pointer', textAlign: 'left',
-                      fontFamily: "'Sora', sans-serif",
-                      display: 'flex', flexDirection: 'column', gap: 10,
-                      transition: 'border-color 0.15s ease, transform 0.15s ease',
+                      display: 'grid', gridTemplateColumns: '56px 1fr 220px 84px 50px',
+                      alignItems: 'center', gap: 16,
+                      padding: '16px 20px',
+                      borderBottom: i < TRACKS.length - 1 ? '1px solid var(--border)' : 'none',
+                      cursor: 'pointer',
+                      transition: 'background 0.12s ease',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <span style={{ width: 7, height: 7, borderRadius: '50%', background: accent, flexShrink: 0 }} aria-hidden />
-                      <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', flex: 1 }}>{t.title}</div>
-                      {attempted > 0 && tBest && (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10.5, fontWeight: 700, padding: '2px 8px', borderRadius: 100, color: bestColor, background: tBest === 'Great' ? 'rgba(34, 197, 94, 0.10)' : tBest === 'Good' ? 'rgba(245, 158, 11, 0.10)' : 'rgba(220, 38, 38, 0.10)' }}>
-                          {attempted} done
+                    <div style={{
+                      width: 40, height: 40, borderRadius: 10,
+                      background: 'var(--surface-2)', color: accent,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      flexShrink: 0,
+                    }}>
+                      <div style={{ width: 18, height: 18 }}>{t.icon}</div>
+                    </div>
+
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>{t.title}</div>
+                      <div style={{
+                        fontSize: 12, color: 'var(--text-3)', lineHeight: 1.45,
+                        display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                      }}>{TRACK_DESCS[t.id] || ''}</div>
+                    </div>
+
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                        <div style={{ flex: 1, height: 4, background: 'var(--surface-2)', borderRadius: 2, overflow: 'hidden' }}>
+                          <div style={{ height: '100%', width: `${pct}%`, background: pct >= 75 ? '#22c55e' : pct >= 40 ? '#f59e0b' : accent, borderRadius: 2, transition: 'width 0.3s ease' }} />
+                        </div>
+                        <span style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-3)', minWidth: 28, textAlign: 'right' }}>{pct}%</span>
+                      </div>
+                      <div style={{ fontSize: 10.5, color: 'var(--text-3)' }}>
+                        {attempted === 0 ? 'Not started' : `${attempted} ${attempted === 1 ? 'question' : 'questions'} done`}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      {tBest === null ? (
+                        <span style={{ color: 'var(--text-3)', fontSize: 12 }}>--</span>
+                      ) : (
+                        <span style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 4,
+                          padding: '3px 9px', borderRadius: 100,
+                          background: bestBg, color: bestColor,
+                          fontSize: 10.5, fontWeight: 700,
+                        }}>
+                          {tBest === 'Great' && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>}
+                          {tBest === 'Good' && <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor' }} />}
+                          {tBest === 'Bad' && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>}
+                          {gradeLabel(tBest)}
                         </span>
                       )}
                     </div>
-                    <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                      {TRACK_DESCS[t.id] || ''}
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', color: 'var(--text-3)' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, fontSize: 11, fontWeight: 700, color: accent }}>
-                      {attempted > 0 ? 'Continue' : 'Start'}
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-                    </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>
 
           </div>
           <style>{`
-            .mi-tile:hover { border-color: var(--border-2) !important; transform: translateY(-1px); }
+            .mi-list-row:hover { background: var(--surface-2) !important; }
             .mi-cat-row-new:hover { border-color: var(--border-2) !important; }
             .mi-q-row-new:hover { background: var(--surface-2) !important; }
+            @media (max-width: 720px) {
+              .mi-list-head { grid-template-columns: 56px 1fr 50px !important; }
+              .mi-list-head > span:nth-child(3), .mi-list-head > span:nth-child(4) { display: none; }
+              .mi-list-row { grid-template-columns: 56px 1fr 50px !important; }
+              .mi-list-row > div:nth-child(3), .mi-list-row > div:nth-child(4) { display: none; }
+            }
           `}</style>
         </main>
       </div>
@@ -462,9 +526,9 @@ export default function MockInterviewPage() {
     const avg = avgForQ(questionId);
     const gradePill = (g: Grade | null) => {
       if (!g) return { label: '--', color: 'var(--text-3)', bg: 'var(--surface-2)' };
-      if (g === 'Great') return { label: 'Great', color: '#22c55e', bg: 'rgba(34, 197, 94, 0.10)' };
-      if (g === 'Good') return { label: 'Good', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.10)' };
-      return { label: 'Practice', color: '#dc2626', bg: 'rgba(220, 38, 38, 0.10)' };
+      if (g === 'Great') return { label: gradeLabel(g), color: '#22c55e', bg: 'rgba(34, 197, 94, 0.10)' };
+      if (g === 'Good') return { label: gradeLabel(g), color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.10)' };
+      return { label: gradeLabel(g), color: '#dc2626', bg: 'rgba(220, 38, 38, 0.10)' };
     };
     const bestPill = gradePill(best);
     const avgPill = gradePill(avg);
@@ -838,7 +902,7 @@ export default function MockInterviewPage() {
                           {catBest === 'Great' && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>}
                           {catBest === 'Good' && <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor' }} />}
                           {catBest === 'Bad' && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>}
-                          {catBest === 'Bad' ? 'Practice' : catBest}
+                          {gradeLabel(catBest)}
                         </>
                       )}
                     </div>
@@ -890,7 +954,7 @@ export default function MockInterviewPage() {
                                 background: cBest === 'Great' ? 'rgba(34, 197, 94, 0.10)' : cBest === 'Good' ? 'rgba(245, 158, 11, 0.10)' : 'rgba(220, 38, 38, 0.10)',
                               }}>
                                 <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor' }} />
-                                {cBest === 'Bad' ? 'Practice' : cBest}
+                                {gradeLabel(cBest)}
                               </span>
                             )}
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="2.5" strokeLinecap="round" style={{ opacity: 0.5 }}><polyline points="9 18 15 12 9 6"/></svg>
