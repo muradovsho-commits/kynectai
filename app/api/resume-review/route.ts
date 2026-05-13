@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthUserId, unauthorizedResponse, checkRateLimit, getClientIP, getCorsHeaders } from "../_lib/auth";
+import { checkPlanLimit, incrementUsageInConvex } from "../_lib/plan";
 
 export async function OPTIONS(req: NextRequest) {
   return new NextResponse(null, { status: 204, headers: getCorsHeaders(req) });
@@ -12,11 +13,15 @@ export async function POST(req: NextRequest) {
     const userId = getAuthUserId(req);
     if (!userId) return unauthorizedResponse(corsHeaders);
 
-    // Rate limit: 5 requests per minute per user (resume reviews are expensive)
+    // Rate limit: 5 requests per minute per user (burst protection)
     const ip = getClientIP(req);
     const limitKey = `resume:${userId || ip}`;
     const limited = checkRateLimit(limitKey, 5, 60_000, corsHeaders);
     if (limited) return limited;
+
+    // Server-side plan + weekly usage check (Convex is source of truth)
+    const planCheck = await checkPlanLimit(userId, "resumeReview", corsHeaders);
+    if (!planCheck.allowed) return planCheck.denied!;
 
     const body = await req.json();
     const { resumeText, targetTrack } = body as { resumeText: string; targetTrack: string };
@@ -102,6 +107,8 @@ RESPOND IN THIS EXACT JSON FORMAT (no markdown, no backticks, just raw JSON):
         if (res.ok) {
           const data = await res.json();
           const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+          // Gemini call succeeded and cost real money - count it toward weekly cap
+          await incrementUsageInConvex(userId, "resumeReview");
 
           // Try to parse JSON from response - multiple strategies
           let parsed = null;
