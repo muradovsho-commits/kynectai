@@ -86,13 +86,13 @@ const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
         setResumeUsed(data.week === weekStart ? (data.count || 0) : 0);
       }
     } catch {}
-    try { const plan = localStorage.getItem('offerbell_plan') || 'free'; const prof = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}');
-      // Auto-migrate old pro → elite
-      const migrated = localStorage.getItem('offerbell_plan_migrated_v2');
-      if (!migrated && (plan === 'pro' || prof.plan === 'pro') && localStorage.getItem('offerbell_plan_activated_at')) {
-        localStorage.setItem('offerbell_plan', 'elite'); localStorage.setItem('offerbell_plan_migrated_v2', 'true');
-        prof.plan = 'elite'; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(prof));
-      }
+    try {
+      // Plan is sourced from Convex (server-side patch via getUser). The
+      // localStorage value here is just a cache; the source of truth is
+      // u.plan returned from Convex queries. The old v2 migration that
+      // auto-promoted 'pro' to 'elite' on every page load was removed.
+      const plan = localStorage.getItem('offerbell_plan') || 'free';
+      const prof = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}');
       setUserPlan(localStorage.getItem('offerbell_plan') || prof.plan || plan);
     } catch {}
     try { const at = localStorage.getItem('offerbell_plan_activated_at'); if (at) setPlanActivatedAt(parseInt(at, 10)); } catch {}
