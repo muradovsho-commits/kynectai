@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import { useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
 import './diagnostic.css';
@@ -160,9 +162,15 @@ export default function DiagnosticReviewPage() {
   // Per-track or all-track reset modal. null = closed.
   // 'all' = wipe entire diag history. trackKey string = wipe just that track's entries.
   const [resetTarget, setResetTarget] = useState<'all' | string | null>(null);
+  // userId for Convex persistence. saveProgress lets us push the wipe to
+  // Convex so logout/login doesn't restore old history.
+  const [userId, setUserId] = useState<string>('');
+  const saveProgressMut = useMutation((api as any).progress?.saveProgress);
+  const canReset = userPlan === 'pro' || userPlan === 'elite';
 
-  const doReset = () => {
+  const doReset = async () => {
     if (resetTarget === null) return;
+    let newHistoryJSON = '[]';
     try {
       if (resetTarget === 'all') {
         localStorage.removeItem(STORAGE_KEY);
@@ -171,8 +179,19 @@ export default function DiagnosticReviewPage() {
         const remaining = history.filter(h => h.track !== resetTarget);
         saveHistory(remaining);
         setHistory(remaining);
+        newHistoryJSON = JSON.stringify(remaining);
       }
     } catch {}
+    // Persist to Convex so the wipe survives logout/login. saveProgress
+    // merges, so explicitly setting the key replaces the old value.
+    if (userId && saveProgressMut) {
+      try {
+        await saveProgressMut({
+          userId,
+          data: JSON.stringify({ [STORAGE_KEY]: newHistoryJSON }),
+        });
+      } catch {}
+    }
     setResetTarget(null);
   };
 
@@ -183,6 +202,7 @@ export default function DiagnosticReviewPage() {
     setHistory(loadHistory());
     setUserPlan(getUserPlan());
     setSavedProgress(loadInProgress());
+    setUserId(localStorage.getItem('offerbell_user_id') || '');
   }, []);
 
   useEffect(() => {
@@ -516,7 +536,7 @@ export default function DiagnosticReviewPage() {
                 );
               })()}
 
-              {st.diagsTaken > 0 && (
+              {st.diagsTaken > 0 && canReset && (
                 <div style={{ marginTop: 28, textAlign: 'center' }}>
                   <button onClick={() => setResetTarget(viewTrack || '')} type="button" style={{
                     background: 'transparent', border: 'none',
@@ -678,7 +698,7 @@ export default function DiagnosticReviewPage() {
               })}
             </div>
 
-            {history.length > 0 && (
+            {history.length > 0 && canReset && (
               <div style={{ marginTop: 32, textAlign: 'center' }}>
                 <button onClick={() => setResetTarget('all')} type="button" style={{
                   background: 'transparent', border: 'none',
