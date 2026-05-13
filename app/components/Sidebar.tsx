@@ -78,18 +78,13 @@ export default function Sidebar({ activePage }: SidebarProps) {
   const pathname = usePathname();
 
   useEffect(() => {
-    // One-time migration for old pro users
-    try {
-      const plan = localStorage.getItem('offerbell_plan') || 'free';
-      const migrated = localStorage.getItem('offerbell_plan_migrated_v2');
-      if (!migrated && plan === 'pro' && localStorage.getItem('offerbell_plan_activated_at')) {
-        localStorage.setItem('offerbell_plan', 'elite');
-        localStorage.setItem('offerbell_plan_migrated_v2', 'true');
-        const raw = localStorage.getItem('offerbell_onboarding_profile');
-        if (raw) { const p = JSON.parse(raw); p.plan = 'elite'; localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(p)); }
-        setUserPlan('elite');
-      }
-    } catch {}
+    // Convex is the source of truth for plan (see the first useEffect
+    // above, which fetches u.plan and sets localStorage from it). The old
+    // v2 migration that read localStorage and auto-promoted 'pro' to
+    // 'elite' was removed - it kept reviving Elite for users who'd been
+    // demoted, and a one-off DB backfill is the right way to handle
+    // legacy pro users now.
+    //
     // Keep message count in sync
     const refresh = () => { try { setMessagesSent(parseInt(localStorage.getItem('offerbell_messages_sent') || '0', 10)); } catch {} };
     const onStorage = (e: StorageEvent) => { if (e.key === 'offerbell_messages_sent') refresh(); };
