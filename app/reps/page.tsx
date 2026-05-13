@@ -109,77 +109,215 @@ export default function RepsPage() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// ElitePaywall: rendered when the user is on free or pro. Shows what Reps is
-// and a single CTA into the upgrade flow.
+// ElitePaywall: rendered when the user is on free or pro. Shows what The Desk
+// is and a single CTA into the upgrade flow.
 // ═══════════════════════════════════════════════════════════════════════════
 function ElitePaywall({ currentPlan }: { currentPlan: string | null }) {
   const isPro = currentPlan === 'pro';
 
   return (
-    <div style={{ maxWidth: 620, padding: '40px 0' }}>
-      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 11px', background: '#1e3a8a', color: '#fde68a', borderRadius: 999, fontSize: 10, fontWeight: 700, letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 18 }}>
-        Elite plan
-      </div>
+    <div style={{ maxWidth: 1140, margin: '0 auto', padding: '40px 0 80px', fontFamily: "'Sora', sans-serif" }}>
 
-      <h1 style={{ fontFamily: "'Instrument Serif',serif", fontSize: 46, lineHeight: 1.05, letterSpacing: '-0.5px', color: 'var(--text)', margin: 0, marginBottom: 14 }}>
-        Reps is part of <em style={{ fontStyle: 'italic' }}>Elite</em>.
-      </h1>
+      {/* ─── Two-column hero ─── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)', gap: 48, alignItems: 'center', marginBottom: 48 }} className="paywall-hero">
+        <div>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '4px 11px', marginBottom: 18,
+            background: 'rgba(37, 99, 235, 0.12)', color: '#3b82f6',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: 999,
+            fontSize: 10, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase',
+          }}>
+            <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor' }} />
+            Elite plan
+          </div>
 
-      <p style={{ fontSize: 14.5, color: 'var(--text-2)', lineHeight: 1.65, margin: 0, marginBottom: 26, maxWidth: 560 }}>
-        {isPro
-          ? "You're on Pro, which covers Coach, Mock Interviews, Resume Review, and Outreach. Reps sits one tier up. It drops you into a junior seat on a real workday, personas message you, you build the actual deliverable (Excel, Word, PowerPoint), and the AI grades it on craft, citing specific cells and lines."
-          : 'Reps drops you into a junior seat on a real workday. Personas message you, you build the actual deliverable in your own tools (Excel, Word, PowerPoint), and the AI grades it on craft, citing specific cells, numbers, and lines.'}
-      </p>
+          <h1 style={{
+            fontFamily: "'Instrument Serif', serif",
+            fontSize: 52, lineHeight: 1.02, letterSpacing: '-1px',
+            color: 'var(--text)', margin: 0, marginBottom: 18, fontWeight: 400,
+          }}>
+            The Desk is <em style={{ fontStyle: 'italic' }}>where you</em><br/>
+            <em style={{ fontStyle: 'italic' }}>actually</em> work.
+          </h1>
 
-      <div style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '22px 26px', marginBottom: 28 }}>
-        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 14 }}>
-          What's included
+          <p style={{ fontSize: 15, color: 'var(--text-2)', lineHeight: 1.6, margin: '0 0 28px', maxWidth: 520 }}>
+            {isPro
+              ? "You're on Pro - Coach, Mock Interviews, Resume Review, Outreach. The Desk sits one tier above. You're dropped into a junior seat on a real workday. Personas message you. You build the actual deliverable. The AI grades it line by line."
+              : 'The Desk drops you into a junior seat on a real workday. Personas message you in the voice of MDs and senior associates. You build the actual deliverable in Excel, Word, or PowerPoint. The AI grades the file itself.'}
+          </p>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => { window.location.href = '/checkout?plan=elite'; }}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                background: 'var(--text)', color: 'var(--surface)',
+                border: 'none', padding: '12px 22px', borderRadius: 10,
+                fontSize: 13.5, fontWeight: 700, cursor: 'pointer',
+                fontFamily: "'Sora', sans-serif",
+              }}
+            >
+              Upgrade to Elite
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            <button
+              type="button"
+              onClick={() => { window.location.href = '/checkout'; }}
+              style={{
+                background: 'transparent', color: 'var(--text-2)',
+                border: '1.5px solid var(--border-2)', padding: '12px 20px', borderRadius: 10,
+                fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                fontFamily: "'Sora', sans-serif",
+              }}
+            >
+              Compare plans
+            </button>
+          </div>
         </div>
-        <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {[
-            { title: '10 careers, 30 scenarios', body: 'IB, PE, consulting, restructuring, S&T, AM, VC, RE, ER, audit. Intro, intermediate, and advanced workdays in each.' },
-            { title: 'Real deliverables, real grading', body: 'Build the comp sheet, the LBO, the IC memo, the DCF in Excel, Word, or PowerPoint. Upload it, the AI grades the file itself, line by line.' },
-            { title: 'Multi-persona pings', body: 'MDs, partners, VPs, senior associates message you in the voice of the seat. Push back, ask questions, defend your numbers.' },
-          ].map(item => (
-            <li key={item.title} style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-              <div style={{ flexShrink: 0, width: 16, height: 16, borderRadius: '50%', background: 'var(--text)', color: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 2 }}>
-                <svg width="9" height="9" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" /></svg>
+
+        {/* ─── Visual mockup: persona ping + deliverable card ─── */}
+        <div style={{ position: 'relative', minHeight: 320 }} className="paywall-visual">
+          {/* Faux app workspace */}
+          <div style={{
+            background: 'var(--surface)', border: '1.5px solid var(--border)',
+            borderRadius: 16, padding: '18px 20px',
+            position: 'relative',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.10)',
+          }}>
+            {/* Tab strip */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid var(--border)' }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#dc2626', opacity: 0.5 }} />
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b', opacity: 0.5 }} />
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e', opacity: 0.5 }} />
+              <span style={{ marginLeft: 12, fontSize: 10.5, color: 'var(--text-3)', fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase' }}>IB &middot; LBO build</span>
+            </div>
+
+            {/* Persona message */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 14 }}>
+              <div style={{
+                width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#fff', fontSize: 12, fontWeight: 700,
+                fontFamily: "'Instrument Serif', serif", fontStyle: 'italic',
+              }}>AL</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 4 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>Anna Liu</span>
+                  <span style={{ fontSize: 10.5, color: 'var(--text-3)' }}>VP, Industrials</span>
+                </div>
+                <div style={{
+                  background: 'var(--surface-2)', borderRadius: 10,
+                  padding: '10px 12px',
+                  fontSize: 12.5, color: 'var(--text-2)', lineHeight: 1.5,
+                }}>
+                  Need the LBO model by EOD - 5-year hold, 6.5x entry, 60% leverage. Sources &amp; uses on tab 1, returns on tab 3.
+                </div>
               </div>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>{item.title}</div>
-                <div style={{ fontSize: 12.5, color: 'var(--text-3)', lineHeight: 1.55 }}>{item.body}</div>
+            </div>
+
+            {/* Deliverable card */}
+            <div style={{
+              background: 'var(--bg)', border: '1px solid var(--border)',
+              borderRadius: 10, padding: '12px 14px',
+              display: 'flex', alignItems: 'center', gap: 12,
+              marginBottom: 14,
+            }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: 8,
+                background: 'rgba(34, 197, 94, 0.12)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
               </div>
-            </li>
-          ))}
-        </ul>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text)', marginBottom: 1 }}>Industrials_LBO_v3.xlsx</div>
+                <div style={{ fontSize: 10.5, color: 'var(--text-3)' }}>Uploaded &middot; Graded</div>
+              </div>
+              <div style={{
+                padding: '3px 8px', borderRadius: 100,
+                background: 'rgba(34, 197, 94, 0.12)', color: '#22c55e',
+                fontSize: 10, fontWeight: 700,
+              }}>88 / 100</div>
+            </div>
+
+            {/* Grading feedback */}
+            <div style={{
+              padding: '10px 12px', borderRadius: 8,
+              background: 'var(--surface-2)',
+              borderLeft: '3px solid #22c55e',
+              fontSize: 11, color: 'var(--text-3)', lineHeight: 1.55,
+            }}>
+              <span style={{ color: 'var(--text-2)', fontWeight: 600 }}>Strong:</span> Sources &amp; Uses ties at <span style={{ fontFamily: "'JetBrains Mono', monospace", color: 'var(--text-2)' }}>B14</span>. <span style={{ color: 'var(--text-2)', fontWeight: 600 }}>Watch:</span> Tax shield missing in FCF on tab 2 row 23.
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-        <button
-          type="button"
-          onClick={() => { window.location.href = '/checkout?plan=elite'; }}
-          style={{
-            background: 'var(--text)', color: 'var(--surface)',
-            border: 'none', padding: '13px 24px', borderRadius: 10,
-            fontSize: 13.5, fontWeight: 700, cursor: 'pointer',
-            fontFamily: "'Sora',sans-serif",
-          }}
-        >
-          Upgrade to Elite
-        </button>
-        <button
-          type="button"
-          onClick={() => { window.location.href = '/checkout'; }}
-          style={{
-            background: 'transparent', color: 'var(--text-2)',
-            border: '1.5px solid var(--border)', padding: '13px 20px', borderRadius: 10,
-            fontSize: 13, fontWeight: 600, cursor: 'pointer',
-            fontFamily: "'Sora',sans-serif",
-          }}
-        >
-          Compare plans
-        </button>
+      {/* ─── Feature grid ─── */}
+      <div style={{ marginBottom: 32 }}>
+        <div style={{
+          fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4,
+          textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 18,
+        }}>What's included</div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: 14,
+        }}>
+          {[
+            {
+              title: '10 careers, 30 scenarios',
+              body: 'IB, PE, consulting, restructuring, S&T, AM, VC, RE, ER, audit. Intro, intermediate, and advanced workdays in each.',
+              icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              ),
+            },
+            {
+              title: 'Real deliverables, real grading',
+              body: 'Build the comp sheet, the LBO, the IC memo, the DCF in Excel, Word, or PowerPoint. Upload it. The AI grades the file itself, line by line.',
+              icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg>
+              ),
+            },
+            {
+              title: 'Multi-persona pings',
+              body: 'MDs, partners, VPs, senior associates message you in the voice of the seat. Push back, ask questions, defend your numbers.',
+              icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              ),
+            },
+          ].map(item => (
+            <div key={item.title} style={{
+              background: 'var(--surface)', border: '1.5px solid var(--border)',
+              borderRadius: 14, padding: '20px 22px',
+            }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: 9,
+                background: 'rgba(37, 99, 235, 0.10)', color: '#3b82f6',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginBottom: 14,
+              }}>
+                {item.icon}
+              </div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>{item.title}</div>
+              <div style={{ fontSize: 12.5, color: 'var(--text-3)', lineHeight: 1.55 }}>{item.body}</div>
+            </div>
+          ))}
+        </div>
       </div>
+
+      <style>{`
+        @media (max-width: 880px) {
+          .paywall-hero { grid-template-columns: 1fr !important; gap: 32px !important; }
+          .paywall-visual { order: -1; }
+        }
+      `}</style>
     </div>
   );
 }
