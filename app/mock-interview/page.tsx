@@ -334,21 +334,15 @@ export default function MockInterviewPage() {
   // ══════════════════════════════════════════════════════════════
 
   if (!activeTrack) {
-    const totalQs = TRACKS.reduce((s, t) => s + t.cards.length, 0);
     const totalAttempted = new Set(allResponses.map(r => r.questionId)).size;
     const totalSubmissions = allResponses.length;
+    const hasActivity = totalSubmissions > 0;
 
-    const TRACK_COLORS: Record<string, { bg: string; color: string }> = {
-      ib: { bg: '#dbeafe', color: '#2563eb' },
-      pe: { bg: '#f3e8ff', color: '#7c3aed' },
-      rx: { bg: '#fee2e2', color: '#dc2626' },
-      consulting: { bg: '#fef3c7', color: '#d97706' },
-      accounting: { bg: '#dcfce7', color: '#16a34a' },
-      am: { bg: '#e0f2fe', color: '#0284c7' },
-      st: { bg: '#fce7f3', color: '#db2777' },
-      er: { bg: '#fef9c3', color: '#ca8a04' },
-      re: { bg: '#ffedd5', color: '#ea580c' },
-      vc: { bg: '#ede9fe', color: '#7c3aed' },
+    // Per-track subtle theme. Color only used for the accent dot + the
+    // bottom action chevron, never as a saturated background tile.
+    const TRACK_THEME: Record<string, string> = {
+      ib: '#2563eb', pe: '#16a34a', consulting: '#7c3aed', accounting: '#ea580c',
+      am: '#dc2626', st: '#0891b2', er: '#d97706', re: '#0d9488', rx: '#475569', vc: '#c026d3',
     };
     const TRACK_DESCS: Record<string, string> = {
       ib: 'DCF, LBO, M&A, valuation, and accounting questions from top banks.',
@@ -363,61 +357,97 @@ export default function MockInterviewPage() {
       vc: 'Startup valuation, term sheets, due diligence, and venture mechanics.',
     };
 
-    const ARROW_R = <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>;
-
     return (
-    <div className="app"><Sidebar activePage="mock-interview" />
-      <main className="mi-main"><div className="mi-wrap" style={{ maxWidth: 1100 }}>
-        <div className="mi-label">Practice</div>
-        <div className="mi-title">Mock <em>Interview</em></div>
-        <div style={{ fontSize: 14, color: 'var(--text-3)', lineHeight: 1.6, maxWidth: 560, marginBottom: 28 }}>Record yourself answering real interview questions. Get AI feedback on accuracy, depth, and clarity with video playback of every attempt.</div>
+      <div className="app">
+        <Sidebar activePage="mock-interview" />
+        <main className="main" style={{ padding: '32px 36px 80px' }}>
+          <div style={{ maxWidth: 1180, margin: '0 auto', fontFamily: "'Sora', sans-serif" }}>
 
-        <div style={{ display: 'flex', gap: 36, marginBottom: 40 }}>
-          <div><div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: 'var(--text)', letterSpacing: '-0.5px' }}>{totalQs.toLocaleString()}+</div><div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 2 }}>Questions</div></div>
-          <div><div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: 'var(--text)', letterSpacing: '-0.5px' }}>{TRACKS.length}</div><div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 2 }}>Career Tracks</div></div>
-          {totalSubmissions > 0 && <div><div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: '#16a34a', letterSpacing: '-0.5px' }}>{totalAttempted}</div><div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--text-3)', marginTop: 2 }}>Practiced</div></div>}
-        </div>
+            {/* Header */}
+            <div style={{ marginBottom: 28 }}>
+              <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 10 }}>Practice</div>
+              <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 46, lineHeight: 1, letterSpacing: '-1.2px', color: 'var(--text)', fontWeight: 400, margin: '0 0 14px' }}>
+                Mock <em style={{ fontStyle: 'italic' }}>interview</em>
+              </h1>
+              <p style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.55, maxWidth: 560, margin: 0 }}>
+                Record yourself answering real interview questions. Get AI feedback on accuracy, depth, and clarity, with video playback of every attempt.
+              </p>
+            </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
-          {TRACKS.map(t => {
-            const total = t.cards.length;
-            const attemptedSet = new Set(allResponses.filter(r => r.questionId.startsWith(t.id + '::')).map(r => r.questionId));
-            const attempted = attemptedSet.size;
-            const tc = TRACK_COLORS[t.id] || { bg: 'var(--surface-2)', color: 'var(--text)' };
-            const tResps = allResponses.filter(r => r.questionId.startsWith(t.id + '::'));
-            const tBest: Grade | null = tResps.length === 0 ? null : tResps.some(r => r.grade === 'Great') ? 'Great' : tResps.some(r => r.grade === 'Good') ? 'Good' : 'Bad';
-            return (
-              <div key={t.id} onClick={() => openTrack(t)} style={{
-                background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 10,
-                padding: '24px 20px 18px', cursor: 'pointer', transition: 'all 0.15s',
-                display: 'flex', flexDirection: 'column',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text)'; e.currentTarget.style.boxShadow = '0 2px 16px rgba(0,0,0,0.04)'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.boxShadow = 'none'; }}
-              >
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: tc.bg, color: tc.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
-                  <div style={{ width: 18, height: 18 }}>{t.icon}</div>
+            {/* Stats strip - only shows once user has any activity */}
+            {hasActivity && (
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 28,
+                padding: '14px 18px', marginBottom: 24,
+                background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12,
+              }}>
+                <div>
+                  <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 3 }}>Submissions</div>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.4px', lineHeight: 1 }}>{totalSubmissions}</div>
                 </div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 4, letterSpacing: '-0.1px' }}>{t.title}</div>
-                <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.5, flex: 1, marginBottom: 16 }}>{TRACK_DESCS[t.id] || ''}</div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border)', paddingTop: 12 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: 'var(--text-3)' }}>{total} QUESTIONS</span>
-                    {attempted > 0 && <span style={{ fontSize: 10, fontWeight: 700, color: '#16a34a' }}>{attempted} done</span>}
-                    {tBest && (
-                      <span style={{ fontSize: 10, fontWeight: 700, color: tBest === 'Great' ? '#16a34a' : tBest === 'Good' ? '#3b82f6' : '#dc2626', display: 'flex', alignItems: 'center', gap: 2 }}>
-                        {tBest === 'Bad' ? ThumbDown : ThumbUp}
-                      </span>
-                    )}
-                  </div>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>Start {ARROW_R}</span>
+                <div style={{ width: 1, height: 32, background: 'var(--border)' }} />
+                <div>
+                  <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 3 }}>Questions practiced</div>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: '#22c55e', letterSpacing: '-0.4px', lineHeight: 1 }}>{totalAttempted}</div>
                 </div>
+                <div style={{ flex: 1 }} />
+                <div style={{ fontSize: 11, color: 'var(--text-3)' }}>Across {TRACKS.length} career tracks</div>
               </div>
-            );
-          })}
-        </div>
-      </div></main>
-    </div>
+            )}
+
+            {/* Track grid - 3 col responsive */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 12 }}>
+              {TRACKS.map(t => {
+                const accent = TRACK_THEME[t.id] || 'var(--text-2)';
+                const attemptedSet = new Set(allResponses.filter(r => r.questionId.startsWith(t.id + '::')).map(r => r.questionId));
+                const attempted = attemptedSet.size;
+                const tResps = allResponses.filter(r => r.questionId.startsWith(t.id + '::'));
+                const tBest: Grade | null = tResps.length === 0 ? null : tResps.some(r => r.grade === 'Great') ? 'Great' : tResps.some(r => r.grade === 'Good') ? 'Good' : 'Bad';
+                const bestColor = tBest === 'Great' ? '#22c55e' : tBest === 'Good' ? '#f59e0b' : tBest === 'Bad' ? '#dc2626' : 'var(--text-3)';
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => openTrack(t)}
+                    type="button"
+                    className="mi-tile"
+                    style={{
+                      background: 'var(--surface)', border: '1.5px solid var(--border)',
+                      borderRadius: 12, padding: '16px 18px',
+                      cursor: 'pointer', textAlign: 'left',
+                      fontFamily: "'Sora', sans-serif",
+                      display: 'flex', flexDirection: 'column', gap: 10,
+                      transition: 'border-color 0.15s ease, transform 0.15s ease',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span style={{ width: 7, height: 7, borderRadius: '50%', background: accent, flexShrink: 0 }} aria-hidden />
+                      <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', flex: 1 }}>{t.title}</div>
+                      {attempted > 0 && tBest && (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10.5, fontWeight: 700, padding: '2px 8px', borderRadius: 100, color: bestColor, background: tBest === 'Great' ? 'rgba(34, 197, 94, 0.10)' : tBest === 'Good' ? 'rgba(245, 158, 11, 0.10)' : 'rgba(220, 38, 38, 0.10)' }}>
+                          {attempted} done
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {TRACK_DESCS[t.id] || ''}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, fontSize: 11, fontWeight: 700, color: accent }}>
+                      {attempted > 0 ? 'Continue' : 'Start'}
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+          </div>
+          <style>{`
+            .mi-tile:hover { border-color: var(--border-2) !important; transform: translateY(-1px); }
+            .mi-cat-row-new:hover { border-color: var(--border-2) !important; }
+            .mi-q-row-new:hover { background: var(--surface-2) !important; }
+          `}</style>
+        </main>
+      </div>
     );
   }
 
@@ -430,142 +460,301 @@ export default function MockInterviewPage() {
     const qResps = allResponses.filter(r => r.questionId === questionId);
     const best = bestForQ(questionId);
     const avg = avgForQ(questionId);
+    const gradePill = (g: Grade | null) => {
+      if (!g) return { label: '--', color: 'var(--text-3)', bg: 'var(--surface-2)' };
+      if (g === 'Great') return { label: 'Great', color: '#22c55e', bg: 'rgba(34, 197, 94, 0.10)' };
+      if (g === 'Good') return { label: 'Good', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.10)' };
+      return { label: 'Practice', color: '#dc2626', bg: 'rgba(220, 38, 38, 0.10)' };
+    };
+    const bestPill = gradePill(best);
+    const avgPill = gradePill(avg);
 
     return (
-      <div className="app"><Sidebar activePage="mock-interview" />
-        <main className="mi-main"><div className="mi-wrap">
-          <button className="mi-back" onClick={backToCats} type="button">
-            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            Back
-          </button>
+      <div className="app">
+        <Sidebar activePage="mock-interview" />
+        <main className="main" style={{ padding: '32px 36px 80px' }}>
+          <div style={{ maxWidth: 880, margin: '0 auto', fontFamily: "'Sora', sans-serif" }}>
 
-          <div className="mi-detail-header">
-            <div>
-              <div className="mi-detail-label">Question</div>
-              <div className="mi-detail-title">{activeQuestion.q}</div>
-            </div>
-            <div className="mi-detail-stats">
-              <div className="mi-detail-stat">
-                <div className="mi-detail-stat-val">{qResps.length}</div>
-                <div className="mi-detail-stat-label">Submissions</div>
-              </div>
-              <div className="mi-detail-stat">
-                <div className={`mi-detail-stat-val ${best ? gCls(best) : 'neutral'}`}>{best || '--'}</div>
-                <div className="mi-detail-stat-label">Best</div>
-              </div>
-              <div className="mi-detail-stat">
-                <div className={`mi-detail-stat-val ${avg ? gCls(avg) : 'neutral'}`}>{avg || '--'}</div>
-                <div className="mi-detail-stat-label">Average</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mi-actions">
-            {!isRecording ? (
-              <button className="mi-btn-record start" onClick={startRecording} disabled={!cameraReady || grading} type="button">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
-                Record a Response
-              </button>
-            ) : (
-              <button className="mi-btn-record stop" onClick={stopRecording} type="button">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
-                Stop Recording
-              </button>
-            )}
-            <button className="mi-btn-secondary" onClick={() => setShowAnswer(!showAnswer)} type="button">
-              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              {showAnswer ? 'Hide correct answer' : 'View correct answer'}
+            <button onClick={backToCats} type="button" style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              padding: '6px 10px', borderRadius: 7,
+              background: 'transparent', border: '1.5px solid transparent',
+              color: 'var(--text-3)', fontSize: 12, fontWeight: 600,
+              cursor: 'pointer', fontFamily: "'Sora', sans-serif", marginLeft: -10,
+            }}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+              Back to {activeTrack.title}
             </button>
-          </div>
 
-          {showAnswer && (
-            <div className="mi-answer-box">
-              <div className="mi-answer-label">Correct Answer</div>
-              <div className="mi-answer-text">{activeQuestion.a}</div>
+            {/* Header row: question + stat strip */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 24, margin: '14px 0 24px', flexWrap: 'wrap' }}>
+              <div style={{ flex: 1, minWidth: 0, maxWidth: 620 }}>
+                <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 10 }}>
+                  {activeTrack.title} &middot; {activeQuestion.category}
+                </div>
+                <h1 style={{
+                  fontFamily: "'Instrument Serif', serif",
+                  fontSize: 28, lineHeight: 1.25, letterSpacing: '-0.4px',
+                  color: 'var(--text)', fontWeight: 400, margin: 0,
+                }}>{activeQuestion.q}</h1>
+              </div>
+              <div style={{
+                display: 'flex', gap: 14, flexShrink: 0,
+                padding: '12px 18px',
+                background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12,
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: 1.2, textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 4 }}>Subs</div>
+                  <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, fontStyle: 'italic', color: 'var(--text)', lineHeight: 1 }}>{qResps.length}</div>
+                </div>
+                <div style={{ width: 1, background: 'var(--border)' }} />
+                <div style={{ textAlign: 'center', minWidth: 56 }}>
+                  <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: 1.2, textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 4 }}>Best</div>
+                  <div style={{
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    padding: '3px 8px', borderRadius: 100,
+                    background: bestPill.bg, color: bestPill.color,
+                    fontSize: 10.5, fontWeight: 700,
+                  }}>{bestPill.label}</div>
+                </div>
+                <div style={{ width: 1, background: 'var(--border)' }} />
+                <div style={{ textAlign: 'center', minWidth: 56 }}>
+                  <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: 1.2, textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 4 }}>Avg</div>
+                  <div style={{
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    padding: '3px 8px', borderRadius: 100,
+                    background: avgPill.bg, color: avgPill.color,
+                    fontSize: 10.5, fontWeight: 700,
+                  }}>{avgPill.label}</div>
+                </div>
+              </div>
             </div>
-          )}
 
-          <div className="mi-prompt">
-            <div className="mi-prompt-label">Prompt:</div>
-            <div className="mi-prompt-text">{activeQuestion.q}</div>
-          </div>
-
-          <div className="mi-camera-wrap">
-            <video ref={videoRef} autoPlay muted playsInline />
-            {isRecording && (
-              <><div className="mi-recording-dot" /><div className="mi-recording-timer">{fmtTime(recordingTime)}</div></>
+            {/* Reveal answer (collapsible) */}
+            {showAnswer && (
+              <div style={{
+                background: 'var(--surface)', border: '1.5px solid var(--border)',
+                borderLeft: '3px solid #22c55e',
+                borderRadius: 10, padding: '14px 18px', marginBottom: 14,
+              }}>
+                <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: '#22c55e', marginBottom: 8 }}>Model answer</div>
+                <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6 }}>{activeQuestion.a}</div>
+              </div>
             )}
-            {!isRecording && cameraReady && (
-              <div className="mi-camera-notice">You are not currently being recorded. Click &apos;Record a Response&apos; to get started.</div>
-            )}
-            {!cameraReady && !isRecording && (
-              <div className="mi-camera-notice">Camera access required. Please allow camera permissions.</div>
-            )}
-          </div>
 
-          {grading && (
-            <div className="mi-loading"><div className="mi-spinner" />Analyzing your response...</div>
-          )}
-
-          {qResps.length > 0 && (
-            <div className="mi-responses">
-              <div className="mi-responses-title">Your Response{qResps.length > 1 ? 's' : ''}:</div>
-              {qResps.map(r => {
-                const vid = sessionVideos[r.id] || null;
-                return (
-                  <div key={r.id} className="mi-response-card">
-                    {vid && <video className="mi-response-video" src={vid} controls playsInline />}
-
-                    <div className="mi-response-body">
-                      <div className="mi-response-grade">
-                        <div className={`mi-grade-label ${gCls(r.grade)}`}>
-                          {r.grade === 'Bad' ? ThumbDown : ThumbUp}
-                          {r.grade}
-                          <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-3)', marginLeft: 4 }}>Graded Submission</span>
-                        </div>
-                        <div className="mi-grade-stats">
-                          <div className="mi-grade-stat">{ThumbUp}<strong>{r.strengths.length}</strong>Strengths</div>
-                          <div className="mi-grade-stat">{ThumbDown}<strong>{r.weaknesses.length}</strong>Weaknesses</div>
-                          <div className="mi-grade-stat">
-                            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                            <strong>{r.wordsPerMin}</strong>Words/min
-                          </div>
-                          <div className="mi-grade-stat">
-                            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            <strong>{r.durationSec}s</strong>Tot. Length
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mi-response-feedback">
-                        <h4>Overall Feedback</h4>
-                        <p>{r.overallFeedback}</p>
-                      </div>
-
-                      {(r.strengths.length > 0 || r.weaknesses.length > 0) && (
-                        <div className="mi-response-cols">
-                          {r.strengths.length > 0 && (
-                            <div className="mi-response-col"><h4>Strengths</h4><ul>{r.strengths.map((s, i) => <li key={i}>{s}</li>)}</ul></div>
-                          )}
-                          {r.weaknesses.length > 0 && (
-                            <div className="mi-response-col"><h4>Weaknesses</h4><ul>{r.weaknesses.map((w, i) => <li key={i}>{w}</li>)}</ul></div>
-                          )}
-                        </div>
-                      )}
-
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
-                        <div className="mi-response-time">
-                          Submitted {new Date(r.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                        </div>
-                        <button onClick={() => deleteResponse(r.id)} type="button" style={{ background: 'none', border: 'none', fontSize: 11, color: 'var(--text-3)', cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>Delete</button>
-                      </div>
+            {/* Camera card */}
+            <div style={{
+              background: 'var(--surface)', border: '1.5px solid var(--border)',
+              borderRadius: 14, overflow: 'hidden', marginBottom: 16,
+            }}>
+              <div style={{ position: 'relative', background: '#000', aspectRatio: '16 / 9' }}>
+                <video ref={videoRef} autoPlay muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                {isRecording && (
+                  <>
+                    <div style={{
+                      position: 'absolute', top: 14, left: 14,
+                      display: 'inline-flex', alignItems: 'center', gap: 6,
+                      padding: '5px 10px', borderRadius: 100,
+                      background: 'rgba(220, 38, 38, 0.9)', color: '#fff',
+                      fontSize: 11, fontWeight: 700, letterSpacing: 0.5,
+                    }}>
+                      <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#fff', animation: 'mi-pulse 1.4s ease-in-out infinite' }} />
+                      REC
                     </div>
-                  </div>
-                );
-              })}
+                    <div style={{
+                      position: 'absolute', top: 14, right: 14,
+                      padding: '5px 10px', borderRadius: 7,
+                      background: 'rgba(0, 0, 0, 0.6)', color: '#fff',
+                      fontSize: 12, fontWeight: 700, fontVariantNumeric: 'tabular-nums',
+                    }}>{fmtTime(recordingTime)}</div>
+                  </>
+                )}
+                {!isRecording && cameraReady && (
+                  <div style={{
+                    position: 'absolute', bottom: 14, left: '50%', transform: 'translateX(-50%)',
+                    padding: '6px 12px', borderRadius: 7,
+                    background: 'rgba(0, 0, 0, 0.6)', color: '#fff',
+                    fontSize: 11.5, fontWeight: 500,
+                    whiteSpace: 'nowrap',
+                  }}>Click "Record a response" below to start</div>
+                )}
+                {!cameraReady && !isRecording && (
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#fff', fontSize: 13, fontWeight: 600,
+                  }}>Camera access required. Please allow camera permissions.</div>
+                )}
+              </div>
+
+              {/* Action bar inside the card */}
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: '14px 18px',
+                borderTop: '1px solid var(--border)',
+              }}>
+                {!isRecording ? (
+                  <button
+                    onClick={startRecording}
+                    disabled={!cameraReady || grading}
+                    type="button"
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 8,
+                      background: '#dc2626', color: '#fff',
+                      padding: '10px 18px', borderRadius: 9,
+                      fontSize: 13, fontWeight: 700,
+                      border: 'none',
+                      cursor: (!cameraReady || grading) ? 'not-allowed' : 'pointer',
+                      opacity: (!cameraReady || grading) ? 0.5 : 1,
+                      fontFamily: "'Sora', sans-serif",
+                    }}
+                  >
+                    <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#fff' }} />
+                    Record a response
+                  </button>
+                ) : (
+                  <button
+                    onClick={stopRecording}
+                    type="button"
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 8,
+                      background: 'var(--text)', color: 'var(--surface)',
+                      padding: '10px 18px', borderRadius: 9,
+                      fontSize: 13, fontWeight: 700,
+                      border: 'none', cursor: 'pointer',
+                      fontFamily: "'Sora', sans-serif",
+                    }}
+                  >
+                    <span style={{ width: 9, height: 9, background: '#fff', borderRadius: 1 }} />
+                    Stop &amp; submit
+                  </button>
+                )}
+                <button
+                  onClick={() => setShowAnswer(!showAnswer)}
+                  type="button"
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 7,
+                    background: 'transparent', color: 'var(--text-2)',
+                    padding: '10px 16px', borderRadius: 9,
+                    fontSize: 12.5, fontWeight: 600,
+                    border: '1.5px solid var(--border-2)', cursor: 'pointer',
+                    fontFamily: "'Sora', sans-serif",
+                  }}
+                >
+                  <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  {showAnswer ? 'Hide answer' : 'Reveal answer'}
+                </button>
+              </div>
             </div>
-          )}
-        </div></main>
+
+            {/* Grading loader */}
+            {grading && (
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                padding: '20px',
+                background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12,
+                marginBottom: 16, fontSize: 13, color: 'var(--text-2)',
+              }}>
+                <div style={{ width: 14, height: 14, border: '2px solid var(--border-2)', borderTopColor: 'var(--text)', borderRadius: '50%', animation: 'mi-spin 0.8s linear infinite' }} />
+                Analyzing your response...
+              </div>
+            )}
+
+            {/* Past responses */}
+            {qResps.length > 0 && (
+              <div style={{ marginTop: 28 }}>
+                <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 14 }}>
+                  Your {qResps.length === 1 ? 'response' : `responses (${qResps.length})`}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {qResps.map(r => {
+                    const vid = sessionVideos[r.id] || null;
+                    const pill = gradePill(r.grade);
+                    return (
+                      <div key={r.id} style={{
+                        background: 'var(--surface)', border: '1.5px solid var(--border)',
+                        borderRadius: 12, overflow: 'hidden',
+                      }}>
+                        {vid && (
+                          <video src={vid} controls playsInline style={{ width: '100%', display: 'block', background: '#000', aspectRatio: '16 / 9', objectFit: 'cover' }} />
+                        )}
+                        <div style={{ padding: '18px 20px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, flexWrap: 'wrap' }}>
+                            <div style={{
+                              display: 'inline-flex', alignItems: 'center', gap: 5,
+                              padding: '4px 10px', borderRadius: 100,
+                              background: pill.bg, color: pill.color,
+                              fontSize: 11, fontWeight: 700,
+                            }}>
+                              {r.grade === 'Great' && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>}
+                              {r.grade === 'Good' && <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor' }} />}
+                              {r.grade === 'Bad' && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>}
+                              {pill.label}
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: 11.5, color: 'var(--text-3)' }}>
+                              <span><strong style={{ color: 'var(--text-2)' }}>{r.strengths.length}</strong> strengths</span>
+                              <span><strong style={{ color: 'var(--text-2)' }}>{r.weaknesses.length}</strong> areas to work on</span>
+                              <span><strong style={{ color: 'var(--text-2)' }}>{r.wordsPerMin}</strong> wpm</span>
+                              <span><strong style={{ color: 'var(--text-2)' }}>{r.durationSec}s</strong></span>
+                            </div>
+                            <div style={{ flex: 1 }} />
+                            <div style={{ fontSize: 11, color: 'var(--text-3)' }}>
+                              {new Date(r.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                            </div>
+                          </div>
+
+                          <div style={{ marginBottom: 14 }}>
+                            <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 6 }}>Overall feedback</div>
+                            <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6 }}>{r.overallFeedback}</div>
+                          </div>
+
+                          {(r.strengths.length > 0 || r.weaknesses.length > 0) && (
+                            <div style={{ display: 'grid', gridTemplateColumns: r.strengths.length > 0 && r.weaknesses.length > 0 ? '1fr 1fr' : '1fr', gap: 14 }}>
+                              {r.strengths.length > 0 && (
+                                <div style={{ padding: '12px 14px', background: 'var(--surface-2)', borderRadius: 9, borderLeft: '3px solid #22c55e' }}>
+                                  <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase', color: '#22c55e', marginBottom: 6 }}>Strengths</div>
+                                  <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12.5, color: 'var(--text-2)', lineHeight: 1.6 }}>
+                                    {r.strengths.map((s, i) => <li key={i}>{s}</li>)}
+                                  </ul>
+                                </div>
+                              )}
+                              {r.weaknesses.length > 0 && (
+                                <div style={{ padding: '12px 14px', background: 'var(--surface-2)', borderRadius: 9, borderLeft: '3px solid #dc2626' }}>
+                                  <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase', color: '#dc2626', marginBottom: 6 }}>Areas to work on</div>
+                                  <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12.5, color: 'var(--text-2)', lineHeight: 1.6 }}>
+                                    {r.weaknesses.map((w, i) => <li key={i}>{w}</li>)}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          <div style={{ marginTop: 14, textAlign: 'right' }}>
+                            <button
+                              onClick={() => deleteResponse(r.id)}
+                              type="button"
+                              style={{
+                                background: 'none', border: 'none',
+                                fontSize: 11, color: 'var(--text-3)',
+                                cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+                                padding: '4px 8px',
+                              }}
+                            >Delete</button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+          </div>
+          <style>{`
+            @keyframes mi-spin { to { transform: rotate(360deg); } }
+            @keyframes mi-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+          `}</style>
+        </main>
       </div>
     );
   }
@@ -575,96 +764,148 @@ export default function MockInterviewPage() {
   // ══════════════════════════════════════════════════════════════
 
   return (
-    <div className="app"><Sidebar activePage="mock-interview" />
-      <main className="mi-main"><div className="mi-wrap">
-        <button className="mi-back" onClick={backToTracks} type="button">
-          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          Back
-        </button>
+    <div className="app">
+      <Sidebar activePage="mock-interview" />
+      <main className="main" style={{ padding: '32px 36px 80px' }}>
+        <div style={{ maxWidth: 960, margin: '0 auto', fontFamily: "'Sora', sans-serif" }}>
 
-        <div className="mi-label">{activeTrack.title}</div>
-        <div className="mi-title" style={{ fontSize: 32, marginBottom: 24 }}>Practice <em>Questions</em></div>
+          <button onClick={backToTracks} type="button" style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '6px 10px', borderRadius: 7,
+            background: 'transparent', border: '1.5px solid transparent',
+            color: 'var(--text-3)', fontSize: 12, fontWeight: 600,
+            cursor: 'pointer', fontFamily: "'Sora', sans-serif", marginLeft: -10,
+          }}>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            All tracks
+          </button>
 
-        <div className="mi-cat-list">
-          {categories.map(cat => {
-            const isExp = expandedCats.has(cat.name);
-            const total = cat.cards.length;
-            const attemptedSet = new Set(cat.cards.map(c => makeQid(activeTrack.id, c.q)).filter(id => allResponses.some(r => r.questionId === id)));
-            const attempted = attemptedSet.size;
-            const pct = total > 0 ? Math.round((attempted / total) * 100) : 0;
-            const catResps = allResponses.filter(r => cat.cards.some(c => r.questionId === makeQid(activeTrack.id, c.q)));
-            const subs = catResps.length;
-            const catBest: Grade | null = subs === 0 ? null : catResps.some(r => r.grade === 'Great') ? 'Great' : catResps.some(r => r.grade === 'Good') ? 'Good' : 'Bad';
-            const catAvg: Grade | null = subs === 0 ? null : scoreToGrade(catResps.map(r => r.grade === 'Great' ? 10 : r.grade === 'Good' ? 6 : 2).reduce((a, b) => a + b, 0) / subs);
+          <div style={{ margin: '14px 0 28px' }}>
+            <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 10 }}>{activeTrack.title}</div>
+            <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 36, lineHeight: 1.05, letterSpacing: '-0.8px', color: 'var(--text)', fontWeight: 400, margin: 0 }}>
+              Practice <em style={{ fontStyle: 'italic' }}>questions</em>
+            </h1>
+            <p style={{ fontSize: 13.5, color: 'var(--text-3)', lineHeight: 1.55, margin: '10px 0 0', maxWidth: 560 }}>
+              Pick a category, record yourself answering, and get AI feedback line by line.
+            </p>
+          </div>
 
-            return (
-              <div key={cat.name} className={`mi-cat-row${isExp ? ' expanded' : ''}`}>
-                <div className="mi-cat-header" onClick={() => toggleCat(cat.name)}>
-                  <div className="mi-cat-icon">
-                    <svg fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                  </div>
-                  <div className="mi-cat-info">
-                    <div className="mi-cat-name">{cat.name} <span>({attempted}/{total} complete)</span></div>
-                    <div className="mi-cat-progress-row">
-                      <span className="mi-cat-pct">{pct}%</span>
-                      <div className="mi-cat-bar"><div className="mi-cat-bar-fill" style={{ width: `${pct}%` }} /></div>
-                    </div>
-                  </div>
-                  <div className="mi-cat-stats">
-                    <div className="mi-cat-stat">
-                      <div className={`mi-cat-stat-val${subs > 0 ? '' : ' neutral'}`}>{subs}</div>
-                      <div className="mi-cat-stat-label">Submissions</div>
-                    </div>
-                    <div className="mi-cat-stat">
-                      <div className={`mi-cat-stat-val ${catBest ? gCls(catBest) : 'neutral'}`}>
-                        {catBest ? <>{catBest === 'Bad' ? ThumbDown : ThumbUp} {catBest}</> : '--'}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {categories.map(cat => {
+              const isExp = expandedCats.has(cat.name);
+              const total = cat.cards.length;
+              const attemptedSet = new Set(cat.cards.map(c => makeQid(activeTrack.id, c.q)).filter(id => allResponses.some(r => r.questionId === id)));
+              const attempted = attemptedSet.size;
+              const pct = total > 0 ? Math.round((attempted / total) * 100) : 0;
+              const catResps = allResponses.filter(r => cat.cards.some(c => r.questionId === makeQid(activeTrack.id, c.q)));
+              const subs = catResps.length;
+              const catBest: Grade | null = subs === 0 ? null : catResps.some(r => r.grade === 'Great') ? 'Great' : catResps.some(r => r.grade === 'Good') ? 'Good' : 'Bad';
+              const bestColor = catBest === 'Great' ? '#22c55e' : catBest === 'Good' ? '#f59e0b' : catBest === 'Bad' ? '#dc2626' : 'var(--text-3)';
+              const bestBg = catBest === 'Great' ? 'rgba(34, 197, 94, 0.10)' : catBest === 'Good' ? 'rgba(245, 158, 11, 0.10)' : catBest === 'Bad' ? 'rgba(220, 38, 38, 0.10)' : 'var(--surface-2)';
+
+              return (
+                <div key={cat.name} className="mi-cat-row-new" style={{
+                  background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12,
+                  overflow: 'hidden',
+                  transition: 'border-color 0.15s ease',
+                }}>
+                  {/* Header row (clickable) */}
+                  <div
+                    onClick={() => toggleCat(cat.name)}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 200px auto auto',
+                      alignItems: 'center', gap: 16,
+                      padding: '14px 20px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>{cat.name}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-3)' }}>
+                        {subs === 0 ? 'Not started' : `${subs} ${subs === 1 ? 'submission' : 'submissions'}`}
                       </div>
-                      <div className="mi-cat-stat-label">Best</div>
                     </div>
-                    <div className="mi-cat-stat">
-                      <div className={`mi-cat-stat-val ${catAvg ? gCls(catAvg) : 'neutral'}`}>
-                        {catAvg ? <>{catAvg === 'Bad' ? ThumbDown : ThumbUp} {catAvg}</> : '--'}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div style={{ flex: 1, height: 4, background: 'var(--surface-2)', borderRadius: 2, overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${pct}%`, background: pct >= 75 ? '#22c55e' : pct >= 40 ? '#f59e0b' : 'var(--text-2)', borderRadius: 2, transition: 'width 0.3s ease' }} />
                       </div>
-                      <div className="mi-cat-stat-label">Average</div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', minWidth: 32, textAlign: 'right' }}>{pct}%</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 100, background: bestBg, fontSize: 10.5, fontWeight: 700, color: bestColor, minWidth: 64, justifyContent: 'center' }}>
+                      {catBest === null ? <span style={{ color: 'var(--text-3)' }}>--</span> : (
+                        <>
+                          {catBest === 'Great' && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>}
+                          {catBest === 'Good' && <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor' }} />}
+                          {catBest === 'Bad' && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>}
+                          {catBest === 'Bad' ? 'Practice' : catBest}
+                        </>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', color: 'var(--text-3)', transform: isExp ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>
                     </div>
                   </div>
-                  <div className="mi-cat-chevron">
-                    <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-                  </div>
-                </div>
 
-                {isExp && (
-                  <div className="mi-q-list">
-                    {cat.cards.map(card => {
-                      const cqid = makeQid(activeTrack.id, card.q);
-                      const cBest = bestForQ(cqid);
-                      const isDone = cBest !== null;
-                      return (
-                        <div key={card.q} className="mi-q-row" onClick={() => openQuestion(card)}>
-                          <div className={`mi-q-status${isDone ? ' done' : ''}`}>
-                            {isDone && <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>}
-                          </div>
-                          <div className="mi-q-title">{card.q}</div>
-                          <div className="mi-q-pills">
-                            <span className="mi-q-pill cat-pill">{card.category}</span>
-                            <span className="mi-q-pill diff-pill">{card.difficulty || 'Intermediate'}</span>
-                          </div>
-                          {cBest && (
-                            <div className={`mi-q-score ${gCls(cBest)}`}>
-                              {cBest === 'Bad' ? ThumbDown : ThumbUp}
-                              {cBest}
+                  {/* Questions list */}
+                  {isExp && (
+                    <div style={{ borderTop: '1px solid var(--border)', background: 'var(--bg)' }}>
+                      {cat.cards.map(card => {
+                        const cqid = makeQid(activeTrack.id, card.q);
+                        const cBest = bestForQ(cqid);
+                        const isDone = cBest !== null;
+                        const qColor = cBest === 'Great' ? '#22c55e' : cBest === 'Good' ? '#f59e0b' : cBest === 'Bad' ? '#dc2626' : 'var(--text-3)';
+                        return (
+                          <div
+                            key={card.q}
+                            className="mi-q-row-new"
+                            onClick={() => openQuestion(card)}
+                            style={{
+                              display: 'flex', alignItems: 'center', gap: 14,
+                              padding: '12px 20px',
+                              borderBottom: '1px solid var(--border)',
+                              cursor: 'pointer',
+                              transition: 'background 0.12s ease',
+                            }}
+                          >
+                            <div style={{
+                              width: 18, height: 18, borderRadius: '50%', flexShrink: 0,
+                              background: isDone ? '#22c55e' : 'transparent',
+                              border: isDone ? 'none' : '1.5px solid var(--border-2)',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              color: '#fff',
+                            }}>
+                              {isDone && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>}
                             </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                            <div style={{ flex: 1, fontSize: 13, color: 'var(--text)', lineHeight: 1.4 }}>{card.q}</div>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', letterSpacing: 0.4, textTransform: 'uppercase' }}>
+                              {card.difficulty || 'Intermediate'}
+                            </span>
+                            {cBest && (
+                              <span style={{
+                                display: 'inline-flex', alignItems: 'center', gap: 4,
+                                padding: '2px 8px', borderRadius: 100,
+                                fontSize: 10, fontWeight: 700,
+                                color: qColor,
+                                background: cBest === 'Great' ? 'rgba(34, 197, 94, 0.10)' : cBest === 'Good' ? 'rgba(245, 158, 11, 0.10)' : 'rgba(220, 38, 38, 0.10)',
+                              }}>
+                                <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor' }} />
+                                {cBest === 'Bad' ? 'Practice' : cBest}
+                              </span>
+                            )}
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="2.5" strokeLinecap="round" style={{ opacity: 0.5 }}><polyline points="9 18 15 12 9 6"/></svg>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
         </div>
-      </div></main>
+      </main>
     </div>
   );
 }
