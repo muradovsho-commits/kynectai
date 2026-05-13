@@ -393,6 +393,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
   <a href="/" class="n-logo">OfferBell<em>.</em></a>
   <div class="n-links">
     <a href="#features-detail">Features</a>
+    <a href="#tracks">Tracks</a>
     <a href="#proof">Testimonials</a>
     <a href="#pricing">Pricing</a>
     <a href="#faq">FAQ</a>
@@ -476,6 +477,96 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
     <a href="/signup" class="btn">Try For Free Today &rarr;</a>
     <div class="hero-note">No credit card required</div>
   </div>
+</section>
+
+<!-- ═══ TRACKS ═══ -->
+<section class="tracks reveal" id="tracks">
+  <div class="tr-inner">
+    <div style="text-align:center;margin-bottom:48px">
+      <div class="sl">Career Paths</div>
+      <div class="st">Coverage for <em>every track.</em></div>
+      <p class="ss">Ten finance and consulting verticals, each with their own question bank, mock interview prep, and concept drills.</p>
+    </div>
+
+    <div class="tr-grid">
+      <div class="tr-tile">
+        <div class="tr-code">IB</div>
+        <div class="tr-name">Investment Banking</div>
+        <div class="tr-desc">DCF, LBO, M&amp;A, valuation, and accounting questions from top banks.</div>
+      </div>
+      <div class="tr-tile">
+        <div class="tr-code">PE</div>
+        <div class="tr-name">Private Equity</div>
+        <div class="tr-desc">Fund mechanics, deal sourcing, portfolio ops, and returns analysis.</div>
+      </div>
+      <div class="tr-tile">
+        <div class="tr-code">CN</div>
+        <div class="tr-name">Consulting</div>
+        <div class="tr-desc">Case frameworks, market sizing, profitability, and fit questions.</div>
+      </div>
+      <div class="tr-tile">
+        <div class="tr-code">AC</div>
+        <div class="tr-name">Accounting</div>
+        <div class="tr-desc">Financial statements, audit, tax, and technical accounting.</div>
+      </div>
+      <div class="tr-tile">
+        <div class="tr-code">AM</div>
+        <div class="tr-name">Asset Management</div>
+        <div class="tr-desc">Portfolio theory, stock pitches, risk management, and market analysis.</div>
+      </div>
+      <div class="tr-tile">
+        <div class="tr-code">ST</div>
+        <div class="tr-name">Sales &amp; Trading</div>
+        <div class="tr-desc">Trading mechanics, derivatives, macro, and market-making concepts.</div>
+      </div>
+      <div class="tr-tile">
+        <div class="tr-code">ER</div>
+        <div class="tr-name">Equity Research</div>
+        <div class="tr-desc">Equity valuation, sector analysis, modeling, and stock recommendations.</div>
+      </div>
+      <div class="tr-tile">
+        <div class="tr-code">RE</div>
+        <div class="tr-name">Real Estate</div>
+        <div class="tr-desc">Cap rates, NOI, property valuation, and real estate finance.</div>
+      </div>
+      <div class="tr-tile">
+        <div class="tr-code">RX</div>
+        <div class="tr-name">Restructuring</div>
+        <div class="tr-desc">Bankruptcy, distressed debt, credit analysis, and turnaround strategies.</div>
+      </div>
+      <div class="tr-tile">
+        <div class="tr-code">VC</div>
+        <div class="tr-name">Venture Capital</div>
+        <div class="tr-desc">Startup valuation, term sheets, due diligence, and venture mechanics.</div>
+      </div>
+    </div>
+  </div>
+  <style>
+    .tracks{padding:96px 52px;background:var(--cream);border-top:1px solid var(--border)}
+    .tr-inner{max-width:1180px;margin:0 auto}
+    .tr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+    .tr-tile{
+      background:var(--white);border:1px solid var(--border);border-radius:12px;
+      padding:22px 20px;
+      transition:border-color 0.15s ease,transform 0.15s ease,box-shadow 0.15s ease;
+    }
+    .tr-tile:hover{border-color:var(--brown);transform:translateY(-2px);box-shadow:0 6px 20px rgba(139,115,85,0.08)}
+    .tr-code{
+      font-family:'Instrument Serif',serif;font-style:italic;
+      font-size:30px;letter-spacing:-0.5px;line-height:1;
+      color:var(--brown);margin-bottom:14px;
+    }
+    .tr-name{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-0.1px;margin-bottom:6px}
+    .tr-desc{font-size:11.5px;color:var(--text-2);line-height:1.55}
+    @media (max-width:1000px){
+      .tr-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:520px){
+      .tracks{padding:72px 24px}
+      .tr-grid{grid-template-columns:1fr;gap:10px}
+      .tr-tile{padding:18px 18px}
+    }
+  </style>
 </section>
 
 <!-- ═══ FEATURES ═══ -->
