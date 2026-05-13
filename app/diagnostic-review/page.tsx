@@ -614,12 +614,17 @@ export default function DiagnosticReviewPage() {
         <main className="main" style={A_PAGE_OUTER}>
           <div style={A_PAGE_INNER}>
 
-            {/* Top bar: track / category + timer + counter + end */}
+            {/* Top bar: track / category + autosave + timer + counter + save-exit */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 14, flexWrap: 'wrap' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11.5, color: 'var(--text-3)', fontWeight: 600 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 11.5, color: 'var(--text-3)', fontWeight: 600 }}>
                 <span>{track.title}</span>
                 <span style={{ color: 'var(--border-2)' }}>/</span>
                 <span style={{ color: 'var(--text-2)' }}>{q.category}</span>
+                <span style={{ color: 'var(--border-2)' }}>&middot;</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: '#22c55e' }} title="Your progress is saved every question. You can leave and resume from your dashboard at any time within 24 hours.">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  Auto-saved
+                </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11.5, color: 'var(--text-3)', fontWeight: 600 }}>
@@ -627,13 +632,38 @@ export default function DiagnosticReviewPage() {
                   <span style={{ color: timerColor, fontVariantNumeric: 'tabular-nums' }}>{String(timer).padStart(2, '0')}s</span>
                 </div>
                 <div style={{ fontSize: 11.5, color: 'var(--text-3)', fontWeight: 600 }}>Q{idx + 1} <span style={{ color: 'var(--border-2)' }}>/ {questions.length}</span></div>
-                <button onClick={() => setPhase('results')} type="button" style={{
-                  background: 'transparent', color: 'var(--text-3)',
-                  padding: '6px 12px', borderRadius: 7,
-                  fontSize: 11.5, fontWeight: 600,
-                  border: '1.5px solid var(--border)',
-                  cursor: 'pointer', fontFamily: "'Sora', sans-serif",
-                }}>End</button>
+                <button
+                  onClick={() => {
+                    // Snapshot the current in-progress state so Resume picks up here.
+                    // The Home phase shows a Resume banner when savedProgress is set.
+                    saveInProgress({
+                      trackKey, questions, idx,
+                      catResults: { ...catResults },
+                      totalCorrect, totalAnswered, missed: [...missed],
+                      savedAt: Date.now(),
+                    });
+                    setSavedProgress({
+                      trackKey, questions, idx,
+                      catResults: { ...catResults },
+                      totalCorrect, totalAnswered, missed: [...missed],
+                      savedAt: Date.now(),
+                    });
+                    setPhase('home');
+                  }}
+                  type="button"
+                  title="Your progress is saved. Resume from the Diagnostic Review home anytime within 24 hours."
+                  style={{
+                    background: 'transparent', color: 'var(--text-2)',
+                    padding: '6px 12px', borderRadius: 7,
+                    fontSize: 11.5, fontWeight: 600,
+                    border: '1.5px solid var(--border-2)',
+                    cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+                    display: 'inline-flex', alignItems: 'center', gap: 5,
+                  }}
+                >
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                  Save &amp; exit
+                </button>
               </div>
             </div>
 
