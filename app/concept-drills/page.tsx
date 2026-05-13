@@ -162,9 +162,18 @@ function ConceptDrillsContent() {
   const accuracy = total > 0 ? Math.round(correct / total * 100) : 0;
 
   // ══════════════ LANDING ══════════════
+  // ─────────────────────────────── shared atoms
+  const PAGE_OUTER: React.CSSProperties = { padding: '32px 36px 80px' };
+  const PAGE_INNER: React.CSSProperties = { maxWidth: 960, margin: '0 auto', fontFamily: "'Sora', sans-serif" };
+  const EYEBROW: React.CSSProperties = { fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: 'var(--text-3)' };
+  const SERIF_TITLE_SM: React.CSSProperties = { fontFamily: "'Instrument Serif', serif", fontSize: 36, lineHeight: 1.05, letterSpacing: '-0.8px', color: 'var(--text)', fontWeight: 400, margin: 0 };
+  const CARD: React.CSSProperties = { background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12 };
+  const BACK_LINK: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 10px', borderRadius: 7, background: 'transparent', border: '1.5px solid transparent', color: 'var(--text-3)', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: "'Sora', sans-serif", marginLeft: -10 };
+
+  // ═══════════════════════════════════════════════════════════════
+  //   PHASE 1 - LANDING (track picker)
+  // ═══════════════════════════════════════════════════════════════
   if (phase === 'landing') {
-    // Aggregate per-track stats from the same localStorage keys the drill
-    // logic already writes to. Computed inline, refreshes on each render.
     const trackStats: Record<string, { seen: number; pass: number; pct: number }> = {};
     let totalSeen = 0;
     let totalPass = 0;
@@ -186,141 +195,89 @@ function ConceptDrillsContent() {
       }
     }
     const overallPct = totalSeen > 0 ? Math.round((totalPass / totalSeen) * 100) : 0;
-    const hasActivity = totalSeen > 0;
 
     return (
       <div className="app">
         <Sidebar activePage="concept-drills" />
-        <main className="main" style={{ padding: '32px 36px 80px' }}>
-          <div style={{ maxWidth: 1180, margin: '0 auto', fontFamily: "'Sora', sans-serif" }}>
+        <main className="main" style={PAGE_OUTER}>
+          <div style={PAGE_INNER}>
 
-            {/* ════════ HERO ════════ */}
-            <div style={{
-              display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
-              gap: 32, marginBottom: 36, paddingBottom: 28,
-              borderBottom: '1px solid var(--border)', flexWrap: 'wrap',
-            }}>
-              <div style={{ flex: 1, minWidth: 280 }}>
-                <div style={{
-                  fontSize: 10.5, fontWeight: 700, letterSpacing: 1.6,
-                  textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 12,
-                }}>Practice</div>
-                <h1 style={{
-                  fontFamily: "'Instrument Serif', serif",
-                  fontSize: 46, lineHeight: 1, letterSpacing: '-1.2px',
-                  color: 'var(--text)', fontWeight: 400, margin: '0 0 14px',
-                }}>Concept <em style={{ fontStyle: 'italic' }}>Drills</em></h1>
-                <p style={{
-                  fontSize: 14, color: 'var(--text-2)', lineHeight: 1.55,
-                  maxWidth: 540, margin: 0,
-                }}>Ten timed multiple-choice questions per round, drawn at random from the track you pick. Pass rate stays visible so you can see where you're tight and where you're not.</p>
-              </div>
-
-              {hasActivity && (
-                <div style={{
-                  display: 'flex', gap: 14, flexShrink: 0,
-                }}>
-                  <div style={{
-                    padding: '14px 18px',
-                    background: 'var(--surface)', border: '1.5px solid var(--border)',
-                    borderRadius: 12, minWidth: 120,
-                  }}>
-                    <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>Questions</div>
-                    <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 30, fontStyle: 'italic', color: 'var(--text)', letterSpacing: '-0.5px', lineHeight: 1 }}>{totalSeen}</div>
-                  </div>
-                  <div style={{
-                    padding: '14px 18px',
-                    background: 'var(--surface)', border: '1.5px solid var(--border)',
-                    borderRadius: 12, minWidth: 120,
-                  }}>
-                    <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>Accuracy</div>
-                    <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 30, fontStyle: 'italic', color: overallPct >= 70 ? '#22c55e' : overallPct >= 50 ? '#f59e0b' : 'var(--text)', letterSpacing: '-0.5px', lineHeight: 1 }}>{overallPct}<span style={{ fontSize: 16, color: 'var(--text-3)' }}>%</span></div>
-                  </div>
-                </div>
-              )}
+            {/* Header */}
+            <div style={{ marginBottom: 28 }}>
+              <div style={{ ...EYEBROW, marginBottom: 10 }}>Practice</div>
+              <h1 style={SERIF_TITLE_SM}>Concept <em style={{ fontStyle: 'italic' }}>drills</em></h1>
+              <p style={{ fontSize: 13.5, color: 'var(--text-3)', lineHeight: 1.55, margin: '10px 0 0', maxWidth: 560 }}>
+                Ten multiple-choice questions per round, drawn from the track you pick. Pass rates stay visible so you know where to come back.
+              </p>
             </div>
 
-            {/* ════════ TRACK GRID ════════ */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-              gap: 14,
-            }}>
+            {/* Stats strip - only shows once user has any activity */}
+            {totalSeen > 0 && (
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 28,
+                padding: '14px 18px', marginBottom: 24,
+                ...CARD,
+              }}>
+                <div>
+                  <div style={{ ...EYEBROW, fontSize: 9.5, marginBottom: 3 }}>Questions</div>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.4px', lineHeight: 1 }}>{totalSeen}</div>
+                </div>
+                <div style={{ width: 1, height: 32, background: 'var(--border)' }} />
+                <div>
+                  <div style={{ ...EYEBROW, fontSize: 9.5, marginBottom: 3 }}>Accuracy</div>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: overallPct >= 70 ? '#22c55e' : overallPct >= 50 ? '#f59e0b' : 'var(--text)', letterSpacing: '-0.4px', lineHeight: 1 }}>
+                    {overallPct}<span style={{ fontSize: 13, color: 'var(--text-3)', fontWeight: 500 }}>%</span>
+                  </div>
+                </div>
+                <div style={{ flex: 1 }} />
+                <div style={{ fontSize: 11, color: 'var(--text-3)' }}>Pass rate {totalPass} of {totalSeen}</div>
+              </div>
+            )}
+
+            {/* Track list - dense 2-col grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 12 }}>
               {TRACK_KEYS.map((k) => {
                 const t = TRACKS[k];
-                const theme = TRACK_THEME[k] || { color: 'var(--text)', bg: 'var(--surface-2)' };
+                const theme = TRACK_THEME[k] || { color: 'var(--text-2)', bg: 'var(--surface-2)' };
                 const stats = trackStats[k] || { seen: 0, pass: 0, pct: 0 };
-                const questionCount = t.questions.length;
                 return (
                   <button
                     key={k}
                     onClick={() => { setTrackKey(k); setPhase('topics'); }}
                     type="button"
-                    className="cd-tile"
+                    className="cd-row"
                     style={{
-                      position: 'relative', textAlign: 'left',
-                      background: 'var(--surface)', border: '1.5px solid var(--border)',
-                      borderRadius: 14, padding: '18px 20px 16px',
-                      cursor: 'pointer', overflow: 'hidden',
+                      ...CARD,
+                      textAlign: 'left',
+                      padding: '16px 18px',
+                      cursor: 'pointer',
                       fontFamily: "'Sora', sans-serif",
-                      transition: 'transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease',
+                      display: 'flex', flexDirection: 'column', gap: 10,
+                      transition: 'border-color 0.15s ease, transform 0.15s ease',
                     }}
                   >
-                    {/* Accent stripe down the left edge */}
-                    <span style={{
-                      position: 'absolute', left: 0, top: 0, bottom: 0, width: 3,
-                      background: theme.color, opacity: 0.85,
-                    }} aria-hidden />
-
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 14 }}>
-                      <div style={{
-                        width: 38, height: 38, borderRadius: 10,
-                        background: theme.bg,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        flexShrink: 0,
-                      }}>
-                        <TrackIcon name={t.icon} color={theme.color} />
-                      </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span style={{ width: 7, height: 7, borderRadius: '50%', background: theme.color, flexShrink: 0 }} aria-hidden />
+                      <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', flex: 1 }}>{t.title}</div>
                       {stats.seen > 0 && (
                         <div style={{
-                          padding: '3px 8px', borderRadius: 100,
                           fontSize: 10.5, fontWeight: 700,
-                          background: stats.pct >= 70 ? 'rgba(34, 197, 94, 0.12)' : stats.pct >= 50 ? 'rgba(245, 158, 11, 0.12)' : 'rgba(220, 38, 38, 0.12)',
+                          padding: '2px 8px', borderRadius: 100,
                           color: stats.pct >= 70 ? '#22c55e' : stats.pct >= 50 ? '#f59e0b' : '#dc2626',
-                          border: 'none',
+                          background: stats.pct >= 70 ? 'rgba(34, 197, 94, 0.10)' : stats.pct >= 50 ? 'rgba(245, 158, 11, 0.10)' : 'rgba(220, 38, 38, 0.10)',
                         }}>{stats.pct}%</div>
                       )}
                     </div>
-
-                    <div style={{
-                      fontSize: 16, fontWeight: 700, color: 'var(--text)',
-                      lineHeight: 1.25, marginBottom: 6,
-                    }}>{t.title}</div>
-
                     <div style={{
                       fontSize: 12, color: 'var(--text-3)', lineHeight: 1.5,
-                      marginBottom: 14,
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
+                      display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
                     }}>{t.desc}</div>
-
-                    <div style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      gap: 8, paddingTop: 12,
-                      borderTop: '1px solid var(--border)',
-                    }}>
-                      <div style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600 }}>
-                        {t.topics.length} topics &middot; {questionCount} Qs
-                      </div>
-                      <div style={{
-                        display: 'flex', alignItems: 'center', gap: 4,
-                        fontSize: 11, fontWeight: 700, color: theme.color,
-                      }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6, fontSize: 11, color: 'var(--text-3)', fontWeight: 600 }}>
+                      <span>{t.topics.length} topics &middot; {t.questions.length} questions</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, color: 'var(--text-2)' }}>
                         {stats.seen > 0 ? 'Drill again' : 'Start'}
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-                      </div>
+                      </span>
                     </div>
                   </button>
                 );
@@ -328,198 +285,421 @@ function ConceptDrillsContent() {
             </div>
 
           </div>
-
           <style>{`
-            .cd-tile:hover {
-              transform: translateY(-2px);
-              border-color: var(--border-2) !important;
-              box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-            }
+            .cd-row:hover { border-color: var(--border-2) !important; transform: translateY(-1px); }
+            .cd-topic-card:hover { border-color: var(--border-2) !important; background: var(--surface-2) !important; }
+            .cd-choice-btn:not(:disabled):hover { border-color: var(--border-2) !important; background: var(--surface-2) !important; }
           `}</style>
         </main>
       </div>
     );
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  //   PHASE 2 - TOPIC PICKER
+  // ═══════════════════════════════════════════════════════════════
+  if (phase === 'topics') {
+    const theme = TRACK_THEME[trackKey] || { color: 'var(--text-2)', bg: 'var(--surface-2)' };
+    return (
+      <div className="app">
+        <Sidebar activePage="concept-drills" />
+        <main className="main" style={PAGE_OUTER}>
+          <div style={{ ...PAGE_INNER, maxWidth: 760 }}>
 
-  // ══════════════ TOPIC PICKER ══════════════
-  if (phase === 'topics') return (
-    <div className="app">
-      <Sidebar activePage="concept-drills" />
-      <main className="main cd-main">
-        <div className="cd-page cd-page-narrow">
-          <button className="cd-back" onClick={() => setPhase('landing')} type="button">
-            <span aria-hidden>‹</span> All tracks
-          </button>
+            <button onClick={() => setPhase('landing')} type="button" style={BACK_LINK}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+              All tracks
+            </button>
 
-          <header className="cd-page-head cd-page-head-sub">
-            <div className="cd-eyebrow">{track.title}</div>
-            <h1 className="cd-h1"><em>Pick</em> a topic</h1>
-            <p className="cd-lede">Ten questions chosen at random, scored as you go. Each round is a fresh draw.</p>
-          </header>
-
-          <ul className="cd-topic-list">
-            <li>
-              <button className="cd-topic-row cd-topic-all" onClick={() => startDrill('All Topics')} type="button">
-                <span className="cd-topic-num" aria-hidden></span>
-                <span className="cd-topic-name">All topics</span>
-                <span className="cd-topic-arrow" aria-hidden>›</span>
-              </button>
-            </li>
-            {track.topics.map((topic, i) => {
-              return (
-                <li key={topic}>
-                  <button className="cd-topic-row" onClick={() => startDrill(topic)} type="button">
-                    <span className="cd-topic-num">{String(i + 1).padStart(2, '0')}</span>
-                    <span className="cd-topic-name">{topic}</span>
-                    <span className="cd-topic-arrow" aria-hidden>›</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      </main>
-    </div>
-  );
-
-  // ══════════════ DRILLING ══════════════
-  if (phase === 'drilling' && q) return (
-    <div className="app">
-      <Sidebar activePage="concept-drills" />
-      <main className="main cd-main">
-        <div className="cd-page cd-page-play">
-          <div className="cd-play-top">
-            <div className="cd-play-title">
-              <span className="cd-play-track">{track.title}</span>
-              <span className="cd-play-sep">·</span>
-              <span className="cd-play-topic">{activeTopic}</span>
+            {/* Header */}
+            <div style={{ margin: '14px 0 24px' }}>
+              <div style={{ ...EYEBROW, display: 'inline-flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: theme.color }} />
+                {track.title}
+              </div>
+              <h1 style={SERIF_TITLE_SM}>Pick a <em style={{ fontStyle: 'italic' }}>topic</em></h1>
+              <p style={{ fontSize: 13.5, color: 'var(--text-3)', lineHeight: 1.55, margin: '10px 0 0' }}>
+                Ten questions drawn from the topic you pick. New random set each time.
+              </p>
             </div>
-            <button className="cd-play-end" onClick={() => setPhase('done')} type="button">End drill</button>
-          </div>
 
-          <div className="cd-progress">
-            <div className="cd-progress-fill" style={{ width: `${(idx / questions.length) * 100}%` }} />
-          </div>
+            {/* All topics - featured */}
+            <button
+              onClick={() => startDrill('All Topics')}
+              type="button"
+              className="cd-topic-card"
+              style={{
+                width: '100%', textAlign: 'left',
+                padding: '16px 20px', marginBottom: 12,
+                ...CARD,
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: 14,
+                fontFamily: "'Sora', sans-serif",
+                transition: 'border-color 0.15s ease, background 0.15s ease',
+              }}
+            >
+              <div style={{
+                width: 36, height: 36, borderRadius: 9,
+                background: theme.bg,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <svg width="16" height="16" fill="none" stroke={theme.color} strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M3 3h18v18H3z"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>All topics</div>
+                <div style={{ fontSize: 11.5, color: 'var(--text-3)' }}>Random mix from {track.questions.length} questions across {track.topics.length} topics</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
 
-          <article className="cd-q">
-            <header className="cd-q-head">
-              <span className="cd-q-index">Q{String(idx + 1).padStart(2, '0')}<span className="cd-q-of">/ {questions.length}</span></span>
-              <span className="cd-q-rule" aria-hidden></span>
-              <span className="cd-q-cat">{q.category}</span>
-              {q.difficulty && <span className={`cd-q-diff cd-q-diff-${q.difficulty}`}>{q.difficulty}</span>}
-            </header>
-
-            {q.scenario && <div className="cd-q-scenario">{q.scenario}</div>}
-
-            <h2 className="cd-q-prompt">{q.q}</h2>
-
-            <div className="cd-choices">
-              {q.options.map((opt, i) => {
-                let cls = 'cd-choice';
-                if (selected !== null) {
-                  if (i === q.correct) cls += ' correct';
-                  else if (i === selected) cls += ' wrong';
-                  else cls += ' faded';
-                }
+            {/* Individual topics */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 10 }}>
+              {track.topics.map((topic, i) => {
+                const qCount = track.questions.filter(q => q.topic === topic).length;
                 return (
-                  <button key={i} className={cls} onClick={() => handleSelect(i)} type="button" disabled={selected !== null}>
-                    <span className="cd-choice-letter">{'ABCD'[i]}</span>
-                    <span className="cd-choice-text">{opt}</span>
+                  <button
+                    key={topic}
+                    onClick={() => startDrill(topic)}
+                    type="button"
+                    className="cd-topic-card"
+                    style={{
+                      textAlign: 'left',
+                      padding: '14px 16px',
+                      ...CARD,
+                      cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      fontFamily: "'Sora', sans-serif",
+                      transition: 'border-color 0.15s ease, background 0.15s ease',
+                    }}
+                  >
+                    <span style={{
+                      fontFamily: "'Instrument Serif', serif", fontStyle: 'italic',
+                      fontSize: 18, color: theme.color, minWidth: 22, flexShrink: 0,
+                    }}>{String(i + 1).padStart(2, '0')}</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>{topic}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{qCount} questions</div>
+                    </div>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
                   </button>
                 );
               })}
             </div>
 
-            {showExp && (
-              <div className={`cd-exp ${selected === q.correct ? 'correct' : 'wrong'}`}>
-                <div className="cd-exp-label">{selected === q.correct ? 'Correct' : 'Incorrect'}</div>
-                <div className="cd-exp-text">{q.explanation}</div>
-                <button className="cd-exp-next" onClick={next} type="button">
-                  {idx + 1 >= questions.length ? 'Finish' : 'Next question'} <span aria-hidden>›</span>
-                </button>
+          </div>
+          <style>{`
+            .cd-topic-card:hover { border-color: var(--border-2) !important; background: var(--surface-2) !important; }
+            .cd-choice-btn:not(:disabled):hover { border-color: var(--border-2) !important; background: var(--surface-2) !important; }
+          `}</style>
+        </main>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //   PHASE 3 - DRILLING
+  // ═══════════════════════════════════════════════════════════════
+  if (phase === 'drilling' && q) {
+    const theme = TRACK_THEME[trackKey] || { color: 'var(--text-2)', bg: 'var(--surface-2)' };
+    const progressPct = ((idx) / questions.length) * 100;
+    const isCorrect = selected === q.correct;
+    return (
+      <div className="app">
+        <Sidebar activePage="concept-drills" />
+        <main className="main" style={PAGE_OUTER}>
+          <div style={{ ...PAGE_INNER, maxWidth: 760 }}>
+
+            {/* Top bar: breadcrumb + score + end */}
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              gap: 16, marginBottom: 14, flexWrap: 'wrap',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11.5, color: 'var(--text-3)', fontWeight: 600 }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: theme.color, display: 'inline-block' }} />
+                <span>{track.title}</span>
+                <span style={{ color: 'var(--border-2)' }}>/</span>
+                <span style={{ color: 'var(--text-2)' }}>{activeTopic}</span>
               </div>
-            )}
-          </article>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ fontSize: 11.5, color: 'var(--text-3)', fontWeight: 600 }}>
+                  <span style={{ color: 'var(--text)' }}>{score}</span> pts &middot;{' '}
+                  <span style={{ color: '#22c55e' }}>{correct}</span> right &middot;{' '}
+                  <span style={{ color: '#dc2626' }}>{wrong}</span> wrong
+                </div>
+                <button onClick={() => setPhase('done')} type="button" style={{
+                  background: 'transparent', color: 'var(--text-3)',
+                  padding: '6px 12px', borderRadius: 7,
+                  fontSize: 11.5, fontWeight: 600,
+                  border: '1.5px solid var(--border)',
+                  cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+                }}>End drill</button>
+              </div>
+            </div>
 
-          <footer className="cd-play-foot">
-            <span><span className="cd-foot-n">{score}</span> pts</span>
-            <span className="cd-foot-sep">·</span>
-            <span className="cd-foot-ok">{correct} right</span>
-            <span className="cd-foot-sep">·</span>
-            <span className="cd-foot-no">{wrong} wrong</span>
-          </footer>
-        </div>
-      </main>
-    </div>
-  );
+            {/* Progress bar */}
+            <div style={{ height: 4, background: 'var(--surface-2)', borderRadius: 2, overflow: 'hidden', marginBottom: 24 }}>
+              <div style={{ height: '100%', width: `${progressPct}%`, background: theme.color, transition: 'width 0.3s ease', borderRadius: 2 }} />
+            </div>
 
-  // ══════════════ REVIEW ══════════════
+            {/* Question card */}
+            <div style={{ ...CARD, padding: '24px 28px' }}>
+              {/* Question header */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+                <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text-3)', letterSpacing: 0.4 }}>
+                  Q{String(idx + 1).padStart(2, '0')} <span style={{ color: 'var(--border-2)' }}>/ {questions.length}</span>
+                </div>
+                <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+                <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-3)', letterSpacing: 0.5, textTransform: 'uppercase' }}>{q.category}</div>
+                {q.difficulty && (
+                  <div style={{
+                    fontSize: 9.5, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase',
+                    padding: '2px 7px', borderRadius: 4,
+                    color: q.difficulty === 'easy' ? '#22c55e' : q.difficulty === 'medium' ? '#f59e0b' : '#dc2626',
+                    background: q.difficulty === 'easy' ? 'rgba(34, 197, 94, 0.10)' : q.difficulty === 'medium' ? 'rgba(245, 158, 11, 0.10)' : 'rgba(220, 38, 38, 0.10)',
+                  }}>{q.difficulty}</div>
+                )}
+              </div>
+
+              {/* Scenario */}
+              {q.scenario && (
+                <div style={{
+                  padding: '12px 14px', marginBottom: 16,
+                  background: 'var(--surface-2)', borderLeft: `3px solid ${theme.color}`,
+                  borderRadius: 6,
+                  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                  fontSize: 12.5, color: 'var(--text-2)', lineHeight: 1.6,
+                }}>{q.scenario}</div>
+              )}
+
+              {/* Question prompt */}
+              <h2 style={{
+                fontFamily: "'Instrument Serif', serif",
+                fontSize: 24, lineHeight: 1.3, color: 'var(--text)',
+                fontWeight: 400, margin: '0 0 20px',
+                letterSpacing: '-0.3px',
+              }}>{q.q}</h2>
+
+              {/* Choices */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {q.options.map((opt, i) => {
+                  const isSelected = selected === i;
+                  const isCorrectChoice = i === q.correct;
+                  const showResult = selected !== null;
+                  let borderColor = 'var(--border)';
+                  let bg = 'var(--surface)';
+                  let textColor = 'var(--text)';
+                  let letterBg = 'var(--surface-2)';
+                  let letterColor = 'var(--text-3)';
+                  if (showResult) {
+                    if (isCorrectChoice) { borderColor = '#22c55e'; bg = 'rgba(34, 197, 94, 0.08)'; letterBg = '#22c55e'; letterColor = '#fff'; }
+                    else if (isSelected) { borderColor = '#dc2626'; bg = 'rgba(220, 38, 38, 0.08)'; letterBg = '#dc2626'; letterColor = '#fff'; }
+                    else { textColor = 'var(--text-3)'; }
+                  }
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => handleSelect(i)}
+                      disabled={selected !== null}
+                      type="button"
+                      className="cd-choice-btn"
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 12,
+                        padding: '13px 16px',
+                        background: bg, border: `1.5px solid ${borderColor}`, borderRadius: 9,
+                        cursor: selected !== null ? 'default' : 'pointer',
+                        fontFamily: "'Sora', sans-serif",
+                        textAlign: 'left', color: textColor,
+                        transition: 'all 0.12s ease',
+                      }}
+                    >
+                      <div style={{
+                        width: 26, height: 26, borderRadius: 7,
+                        background: letterBg, color: letterColor,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 11, fontWeight: 700,
+                        flexShrink: 0,
+                        transition: 'all 0.12s ease',
+                      }}>{'ABCD'[i]}</div>
+                      <span style={{ fontSize: 13.5, lineHeight: 1.4, flex: 1 }}>{opt}</span>
+                      {showResult && isCorrectChoice && (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      )}
+                      {showResult && isSelected && !isCorrectChoice && (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Explanation */}
+              {showExp && (
+                <div style={{
+                  marginTop: 18, padding: '16px 18px',
+                  background: 'var(--surface-2)', borderRadius: 10,
+                  borderLeft: `3px solid ${isCorrect ? '#22c55e' : '#dc2626'}`,
+                }}>
+                  <div style={{
+                    fontSize: 10.5, fontWeight: 700, letterSpacing: 0.6, textTransform: 'uppercase',
+                    color: isCorrect ? '#22c55e' : '#dc2626', marginBottom: 6,
+                  }}>{isCorrect ? 'Correct' : 'Not quite'}</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6, marginBottom: 14 }}>{q.explanation}</div>
+                  <button onClick={next} type="button" style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 7,
+                    background: 'var(--text)', color: 'var(--surface)',
+                    padding: '9px 16px', borderRadius: 8,
+                    fontSize: 12.5, fontWeight: 700,
+                    border: 'none', cursor: 'pointer',
+                    fontFamily: "'Sora', sans-serif",
+                  }}>
+                    {idx + 1 >= questions.length ? 'Finish drill' : 'Next question'}
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                </div>
+              )}
+            </div>
+
+          </div>
+          <style>{`
+            .cd-choice-btn:not(:disabled):hover { border-color: var(--border-2) !important; background: var(--surface-2) !important; }
+          `}</style>
+        </main>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //   PHASE 4 - RESULTS
+  // ═══════════════════════════════════════════════════════════════
+  const theme = TRACK_THEME[trackKey] || { color: 'var(--text-2)', bg: 'var(--surface-2)' };
+  const missed = history.filter(h => !h.correct);
+  const accuracyColor = accuracy >= 70 ? '#22c55e' : accuracy >= 50 ? '#f59e0b' : '#dc2626';
   return (
     <div className="app">
       <Sidebar activePage="concept-drills" />
-      <main className="main cd-main">
-        <div className="cd-page cd-page-narrow">
-          <header className="cd-page-head">
-            <div className="cd-eyebrow">Drill complete</div>
-            <h1 className="cd-h1"><em>{track.title}</em>{activeTopic !== 'All Topics' ? ` · ${activeTopic}` : ''}</h1>
-          </header>
+      <main className="main" style={PAGE_OUTER}>
+        <div style={{ ...PAGE_INNER, maxWidth: 760 }}>
 
-          <div className="cd-result-summary">
-            <div className="cd-result-accuracy">
-              <span className="cd-result-num">{accuracy}</span>
-              <span className="cd-result-pct">%</span>
+          {/* Header */}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ ...EYEBROW, display: 'inline-flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: theme.color }} />
+              Drill complete
             </div>
-            <div className="cd-result-meta">
-              <div className="cd-result-line">{correct} of {total} correct</div>
-              <div className="cd-result-line-sub">{score} points</div>
+            <h1 style={SERIF_TITLE_SM}>
+              <em style={{ fontStyle: 'italic' }}>{track.title}</em>
+              {activeTopic !== 'All Topics' && <span style={{ color: 'var(--text-3)', fontStyle: 'normal' }}> &middot; {activeTopic}</span>}
+            </h1>
+          </div>
+
+          {/* Big stats card */}
+          <div style={{
+            ...CARD, padding: '28px 32px', marginBottom: 16,
+            display: 'flex', alignItems: 'center', gap: 32,
+          }}>
+            <div style={{ position: 'relative', width: 96, height: 96, flexShrink: 0 }}>
+              <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
+                <circle cx="50" cy="50" r="42" fill="none" stroke="var(--surface-2)" strokeWidth="9" />
+                <circle cx="50" cy="50" r="42" fill="none" stroke={accuracyColor} strokeWidth="9" strokeDasharray={`${(accuracy / 100) * 264} 264`} strokeLinecap="round" />
+              </svg>
+              <div style={{
+                position: 'absolute', inset: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexDirection: 'column',
+                fontFamily: "'Instrument Serif', serif",
+              }}>
+                <div style={{ fontSize: 28, fontStyle: 'italic', color: accuracyColor, lineHeight: 1, letterSpacing: '-0.5px' }}>{accuracy}<span style={{ fontSize: 14, color: 'var(--text-3)' }}>%</span></div>
+              </div>
+            </div>
+            <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }}>
+              <div>
+                <div style={{ ...EYEBROW, fontSize: 9.5, marginBottom: 4 }}>Correct</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: '#22c55e', lineHeight: 1 }}>{correct}<span style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 500 }}> / {total}</span></div>
+              </div>
+              <div>
+                <div style={{ ...EYEBROW, fontSize: 9.5, marginBottom: 4 }}>Wrong</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: missed.length > 0 ? '#dc2626' : 'var(--text-3)', lineHeight: 1 }}>{wrong}</div>
+              </div>
+              <div>
+                <div style={{ ...EYEBROW, fontSize: 9.5, marginBottom: 4 }}>Points</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)', lineHeight: 1 }}>{score}</div>
+              </div>
             </div>
           </div>
 
-          {history.filter(h => !h.correct).length > 0 && (
-            <section className="cd-review">
-              <div className="cd-review-head">
-                <span className="cd-review-lbl">What you missed</span>
-                <span className="cd-review-count">{history.filter(h => !h.correct).length}</span>
+          {/* Free plan upgrade nudge */}
+          {(() => {
+            const plan = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_plan') || 'free') : 'free';
+            if (plan === 'pro' || plan === 'elite') return null;
+            return (
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '12px 16px', marginBottom: 16,
+                ...CARD,
+                fontSize: 12, color: 'var(--text-3)',
+              }}>
+                <span>Free drills are 5 questions. Upgrade for full {DRILL_SIZE}-question drills across all tracks.</span>
+                <a href="/checkout" style={{ padding: '6px 12px', borderRadius: 7, fontSize: 11, fontWeight: 700, background: 'var(--text)', color: 'var(--surface)', textDecoration: 'none', fontFamily: "'Sora', sans-serif", flexShrink: 0, marginLeft: 12 }}>Upgrade</a>
               </div>
-              <ol className="cd-review-list">
-                {history.filter(h => !h.correct).map((h, i) => (
-                  <li key={i} className="cd-review-item">
-                    <div className="cd-review-topic">{h.topic}</div>
-                    <div className="cd-review-q">{h.q}</div>
-                    <div className="cd-review-exp">{h.explanation}</div>
-                  </li>
+            );
+          })()}
+
+          {/* Missed questions */}
+          {missed.length > 0 && (
+            <div style={{ ...CARD, padding: '20px 24px', marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                <div style={{ ...EYEBROW }}>What you missed</div>
+                <div style={{
+                  fontSize: 10.5, fontWeight: 700, padding: '2px 8px', borderRadius: 100,
+                  background: 'rgba(220, 38, 38, 0.10)', color: '#dc2626',
+                }}>{missed.length}</div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                {missed.map((h, i) => (
+                  <div key={i} style={{
+                    paddingBottom: i < missed.length - 1 ? 14 : 0,
+                    borderBottom: i < missed.length - 1 ? '1px solid var(--border)' : 'none',
+                  }}>
+                    <div style={{ ...EYEBROW, fontSize: 9.5, marginBottom: 5 }}>{h.topic}</div>
+                    <div style={{ fontSize: 13.5, color: 'var(--text)', fontWeight: 600, marginBottom: 6, lineHeight: 1.4 }}>{h.q}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.55 }}>{h.explanation}</div>
+                  </div>
                 ))}
-              </ol>
-            </section>
+              </div>
+            </div>
           )}
 
-          <div className="cd-result-actions-wrap">
-            {(() => {
-              const plan = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_plan') || 'free') : 'free';
-              if (plan === 'pro' || plan === 'elite') return null;
-              return (
-                <div style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '12px 18px', marginBottom: 16,
-                  background: 'var(--surface)', border: '1.5px solid var(--border)',
-                  borderRadius: 10, fontSize: 12, color: 'var(--text-3)',
-                }}>
-                  <span>Free drills are 5 questions. Upgrade for full {DRILL_SIZE}-question drills across all tracks.</span>
-                  <a href="/checkout" style={{ padding: '5px 12px', borderRadius: 7, fontSize: 11, fontWeight: 700, background: 'var(--text)', color: 'var(--surface)', textDecoration: 'none', fontFamily: "'Sora', sans-serif", flexShrink: 0, marginLeft: 12 }}>Upgrade</a>
-                </div>
-              );
-            })()}
-            <div className="cd-result-actions-label">Next</div>
-            <div className="cd-result-actions">
-              <button className="cd-action-primary" onClick={() => startDrill(activeTopic)} type="button">
-                Drill again
-                <span aria-hidden>↻</span>
-              </button>
-              <button className="cd-action-secondary" onClick={() => setPhase('topics')} type="button">Pick another topic</button>
-              <button className="cd-action-secondary" onClick={() => setPhase('landing')} type="button">All tracks</button>
-            </div>
+          {/* Actions */}
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <button onClick={() => startDrill(activeTopic)} type="button" style={{
+              flex: '1 1 200px',
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              background: 'var(--text)', color: 'var(--surface)',
+              padding: '12px 18px', borderRadius: 9,
+              fontSize: 13, fontWeight: 700,
+              border: 'none', cursor: 'pointer',
+              fontFamily: "'Sora', sans-serif",
+            }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>
+              Drill again
+            </button>
+            <button onClick={() => setPhase('topics')} type="button" style={{
+              background: 'transparent', color: 'var(--text-2)',
+              padding: '12px 18px', borderRadius: 9,
+              fontSize: 13, fontWeight: 600,
+              border: '1.5px solid var(--border-2)', cursor: 'pointer',
+              fontFamily: "'Sora', sans-serif",
+            }}>Another topic</button>
+            <button onClick={() => setPhase('landing')} type="button" style={{
+              background: 'transparent', color: 'var(--text-2)',
+              padding: '12px 18px', borderRadius: 9,
+              fontSize: 13, fontWeight: 600,
+              border: '1.5px solid var(--border-2)', cursor: 'pointer',
+              fontFamily: "'Sora', sans-serif",
+            }}>All tracks</button>
           </div>
+
         </div>
       </main>
     </div>
