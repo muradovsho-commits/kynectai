@@ -56,7 +56,6 @@ const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
 
   // Redesigned UI: tab state for the new settings layout. Pure cosmetic;
   // does not change behavior.
-  const [activeTab, setActiveTab] = useState<'plan' | 'usage' | 'profile' | 'account'>('plan');
 
   // Server-side weekly usage (Convex). Falls back to localStorage if the
   // fetch hasn't resolved yet so the page never renders empty bars.
@@ -430,440 +429,411 @@ const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
     <div className="app">
       <Sidebar activePage="my-account" />
 
-      <main className="main" style={{ padding: '40px 48px 80px', maxWidth: 1100, margin: '0 auto' }}>
+      <main className="main" style={{ padding: '36px 44px 80px', maxWidth: 1180, margin: '0 auto' }}>
 
-        {/* ───────────────────────── HERO ───────────────────────── */}
+        {/* ════════════════ HERO ════════════════ */}
         <div style={{
-          display: 'flex', alignItems: 'flex-start', gap: 24,
-          paddingBottom: 32, marginBottom: 32,
+          display: 'flex', alignItems: 'center', gap: 20,
+          paddingBottom: 24, marginBottom: 28,
           borderBottom: '1px solid var(--border)',
         }}>
           <div style={{ position: 'relative', flexShrink: 0 }}>
             <input ref={picInputRef} type="file" accept="image/*" onChange={handlePicUpload} style={{ display: 'none' }} />
-            <div
+            <button
+              type="button"
               onClick={() => picInputRef.current?.click()}
               style={{
-                width: 88, height: 88, borderRadius: '50%',
+                width: 64, height: 64, borderRadius: '50%',
                 background: 'var(--text)', color: 'var(--surface)',
-                fontSize: 30, fontWeight: 700,
+                fontSize: 22, fontWeight: 700,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontFamily: "'Instrument Serif', serif",
-                cursor: 'pointer', overflow: 'hidden', position: 'relative',
+                cursor: 'pointer', overflow: 'hidden',
+                border: '2px solid var(--border)',
+                padding: 0,
               }}
+              aria-label="Change profile picture"
             >
               {profilePic ? (
                 <img src={profilePic} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
               ) : (initials || '?')}
-              <div style={{
-                position: 'absolute', bottom: 0, left: 0, right: 0,
-                height: 26, background: 'rgba(0,0,0,0.55)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-              </div>
-            </div>
+            </button>
             {profilePic && (
-              <button onClick={removePic} type="button" title="Remove photo" style={{
-                position: 'absolute', top: -4, right: -4, width: 22, height: 22, borderRadius: '50%',
-                background: 'var(--surface)', border: '1.5px solid var(--border)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer', fontSize: 13, color: 'var(--text-3)', lineHeight: 1, padding: 0,
-              }}>&times;</button>
+              <button
+                type="button"
+                onClick={removePic}
+                title="Remove photo"
+                style={{
+                  position: 'absolute', top: -6, right: -6,
+                  width: 22, height: 22, borderRadius: '50%',
+                  background: 'var(--bg)', border: '1.5px solid var(--border-2)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', padding: 0,
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
+                }}
+              >
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
             )}
           </div>
 
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{
-              fontFamily: "'Instrument Serif', serif", fontSize: 34, letterSpacing: '-0.5px',
-              color: 'var(--text)', marginBottom: 4, lineHeight: 1.1,
+              fontFamily: "'Instrument Serif', serif", fontSize: 26, letterSpacing: '-0.3px',
+              color: 'var(--text)', lineHeight: 1.15, marginBottom: 2,
             }}>
-              {firstName} <em style={{ fontStyle: 'italic' }}>{lastName}</em>
+              {firstName || 'Set'} <em style={{ fontStyle: 'italic' }}>{lastName || 'your name'}</em>
             </div>
-            <div style={{ fontSize: 13.5, color: 'var(--text-3)', marginBottom: 14 }}>{email || 'No email set'}</div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <div style={{ fontSize: 12.5, color: 'var(--text-3)', marginBottom: 8 }}>{email || 'No email set'}</div>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               <span style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                padding: '5px 12px', borderRadius: 100,
-                fontSize: 11.5, fontWeight: 600, ...planBadgeStyle,
+                display: 'inline-flex', alignItems: 'center', gap: 5,
+                padding: '3px 9px', borderRadius: 100,
+                fontSize: 10.5, fontWeight: 700, letterSpacing: 0.3, textTransform: 'uppercase',
+                ...planBadgeStyle,
               }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor' }} />
-                {planLabel} Plan
+                <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor' }} />
+                {planLabel}
               </span>
               {school && (
                 <span style={{
-                  display: 'inline-flex', padding: '5px 12px', borderRadius: 100,
-                  fontSize: 11.5, fontWeight: 600,
-                  background: 'var(--surface-2)', color: 'var(--text-2)', border: '1px solid var(--border)',
+                  display: 'inline-flex', padding: '3px 9px', borderRadius: 100,
+                  fontSize: 10.5, fontWeight: 600,
+                  background: 'var(--surface-2)', color: 'var(--text-3)',
+                  border: '1px solid var(--border)',
                 }}>{school}</span>
               )}
               {year && (
                 <span style={{
-                  display: 'inline-flex', padding: '5px 12px', borderRadius: 100,
-                  fontSize: 11.5, fontWeight: 600,
-                  background: 'var(--surface-2)', color: 'var(--text-2)', border: '1px solid var(--border)',
+                  display: 'inline-flex', padding: '3px 9px', borderRadius: 100,
+                  fontSize: 10.5, fontWeight: 600,
+                  background: 'var(--surface-2)', color: 'var(--text-3)',
+                  border: '1px solid var(--border)',
                 }}>{year}</span>
               )}
             </div>
           </div>
 
           <button type="button" onClick={handleSignOut} style={{
-            background: 'var(--surface)', color: 'var(--text-2)',
-            padding: '10px 20px', borderRadius: 10,
-            fontSize: 13, fontWeight: 600,
+            background: 'transparent', color: 'var(--text-2)',
+            padding: '8px 16px', borderRadius: 8,
+            fontSize: 12.5, fontWeight: 600,
             border: '1.5px solid var(--border-2)',
             cursor: 'pointer', fontFamily: "'Sora', sans-serif",
             flexShrink: 0,
-          }}>Sign out</button>
+            display: 'flex', alignItems: 'center', gap: 6,
+          }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+            Sign out
+          </button>
         </div>
 
-        {/* ───────────────────────── PENDING PLAN BANNER ───────────────────────── */}
+        {/* ════════════════ PENDING PLAN BANNER ════════════════ */}
         {pendingPlanChange && (
           <div style={{
-            marginBottom: 24, padding: '14px 18px',
-            borderRadius: 12, background: 'rgba(251, 146, 60, 0.08)',
-            border: '1.5px solid rgba(251, 146, 60, 0.35)',
-            display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap',
+            marginBottom: 20, padding: '13px 16px',
+            borderRadius: 10, background: 'rgba(251, 146, 60, 0.07)',
+            border: '1.5px solid rgba(251, 146, 60, 0.3)',
+            display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap',
           }}>
             <div style={{ flex: 1, minWidth: 220 }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
                 {pendingPlanChange.targetPlan === 'free'
-                  ? 'Your subscription is scheduled to cancel'
-                  : `Your plan switches to ${pendingPlanChange.targetPlan === 'pro' ? 'Pro' : pendingPlanChange.targetPlan}`}
+                  ? 'Subscription scheduled to cancel'
+                  : `Plan switches to ${pendingPlanChange.targetPlan === 'pro' ? 'Pro' : pendingPlanChange.targetPlan}`}
               </div>
               <div style={{ fontSize: 12, color: 'var(--text-3)' }}>
-                Effective {new Date(pendingPlanChange.effectiveAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}. You'll keep your current plan until then.
+                Effective {new Date(pendingPlanChange.effectiveAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}. Current plan stays until then.
               </div>
             </div>
             <button type="button" onClick={handleKeepPlan} disabled={resumingPlan} style={{
-              padding: '8px 16px', borderRadius: 8,
+              padding: '7px 14px', borderRadius: 7,
               border: '1.5px solid var(--border-2)', background: 'var(--bg)', color: 'var(--text)',
-              fontSize: 12, fontWeight: 700,
-              cursor: resumingPlan ? 'not-allowed' : 'pointer', opacity: resumingPlan ? 0.6 : 1,
-              fontFamily: "'Sora', sans-serif",
+              fontSize: 12, fontWeight: 700, cursor: resumingPlan ? 'not-allowed' : 'pointer',
+              opacity: resumingPlan ? 0.6 : 1, fontFamily: "'Sora', sans-serif",
             }}>{resumingPlan ? 'Working...' : 'Keep my plan'}</button>
           </div>
         )}
 
-        {/* ───────────────────────── PILL TAB NAV ───────────────────────── */}
-        <div style={{
-          display: 'flex', gap: 4, padding: 4,
-          background: 'var(--surface-2)', borderRadius: 12,
-          marginBottom: 28, width: 'fit-content',
-        }}>
-          {([
-            { id: 'plan',    label: 'Plan & Billing' },
-            { id: 'usage',   label: 'Usage' },
-            { id: 'profile', label: 'Profile' },
-            { id: 'account', label: 'Account' },
-          ] as const).map(t => (
-            <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
-              style={{
-                padding: '9px 18px', borderRadius: 9, border: 'none',
-                fontSize: 13, fontWeight: 600,
-                fontFamily: "'Sora', sans-serif",
-                cursor: 'pointer',
-                background: activeTab === t.id ? 'var(--bg)' : 'transparent',
-                color: activeTab === t.id ? 'var(--text)' : 'var(--text-3)',
-                boxShadow: activeTab === t.id ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-                transition: 'all 0.15s ease',
-              }}>
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* ───────────────────────── TAB: PLAN ───────────────────────── */}
-        {activeTab === 'plan' && (
-          <div data-tutorial="plan-section">
-            {(userPlan === 'pro' || userPlan === 'elite') ? (
-              <div style={{
-                background: 'var(--surface)', border: '1.5px solid var(--border)',
-                borderRadius: 16, padding: '28px 32px',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 24, marginBottom: 24 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <div style={{
-                      width: 52, height: 52, borderRadius: 14,
-                      background: userPlan === 'elite' ? '#1d4ed8' : '#166534',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                    }}>
-                      <svg width="22" height="22" fill="none" stroke="#fff" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>{planLabel} Plan</div>
-                      <div style={{ fontSize: 12.5, color: 'var(--text-3)' }}>
-                        {userPlan === 'elite'
-                          ? 'The Desk, higher AI limits, 30 resume reviews/week, priority support'
-                          : 'Usage-based AI, 10 resume reviews/week, all features'}
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 30, fontStyle: 'italic', color: 'var(--text)', letterSpacing: '-0.5px', lineHeight: 1 }}>
-                      {promoCode && (promoCode.toLowerCase().includes('lifetime') || promoCode.toLowerCase().includes('forever') || promoCode.toLowerCase().includes('free'))
-                        ? <>$0</>
-                        : billingCycle === 'annual'
-                          ? <>{userPlan === 'elite' ? '$384' : '$192'}<span style={{ fontSize: 13, fontStyle: 'normal', fontFamily: "'Sora', sans-serif", color: 'var(--text-3)', fontWeight: 400 }}>/yr</span></>
-                          : billingCycle === '6month'
-                            ? <>{userPlan === 'elite' ? '$216' : '$108'}<span style={{ fontSize: 13, fontStyle: 'normal', fontFamily: "'Sora', sans-serif", color: 'var(--text-3)', fontWeight: 400 }}>/6mo</span></>
-                            : <>{userPlan === 'elite' ? '$40' : '$20'}<span style={{ fontSize: 13, fontStyle: 'normal', fontFamily: "'Sora', sans-serif", color: 'var(--text-3)', fontWeight: 400 }}>/mo</span></>
-                      }
-                    </div>
-                    <div style={{ fontSize: 10.5, color: '#22c55e', fontWeight: 600, marginTop: 4, textTransform: 'uppercase', letterSpacing: 1 }}>Active</div>
-                  </div>
-                </div>
-
-                {(() => {
-                  if (!planActivatedAt && !promoCode) return null;
-                  const fmtDate = (ts: number) => new Date(ts).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-                  const cycleDays = billingCycle === 'annual' ? 365 : billingCycle === '6month' ? 182 : 30;
-                  return (
-                    <div style={{
-                      padding: '12px 14px', background: 'var(--surface-2)', borderRadius: 10,
-                      fontSize: 12, color: 'var(--text-3)', marginBottom: 18,
-                    }}>
-                      {promoCode ? (() => {
-                        const code = promoCode.toLowerCase();
-                        if (code.includes('lifetime') || code.includes('forever') || code.includes('free')) {
-                          return <>Lifetime access via promo code <strong style={{ color: 'var(--text-2)' }}>{promoCode}</strong></>;
-                        }
-                        if (planActivatedAt) return <>Activated via code <strong style={{ color: 'var(--text-2)' }}>{promoCode}</strong>. Renews {fmtDate(planActivatedAt + cycleDays * 864e5)}</>;
-                        return <>Activated via code <strong style={{ color: 'var(--text-2)' }}>{promoCode}</strong></>;
-                      })() : (
-                        planActivatedAt ? <>Renews {fmtDate(planActivatedAt + cycleDays * 864e5)}</> : null
-                      )}
-                    </div>
-                  );
-                })()}
-
-                <button type="button" onClick={() => window.location.href = '/checkout'} style={{
-                  width: '100%', background: 'var(--text)', color: 'var(--surface)',
-                  padding: '12px 0', borderRadius: 10,
-                  fontSize: 13, fontWeight: 700, border: 'none',
-                  cursor: 'pointer', fontFamily: "'Sora', sans-serif",
-                }}>Manage plan</button>
+        {/* ════════════════ TOP ROW: PLAN + USAGE ════════════════ */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 16, marginBottom: 16 }} className="ma-grid">
+          {/* ─── PLAN CARD ─── */}
+          <div data-tutorial="plan-section" style={{
+            background: 'var(--surface)', border: '1.5px solid var(--border)',
+            borderRadius: 14, padding: '22px 24px',
+            display: 'flex', flexDirection: 'column',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 0.6 }}>Plan &amp; billing</div>
+              <div style={{ fontSize: 10.5, fontWeight: 700, color: userPlan === 'free' ? 'var(--text-3)' : '#22c55e', letterSpacing: 0.5, textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 5 }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: userPlan === 'free' ? 'var(--text-3)' : '#22c55e' }}/>
+                {userPlan === 'free' ? 'Free' : 'Active'}
               </div>
-            ) : (
-              <div style={{
-                background: 'var(--surface)', border: '1.5px solid var(--border)',
-                borderRadius: 16, padding: '28px 32px',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 24, marginBottom: 20 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <div style={{
-                      width: 52, height: 52, borderRadius: 14, background: 'var(--text)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                    }}>
-                      <svg width="22" height="22" fill="none" stroke="var(--surface)" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>Free Plan</div>
-                      <div style={{ fontSize: 12.5, color: 'var(--text-3)' }}>5 outreach lifetime, 1 resume review/week, 3 mock interviews/week</div>
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 30, fontStyle: 'italic', color: 'var(--text)', letterSpacing: '-0.5px', lineHeight: 1 }}>
-                      $0<span style={{ fontSize: 13, fontStyle: 'normal', fontFamily: "'Sora', sans-serif", color: 'var(--text-3)', fontWeight: 400 }}>/mo</span>
-                    </div>
-                    <div style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 4 }}>No card required</div>
-                  </div>
-                </div>
-                <button type="button" onClick={() => window.location.href = '/checkout'} style={{
-                  width: '100%', background: '#2563eb', color: '#fff',
-                  padding: '12px 0', borderRadius: 10,
-                  fontSize: 13, fontWeight: 700, border: 'none',
-                  cursor: 'pointer', fontFamily: "'Sora', sans-serif",
-                }}>View plans &amp; upgrade</button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ───────────────────────── TAB: USAGE ───────────────────────── */}
-        {activeTab === 'usage' && (
-          <div>
-            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 18, gap: 16, flexWrap: 'wrap' }}>
-              <div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>This week</div>
-                <div style={{ fontSize: 12.5, color: 'var(--text-3)' }}>Resets <strong style={{ color: 'var(--text-2)' }}>{reset.day}</strong> at {reset.time} (in {reset.relative})</div>
-              </div>
-              {userPlan !== 'elite' && (
-                <a href="/checkout" style={{
-                  padding: '8px 14px', borderRadius: 8,
-                  background: 'var(--text)', color: 'var(--surface)',
-                  fontSize: 12, fontWeight: 700, textDecoration: 'none',
-                  fontFamily: "'Sora', sans-serif",
-                }}>Upgrade for higher limits</a>
-              )}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, marginBottom: 12 }}>
+              <div>
+                <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 30, letterSpacing: '-0.5px', color: 'var(--text)', lineHeight: 1, marginBottom: 4 }}>
+                  {planLabel} <em style={{ fontStyle: 'italic' }}>plan</em>
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.5 }}>
+                  {userPlan === 'elite'
+                    ? 'The Desk, higher AI limits, 30 resume reviews/week'
+                    : userPlan === 'pro'
+                      ? '10 resume reviews/week, 20 outreach/week, all features'
+                      : '5 outreach lifetime, 1 review/week, 3 mocks/week'}
+                </div>
+              </div>
+              <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, fontStyle: 'italic', color: 'var(--text)', letterSpacing: '-0.5px', lineHeight: 1 }}>
+                  {userPlan === 'free' ? '$0' : (promoCode && (promoCode.toLowerCase().includes('lifetime') || promoCode.toLowerCase().includes('forever') || promoCode.toLowerCase().includes('free')))
+                    ? '$0'
+                    : billingCycle === 'annual'
+                      ? userPlan === 'elite' ? '$384' : '$192'
+                      : billingCycle === '6month'
+                        ? userPlan === 'elite' ? '$216' : '$108'
+                        : userPlan === 'elite' ? '$40' : '$20'
+                  }
+                  <span style={{ fontSize: 12, fontStyle: 'normal', fontFamily: "'Sora', sans-serif", color: 'var(--text-3)', fontWeight: 400 }}>
+                    /{billingCycle === 'annual' ? 'yr' : billingCycle === '6month' ? '6mo' : 'mo'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {(planActivatedAt || promoCode) && (userPlan === 'pro' || userPlan === 'elite') && (
+              <div style={{
+                padding: '10px 12px', background: 'var(--surface-2)', borderRadius: 8,
+                fontSize: 11.5, color: 'var(--text-3)', marginBottom: 14, lineHeight: 1.5,
+              }}>
+                {(() => {
+                  const fmtDate = (ts: number) => new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                  const cycleDays = billingCycle === 'annual' ? 365 : billingCycle === '6month' ? 182 : 30;
+                  if (promoCode) {
+                    const code = promoCode.toLowerCase();
+                    if (code.includes('lifetime') || code.includes('forever') || code.includes('free')) return <>Lifetime via code <strong style={{ color: 'var(--text-2)' }}>{promoCode}</strong></>;
+                    if (planActivatedAt) return <>Via code <strong style={{ color: 'var(--text-2)' }}>{promoCode}</strong>. Renews {fmtDate(planActivatedAt + cycleDays * 864e5)}</>;
+                    return <>Activated via <strong style={{ color: 'var(--text-2)' }}>{promoCode}</strong></>;
+                  }
+                  if (planActivatedAt) return <>Renews {fmtDate(planActivatedAt + cycleDays * 864e5)}</>;
+                  return null;
+                })()}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
+              <button type="button" onClick={() => window.location.href = '/checkout'} style={{
+                flex: 1, background: userPlan === 'free' ? '#2563eb' : 'var(--surface-2)',
+                color: userPlan === 'free' ? '#fff' : 'var(--text)',
+                padding: '11px 0', borderRadius: 9,
+                fontSize: 12.5, fontWeight: 700,
+                border: userPlan === 'free' ? 'none' : '1.5px solid var(--border-2)',
+                cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+              }}>{userPlan === 'free' ? 'Upgrade plan' : 'Manage plan'}</button>
+              {userPlan !== 'free' && (
+                <button type="button" onClick={() => window.location.href = '/checkout'} style={{
+                  background: 'transparent', color: 'var(--text-2)',
+                  padding: '11px 14px', borderRadius: 9,
+                  fontSize: 12.5, fontWeight: 600,
+                  border: '1.5px solid var(--border-2)',
+                  cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+                }}>Compare</button>
+              )}
+            </div>
+          </div>
+
+          {/* ─── USAGE CARD ─── */}
+          <div style={{
+            background: 'var(--surface)', border: '1.5px solid var(--border)',
+            borderRadius: 14, padding: '22px 24px',
+            display: 'flex', flexDirection: 'column',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 0.6 }}>This week</div>
+              <div style={{ fontSize: 10.5, color: 'var(--text-3)' }}>Resets {reset.day.split(',')[0]} ({reset.relative})</div>
+            </div>
+            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 26, color: 'var(--text)', letterSpacing: '-0.3px', marginBottom: 14, lineHeight: 1.15 }}>
+              Your <em style={{ fontStyle: 'italic' }}>usage</em>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {usageRows.map(row => {
                 const pct = row.limit > 0 ? Math.min(100, Math.round((row.used / row.limit) * 100)) : 0;
                 const remaining = Math.max(0, row.limit - row.used);
                 const isUnlimited = row.limit >= 999;
                 const overOrAt = !isUnlimited && row.used >= row.limit;
                 const barColor = overOrAt ? '#dc2626' : pct >= 80 ? '#f59e0b' : 'var(--text)';
-                const statusText = isUnlimited
-                  ? 'Unlimited'
-                  : overOrAt
-                    ? `Limit reached. Resets ${reset.day}`
-                    : `${remaining} left ${row.isLifetime ? 'on Free plan' : 'this week'}`;
                 return (
-                  <div key={row.key} style={{
-                    background: 'var(--surface)', border: '1.5px solid var(--border)',
-                    borderRadius: 14, padding: '18px 20px',
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                      <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.5px' }}>{row.label}</div>
-                      {row.isLifetime && (
-                        <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: 'var(--surface-2)', color: 'var(--text-3)', letterSpacing: '.5px' }}>LIFETIME</span>
-                      )}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 10 }}>
-                      <div style={{ fontSize: 28, fontWeight: 700, color: barColor, letterSpacing: '-0.5px', lineHeight: 1, fontFamily: "'Instrument Serif', serif", fontStyle: 'italic' }}>{row.used}</div>
-                      <div style={{ fontSize: 13, color: 'var(--text-3)' }}>of {isUnlimited ? '∞' : row.limit}</div>
+                  <div key={row.key}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 5 }}>
+                      <div style={{ fontSize: 12.5, color: 'var(--text-2)', fontWeight: 500 }}>{row.label}</div>
+                      <div style={{ fontSize: 11.5, color: overOrAt ? '#dc2626' : 'var(--text-3)', fontWeight: 600 }}>
+                        {isUnlimited ? <span style={{ color: 'var(--text-3)' }}>Unlimited</span> : <>{row.used} <span style={{ color: 'var(--text-3)' }}>/ {row.limit}</span></>}
+                      </div>
                     </div>
                     {!isUnlimited && (
-                      <div style={{ height: 5, background: 'var(--surface-2)', borderRadius: 3, overflow: 'hidden', marginBottom: 10 }}>
-                        <div style={{ height: '100%', borderRadius: 3, background: barColor, width: barsAnimated ? pct + '%' : '0%', transition: 'width 1s cubic-bezier(.4,0,.2,1)' }} />
+                      <div style={{ height: 4, background: 'var(--surface-2)', borderRadius: 2, overflow: 'hidden' }}>
+                        <div style={{ height: '100%', borderRadius: 2, background: barColor, width: barsAnimated ? pct + '%' : '0%', transition: 'width 1s cubic-bezier(.4,0,.2,1)' }} />
                       </div>
                     )}
-                    <div style={{ fontSize: 11.5, color: overOrAt ? '#dc2626' : 'var(--text-3)' }}>{statusText}</div>
                   </div>
                 );
               })}
             </div>
           </div>
-        )}
+        </div>
 
-        {/* ───────────────────────── TAB: PROFILE ───────────────────────── */}
-        {activeTab === 'profile' && (
-          <div data-tutorial="profile-section" style={{
-            background: 'var(--surface)', border: '1.5px solid var(--border)',
-            borderRadius: 16, padding: '28px 32px',
+        {/* ════════════════ PROFILE FORM ════════════════ */}
+        <div data-tutorial="profile-section" style={{
+          background: 'var(--surface)', border: '1.5px solid var(--border)',
+          borderRadius: 14, padding: '22px 24px', marginBottom: 16,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 0.6, marginBottom: 4 }}>Profile</div>
+              <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: 'var(--text)', letterSpacing: '-0.3px', lineHeight: 1.15 }}>
+                Your <em style={{ fontStyle: 'italic' }}>info</em>
+              </div>
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--text-3)', display: 'flex', alignItems: 'center', gap: 5 }}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Saves automatically
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }} className="ma-form">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 0.5 }}>First name</label>
+              <input style={inp} type="text" value={firstName} onChange={e => { setFirstName(e.target.value); autoSave(); }} placeholder="First name" />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Last name</label>
+              <input style={inp} type="text" value={lastName} onChange={e => { setLastName(e.target.value); autoSave(); }} placeholder="Last name" />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Email</label>
+              <input style={inp} type="email" value={email} onChange={e => { setEmail(e.target.value); autoSave(); }} placeholder="your@email.com" />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 0.5 }}>School</label>
+              <select style={inp} value={school} onChange={e => { setSchool(e.target.value); autoSave(); }}>
+                <option value="">Select school...</option>
+                {school && !SCHOOLS.includes(school) && <option key={school}>{school}</option>}
+                {SCHOOLS.map(s => <option key={s}>{s}</option>)}
+              </select>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Graduation</label>
+              <select style={inp} value={year} onChange={e => { setYear(e.target.value); autoSave(); }}>
+                <option value="">Select year...</option>
+                {year && !YEARS.includes(year) && <option key={year}>{year}</option>}
+                {YEARS.map(y => <option key={y}>{y}</option>)}
+              </select>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Target role</label>
+              <select style={inp} value={targetRole} onChange={e => { setTargetRole(e.target.value); autoSave(); }}>
+                <option value="">Select role...</option>
+                {targetRole && !VERTICALS.includes(targetRole) && <option key={targetRole}>{targetRole}</option>}
+                {VERTICALS.map(v => <option key={v}>{v}</option>)}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* ════════════════ ACCOUNT ACTIONS ════════════════ */}
+        <div style={{
+          background: 'var(--surface)', border: '1.5px solid var(--border)',
+          borderRadius: 14, padding: '6px 24px',
+        }}>
+          {/* Support row */}
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '16px 0', gap: 20, borderBottom: '1px solid var(--border)',
           }}>
-            <div style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 24, lineHeight: 1.5 }}>
-              Changes save automatically. This information helps Coach and Reps personalize your recruiting advice.
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>First name</label>
-                <input style={inp} type="text" value={firstName} onChange={e => { setFirstName(e.target.value); autoSave(); }} placeholder="First name" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" strokeWidth="2" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>Last name</label>
-                <input style={inp} type="text" value={lastName} onChange={e => { setLastName(e.target.value); autoSave(); }} placeholder="Last name" />
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>Email</label>
-                <input style={inp} type="email" value={email} onChange={e => { setEmail(e.target.value); autoSave(); }} placeholder="your@email.com" />
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>School</label>
-                <select style={inp} value={school} onChange={e => { setSchool(e.target.value); autoSave(); }}>
-                  <option value="">Select school...</option>
-                  {school && !SCHOOLS.includes(school) && <option key={school}>{school}</option>}
-                  {SCHOOLS.map(s => <option key={s}>{s}</option>)}
-                </select>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>Graduation year</label>
-                <select style={inp} value={year} onChange={e => { setYear(e.target.value); autoSave(); }}>
-                  <option value="">Select year...</option>
-                  {year && !YEARS.includes(year) && <option key={year}>{year}</option>}
-                  {YEARS.map(y => <option key={y}>{y}</option>)}
-                </select>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>Target role</label>
-                <select style={inp} value={targetRole} onChange={e => { setTargetRole(e.target.value); autoSave(); }}>
-                  <option value="">Select role...</option>
-                  {targetRole && !VERTICALS.includes(targetRole) && <option key={targetRole}>{targetRole}</option>}
-                  {VERTICALS.map(v => <option key={v}>{v}</option>)}
-                </select>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 1 }}>Need help?</div>
+                <div style={{ fontSize: 11.5, color: 'var(--text-3)' }}>Questions, feedback, or partnership inquiries</div>
               </div>
             </div>
+            <a href="mailto:officialofferbell@gmail.com" style={{
+              background: 'transparent', color: 'var(--text-2)',
+              padding: '7px 14px', borderRadius: 8,
+              fontSize: 12, fontWeight: 600,
+              border: '1.5px solid var(--border-2)',
+              textDecoration: 'none', whiteSpace: 'nowrap',
+              fontFamily: "'Sora', sans-serif",
+            }}>Email support</a>
           </div>
-        )}
 
-        {/* ───────────────────────── TAB: ACCOUNT ───────────────────────── */}
-        {activeTab === 'account' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <div style={{
-              background: 'var(--surface)', border: '1.5px solid var(--border)',
-              borderRadius: 14, padding: '20px 24px',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20,
-            }}>
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>Need help?</div>
-                <div style={{ fontSize: 12.5, color: 'var(--text-3)' }}>Reach out for questions, feedback, or partnership inquiries.</div>
+          {/* Sign out row */}
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '16px 0', gap: 20, borderBottom: '1px solid var(--border)',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" strokeWidth="2" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
               </div>
-              <a href="mailto:officialofferbell@gmail.com" style={{
-                background: 'var(--surface)', color: 'var(--text)',
-                padding: '9px 16px', borderRadius: 9,
-                fontSize: 12, fontWeight: 700,
-                border: '1.5px solid var(--border-2)',
-                textDecoration: 'none', whiteSpace: 'nowrap',
-                fontFamily: "'Sora', sans-serif",
-              }}>Email support</a>
-            </div>
-
-            <div style={{
-              background: 'var(--surface)', border: '1.5px solid var(--border)',
-              borderRadius: 14, padding: '20px 24px',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20,
-            }}>
               <div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>Sign out</div>
-                <div style={{ fontSize: 12.5, color: 'var(--text-3)' }}>You can sign back in anytime with your email.</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 1 }}>Sign out</div>
+                <div style={{ fontSize: 11.5, color: 'var(--text-3)' }}>You can sign back in anytime</div>
               </div>
-              <button type="button" onClick={handleSignOut} style={{
-                background: 'var(--surface)', color: 'var(--text-2)',
-                padding: '9px 18px', borderRadius: 9,
-                fontSize: 12, fontWeight: 700,
-                border: '1.5px solid var(--border-2)',
-                cursor: 'pointer', fontFamily: "'Sora', sans-serif",
-              }}>Sign out</button>
             </div>
-
-            <div style={{
-              background: 'var(--surface)', border: '1.5px solid rgba(220, 38, 38, 0.25)',
-              borderRadius: 14, padding: '20px 24px',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20,
-            }}>
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>Delete account</div>
-                <div style={{ fontSize: 12.5, color: 'var(--text-3)' }}>Permanently removes your account, profile, and recruiting data. Cannot be undone.</div>
-              </div>
-              <button type="button" onClick={() => setModal({
-                title: 'Delete your account?',
-                desc: 'This permanently erases your profile, plan, and all recruiting data. You cannot undo this.',
-                confirmLabel: 'Delete forever',
-                onConfirm: async () => {
-                  const uid = localStorage.getItem('offerbell_user_id');
-                  if (!uid) return;
-                  try {
-                    await deleteAccountMutation({ userId: uid });
-                    const keys: string[] = [];
-                    for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k) keys.push(k); }
-                    keys.forEach(k => localStorage.removeItem(k));
-                    document.cookie = 'offerbell_user_id=; path=/; max-age=0';
-                    router.push('/');
-                  } catch (e) {
-                    alert('Could not delete account. Please email support.');
-                  }
-                },
-              })} style={{
-                background: 'transparent', color: '#dc2626',
-                padding: '9px 18px', borderRadius: 9,
-                fontSize: 12, fontWeight: 700,
-                border: '1.5px solid rgba(220, 38, 38, 0.4)',
-                cursor: 'pointer', fontFamily: "'Sora', sans-serif",
-              }}>Delete account</button>
-            </div>
+            <button type="button" onClick={handleSignOut} style={{
+              background: 'transparent', color: 'var(--text-2)',
+              padding: '7px 14px', borderRadius: 8,
+              fontSize: 12, fontWeight: 600,
+              border: '1.5px solid var(--border-2)',
+              cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+            }}>Sign out</button>
           </div>
-        )}
+
+          {/* Delete account row */}
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '16px 0', gap: 20,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(220, 38, 38, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+              </div>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 1 }}>Delete account</div>
+                <div style={{ fontSize: 11.5, color: 'var(--text-3)' }}>Permanently removes profile, plan, and all recruiting data</div>
+              </div>
+            </div>
+            <button type="button" onClick={() => setModal({
+              title: 'Delete your account?',
+              desc: 'This permanently erases your profile, plan, and all recruiting data. You cannot undo this.',
+              confirmLabel: 'Delete forever',
+              onConfirm: async () => {
+                const uid = localStorage.getItem('offerbell_user_id');
+                if (!uid) return;
+                try {
+                  await deleteAccountMutation({ userId: uid });
+                  const keys: string[] = [];
+                  for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k) keys.push(k); }
+                  keys.forEach(k => localStorage.removeItem(k));
+                  document.cookie = 'offerbell_user_id=; path=/; max-age=0';
+                  router.push('/');
+                } catch (e) {
+                  alert('Could not delete account. Please email support.');
+                }
+              },
+            })} style={{
+              background: 'transparent', color: '#dc2626',
+              padding: '7px 14px', borderRadius: 8,
+              fontSize: 12, fontWeight: 600,
+              border: '1.5px solid rgba(220, 38, 38, 0.35)',
+              cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+            }}>Delete</button>
+          </div>
+        </div>
 
       </main>
 
@@ -878,16 +848,26 @@ const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
       {/* Confirmation Modal */}
       {modal && (
         <div onClick={() => setModal(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg)', border: '1.5px solid var(--border)', borderRadius: 16, padding: '28px', width: 380, maxWidth: '90vw', boxShadow: '0 16px 48px rgba(0,0,0,0.12)' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '24px', width: 380, maxWidth: '90vw', boxShadow: '0 16px 48px rgba(0,0,0,0.3)' }}>
             <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>{modal.title}</div>
-            <div style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.7, marginBottom: 24 }}>{modal.desc}</div>
+            <div style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.6, marginBottom: 20 }}>{modal.desc}</div>
             <div style={{ display: 'flex', gap: 10 }}>
-              <button type="button" onClick={() => setModal(null)} style={{ flex: 1, padding: '11px', borderRadius: 10, border: '1.5px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>Go back</button>
-              <button type="button" onClick={() => { setModal(null); modal.onConfirm(); }} style={{ flex: 1, padding: '11px', borderRadius: 10, border: 'none', background: '#dc2626', color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>{modal.confirmLabel}</button>
+              <button type="button" onClick={() => setModal(null)} style={{ flex: 1, padding: '10px', borderRadius: 9, border: '1.5px solid var(--border-2)', background: 'transparent', color: 'var(--text-2)', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>Go back</button>
+              <button type="button" onClick={() => { setModal(null); modal.onConfirm(); }} style={{ flex: 1, padding: '10px', borderRadius: 9, border: 'none', background: '#dc2626', color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>{modal.confirmLabel}</button>
             </div>
           </div>
         </div>
       )}
+
+      <style>{`
+        @media (max-width: 900px) {
+          .ma-grid { grid-template-columns: 1fr !important; }
+          .ma-form { grid-template-columns: 1fr 1fr !important; }
+        }
+        @media (max-width: 600px) {
+          .ma-form { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </div>
   );
 }
