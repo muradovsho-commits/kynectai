@@ -305,6 +305,11 @@ export default function CoachPage() {
   const [userName, setUserName] = useState({ first: '', last: '' });
   const [isPro, setIsPro] = useState(false);
   const [freeLimitHit, setFreeLimitHit] = useState(false);
+  // Server-driven limit details (populated from 429 response). When set, the
+  // overlay and persistent banner display reset time + plan-specific upgrade
+  // CTA. Cleared when the limit window resets.
+  const [limitInfo, setLimitInfo] = useState<{ plan: 'free' | 'pro' | 'elite'; used: number; limit: number } | null>(null);
+  const [showLimitOverlay, setShowLimitOverlay] = useState(false);
   const [planLoaded, setPlanLoaded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -478,24 +483,41 @@ export default function CoachPage() {
     }
   };
 
+  // Returns next Monday 00:00 in user's local time. Server's weekly window is
+  // UTC Monday-to-Monday, so we convert from UTC to local for display.
+  const getNextResetDate = (): Date => {
+    const now = new Date();
+    // Find Monday UTC of NEXT week
+    const utcDay = now.getUTCDay();
+    const daysUntilNextMonday = utcDay === 0 ? 1 : (8 - utcDay);
+    const nextMondayUTC = new Date(Date.UTC(
+      now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilNextMonday, 0, 0, 0, 0
+    ));
+    return nextMondayUTC;
+  };
+
+  const getWeeklyResetDisplay = (): { day: string; time: string; relative: string } => {
+    const reset = getNextResetDate();
+    const day = reset.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+    const time = reset.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+    const diff = reset.getTime() - Date.now();
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    let relative: string;
+    if (days >= 1) relative = `in ${days}d ${hours}h`;
+    else if (hours >= 1) relative = `in ${hours}h`;
+    else relative = `in ${Math.floor(diff / 60000)}m`;
+    return { day, time, relative };
+  };
+
   const sendMessage = async (text: string) => {
     if (isLoading || !text.trim()) return;
     if (isPro && rateLimited) return;
-
-    // Free users: 1 coach message per week
-    if (!isPro) {
-      try {
-        const now = new Date(); const day = now.getDay(); const diff = day === 0 ? 6 : day - 1;
-        const mon = new Date(now); mon.setDate(now.getDate() - diff); mon.setHours(0,0,0,0);
-        const week = mon.toISOString().split('T')[0];
-        const raw = localStorage.getItem('offerbell_coach_weekly');
-        let wk = raw ? JSON.parse(raw) : { week, count: 0 };
-        if (wk.week !== week) wk = { week, count: 0 };
-        if (wk.count >= 1) {
-          setFreeLimitHit(true);
-          return;
-        }
-      } catch {}
+    // Server is the source of truth. If we know the limit's hit, block here
+    // instead of making a network round trip just to get a 429 back.
+    if (limitInfo) {
+      setShowLimitOverlay(true);
+      return;
     }
 
     const userMsg: Message = { role: 'user', content: text.trim(), time: Date.now() };
@@ -515,25 +537,27 @@ export default function CoachPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setMessages(prev => [...prev, { role: 'assistant', content: ' ' + (data.error || 'Coach is temporarily unavailable.'), time: Date.now() }]);
+        // Server-side limit reached. Strip the user's just-sent message from
+        // the chat (it never got processed) and surface the limit screen
+        // instead of dumping "limit_reached" into a Coach bubble.
+        if (res.status === 429 && data?.error === 'limit_reached') {
+          setMessages(prev => prev.slice(0, -1));
+          setLimitInfo({
+            plan: (data.plan as 'free' | 'pro' | 'elite') || (isPro ? 'pro' : 'free'),
+            used: typeof data.used === 'number' ? data.used : 0,
+            limit: typeof data.limit === 'number' ? data.limit : 1,
+          });
+          setShowLimitOverlay(true);
+        } else {
+          setMessages(prev => [...prev, { role: 'assistant', content: ' ' + (data.error || 'Coach is temporarily unavailable.'), time: Date.now() }]);
+        }
       } else {
         setMessages(prev => [...prev, { role: 'assistant', content: data.text || 'Something went wrong.', time: Date.now() }]);
         if (isPro) {
           incrementUsage();
-        } else {
-          // Increment free weekly count
-          try {
-            const now = new Date(); const day = now.getDay(); const diff = day === 0 ? 6 : day - 1;
-            const mon = new Date(now); mon.setDate(now.getDate() - diff); mon.setHours(0,0,0,0);
-            const week = mon.toISOString().split('T')[0];
-            const raw = localStorage.getItem('offerbell_coach_weekly');
-            let wk = raw ? JSON.parse(raw) : { week, count: 0 };
-            if (wk.week !== week) wk = { week, count: 0 };
-            wk.count++;
-            localStorage.setItem('offerbell_coach_weekly', JSON.stringify(wk));
-            if (wk.count >= 1) setFreeLimitHit(true);
-          } catch {}
         }
+        // Free / Pro / Elite usage is now tracked server-side in Convex.
+        // No more localStorage counting.
       }
     } catch (err: any) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Connection error: ' + (err?.message || 'please try again.'), time: Date.now() }]);
@@ -739,7 +763,31 @@ export default function CoachPage() {
           ) : (
           <div className="coach-input-area">
             <div className="coach-input-area-inner">
-              {isPro && usageWarning && !rateLimited && (
+              {limitInfo && (
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+                  padding: '12px 16px', marginBottom: 10,
+                  background: 'var(--surface-2)', border: '1.5px solid var(--border)', borderRadius: 10,
+                  fontSize: 12.5, color: 'var(--text-2)',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <svg width="15" height="15" fill="none" stroke="var(--text-3)" strokeWidth="1.6" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>
+                      <strong style={{ color: 'var(--text)' }}>Coach limit reached.</strong>{' '}
+                      Resets <strong style={{ color: 'var(--text)' }}>{getWeeklyResetDisplay().day}</strong> ({getWeeklyResetDisplay().relative}).
+                    </span>
+                  </div>
+                  {limitInfo.plan !== 'elite' && (
+                    <a href="/checkout" style={{
+                      padding: '6px 12px', borderRadius: 6,
+                      background: 'var(--text)', color: 'var(--surface)',
+                      fontSize: 11.5, fontWeight: 700, textDecoration: 'none',
+                      fontFamily: "'Sora', sans-serif", whiteSpace: 'nowrap',
+                    }}>Upgrade</a>
+                  )}
+                </div>
+              )}
+              {isPro && usageWarning && !rateLimited && !limitInfo && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 14px', marginBottom: 8, background: '#fef3c7', border: '1px solid #fde68a', borderRadius: 8, fontSize: 12, color: '#92400e' }}>
                   <svg width="14" height="14" fill="none" stroke="#d97706" strokeWidth="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                   <span>You've used about <strong>{usagePct}%</strong> of your session limit. Resets {formatResetTime()}.</span>
@@ -758,15 +806,15 @@ export default function CoachPage() {
                 <textarea
                   ref={textareaRef}
                   className="coach-chat-input"
-                  placeholder={freeLimitHit ? "Weekly limit reached. Resets Monday." : "Type your strategic response..."}
+                  placeholder={limitInfo ? `Limit reached. Resets ${getWeeklyResetDisplay().day}.` : "Type your strategic response..."}
                   rows={1}
                   value={inputVal}
                   onChange={e => { setInputVal(e.target.value); autoResize(e.target); }}
                   onKeyDown={handleKey}
-                  disabled={freeLimitHit}
-                  style={freeLimitHit ? { opacity: 0.4, cursor: 'not-allowed' } : undefined}
+                  disabled={!!limitInfo}
+                  style={limitInfo ? { opacity: 0.4, cursor: 'not-allowed' } : undefined}
                 />
-                <button className="coach-send-btn" onClick={() => sendMessage(inputVal)} disabled={isLoading || !inputVal.trim() || freeLimitHit} type="button">
+                <button className="coach-send-btn" onClick={() => sendMessage(inputVal)} disabled={isLoading || !inputVal.trim() || !!limitInfo} type="button">
                   {isLoading ? <div className="coach-spinner" /> : <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                 </button>
               </div>
@@ -777,17 +825,21 @@ export default function CoachPage() {
         </div>
       </div>
 
-      {/* Free limit overlay */}
-      {freeLimitHit && (
+      {/* Usage limit overlay (all plans). Server-driven via limitInfo. */}
+      {showLimitOverlay && limitInfo && (() => {
+        const reset = getWeeklyResetDisplay();
+        const planLabel = limitInfo.plan === 'free' ? 'Free' : limitInfo.plan === 'pro' ? 'Pro' : 'Elite';
+        const nextTier = limitInfo.plan === 'free' ? 'Pro' : limitInfo.plan === 'pro' ? 'Elite' : null;
+        return (
         <div style={{
           position: 'fixed', inset: 0, zIndex: 400,
           background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(12px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          animation: 'fadeIn 0.25s ease',
+          animation: 'fadeIn 0.25s ease', padding: 20,
         }}>
           <div style={{
             background: 'var(--surface)', border: '1.5px solid var(--border)',
-            borderRadius: 20, padding: '48px 44px', maxWidth: 420, width: '100%',
+            borderRadius: 20, padding: '44px 40px', maxWidth: 440, width: '100%',
             textAlign: 'center', boxShadow: '0 24px 80px rgba(0,0,0,0.2)',
           }}>
             <div style={{
@@ -797,29 +849,35 @@ export default function CoachPage() {
             }}>
               <svg width="24" height="24" fill="none" stroke="var(--text-3)" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             </div>
-            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 26, color: 'var(--text)', letterSpacing: '-0.5px', marginBottom: 8 }}>
-              Weekly limit <em style={{ fontStyle: 'italic' }}>reached</em>
+            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: 'var(--text)', letterSpacing: '-0.5px', marginBottom: 10 }}>
+              Usage limit <em style={{ fontStyle: 'italic' }}>reached</em>
             </div>
-            <div style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.7, marginBottom: 28 }}>
-              You have used your free coach message for this week. Your limit resets every Monday.
+            <div style={{ fontSize: 13.5, color: 'var(--text-2)', lineHeight: 1.65, marginBottom: 8 }}>
+              You've used all <strong style={{ color: 'var(--text)' }}>{limitInfo.limit}</strong> of your weekly Coach messages on the {planLabel} plan.
+            </div>
+            <div style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.65, marginBottom: 26 }}>
+              Resets <strong style={{ color: 'var(--text)' }}>{reset.day}</strong> at <strong style={{ color: 'var(--text)' }}>{reset.time}</strong> ({reset.relative}).
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <a href="/checkout" style={{
-                display: 'block', padding: '13px 0', borderRadius: 10,
-                background: 'var(--text)', color: 'var(--surface)',
-                fontSize: 14, fontWeight: 700, textDecoration: 'none',
-                fontFamily: "'Sora', sans-serif",
-              }}>Upgrade to Pro</a>
-              <button onClick={() => setFreeLimitHit(false)} type="button" style={{
+              {nextTier && (
+                <a href="/checkout" style={{
+                  display: 'block', padding: '13px 0', borderRadius: 10,
+                  background: 'var(--text)', color: 'var(--surface)',
+                  fontSize: 14, fontWeight: 700, textDecoration: 'none',
+                  fontFamily: "'Sora', sans-serif",
+                }}>Upgrade to {nextTier} for higher limits</a>
+              )}
+              <button onClick={() => setShowLimitOverlay(false)} type="button" style={{
                 padding: '12px 0', borderRadius: 10,
                 background: 'none', border: '1.5px solid var(--border)',
                 color: 'var(--text-2)', fontSize: 13, fontWeight: 600,
                 cursor: 'pointer', fontFamily: "'Sora', sans-serif",
-              }}>Wait for Reset</button>
+              }}>Got it</button>
             </div>
           </div>
         </div>
-      )}
+        );
+      })()}
       <style>{`@keyframes fadeIn{from{opacity:0}to{opacity:1}}`}</style>
     </div>
   );
