@@ -429,7 +429,8 @@ const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
     <div className="app">
       <Sidebar activePage="my-account" />
 
-      <main className="main" style={{ padding: '36px 44px 80px', maxWidth: 1180, margin: '0 auto' }}>
+      <main className="main" style={{ padding: '32px 36px 80px' }}>
+        <div style={{ maxWidth: 1180, margin: '0 auto' }}>
 
         {/* ════════════════ HERO ════════════════ */}
         <div style={{
@@ -835,6 +836,7 @@ const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
           </div>
         </div>
 
+        </div>
       </main>
 
       {showTutorial && (
