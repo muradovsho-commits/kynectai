@@ -65,6 +65,57 @@ function TrackIcon({ name, color }: { name: string; color: string }) {
   }
 }
 
+// Confirmation modal used for both per-track and all-track progress resets.
+// target === 'all' triggers a global wipe; any other string is a track key.
+function ResetModal({ target, onCancel, onConfirm }: { target: string; onCancel: () => void; onConfirm: () => void }) {
+  const isAll = target === 'all';
+  const trackName = !isAll && TRACKS[target] ? TRACKS[target].title : '';
+  return (
+    <div onClick={onCancel} style={{
+      position: 'fixed', inset: 0, zIndex: 999,
+      background: 'rgba(0, 0, 0, 0.4)', backdropFilter: 'blur(4px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: 24,
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: 'var(--bg)', border: '1.5px solid var(--border)',
+        borderRadius: 14, padding: 24,
+        width: 420, maxWidth: '100%',
+        boxShadow: '0 16px 48px rgba(0,0,0,0.3)',
+        fontFamily: "'Sora', sans-serif",
+      }}>
+        <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: '#dc2626', marginBottom: 10 }}>
+          Reset {isAll ? 'all progress' : `${trackName} progress`}
+        </div>
+        <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, lineHeight: 1.15, letterSpacing: '-0.3px', color: 'var(--text)', marginBottom: 12 }}>
+          Are you <em style={{ fontStyle: 'italic' }}>sure?</em>
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.6, marginBottom: 22 }}>
+          {isAll
+            ? 'This deletes every drill stat and accuracy score across all 10 tracks. Your question bank and topics stay intact, but past performance is gone. This cannot be undone.'
+            : `This deletes every drill stat and accuracy score for ${trackName}. Other tracks are unaffected. Your question bank and topics stay intact. This cannot be undone.`}
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button onClick={onCancel} type="button" style={{
+            flex: 1, padding: '10px', borderRadius: 9,
+            background: 'transparent', color: 'var(--text-2)',
+            border: '1.5px solid var(--border-2)',
+            fontSize: 13, fontWeight: 600, cursor: 'pointer',
+            fontFamily: "'Sora', sans-serif",
+          }}>Cancel</button>
+          <button onClick={onConfirm} type="button" style={{
+            flex: 1, padding: '10px', borderRadius: 9,
+            background: '#dc2626', color: '#fff',
+            border: 'none',
+            fontSize: 13, fontWeight: 700, cursor: 'pointer',
+            fontFamily: "'Sora', sans-serif",
+          }}>Reset</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ConceptDrillsPage() {
   return (
     <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>}>
@@ -86,6 +137,26 @@ function ConceptDrillsContent() {
   const [wrong, setWrong] = useState(0);
   const [history, setHistory] = useState<{ q: string; correct: boolean; explanation: string; topic: string }[]>([]);
   const [activeTopic, setActiveTopic] = useState('All Topics');
+
+  // Per-track or all-track reset modal. null = closed.
+  // 'all' = reset every track. trackKey string = reset just that track.
+  const [resetTarget, setResetTarget] = useState<'all' | string | null>(null);
+  // Bumped after a reset wipes localStorage so the next render reads fresh
+  // (empty) trackStats from disk.
+  const [resetTick, setResetTick] = useState(0);
+
+  const doReset = () => {
+    if (resetTarget === null) return;
+    try {
+      if (resetTarget === 'all') {
+        for (const k of TRACK_KEYS) localStorage.removeItem(`offerbell_flash_perf_${k}`);
+      } else {
+        localStorage.removeItem(`offerbell_flash_perf_${resetTarget}`);
+      }
+    } catch {}
+    setResetTarget(null);
+    setResetTick(t => t + 1);
+  };
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -235,7 +306,7 @@ function ConceptDrillsContent() {
             )}
 
             {/* Track list - dense 2-col grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 12 }}>
+            <div key={`tracks-${resetTick}`} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 12 }}>
               {TRACK_KEYS.map((k) => {
                 const t = TRACKS[k];
                 const theme = TRACK_THEME[k] || { color: 'var(--text-2)', bg: 'var(--surface-2)' };
@@ -284,7 +355,23 @@ function ConceptDrillsContent() {
               })}
             </div>
 
+            {totalSeen > 0 && (
+              <div style={{ marginTop: 28, textAlign: 'center' }}>
+                <button onClick={() => setResetTarget('all')} type="button" style={{
+                  background: 'transparent', border: 'none',
+                  fontSize: 11.5, color: 'var(--text-3)',
+                  cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+                  padding: '6px 10px', borderRadius: 6,
+                  textDecoration: 'underline', textUnderlineOffset: 3,
+                  textDecorationColor: 'var(--border-2)',
+                }}>Reset all drill progress</button>
+              </div>
+            )}
+
           </div>
+          {resetTarget !== null && (
+            <ResetModal target={resetTarget} onCancel={() => setResetTarget(null)} onConfirm={doReset} />
+          )}
           <style>{`
             .cd-row:hover { border-color: var(--border-2) !important; transform: translateY(-1px); }
             .cd-topic-card:hover { border-color: var(--border-2) !important; background: var(--surface-2) !important; }
@@ -385,7 +472,28 @@ function ConceptDrillsContent() {
               })}
             </div>
 
+            {(() => {
+              let hasTrackData = false;
+              try { hasTrackData = !!localStorage.getItem(`offerbell_flash_perf_${trackKey}`); } catch {}
+              if (!hasTrackData) return null;
+              return (
+                <div style={{ marginTop: 28, textAlign: 'center' }}>
+                  <button onClick={() => setResetTarget(trackKey)} type="button" style={{
+                    background: 'transparent', border: 'none',
+                    fontSize: 11.5, color: 'var(--text-3)',
+                    cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+                    padding: '6px 10px', borderRadius: 6,
+                    textDecoration: 'underline', textUnderlineOffset: 3,
+                    textDecorationColor: 'var(--border-2)',
+                  }}>Reset {track.title} progress</button>
+                </div>
+              );
+            })()}
+
           </div>
+          {resetTarget !== null && (
+            <ResetModal target={resetTarget} onCancel={() => setResetTarget(null)} onConfirm={doReset} />
+          )}
           <style>{`
             .cd-topic-card:hover { border-color: var(--border-2) !important; background: var(--surface-2) !important; }
             .cd-choice-btn:not(:disabled):hover { border-color: var(--border-2) !important; background: var(--surface-2) !important; }
