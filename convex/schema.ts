@@ -27,7 +27,7 @@ export default defineSchema({
     recruitYear: v.optional(v.string()),
     targetFirms: v.optional(v.array(v.string())),
     profilePic: v.optional(v.string()),
-    // Stripe / subscription fields. All optional — populated by webhook on
+    // Stripe / subscription fields. All optional - populated by webhook on
     // first successful checkout, or remain unset for users who never paid.
     stripeCustomerId: v.optional(v.string()),
     stripeSubscriptionId: v.optional(v.string()),
@@ -161,4 +161,18 @@ export default defineSchema({
     data: v.string(),
     updatedAt: v.number(),
   }).index("by_userId", ["userId"]),
+
+  // Server-side enforcement of weekly plan limits.
+  // One row per user per ISO-week (Monday UTC). Reset is implicit: a new
+  // week creates a new row, old rows are ignored. Counters track count of
+  // successful API calls per feature in the current week.
+  weeklyUsage: defineTable({
+    userId: v.string(),
+    weekStart: v.string(),
+    coach: v.optional(v.number()),
+    resumeReview: v.optional(v.number()),
+    outreachWriter: v.optional(v.number()),
+    mockInterview: v.optional(v.number()),
+    updatedAt: v.number(),
+  }).index("by_user_week", ["userId", "weekStart"]),
 });
