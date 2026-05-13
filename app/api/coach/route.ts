@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthUserId, unauthorizedResponse, checkRateLimit, getClientIP, getCorsHeaders } from "../_lib/auth";
+import { checkPlanLimit, incrementUsageInConvex } from "../_lib/plan";
 
 export async function OPTIONS(req: NextRequest) {
   return new NextResponse(null, { status: 204, headers: getCorsHeaders(req) });
@@ -12,11 +13,15 @@ export async function POST(req: NextRequest) {
     const userId = getAuthUserId(req);
     if (!userId) return unauthorizedResponse(corsHeaders);
 
-    // Rate limit: 30 requests per minute per user
+    // Rate limit: 30 requests per minute per user (burst protection)
     const ip = getClientIP(req);
     const limitKey = `coach:${userId || ip}`;
     const limited = checkRateLimit(limitKey, 30, 60_000, corsHeaders);
     if (limited) return limited;
+
+    // Server-side plan + weekly usage check (Convex is source of truth)
+    const planCheck = await checkPlanLimit(userId, "coach", corsHeaders);
+    if (!planCheck.allowed) return planCheck.denied!;
 
     const body = await req.json();
     const { messages, system, track } = body as {
@@ -80,6 +85,7 @@ The user is currently on the "${track || "Investment Banking"}" recruiting track
         if (res.ok) {
           const data = await res.json();
           const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Something went wrong - please try again.";
+          await incrementUsageInConvex(userId, "coach");
           return NextResponse.json({ text }, { headers: corsHeaders });
         }
 
@@ -101,6 +107,7 @@ The user is currently on the "${track || "Investment Banking"}" recruiting track
         if (res2.ok) {
           const data2 = await res2.json();
           const text2 = data2.candidates?.[0]?.content?.parts?.[0]?.text || "Something went wrong - please try again.";
+          await incrementUsageInConvex(userId, "coach");
           return NextResponse.json({ text: text2 }, { headers: corsHeaders });
         }
 
