@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthUserId, unauthorizedResponse, checkRateLimit, getClientIP, getCorsHeaders } from "../_lib/auth";
+import { checkPlanLimit, incrementUsageInConvex } from "../_lib/plan";
 
 export async function OPTIONS(req: NextRequest) {
   return new NextResponse(null, { status: 204, headers: getCorsHeaders(req) });
@@ -26,6 +27,15 @@ export async function POST(req: NextRequest) {
       history?: { role: string; content: string }[];
       track?: string;
     };
+
+    // A "mock interview" = one full session = N question/answer turns. We
+    // count sessions, not turns, by treating an empty/missing history as
+    // the start of a session. Free plan: 3 sessions/week. Pro/Elite: 999.
+    const isSessionStart = !history || history.length === 0;
+    if (isSessionStart) {
+      const planCheck = await checkPlanLimit(userId, "mockInterview", corsHeaders);
+      if (!planCheck.allowed) return planCheck.denied!;
+    }
 
     if (!question || !userAnswer) {
       return NextResponse.json({ error: "Missing question or answer" }, { status: 400, headers: corsHeaders });
@@ -107,6 +117,7 @@ The score block is parsed programmatically. Do not include it inside your writte
             feedback = text.replace(/\|\|\|SCORE:.*?\|\|\|/, "").trim();
           }
 
+          if (isSessionStart) await incrementUsageInConvex(userId, "mockInterview");
           return NextResponse.json({ feedback, score }, { headers: corsHeaders });
         }
 
@@ -136,6 +147,7 @@ The score block is parsed programmatically. Do not include it inside your writte
             try { score2 = JSON.parse(scoreMatch2[1]); } catch { /* */ }
             feedback2 = text2.replace(/\|\|\|SCORE:.*?\|\|\|/, "").trim();
           }
+          if (isSessionStart) await incrementUsageInConvex(userId, "mockInterview");
           return NextResponse.json({ feedback: feedback2, score: score2 }, { headers: corsHeaders });
         }
 
