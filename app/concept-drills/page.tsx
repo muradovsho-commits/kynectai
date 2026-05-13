@@ -273,7 +273,7 @@ function ConceptDrillsContent() {
                       display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
                     }}>{t.desc}</div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6, fontSize: 11, color: 'var(--text-3)', fontWeight: 600 }}>
-                      <span>{t.topics.length} topics &middot; {t.questions.length} questions</span>
+                      <span>{t.topics.length} topics</span>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, color: 'var(--text-2)' }}>
                         {stats.seen > 0 ? 'Drill again' : 'Start'}
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -348,7 +348,7 @@ function ConceptDrillsContent() {
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>All topics</div>
-                <div style={{ fontSize: 11.5, color: 'var(--text-3)' }}>Random mix from {track.questions.length} questions across {track.topics.length} topics</div>
+                <div style={{ fontSize: 11.5, color: 'var(--text-3)' }}>Random mix across all {track.topics.length} topics</div>
               </div>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
@@ -356,7 +356,6 @@ function ConceptDrillsContent() {
             {/* Individual topics */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 10 }}>
               {track.topics.map((topic, i) => {
-                const qCount = track.questions.filter(q => q.topic === topic).length;
                 return (
                   <button
                     key={topic}
@@ -378,8 +377,7 @@ function ConceptDrillsContent() {
                       fontSize: 18, color: theme.color, minWidth: 22, flexShrink: 0,
                     }}>{String(i + 1).padStart(2, '0')}</span>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>{topic}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{qCount} questions</div>
+                      <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)' }}>{topic}</div>
                     </div>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
                   </button>
