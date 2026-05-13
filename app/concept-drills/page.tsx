@@ -2,6 +2,8 @@
 'use client';
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
 import './drills.css';
@@ -144,16 +146,34 @@ function ConceptDrillsContent() {
   // Bumped after a reset wipes localStorage so the next render reads fresh
   // (empty) trackStats from disk.
   const [resetTick, setResetTick] = useState(0);
+  // Plan + userId so we can (1) hide reset for free users and
+  // (2) persist resets to Convex so they survive logout/login.
+  const [userPlan, setUserPlan] = useState<string>('free');
+  const [userId, setUserId] = useState<string>('');
+  const saveProgressMut = useMutation((api as any).progress?.saveProgress);
+  const canReset = userPlan === 'pro' || userPlan === 'elite';
 
-  const doReset = () => {
+  const doReset = async () => {
     if (resetTarget === null) return;
+    // Build the payload that mirrors the localStorage wipe. saveProgress
+    // merges new values over old, so setting a key to "{}" effectively
+    // erases that progress server-side too.
+    const payload: Record<string, string> = {};
     try {
       if (resetTarget === 'all') {
-        for (const k of TRACK_KEYS) localStorage.removeItem(`offerbell_flash_perf_${k}`);
+        for (const k of TRACK_KEYS) {
+          localStorage.removeItem(`offerbell_flash_perf_${k}`);
+          payload[`offerbell_flash_perf_${k}`] = '{}';
+        }
       } else {
         localStorage.removeItem(`offerbell_flash_perf_${resetTarget}`);
+        payload[`offerbell_flash_perf_${resetTarget}`] = '{}';
       }
     } catch {}
+    // Persist the wipe to Convex so logout/login doesn't restore old values.
+    if (userId && saveProgressMut && Object.keys(payload).length > 0) {
+      try { await saveProgressMut({ userId, data: JSON.stringify(payload) }); } catch {}
+    }
     setResetTarget(null);
     setResetTick(t => t + 1);
   };
@@ -162,6 +182,8 @@ function ConceptDrillsContent() {
     if (typeof window === 'undefined') return;
     const theme = localStorage.getItem('offerbell-theme');
     if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    setUserId(localStorage.getItem('offerbell_user_id') || '');
+    setUserPlan(localStorage.getItem('offerbell_plan') || 'free');
 
     // Handle URL params from cross-feature links (e.g. diagnostic review)
     const paramTrack = searchParams.get('track');
@@ -355,7 +377,7 @@ function ConceptDrillsContent() {
               })}
             </div>
 
-            {totalSeen > 0 && (
+            {totalSeen > 0 && canReset && (
               <div style={{ marginTop: 28, textAlign: 'center' }}>
                 <button onClick={() => setResetTarget('all')} type="button" style={{
                   background: 'transparent', border: 'none',
@@ -473,6 +495,7 @@ function ConceptDrillsContent() {
             </div>
 
             {(() => {
+              if (!canReset) return null;
               let hasTrackData = false;
               try { hasTrackData = !!localStorage.getItem(`offerbell_flash_perf_${trackKey}`); } catch {}
               if (!hasTrackData) return null;
