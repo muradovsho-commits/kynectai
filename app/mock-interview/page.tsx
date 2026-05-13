@@ -349,6 +349,12 @@ export default function MockInterviewPage() {
       ib: '#2563eb', pe: '#16a34a', consulting: '#7c3aed', accounting: '#ea580c',
       am: '#dc2626', st: '#0891b2', er: '#d97706', re: '#0d9488', rx: '#475569', vc: '#c026d3',
     };
+    // Standard industry 2-letter codes. Rendered in serif italic in the row
+    // as a quiet editorial alternative to icon tiles.
+    const TRACK_CODE: Record<string, string> = {
+      ib: 'IB', pe: 'PE', consulting: 'CN', accounting: 'AC',
+      am: 'AM', st: 'ST', er: 'ER', re: 'RE', rx: 'RX', vc: 'VC',
+    };
     const TRACK_DESCS: Record<string, string> = {
       ib: 'DCF, LBO, M&A, valuation, and accounting questions from top banks.',
       pe: 'Fund mechanics, deal sourcing, portfolio ops, and returns analysis.',
@@ -444,13 +450,15 @@ export default function MockInterviewPage() {
                     }}
                   >
                     <div style={{
-                      width: 40, height: 40, borderRadius: 10,
-                      background: 'var(--surface-2)', color: accent,
+                      fontFamily: "'Instrument Serif', serif",
+                      fontStyle: 'italic',
+                      fontSize: 24,
+                      letterSpacing: '-0.5px',
+                      color: accent,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       flexShrink: 0,
-                    }}>
-                      <div style={{ width: 18, height: 18 }}>{t.icon}</div>
-                    </div>
+                      lineHeight: 1,
+                    }}>{TRACK_CODE[t.id] || ''}</div>
 
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>{t.title}</div>
