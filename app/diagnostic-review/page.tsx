@@ -88,6 +88,57 @@ function loadInProgress(): InProgressState | null {
   } catch { return null; }
 }
 
+// Confirmation modal for per-track or all-track diagnostic history resets.
+// target === 'all' triggers a global wipe; any other string is a track key.
+function DiagResetModal({ target, onCancel, onConfirm }: { target: string; onCancel: () => void; onConfirm: () => void }) {
+  const isAll = target === 'all';
+  const trackName = !isAll && TRACKS[target] ? TRACKS[target].title : '';
+  return (
+    <div onClick={onCancel} style={{
+      position: 'fixed', inset: 0, zIndex: 999,
+      background: 'rgba(0, 0, 0, 0.4)', backdropFilter: 'blur(4px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: 24,
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: 'var(--bg)', border: '1.5px solid var(--border)',
+        borderRadius: 14, padding: 24,
+        width: 440, maxWidth: '100%',
+        boxShadow: '0 16px 48px rgba(0,0,0,0.3)',
+        fontFamily: "'Sora', sans-serif",
+      }}>
+        <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: '#dc2626', marginBottom: 10 }}>
+          Reset {isAll ? 'all diagnostic history' : `${trackName} history`}
+        </div>
+        <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, lineHeight: 1.15, letterSpacing: '-0.3px', color: 'var(--text)', marginBottom: 12 }}>
+          Are you <em style={{ fontStyle: 'italic' }}>sure?</em>
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.6, marginBottom: 22 }}>
+          {isAll
+            ? 'This deletes every past diagnostic across all 10 tracks - scores, category breakdowns, and timeline. You can take new diagnostics any time, but the old ones are gone. This cannot be undone.'
+            : `This deletes every past ${trackName} diagnostic - scores, category breakdowns, and timeline. Other tracks are unaffected. You can take new diagnostics any time. This cannot be undone.`}
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button onClick={onCancel} type="button" style={{
+            flex: 1, padding: '10px', borderRadius: 9,
+            background: 'transparent', color: 'var(--text-2)',
+            border: '1.5px solid var(--border-2)',
+            fontSize: 13, fontWeight: 600, cursor: 'pointer',
+            fontFamily: "'Sora', sans-serif",
+          }}>Cancel</button>
+          <button onClick={onConfirm} type="button" style={{
+            flex: 1, padding: '10px', borderRadius: 9,
+            background: '#dc2626', color: '#fff',
+            border: 'none',
+            fontSize: 13, fontWeight: 700, cursor: 'pointer',
+            fontFamily: "'Sora', sans-serif",
+          }}>Reset</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DiagnosticReviewPage() {
   const [phase, setPhase] = useState<Phase>('home');
   const [trackKey, setTrackKey] = useState('');
@@ -105,6 +156,25 @@ export default function DiagnosticReviewPage() {
   const [userPlan, setUserPlan] = useState<string>('free');
   const [savedProgress, setSavedProgress] = useState<InProgressState | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Per-track or all-track reset modal. null = closed.
+  // 'all' = wipe entire diag history. trackKey string = wipe just that track's entries.
+  const [resetTarget, setResetTarget] = useState<'all' | string | null>(null);
+
+  const doReset = () => {
+    if (resetTarget === null) return;
+    try {
+      if (resetTarget === 'all') {
+        localStorage.removeItem(STORAGE_KEY);
+        setHistory([]);
+      } else {
+        const remaining = history.filter(h => h.track !== resetTarget);
+        saveHistory(remaining);
+        setHistory(remaining);
+      }
+    } catch {}
+    setResetTarget(null);
+  };
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -446,7 +516,23 @@ export default function DiagnosticReviewPage() {
                 );
               })()}
 
+              {st.diagsTaken > 0 && (
+                <div style={{ marginTop: 28, textAlign: 'center' }}>
+                  <button onClick={() => setResetTarget(viewTrack || '')} type="button" style={{
+                    background: 'transparent', border: 'none',
+                    fontSize: 11.5, color: 'var(--text-3)',
+                    cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+                    padding: '6px 10px', borderRadius: 6,
+                    textDecoration: 'underline', textUnderlineOffset: 3,
+                    textDecorationColor: 'var(--border-2)',
+                  }}>Reset {t.title} history</button>
+                </div>
+              )}
+
             </div>
+            {resetTarget !== null && (
+              <DiagResetModal target={resetTarget} onCancel={() => setResetTarget(null)} onConfirm={doReset} />
+            )}
             <style>{`
               @media (max-width: 720px) {
                 .diag-readiness-card { flex-wrap: wrap; }
@@ -591,7 +677,23 @@ export default function DiagnosticReviewPage() {
                 );
               })}
             </div>
+
+            {history.length > 0 && (
+              <div style={{ marginTop: 32, textAlign: 'center' }}>
+                <button onClick={() => setResetTarget('all')} type="button" style={{
+                  background: 'transparent', border: 'none',
+                  fontSize: 11.5, color: 'var(--text-3)',
+                  cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+                  padding: '6px 10px', borderRadius: 6,
+                  textDecoration: 'underline', textUnderlineOffset: 3,
+                  textDecorationColor: 'var(--border-2)',
+                }}>Reset all diagnostic history</button>
+              </div>
+            )}
           </div>
+          {resetTarget !== null && (
+            <DiagResetModal target={resetTarget} onCancel={() => setResetTarget(null)} onConfirm={doReset} />
+          )}
         </main>
       </div>
     );
