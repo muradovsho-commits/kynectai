@@ -95,6 +95,13 @@ const EXCLUDE_FROM_SYNC = new Set([
   'offerbell_promo_code',
 ]);
 
+// Cross-tab coordination: tabs share a "last push" timestamp via localStorage
+// so they don't both fire saveProgress at the same wall-clock moment.
+// Without this, multi-tab users generate write-conflict retries on the userProgress
+// document (one document per user), each retry costing a full read + write of the blob.
+const CROSS_TAB_LOCK_KEY = 'offerbell_progress_push_lock_ts';
+const CROSS_TAB_LOCK_WINDOW_MS = 3000;
+
 function gatherLocalData(): Record<string, string> {
   const data: Record<string, string> = {};
   for (const key of SYNC_KEYS) {
@@ -250,7 +257,10 @@ export function useProgressSync() {
   // ── Push routine: schedule (debounced) and execute (dirty-checked) ───────
   function schedulePush() {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => { void pushIfDirty(); }, 10000);
+    // Add 0-2s jitter so independently-running tabs naturally desync their
+    // debounce timers, dramatically reducing the chance of simultaneous pushes.
+    const jitter = Math.floor(Math.random() * 2000);
+    saveTimerRef.current = setTimeout(() => { void pushIfDirty(); }, 10000 + jitter);
   }
 
   async function pushIfDirty() {
@@ -262,6 +272,22 @@ export function useProgressSync() {
     const localStr = JSON.stringify(local);
     const localHash = hashString(localStr);
     if (localHash === lastPushedHashRef.current) return;
+
+    // Cross-tab lock check: if another tab pushed within the lock window,
+    // skip this push and reschedule. The dirty data stays marked (hash check
+    // above will let the next push through), so nothing is lost; we just
+    // avoid colliding with the other tab's write to the same userProgress doc.
+    try {
+      const lastLockTs = parseInt(localStorage.getItem(CROSS_TAB_LOCK_KEY) || '0', 10);
+      if (lastLockTs && Date.now() - lastLockTs < CROSS_TAB_LOCK_WINDOW_MS) {
+        schedulePush();
+        return;
+      }
+    } catch {}
+
+    // Claim the cross-tab lock before firing the network call so other tabs see it.
+    try { localStorage.setItem(CROSS_TAB_LOCK_KEY, String(Date.now())); } catch {}
+
     isPushingRef.current = true;
     try {
       await saveProgress({ userId: uid, data: localStr });
