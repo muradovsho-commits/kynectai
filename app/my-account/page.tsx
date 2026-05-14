@@ -21,7 +21,6 @@ const YEARS = ["Class of 2025","Class of 2026","Class of 2027","Class of 2028","
 
 export default function MyAccountPage() {
   const router = useRouter();
-  const deleteAccountMutation = useMutation(api.auth.deleteAccount);
   const downgradePlanMutation = useMutation(api.auth.downgradePlan);
 const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
   const [userId, setUserId] = useState('');
@@ -794,46 +793,7 @@ const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
             }}>Sign out</button>
           </div>
 
-          {/* Delete account row */}
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            padding: '16px 0', gap: 20,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(220, 38, 38, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-              </div>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 1 }}>Delete account</div>
-                <div style={{ fontSize: 11.5, color: 'var(--text-3)' }}>Permanently removes profile, plan, and all recruiting data</div>
-              </div>
-            </div>
-            <button type="button" onClick={() => setModal({
-              title: 'Delete your account?',
-              desc: 'This permanently erases your profile, plan, and all recruiting data. You cannot undo this.',
-              confirmLabel: 'Delete forever',
-              onConfirm: async () => {
-                const uid = localStorage.getItem('offerbell_user_id');
-                if (!uid) return;
-                try {
-                  await deleteAccountMutation({ userId: uid });
-                  const keys: string[] = [];
-                  for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k) keys.push(k); }
-                  keys.forEach(k => localStorage.removeItem(k));
-                  document.cookie = 'offerbell_user_id=; path=/; max-age=0';
-                  router.push('/');
-                } catch (e) {
-                  alert('Could not delete account. Please email support.');
-                }
-              },
-            })} style={{
-              background: 'transparent', color: '#dc2626',
-              padding: '7px 14px', borderRadius: 8,
-              fontSize: 12, fontWeight: 600,
-              border: '1.5px solid rgba(220, 38, 38, 0.35)',
-              cursor: 'pointer', fontFamily: "'Sora', sans-serif",
-            }}>Delete</button>
-          </div>
+          {/* Delete account row removed - users contact support to delete */}
         </div>
 
         </div>
