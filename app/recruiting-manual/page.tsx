@@ -317,91 +317,150 @@ export default function RecruitingManualPage() {
   const track=TRACKS.find(t=>t.id===activeTrack)||TRACKS[0];
   const chapter=track.chapters[activeChapter]||track.chapters[0];
 
+  // Standard industry 2-letter codes. Rendered in serif italic as a quiet
+  // editorial alternative to icon tiles (matches Mock Interview).
+  const TRACK_CODE: Record<string, string> = {
+    ib: 'IB', pe: 'PE', consulting: 'CN', ge: 'GE', am: 'AM',
+    accounting: 'AC', st: 'ST', er: 'ER', re: 'RE', vc: 'VC', rx: 'RX',
+  };
+  const TRACK_THEME: Record<string, string> = {
+    ib: '#2563eb', pe: '#16a34a', consulting: '#7c3aed', ge: '#0891b2',
+    am: '#dc2626', accounting: '#ea580c', st: '#0891b2', er: '#d97706',
+    re: '#0d9488', vc: '#c026d3', rx: '#475569',
+  };
+
   return (
     <div className="app">
       <Sidebar activePage="recruiting-manual" />
 
-      <main className="manual-main">
-        <div className="manual-inner">
+      <main className="main" style={{ padding: '32px 36px 80px', flex: 1, height: '100vh', overflowY: 'auto' }}>
+        <div style={{ maxWidth: 1180, margin: '0 auto', fontFamily: "'Sora', sans-serif" }}>
 
           {/* Back link */}
-          <div style={{marginBottom: 20}}>
-            <Link href="/learn" style={{display:"inline-flex",alignItems:"center",gap:6,fontSize:13,fontWeight:500,color:"var(--text-3)",textDecoration:"none"}}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <div style={{ marginBottom: 18 }}>
+            <Link href="/learn" style={{display:"inline-flex",alignItems:"center",gap:6,fontSize:12.5,fontWeight:500,color:"var(--text-3)",textDecoration:"none"}}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
               Learning Hub
             </Link>
           </div>
 
-          {/* Hero - makes positioning unambiguous */}
-          <div className="cr-hero">
-            <div className="cr-eyebrow">Career Roadmaps</div>
-            <h1 className="cr-title">Understand the <em>careers.</em></h1>
-            <p className="cr-sub">What each role actually does day-to-day, who the key firms are, how much they pay, and how to break in. A primer on the work itself, not on how to interview for it.</p>
-
-            {/* Disambiguation: makes it crystal clear this is NOT interview prep */}
-            <div className="cr-disambig">
-              <div className="cr-disambig-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              </div>
-              <div className="cr-disambig-text">
-                <div className="cr-disambig-label">Prepping for interviews?</div>
-                <div className="cr-disambig-desc">Technicals, behaviorals, modeling tests, valuation, and frameworks live in the Interview Prep Guides.</div>
-              </div>
-              <Link href="/learn" className="cr-disambig-cta">Interview Prep Guides
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </Link>
-            </div>
-          </div>
-
           {activeTrack === '' ? (
             <>
-              {/* Section header above grid */}
-              <div className="cr-section-header">
-                <div className="cr-section-eyebrow">Select a path</div>
-                <h2 className="cr-section-title">{TRACKS.length} careers <em>to explore.</em></h2>
+              {/* Hero - matches Mock Interview pattern */}
+              <div style={{ marginBottom: 28 }}>
+                <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 10 }}>Career Roadmaps</div>
+                <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 46, lineHeight: 1, letterSpacing: '-1.2px', color: 'var(--text)', fontWeight: 400, margin: '0 0 14px' }}>
+                  Understand the <em style={{ fontStyle: 'italic' }}>careers.</em>
+                </h1>
+                <p style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.6, maxWidth: 620, margin: 0 }}>
+                  What each role does day-to-day, who the key firms are, what they pay, and how to break in. Not for interview prep, that lives in the <Link href="/learn" style={{color:'var(--text)', textDecoration:'underline', textUnderlineOffset: 3, fontWeight: 600}}>Interview Prep Guides</Link>.
+                </p>
               </div>
 
-              {/* Clean 3-column track grid */}
-              <div className="cr-track-grid">
-                {TRACKS.map(t => (
-                  <button key={t.id} type="button" className="cr-track-card" onClick={() => {setActiveTrack(t.id); setActiveChapter(0);}}>
-                    <div className="cr-track-card-top">
-                      <div className="cr-track-card-icon">{ICONS[t.id]}</div>
-                      <div className="cr-track-card-arrow">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              {/* Track list - same row pattern as Mock Interview landing */}
+              <div style={{
+                background: 'var(--surface)', border: '1.5px solid var(--border)',
+                borderRadius: 14, overflow: 'hidden',
+              }}>
+                <div style={{
+                  display: 'grid', gridTemplateColumns: '56px 1fr 120px 50px',
+                  alignItems: 'center', gap: 16,
+                  padding: '10px 20px',
+                  background: 'var(--surface-2)', borderBottom: '1px solid var(--border)',
+                  fontSize: 9.5, fontWeight: 700, letterSpacing: 1.2, textTransform: 'uppercase', color: 'var(--text-3)',
+                }}>
+                  <span></span>
+                  <span>Track</span>
+                  <span style={{ textAlign: 'right' }}>Chapters</span>
+                  <span></span>
+                </div>
+
+                {TRACKS.map((t, i) => {
+                  const accent = TRACK_THEME[t.id] || 'var(--text-2)';
+                  return (
+                    <div
+                      key={t.id}
+                      onClick={() => {setActiveTrack(t.id); setActiveChapter(0);}}
+                      className="cr-row"
+                      style={{
+                        display: 'grid', gridTemplateColumns: '56px 1fr 120px 50px',
+                        alignItems: 'center', gap: 16,
+                        padding: '18px 20px',
+                        borderBottom: i < TRACKS.length - 1 ? '1px solid var(--border)' : 'none',
+                        cursor: 'pointer',
+                        transition: 'background 0.12s ease',
+                      }}
+                    >
+                      <div style={{
+                        fontFamily: "'Instrument Serif', serif",
+                        fontStyle: 'italic',
+                        fontSize: 26,
+                        letterSpacing: '-0.5px',
+                        color: accent,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        flexShrink: 0,
+                        lineHeight: 1,
+                      }}>{TRACK_CODE[t.id] || ''}</div>
+
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>{t.title}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.45 }}>{t.sub}</div>
+                      </div>
+
+                      <div style={{ fontSize: 11.5, color: 'var(--text-3)', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
+                        {t.chapters.length}
+                      </div>
+
+                      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="9 18 15 12 9 6"/>
+                        </svg>
                       </div>
                     </div>
-                    <div className="cr-track-card-title">{t.title}</div>
-                    <div className="cr-track-card-sub">{t.sub}</div>
-                    <div className="cr-track-card-footer">{t.chapters.length} chapter{t.chapters.length === 1 ? '' : 's'}</div>
-                  </button>
-                ))}
+                  );
+                })}
               </div>
+
+              <style>{`.cr-row:hover { background: var(--surface-2); }`}</style>
             </>
           ) : (
             <>
               {/* Track detail view */}
-              <button onClick={() => setActiveTrack('')} className="cr-back-btn" type="button">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                All roadmaps
-              </button>
+              <div style={{ marginBottom: 18 }}>
+                <button onClick={() => setActiveTrack('')} type="button" style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  background: 'none', border: 'none', padding: 0,
+                  fontSize: 12.5, fontWeight: 500, color: 'var(--text-3)',
+                  cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+                }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                  All roadmaps
+                </button>
+              </div>
 
-              <div className="cr-track-header">
-                <div className="cr-track-header-icon">{ICONS[track.id]}</div>
-                <div>
-                  <div className="cr-track-header-eyebrow">Career Roadmap</div>
-                  <h2 className="cr-track-header-title">{track.title}</h2>
-                  <div className="cr-track-header-sub">{track.sub}</div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 18, marginBottom: 28 }}>
+                <div style={{
+                  fontFamily: "'Instrument Serif', serif",
+                  fontStyle: 'italic',
+                  fontSize: 56,
+                  letterSpacing: '-1.5px',
+                  color: TRACK_THEME[track.id] || 'var(--text-2)',
+                  lineHeight: 1,
+                  flexShrink: 0,
+                }}>{TRACK_CODE[track.id] || ''}</div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 8 }}>Career Roadmap</div>
+                  <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 36, lineHeight: 1.05, letterSpacing: '-0.8px', color: 'var(--text)', fontWeight: 400, margin: '0 0 6px' }}>
+                    {track.title}
+                  </h1>
+                  <div style={{ fontSize: 13, color: 'var(--text-3)' }}>{track.sub}</div>
                 </div>
               </div>
 
               {/* Chapter pills */}
-              <div className="cr-chapter-nav">
-                {track.chapters.map((ch, i) => (
-                  <button key={ch.title} className={'cr-chapter-pill' + (activeChapter === i ? ' active' : '')} onClick={() => setActiveChapter(i)} type="button">
-                    <span className="cr-chapter-num">{i + 1}</span>
-                    <span>{ch.title}</span>
-                  </button>
+              <div className="chapter-nav">
+                {track.chapters.map((ch,i)=>(
+                  <button key={ch.title} className={'chapter-pill'+(activeChapter===i?' active':'')} onClick={()=>setActiveChapter(i)} type="button">{ch.title}</button>
                 ))}
               </div>
 
@@ -414,16 +473,9 @@ export default function RecruitingManualPage() {
                 <ExpandCard key={`${activeTrack}-${activeChapter}-${i}`} num={i+1} title={sec.title} content={sec.content} defaultOpen={i===0}/>
               ))}
 
-              <div className="cr-pager">
-                <button className="cr-pager-btn" onClick={()=>{if(activeChapter>0)setActiveChapter(activeChapter-1);}} disabled={activeChapter===0} type="button">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                  Previous
-                </button>
-                <div className="cr-pager-progress">Chapter {activeChapter+1} of {track.chapters.length}</div>
-                <button className="cr-pager-btn" onClick={()=>{if(activeChapter<track.chapters.length-1)setActiveChapter(activeChapter+1);}} disabled={activeChapter>=track.chapters.length-1} type="button">
-                  Next
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                </button>
+              <div className="manual-nav">
+                <button className="manual-nav-btn back" onClick={()=>{if(activeChapter>0)setActiveChapter(activeChapter-1);}} disabled={activeChapter===0} type="button">&larr; Previous</button>
+                <button className="manual-nav-btn next" onClick={()=>{if(activeChapter<track.chapters.length-1)setActiveChapter(activeChapter+1);}} disabled={activeChapter>=track.chapters.length-1} type="button">Next Chapter &rarr;</button>
               </div>
             </>
           )}
