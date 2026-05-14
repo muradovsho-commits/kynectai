@@ -1,6 +1,9 @@
 'use client';
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMutation, useAction } from 'convex/react';
+import { ConvexHttpClient } from 'convex/browser';
+import { api } from '../../convex/_generated/api';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
 import './mock-interview.css';
@@ -86,6 +89,12 @@ function gradeLabel(g: Grade): string {
 export default function MockInterviewPage() {
   const router = useRouter();
 
+  // Per-entry Convex mutations. Replaces the old blob-sync path for
+  // offerbell_mock_responses, which round-tripped ~500KB on every save.
+  const upsertResponseMut = useMutation(api.mockResponses.upsertResponse);
+  const setResponseHiddenMut = useMutation(api.mockResponses.setResponseHidden);
+  const importResponsesMut = useMutation(api.mockResponses.importResponses);
+
   const [activeTrack, setActiveTrack] = useState<TrackDef | null>(null);
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set());
   const [activeQuestion, setActiveQuestion] = useState<Flashcard | null>(null);
@@ -109,11 +118,88 @@ export default function MockInterviewPage() {
   const recognitionRef = useRef<any>(null);
   const recordingStartRef = useRef<number>(0);
 
-  // Init
+  // Init: load responses. Source of truth is now the Convex mockResponses
+  // table. We hydrate from there, with a one-time migration for users whose
+  // data still lives only in localStorage (the legacy blob-sync path).
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    if (!localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
-    setAllResponses(loadResponses());
+    const uid = localStorage.getItem('offerbell_user_id');
+    if (!uid) { router.replace('/signin'); return; }
+
+    // Start with whatever's in localStorage so the UI isn't blank during fetch
+    const localList = loadResponses();
+    setAllResponses(localList);
+
+    const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+    if (!url) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const client = new ConvexHttpClient(url);
+        const cloud = await client.query(api.mockResponses.listResponses, { userId: uid }) as ResponseEntry[];
+        if (cancelled) return;
+
+        // If cloud has nothing but local does, this user predates the split.
+        // One-time migration: push everything in localStorage up to Convex.
+        if ((!cloud || cloud.length === 0) && localList.length > 0) {
+          try {
+            await importResponsesMut({
+              userId: uid,
+              entries: localList.map(r => ({
+                entryId: r.id,
+                questionId: r.questionId,
+                trackId: r.questionId.split('::')[0] || '',
+                transcript: r.transcript,
+                grade: r.grade,
+                overallFeedback: r.overallFeedback,
+                strengths: r.strengths,
+                weaknesses: r.weaknesses,
+                wordsPerMin: r.wordsPerMin,
+                durationSec: r.durationSec,
+                timestamp: r.timestamp,
+                hidden: r.hidden,
+              })),
+            });
+          } catch {}
+          return; // localList already in state
+        }
+
+        // Merge: prefer cloud version, but keep any local entry not yet uploaded.
+        const cloudIds = new Set(cloud.map(r => r.id));
+        const onlyLocal = localList.filter(r => !cloudIds.has(r.id));
+        const merged = [...cloud, ...onlyLocal].sort((a, b) => b.timestamp - a.timestamp);
+        setAllResponses(merged);
+        saveResponses(merged);
+
+        // Push any local-only entries up to Convex
+        if (onlyLocal.length > 0) {
+          try {
+            await importResponsesMut({
+              userId: uid,
+              entries: onlyLocal.map(r => ({
+                entryId: r.id,
+                questionId: r.questionId,
+                trackId: r.questionId.split('::')[0] || '',
+                transcript: r.transcript,
+                grade: r.grade,
+                overallFeedback: r.overallFeedback,
+                strengths: r.strengths,
+                weaknesses: r.weaknesses,
+                wordsPerMin: r.wordsPerMin,
+                durationSec: r.durationSec,
+                timestamp: r.timestamp,
+                hidden: r.hidden,
+              })),
+            });
+          } catch {}
+        }
+      } catch {
+        // Network failure - keep showing localStorage data
+      }
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   // Rehydrate video blobs from IndexedDB for any responses we don't have in memory.
@@ -359,6 +445,26 @@ export default function MockInterviewPage() {
     setAllResponses(updated);
     saveResponses(updated);
 
+    // Push this single entry to Convex (replaces the old ~500KB blob round-trip).
+    // Fire-and-forget; localStorage is the immediate source of truth.
+    const currentUid = localStorage.getItem('offerbell_user_id');
+    if (currentUid) {
+      upsertResponseMut({
+        userId: currentUid,
+        entryId,
+        questionId,
+        trackId: activeTrack.id,
+        transcript,
+        grade,
+        overallFeedback,
+        strengths,
+        weaknesses,
+        wordsPerMin: wpm,
+        durationSec: actualDuration,
+        timestamp: entry.timestamp,
+      }).catch(() => {});
+    }
+
     // Persist the video blob to IndexedDB so it survives page reloads.
     // Fire-and-forget; if it fails (quota, browser limits) video stays session-only.
     saveVideoBlob(entryId, blob).catch(() => {});
@@ -394,6 +500,12 @@ export default function MockInterviewPage() {
     const updated = allResponses.map(r => r.id === id ? { ...r, hidden: !r.hidden } : r);
     setAllResponses(updated);
     saveResponses(updated);
+    // Mirror the flag change to Convex
+    const uid = localStorage.getItem('offerbell_user_id');
+    const newHidden = !allResponses.find(r => r.id === id)?.hidden;
+    if (uid) {
+      setResponseHiddenMut({ userId: uid, entryId: id, hidden: newHidden }).catch(() => {});
+    }
   }
 
   // Helpers
