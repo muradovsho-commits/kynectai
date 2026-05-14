@@ -11,6 +11,7 @@ import { ACCT_FLASHCARDS } from '../flashcards/acct-flashcard-data';
 import { AM_FLASHCARDS } from '../flashcards/am-flashcard-data';
 import { ST_FLASHCARDS } from '../flashcards/st-flashcard-data';
 import { ER_FLASHCARDS, RE_FLASHCARDS, VC_FLASHCARDS, RX_FLASHCARDS } from '../flashcards/other-flashcard-data';
+import { saveVideoBlob, loadVideoBlob, deleteVideoBlob, pruneOrphanedVideos } from './video-storage';
 
 // ══════════════════════════════════════════════════════════════
 // TYPES
@@ -112,6 +113,33 @@ export default function MockInterviewPage() {
     if (!localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
     setAllResponses(loadResponses());
   }, [router]);
+
+  // Rehydrate video blobs from IndexedDB for any responses we don't have in memory.
+  // Object URLs only live for the current page session, so we recreate them from the
+  // persisted blobs on every page load. Runs whenever the response list changes.
+  useEffect(() => {
+    if (allResponses.length === 0) return;
+    let cancelled = false;
+    (async () => {
+      // First pass: clean up any IDB blobs whose response was deleted in another tab/session
+      const validIds = new Set(allResponses.map(r => r.id));
+      pruneOrphanedVideos(validIds).catch(() => {});
+
+      // Load each missing video and add to sessionVideos as it arrives
+      for (const r of allResponses) {
+        if (cancelled) return;
+        if (sessionVideos[r.id]) continue; // already have this one
+        const blob = await loadVideoBlob(r.id);
+        if (cancelled) return;
+        if (blob) {
+          const url = URL.createObjectURL(blob);
+          setSessionVideos(prev => prev[r.id] ? prev : { ...prev, [r.id]: url });
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allResponses]);
 
   // Camera lifecycle
   useEffect(() => {
@@ -329,6 +357,10 @@ export default function MockInterviewPage() {
     setAllResponses(updated);
     saveResponses(updated);
 
+    // Persist the video blob to IndexedDB so it survives page reloads.
+    // Fire-and-forget; if it fails (quota, browser limits) video stays session-only.
+    saveVideoBlob(entryId, blob).catch(() => {});
+
     // Increment weekly usage for free users
     const plan = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_plan') || 'free') : 'free';
     if (plan !== 'pro' && plan !== 'elite') {
@@ -352,6 +384,8 @@ export default function MockInterviewPage() {
     setAllResponses(updated);
     saveResponses(updated);
     if (sessionVideos[id]) { URL.revokeObjectURL(sessionVideos[id]); setSessionVideos(prev => { const n = { ...prev }; delete n[id]; return n; }); }
+    // Also clear the persisted blob so storage doesn't grow forever
+    deleteVideoBlob(id).catch(() => {});
   }
 
   // Helpers
