@@ -52,6 +52,7 @@ const TRACKS: TrackDef[] = [
 ];
 
 const RESPONSES_KEY = 'offerbell_mock_responses';
+const RECORDING_LIMIT_SEC = 60;
 
 function loadResponses(): ResponseEntry[] {
   try { const raw = localStorage.getItem(RESPONSES_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; }
@@ -136,7 +137,20 @@ export default function MockInterviewPage() {
   useEffect(() => {
     if (isRecording) {
       setRecordingTime(0);
-      timerRef.current = setInterval(() => setRecordingTime(t => t + 1), 1000);
+      timerRef.current = setInterval(() => {
+        setRecordingTime(t => {
+          const next = t + 1;
+          if (next >= RECORDING_LIMIT_SEC) {
+            // Hit the cap - stop recording. Defer so we don't tear down inside the setState callback.
+            setTimeout(() => {
+              try { recorderRef.current?.stop(); } catch {}
+              try { recognitionRef.current?.stop(); } catch {}
+              setIsRecording(false);
+            }, 0);
+          }
+          return next;
+        });
+      }, 1000);
     } else {
       if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
     }
@@ -198,18 +212,34 @@ export default function MockInterviewPage() {
       recorder.start();
     } catch { return; }
 
-    // Speech recognition
+    // Speech recognition. Chrome's Web Speech API silently stops after pauses
+    // and internal timeouts, so we capture interim results and auto-restart
+    // while the MediaRecorder is still going.
     try {
       const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SR) {
         const r = new SR();
-        r.continuous = true; r.interimResults = false; r.lang = 'en-US';
+        r.continuous = true; r.interimResults = true; r.lang = 'en-US';
+
+        let finalText = '';
         r.onresult = (e: any) => {
-          let t = '';
-          for (let i = 0; i < e.results.length; i++) { if (e.results[i].isFinal) t += e.results[i][0].transcript + ' '; }
-          transcriptRef.current = t.trim();
+          let interimText = '';
+          for (let i = e.resultIndex; i < e.results.length; i++) {
+            if (e.results[i].isFinal) {
+              finalText += e.results[i][0].transcript + ' ';
+            } else {
+              interimText += e.results[i][0].transcript + ' ';
+            }
+          }
+          transcriptRef.current = (finalText + interimText).trim();
         };
-        r.onerror = () => {};
+        r.onend = () => {
+          // If we're still recording, the engine timed out by itself - restart it
+          if (recorderRef.current && recorderRef.current.state === 'recording') {
+            try { r.start(); } catch {}
+          }
+        };
+        r.onerror = (_e: any) => { /* 'no-speech' and 'aborted' are normal - onend will restart if needed */ };
         recognitionRef.current = r;
         r.start();
       }
@@ -226,12 +256,22 @@ export default function MockInterviewPage() {
 
   async function processRecording() {
     if (!activeQuestion || !activeTrack) return;
+
+    const transcript = transcriptRef.current.trim();
+    const actualDuration = Math.round((Date.now() - recordingStartRef.current) / 1000);
+
+    // No speech captured - bail without consuming usage or hitting the AI grader.
+    // This happens when the mic didn't pick up audio, browser permissions were off,
+    // or speech recognition silently failed mid-recording.
+    if (!transcript || actualDuration < 2) {
+      alert("We didn't catch any audio. Check that your microphone is enabled for this site and try again. (Chrome is the most reliable browser for this feature.)");
+      return;
+    }
+
     setGrading(true);
 
     const blob = new Blob(chunksRef.current, { type: 'video/webm' });
     const videoUrl = URL.createObjectURL(blob);
-    const transcript = transcriptRef.current || '[No speech detected]';
-    const actualDuration = Math.round((Date.now() - recordingStartRef.current) / 1000);
     const wordCount = transcript.split(/\s+/).filter(Boolean).length;
     const wpm = actualDuration > 0 ? Math.round((wordCount / actualDuration) * 60) : 0;
 
@@ -636,9 +676,10 @@ export default function MockInterviewPage() {
                     <div style={{
                       position: 'absolute', top: 14, right: 14,
                       padding: '5px 10px', borderRadius: 7,
-                      background: 'rgba(0, 0, 0, 0.6)', color: '#fff',
+                      background: recordingTime >= RECORDING_LIMIT_SEC - 10 ? 'rgba(220, 38, 38, 0.92)' : 'rgba(0, 0, 0, 0.6)',
+                      color: '#fff',
                       fontSize: 12, fontWeight: 700, fontVariantNumeric: 'tabular-nums',
-                    }}>{fmtTime(recordingTime)}</div>
+                    }}>{recordingTime}s / {RECORDING_LIMIT_SEC}s</div>
                   </>
                 )}
                 {!isRecording && cameraReady && (
