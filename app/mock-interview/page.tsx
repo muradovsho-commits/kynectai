@@ -31,6 +31,7 @@ type ResponseEntry = {
   wordsPerMin: number;
   durationSec: number;
   timestamp: number;
+  hidden?: boolean;
 };
 
 type TrackDef = { id: string; title: string; cards: Flashcard[]; icon: React.ReactNode };
@@ -94,6 +95,7 @@ export default function MockInterviewPage() {
   const [recordingTime, setRecordingTime] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [grading, setGrading] = useState(false);
+  const [showHidden, setShowHidden] = useState(false);
 
   const [allResponses, setAllResponses] = useState<ResponseEntry[]>([]);
   const [sessionVideos, setSessionVideos] = useState<Record<string, string>>({});
@@ -200,7 +202,7 @@ export default function MockInterviewPage() {
   // Navigation
   function openTrack(t: TrackDef) { setActiveTrack(t); setExpandedCats(new Set()); setActiveQuestion(null); }
   function toggleCat(c: string) { setExpandedCats(prev => { const n = new Set(prev); n.has(c) ? n.delete(c) : n.add(c); return n; }); }
-  function openQuestion(card: Flashcard) { setActiveQuestion(card); setShowAnswer(false); setIsRecording(false); setRecordingTime(0); transcriptRef.current = ''; }
+  function openQuestion(card: Flashcard) { setActiveQuestion(card); setShowAnswer(false); setIsRecording(false); setRecordingTime(0); transcriptRef.current = ''; setShowHidden(false); }
   function backToCats() { setActiveQuestion(null); setShowAnswer(false); if (isRecording) stopRecording(); }
   function backToTracks() { setActiveTrack(null); setActiveQuestion(null); }
 
@@ -386,6 +388,12 @@ export default function MockInterviewPage() {
     if (sessionVideos[id]) { URL.revokeObjectURL(sessionVideos[id]); setSessionVideos(prev => { const n = { ...prev }; delete n[id]; return n; }); }
     // Also clear the persisted blob so storage doesn't grow forever
     deleteVideoBlob(id).catch(() => {});
+  }
+
+  function toggleHideResponse(id: string) {
+    const updated = allResponses.map(r => r.id === id ? { ...r, hidden: !r.hidden } : r);
+    setAllResponses(updated);
+    saveResponses(updated);
   }
 
   // Helpers
@@ -604,6 +612,9 @@ export default function MockInterviewPage() {
   if (activeQuestion) {
     const questionId = makeQid(activeTrack.id, activeQuestion.q);
     const qResps = allResponses.filter(r => r.questionId === questionId);
+    const visibleResps = qResps.filter(r => !r.hidden);
+    const hiddenResps = qResps.filter(r => !!r.hidden);
+    const shownResps = showHidden ? qResps : visibleResps;
     const best = bestForQ(questionId);
     const avg = avgForQ(questionId);
     const gradePill = (g: Grade | null) => {
@@ -811,16 +822,17 @@ export default function MockInterviewPage() {
             {qResps.length > 0 && (
               <div style={{ marginTop: 28 }}>
                 <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 14 }}>
-                  Your {qResps.length === 1 ? 'response' : `responses (${qResps.length})`}
+                  Your {visibleResps.length === 1 ? 'response' : `responses (${visibleResps.length})`}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                  {qResps.map(r => {
+                  {shownResps.map(r => {
                     const vid = sessionVideos[r.id] || null;
                     const pill = gradePill(r.grade);
                     return (
                       <div key={r.id} style={{
                         background: 'var(--surface)', border: '1.5px solid var(--border)',
                         borderRadius: 12, overflow: 'hidden',
+                        opacity: r.hidden ? 0.55 : 1,
                       }}>
                         {vid && (
                           <video src={vid} controls playsInline style={{ width: '100%', display: 'block', background: '#000', aspectRatio: '16 / 9', objectFit: 'cover' }} />
@@ -878,7 +890,7 @@ export default function MockInterviewPage() {
 
                           <div style={{ marginTop: 14, textAlign: 'right' }}>
                             <button
-                              onClick={() => deleteResponse(r.id)}
+                              onClick={() => toggleHideResponse(r.id)}
                               type="button"
                               style={{
                                 background: 'none', border: 'none',
@@ -886,13 +898,29 @@ export default function MockInterviewPage() {
                                 cursor: 'pointer', fontFamily: "'Sora', sans-serif",
                                 padding: '4px 8px',
                               }}
-                            >Delete</button>
+                            >{r.hidden ? 'Unhide' : 'Hide'}</button>
                           </div>
                         </div>
                       </div>
                     );
                   })}
                 </div>
+
+                {hiddenResps.length > 0 && (
+                  <div style={{ marginTop: 14, textAlign: 'center' }}>
+                    <button
+                      onClick={() => setShowHidden(s => !s)}
+                      type="button"
+                      style={{
+                        background: 'none', border: '1px solid var(--border)',
+                        fontSize: 11, color: 'var(--text-2)',
+                        cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+                        padding: '6px 14px', borderRadius: 7,
+                        letterSpacing: 0.3,
+                      }}
+                    >{showHidden ? `Collapse ${hiddenResps.length} hidden` : `Show ${hiddenResps.length} hidden`}</button>
+                  </div>
+                )}
               </div>
             )}
 
