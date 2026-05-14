@@ -81,26 +81,40 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
     }
   }, [step, router]);
 
-  // Find and highlight the spotlight element
+  // Find and track the spotlight element. Polls every 150ms while step is active
+  // so the rect stays accurate across scrolls, late page mounts, and resizes.
   useEffect(() => {
     if (step >= STEPS.length) return;
     const s = STEPS[step];
     if (!s.spotlightSelector) { setSpotlightRect(null); return; }
 
-    const findEl = () => {
+    let cancelled = false;
+    let scrolledOnce = false;
+
+    const tick = () => {
+      if (cancelled) return;
       const el = document.querySelector(s.spotlightSelector!);
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        setSpotlightRect(rect);
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } else {
+      if (!el) {
         setSpotlightRect(null);
+        return;
+      }
+      const rect = el.getBoundingClientRect();
+      setSpotlightRect(prev => {
+        if (prev && prev.left === rect.left && prev.top === rect.top && prev.width === rect.width && prev.height === rect.height) {
+          return prev;
+        }
+        return rect;
+      });
+      // Bring it into view on first sighting only
+      if (!scrolledOnce) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        scrolledOnce = true;
       }
     };
-    // Delay to let page render
-    const t = setTimeout(findEl, 600);
-    const t2 = setTimeout(findEl, 1200);
-    return () => { clearTimeout(t); clearTimeout(t2); };
+
+    tick();
+    const interval = setInterval(tick, 150);
+    return () => { cancelled = true; clearInterval(interval); };
   }, [step, navigated]);
 
   // Check if profile is filled (for step 0)
@@ -177,31 +191,26 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
   // Elevate the spotlighted element above the overlay ONLY for interactive steps
   const needsInteraction = step === 0; // Only profile step needs form interaction
   useEffect(() => {
-    if (!currentStep.spotlightSelector) return;
-    const findAndSetup = () => {
+    if (!currentStep.spotlightSelector || !needsInteraction) return;
+    const apply = () => {
       const el = document.querySelector(currentStep.spotlightSelector!) as HTMLElement;
       if (!el) return;
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      if (needsInteraction) {
-        el.style.position = 'relative';
-        el.style.zIndex = '100000';
-        el.style.background = 'var(--surface, #fff)';
-        el.style.borderRadius = '16px';
-      }
+      el.style.position = 'relative';
+      el.style.zIndex = '100000';
+      el.style.background = 'var(--surface, #fff)';
+      el.style.borderRadius = '16px';
     };
-    const t1 = setTimeout(findAndSetup, 400);
-    const t2 = setTimeout(findAndSetup, 900);
+    const t1 = setTimeout(apply, 400);
+    const t2 = setTimeout(apply, 900);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
-      if (currentStep.spotlightSelector) {
-        const el = document.querySelector(currentStep.spotlightSelector) as HTMLElement;
-        if (el) {
-          el.style.zIndex = '';
-          el.style.position = '';
-          el.style.background = '';
-          el.style.borderRadius = '';
-        }
+      const el = document.querySelector(currentStep.spotlightSelector!) as HTMLElement;
+      if (el) {
+        el.style.zIndex = '';
+        el.style.position = '';
+        el.style.background = '';
+        el.style.borderRadius = '';
       }
     };
   }, [step, currentStep.spotlightSelector, navigated, needsInteraction]);
@@ -212,8 +221,46 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
       transition: 'opacity .3s',
       opacity: animating ? 0 : 1,
     }}>
-      {/* Single full-screen dim overlay - blocks all clicks */}
-      <div style={{ position:'fixed', inset:0, background: isLast ? 'rgba(0,0,0,0.75)' : 'rgba(0,0,0,0.65)' }} />
+      {/* Dim overlay with a cutout around the spotlight rect.
+          Falls back to a flat dim if no spotlight target is set. */}
+      {spotlightRect ? (
+        <svg style={{ position: 'fixed', inset: 0, width: '100%', height: '100%' }}>
+          <defs>
+            <mask id="offerbell-spotlight-mask">
+              <rect width="100%" height="100%" fill="white" />
+              <rect
+                x={Math.max(0, spotlightRect.left - 10)}
+                y={Math.max(0, spotlightRect.top - 10)}
+                width={spotlightRect.width + 20}
+                height={spotlightRect.height + 20}
+                rx="14"
+                ry="14"
+                fill="black"
+              />
+            </mask>
+          </defs>
+          <rect
+            width="100%"
+            height="100%"
+            fill={isLast ? 'rgba(0,0,0,0.75)' : 'rgba(0,0,0,0.65)'}
+            mask="url(#offerbell-spotlight-mask)"
+          />
+          {/* Thin highlight ring around the cutout */}
+          <rect
+            x={Math.max(0, spotlightRect.left - 10)}
+            y={Math.max(0, spotlightRect.top - 10)}
+            width={spotlightRect.width + 20}
+            height={spotlightRect.height + 20}
+            rx="14"
+            ry="14"
+            fill="none"
+            stroke="rgba(255,255,255,0.35)"
+            strokeWidth="1.5"
+          />
+        </svg>
+      ) : (
+        <div style={{ position:'fixed', inset:0, background: isLast ? 'rgba(0,0,0,0.75)' : 'rgba(0,0,0,0.65)' }} />
+      )}
 
       {/* Card */}
       <div style={{
