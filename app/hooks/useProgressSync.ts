@@ -93,6 +93,11 @@ const EXCLUDE_FROM_SYNC = new Set([
   'offerbell_plan',
   'offerbell_plan_activated_at',
   'offerbell_promo_code',
+  // Moved to dedicated Convex tables (mockResponses, coachConvos).
+  // Excluding them from the blob means saves of these keys no longer cause
+  // ~500KB round trips through userProgress.data.
+  'offerbell_mock_responses',
+  'offerbell_coach_history',
 ]);
 
 // Cross-tab coordination: tabs share a "last push" timestamp via localStorage
