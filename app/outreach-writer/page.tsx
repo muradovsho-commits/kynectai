@@ -33,21 +33,20 @@ export default function OutreachWriterPage() {
   const [messagesSent, setMessagesSent] = useState(0);
   useEffect(() => {
     try {
+      // Per-account display counter only. The actual rate limit is enforced
+      // server-side in /api/generate-outreach via checkPlanLimit, so we no
+      // longer cross-reference a global cookie - that was leaking counts
+      // between accounts on the same browser (fresh accounts inheriting old
+      // counts from prior signups).
       const localCount = parseInt(localStorage.getItem('offerbell_messages_sent') || '0', 10);
-      const cookieMatch = document.cookie.match(/offerbell_msg_count=(\d+)/);
-      const cookieCount = cookieMatch ? parseInt(cookieMatch[1], 10) : 0;
-      const maxCount = Math.max(localCount, cookieCount);
-      setMessagesSent(maxCount);
-      if (maxCount > localCount) {
-        localStorage.setItem('offerbell_messages_sent', String(maxCount));
-      }
+      setMessagesSent(localCount);
       // Sync to extension if installed
       try {
         const extensionId = 'ecmiggmdjpohgidmdonhbcbnlhdagmkp';
         if (extensionId && typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
           chrome.runtime.sendMessage(extensionId, {
             action: 'updateCount',
-            messagesSent: maxCount,
+            messagesSent: localCount,
             plan: localStorage.getItem('offerbell_plan') || 'free',
             userId: localStorage.getItem('offerbell_user_id') || ''
           }, () => {});
@@ -231,12 +230,10 @@ Rules:
           const newQ = await incrementOutreachCount({ userId: storedUid as any });
           localStorage.setItem("offerbell_messages_sent", String(newQ));
           setMessagesSent(newQ);
-          document.cookie = `offerbell_msg_count=${newQ}; path=/; max-age=2592000; SameSite=Lax`;
         } else {
           const prev = parseInt(localStorage.getItem("offerbell_messages_sent") || "0", 10); 
           localStorage.setItem("offerbell_messages_sent", String(prev + 1)); 
           setMessagesSent(prev + 1);
-          document.cookie = `offerbell_msg_count=${prev + 1}; path=/; max-age=2592000; SameSite=Lax`;
         }
         // Increment weekly usage for Pro/Elite
         if (userPlan === 'pro' || userPlan === 'elite') {
