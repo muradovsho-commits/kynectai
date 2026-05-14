@@ -144,10 +144,15 @@ function SignupContent() {
               width: "100%", height: 48, borderRadius: 10, border: "none",
               background: "#0a0a0a", color: "#ffffff", fontSize: 14, fontWeight: 700,
               fontFamily: "'Sora', sans-serif", cursor: submitting ? "not-allowed" : "pointer",
-              opacity: submitting ? 0.6 : 1, marginBottom: 20,
+              opacity: submitting ? 0.6 : 1, marginBottom: 14,
             }}>
               {submitting ? "Creating account..." : "Create Account"}
             </button>
+
+            <div style={{ fontSize: 11.5, color: "#9e9b96", lineHeight: 1.55, textAlign: "center", marginBottom: 18 }}>
+              By creating an account, you agree to our{" "}
+              <a href="/terms.html" target="_blank" rel="noopener noreferrer" style={{ color: "#6b6860", textDecoration: "underline", textUnderlineOffset: 2 }}>Terms of Service</a>.
+            </div>
           </form>
           )}
 
