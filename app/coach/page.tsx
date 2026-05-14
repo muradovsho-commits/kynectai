@@ -3,6 +3,9 @@
 import Sidebar from "../components/Sidebar";
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMutation } from 'convex/react';
+import { ConvexHttpClient } from 'convex/browser';
+import { api } from '../../convex/_generated/api';
 import '../contact-finder/contact-finder.css';
 import './coach.css';
 
@@ -220,6 +223,10 @@ function fmtTime(ts?: number) {
 
 export default function CoachPage() {
   const router = useRouter();
+  // Per-conversation Convex mutations. Replaces the old blob-sync path which
+  // pushed the entire offerbell_coach_history (~500KB) on every message.
+  const upsertConvoMut = useMutation(api.coachConvos.upsertConvo);
+  const importConvosMut = useMutation(api.coachConvos.importConvos);
   const [activeTrack, setActiveTrack] = useState('Investment Banking');
   const [activeFeature, setActiveFeature] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -409,8 +416,76 @@ export default function CoachPage() {
         if (wk.week === week && wk.count >= 1) setFreeLimitHit(true);
       } catch {}
     }
-    // Load saved conversations
-    setConvos(loadConvos());
+    // Load saved conversations. Source of truth is now Convex coachConvos
+    // table. We hydrate from there with a one-time migration for users whose
+    // history still lives only in localStorage.
+    const localList = loadConvos();
+    setConvos(localList);
+
+    const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+    const uid = localStorage.getItem('offerbell_user_id');
+    if (convexUrl && uid) {
+      (async () => {
+        try {
+          const client = new ConvexHttpClient(convexUrl);
+          const cloud = await client.query(api.coachConvos.listConvos, { userId: uid }) as Array<{ id: string; track: string; feature: string | null; preview: string; messages: string; createdAt: number; updatedAt: number }>;
+
+          // Cloud has data: hydrate from there. Parse messages back from JSON string.
+          if (cloud && cloud.length > 0) {
+            const cloudConvos: StoredConvo[] = cloud.map(c => ({
+              id: c.id,
+              track: c.track,
+              feature: c.feature,
+              preview: c.preview,
+              messages: (() => { try { return JSON.parse(c.messages); } catch { return []; } })(),
+              createdAt: c.createdAt,
+              updatedAt: c.updatedAt,
+            }));
+            // Merge with local-only convos (anything in localStorage not yet uploaded)
+            const cloudIds = new Set(cloudConvos.map(c => c.id));
+            const onlyLocal = localList.filter(c => !cloudIds.has(c.id));
+            const merged = [...cloudConvos, ...onlyLocal].sort((a, b) => b.updatedAt - a.updatedAt);
+            setConvos(merged);
+            saveConvos(merged);
+            // Push any local-only to cloud
+            if (onlyLocal.length > 0) {
+              try {
+                await importConvosMut({
+                  userId: uid,
+                  convos: onlyLocal.map(c => ({
+                    convoId: c.id,
+                    track: c.track,
+                    feature: c.feature ?? undefined,
+                    preview: c.preview,
+                    messages: JSON.stringify(c.messages),
+                    createdAt: c.createdAt,
+                    updatedAt: c.updatedAt,
+                  })),
+                });
+              } catch {}
+            }
+          } else if (localList.length > 0) {
+            // Cloud empty, local has data: migrate up
+            try {
+              await importConvosMut({
+                userId: uid,
+                convos: localList.map(c => ({
+                  convoId: c.id,
+                  track: c.track,
+                  feature: c.feature ?? undefined,
+                  preview: c.preview,
+                  messages: JSON.stringify(c.messages),
+                  createdAt: c.createdAt,
+                  updatedAt: c.updatedAt,
+                })),
+              });
+            } catch {}
+          }
+        } catch {
+          // Network failure - keep showing localStorage data
+        }
+      })();
+    }
     // Use saved theme preference
     const savedTheme = localStorage.getItem('offerbell-theme');
     if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
@@ -442,6 +517,22 @@ export default function CoachPage() {
         const others = prev.filter(c => c.id !== id);
         const next = [updated, ...others];
         saveConvos(next);
+
+        // Push this single convo to Convex (per-row, not the entire blob).
+        const uid = localStorage.getItem('offerbell_user_id');
+        if (uid) {
+          upsertConvoMut({
+            userId: uid,
+            convoId: updated.id,
+            track: updated.track,
+            feature: updated.feature ?? undefined,
+            preview: updated.preview,
+            messages: JSON.stringify(updated.messages),
+            createdAt: updated.createdAt,
+            updatedAt: updated.updatedAt,
+          }).catch(() => {});
+        }
+
         return next;
       });
       if (!activeConvoId) setActiveConvoId(id);
@@ -469,6 +560,7 @@ export default function CoachPage() {
     setTimeout(() => textareaRef.current?.focus(), 100);
   };
 
+  const deleteConvoMut = useMutation(api.coachConvos.deleteConvo);
   const deleteConvo = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setConvos(prev => {
@@ -476,6 +568,10 @@ export default function CoachPage() {
       saveConvos(next);
       return next;
     });
+    const uid = localStorage.getItem('offerbell_user_id');
+    if (uid) {
+      deleteConvoMut({ userId: uid, convoId: id }).catch(() => {});
+    }
     if (id === activeConvoId) {
       setMessages([]);
       setActiveConvoId(null);
