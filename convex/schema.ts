@@ -162,6 +162,44 @@ export default defineSchema({
     updatedAt: v.number(),
   }).index("by_userId", ["userId"]),
 
+  // Per-entry storage for mock interview responses. Replaces having the
+  // entire responses array round-trip through userProgress.data on every
+  // save (was ~500KB per write; now ~1KB per response).
+  mockResponses: defineTable({
+    userId: v.string(),
+    entryId: v.string(),
+    questionId: v.string(),
+    trackId: v.string(),
+    transcript: v.string(),
+    grade: v.string(),
+    overallFeedback: v.string(),
+    strengths: v.array(v.string()),
+    weaknesses: v.array(v.string()),
+    wordsPerMin: v.number(),
+    durationSec: v.number(),
+    timestamp: v.number(),
+    hidden: v.optional(v.boolean()),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_entry", ["userId", "entryId"]),
+
+  // Per-conversation storage for Coach chat history. The messages array
+  // stays nested inside the row (a conversation is always loaded as a
+  // single unit), but each conversation is its own document so saving a
+  // new message patches one ~5KB row instead of re-writing the whole blob.
+  coachConvos: defineTable({
+    userId: v.string(),
+    convoId: v.string(),
+    track: v.string(),
+    feature: v.optional(v.string()),
+    preview: v.string(),
+    messages: v.string(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_convo", ["userId", "convoId"]),
+
   // Server-side enforcement of weekly plan limits.
   // One row per user per ISO-week (Monday UTC). Reset is implicit: a new
   // week creates a new row, old rows are ignored. Counters track count of
