@@ -323,54 +323,85 @@ export default function RecruitingManualPage() {
 
       <main className="manual-main">
         <div className="manual-inner">
-          <div className="manual-hero">
-            <div style={{marginBottom: "16px"}}>
-              <Link href="/learn" style={{display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "14px", fontWeight: 600, color: "var(--text-3)", textDecoration: "none"}}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back to Overview
-              </Link>
-            </div>
-            <div className="manual-hero-title">Career <em>Roadmaps</em></div>
-            <div className="manual-hero-sub">Your complete guide to breaking into high finance and professional services. Select an industry track below to learn what the job is, who the key players are, what they pay, and how to get in.</div>
+
+          {/* Back link */}
+          <div style={{marginBottom: 20}}>
+            <Link href="/learn" style={{display:"inline-flex",alignItems:"center",gap:6,fontSize:13,fontWeight:500,color:"var(--text-3)",textDecoration:"none"}}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              Learning Hub
+            </Link>
           </div>
 
-          <div className="track-grid">
-            {TRACKS.map(t=>(
-              <div key={t.id} className={'track-card'+(activeTrack===t.id?' active':'')} onClick={()=>{setActiveTrack(t.id);setActiveChapter(0);}}>
-                <div className="track-icon">{ICONS[t.id]}</div>
-                <div className="track-card-title">{t.title}</div>
-                <div className="track-card-sub">{t.sub}</div>
+          {/* Hero - makes positioning unambiguous */}
+          <div className="cr-hero">
+            <div className="cr-eyebrow">Career Roadmaps</div>
+            <h1 className="cr-title">Understand the <em>careers.</em></h1>
+            <p className="cr-sub">What each role actually does day-to-day, who the key firms are, how much they pay, and how to break in. A primer on the work itself, not on how to interview for it.</p>
+
+            {/* Disambiguation: makes it crystal clear this is NOT interview prep */}
+            <div className="cr-disambig">
+              <div className="cr-disambig-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
               </div>
-            ))}
+              <div className="cr-disambig-text">
+                <div className="cr-disambig-label">Prepping for interviews?</div>
+                <div className="cr-disambig-desc">Technicals, behaviorals, modeling tests, valuation, and frameworks live in the Interview Prep Guides.</div>
+              </div>
+              <Link href="/learn" className="cr-disambig-cta">Interview Prep Guides
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </Link>
+            </div>
           </div>
 
           {activeTrack === '' ? (
-            <div style={{maxWidth:"820px"}}>
-              <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"16px",padding:"28px 32px",marginBottom:"20px"}}>
-                <h2 style={{fontFamily:"'Instrument Serif', serif",fontSize:"22px",color:"var(--text)",marginBottom:"8px"}}>Explore Career Roadmaps</h2>
-                <p style={{fontSize:"14px",color:"var(--text-2)",lineHeight:1.7,marginBottom:"16px"}}>Not sure which path is right for you? Each track below covers what the job actually is, what you do day-to-day, the key firms and tiers, compensation at every level, the recruiting process, and how to break in.</p>
-                <p style={{fontSize:"14px",color:"var(--text-2)",lineHeight:1.7}}>Select an industry above or pick one below to start exploring.</p>
+            <>
+              {/* Section header above grid */}
+              <div className="cr-section-header">
+                <div className="cr-section-eyebrow">Select a path</div>
+                <h2 className="cr-section-title">{TRACKS.length} careers <em>to explore.</em></h2>
               </div>
-              <div style={{fontSize:"11px",fontWeight:700,color:"var(--text-3)",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"12px"}}>Industry Tracks</div>
-              {TRACKS.map((t, i) => (
-                <div key={t.id} onClick={() => {setActiveTrack(t.id);setActiveChapter(0);}} style={{display:"flex",alignItems:"center",gap:"16px",padding:"14px 18px",background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"12px",marginBottom:"8px",cursor:"pointer"}}>
-                  <div style={{width:"32px",height:"32px",borderRadius:"50%",background:"var(--surface-2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",fontWeight:700,color:"var(--text-2)",flexShrink:0}}>{i + 1}</div>
-                  <div style={{flex:1}}>
-                    <div style={{fontSize:"14px",fontWeight:600,color:"var(--text)"}}>{t.title}</div>
-                    <div style={{fontSize:"12px",color:"var(--text-3)",marginTop:"2px"}}>{t.sub}</div>
-                  </div>
-                  <div style={{fontSize:"12px",color:"var(--text-3)"}}>{t.chapters.length} chapters</div>
-                </div>
-              ))}
-            </div>
+
+              {/* Clean 3-column track grid */}
+              <div className="cr-track-grid">
+                {TRACKS.map(t => (
+                  <button key={t.id} type="button" className="cr-track-card" onClick={() => {setActiveTrack(t.id); setActiveChapter(0);}}>
+                    <div className="cr-track-card-top">
+                      <div className="cr-track-card-icon">{ICONS[t.id]}</div>
+                      <div className="cr-track-card-arrow">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                      </div>
+                    </div>
+                    <div className="cr-track-card-title">{t.title}</div>
+                    <div className="cr-track-card-sub">{t.sub}</div>
+                    <div className="cr-track-card-footer">{t.chapters.length} chapter{t.chapters.length === 1 ? '' : 's'}</div>
+                  </button>
+                ))}
+              </div>
+            </>
           ) : (
             <>
-              <div style={{marginBottom:"16px"}}>
-                <button onClick={() => setActiveTrack('')} style={{background:"none",border:"none",cursor:"pointer",fontSize:"13px",color:"var(--text-3)",fontFamily:"'Sora',sans-serif",padding:0}}>Back to overview</button>
+              {/* Track detail view */}
+              <button onClick={() => setActiveTrack('')} className="cr-back-btn" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                All roadmaps
+              </button>
+
+              <div className="cr-track-header">
+                <div className="cr-track-header-icon">{ICONS[track.id]}</div>
+                <div>
+                  <div className="cr-track-header-eyebrow">Career Roadmap</div>
+                  <h2 className="cr-track-header-title">{track.title}</h2>
+                  <div className="cr-track-header-sub">{track.sub}</div>
+                </div>
               </div>
-              <div className="chapter-nav">
-                {track.chapters.map((ch,i)=>(
-                  <button key={ch.title} className={'chapter-pill'+(activeChapter===i?' active':'')} onClick={()=>setActiveChapter(i)} type="button">{ch.title}</button>
+
+              {/* Chapter pills */}
+              <div className="cr-chapter-nav">
+                {track.chapters.map((ch, i) => (
+                  <button key={ch.title} className={'cr-chapter-pill' + (activeChapter === i ? ' active' : '')} onClick={() => setActiveChapter(i)} type="button">
+                    <span className="cr-chapter-num">{i + 1}</span>
+                    <span>{ch.title}</span>
+                  </button>
                 ))}
               </div>
 
@@ -383,9 +414,16 @@ export default function RecruitingManualPage() {
                 <ExpandCard key={`${activeTrack}-${activeChapter}-${i}`} num={i+1} title={sec.title} content={sec.content} defaultOpen={i===0}/>
               ))}
 
-              <div className="manual-nav">
-                <button className="manual-nav-btn back" onClick={()=>{if(activeChapter>0)setActiveChapter(activeChapter-1);}} disabled={activeChapter===0} type="button">&larr; Previous</button>
-                <button className="manual-nav-btn next" onClick={()=>{if(activeChapter<track.chapters.length-1)setActiveChapter(activeChapter+1);}} disabled={activeChapter>=track.chapters.length-1} type="button">Next Chapter &rarr;</button>
+              <div className="cr-pager">
+                <button className="cr-pager-btn" onClick={()=>{if(activeChapter>0)setActiveChapter(activeChapter-1);}} disabled={activeChapter===0} type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                  Previous
+                </button>
+                <div className="cr-pager-progress">Chapter {activeChapter+1} of {track.chapters.length}</div>
+                <button className="cr-pager-btn" onClick={()=>{if(activeChapter<track.chapters.length-1)setActiveChapter(activeChapter+1);}} disabled={activeChapter>=track.chapters.length-1} type="button">
+                  Next
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
               </div>
             </>
           )}
