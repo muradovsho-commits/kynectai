@@ -23,7 +23,7 @@ import { getAuthUserId, unauthorizedResponse, checkRateLimit, getClientIP, getCo
 
 export const runtime = "nodejs";   // we need Node APIs for file parsing
 export const dynamic = "force-dynamic";
-// Vercel function timeout — 60s gives Gemini room. On hobby tier the
+// Vercel function timeout - 60s gives Gemini room. On hobby tier the
 // effective cap is lower; if you see 504s here, upgrade or move to streaming.
 export const maxDuration = 60;
 
@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
     const personaFirm = graderPersona.firm || "the firm";
     const personaStyle = graderPersona.style || "Direct, exacting, time-poor.";
 
-    const systemPrompt = `You are ${personaName}, ${personaTitle} at ${personaFirm}, reviewing a first-year analyst's work product. Stay in this character throughout — match the voice and style below — but your judgment must be technically accurate.
+    const systemPrompt = `You are ${personaName}, ${personaTitle} at ${personaFirm}, reviewing a first-year analyst's work product. Stay in this character throughout - match the voice and style below - but your judgment must be technically accurate.
 
 YOUR STYLE
 ${personaStyle}
@@ -126,16 +126,16 @@ ${scenarioContext}
 WHAT YOU ASKED THE ANALYST TO PRODUCE
 ${artifactPrompt}
 
-YOUR GRADING RUBRIC (apply this exactly — score each dimension 1-10, then write the verdict)
+YOUR GRADING RUBRIC (apply this exactly - score each dimension 1-10, then write the verdict)
 ${artifactRubric}
 
-THE ANALYST'S ACTUAL SUBMISSION (parsed from their .${artifactFormat} file${truncated ? ' — TRUNCATED to fit context, grade based on what is shown' : ''})
+THE ANALYST'S ACTUAL SUBMISSION (parsed from their .${artifactFormat} file${truncated ? ' - TRUNCATED to fit context, grade based on what is shown' : ''})
 ${contentForAI}
 
 YOUR JOB
 Grade the submission against the rubric. Be specific. Cite cells, columns, sections, or sentences directly. Do NOT be vague. Do NOT soften feedback to be nice. If a number is wrong, say what should be there and why. If a peer doesn't belong, say which and why.
 
-OUTPUT FORMAT — STRICT JSON, no markdown fences:
+OUTPUT FORMAT - STRICT JSON, no markdown fences:
 {
   "scores": {
     "<rubric dimension name in snake_case>": <integer 1-10>,
@@ -156,7 +156,9 @@ Do not output anything outside the JSON object.`;
         generationConfig: {
           temperature: 0.4,    // grading should be relatively deterministic
           topP: 0.9,
-          maxOutputTokens: 2048,
+          // Bumped from 2048: prior cap was cutting off the JSON response mid-string,
+          // which broke JSON.parse and caused the raw blob to surface in the UI.
+          maxOutputTokens: 4096,
           responseMimeType: "application/json",
         },
       }),
@@ -172,16 +174,52 @@ Do not output anything outside the JSON object.`;
     const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
     let parsed: { scores?: Record<string, number>; feedback?: string } = {};
+
+    // Attempt 1: clean JSON parse
     try {
       parsed = JSON.parse(rawText);
-    } catch {
-      const cleaned = rawText.replace(/```json|```/g, "").trim();
-      try { parsed = JSON.parse(cleaned); } catch {}
+    } catch {}
+
+    // Attempt 2: strip markdown fences if present
+    if (!parsed.feedback) {
+      try {
+        const cleaned = rawText.replace(/```json|```/g, "").trim();
+        parsed = JSON.parse(cleaned);
+      } catch {}
     }
 
+    // Attempt 3: regex extraction from partial/truncated JSON.
+    // This handles the case where Gemini hit maxOutputTokens mid-string,
+    // leaving us with an unparseable but partially-recoverable response.
+    if (!parsed.scores || Object.keys(parsed.scores).length === 0) {
+      const scoresMatch = rawText.match(/"scores"\s*:\s*\{([\s\S]*?)\}/);
+      if (scoresMatch) {
+        const dims: Record<string, number> = {};
+        const dimRegex = /"([^"]+)"\s*:\s*(\d+(?:\.\d+)?)/g;
+        let m: RegExpExecArray | null;
+        while ((m = dimRegex.exec(scoresMatch[1])) !== null) {
+          dims[m[1]] = parseFloat(m[2]);
+        }
+        if (Object.keys(dims).length > 0) parsed.scores = dims;
+      }
+    }
     if (!parsed.feedback) {
-      // Fallback — surface the raw text rather than fail silently.
-      parsed.feedback = rawText.slice(0, 2000) || "Grader produced no output.";
+      // Match the feedback string, tolerating either a proper close-quote
+      // or end-of-text (truncated response).
+      const fbMatch = rawText.match(/"feedback"\s*:\s*"([\s\S]*?)(?:"\s*[},]|$)/);
+      if (fbMatch && fbMatch[1]) {
+        parsed.feedback = fbMatch[1]
+          .replace(/\\n/g, "\n")
+          .replace(/\\"/g, '"')
+          .replace(/\\\\/g, "\\")
+          .trim();
+      }
+    }
+
+    // Absolute last-resort fallback: a friendly message, NOT the raw blob.
+    // Showing raw JSON to the user is jarring and breaks the persona illusion.
+    if (!parsed.feedback) {
+      parsed.feedback = "I couldn't put together a clean review on this pass. Resubmit and I'll take another look.";
     }
     if (!parsed.scores || typeof parsed.scores !== "object") {
       parsed.scores = {};
@@ -199,13 +237,13 @@ Do not output anything outside the JSON object.`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// File parsers — each returns a string blob suitable for an LLM to read.
+// File parsers - each returns a string blob suitable for an LLM to read.
 // We aim for "the AI can cite a cell/section by name", not perfect fidelity.
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function parseXlsx(buf: Buffer): Promise<string> {
-  // Dynamic import — xlsx is heavy and only needed when an Excel file is up.
-  // @ts-expect-error  — xlsx ships its own types but TS can be picky about the way it loads at runtime.
+  // Dynamic import - xlsx is heavy and only needed when an Excel file is up.
+  // @ts-expect-error  - xlsx ships its own types but TS can be picky about the way it loads at runtime.
   const XLSX = await import("xlsx");
   const wb = XLSX.read(buf, { type: "buffer", cellFormula: true, cellNF: true, cellDates: true });
 
@@ -221,7 +259,7 @@ async function parseXlsx(buf: Buffer): Promise<string> {
     const range = XLSX.utils.decode_range(ref);
 
     // Build a CSV-ish dump with formulas annotated. We cap rows/cols so a
-    // huge sheet doesn't blow our token budget — Reps deliverables are
+    // huge sheet doesn't blow our token budget - Reps deliverables are
     // small enough that 60x30 covers them.
     const maxRows = Math.min(range.e.r - range.s.r + 1, 80);
     const maxCols = Math.min(range.e.c - range.s.c + 1, 40);
@@ -253,14 +291,14 @@ async function parseXlsx(buf: Buffer): Promise<string> {
 }
 
 async function parseDocx(buf: Buffer): Promise<string> {
-  // @ts-expect-error  — mammoth doesn't bundle clean types; safe at runtime.
+  // @ts-expect-error  - mammoth doesn't bundle clean types; safe at runtime.
   const mammoth = await import("mammoth");
   const result = await mammoth.extractRawText({ buffer: buf });
   return result.value || "";
 }
 
 async function parsePdf(buf: Buffer): Promise<string> {
-  // pdf-parse exports a default function — load it dynamically.
+  // pdf-parse exports a default function - load it dynamically.
   // @ts-expect-error
   const pdfMod = await import("pdf-parse/lib/pdf-parse.js");
   const pdfParse = pdfMod.default || pdfMod;
