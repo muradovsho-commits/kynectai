@@ -1,0 +1,96 @@
+import { mutation, query } from "./_generated/server";
+import { v } from "convex/values";
+
+// List all coach conversations for a user. Capped at 50 newest by the
+// client, but query returns everything; client sorts/caps.
+export const listConvos = query({
+  args: { userId: v.string() },
+  handler: async (ctx, { userId }) => {
+    const rows = await ctx.db
+      .query("coachConvos")
+      .withIndex("by_user", q => q.eq("userId", userId))
+      .collect();
+    return rows.sort((a, b) => b.updatedAt - a.updatedAt).map(r => ({
+      id: r.convoId,
+      track: r.track,
+      feature: r.feature ?? null,
+      preview: r.preview,
+      messages: r.messages,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+    }));
+  },
+});
+
+// Insert or update a single conversation by convoId. Idempotent.
+export const upsertConvo = mutation({
+  args: {
+    userId: v.string(),
+    convoId: v.string(),
+    track: v.string(),
+    feature: v.optional(v.string()),
+    preview: v.string(),
+    messages: v.string(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const existing = await ctx.db
+      .query("coachConvos")
+      .withIndex("by_user_convo", q => q.eq("userId", args.userId).eq("convoId", args.convoId))
+      .first();
+    if (existing) {
+      await ctx.db.patch(existing._id, {
+        track: args.track,
+        feature: args.feature,
+        preview: args.preview,
+        messages: args.messages,
+        updatedAt: args.updatedAt,
+      });
+    } else {
+      await ctx.db.insert("coachConvos", args);
+    }
+  },
+});
+
+// Delete a single conversation.
+export const deleteConvo = mutation({
+  args: { userId: v.string(), convoId: v.string() },
+  handler: async (ctx, { userId, convoId }) => {
+    const existing = await ctx.db
+      .query("coachConvos")
+      .withIndex("by_user_convo", q => q.eq("userId", userId).eq("convoId", convoId))
+      .first();
+    if (existing) {
+      await ctx.db.delete(existing._id);
+    }
+  },
+});
+
+// Bulk import for one-time migration of existing localStorage data.
+// Skips any convoId that already exists; safe to call repeatedly.
+export const importConvos = mutation({
+  args: {
+    userId: v.string(),
+    convos: v.array(v.object({
+      convoId: v.string(),
+      track: v.string(),
+      feature: v.optional(v.string()),
+      preview: v.string(),
+      messages: v.string(),
+      createdAt: v.number(),
+      updatedAt: v.number(),
+    })),
+  },
+  handler: async (ctx, { userId, convos }) => {
+    for (const c of convos) {
+      const existing = await ctx.db
+        .query("coachConvos")
+        .withIndex("by_user_convo", q => q.eq("userId", userId).eq("convoId", c.convoId))
+        .first();
+      if (!existing) {
+        await ctx.db.insert("coachConvos", { userId, ...c });
+      }
+    }
+  },
+});
