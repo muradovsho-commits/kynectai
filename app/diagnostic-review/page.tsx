@@ -657,10 +657,17 @@ export default function DiagnosticReviewPage() {
             </div>
 
             <div className="diag-track-list">
-              {allStats.map(({ k, t, st }, i) => {
+              {(() => {
+                // Free tier rule: 1 diagnostic total, but the user picks which
+                // track. So all tracks are unlocked until they've taken any
+                // diagnostic. After that, the track they took stays clickable
+                // (so they can review their results), and the rest are locked.
+                const totalTaken = allStats.reduce((sum, s) => sum + s.st.diagsTaken, 0);
+                const freeQuotaUsed = userPlan === 'free' && totalTaken >= 1;
+                return allStats.map(({ k, t, st }, i) => {
                 const scoreColor = st.avgScore >= 80 ? '#16a34a' : st.avgScore >= 55 ? '#d97706' : st.avgScore > 0 ? '#dc2626' : 'var(--text-3)';
                 const recent = st.history.slice(0, 6).reverse();
-                const isLocked = userPlan === 'free' && i >= (PLAN_LIMITS.diagnosticTracks.free as number);
+                const isLocked = freeQuotaUsed && st.diagsTaken === 0;
                 return (
                   <div key={k} className="diag-track-row" onClick={() => { if (isLocked) { window.location.href = '/checkout'; return; } setViewTrack(k); }} style={isLocked ? { opacity: 0.5, cursor: 'not-allowed' } : {}}>
                     <span className="diag-tr-num">{String(i + 1).padStart(2, '0')}</span>
@@ -695,7 +702,8 @@ export default function DiagnosticReviewPage() {
                     <div className="diag-tr-arrow">{ARROW_R}</div>
                   </div>
                 );
-              })}
+              });
+              })()}
             </div>
 
             {history.length > 0 && canReset && (
