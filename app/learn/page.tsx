@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Sidebar from '../components/Sidebar';
 import TutorialOverlay from '../components/TutorialOverlay';
+import { useIsPro } from '../lib/usePlan';
 import '../contact-finder/contact-finder.css';
 import './learn.css';
 
@@ -123,6 +124,7 @@ const ARROW = <svg viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" str
 
 export default function LearnPage() {
   const totalModules = GUIDES.reduce((s, g) => s + g.modules, 0) + 12; // +12 for career roadmaps tracks
+  const isPro = useIsPro();
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
 
@@ -200,9 +202,7 @@ export default function LearnPage() {
         {/* Unified Card Grid */}
         <div className="learn-grid">
           {GUIDES.map(g => {
-            const plan = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_plan') || 'free') : 'free';
-            const isPaid = plan === 'pro' || plan === 'elite';
-            if (!isPaid) {
+            if (!isPro) {
               return (
                 <div key={g.id} className="learn-card" style={{ opacity: 0.55, cursor: 'not-allowed', position: 'relative' }} onClick={() => { window.location.href = '/checkout'; }}>
                   <div style={{ position: 'absolute', top: 12, right: 12 }}>
