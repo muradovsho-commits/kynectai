@@ -166,6 +166,9 @@ export default function DiagnosticReviewPage() {
   // Convex so logout/login doesn't restore old history.
   const [userId, setUserId] = useState<string>('');
   const saveProgressMut = useMutation((api as any).progress?.saveProgress);
+  const appendDiagResultMut = useMutation((api as any).diagHistory?.appendResult);
+  const clearAllDiagMut = useMutation((api as any).diagHistory?.clearAll);
+  const clearTrackDiagMut = useMutation((api as any).diagHistory?.clearTrack);
   const canReset = userPlan === 'pro' || userPlan === 'elite';
 
   const doReset = async () => {
@@ -175,11 +178,19 @@ export default function DiagnosticReviewPage() {
       if (resetTarget === 'all') {
         localStorage.removeItem(STORAGE_KEY);
         setHistory([]);
+        // Clear the dedicated diagHistory table too.
+        if (userId && clearAllDiagMut) {
+          try { await clearAllDiagMut({ userId }); } catch {}
+        }
       } else {
         const remaining = history.filter(h => h.track !== resetTarget);
         saveHistory(remaining);
         setHistory(remaining);
         newHistoryJSON = JSON.stringify(remaining);
+        // Clear just this track in the dedicated table.
+        if (userId && clearTrackDiagMut) {
+          try { await clearTrackDiagMut({ userId, track: resetTarget }); } catch {}
+        }
       }
     } catch {}
     // Persist to Convex so the wipe survives logout/login. saveProgress
@@ -296,6 +307,20 @@ export default function DiagnosticReviewPage() {
     };
     const updated = [result, ...history].slice(0, 50);
     setHistory(updated); saveHistory(updated);
+    // Mirror new result to dedicated Convex table. Fire-and-forget.
+    if (userId && appendDiagResultMut) {
+      void appendDiagResultMut({
+        userId,
+        entryId: result.id,
+        track: result.track,
+        date: result.date,
+        score: result.score,
+        totalCorrect: result.totalCorrect,
+        totalAnswered: result.totalAnswered,
+        catScores: JSON.stringify(result.catScores),
+        timestamp: parseInt(result.id, 10) || Date.now(),
+      }).catch(() => {});
+    }
     saveInProgress(null); // Clear saved progress
     setPhase('results');
   };
