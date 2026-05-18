@@ -200,6 +200,37 @@ export default defineSchema({
     .index("by_user", ["userId"])
     .index("by_user_convo", ["userId", "convoId"]),
 
+  // Per-track flashcard performance. One row per (userId, track) instead of
+  // sending all 10 tracks of stats through the userProgress blob on every
+  // flashcard rating. Stats stay nested as JSON because they're always loaded
+  // as a unit for a given track view.
+  flashPerf: defineTable({
+    userId: v.string(),
+    track: v.string(),
+    data: v.string(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_track", ["userId", "track"]),
+
+  // Diagnostic assessment history. One row per completed diagnostic. Replaces
+  // having the entire history array round-trip through userProgress.data on
+  // every diagnostic completion.
+  diagHistory: defineTable({
+    userId: v.string(),
+    entryId: v.string(),
+    track: v.string(),
+    date: v.string(),
+    score: v.number(),
+    totalCorrect: v.number(),
+    totalAnswered: v.number(),
+    catScores: v.string(),
+    timestamp: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_entry", ["userId", "entryId"])
+    .index("by_user_track", ["userId", "track"]),
+
   // Server-side enforcement of weekly plan limits.
   // One row per user per ISO-week (Monday UTC). Reset is implicit: a new
   // week creates a new row, old rows are ignored. Counters track count of
