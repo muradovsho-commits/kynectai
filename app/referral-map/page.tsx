@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
 import { PLAN_LIMITS } from '../lib/plan';
+import { useUserPlan } from '../lib/usePlan';
 import './referral-map.css';
 import { US_STATES } from './us-states';
 import { US_PATHS } from './us-paths';
@@ -414,6 +415,7 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
 // ═══ MAIN PAGE ═══
 export default function ReferralMapPage() {
   const router = useRouter();
+  const userPlan = useUserPlan();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [modal, setModal] = useState<'add' | 'edit' | 'import' | null>(null);
   const [userState, setUserState] = useState<string | null>(null);
@@ -471,10 +473,9 @@ export default function ReferralMapPage() {
     if (!form.name?.trim()) return;
     const id = form.id || `r_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
     const isNew = !contacts.some(c => c.id === id);
-    // Free users: max 5 contacts
+    // Free users: max 5 contacts. Plan comes from Convex via useUserPlan.
     if (isNew) {
-      const plan = localStorage.getItem('offerbell_plan') || 'free';
-      if (plan !== 'pro' && plan !== 'elite' && contacts.length >= PLAN_LIMITS.referralContacts.free) {
+      if (userPlan !== 'pro' && userPlan !== 'elite' && contacts.length >= PLAN_LIMITS.referralContacts.free) {
         alert('Free plan allows ' + PLAN_LIMITS.referralContacts.free + ' referral contacts. Upgrade to Pro for unlimited.');
         return;
       }
@@ -490,8 +491,7 @@ export default function ReferralMapPage() {
     setModal(null); setForm({});
   };
   const doImport = () => {
-    const plan = localStorage.getItem('offerbell_plan') || 'free';
-    const isPaid = plan === 'pro' || plan === 'elite';
+    const isPaid = userPlan === 'pro' || userPlan === 'elite';
     let toAdd = impList.filter(c => c.sel).map(c => ({ id: `imp_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`, name: `${c.fname} ${c.lname}`.trim(), firm: c.firm || '', role: c.role || '', referredBy: 'you', note: '', addedAt: Date.now() }));
     if (!isPaid) {
       const remaining = Math.max(0, PLAN_LIMITS.referralContacts.free - contacts.length);
