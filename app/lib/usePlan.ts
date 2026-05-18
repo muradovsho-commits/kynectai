@@ -7,50 +7,53 @@ import { api } from '../../convex/_generated/api';
 // ─────────────────────────────────────────────────────────────────────────────
 // SERVER-TRUTH PLAN HOOKS
 //
-// Replaces the old getUserPlan() / isUserPro() / isUserElite() functions
-// which read localStorage. Those values are tampered easily via DevTools.
+// Plan source of truth is Convex (Stripe webhook writes users.plan). Pages
+// use these hooks instead of reading localStorage directly, so DevTools
+// localStorage tampering does nothing.
 //
-// Pattern:
-//   • First render returns localStorage value as a "warm start" (instant UI)
-//   • As soon as Convex responds, the verified plan from the database takes
-//     over. Stripe webhook is the source of truth for users.plan in Convex.
-//   • If a user faked localStorage to "elite", the gates snap shut as soon
-//     as Convex returns (~200ms). They never get to use anything paid.
-//
-// Bandwidth cost: each gated page mount fires one small Convex query to
-// users.getUser (~200 bytes). Negligible compared to anything else.
+// Hydration-safe pattern:
+//   • First render (server + client both) returns 'free' as a neutral
+//     default. This is the only way to avoid React hydration mismatch
+//     errors, since the server can't see localStorage.
+//   • After mount, we read localStorage as a fast "warm start" so paid
+//     users don't see a flash of locked content.
+//   • As soon as Convex responds, its value takes precedence. Tampered
+//     localStorage gets corrected within ~200ms.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type PlanTier = 'free' | 'pro' | 'elite';
 
 export function useUserPlan(): PlanTier {
+  const [mounted, setMounted] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [warmStart, setWarmStart] = useState<PlanTier>('free');
 
   useEffect(() => {
+    setMounted(true);
     if (typeof window !== 'undefined') {
       setUserId(localStorage.getItem('offerbell_user_id'));
+      try {
+        const local = localStorage.getItem('offerbell_plan');
+        if (local === 'elite' || local === 'pro') setWarmStart(local);
+      } catch {}
     }
   }, []);
 
-  // Convex query - skipped until we have the userId from localStorage.
-  // useQuery returns undefined while loading, then the data once it lands.
+  // Convex query - skipped until userId is loaded from localStorage.
   const userData = useQuery(
     api.users.getUser,
     userId ? { userId } : 'skip'
   ) as { plan?: string } | undefined;
 
-  // Warm start: while Convex is loading on first paint, fall back to
-  // localStorage so the UI doesn't briefly flash the wrong gating to
-  // legitimate paid users. Once Convex returns, its value overrides.
-  if (userData === undefined) {
-    if (typeof window === 'undefined') return 'free';
-    try {
-      const local = localStorage.getItem('offerbell_plan');
-      if (local === 'elite' || local === 'pro') return local;
-    } catch {}
-    return 'free';
-  }
+  // Until mount, return 'free' so server-side render matches client first
+  // render. Prevents React hydration error #418.
+  if (!mounted) return 'free';
 
+  // Post-mount, while Convex is still loading, return the localStorage
+  // warm-start so paid users don't see a flash of locked content.
+  if (userData === undefined) return warmStart;
+
+  // Convex returned. This is the source of truth.
   const plan = userData?.plan;
   if (plan === 'elite' || plan === 'pro') return plan;
   return 'free';
