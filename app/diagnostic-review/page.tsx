@@ -60,6 +60,7 @@ const BACK_ARROW = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" s
 const ARROW_R = <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 6l6 6-6 6"/></svg>;
 
 import { getUserPlan, PLAN_LIMITS } from '../lib/plan';
+import { useUserPlan } from '../lib/usePlan';
 
 const PROGRESS_KEY = 'offerbell_diag_in_progress';
 
@@ -155,7 +156,7 @@ export default function DiagnosticReviewPage() {
   const [missed, setMissed] = useState<{ q: string; explanation: string; category: string }[]>([]);
   const [history, setHistory] = useState<DiagResult[]>([]);
   const [viewTrack, setViewTrack] = useState<string | null>(null);
-  const [userPlan, setUserPlan] = useState<string>('free');
+  const userPlan = useUserPlan();
   const [savedProgress, setSavedProgress] = useState<InProgressState | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -211,7 +212,6 @@ export default function DiagnosticReviewPage() {
     const theme = localStorage.getItem('offerbell-theme');
     if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
     setHistory(loadHistory());
-    setUserPlan(getUserPlan());
     setSavedProgress(loadInProgress());
     setUserId(localStorage.getItem('offerbell_user_id') || '');
   }, []);
@@ -522,8 +522,7 @@ export default function DiagnosticReviewPage() {
 
               {/* CTA */}
               {(() => {
-                const plan = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_plan') || 'free') : 'free';
-                const isPaid = plan === 'pro' || plan === 'elite';
+                const isPaid = userPlan === 'pro' || userPlan === 'elite';
                 const totalTaken = Object.keys(TRACKS).reduce((sum, k) => sum + trackStats(k).diagsTaken, 0);
                 const atLimit = !isPaid && totalTaken >= 1;
 
