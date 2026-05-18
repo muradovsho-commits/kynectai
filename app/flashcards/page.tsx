@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect, useMemo, useCallback, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
 import './flashcards.css';
@@ -164,7 +166,22 @@ function FlashcardsContent() {
   }, [activeTrack]);
 
   const perfKey = activeTrack ? `offerbell_flash_perf_${activeTrack}` : 'offerbell_flash_perf';
-  const savePerf = useCallback((p: PerfData) => { setPerf(p); localStorage.setItem(perfKey, JSON.stringify(p)); }, [perfKey]);
+  const upsertPerfMut = useMutation(api.flashPerf.upsertPerf);
+  const savePerf = useCallback((p: PerfData) => {
+    setPerf(p);
+    const serialized = JSON.stringify(p);
+    localStorage.setItem(perfKey, serialized);
+    // Mirror write to dedicated Convex table. Fire-and-forget: UI doesn't
+    // wait, errors don't propagate. localStorage stays the offline-first
+    // source of truth and useProgressSync hydrates this back into
+    // localStorage on next sign-in.
+    if (activeTrack) {
+      const uid = (typeof window !== 'undefined') ? localStorage.getItem('offerbell_user_id') : null;
+      if (uid) {
+        void upsertPerfMut({ userId: uid, track: activeTrack, data: serialized }).catch(() => {});
+      }
+    }
+  }, [perfKey, activeTrack, upsertPerfMut]);
 
   // Bookmark helpers
   const bookmarkSet = useMemo(() => new Set(bookmarks.map(b => `${b.track}::${b.q}`)), [bookmarks]);
@@ -414,8 +431,7 @@ function FlashcardsContent() {
                               const cat = card.category;
                               if (!p.byCat[cat]) p.byCat[cat] = { seen: 0, pass: 0 };
                               p.byCat[cat].seen++;
-                              localStorage.setItem(perfKey, JSON.stringify(p));
-                              setPerf(p);
+                              savePerf(p);
                             } catch {}
                           }
                         }} type="button">
@@ -488,8 +504,7 @@ function FlashcardsContent() {
                           const cat = c.category;
                           if (!p.byCat[cat]) p.byCat[cat] = { seen: 0, pass: 0 };
                           p.byCat[cat].seen++;
-                          localStorage.setItem(perfKey, JSON.stringify(p));
-                          setPerf(p);
+                          savePerf(p);
                         } catch {}
                       }
                     }}>
