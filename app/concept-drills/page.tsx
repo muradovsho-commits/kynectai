@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { useIsPro } from '../lib/usePlan';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
 import './drills.css';
@@ -128,6 +129,7 @@ export default function ConceptDrillsPage() {
 
 function ConceptDrillsContent() {
   const searchParams = useSearchParams();
+  const isPro = useIsPro();
   const [phase, setPhase] = useState<Phase>('landing');
   const [trackKey, setTrackKey] = useState('ib');
   const [questions, setQuestions] = useState<MCQ[]>([]);
@@ -148,10 +150,9 @@ function ConceptDrillsContent() {
   const [resetTick, setResetTick] = useState(0);
   // Plan + userId so we can (1) hide reset for free users and
   // (2) persist resets to Convex so they survive logout/login.
-  const [userPlan, setUserPlan] = useState<string>('free');
   const [userId, setUserId] = useState<string>('');
   const saveProgressMut = useMutation((api as any).progress?.saveProgress);
-  const canReset = userPlan === 'pro' || userPlan === 'elite';
+  const canReset = isPro;
 
   const doReset = async () => {
     if (resetTarget === null) return;
@@ -183,7 +184,8 @@ function ConceptDrillsContent() {
     const theme = localStorage.getItem('offerbell-theme');
     if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
     setUserId(localStorage.getItem('offerbell_user_id') || '');
-    setUserPlan(localStorage.getItem('offerbell_plan') || 'free');
+
+    // Handle URL params from cross-feature links (e.g. diagnostic review)
 
     // Handle URL params from cross-feature links (e.g. diagnostic review)
     const paramTrack = searchParams.get('track');
@@ -213,10 +215,9 @@ function ConceptDrillsContent() {
     const allQs = track.questions;
     const pool = topic === 'All Topics' ? allQs : allQs.filter(q => q.topic === topic);
     const source = pool.length > 0 ? pool : allQs;
-    // Free users get 5 questions per drill, paid get full DRILL_SIZE
-    const plan = localStorage.getItem('offerbell_plan') || 'free';
-    const isPaid = plan === 'pro' || plan === 'elite';
-    const size = isPaid ? DRILL_SIZE : 5;
+    // Free users get 5 questions per drill, paid get full DRILL_SIZE.
+    // isPro reads server truth via useIsPro hook (Convex-backed).
+    const size = isPro ? DRILL_SIZE : 5;
     const picked = shuffle(source).slice(0, size).map(drillToMCQ);
     setQuestions(picked);
     setIdx(0); setSelected(null); setShowExp(false);
@@ -759,8 +760,7 @@ function ConceptDrillsContent() {
 
           {/* Free plan upgrade nudge */}
           {(() => {
-            const plan = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_plan') || 'free') : 'free';
-            if (plan === 'pro' || plan === 'elite') return null;
+            if (isPro) return null;
             return (
               <div style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
