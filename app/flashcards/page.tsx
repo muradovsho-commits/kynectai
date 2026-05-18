@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo, useCallback, useRef, Suspense } from 'rea
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { useIsPro } from '../lib/usePlan';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
 import './flashcards.css';
@@ -110,7 +111,7 @@ export default function FlashcardsPage() {
 function FlashcardsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isPro, setIsPro] = useState(false);
+  const isPro = useIsPro();
   const [activeTrack, setActiveTrack] = useState<string | null>(null);
   const [idx, setIdx] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -130,9 +131,6 @@ function FlashcardsContent() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!window.localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
-    const p = localStorage.getItem('offerbell_plan') || 'free';
-    setIsPro(p === 'pro' || p === 'elite');
-    import('../lib/plan').then(({ isUserPro }) => { setIsPro(isUserPro()); });
     setBookmarks(loadBookmarks());
 
     // Handle URL params from cross-feature links (e.g. diagnostic review)
