@@ -98,6 +98,19 @@ const EXCLUDE_FROM_SYNC = new Set([
   // ~500KB round trips through userProgress.data.
   'offerbell_mock_responses',
   'offerbell_coach_history',
+  // Moved to dedicated Convex tables (flashPerf, diagHistory) - same reason
+  // as above. Hydrated into localStorage from those tables on init below.
+  'offerbell_flash_perf_ib',
+  'offerbell_flash_perf_pe',
+  'offerbell_flash_perf_rx',
+  'offerbell_flash_perf_consulting',
+  'offerbell_flash_perf_accounting',
+  'offerbell_flash_perf_am',
+  'offerbell_flash_perf_st',
+  'offerbell_flash_perf_er',
+  'offerbell_flash_perf_re',
+  'offerbell_flash_perf_vc',
+  'offerbell_diag_history',
 ]);
 
 // Cross-tab coordination: tabs share a "last push" timestamp via localStorage
@@ -223,6 +236,92 @@ export function useProgressSync() {
     (async () => {
       try {
         const client = new ConvexHttpClient(url);
+
+        // ── Hydrate the dedicated-table data into localStorage so pages that
+        //    read localStorage directly (flashcards, concept-drills,
+        //    diagnostic-review, etc.) see the cross-device source of truth.
+        //    Done in parallel with the blob fetch below.
+        //    If a fetch fails or returns empty, localStorage is left as-is
+        //    (existing local data survives).
+        const flashPerfPromise = client.query(api.flashPerf.listPerf, { userId })
+          .then((rows: Record<string, { data: string; updatedAt: number }>) => {
+            if (!rows) return;
+            for (const [track, row] of Object.entries(rows)) {
+              try { localStorage.setItem(`offerbell_flash_perf_${track}`, row.data); } catch {}
+            }
+            // One-time migration: if cloud has no rows but localStorage has
+            // legacy flash_perf data, push everything up.
+            if (Object.keys(rows).length === 0) {
+              const tracks = ['ib','pe','rx','consulting','accounting','am','st','er','re','vc'];
+              const entries: Array<{ track: string; data: string }> = [];
+              for (const t of tracks) {
+                try {
+                  const local = localStorage.getItem(`offerbell_flash_perf_${t}`);
+                  if (local) entries.push({ track: t, data: local });
+                } catch {}
+              }
+              if (entries.length > 0) {
+                void (async () => {
+                  try {
+                    const c = new ConvexHttpClient(url);
+                    await c.mutation(api.flashPerf.importPerf, { userId, entries });
+                  } catch {}
+                })();
+              }
+            }
+          })
+          .catch(() => {});
+
+        const diagHistoryPromise = client.query(api.diagHistory.listHistory, { userId })
+          .then((rows: Array<{ id: string; track: string; date: string; score: number; totalCorrect: number; totalAnswered: number; catScores: string; timestamp: number }>) => {
+            if (!rows) return;
+            if (rows.length > 0) {
+              // Reshape back to the legacy localStorage format so pages keep working.
+              const legacy = rows.map(r => ({
+                id: r.id,
+                track: r.track,
+                date: r.date,
+                score: r.score,
+                totalCorrect: r.totalCorrect,
+                totalAnswered: r.totalAnswered,
+                catScores: (() => { try { return JSON.parse(r.catScores); } catch { return {}; } })(),
+              }));
+              try { localStorage.setItem('offerbell_diag_history', JSON.stringify(legacy)); } catch {}
+            } else {
+              // One-time migration from legacy localStorage.
+              try {
+                const localRaw = localStorage.getItem('offerbell_diag_history');
+                if (localRaw) {
+                  const localArr = JSON.parse(localRaw);
+                  if (Array.isArray(localArr) && localArr.length > 0) {
+                    const entries = localArr.map((e: any) => ({
+                      entryId: e.id || String(Date.now()) + Math.random(),
+                      track: e.track || '',
+                      date: e.date || new Date().toISOString(),
+                      score: e.score || 0,
+                      totalCorrect: e.totalCorrect || 0,
+                      totalAnswered: e.totalAnswered || 0,
+                      catScores: JSON.stringify(e.catScores || {}),
+                      timestamp: e.id ? parseInt(e.id, 10) || Date.now() : Date.now(),
+                    }));
+                    void (async () => {
+                      try {
+                        const c = new ConvexHttpClient(url);
+                        await c.mutation(api.diagHistory.importHistory, { userId, entries });
+                      } catch {}
+                    })();
+                  }
+                }
+              } catch {}
+            }
+          })
+          .catch(() => {});
+
+        // Don't await the hydration promises - they're side-effect-only and
+        // shouldn't block the blob sync below.
+        void flashPerfPromise;
+        void diagHistoryPromise;
+
         const cloudData = await client.query(api.progress.loadProgress, { userId });
 
         if (!cloudData) {
