@@ -38,6 +38,18 @@ export async function POST(request: NextRequest) {
     const userId = typeof body.userId === "string" ? body.userId : undefined;
     const subscriptionId = typeof body.subscriptionId === "string" ? body.subscriptionId : undefined;
     const targetPlan = body.targetPlan === 'elite' ? 'elite' : body.targetPlan === 'pro' ? 'pro' : null;
+    // Optional. If provided, the new sub will use this billing interval.
+    // If omitted, we preserve the current sub's billing interval (the legacy
+    // behavior). This is what fixes the bug where a Pro Monthly user
+    // clicking "Upgrade to Elite" after toggling 6-Month would end up on
+    // Elite Monthly instead.
+    const targetBilling = body.targetBilling === 'annual'
+      ? 'annual'
+      : body.targetBilling === '6month'
+      ? '6month'
+      : body.targetBilling === 'monthly'
+      ? 'monthly'
+      : null;
     if (!userId || !subscriptionId || !targetPlan) {
       return NextResponse.json({ error: "Missing userId, subscriptionId, or targetPlan" }, { status: 400 });
     }
@@ -55,10 +67,18 @@ export async function POST(request: NextRequest) {
     }
     const currentInterval = currentItem.price?.recurring?.interval;
     const currentIntervalCount = currentItem.price?.recurring?.interval_count;
-    const billing = billingFromInterval(currentInterval, currentIntervalCount);
+    const currentBilling = billingFromInterval(currentInterval, currentIntervalCount);
+    // Use targetBilling if provided, otherwise preserve current billing.
+    const billing = targetBilling || currentBilling;
     const newPriceCfg = PRICES[targetPlan][billing];
 
     const currentAmount = currentItem.price?.unit_amount || 0;
+
+    // No-op detection: same tier AND same billing = nothing to change.
+    if (currentAmount === newPriceCfg.amount && currentBilling === billing) {
+      return NextResponse.json({ error: "Already on this plan" }, { status: 400 });
+    }
+
     const isUpgrade = newPriceCfg.amount > currentAmount;
 
     if (isUpgrade) {
