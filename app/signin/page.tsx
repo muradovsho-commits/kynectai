@@ -11,7 +11,6 @@ function SigninContent() {
   const router = useRouter();
   const signIn = useMutation((api as any).auth?.signIn);
   const generateVerificationToken = useMutation((api as any).auth?.generateVerificationToken);
-  const repairPlan = useMutation((api as any).auth?.repairPlan);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -73,10 +72,16 @@ function SigninContent() {
                 }
               }
               // One-time repair: if cloud has higher plan than DB
+              // One-time repair from cloud: SECURITY - we no longer call any
+              // upgrade mutation from the client. Plan source of truth is the
+              // users table in Convex, written only by the Stripe webhook
+              // after signature verification. If the cloud blob still has a
+              // stale offerbell_plan from before that change, we read it for
+              // warm-start UI only - the hook reconciles against Convex
+              // truth within ~200ms.
               const cloudPlan = cloud['offerbell_plan'] || '';
               const planRank: Record<string, number> = { free: 0, pro: 1, elite: 2 };
               if (cloudPlan && (planRank[cloudPlan] || 0) > (planRank[finalPlan] || 0)) {
-                try { if (repairPlan) await repairPlan({ userId: id, plan: cloudPlan }); } catch {}
                 finalPlan = cloudPlan;
               }
             }
