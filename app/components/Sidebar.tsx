@@ -34,35 +34,15 @@ export default function Sidebar({ activePage }: SidebarProps) {
     } catch {}
     return { first: '', last: '' };
   });
-  const [userPlan, setUserPlan] = useState(() => {
-    if (typeof window === 'undefined') return 'free';
-    return localStorage.getItem('offerbell_plan') || 'free';
-  });
-
-  // One-time DB plan refresh on mount. No live subscription. Updates the
-  // localStorage cache so subsequent mounts on other pages render instantly.
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const uid = localStorage.getItem('offerbell_user_id');
-    if (!uid) return;
-    const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
-    if (!url) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const client = new ConvexHttpClient(url);
-        const u = await client.query((api as any).users.getUser, { userId: uid });
-        if (cancelled) return;
-        if (!u || !u.found) return;
-        const dbPlan = u.plan || 'free';
-        setUserPlan(dbPlan);
-        try { localStorage.setItem('offerbell_plan', dbPlan); } catch {}
-      } catch {
-        // Network error / not signed in - keep using the localStorage cache.
-      }
-    })();
-    return () => { cancelled = true; };
-  }, []);
+  // Plan comes from the Convex-backed hook. The hook:
+  //   • Reads users.plan from Convex (Stripe webhook is the source of truth)
+  //   • Reactively re-renders if the plan changes mid-session
+  //   • Side effect: writes the verified plan to localStorage.offerbell_plan
+  //     so legacy pages that read localStorage directly converge on the
+  //     same value within ~200ms of page load. Since Sidebar mounts on
+  //     every authenticated page, this means localStorage is always in
+  //     sync with Convex on every page in the app.
+  const userPlan = useUserPlan();
 
   const [messagesSent, setMessagesSent] = useState(() => {
     if (typeof window === 'undefined') return 0;
