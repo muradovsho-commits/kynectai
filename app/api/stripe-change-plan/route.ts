@@ -79,8 +79,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Already on this plan" }, { status: 400 });
     }
 
-    const isUpgrade = newPriceCfg.amount > currentAmount;
-if (isUpgrade) {
+    // Determine if this is a tier change vs same-tier billing change.
+    // A TIER upgrade (Pro → Elite) should ALWAYS apply immediately, even
+    // if the new billing cycle is shorter (and thus lower per-cycle price).
+    // Without this, Pro Annual → Elite Monthly would get misclassified as a
+    // downgrade just because $40 < $192, and the user would wait months
+    // for Elite instead of getting it today.
+    const currentIsElite = currentAmount === 4000 || currentAmount === 21600 || currentAmount === 38400;
+    const currentTier: 'pro' | 'elite' = currentIsElite ? 'elite' : 'pro';
+    const tierRank: Record<string, number> = { pro: 1, elite: 2 };
+    const isTierUpgrade = tierRank[targetPlan] > tierRank[currentTier];
+    const isTierDowngrade = tierRank[targetPlan] < tierRank[currentTier];
+
+    // Apply immediately if: tier upgrade (any cycle), or same-tier going to
+    // a longer commitment (higher per-cycle price).
+    // Schedule for period-end if: tier downgrade (any cycle), or same-tier
+    // going to a shorter commitment (lower per-cycle price).
+    const isImmediate = isTierUpgrade
+      || (!isTierDowngrade && newPriceCfg.amount > currentAmount);
+
+    if (isImmediate) {
       // Instant upgrade/longer-commitment. Stripe prorates and charges the
       // diff. Reuse the existing product ID rather than creating a new one
       // inline - Stripe's subscriptions.update API rejects price_data with
