@@ -20,8 +20,7 @@ const YEARS = ["Class of 2025","Class of 2026","Class of 2027","Class of 2028","
 
 export default function MyAccountPage() {
   const router = useRouter();
-  const downgradePlanMutation = useMutation(api.auth.downgradePlan);
-const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
+  const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
   const [userId, setUserId] = useState('');
   // Replaces a reactive useQuery - see below for one-time HTTP fetch.
   const [dbUser, setDbUser] = useState<any>(null);
