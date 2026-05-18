@@ -74,8 +74,6 @@ export default function CheckoutPage() {
   const [currentPlan, setCurrentPlan] = useState<PlanTier>('free');
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
   const [currentCycle, setCurrentCycle] = useState<string | null>(null);
-  const downgradePlan = useMutation((api as any).auth?.downgradePlan);
-  const changePlan = useMutation((api as any).auth?.upgradePlan);
 
   useEffect(() => {
     const theme = localStorage.getItem("offerbell-theme");
