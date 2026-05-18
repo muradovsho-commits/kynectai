@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthUserId, unauthorizedResponse, checkRateLimit, getClientIP, getCorsHeaders } from "../_lib/auth";
+import { getPlanFromConvex } from "../_lib/plan";
 
 export async function OPTIONS(req: NextRequest) {
   return new NextResponse(null, { status: 204, headers: getCorsHeaders(req) });
@@ -15,6 +16,17 @@ export async function POST(req: NextRequest) {
     const limitKey = `reps:${userId || ip}`;
     const limited = checkRateLimit(limitKey, 20, 60_000, corsHeaders);
     if (limited) return limited;
+
+    // Elite-only gate. Reps is an Elite-tier feature; reject anyone else even
+    // if they bypassed the UI by tampering with localStorage. Plan comes from
+    // Convex where the Stripe webhook is the source of truth.
+    const plan = await getPlanFromConvex(userId);
+    if (plan !== "elite") {
+      return NextResponse.json(
+        { error: "Reps is an Elite-only feature. Upgrade to access this." },
+        { status: 403, headers: corsHeaders }
+      );
+    }
 
     const body = await req.json();
     const { messages, persona, context, stepType } = body as {
