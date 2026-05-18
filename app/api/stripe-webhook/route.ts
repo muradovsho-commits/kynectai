@@ -172,6 +172,64 @@ export async function POST(request: NextRequest) {
         break;
       }
 
+      // ──────────────────────────────────────────────────────────────────────
+      // Chargeback. Customer disputed the charge with their bank. The money
+      // is being pulled back from our Stripe balance and we owe a $15 dispute
+      // fee. Cancel the subscription immediately so they lose access -
+      // there's no scenario where someone who chargebacks should keep paid
+      // features. Stripe will fire customer.subscription.deleted afterwards,
+      // which our handler above uses to drop the user to free.
+      // ──────────────────────────────────────────────────────────────────────
+      case 'charge.dispute.created': {
+        const dispute = event.data.object as Stripe.Dispute;
+        const chargeId = typeof dispute.charge === 'string' ? dispute.charge : dispute.charge?.id;
+        if (!chargeId) break;
+        try {
+          const charge = await stripe.charges.retrieve(chargeId);
+          const invoiceId = typeof charge.invoice === 'string' ? charge.invoice : charge.invoice?.id;
+          if (!invoiceId) break;
+          const invoice = await stripe.invoices.retrieve(invoiceId);
+          const subId = typeof (invoice as any).subscription === 'string'
+            ? (invoice as any).subscription
+            : (invoice as any).subscription?.id;
+          if (!subId) break;
+          await stripe.subscriptions.cancel(subId);
+          console.log('[stripe-webhook] Chargeback - cancelled sub', subId);
+        } catch (e: any) {
+          // If the sub is already cancelled (concurrent webhook, etc.),
+          // Stripe throws. Swallow - we got the desired end state anyway.
+          console.error('[stripe-webhook] Chargeback handler error:', e?.message || e);
+        }
+        break;
+      }
+
+      // ──────────────────────────────────────────────────────────────────────
+      // Refund. Admin issued a refund in Stripe dashboard (or via API). Only
+      // act on FULL refunds - partial refunds keep the sub active. On full
+      // refund, cancel the subscription so the user loses access. They got
+      // their money back, they shouldn't keep paid features.
+      // ──────────────────────────────────────────────────────────────────────
+      case 'charge.refunded': {
+        const charge = event.data.object as Stripe.Charge;
+        // charge.refunded is true only when fully refunded. Partial refunds
+        // leave it false and keep amount_refunded < amount.
+        if (!charge.refunded) break;
+        const invoiceId = typeof charge.invoice === 'string' ? charge.invoice : charge.invoice?.id;
+        if (!invoiceId) break;
+        try {
+          const invoice = await stripe.invoices.retrieve(invoiceId);
+          const subId = typeof (invoice as any).subscription === 'string'
+            ? (invoice as any).subscription
+            : (invoice as any).subscription?.id;
+          if (!subId) break;
+          await stripe.subscriptions.cancel(subId);
+          console.log('[stripe-webhook] Full refund - cancelled sub', subId);
+        } catch (e: any) {
+          console.error('[stripe-webhook] Refund handler error:', e?.message || e);
+        }
+        break;
+      }
+
       default:
         // Ignore other events - we only care about subscription lifecycle.
         break;
