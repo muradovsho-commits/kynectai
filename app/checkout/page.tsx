@@ -158,15 +158,51 @@ const handleDowngrade = async () => {
   };
 
 const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
-    if (from === to) return;
+    // The desired billing cycle comes from the toggle on this page. Pass it
+    // to the API so a user toggling Monthly → 6-Month actually gets the
+    // 6-Month rate, instead of the API forcing them back to Monthly.
+    const targetBilling = billingCycle;
 
-    // Going from a paid plan to another paid plan: route through Stripe.
-    // Upgrades happen instantly with proration; downgrades are scheduled.
+    // True no-op: same tier AND same billing cycle as the user's current sub.
+    if (from === to && currentCycle === targetBilling) return;
+
+    // Going from a paid plan to another paid plan (tier change OR billing
+    // change within the same tier): route through Stripe. The API decides
+    // whether to do an instant prorated change (paying more upfront) or
+    // schedule at period end (paying less / longer interval downgrades).
     if ((from === 'pro' || from === 'elite') && (to === 'pro' || to === 'elite')) {
-      const isUpgrade = from === 'pro' && to === 'elite';
-      const message = isUpgrade
-        ? 'Upgrade to Elite now? You will be charged the prorated difference for your current billing period.'
-        : 'Switch to Pro? The change takes effect at your next billing cycle - you will keep Elite access until then.';
+      const tierUpgrade = from === 'pro' && to === 'elite';
+      const tierDowngrade = from === 'elite' && to === 'pro';
+      const sameTier = from === to;
+
+      // Decide message based on what's changing. We can't compute the exact
+      // prorate amount client-side - Stripe does that. We just tell the
+      // user whether to expect a charge today or a scheduled change.
+      const billingLabelMap: Record<string, string> = {
+        monthly: 'Monthly',
+        '6month': '6-Month',
+        annual: 'Annual',
+      };
+      const newPlanLabel = to === 'elite' ? 'Elite' : 'Pro';
+      const newBillingLabel = billingLabelMap[targetBilling] || targetBilling;
+
+      let message: string;
+      if (tierUpgrade) {
+        message = `Upgrade to ${newPlanLabel} ${newBillingLabel}? You will be charged the prorated difference for your current billing period today.`;
+      } else if (tierDowngrade) {
+        message = `Switch to ${newPlanLabel} ${newBillingLabel}? The change takes effect at your next billing cycle - you will keep Elite access until then.`;
+      } else if (sameTier) {
+        // Same tier, different billing cycle. Direction depends on whether
+        // the new billing is a longer commitment (more upfront, instant) or
+        // shorter (scheduled at period end).
+        const goingLonger = (targetBilling === 'annual' && currentCycle !== 'annual')
+          || (targetBilling === '6month' && currentCycle === 'monthly');
+        message = goingLonger
+          ? `Switch to ${newBillingLabel} billing? You will be charged the prorated difference today and locked in at the lower per-month rate.`
+          : `Switch to ${newBillingLabel} billing? The change takes effect at your next billing cycle.`;
+      } else {
+        message = `Switch to ${newPlanLabel} ${newBillingLabel}?`;
+      }
       if (!confirm(message)) return;
 
       setLoading('switch');
@@ -193,7 +229,7 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
         const res = await fetch('/api/stripe-change-plan', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId, subscriptionId, targetPlan: to }),
+          body: JSON.stringify({ userId, subscriptionId, targetPlan: to, targetBilling }),
         });
         const data = await res.json();
         if (!res.ok || !data.success) {
@@ -204,10 +240,10 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
 
         if (data.immediate) {
           // Upgrade took effect now. Webhook will catch up the DB.
-          alert(`You're now on ${to === 'elite' ? 'Elite' : 'Pro'}.`);
+          alert(`You're now on ${newPlanLabel} ${newBillingLabel}.`);
         } else {
           const when = data.effectiveAt ? new Date(data.effectiveAt).toLocaleDateString() : 'the end of your current period';
-          alert(`Your switch to ${to === 'elite' ? 'Elite' : 'Pro'} is scheduled for ${when}. You'll keep your current plan until then.`);
+          alert(`Your switch to ${newPlanLabel} ${newBillingLabel} is scheduled for ${when}. You'll keep your current plan until then.`);
         }
         // Don't touch localStorage plan keys. The webhook handles DB state.
         // Sidebar/my-account will reflect changes via their reactive query.
@@ -366,20 +402,30 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
               </div>
 
               <button
-                onClick={() => { if (currentPlan === 'pro') return; handleSwitch(currentPlan, 'pro'); }}
-                disabled={currentPlan === 'pro' || !!loading}
+                onClick={() => {
+                  // True no-op: same tier AND same billing cycle.
+                  if (currentPlan === 'pro' && currentCycle === billingCycle) return;
+                  handleSwitch(currentPlan, 'pro');
+                }}
+                disabled={(currentPlan === 'pro' && currentCycle === billingCycle) || !!loading}
                 type="button"
                 style={{
                   width: '100%', padding: '12px 0', borderRadius: 10, marginTop: 20, border: 'none',
-                  background: currentPlan === 'pro' ? 'var(--surface-2)' : 'var(--text)',
-                  color: currentPlan === 'pro' ? 'var(--text-3)' : 'var(--surface)',
+                  background: (currentPlan === 'pro' && currentCycle === billingCycle) ? 'var(--surface-2)' : 'var(--text)',
+                  color: (currentPlan === 'pro' && currentCycle === billingCycle) ? 'var(--text-3)' : 'var(--surface)',
                   fontSize: 13, fontWeight: 700,
-                  cursor: currentPlan === 'pro' ? 'default' : 'pointer',
+                  cursor: (currentPlan === 'pro' && currentCycle === billingCycle) ? 'default' : 'pointer',
                   fontFamily: "'Sora', sans-serif",
                   opacity: loading === 'pro' ? 0.6 : 1,
                 }}
               >
-                {currentPlan === 'pro' ? 'Current Plan' : currentPlan === 'elite' ? 'Switch to Pro' : loading === 'pro' ? 'Redirecting...' : 'Upgrade to Pro'}
+                {currentPlan === 'pro' && currentCycle === billingCycle
+                  ? 'Current Plan'
+                  : currentPlan === 'pro' && currentCycle !== billingCycle
+                  ? `Switch to ${billingCycle === 'annual' ? 'Annual' : billingCycle === '6month' ? '6-Month' : 'Monthly'} Billing`
+                  : currentPlan === 'elite'
+                  ? 'Switch to Pro'
+                  : loading === 'pro' ? 'Redirecting...' : 'Upgrade to Pro'}
               </button>
             </div>
           </div>
@@ -420,20 +466,27 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
               </div>
 
               <button
-                onClick={() => { if (currentPlan === 'elite') return; handleSwitch(currentPlan, 'elite'); }}
-                disabled={currentPlan === 'elite' || !!loading}
+                onClick={() => {
+                  if (currentPlan === 'elite' && currentCycle === billingCycle) return;
+                  handleSwitch(currentPlan, 'elite');
+                }}
+                disabled={(currentPlan === 'elite' && currentCycle === billingCycle) || !!loading}
                 type="button"
                 style={{
                   width: '100%', padding: '12px 0', borderRadius: 10, marginTop: 20, border: 'none',
-                  background: currentPlan === 'elite' ? 'rgba(37,99,235,0.15)' : 'linear-gradient(135deg, #2563eb, #3b82f6)',
-                  color: currentPlan === 'elite' ? '#2563eb' : '#fff',
+                  background: (currentPlan === 'elite' && currentCycle === billingCycle) ? 'rgba(37,99,235,0.15)' : 'linear-gradient(135deg, #2563eb, #3b82f6)',
+                  color: (currentPlan === 'elite' && currentCycle === billingCycle) ? '#2563eb' : '#fff',
                   fontSize: 13, fontWeight: 700,
-                  cursor: currentPlan === 'elite' ? 'default' : 'pointer',
+                  cursor: (currentPlan === 'elite' && currentCycle === billingCycle) ? 'default' : 'pointer',
                   fontFamily: "'Sora', sans-serif",
                   opacity: loading === 'elite' ? 0.6 : 1,
                 }}
               >
-                {currentPlan === 'elite' ? 'Current Plan' : loading === 'elite' ? 'Redirecting...' : 'Upgrade to Elite'}
+                {currentPlan === 'elite' && currentCycle === billingCycle
+                  ? 'Current Plan'
+                  : currentPlan === 'elite' && currentCycle !== billingCycle
+                  ? `Switch to ${billingCycle === 'annual' ? 'Annual' : billingCycle === '6month' ? '6-Month' : 'Monthly'} Billing`
+                  : loading === 'elite' ? 'Redirecting...' : 'Upgrade to Elite'}
               </button>
             </div>
           </div>
