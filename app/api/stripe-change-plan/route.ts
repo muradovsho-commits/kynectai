@@ -80,15 +80,21 @@ export async function POST(request: NextRequest) {
     }
 
     const isUpgrade = newPriceCfg.amount > currentAmount;
-
-    if (isUpgrade) {
-      // Instant upgrade. Stripe prorates and charges the diff.
+if (isUpgrade) {
+      // Instant upgrade/longer-commitment. Stripe prorates and charges the
+      // diff. Reuse the existing product ID rather than creating a new one
+      // inline - Stripe's subscriptions.update API rejects price_data with
+      // product_data and only accepts product (an existing Product ID).
+      // The webhook reads unit_amount to determine the resulting tier, so
+      // keeping the same product is fine.
       await stripe.subscriptions.update(subscriptionId, {
         items: [{
           id: currentItem.id,
           price_data: {
             currency: 'usd',
-            product_data: { name: newPriceCfg.name, description: newPriceCfg.desc },
+            product: typeof currentItem.price?.product === 'string'
+              ? currentItem.price.product
+              : (currentItem.price?.product as any)?.id,
             unit_amount: newPriceCfg.amount,
             recurring: { interval: newPriceCfg.interval, interval_count: newPriceCfg.intervalCount },
           },
