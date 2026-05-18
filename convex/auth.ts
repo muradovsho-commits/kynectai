@@ -230,43 +230,17 @@ export const deleteAccount = mutation({
   },
 });
 
-export const upgradePlan = mutation({
-  args: { userId: v.string(), promoCode: v.optional(v.string()), plan: v.optional(v.string()) },
-  handler: async (ctx, args) => {
-    const users = await ctx.db.query("users").collect();
-    const user = users.find((u) => u._id.toString() === args.userId);
-    if (!user) throw new ConvexError("User not found");
-    const tier = args.plan === 'elite' ? 'elite' : 'pro';
-    const patch: any = { plan: tier, planActivatedAt: Date.now() };
-    if (args.promoCode) patch.promoCode = args.promoCode;
-    await ctx.db.patch(user._id, patch);
-    return { success: true, planActivatedAt: Date.now() };
-  },
-});
+// ─────────────────────────────────────────────────────────────────────────────
+// SECURITY NOTE: upgradePlan, downgradePlan, and repairPlan mutations used to
+// live here. They were callable from any browser console, with no auth, and
+// would directly patch users.plan. A malicious user could call
+// upgradePlan({ userId: 'their-id', plan: 'elite' }) and grant themselves
+// Elite without paying. They have been removed. Plan changes flow only
+// through the Stripe webhook (setStripeSubscription /
+// applyStripeSubscriptionUpdate / applyStripeSubscriptionCanceled below),
+// which validates a Stripe signature before doing anything.
+// ─────────────────────────────────────────────────────────────────────────────
 
-export const downgradePlan = mutation({
-  args: { userId: v.string() },
-  handler: async (ctx, args) => {
-    const users = await ctx.db.query("users").collect();
-    const user = users.find((u) => u._id.toString() === args.userId);
-    if (!user) throw new ConvexError("User not found");
-    await ctx.db.patch(user._id, { plan: "free", planActivatedAt: undefined });
-    return { success: true };
-  },
-});
-
-export const repairPlan = mutation({
-  args: { userId: v.string(), plan: v.string() },
-  handler: async (ctx, args) => {
-    const users = await ctx.db.query("users").collect();
-    const user = users.find((u) => u._id.toString() === args.userId);
-    if (!user) return { success: false };
-    if (args.plan === 'pro' || args.plan === 'elite') {
-      await ctx.db.patch(user._id, { plan: args.plan, planActivatedAt: user.planActivatedAt || Date.now() });
-    }
-    return { success: true };
-  },
-});
 // ─────────────────────────────────────────────────────────────────────────────
 // Stripe webhook mutations. Called only from the Stripe webhook handler at
 // /api/stripe-webhook after signature verification. Each is a small, focused
