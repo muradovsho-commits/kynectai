@@ -1,20 +1,23 @@
 "use client";
 import { useEffect } from "react";
-import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
-import { api } from "../../../convex/_generated/api";
 
 export default function CheckoutSuccessPage() {
   const router = useRouter();
-  const upgradePlan = useMutation((api as any).auth?.upgradePlan);
 
   useEffect(() => {
     const now = Date.now();
     const params = new URLSearchParams(window.location.search);
     const planTier = params.get('plan') || localStorage.getItem('offerbell_checkout_plan') || 'pro';
     const billingType = params.get('billing') || localStorage.getItem('offerbell_billing_cycle') || 'monthly';
-    
-    // Save plan to localStorage
+
+    // Save plan to localStorage. This drives the warm-start UI (useUserPlan
+    // hook) so the user sees their new plan immediately. The actual source
+    // of truth in Convex is updated by the Stripe webhook once payment
+    // settles - usually within a few seconds. We do NOT call any client-side
+    // upgradePlan mutation here because that would let a user navigate
+    // directly to /checkout/success?plan=elite and upgrade themselves
+    // without paying.
     try {
       const raw = localStorage.getItem("offerbell_onboarding_profile");
       const existing = raw ? JSON.parse(raw) : {};
@@ -25,24 +28,9 @@ export default function CheckoutSuccessPage() {
       localStorage.removeItem("offerbell_checkout_plan");
     } catch {}
 
-   // Persist to database - surface failures loudly. If this silently fails
-    // the DB stays at the old plan tier, so we'd see it on next signin as
-    // a "downgrade" when the user reopens the site.
-    try {
-      const userId = localStorage.getItem("offerbell_user_id");
-      const promo = localStorage.getItem("offerbell_promo_code") || undefined;
-      if (userId && upgradePlan) {
-        upgradePlan({ userId, promoCode: promo, plan: planTier })
-          .then(() => console.log('[checkout] Plan persisted to DB:', planTier))
-          .catch((e: any) => console.error('[checkout] upgradePlan FAILED:', e?.message || e, e));
-      } else {
-        console.error('[checkout] Cannot persist plan - userId or mutation missing.', { userId, hasMutation: !!upgradePlan });
-      }
-    } catch (e) { console.error('[checkout] Persist threw:', e); }
-
     const timer = setTimeout(() => router.push("/dashboard"), 3000);
     return () => clearTimeout(timer);
-  }, [router, upgradePlan]);
+  }, [router]);
 
   const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
   const planName = (params?.get('plan') || 'pro') === 'elite' ? 'Elite' : 'Pro';
