@@ -237,10 +237,25 @@ function FlashcardsContent() {
     const h = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' || e.key === 'l') goNext();
       if (e.key === 'ArrowLeft' || e.key === 'h') goPrev();
-      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setShowAnswer(p => !p); }
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        const wasHidden = !showAnswer;
+        setShowAnswer(p => !p);
+        if (wasHidden && card) {
+          try {
+            const raw = localStorage.getItem(perfKey);
+            const p = raw ? JSON.parse(raw) : { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
+            p.seen = (p.seen || 0) + 1;
+            const cat = card.category;
+            if (!p.byCat[cat]) p.byCat[cat] = { seen: 0, pass: 0 };
+            p.byCat[cat].seen++;
+            savePerf(p);
+          } catch {}
+        }
+      }
     };
     window.addEventListener('keydown', h); return () => window.removeEventListener('keydown', h);
-  }, [goNext, goPrev]);
+  }, [goNext, goPrev, showAnswer, card, perfKey, savePerf]);
 
   const openTrack = (id: string) => { setActiveTrack(id); setFilterCat('All'); setFilterDiff('All'); setIdx(0); resetCardState(); setShuffleKey(0); setShowBookmarksOnly(false); };
   const goBack = () => { setActiveTrack(null); setIdx(0); resetCardState(); };
