@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { PLAN_LIMITS } from '../lib/plan';
+import { useUserPlan } from '../lib/usePlan';
 import '../contact-finder/contact-finder.css';
 import RemindersPanel from './RemindersPanel';
 
@@ -95,14 +96,9 @@ export default function OutreachTrackerPage() {
   const [_userName, _setUserName] = useState({ first: '', last: '' });
 
   const [messagesSent, setMessagesSent] = useState(0);
-  const [userPlan, setUserPlan] = useState('free');
+  const userPlan = useUserPlan();
   useEffect(() => {
     try { setMessagesSent(parseInt(localStorage.getItem('offerbell_messages_sent') || '0', 10)); } catch {}
-    try {
-      const plan = localStorage.getItem('offerbell_plan') || 'free';
-      const prof = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}');
-      setUserPlan(prof.plan || plan);
-    } catch { setUserPlan('free'); }
   }, []);
 
   useEffect(() => {
