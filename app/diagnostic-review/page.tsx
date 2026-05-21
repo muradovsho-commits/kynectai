@@ -9,7 +9,14 @@ import './diagnostic.css';
 import { TRACKS as DRILL_TRACKS, DrillQ } from '../concept-drills/drill-data';
 
 type MCQ = { q: string; category: string; options: string[]; correct: number; explanation: string };
-type TrackDef = { title: string; categories: string[]; questions: DrillQ[] };
+type TrackDef = { title: string; categories: string[]; questions: DrillQ[]; target: number };
+
+// Total questions per diagnostic session, per career (rounded to clean numbers)
+const TRACK_TARGET: Record<string, number> = {
+  ib: 40, pe: 50, consulting: 45, accounting: 25, am: 25,
+  st: 50, er: 30, re: 30, vc: 40, rx: 25,
+};
+const DEFAULT_TARGET = 40;
 type CatResult = { total: number; correct: number };
 type DiagResult = {
   id: string; track: string; date: string; score: number;
@@ -19,10 +26,9 @@ type DiagResult = {
 
 const TRACKS: Record<string, TrackDef> = {};
 for (const [key, t] of Object.entries(DRILL_TRACKS)) {
-  TRACKS[key] = { title: t.title, categories: t.topics, questions: t.questions };
+  TRACKS[key] = { title: t.title, categories: t.topics, questions: t.questions, target: TRACK_TARGET[key] ?? DEFAULT_TARGET };
 }
 
-const QUESTIONS_PER_CAT = 5;
 const TIME_PER_Q = 45;
 const STORAGE_KEY = 'offerbell_diag_history';
 
@@ -31,22 +37,30 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 function buildAssessment(track: TrackDef): MCQ[] {
+  // Shuffle each category's pool, then deal round-robin across categories
+  // until we hit the track's target total (or exhaust the pools). Spreads
+  // evenly across categories and caps naturally at each pool's size.
+  const pools = track.categories
+    .map(cat => ({ cat, qs: shuffle(track.questions.filter(q => q.topic === cat)) }))
+    .filter(p => p.qs.length > 0);
+
+  const alloc = pools.map(() => 0);
+  let remaining = track.target;
+  let progress = true;
+  while (remaining > 0 && progress) {
+    progress = false;
+    for (let i = 0; i < pools.length && remaining > 0; i++) {
+      if (alloc[i] < pools[i].qs.length) { alloc[i]++; remaining--; progress = true; }
+    }
+  }
+
   const allQ: MCQ[] = [];
-  for (const cat of track.categories) {
-    const pool = track.questions.filter(q => q.topic === cat);
-    if (pool.length === 0) continue;
-    const picked = shuffle(pool).slice(0, QUESTIONS_PER_CAT);
-    for (const d of picked) {
-      allQ.push({ q: d.q, category: cat, options: d.options, correct: d.correct, explanation: d.explanation });
+  pools.forEach((p, i) => {
+    for (let k = 0; k < alloc[i]; k++) {
+      const d = p.qs[k];
+      allQ.push({ q: d.q, category: p.cat, options: d.options, correct: d.correct, explanation: d.explanation });
     }
-  }
-  if (allQ.length < 10) {
-    const used = new Set(allQ.map(q => q.q));
-    const remaining = shuffle(track.questions.filter(q => !used.has(q.q))).slice(0, 10 - allQ.length);
-    for (const d of remaining) {
-      allQ.push({ q: d.q, category: d.topic, options: d.options, correct: d.correct, explanation: d.explanation });
-    }
-  }
+  });
   return shuffle(allQ);
 }
 
