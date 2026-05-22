@@ -52,6 +52,17 @@ function tierFromSubscription(sub: Stripe.Subscription): 'pro' | 'elite' | null 
   return null;
 }
 
+// Read the current period end from a subscription. In Stripe API versions
+// from 2025 onward, current_period_end lives on the subscription ITEM, not
+// the top-level subscription object. Read the item first, fall back to the
+// legacy top-level field, then undefined. Mirrors the logic in
+// stripe-cancel/route.ts. Returns milliseconds (our DB stores ms).
+function periodEndMsFromSub(sub: Stripe.Subscription): number | undefined {
+  const item = (sub as any).items?.data?.[0];
+  const periodEndSec = item?.current_period_end ?? (sub as any).current_period_end ?? null;
+  return periodEndSec ? periodEndSec * 1000 : undefined;
+}
+
 export async function POST(request: NextRequest) {
   // 1) Verify signature. Without this anyone could forge an event and grant
   // themselves a paid plan. Reject anything that doesn't pass.
@@ -97,7 +108,7 @@ export async function POST(request: NextRequest) {
           expand: ['items.data.price.product'],
         });
         const plan = tierFromSubscription(sub) || 'pro';
-        const periodEndMs = (sub as any).current_period_end ? (sub as any).current_period_end * 1000 : undefined;
+        const periodEndMs = periodEndMsFromSub(sub);
 
         await convex.mutation((api as any).auth.setStripeSubscription, {
           userId,
@@ -120,7 +131,7 @@ export async function POST(request: NextRequest) {
       case 'customer.subscription.created': {
         const sub = event.data.object as Stripe.Subscription;
         const plan = tierFromSubscription(sub) || undefined;
-        const periodEndMs = (sub as any).current_period_end ? (sub as any).current_period_end * 1000 : undefined;
+        const periodEndMs = periodEndMsFromSub(sub);
 
         // Do NOT clear pendingPlanChange here. Routine updates (cancel_at_
         // period_end flipping, payment status changes, etc.) must not wipe
