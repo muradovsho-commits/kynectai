@@ -86,7 +86,7 @@ The score block is parsed programmatically. Do not include it inside your writte
           { role: "user" as const, parts: [{ text: `Interview question: "${question}"\n\nCandidate's answer: "${userAnswer}"` }] },
         ];
 
-    const models = ["gemini-2.5-flash", "gemini-3-flash-preview", "gemini-2.5-flash-lite"];
+    const models = ["gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.5-flash-lite"];
 
     for (const model of models) {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
@@ -107,19 +107,24 @@ The score block is parsed programmatically. Do not include it inside your writte
           const data = await res.json();
           const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-          // Parse score block
-          const scoreMatch = text.match(/\|\|\|SCORE:(.*?)\|\|\|/);
-          let score = null;
-          let feedback = text;
-          if (scoreMatch) {
-            try {
-              score = JSON.parse(scoreMatch[1]);
-            } catch { /* ignore parse error */ }
-            feedback = text.replace(/\|\|\|SCORE:.*?\|\|\|/, "").trim();
-          }
+          // Only accept a non-empty response. An empty 200 (e.g. a model that
+          // spent its whole token budget on internal reasoning and returned no
+          // text) must fall through to the next attempt/model instead of
+          // returning a blank grade to the user.
+          if (text.trim()) {
+            const scoreMatch = text.match(/\|\|\|SCORE:(.*?)\|\|\|/);
+            let score = null;
+            let feedback = text;
+            if (scoreMatch) {
+              try {
+                score = JSON.parse(scoreMatch[1]);
+              } catch { /* ignore parse error */ }
+              feedback = text.replace(/\|\|\|SCORE:.*?\|\|\|/, "").trim();
+            }
 
-          if (isSessionStart) await incrementUsageInConvex(userId, "mockInterview");
-          return NextResponse.json({ feedback, score }, { headers: corsHeaders });
+            if (isSessionStart) await incrementUsageInConvex(userId, "mockInterview");
+            return NextResponse.json({ feedback, score }, { headers: corsHeaders });
+          }
         }
 
         // Try without systemInstruction
@@ -142,15 +147,17 @@ The score block is parsed programmatically. Do not include it inside your writte
         if (res2.ok) {
           const data2 = await res2.json();
           const text2 = data2.candidates?.[0]?.content?.parts?.[0]?.text || "";
-          const scoreMatch2 = text2.match(/\|\|\|SCORE:(.*?)\|\|\|/);
-          let score2 = null;
-          let feedback2 = text2;
-          if (scoreMatch2) {
-            try { score2 = JSON.parse(scoreMatch2[1]); } catch { /* */ }
-            feedback2 = text2.replace(/\|\|\|SCORE:.*?\|\|\|/, "").trim();
+          if (text2.trim()) {
+            const scoreMatch2 = text2.match(/\|\|\|SCORE:(.*?)\|\|\|/);
+            let score2 = null;
+            let feedback2 = text2;
+            if (scoreMatch2) {
+              try { score2 = JSON.parse(scoreMatch2[1]); } catch { /* */ }
+              feedback2 = text2.replace(/\|\|\|SCORE:.*?\|\|\|/, "").trim();
+            }
+            if (isSessionStart) await incrementUsageInConvex(userId, "mockInterview");
+            return NextResponse.json({ feedback: feedback2, score: score2 }, { headers: corsHeaders });
           }
-          if (isSessionStart) await incrementUsageInConvex(userId, "mockInterview");
-          return NextResponse.json({ feedback: feedback2, score: score2 }, { headers: corsHeaders });
         }
 
         continue;
