@@ -124,7 +124,7 @@ function SigninContent() {
                 action: 'updateCount',
                 userId: id,
                 messagesSent: result?.outreachCount || 0,
-                plan: plan
+                plan: finalPlan
               }, () => {});
             }
           }
