@@ -95,7 +95,6 @@ The score block is parsed programmatically. Do not include it inside your writte
         const res = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          signal: AbortSignal.timeout(15000),
           body: JSON.stringify({
             contents: messages,
             systemInstruction: { parts: [{ text: systemPrompt }] },
@@ -107,31 +106,25 @@ The score block is parsed programmatically. Do not include it inside your writte
           const data = await res.json();
           const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-          // Only accept a non-empty response. An empty 200 (e.g. a model that
-          // spent its whole token budget on internal reasoning and returned no
-          // text) must fall through to the next attempt/model instead of
-          // returning a blank grade to the user.
-          if (text.trim()) {
-            const scoreMatch = text.match(/\|\|\|SCORE:(.*?)\|\|\|/);
-            let score = null;
-            let feedback = text;
-            if (scoreMatch) {
-              try {
-                score = JSON.parse(scoreMatch[1]);
-              } catch { /* ignore parse error */ }
-              feedback = text.replace(/\|\|\|SCORE:.*?\|\|\|/, "").trim();
-            }
-
-            if (isSessionStart) await incrementUsageInConvex(userId, "mockInterview");
-            return NextResponse.json({ feedback, score }, { headers: corsHeaders });
+          // Parse score block
+          const scoreMatch = text.match(/\|\|\|SCORE:(.*?)\|\|\|/);
+          let score = null;
+          let feedback = text;
+          if (scoreMatch) {
+            try {
+              score = JSON.parse(scoreMatch[1]);
+            } catch { /* ignore parse error */ }
+            feedback = text.replace(/\|\|\|SCORE:.*?\|\|\|/, "").trim();
           }
+
+          if (isSessionStart) await incrementUsageInConvex(userId, "mockInterview");
+          return NextResponse.json({ feedback, score }, { headers: corsHeaders });
         }
 
         // Try without systemInstruction
         const res2 = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          signal: AbortSignal.timeout(15000),
           body: JSON.stringify({
             contents: [
               { role: "user", parts: [{ text: systemPrompt + "\n\n---\n\n" + `Interview question: "${question}"\n\nCandidate's answer: "${userAnswer}"` }] },
@@ -147,17 +140,15 @@ The score block is parsed programmatically. Do not include it inside your writte
         if (res2.ok) {
           const data2 = await res2.json();
           const text2 = data2.candidates?.[0]?.content?.parts?.[0]?.text || "";
-          if (text2.trim()) {
-            const scoreMatch2 = text2.match(/\|\|\|SCORE:(.*?)\|\|\|/);
-            let score2 = null;
-            let feedback2 = text2;
-            if (scoreMatch2) {
-              try { score2 = JSON.parse(scoreMatch2[1]); } catch { /* */ }
-              feedback2 = text2.replace(/\|\|\|SCORE:.*?\|\|\|/, "").trim();
-            }
-            if (isSessionStart) await incrementUsageInConvex(userId, "mockInterview");
-            return NextResponse.json({ feedback: feedback2, score: score2 }, { headers: corsHeaders });
+          const scoreMatch2 = text2.match(/\|\|\|SCORE:(.*?)\|\|\|/);
+          let score2 = null;
+          let feedback2 = text2;
+          if (scoreMatch2) {
+            try { score2 = JSON.parse(scoreMatch2[1]); } catch { /* */ }
+            feedback2 = text2.replace(/\|\|\|SCORE:.*?\|\|\|/, "").trim();
           }
+          if (isSessionStart) await incrementUsageInConvex(userId, "mockInterview");
+          return NextResponse.json({ feedback: feedback2, score: score2 }, { headers: corsHeaders });
         }
 
         continue;
