@@ -23,6 +23,76 @@ function simpleHash(str: string): string {
   return "kh_" + base + Math.abs(hash2).toString(36);
 }
 
+// ─── Password hashing: PBKDF2-SHA256 with a per-user random salt ──────────────
+// The Convex runtime exposes the Web Crypto API (crypto.subtle / crypto.get-
+// RandomValues), same as Cloudflare Workers. We use PBKDF2 because bcrypt and
+// scrypt aren't available in WebCrypto. Stored format:
+//   pbkdf2$<iterations>$<saltHex>$<hashHex>
+// Legacy hashes (prefix "kh_") are still verified via simpleHash and upgraded
+// to this scheme transparently on the user's next successful sign-in, so
+// existing accounts are never locked out.
+const PBKDF2_ITERATIONS = 100_000;
+
+function toHex(bytes: Uint8Array): string {
+  let out = "";
+  for (let i = 0; i < bytes.length; i++) out += bytes[i].toString(16).padStart(2, "0");
+  return out;
+}
+
+function fromHex(hex: string): Uint8Array {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < bytes.length; i++) bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+  return bytes;
+}
+
+async function derivePbkdf2(password: string, salt: Uint8Array, iterations: number): Promise<string> {
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(password),
+    "PBKDF2",
+    false,
+    ["deriveBits"]
+  );
+  const bits = await crypto.subtle.deriveBits(
+    { name: "PBKDF2", hash: "SHA-256", salt: salt as BufferSource, iterations },
+    keyMaterial,
+    256
+  );
+  return toHex(new Uint8Array(bits));
+}
+
+async function hashPassword(password: string): Promise<string> {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const hashHex = await derivePbkdf2(password, salt, PBKDF2_ITERATIONS);
+  return `pbkdf2$${PBKDF2_ITERATIONS}$${toHex(salt)}$${hashHex}`;
+}
+
+// Constant-time comparison so a match doesn't leak via response timing.
+function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+// Returns { ok, needsUpgrade }. needsUpgrade is true when a legacy "kh_" hash
+// matched — the caller should re-store a PBKDF2 hash to migrate the user.
+async function verifyPassword(
+  password: string,
+  stored: string
+): Promise<{ ok: boolean; needsUpgrade: boolean }> {
+  if (stored.startsWith("pbkdf2$")) {
+    const parts = stored.split("$");
+    const iterations = parseInt(parts[1], 10);
+    const saltHex = parts[2];
+    const hashHex = parts[3];
+    const computed = await derivePbkdf2(password, fromHex(saltHex), iterations);
+    return { ok: timingSafeEqual(computed, hashHex), needsUpgrade: false };
+  }
+  // Legacy "kh_" scheme.
+  return { ok: timingSafeEqual(simpleHash(password), stored), needsUpgrade: true };
+}
+
 export const signUp = mutation({
   args: {
     fullName: v.string(),
@@ -55,7 +125,7 @@ export const signUp = mutation({
     }
 
     // Hash password
-    const passwordHash = simpleHash(args.password);
+    const passwordHash = await hashPassword(args.password);
 
     // Generate Verification Token
     const verificationToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -93,10 +163,15 @@ export const signIn = mutation({
       throw new ConvexError("No account found with this email. Please sign up first.");
     }
 
-    // Check password
-    const passwordHash = simpleHash(args.password);
-    if (user.passwordHash !== passwordHash) {
+    // Check password. Verifies against the stored scheme (PBKDF2 or legacy
+    // "kh_"). If a legacy hash matched, transparently re-hash with PBKDF2 so
+    // the user is migrated off the weak scheme without any action on their end.
+    const { ok, needsUpgrade } = await verifyPassword(args.password, user.passwordHash);
+    if (!ok) {
       throw new ConvexError("Incorrect password. Please try again.");
+    }
+    if (needsUpgrade) {
+      await ctx.db.patch(user._id, { passwordHash: await hashPassword(args.password) });
     }
 
     // Check email verification
@@ -195,7 +270,7 @@ export const resetPassword = mutation({
       throw new ConvexError("Password must be at least 6 characters.");
     }
 
-    const passwordHash = simpleHash(args.newPassword);
+    const passwordHash = await hashPassword(args.newPassword);
 
     await ctx.db.patch(user._id, {
       passwordHash,
