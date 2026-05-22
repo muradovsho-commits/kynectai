@@ -86,7 +86,7 @@ The score block is parsed programmatically. Do not include it inside your writte
           { role: "user" as const, parts: [{ text: `Interview question: "${question}"\n\nCandidate's answer: "${userAnswer}"` }] },
         ];
 
-    const models = ["gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.5-flash-lite"];
+    const models = ["gemini-2.5-flash", "gemini-3-flash-preview", "gemini-2.5-flash-lite"];
 
     for (const model of models) {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
@@ -95,6 +95,7 @@ The score block is parsed programmatically. Do not include it inside your writte
         const res = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          signal: AbortSignal.timeout(15000),
           body: JSON.stringify({
             contents: messages,
             systemInstruction: { parts: [{ text: systemPrompt }] },
@@ -125,6 +126,7 @@ The score block is parsed programmatically. Do not include it inside your writte
         const res2 = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          signal: AbortSignal.timeout(15000),
           body: JSON.stringify({
             contents: [
               { role: "user", parts: [{ text: systemPrompt + "\n\n---\n\n" + `Interview question: "${question}"\n\nCandidate's answer: "${userAnswer}"` }] },
