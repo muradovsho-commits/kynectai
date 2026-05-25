@@ -1182,8 +1182,16 @@ document.addEventListener('click',function(e){
   if(!a||!a.href||a.target==="_blank"||a.href.startsWith("mailto:"))return;
   const u=new URL(a.href,location.origin);
   if(u.origin!==location.origin||u.hash)return;
-  e.preventDefault();document.body.classList.add('page-exit');
-  setTimeout(()=>{location.href=a.href},160);
+  e.preventDefault();
+  const dest=u.pathname+u.search;
+  // When embedded in the app shell (iframe), hand off to the parent for a
+  // smooth client-side route change instead of a full iframe reload (blink).
+  if(window.parent&&window.parent!==window){
+    window.parent.postMessage({type:'navigate',url:dest},'*');
+  }else{
+    document.body.classList.add('page-exit');
+    setTimeout(()=>{location.href=a.href},160);
+  }
 });
 </script>
 </body>
