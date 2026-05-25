@@ -2,6 +2,30 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthUserId, unauthorizedResponse, checkRateLimit, getClientIP, getCorsHeaders } from "../_lib/auth";
 import { checkPlanLimit, incrementUsageInConvex } from "../_lib/plan";
 
+// Robustly extract the |||SCORE:{...}||| block from a model response and strip
+// it from the user-facing feedback. Tolerant of: JSON spanning multiple lines
+// (uses the dotAll flag), trailing junk around the object, and a missing/
+// truncated closing delimiter. Returns score=null only when no valid JSON can
+// be recovered, so a well-formed score is no longer lost to a brittle regex.
+function parseScoreBlock(text: string): { score: any; feedback: string } {
+  let score: any = null;
+  // Prefer a fully-delimited block; fall back to an unterminated trailing block.
+  let m = text.match(/\|\|\|SCORE:([\s\S]*?)\|\|\|/);
+  if (!m) m = text.match(/\|\|\|SCORE:([\s\S]*)$/);
+  if (m) {
+    let raw = m[1].trim();
+    const first = raw.indexOf("{");
+    const last = raw.lastIndexOf("}");
+    if (first !== -1 && last > first) raw = raw.slice(first, last + 1);
+    try { score = JSON.parse(raw); } catch { score = null; }
+  }
+  const feedback = text
+    .replace(/\|\|\|SCORE:[\s\S]*?\|\|\|/, "")
+    .replace(/\|\|\|SCORE:[\s\S]*$/, "")
+    .trim();
+  return { score, feedback };
+}
+
 export async function OPTIONS(req: NextRequest) {
   return new NextResponse(null, { status: 204, headers: getCorsHeaders(req) });
 }
@@ -95,6 +119,7 @@ The score block is parsed programmatically. Do not include it inside your writte
         const res = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          signal: AbortSignal.timeout(15000),
           body: JSON.stringify({
             contents: messages,
             systemInstruction: { parts: [{ text: systemPrompt }] },
@@ -106,25 +131,23 @@ The score block is parsed programmatically. Do not include it inside your writte
           const data = await res.json();
           const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-          // Parse score block
-          const scoreMatch = text.match(/\|\|\|SCORE:(.*?)\|\|\|/);
-          let score = null;
-          let feedback = text;
-          if (scoreMatch) {
-            try {
-              score = JSON.parse(scoreMatch[1]);
-            } catch { /* ignore parse error */ }
-            feedback = text.replace(/\|\|\|SCORE:.*?\|\|\|/, "").trim();
-          }
+          // Only accept a non-empty response. An empty 200 (e.g. a model that
+          // spent its whole token budget on internal reasoning and returned no
+          // text) must fall through to the next attempt/model instead of
+          // returning a blank grade to the user.
+          if (text.trim()) {
+            const { score, feedback } = parseScoreBlock(text);
 
-          if (isSessionStart) await incrementUsageInConvex(userId, "mockInterview");
-          return NextResponse.json({ feedback, score }, { headers: corsHeaders });
+            if (isSessionStart) await incrementUsageInConvex(userId, "mockInterview");
+            return NextResponse.json({ feedback, score }, { headers: corsHeaders });
+          }
         }
 
         // Try without systemInstruction
         const res2 = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          signal: AbortSignal.timeout(15000),
           body: JSON.stringify({
             contents: [
               { role: "user", parts: [{ text: systemPrompt + "\n\n---\n\n" + `Interview question: "${question}"\n\nCandidate's answer: "${userAnswer}"` }] },
@@ -140,15 +163,11 @@ The score block is parsed programmatically. Do not include it inside your writte
         if (res2.ok) {
           const data2 = await res2.json();
           const text2 = data2.candidates?.[0]?.content?.parts?.[0]?.text || "";
-          const scoreMatch2 = text2.match(/\|\|\|SCORE:(.*?)\|\|\|/);
-          let score2 = null;
-          let feedback2 = text2;
-          if (scoreMatch2) {
-            try { score2 = JSON.parse(scoreMatch2[1]); } catch { /* */ }
-            feedback2 = text2.replace(/\|\|\|SCORE:.*?\|\|\|/, "").trim();
+          if (text2.trim()) {
+            const { score: score2, feedback: feedback2 } = parseScoreBlock(text2);
+            if (isSessionStart) await incrementUsageInConvex(userId, "mockInterview");
+            return NextResponse.json({ feedback: feedback2, score: score2 }, { headers: corsHeaders });
           }
-          if (isSessionStart) await incrementUsageInConvex(userId, "mockInterview");
-          return NextResponse.json({ feedback: feedback2, score: score2 }, { headers: corsHeaders });
         }
 
         continue;
