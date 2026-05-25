@@ -419,6 +419,26 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 </nav>
 
 <!-- ═══ HERO ═══ -->
+<style>
+.hero-montage{padding:0 28px 20px;margin-top:-6vh}
+.hero{min-height:72vh!important;padding-bottom:20px!important}
+.hero-stage{position:relative;width:100%;max-width:1240px;margin:0 auto;height:clamp(440px,52vw,660px);
+  --dot:rgba(26,23,20,0.10);
+  background-image:radial-gradient(var(--dot) 1px,transparent 1px);background-size:22px 22px;
+  -webkit-mask-image:radial-gradient(ellipse 78% 86% at 50% 42%,#000 55%,transparent 100%);
+          mask-image:radial-gradient(ellipse 78% 86% at 50% 42%,#000 55%,transparent 100%)}
+.fpos{position:absolute;opacity:0;transform:translateY(26px) rotate(var(--r,0deg));
+  transition:opacity .9s cubic-bezier(.22,.61,.36,1),transform .9s cubic-bezier(.22,.61,.36,1)}
+.fpos.in{opacity:1;transform:translateY(0) rotate(var(--r,0deg))}
+.ffloat{animation:ffloat var(--dur,8s) ease-in-out infinite;animation-delay:var(--fd,0s)}
+@keyframes ffloat{50%{transform:translateY(-15px)}}
+.fcard{border-radius:13px;overflow:hidden;background:#fff;
+  border:1px solid rgba(26,23,20,0.07);
+  box-shadow:0 2px 4px rgba(26,23,20,.04),0 28px 56px -26px rgba(26,23,20,.30)}
+.fcard img{width:100%;display:block}
+.fcard.dark{border-color:rgba(255,255,255,0.06)}
+@media(max-width:760px){.hero-montage{display:none}}
+</style>
 <section class="hero reveal">
   <div class="hero-inner">
     <div class="hero-label">Prepare. Practice. Get Hired.</div>
@@ -428,6 +448,24 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
     <div class="hero-note">No credit card required · Used on 50+ campuses</div>
   </div>
 </section>
+
+<!-- ═══ HERO MONTAGE (real OfferBell app) ═══ -->
+<section class="hero-montage" aria-hidden="true">
+  <div class="hero-stage" id="heroStage">
+    <div class="fpos" style="left:0.5%;top:11%;width:25%;--r:-4deg;z-index:2"><div class="ffloat" style="--dur:9s;--fd:.2s"><div class="fcard"><img src="hero/card-coach.png" alt="AI Coach"></div></div></div>
+    <div class="fpos" style="left:3%;top:55%;width:30%;--r:4deg;z-index:4"><div class="ffloat" style="--dur:8.4s;--fd:1.1s"><div class="fcard"><img src="hero/card-mock.png" alt="Mock interview"></div></div></div>
+    <div class="fpos" style="left:30%;top:23%;width:40%;--r:-2deg;z-index:3"><div class="ffloat" style="--dur:10s;--fd:0s"><div class="fcard"><img src="hero/card-dashboard.png" alt="Dashboard"></div></div></div>
+    <div class="fpos" style="left:31%;top:4%;width:26%;--r:3deg;z-index:6"><div class="ffloat" style="--dur:7.6s;--fd:.6s"><div class="fcard dark"><img src="hero/card-tip.png" alt="Daily tip"></div></div></div>
+    <div class="fpos" style="left:33%;top:64%;width:31%;--r:2deg;z-index:7"><div class="ffloat" style="--dur:8.8s;--fd:1.4s"><div class="fcard"><img src="hero/card-flash.png" alt="Interview flashcards"></div></div></div>
+    <div class="fpos" style="left:71%;top:12%;width:28%;--r:4deg;z-index:4"><div class="ffloat" style="--dur:9.4s;--fd:.4s"><div class="fcard"><img src="hero/card-map.png" alt="Referral map"></div></div></div>
+    <div class="fpos" style="left:73.5%;top:49%;width:23%;--r:-4deg;z-index:5"><div class="ffloat" style="--dur:8s;--fd:.9s"><div class="fcard"><img src="hero/card-writer.png" alt="Outreach writer"></div></div></div>
+  </div>
+</section>
+<script>
+(function(){var s=document.getElementById('heroStage');if(!s)return;var c=s.querySelectorAll('.fpos');
+function go(){c.forEach(function(el,i){setTimeout(function(){el.classList.add('in')},110*i)})}
+if('requestAnimationFrame'in window){requestAnimationFrame(function(){requestAnimationFrame(go)})}else{go()}})();
+</script>
 
 <!-- ═══ MARQUEE ═══ -->
 <div class="marquee-wrap">
