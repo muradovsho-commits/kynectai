@@ -249,7 +249,7 @@ export default function DashboardPage() {
             </Link>
             <Link className="dash-action-card" href="/flashcards">
               <div className="dash-action-title">Drill interview questions</div>
-              <div className="dash-action-desc">Practice with 1,300+ technical flashcards across all tracks.</div>
+              <div className="dash-action-desc">Practice with 5,000+ technical flashcards across all tracks.</div>
               <div className="dash-action-link">Open Interview Flashcards →</div>
             </Link>
           </div>
