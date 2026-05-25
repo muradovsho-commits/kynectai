@@ -169,9 +169,9 @@ function SigninContent() {
           <div>
             <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
               {[
-                { n: '1,300+', l: 'Questions' },
-                { n: '11', l: 'Career Tracks' },
-                { n: '50+', l: 'Campuses' },
+                { n: '5,000+', l: 'Questions' },
+                { n: '10', l: 'Career Tracks' },
+                { n: '200+', l: 'Campuses' },
               ].map((s, i) => (
                 <div key={i} style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '12px 16px', flex: 1 }}>
                   <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: '#fff', letterSpacing: '-0.5px' }}>{s.n}</div>
