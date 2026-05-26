@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useUserPlan } from '../lib/usePlan';
+import { useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 
 interface SidebarProps {
   activePage: string;
@@ -53,6 +55,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
     if (typeof window === 'undefined') return null;
     try { return localStorage.getItem('offerbell_profile_pic') || null; } catch { return null; }
   });
+  const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
   const picInputRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
 
@@ -114,6 +117,11 @@ export default function Sidebar({ activePage }: SidebarProps) {
         const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
         setProfilePic(dataUrl);
         localStorage.setItem('offerbell_profile_pic', dataUrl);
+        // Persist to users table (source of truth) so it survives reload.
+        try {
+          const uid = localStorage.getItem('offerbell_user_id') || '';
+          if (uid) void updateProfileMut({ userId: uid, profilePic: dataUrl });
+        } catch {}
       };
       img.src = reader.result as string;
     };
