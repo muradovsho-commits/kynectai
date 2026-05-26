@@ -529,6 +529,45 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 .tc-quote{font-size:14.5px;line-height:1.6;color:#343434}
 @media(max-width:880px){.te-cols{grid-template-columns:1fr;max-width:460px}.te-col:nth-child(n+2){display:none}.te-wall{height:auto;mask-image:none;-webkit-mask-image:none}.te-col{transform:none!important}}
 </style>
+<style>
+/* ===== MOBILE FIXES ===== */
+html,body{overflow-x:hidden;max-width:100%}
+.n-burger{display:none;background:none;border:none;cursor:pointer;width:30px;height:24px;flex-direction:column;justify-content:center;gap:5px;padding:0;justify-self:end}
+.n-burger span{display:block;width:22px;height:2px;background:currentColor;border-radius:2px;transition:transform .22s,opacity .22s}
+nav#nav .n-burger{color:rgba(253,230,197,.9)}
+nav#nav.scrolled .n-burger{color:var(--text)}
+.n-burger.is-open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.n-burger.is-open span:nth-child(2){opacity:0}
+.n-burger.is-open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.n-menu{display:none;position:fixed;top:58px;left:0;right:0;z-index:99;background:var(--cream);border-bottom:1px solid var(--border);padding:8px 22px 22px;box-shadow:0 18px 40px -22px rgba(0,0,0,.3)}
+.n-menu.open{display:block}
+.n-menu a{display:block;padding:14px 0;font-size:15px;font-weight:600;color:var(--text);text-decoration:none;border-bottom:1px solid var(--border);letter-spacing:.3px}
+.n-menu a:last-of-type{border-bottom:none}
+.n-menu-note{margin-top:14px;font-size:12px;color:var(--text-3);letter-spacing:.2px}
+@media(max-width:700px){
+  nav#nav{grid-template-columns:1fr auto!important;padding:0 18px!important;height:58px!important}
+  nav#nav .n-logo{justify-self:start!important;font-size:20px}
+  nav#nav .n-right{display:none!important}
+  nav#nav .n-burger{display:flex!important}
+  .hero{min-height:auto!important;align-items:flex-start!important;flex-direction:column!important;padding:116px 0 56px!important}
+  .hero-inner2{transform:none!important}
+  .hero-trusted{position:static!important;left:auto!important;right:auto!important;bottom:auto!important;margin-top:34px}
+  .flow{padding:68px 20px 54px}
+  .fl-layer{width:100%;max-width:100%;height:auto;min-height:0;margin:0}
+  .fl-svg{display:none}
+  .fl-cap{position:static!important;transform:none!important;left:auto!important;right:auto!important;margin:0 0 10px!important}
+  .fl-start{margin:0 0 20px!important}
+  .node{position:static!important;transform:none!important;left:auto!important;top:auto!important;margin:24px 0 10px!important}
+  .stage{position:static!important;left:auto!important;top:auto!important;width:auto!important;max-width:100%!important;opacity:1!important;transform:none!important;text-align:left!important;margin:0 0 4px!important}
+  .stage.left,.stage.right{text-align:left!important}
+  .fl-end{margin:30px 0 0!important}
+  .tr-stat{padding:0 14px}
+  .tr-stat .n{font-size:33px}
+  .hero-inner2{padding:0 26px}
+  .hero-trusted{padding:0 26px}
+  .ht-logos{gap:22px}
+}
+</style>
 </head>
 <body>
 
@@ -546,7 +585,16 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
     <a href="/signin" class="n-signin">Sign in</a>
     <a href="/signup" class="n-cta">Get Started</a>
   </div>
+  <button class="n-burger" aria-label="Open menu"><span></span><span></span><span></span></button>
 </nav>
+<div class="n-menu" id="nMenu">
+  <a href="#tracks">Tracks</a>
+  <a href="#features-detail">Features</a>
+  <a href="#proof">Testimonials</a>
+  <a href="#pricing">Pricing</a>
+  <a href="#faq">FAQ</a>
+  <div class="n-menu-note">Sign up &amp; sign in on desktop.</div>
+</div>
 
 <!-- ═══ HERO ═══ -->
 <style>
@@ -1006,6 +1054,16 @@ addEventListener('scroll',tick,{passive:true});addEventListener('resize',tick);t
   }
   window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(upd);ticking=true;}},{passive:true});
   window.addEventListener('resize',upd);upd();
+})();
+</script>
+<script>
+(function(){
+  var burger=document.querySelector('.n-burger'),menu=document.getElementById('nMenu');
+  if(!burger||!menu)return;
+  function close(){menu.classList.remove('open');burger.classList.remove('is-open');}
+  burger.addEventListener('click',function(e){e.stopPropagation();menu.classList.toggle('open');burger.classList.toggle('is-open');});
+  menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',close);});
+  document.addEventListener('click',function(e){if(menu.classList.contains('open')&&!menu.contains(e.target)&&e.target!==burger)close();});
 })();
 </script>
 </body>
