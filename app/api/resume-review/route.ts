@@ -91,24 +91,37 @@ RESPOND IN THIS EXACT JSON FORMAT (no markdown, no backticks, just raw JSON):
 
     const models = ["gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.5-flash-lite"];
 
+    let lastRaw = "";
+
     for (const model of models) {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
       try {
+        // Force valid JSON and give the model room to finish it. The old config
+        // (2048 tokens, no responseMimeType, thinking left on for 2.5 models)
+        // let "thinking" eat the budget and truncate the JSON - that truncated
+        // output is what produced "could not format it properly".
+        const generationConfig: any = {
+          temperature: 0.6,
+          topP: 0.9,
+          maxOutputTokens: 8192,
+          responseMimeType: "application/json",
+        };
+        if (model.startsWith("gemini-2.5")) {
+          generationConfig.thinkingConfig = { thinkingBudget: 0 };
+        }
         const res = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             contents: messages,
             systemInstruction: { parts: [{ text: systemPrompt }] },
-            generationConfig: { temperature: 0.6, topP: 0.9, maxOutputTokens: 2048 },
+            generationConfig,
           }),
         });
 
         if (res.ok) {
           const data = await res.json();
           const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-          // Gemini call succeeded and cost real money - count it toward weekly cap
-          await incrementUsageInConvex(userId, "resumeReview");
 
           // Try to parse JSON from response - multiple strategies
           let parsed = null;
@@ -147,20 +160,19 @@ RESPOND IN THIS EXACT JSON FORMAT (no markdown, no backticks, just raw JSON):
             } catch {}
           }
 
-          // Validate that parsed has the expected structure
-          if (parsed && typeof parsed.overallScore === 'number' && parsed.sections) {
-            return NextResponse.json({ review: parsed, model }, { headers: corsHeaders });
-          }
-
-          // Strategy 4: If we still can't parse, try the client side
-          // Return raw but also signal it's JSON-like so client can retry parsing
+          // Any successful parse is a usable, billable result: count it ONCE
+          // here (not on every model attempt, which was silently eating the
+          // weekly quota on failures) and return it.
           if (parsed) {
-            // Parsed but missing expected fields - still send as review, client will handle
+            await incrementUsageInConvex(userId, "resumeReview");
             return NextResponse.json({ review: parsed, model }, { headers: corsHeaders });
           }
 
-          // Last resort: return raw but let the client try to parse it too
-          return NextResponse.json({ raw: text, model }, { headers: corsHeaders });
+          // Couldn't parse this model's output - remember it and fall through to
+          // the next, more reliable model instead of giving up immediately
+          // (the old code returned raw from the first model and never retried).
+          lastRaw = text;
+          continue;
         } else {
           const errBody = await res.text().catch(() => "");
           console.error(`Model ${model} failed: ${res.status} ${errBody.slice(0, 200)}`);
@@ -170,6 +182,11 @@ RESPOND IN THIS EXACT JSON FORMAT (no markdown, no backticks, just raw JSON):
       }
     }
 
+    // Every model responded but none returned parseable JSON - hand the best
+    // raw text to the client as a final fallback so it can attempt its own parse.
+    if (lastRaw) {
+      return NextResponse.json({ raw: lastRaw }, { headers: corsHeaders });
+    }
     return NextResponse.json({ error: "All models failed" }, { status: 502, headers: corsHeaders });
   } catch (err: any) {
     return NextResponse.json({ error: err.message || "Server error" }, { status: 500, headers: corsHeaders });
