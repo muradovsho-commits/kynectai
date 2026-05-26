@@ -130,6 +130,27 @@ function gatherLocalData(): Record<string, string> {
   return data;
 }
 
+// Mark today (LOCAL date) as an active day. Runs app-wide (see init effect)
+// so ANY page counts toward activity - previously only opening the dashboard
+// logged a day, so days where the user only studied (flashcards, drills, etc.)
+// were never recorded. offerbell_activity_days is union-merged across devices.
+function recordActivityToday() {
+  try {
+    const d = new Date();
+    const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const raw = localStorage.getItem('offerbell_activity_days');
+    let days: string[] = [];
+    try { const p = raw ? JSON.parse(raw) : []; if (Array.isArray(p)) days = p; } catch {}
+    if (!days.includes(today)) {
+      days.push(today);
+      const cut = new Date(); cut.setDate(cut.getDate() - 120);
+      const cutoff = `${cut.getFullYear()}-${String(cut.getMonth() + 1).padStart(2, '0')}-${String(cut.getDate()).padStart(2, '0')}`;
+      days = days.filter(x => x >= cutoff);
+      localStorage.setItem('offerbell_activity_days', JSON.stringify(days));
+    }
+  } catch {}
+}
+
 // Cheap, deterministic string hash. We compare hashes to decide whether to
 // push - equal hash means nothing changed since last successful push, so
 // we skip the network call entirely.
@@ -168,6 +189,15 @@ function mergeBlobs(cloud: Record<string, string>, local: Record<string, string>
   const merged: Record<string, string> = { ...cloud };
   for (const key of SYNC_KEYS) {
     if (EXCLUDE_FROM_SYNC.has(key)) continue;
+    // Profile pic is a local-authoritative scalar: whatever this tab holds
+    // (including an empty string = "removed") wins. Without this, the
+    // (cv && !lv) branch below keeps restoring the old cloud pic every load,
+    // so removing/changing the avatar never sticks.
+    if (key === 'offerbell_profile_pic') {
+      if (key in local) merged[key] = local[key];
+      else if (key in cloud) merged[key] = cloud[key];
+      continue;
+    }
     const cv = cloud[key];
     const lv = local[key];
     if (!cv && lv) merged[key] = lv;
@@ -229,6 +259,9 @@ export function useProgressSync() {
   useEffect(() => {
     if (!userId || hasSyncedRef.current) return;
     hasSyncedRef.current = true;
+
+    // App-wide: record today as active on any page load (was dashboard-only).
+    recordActivityToday();
 
     const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
     if (!url) return;
@@ -444,7 +477,10 @@ export function useProgressSync() {
         lastPushedHashRef.current = localHash;
       } catch {}
     };
-    const onVis = () => { if (document.visibilityState === 'hidden') void pushIfDirty(); };
+    const onVis = () => {
+      if (document.visibilityState === 'hidden') void pushIfDirty();
+      else recordActivityToday();
+    };
     window.addEventListener('beforeunload', flushBeacon);
     document.addEventListener('visibilitychange', onVis);
     return () => {
