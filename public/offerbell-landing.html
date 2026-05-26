@@ -11,17 +11,17 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --black:#1a1714;
+  --black:#0f0f0f;
   --white:#ffffff;
-  --cream:#faf8f5;
-  --warm:#f3ede4;
-  --brown:#8b7355;
-  --text:#1a1714;
-  --text-2:#6b6560;
-  --text-3:#9e9890;
-  --border:#e5ded4;
-  --green:#16a34a;
-  --red:#c0392b;
+  --cream:#fafafa;
+  --warm:#efefef;
+  --brown:#2f2f2f;
+  --text:#0f0f0f;
+  --text-2:#5c5c5c;
+  --text-3:#9a9a9a;
+  --border:#e6e6e6;
+  --green:#444444;
+  --red:#444444;
 }
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
@@ -32,7 +32,7 @@ nav{
   position:fixed;top:0;left:0;right:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
   padding:0 52px;height:60px;
-  background:rgba(250,248,245,0.92);backdrop-filter:blur(14px);
+  background:rgba(248,248,248,0.92);backdrop-filter:blur(14px);
   border-bottom:1px solid transparent;transition:border-color 0.25s;
 }
 nav.scrolled{border-bottom-color:var(--border)}
@@ -58,7 +58,7 @@ nav.scrolled{border-bottom-color:var(--border)}
 }
 .hero::after{
   content:'';position:absolute;inset:0;
-  background:linear-gradient(180deg, rgba(250,248,245,0.3) 0%, transparent 40%, transparent 65%, var(--cream) 100%);
+  background:linear-gradient(180deg, rgba(248,248,248,0.3) 0%, transparent 40%, transparent 65%, var(--cream) 100%);
 }
 .hero>*{position:relative;z-index:1}
 .hero-inner{max-width:700px;margin:0 auto}
@@ -176,7 +176,7 @@ nav.scrolled{border-bottom-color:var(--border)}
   background:var(--white);border:1px solid var(--border);
   border-radius:12px;padding:22px 24px;min-width:300px;max-width:340px;flex-shrink:0;
 }
-.pr-stars{color:#f59e0b;font-size:14px;letter-spacing:2px;margin-bottom:10px}
+.pr-stars{color:#a7a7a7;font-size:14px;letter-spacing:2px;margin-bottom:10px}
 .pr-qt{font-size:13.5px;color:var(--text-2);line-height:1.65;font-style:italic;margin-bottom:12px}
 .pr-qa{font-size:12px;font-weight:700;color:var(--text)}
 
@@ -254,7 +254,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 .feat-d{font-size:14.5px;color:var(--text-2);line-height:1.7;max-width:420px;margin-bottom:22px}
 .feat-points{display:flex;flex-direction:column;gap:10px}
 .feat-pt{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2)}
-.feat-pt svg{flex-shrink:0;stroke:#16a34a;stroke-width:2.5;width:14px;height:14px;fill:none}
+.feat-pt svg{flex-shrink:0;stroke:#6f6f6f;stroke-width:2.5;width:14px;height:14px;fill:none}
 
 /* Feature demo boxes */
 .feat-vis{
@@ -266,16 +266,16 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 /* Resume review demo */
 .demo-rr-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .demo-rr-title{font-size:12px;font-weight:700;color:var(--text)}
-.demo-rr-ring{width:44px;height:44px;border-radius:50%;border:3px solid #16a34a;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:18px;color:#16a34a}
+.demo-rr-ring{width:44px;height:44px;border-radius:50%;border:3px solid #6f6f6f;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:18px;color:#6f6f6f}
 .demo-rr-sec{background:var(--cream);border-radius:8px;padding:10px 14px;margin-bottom:8px}
 .demo-rr-sec-h{display:flex;align-items:center;justify-content:space-between;font-size:10px;margin-bottom:5px}
 .demo-rr-sec-n{font-weight:700;letter-spacing:0.3px;text-transform:uppercase;color:var(--text-3)}
 .demo-rr-sec-s{font-family:'Instrument Serif',serif;font-size:14px}
 .demo-bar{height:3px;background:var(--border);border-radius:2px}
-.demo-bar-f{height:100%;border-radius:2px;background:#16a34a}
+.demo-bar-f{height:100%;border-radius:2px;background:#6f6f6f}
 
 /* Outreach writer demo */
-.demo-ow-avi{width:32px;height:32px;border-radius:8px;background:#3b82f6;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.demo-ow-avi{width:32px;height:32px;border-radius:8px;background:#7a7a7a;color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 .demo-ow-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .demo-ow-name{font-size:12px;font-weight:700;color:var(--text)}
 .demo-ow-firm{font-size:10px;color:var(--text-3)}
@@ -300,16 +300,16 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 .demo-crm-firm{font-size:10.5px;color:var(--text-3)}
 .demo-crm-days{font-size:10.5px;color:var(--text-3);text-align:right;font-variant-numeric:tabular-nums}
 .demo-crm-badge{display:inline-block;font-size:9.5px;font-weight:700;padding:3.5px 8px;border-radius:5px;letter-spacing:0.2px;white-space:nowrap}
-.demo-crm-badge.b-drafted{background:rgba(148,163,184,0.18);color:#475569}
-.demo-crm-badge.b-sent{background:rgba(59,130,246,0.15);color:#1d4ed8}
-.demo-crm-badge.b-fu2{background:rgba(245,158,11,0.18);color:#a16207}
-.demo-crm-badge.b-spoken{background:rgba(16,185,129,0.18);color:#047857}
-.demo-crm-badge.b-stay{background:rgba(168,85,247,0.18);color:#7e22ce}
+.demo-crm-badge.b-drafted{background:rgba(161,161,161,0.18);color:#535353}
+.demo-crm-badge.b-sent{background:rgba(122,122,122,0.15);color:#4f4f4f}
+.demo-crm-badge.b-fu2{background:rgba(167,167,167,0.18);color:#6a6a6a}
+.demo-crm-badge.b-spoken{background:rgba(128,128,128,0.18);color:#525252}
+.demo-crm-badge.b-stay{background:rgba(128,128,128,0.18);color:#515151}
 
 /* Mock interview demo */
 .demo-mi-cam{background:#0a0a0a;border-radius:10px;height:140px;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:12px}
-.demo-mi-rec{position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#fff}
-.demo-mi-dot{width:7px;height:7px;border-radius:50%;background:#dc2626;animation:miP 1.2s infinite}
+.demo-mi-rec{position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#ffffff}
+.demo-mi-dot{width:7px;height:7px;border-radius:50%;background:#5c5c5c;animation:miP 1.2s infinite}
 @keyframes miP{0%,100%{opacity:1}50%{opacity:0.3}}
 .demo-mi-stats{display:flex;gap:14px;font-size:10px;color:var(--text-3)}
 .demo-mi-stats strong{color:var(--text);font-weight:700}
@@ -318,7 +318,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 .demo-coach-msg{border-radius:10px;padding:10px 12px;font-size:11.5px;line-height:1.6;margin-bottom:8px;max-width:88%}
 .demo-coach-user{background:var(--cream);color:var(--text);align-self:flex-end;border-bottom-right-radius:3px;margin-left:auto}
 .demo-coach-ai{background:var(--black);color:rgba(255,255,255,0.9);border-bottom-left-radius:3px}
-.demo-coach-label{font-size:8px;font-weight:800;color:#a78bfa;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:3px}
+.demo-coach-label{font-size:8px;font-weight:800;color:#a0a0a0;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:3px}
 
 @media(max-width:900px){
   .hero{padding:120px 24px 60px;min-height:70vh}
@@ -399,6 +399,135 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
   .cta-band-note{text-align:center}
 }
 </style>
+<style>
+
+/* ===== REDESIGN: shared helpers ===== */
+.wrap{max-width:1140px;margin:0 auto;padding:0 52px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase}
+.note{font-size:13px;color:var(--text-3);margin-top:14px}
+.oldway2 h2,.ourway2 h2{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-1px}
+.tracks .sl,.flow .sl{font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--brown);margin-bottom:0}
+.tracks .st,.flow .st{font-family:'Instrument Serif',serif;font-size:clamp(34px,4vw,52px);line-height:1.06;letter-spacing:-1px;margin:14px 0}
+.tracks .st em,.flow .st em{font-style:italic;color:var(--brown)}
+.tracks .ss,.flow .ss{font-size:16px;color:var(--text-2);max-width:560px;margin:0 auto;line-height:1.6}
+/* ===== REDESIGN: stats band ===== */
+.stats{background:var(--cream);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stats .wrap{display:grid;grid-template-columns:repeat(4,1fr);padding-top:64px;padding-bottom:64px}
+.stat{text-align:center;position:relative}
+.stat+.stat::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);height:54px;width:1px;background:var(--border)}
+.stat .n{font-family:'Instrument Serif',serif;font-size:clamp(42px,5vw,62px);line-height:1;color:var(--black);letter-spacing:-1px}
+.stat .l{font-size:12.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3);margin-top:12px}
+@media(max-width:860px){.stats .wrap{grid-template-columns:1fr 1fr;gap:40px}.stat:nth-child(3)::before,.stat+.stat::before{display:none}}
+
+/* ===== REDESIGN: old/our way ===== */
+/* OLD WAY (muted) - context */
+.oldway2{background:#e4e4e4;padding:96px 0}
+.oldway2 .wrap{display:grid;grid-template-columns:0.92fr 1.08fr;gap:72px;align-items:start}
+.ow-head .eyebrow{color:#8d8d8d}
+.ow-head h2{font-size:clamp(36px,4.4vw,54px);line-height:1.04;margin:18px 0 22px;color:var(--black)}
+.ow-head h2 em{color:#7c7c7c}
+.ow-head p{font-size:17px;line-height:1.65;color:#676767;max-width:380px}
+.ow-list{display:flex;flex-direction:column}
+.ow-item{display:grid;grid-template-columns:auto 1fr;gap:26px;padding:24px 0;border-top:1px solid #cecece;align-items:start}
+.ow-item:last-child{border-bottom:1px solid #cecece}
+.ow-num{font-family:'Instrument Serif',serif;font-size:32px;line-height:1;color:#a3a3a3}
+.ow-item h3{font-size:18px;font-weight:600;color:#252525;margin-bottom:6px}
+.ow-item p{font-size:15px;line-height:1.6;color:#6d6d6d}
+.ow-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:9px;vertical-align:middle}
+/* OUR WAY - warm, light, on-brand */
+.ourway2{position:relative;overflow:hidden;background:var(--cream);padding:104px 0}
+.ourway2::before{content:"";position:absolute;right:-8%;top:46%;transform:translateY(-50%);width:560px;height:560px;border-radius:50%;
+  background:radial-gradient(closest-side,#e8e8e8,transparent 72%);opacity:.85;pointer-events:none}
+.ourway2 .wrap{position:relative;display:grid;grid-template-columns:0.92fr 1.08fr;gap:72px;align-items:start}
+.uw-head .eyebrow{color:var(--brown)}
+.uw-head h2{font-size:clamp(36px,4.4vw,54px);line-height:1.04;margin:18px 0 22px;color:var(--black)}
+.uw-head h2 em{color:var(--brown)}
+.uw-head p{font-size:17px;line-height:1.65;color:var(--text-2);max-width:350px;margin-bottom:30px}
+.uw-list{display:flex;flex-direction:column}
+.uw-item{display:grid;grid-template-columns:auto 1fr;gap:26px;padding:24px 0;border-top:1px solid var(--border);align-items:start}
+.uw-item:last-child{border-bottom:1px solid var(--border)}
+.uw-num{font-family:'Instrument Serif',serif;font-size:32px;line-height:1;color:var(--brown)}
+.uw-item h3{font-size:18px;font-weight:600;color:var(--black);margin-bottom:6px}
+.uw-item p{font-size:15px;line-height:1.6;color:var(--text-2)}
+@media(max-width:860px){.oldway2 .wrap,.ourway2 .wrap{grid-template-columns:1fr;gap:40px}}
+/* ===== REDESIGN: tracks ===== */
+.tracks{padding:96px 52px;border-top:1px solid var(--border)}
+.tr-inner{max-width:1180px;margin:0 auto}
+.tr-head{text-align:center;margin-bottom:48px}
+.tr-explorer{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:stretch}
+.tr-list{display:flex;flex-direction:column;gap:3px;background:var(--white);border:1px solid var(--border);border-radius:14px;padding:10px;height:fit-content}
+.tr-row{display:flex;align-items:center;gap:13px;padding:12px 14px;border-radius:9px;cursor:pointer;transition:background .15s}
+.tr-row:hover{background:#f2f2f2}
+.tr-row.active{background:var(--warm)}
+.tr-row .rc{font-family:'Instrument Serif',serif;font-style:italic;font-size:21px;color:var(--brown);width:32px;text-align:center;flex-shrink:0;line-height:1}
+.tr-row .rn{font-size:14.5px;font-weight:600;color:var(--text-2)}
+.tr-row.active .rn,.tr-row:hover .rn{color:var(--black)}
+.tr-row .rar{margin-left:auto;color:var(--brown);opacity:0;transform:translateX(-4px);transition:.15s;font-size:14px}
+.tr-row.active .rar{opacity:1;transform:none}
+.tr-panel{position:relative;overflow:hidden;background:var(--white);border:1px solid var(--border);border-radius:14px;padding:44px 46px;display:flex;flex-direction:column;justify-content:center}
+.tr-content{position:relative;z-index:1}
+.tr-panel .peyebrow{font-size:11.5px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--brown)}
+.tr-panel h3{font-family:'Instrument Serif',serif;font-size:40px;color:var(--black);margin:10px 0 14px;letter-spacing:-.5px;line-height:1.04}
+.tr-panel .pdesc{font-size:16px;color:var(--text-2);line-height:1.62;max-width:540px;margin-bottom:36px}
+.tr-stats{display:flex;align-items:flex-start;margin-bottom:30px}
+.tr-stat{position:relative;padding:0 30px;text-align:center}
+.tr-stat:first-child{padding-left:0;text-align:center}
+.tr-stat+.tr-stat::before{content:"";position:absolute;left:0;top:4px;height:52px;width:1px;background:var(--border)}
+.tr-stat .n{font-family:'Instrument Serif',serif;font-size:46px;color:var(--brown);line-height:1;letter-spacing:-1px}
+.tr-stat .l{font-size:11.5px;color:var(--text-3);margin-top:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase}
+.tr-incl{margin-top:6px;padding-top:24px;border-top:1px solid var(--border);max-width:560px}
+.tr-incl-label{font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:var(--text-3);margin-bottom:11px}
+.tr-incl-row{font-size:15px;color:var(--text-2);line-height:1.5}
+.tr-incl-row span:not(:first-child)::before{content:"\00B7";margin:0 13px;color:#bbbbbb;font-weight:700}
+.tr-incl-row em{font-style:italic;color:var(--brown)}
+@media(max-width:860px){.tr-explorer{grid-template-columns:1fr}.tr-panel .pcode{font-size:90px}}
+/* ===== REDESIGN: features flow ===== */
+.flow{padding:90px 24px 40px;border-top:1px solid var(--border)}
+.fl-head{text-align:center;margin-bottom:40px}
+.fl-layer{position:relative;width:880px;max-width:100%;height:1640px;margin:0 auto}
+.fl-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.fl-route{fill:none;stroke:#cecece;stroke-width:2.5;stroke-linecap:round}
+.fl-route-draw{fill:none;stroke:var(--brown);stroke-width:2.5;stroke-linecap:round}
+#plane{fill:var(--brown);transition:none}
+.fl-cap{position:absolute;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:9px;
+  font-size:12.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:10px 20px;border-radius:100px;white-space:nowrap}
+.fl-start{top:0;background:var(--warm);color:var(--brown)}
+.fl-start .dot{width:8px;height:8px;border-radius:50%;background:var(--brown)}
+.fl-end{bottom:0;background:var(--black);color:#e9e9e9}
+.node{position:absolute;width:50px;height:50px;border-radius:50%;background:var(--cream);border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:22px;color:var(--text-3);
+  transform:translate(-50%,-50%) scale(.85);transition:all .5s cubic-bezier(.22,.61,.36,1);z-index:2}
+.node.on{border-color:var(--brown);color:var(--brown);background:#ffffff;transform:translate(-50%,-50%) scale(1);box-shadow:0 8px 22px -8px rgba(119,119,119,.5)}
+.stage{position:absolute;width:250px;opacity:0;transition:opacity .6s ease,transform .6s ease}
+.stage.on{opacity:1;transform:none!important}
+.stage.left{text-align:right}
+.stage.right{text-align:left}
+.stage.left{transform:translateX(14px)}
+.stage.right{transform:translateX(-14px)}
+.stg-name{font-family:'Instrument Serif',serif;font-size:30px;color:var(--black);line-height:1;margin-bottom:9px}
+.stg-desc{font-size:14.5px;color:var(--text-2);line-height:1.5;margin-bottom:13px}
+.stg-tools span{font-size:13.5px;color:var(--text);font-weight:500}
+.stg-tools span:not(:last-child)::after{content:"·";margin:0 9px;color:var(--brown);font-weight:700}
+@media(max-width:920px){.fl-layer{transform-origin:top center}}
+/* ===== REDESIGN: testimonials ===== */
+.testi{position:relative;overflow:hidden;padding:84px 0 90px;
+  background:radial-gradient(135% 125% at 50% -18%,#3a3a3a 0%,#222222 48%,#0b0b0b 100%)}
+.te-head{text-align:center;max-width:680px;margin:0 auto 50px;padding:0 24px}
+.te-h{font-family:'Instrument Serif',serif;font-size:clamp(40px,5.2vw,68px);color:#ececec;letter-spacing:-1.5px;line-height:1.02;margin-bottom:18px}
+.te-sub{font-size:17px;line-height:1.6;color:#cfcfcf}
+.te-wall{position:relative;height:660px;overflow:hidden;
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000000 9%,#000000 91%,transparent);mask-image:linear-gradient(180deg,transparent,#000000 9%,#000000 91%,transparent)}
+.te-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;max-width:1180px;margin:0 auto;padding:0 32px;align-items:start}
+.te-col{display:flex;flex-direction:column;gap:22px;will-change:transform}
+.tcard{background:#fbfbfb;border-radius:18px;padding:24px 26px;box-shadow:0 20px 40px -26px rgba(20,20,20,.55)}
+.tc-head{display:flex;align-items:center;gap:13px;margin-bottom:13px}
+.tc-av{width:46px;height:46px;border-radius:50%;color:#ffffff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tc-name{font-size:15.5px;font-weight:700;color:var(--black);line-height:1.1}
+.tc-school{font-size:13px;color:var(--text-3);margin-top:2px}
+.tc-sub{font-size:13px;font-weight:600;color:var(--brown);margin-bottom:11px}
+.tc-quote{font-size:14.5px;line-height:1.6;color:#343434}
+@media(max-width:880px){.te-cols{grid-template-columns:1fr;max-width:460px}.te-col:nth-child(n+2){display:none}.te-wall{height:auto;mask-image:none;-webkit-mask-image:none}.te-col{transform:none!important}}
+</style>
 </head>
 <body>
 
@@ -420,7 +549,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 <!-- ═══ HERO ═══ -->
 <style>
 /* ════ PACE-style hero + nav ════ */
-:root{--p-cream:#fde6c5;--p-tan:#caaf8c;--p-logo:#ecdcc4;--p-btn:#fbfbf8;--p-btn-ink:#3c2d1d}
+:root{--p-cream:#e9e9e9;--p-tan:#b3b3b3;--p-logo:#dedede;--p-btn:#fbfbfb;--p-btn-ink:#303030}
 
 /* NAV: transparent over hero, solid once scrolled */
 nav#nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:66px;padding:0 42px;
@@ -429,20 +558,20 @@ nav#nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;heigh
 nav#nav .n-left{display:flex;gap:30px;justify-self:start}
 nav#nav .n-right{display:flex;gap:20px;align-items:center;justify-self:end}
 nav#nav .n-logo{justify-self:center;font-family:'Instrument Serif',serif;font-size:24px;letter-spacing:.4px;color:var(--p-logo);text-decoration:none}
-nav#nav .n-left a,nav#nav .n-signin{font-size:11.5px;letter-spacing:1.8px;text-transform:uppercase;font-weight:500;color:rgba(253,230,197,.78);padding:0;text-decoration:none;transition:color .2s}
-nav#nav .n-left a:hover,nav#nav .n-signin:hover{color:#fff}
+nav#nav .n-left a,nav#nav .n-signin{font-size:11.5px;letter-spacing:1.8px;text-transform:uppercase;font-weight:500;color:rgba(233,233,233,.78);padding:0;text-decoration:none;transition:color .2s}
+nav#nav .n-left a:hover,nav#nav .n-signin:hover{color:#ffffff}
 nav#nav .n-cta{font-size:11.5px;letter-spacing:1.8px;text-transform:uppercase;font-weight:600;color:var(--p-cream);
-  background:transparent;border:1px solid rgba(253,230,197,.45);border-radius:100px;padding:9px 18px;transition:.2s}
-nav#nav .n-cta:hover{background:rgba(253,230,197,.12);border-color:rgba(253,230,197,.85);opacity:1}
-nav#nav.scrolled{background:rgba(250,248,245,.92);backdrop-filter:blur(14px);border-bottom-color:var(--border)}
+  background:transparent;border:1px solid rgba(233,233,233,.45);border-radius:100px;padding:9px 18px;transition:.2s}
+nav#nav .n-cta:hover{background:rgba(233,233,233,.12);border-color:rgba(233,233,233,.85);opacity:1}
+nav#nav.scrolled{background:rgba(248,248,248,.92);backdrop-filter:blur(14px);border-bottom-color:var(--border)}
 nav#nav.scrolled .n-logo{color:var(--black)}
 nav#nav.scrolled .n-left a,nav#nav.scrolled .n-signin{color:var(--text-2)}
 nav#nav.scrolled .n-left a:hover,nav#nav.scrolled .n-signin:hover{color:var(--black)}
-nav#nav.scrolled .n-cta{background:var(--black);color:#fff;border-color:var(--black)}
+nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(--black)}
 
 /* HERO */
 .hero{position:relative;min-height:94vh;overflow:hidden;display:flex;align-items:center;text-align:left;padding:0;
-  background:radial-gradient(135% 125% at 50% -18%,#c69d75 0%,#9d7749 45%,#684e32 100%)}
+  background:radial-gradient(135% 125% at 50% -18%,#3a3a3a 0%,#222222 48%,#0b0b0b 100%)}
 .hero::before,.hero::after{display:none!important}
 .hero-inner2{position:relative;z-index:3;width:100%;max-width:1200px;margin:0 auto;padding:0 56px}
 .hero h1{font-family:'Instrument Serif',serif;color:var(--p-cream);font-size:clamp(46px,7vw,92px);line-height:.97;
@@ -450,15 +579,15 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#fff;border-color:var(--bl
 .hero h1 em{font-style:italic}
 .hero-sub2{color:var(--p-tan);font-size:18px;line-height:1.62;max-width:350px;margin:0 0 36px}
 .hero-cta2{display:inline-flex;align-items:center;gap:9px;background:var(--p-btn);color:var(--p-btn-ink);font-weight:600;text-decoration:none;
-  font-size:15px;padding:15px 28px;border-radius:100px;box-shadow:0 14px 34px -14px rgba(40,28,15,.55);
+  font-size:15px;padding:15px 28px;border-radius:100px;box-shadow:0 14px 34px -14px rgba(30,30,30,.55);
   transition:transform .2s,box-shadow .2s}
-.hero-cta2:hover{transform:translateY(-2px);box-shadow:0 20px 46px -16px rgba(40,28,15,.6)}
-.hero-art{position:absolute;right:-1%;top:50%;transform:translateY(-52%);width:min(56vw,740px);z-index:1;pointer-events:none}
-.hero-art svg{width:100%;height:auto;display:block;filter:drop-shadow(0 44px 64px rgba(38,24,11,.34))}
+.hero-cta2:hover{transform:translateY(-2px);box-shadow:0 20px 46px -16px rgba(30,30,30,.6)}
+.hero-art{position:absolute;right:-1%;top:50%;transform:translateY(calc(-52% + var(--leafY,0px))) rotate(var(--leafR,0deg));transform-origin:60% 40%;width:min(56vw,740px);z-index:1;pointer-events:none;will-change:transform}
+.hero-art svg{width:100%;height:auto;display:block;filter:drop-shadow(0 44px 64px rgba(27,27,27,.34))}
 .hero-trusted{position:absolute;left:0;right:0;bottom:46px;z-index:3;width:100%;max-width:1200px;margin:0 auto;padding:0 56px}
-.ht-label{font-size:11px;letter-spacing:2.6px;text-transform:uppercase;color:rgba(253,230,197,.5);margin-bottom:15px}
+.ht-label{font-size:11px;letter-spacing:2.6px;text-transform:uppercase;color:rgba(233,233,233,.5);margin-bottom:15px}
 .ht-logos{display:flex;gap:40px;align-items:center;flex-wrap:wrap}
-.ht-logos span{font-family:'Instrument Serif',serif;font-size:20px;color:rgba(253,230,197,.6);white-space:nowrap}
+.ht-logos span{font-family:'Instrument Serif',serif;font-size:20px;color:rgba(233,233,233,.6);white-space:nowrap}
 @media(max-width:860px){
   nav#nav .n-left{display:none}
   .hero-art{opacity:.45;right:-25%;width:96vw}
@@ -472,12 +601,12 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#fff;border-color:var(--bl
       <defs>
         <linearGradient id="rib" x1="0.15" y1="0" x2="0.55" y2="1">
           <stop offset="0" stop-color="#ffffff"/>
-          <stop offset="0.5" stop-color="#f0eeeb"/>
-          <stop offset="1" stop-color="#dbd7d1"/>
+          <stop offset="0.5" stop-color="#eeeeee"/>
+          <stop offset="1" stop-color="#d8d8d8"/>
         </linearGradient>
         <linearGradient id="rfold" x1="0.2" y1="0.1" x2="1" y2="1">
-          <stop offset="0" stop-color="#dcd7d0"/>
-          <stop offset="1" stop-color="#c0bab2"/>
+          <stop offset="0" stop-color="#d8d8d8"/>
+          <stop offset="1" stop-color="#bbbbbb"/>
         </linearGradient>
       </defs>
       <path d="M300 706 C246 566 246 402 332 276 C384 188 474 116 566 124 C606 128 614 156 588 188 C520 268 442 312 412 392 C386 460 402 566 360 654 C344 686 322 700 300 706 Z" fill="url(#rib)"/>
@@ -491,606 +620,126 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#fff;border-color:var(--bl
   </div>
   <div class="hero-trusted">
     <div class="ht-label">Trusted by students recruiting at</div>
-    <div class="ht-logos"><span>Goldman Sachs</span><span>Morgan Stanley</span><span>Evercore</span><span>Blackstone</span><span>McKinsey</span><span>Citadel</span></div>
+    <div class="ht-logos"><span>Goldman Sachs</span><span>Morgan Stanley</span><span>Blackstone</span><span>McKinsey</span><span>KPMG</span><span>&amp; More</span></div>
   </div>
 </section>
 
-<!-- ═══ MARQUEE ═══ -->
-<div class="marquee-wrap">
-  <div class="marquee-label">Join hundreds of students landing offers at</div>
-  <div class="marquee-track">
-    <div class="marquee-inner">
-      <span>Goldman Sachs</span><span>J.P. Morgan</span><span>Morgan Stanley</span><span>Bank of America</span><span>Barclays</span><span>Citi</span><span>Lazard</span><span>Evercore</span><span>Centerview</span><span>PJT Partners</span><span>Moelis</span><span>Jefferies</span><span>Houlihan Lokey</span><span>Blackstone</span><span>KKR</span><span>Apollo</span><span>Carlyle</span><span>McKinsey</span><span>BCG</span><span>Bain</span><span>Deloitte</span><span>PwC</span><span>EY</span><span>KPMG</span><span>BlackRock</span><span>Citadel</span><span>Point72</span>
-      <span>Goldman Sachs</span><span>J.P. Morgan</span><span>Morgan Stanley</span><span>Bank of America</span><span>Barclays</span><span>Citi</span><span>Lazard</span><span>Evercore</span><span>Centerview</span><span>PJT Partners</span><span>Moelis</span><span>Jefferies</span><span>Houlihan Lokey</span><span>Blackstone</span><span>KKR</span><span>Apollo</span><span>Carlyle</span><span>McKinsey</span><span>BCG</span><span>Bain</span><span>Deloitte</span><span>PwC</span><span>EY</span><span>KPMG</span><span>BlackRock</span><span>Citadel</span><span>Point72</span>
-    </div>
+<!-- STATS BAND -->
+<section class="stats">
+  <div class="wrap">
+    <div class="stat"><div class="n">5,000+</div><div class="l">Questions</div></div>
+    <div class="stat"><div class="n">1,000+</div><div class="l">Drills</div></div>
+    <div class="stat"><div class="n">10</div><div class="l">Career tracks</div></div>
+    <div class="stat"><div class="n">11</div><div class="l">Prep tools</div></div>
   </div>
-</div>
+</section>
 
-<!-- ═══ OLD WAY ═══ -->
-<section class="oldway reveal" id="features">
-  <div class="sl">Old Way</div>
-  <div class="st">Outdated tools.<br><em>Outdated results.</em></div>
-  <p class="ss">Spreadsheets, random PDFs, and scattered advice weren't built for how recruiting actually works.</p>
-  <div class="ow-pains">
-    <div class="ow-pain">
-      <div class="ow-pain-dot" style="background:var(--red)"></div>
-      <div class="ow-pain-t">Disconnected</div>
-      <div class="ow-pain-d">LinkedIn for sourcing, a spreadsheet for tracking, ChatGPT for messages. Nothing talks to each other.</div>
+<!-- OLD WAY -->
+<section class="oldway2" id="features">
+  <div class="wrap">
+    <div class="ow-head">
+      <div class="eyebrow">The old way</div>
+      <h2>Outdated tools.<br><em>Outdated results.</em></h2>
+      <p>Spreadsheets, random PDFs, and scattered advice were never built for how recruiting actually works.</p>
     </div>
-    <div class="ow-pain">
-      <div class="ow-pain-dot" style="background:var(--brown)"></div>
-      <div class="ow-pain-t">Overwhelming</div>
-      <div class="ow-pain-d">Too much info scattered across too many places. No clarity on what to do first or what actually matters.</div>
-    </div>
-    <div class="ow-pain">
-      <div class="ow-pain-dot" style="background:var(--text-3)"></div>
-      <div class="ow-pain-t">Unstructured</div>
-      <div class="ow-pain-d">No system, no progress tracking, no feedback. Just guesswork and hoping for the best.</div>
+    <div class="ow-list">
+      <div class="ow-item"><div class="ow-num">01</div><div><h3><span class="ow-dot" style="background:var(--red)"></span>Disconnected</h3><p>LinkedIn for sourcing, a spreadsheet for tracking, ChatGPT for messages. Nothing talks to each other.</p></div></div>
+      <div class="ow-item"><div class="ow-num">02</div><div><h3><span class="ow-dot" style="background:var(--brown)"></span>Overwhelming</h3><p>Too much information scattered across too many places. No clarity on what actually matters.</p></div></div>
+      <div class="ow-item"><div class="ow-num">03</div><div><h3><span class="ow-dot" style="background:var(--text-3)"></span>Unstructured</h3><p>No system, no progress tracking, no feedback. Just guesswork and hoping for the best.</p></div></div>
     </div>
   </div>
 </section>
 
 <!-- ═══ OUR WAY ═══ -->
-<section class="ourway reveal">
-  <div class="ourway-inner">
-    <div class="sl">Our Way</div>
-    <div class="st">Everything you need,<br><em>Nothing you don't.</em></div>
-    <p class="ss">One integrated platform to help you learn, practice, reach out, and land offers.</p>
-    <div class="ow-grid">
-      <div class="ow-card">
-        <div class="ow-card-t">Curated learning paths</div>
-        <div class="ow-card-d">Built by students and recruiters who've been through it.</div>
-      </div>
-      <div class="ow-card">
-        <div class="ow-card-t">Real interview practice</div>
-        <div class="ow-card-d">5,000+ questions, mock interviews, and diagnostic reviews.</div>
-      </div>
-      <div class="ow-card">
-        <div class="ow-card-t">Smarter outreach</div>
-        <div class="ow-card-d">AI-written emails, pipeline tracking, and follow-up reminders.</div>
-      </div>
-      <div class="ow-card">
-        <div class="ow-card-t">Actionable insights</div>
-        <div class="ow-card-d">Know exactly where you stand and what to focus on next.</div>
-      </div>
+<section class="ourway2">
+  <div class="wrap">
+    <div class="uw-head">
+      <div class="eyebrow">The OfferBell way</div>
+      <h2>Everything you need.<br><em>Nothing you don't.</em></h2>
+      <p>One integrated platform to learn, practice, reach out, and land the offer.</p>
+      <a href="/signup" class="btn">Try For Free Today &rarr;</a>
+      <div class="note">No credit card required</div>
     </div>
-    <a href="/signup" class="btn">Try For Free Today &rarr;</a>
-    <div class="hero-note">No credit card required</div>
+    <div class="uw-list">
+      <div class="uw-item"><div class="uw-num">01</div><div><h3>Curated learning paths</h3><p>Built by students and recruiters who've actually been through it.</p></div></div>
+      <div class="uw-item"><div class="uw-num">02</div><div><h3>Real interview practice</h3><p>5,000+ questions, AI mock interviews, and diagnostic reviews.</p></div></div>
+      <div class="uw-item"><div class="uw-num">03</div><div><h3>Smarter outreach</h3><p>AI-written emails, pipeline tracking, and follow-up reminders.</p></div></div>
+      <div class="uw-item"><div class="uw-num">04</div><div><h3>Actionable insights</h3><p>Know exactly where you stand and what to focus on next.</p></div></div>
+    </div>
   </div>
 </section>
 
 <!-- ═══ TRACKS ═══ -->
-<section class="tracks reveal" id="tracks">
+<section class="tracks" id="tracks">
   <div class="tr-inner">
-    <div style="text-align:center;margin-bottom:48px">
+    <div class="tr-head">
       <div class="sl">Career Paths</div>
       <div class="st">Coverage for <em>every track.</em></div>
-      <p class="ss">Ten finance and consulting verticals, each with their own question bank, mock interview prep, and concept drills.</p>
+      <p class="ss">Ten finance and consulting verticals, each with its own question bank, prep guide, drills, and mock interviews. Pick one to see what's inside.</p>
     </div>
-
-    <div class="tr-grid">
-      <div class="tr-tile">
-        <div class="tr-code">IB</div>
-        <div class="tr-name">Investment Banking</div>
-        <div class="tr-desc">DCF, LBO, M&amp;A, valuation, and accounting questions from top banks.</div>
-      </div>
-      <div class="tr-tile">
-        <div class="tr-code">PE</div>
-        <div class="tr-name">Private Equity</div>
-        <div class="tr-desc">Fund mechanics, deal sourcing, portfolio ops, and returns analysis.</div>
-      </div>
-      <div class="tr-tile">
-        <div class="tr-code">CN</div>
-        <div class="tr-name">Consulting</div>
-        <div class="tr-desc">Case frameworks, market sizing, profitability, and fit questions.</div>
-      </div>
-      <div class="tr-tile">
-        <div class="tr-code">AC</div>
-        <div class="tr-name">Accounting</div>
-        <div class="tr-desc">Financial statements, audit, tax, and technical accounting.</div>
-      </div>
-      <div class="tr-tile">
-        <div class="tr-code">AM</div>
-        <div class="tr-name">Asset Management</div>
-        <div class="tr-desc">Portfolio theory, stock pitches, risk management, and market analysis.</div>
-      </div>
-      <div class="tr-tile">
-        <div class="tr-code">ST</div>
-        <div class="tr-name">Sales &amp; Trading</div>
-        <div class="tr-desc">Trading mechanics, derivatives, macro, and market-making concepts.</div>
-      </div>
-      <div class="tr-tile">
-        <div class="tr-code">ER</div>
-        <div class="tr-name">Equity Research</div>
-        <div class="tr-desc">Equity valuation, sector analysis, modeling, and stock recommendations.</div>
-      </div>
-      <div class="tr-tile">
-        <div class="tr-code">RE</div>
-        <div class="tr-name">Real Estate</div>
-        <div class="tr-desc">Cap rates, NOI, property valuation, and real estate finance.</div>
-      </div>
-      <div class="tr-tile">
-        <div class="tr-code">RX</div>
-        <div class="tr-name">Restructuring</div>
-        <div class="tr-desc">Bankruptcy, distressed debt, credit analysis, and turnaround strategies.</div>
-      </div>
-      <div class="tr-tile">
-        <div class="tr-code">VC</div>
-        <div class="tr-name">Venture Capital</div>
-        <div class="tr-desc">Startup valuation, term sheets, due diligence, and venture mechanics.</div>
-      </div>
+    <div class="tr-explorer">
+      <div class="tr-list" id="trList"></div>
+      <div class="tr-panel"><div class="tr-content" id="trContent"></div></div>
     </div>
   </div>
-  <style>
-    .tracks{padding:96px 52px;background:var(--cream);border-top:1px solid var(--border)}
-    .tr-inner{max-width:1180px;margin:0 auto}
-    .tr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-    .tr-tile{
-      background:var(--white);border:1px solid var(--border);border-radius:12px;
-      padding:22px 20px;
-      transition:border-color 0.15s ease,transform 0.15s ease,box-shadow 0.15s ease;
-    }
-    .tr-tile:hover{border-color:var(--brown);transform:translateY(-2px);box-shadow:0 6px 20px rgba(139,115,85,0.08)}
-    .tr-code{
-      font-family:'Instrument Serif',serif;font-style:italic;
-      font-size:30px;letter-spacing:-0.5px;line-height:1;
-      color:var(--brown);margin-bottom:14px;
-    }
-    .tr-name{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-0.1px;margin-bottom:6px}
-    .tr-desc{font-size:11.5px;color:var(--text-2);line-height:1.55}
-    @media (max-width:1000px){
-      .tr-grid{grid-template-columns:repeat(2,1fr)}
-    }
-    @media (max-width:520px){
-      .tracks{padding:72px 24px}
-      .tr-grid{grid-template-columns:1fr;gap:10px}
-      .tr-tile{padding:18px 18px}
-    }
-  </style>
 </section>
 
 <!-- ═══ FEATURES ═══ -->
-<section class="features" id="features-detail">
-  <div style="text-align:center;margin-bottom:8px" class="reveal">
-    <div class="sl">Features</div>
-    <div class="st">The tools that<br><em>get you in.</em></div>
-    <p class="ss" style="margin:12px auto 0">Every feature built for one thing: helping you land the offer.</p>
+<section class="flow" id="features-detail">
+  <div class="fl-head">
+    <div class="sl">How it works</div>
+    <div class="st">From day one to <em>signed offer.</em></div>
+    <p class="ss">Every tool maps to one stage of recruiting. Scroll to follow the path our students take.</p>
   </div>
+  <div class="fl-layer" id="layer">
+    <svg class="fl-svg" viewBox="0 0 880 1640" preserveAspectRatio="xMidYMin meet">
+      <path id="route" class="fl-route" d="M440,40 C440,170 290,210 290,340 C290,480 590,530 590,670 C590,810 290,860 290,1000 C290,1140 590,1190 590,1330 C590,1460 440,1490 440,1600"/>
+      <path id="routeDraw" class="fl-route-draw" d="M440,40 C440,170 290,210 290,340 C290,480 590,530 590,670 C590,810 290,860 290,1000 C290,1140 590,1190 590,1330 C590,1460 440,1490 440,1600"/>
+      <g id="plane"><path d="M0,3 L26,13 L0,23 L7,13 Z"/></g>
+    </svg>
 
-  <!-- 01 The Desk -->
-  <div class="feat-row reveal">
-    <div>
-      <div class="feat-num">01 - The Desk</div>
-      <div class="feat-n">Live the job<br><em>before the offer.</em></div>
-      <div class="feat-d">Step into a realistic workday simulation across 10 careers. Multiple AI personas message you with overlapping asks, you respond under pressure, and you get craft-level feedback on your actual work product.</div>
-      <div class="feat-points">
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>10 careers: IB, PE, consulting, RX, S&T, AM, VC, RE, ER, audit</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Multiple personas per session - just like a real workday</div>
-      </div>
-    </div>
-    <div class="feat-vis">
-      <div style="background:#18181b;border-radius:10px;padding:14px 16px;font-family:'DM Sans',sans-serif">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-          <div style="width:7px;height:7px;border-radius:50%;background:#3b82f6"></div>
-          <span style="font-size:11px;font-weight:700;color:#fff;letter-spacing:.5px">INVESTMENT BANKING</span>
-          <span style="margin-left:auto;font-size:9px;color:#666;font-variant-numeric:tabular-nums">3:05 PM</span>
-        </div>
-        <div style="display:flex;gap:8px;margin-bottom:10px">
-          <div style="width:26px;height:26px;border-radius:6px;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0">SC</div>
-          <div><div style="font-size:10px;font-weight:700;color:#e5e5e5">Sarah Chen <span style="font-weight:400;color:#666">VP, Goldman Sachs</span></div><div style="font-size:11px;color:#a3a3a3;line-height:1.5;margin-top:2px">Need you to refresh the CloudVault comp set. The old one is stale. Can you have it to me by tonight?</div></div>
-        </div>
-        <div style="display:flex;gap:8px;margin-bottom:10px">
-          <div style="width:26px;height:26px;border-radius:6px;background:#1d4ed8;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0">JW</div>
-          <div><div style="font-size:10px;font-weight:700;color:#e5e5e5">James Whitfield <span style="font-weight:400;color:#666">MD</span></div><div style="font-size:11px;color:#a3a3a3;line-height:1.5;margin-top:2px">Quick question - the client is now thinking dual-track. How does that change positioning?</div></div>
-        </div>
-        <div style="background:#262626;border-radius:8px;padding:8px 12px;border:1px solid #333">
-          <div style="font-size:9px;font-weight:700;color:#666;letter-spacing:1px;margin-bottom:4px">YOUR TASK</div>
-          <div style="font-size:10.5px;color:#d4d4d4;line-height:1.5">Draft a one-page company overview for the pitch. Every word matters.</div>
-        </div>
-      </div>
-    </div>
-  </div>
+    <div class="fl-cap fl-start"><span class="dot"></span>Start here</div>
 
-  <!-- 02 Resume Review -->
-  <div class="feat-row reverse reveal">
-    <div>
-      <div class="feat-num">02 - AI Resume Review</div>
-      <div class="feat-n">Get your resume<br><em>interview-ready.</em></div>
-      <div class="feat-d">Upload your resume and pick your target track. Get section-by-section scores, rewritten bullets, and positioning advice from an AI trained on what top firms actually look for.</div>
-      <div class="feat-points">
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Section-by-section scores with specific rewrites</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Tailored to IB, PE, consulting, accounting, and more</div>
-      </div>
+    <div class="node" data-i="0" style="left:290px;top:340px">01</div>
+    <div class="stage left" data-i="0" style="left:0px;top:300px;width:230px">
+      <div class="stg-name">Learn</div><div class="stg-desc">Build the foundation for your track.</div>
+      <div class="stg-tools"><span>Prep Guides</span><span>Concept Drills</span><span>The Desk</span></div>
     </div>
-    <div class="feat-vis">
-      <div class="demo-rr-head"><div class="demo-rr-title">Resume Review</div><div class="demo-rr-ring">9</div></div>
-      <div class="demo-rr-sec"><div class="demo-rr-sec-h"><span class="demo-rr-sec-n">Experience</span><span class="demo-rr-sec-s" style="color:#16a34a">8/10</span></div><div class="demo-bar"><div class="demo-bar-f" style="width:80%"></div></div></div>
-      <div class="demo-rr-sec"><div class="demo-rr-sec-h"><span class="demo-rr-sec-n">Skills</span><span class="demo-rr-sec-s" style="color:#16a34a">9/10</span></div><div class="demo-bar"><div class="demo-bar-f" style="width:90%"></div></div></div>
-      <div class="demo-rr-sec"><div class="demo-rr-sec-h"><span class="demo-rr-sec-n">Education</span><span class="demo-rr-sec-s" style="color:#16a34a">10/10</span></div><div class="demo-bar"><div class="demo-bar-f" style="width:100%"></div></div></div>
-      <div class="demo-rr-sec"><div class="demo-rr-sec-h"><span class="demo-rr-sec-n">Formatting</span><span class="demo-rr-sec-s" style="color:#d97706">7/10</span></div><div class="demo-bar"><div class="demo-bar-f" style="width:70%;background:#d97706"></div></div></div>
-    </div>
-  </div>
 
-  <!-- 03 Outreach Writer -->
-  <div class="feat-row reveal">
-    <div>
-      <div class="feat-num">03 - Outreach Writer</div>
-      <div class="feat-n">Messages that<br><em>actually land.</em></div>
-      <div class="feat-d">Pick a contact, choose an angle, get a personalized cold email in seconds. Tailored to their background and your profile.</div>
-      <div class="feat-points">
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Alumni, deal reference, shared interest, and more</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>AI researches the contact before writing</div>
-      </div>
+    <div class="node" data-i="1" style="left:590px;top:670px">02</div>
+    <div class="stage right" data-i="1" style="left:650px;top:630px;width:230px">
+      <div class="stg-name">Prep</div><div class="stg-desc">Sharpen until you can do it in your sleep.</div>
+      <div class="stg-tools"><span>AI Coach</span><span>Flashcards</span><span>Mock Interviews</span></div>
     </div>
-    <div class="feat-vis">
-      <div class="demo-ow-head"><div class="demo-ow-avi">EZ</div><div><div class="demo-ow-name">Emily Zhang</div><div class="demo-ow-firm">Goldman Sachs - TMT</div></div></div>
-      <div class="demo-ow-body">Hi Emily - I'm a junior at NYU Stern targeting IB. I noticed we were both in the Investment Banking Club and you went through Goldman's recruiting process last year. I'd love to hear about your experience...</div>
-      <div class="demo-ow-pills"><span class="demo-ow-pill active">Alumni</span><span class="demo-ow-pill">Deal Ref</span><span class="demo-ow-pill">Shared Interest</span><span class="demo-ow-pill">Cold</span></div>
-    </div>
-  </div>
 
-  <!-- 04 Outreach Tracker -->
-  <div class="feat-row reverse reveal">
-    <div>
-      <div class="feat-num">04 - Outreach Tracker</div>
-      <div class="feat-n">Your full pipeline,<br><em>one place.</em></div>
-      <div class="feat-d">Track every networking conversation from drafted to coffee chat. Follow-up reminders, LinkedIn links, notes - everything a spreadsheet can't do well.</div>
-      <div class="feat-points">
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Auto follow-up reminders when contacts go cold</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>One-click status updates</div>
-      </div>
+    <div class="node" data-i="2" style="left:290px;top:1000px">03</div>
+    <div class="stage left" data-i="2" style="left:0px;top:960px;width:230px">
+      <div class="stg-name">Network</div><div class="stg-desc">Get in front of the people who decide.</div>
+      <div class="stg-tools"><span>Outreach Writer</span><span>Tracker</span><span>Referral Map</span></div>
     </div>
-    <div class="feat-vis">
-      <div class="demo-crm">
-        <div class="demo-crm-head">
-          <div>Contact</div>
-          <div>Firm &amp; Role</div>
-          <div>Status</div>
-          <div style="text-align:right">Last</div>
-        </div>
-        <div class="demo-crm-row">
-          <div class="demo-crm-name">Emily Zhang</div>
-          <div class="demo-crm-firm">Goldman Sachs &middot; IB Analyst</div>
-          <div><span class="demo-crm-badge b-spoken">Spoken With</span></div>
-          <div class="demo-crm-days">2d</div>
-        </div>
-        <div class="demo-crm-row">
-          <div class="demo-crm-name">Marcus Li</div>
-          <div class="demo-crm-firm">Blackstone &middot; Associate</div>
-          <div><span class="demo-crm-badge b-fu2">Followed Up 2x</span></div>
-          <div class="demo-crm-days">1d</div>
-        </div>
-        <div class="demo-crm-row">
-          <div class="demo-crm-name">Sarah Kim</div>
-          <div class="demo-crm-firm">JPMorgan &middot; VP, M&amp;A</div>
-          <div><span class="demo-crm-badge b-stay">Staying in Touch</span></div>
-          <div class="demo-crm-days">6d</div>
-        </div>
-        <div class="demo-crm-row">
-          <div class="demo-crm-name">Alex Chen</div>
-          <div class="demo-crm-firm">Evercore &middot; Director</div>
-          <div><span class="demo-crm-badge b-sent">Sent</span></div>
-          <div class="demo-crm-days">4d</div>
-        </div>
-        <div class="demo-crm-row">
-          <div class="demo-crm-name">David Park</div>
-          <div class="demo-crm-firm">Lazard &middot; Analyst</div>
-          <div><span class="demo-crm-badge b-drafted">Drafted</span></div>
-          <div class="demo-crm-days">-</div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- 05 Mock Interview -->
-  <div class="feat-row reveal">
-    <div>
-      <div class="feat-num">05 - Mock Interview</div>
-      <div class="feat-n">Record. Review.<br><em>Repeat.</em></div>
-      <div class="feat-d">Record yourself answering real interview questions on video. Get AI-graded feedback with accuracy, depth, and clarity scores for every attempt.</div>
-      <div class="feat-points">
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Video recording with live timer</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Strengths, weaknesses, and per-question history</div>
-      </div>
+    <div class="node" data-i="3" style="left:590px;top:1330px">04</div>
+    <div class="stage right" data-i="3" style="left:650px;top:1290px;width:230px">
+      <div class="stg-name">Insights</div><div class="stg-desc">Always know exactly where you stand.</div>
+      <div class="stg-tools"><span>Diagnostic Review</span><span>Resume Review</span></div>
     </div>
-    <div class="feat-vis">
-      <div class="demo-mi-cam">
-        <div class="demo-mi-rec"><div class="demo-mi-dot"></div>REC 1:47</div>
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-      </div>
-      <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px">Walk me through a DCF.</div>
-      <div class="demo-mi-stats"><span><strong>Good</strong> Grade</span><span><strong>3</strong> Strengths</span><span><strong>1</strong> Weakness</span><span><strong>142</strong> WPM</span></div>
-    </div>
-  </div>
 
-  <!-- 06 AI Coach -->
-  <div class="feat-row reverse reveal">
-    <div>
-      <div class="feat-num">06 - AI Coach</div>
-      <div class="feat-n">A mentor who<br><em>never sleeps.</em></div>
-      <div class="feat-d">Ask anything about recruiting, prep for a coffee chat, run through a case, or get your "Why this firm?" answer rewritten. Trained across all 11 career tracks.</div>
-      <div class="feat-points">
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>IB, PE, consulting, accounting, S&T, ER, and more</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Persistent chat history</div>
-      </div>
-    </div>
-    <div class="feat-vis" style="display:flex;flex-direction:column;gap:0">
-      <div class="demo-coach-msg demo-coach-user">Can you review my cold email to a VP at Goldman Sachs?</div>
-      <div class="demo-coach-msg demo-coach-ai"><div class="demo-coach-label">Coach</div>Your opening line is too generic. Lead with something specific: a deal they worked on, a shared connection, or a genuine insight about their group. Here's a rewrite...</div>
-      <div class="demo-coach-msg demo-coach-user">What about my "Why IB?" story?</div>
-    </div>
-  </div>
-
-  <!-- 07 Flashcards -->
-  <div class="feat-row reveal">
-    <div>
-      <div class="feat-num">07 - Interview Flashcards</div>
-      <div class="feat-n">5,000+ real<br><em>interview questions.</em></div>
-      <div class="feat-d">Technical flashcards across 11 career tracks - IB, PE, consulting, accounting, and more. Practice mode to flip and learn, bookmarks to save tough ones.</div>
-      <div class="feat-points">
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Accounting, Valuation, DCF, M&A, LBO, and much more</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Filter by topic, difficulty, and bookmark status</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Single card and grid view modes</div>
-      </div>
-    </div>
-    <div class="feat-vis" style="display:flex;align-items:center;justify-content:center;min-height:240px">
-      <div style="text-align:center">
-        <div style="font-family:'Instrument Serif',serif;font-size:64px;letter-spacing:-2.5px;color:var(--text);line-height:1">5,000</div>
-        <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3);margin-top:6px">Technical questions</div>
-        <div style="font-size:12px;color:var(--text-2);margin-top:12px;line-height:1.5;max-width:260px">Across 10+ finance and accounting tracks</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 08 Concept Drills -->
-  <div class="feat-row reverse reveal">
-    <div>
-      <div class="feat-num">08 - Concept Drills</div>
-      <div class="feat-n">Rapid-fire<br><em>repetition.</em></div>
-      <div class="feat-d">Short, timed MCQ drills that hammer one concept at a time until it's second nature. Targets your weak spots so you stop wasting time on what you already know.</div>
-      <div class="feat-points">
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Timed quizzes with instant feedback</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Category-level performance tracking</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>190+ hand-written drill questions</div>
-      </div>
-    </div>
-    <div class="feat-vis" style="display:flex;align-items:center;justify-content:center">
-      <div style="width:100%">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-          <div style="font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:1px;text-transform:uppercase">LBO Mechanics · Q7/10</div>
-          <div style="font-size:12px;font-weight:700;color:var(--text-2);font-family:'SFMono-Regular',monospace">0:23</div>
-        </div>
-        <div style="height:4px;background:var(--border);border-radius:2px;margin-bottom:18px"><div style="height:100%;width:70%;background:var(--text);border-radius:2px"></div></div>
-        <div style="font-size:13px;font-weight:600;color:var(--text);line-height:1.5;margin-bottom:16px">If sponsor equity falls from 40% to 30%, what happens to IRR?</div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <div style="padding:10px 14px;border-radius:8px;border:1px solid var(--border);font-size:12px;color:var(--text-2)">A - Decreases</div>
-          <div style="padding:10px 14px;border-radius:8px;border:1.5px solid #16a34a;background:#f0fdf4;font-size:12px;color:#16a34a;font-weight:700">B - Increases ✓</div>
-          <div style="padding:10px 14px;border-radius:8px;border:1px solid var(--border);font-size:12px;color:var(--text-2)">C - Stays the same</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 09 Diagnostic Review -->
-  <div class="feat-row reveal">
-    <div>
-      <div class="feat-num">09 - Diagnostic Review</div>
-      <div class="feat-n">Know exactly<br><em>where you stand.</em></div>
-      <div class="feat-d">A timed assessment that pinpoints which technicals you've mastered, where to focus next, and gives you a clear readiness score before any interview.</div>
-      <div class="feat-points">
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Readiness percentage per category</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Prioritized study recommendations</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Track progress across multiple attempts</div>
-      </div>
-    </div>
-    <div class="feat-vis" style="display:flex;align-items:center;justify-content:center">
-      <div style="text-align:center">
-        <div style="position:relative;width:120px;height:120px;margin:0 auto 16px">
-          <svg viewBox="0 0 120 120" style="width:100%;height:100%">
-            <circle cx="60" cy="60" r="48" fill="none" stroke="var(--border)" stroke-width="8"/>
-            <circle cx="60" cy="60" r="48" fill="none" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round" stroke-dasharray="224 302" transform="rotate(-90 60 60)"/>
-          </svg>
-          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
-            <div style="font-family:'Instrument Serif',serif;font-size:32px;letter-spacing:-1px;color:var(--text)">74<span style="font-size:18px">%</span></div>
-            <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-3)">Ready</div>
-          </div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:6px;text-align:left;max-width:200px;margin:0 auto">
-          <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-2)">Accounting</span><span style="color:#16a34a;font-weight:700">9/10</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-2)">Valuation</span><span style="color:#d97706;font-weight:700">5/10</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-2)">M&amp;A / LBO</span><span style="color:#dc2626;font-weight:700">3/10</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 10 Interview Prep Guides -->
-  <div class="feat-row reverse reveal">
-    <div>
-      <div class="feat-num">10 - Interview Prep Guides</div>
-      <div class="feat-n">Interview ready,<br><em>from day one.</em></div>
-      <div class="feat-d">Full interview preparation manuals for every career track. Technical deep-dives, behavioral frameworks, and practice strategies written by industry professionals.</div>
-      <div class="feat-points">
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>11 career tracks covered</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Technical models & frameworks</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>LBO & case study walkthroughs</div>
-      </div>
-    </div>
-    <div class="feat-vis" style="display:flex;align-items:center;justify-content:center">
-      <div style="width:100%">
-        <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--white)">
-          <div style="padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
-            <div style="width:28px;height:28px;border-radius:7px;background:#dbeafe;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
-            <div style="font-size:14px;font-weight:700;color:var(--text)">Investment Banking Guide</div>
-          </div>
-          <div style="padding:14px 18px;display:flex;flex-direction:column;gap:0">
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;color:var(--text)">1. Accounting Fundamentals</span><span style="font-size:10px;color:var(--text-3)">12 min</span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;color:var(--text)">2. Valuation Methodologies</span><span style="font-size:10px;color:var(--text-3)">18 min</span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;color:var(--text)">3. Building a DCF Model</span><span style="font-size:10px;color:var(--text-3)">22 min</span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;color:var(--text)">4. LBO Mechanics</span><span style="font-size:10px;color:var(--text-3)">15 min</span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0"><span style="font-size:12px;color:var(--text)">5. M&amp;A Process &amp; Deal Structures</span><span style="font-size:10px;color:var(--text-3)">20 min</span></div>
-          </div>
-          <div style="padding:10px 18px;border-top:1px solid var(--border);background:var(--cream)">
-            <span style="font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:1px;text-transform:uppercase">11 tracks available</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 11 Referral Map -->
-  <div class="feat-row reveal">
-    <div>
-      <div class="feat-num">11 - Referral Map</div>
-      <div class="feat-n">See who knows<br><em>who.</em></div>
-      <div class="feat-d">A visual network graph showing your referral chains - who introduced you to whom, which connections led to interviews, and where to expand next.</div>
-      <div class="feat-points">
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Interactive SVG network visualization</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Import contacts from your tracker</div>
-        <div class="feat-pt"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Fullscreen expand with custom labels</div>
-      </div>
-    </div>
-    <div class="feat-vis" style="display:flex;align-items:center;justify-content:center;background:var(--cream);padding:16px;min-height:280px">
-      <div style="width:100%;position:relative">
-        <svg viewBox="0 0 978 595" style="width:100%;height:auto" preserveAspectRatio="xMidYMid meet">
-          <g>
-<path d="M628.5,466.4 l0.6,0.2 1.3,-2.7 1.5,-4.4 2.3,0.6 3.1,6 v1 l-2.7,1.9 2.7,0.3 5.2,-2.5 -0.3,-7.6 -2.5,-1.8 -2,-2 0.4,-4 10.5,-1.5 25.7,-2.9 6.7,-0.6 5.6,0.1 -0.5,-2.2 -1.5,-0.8 -0.9,-1.1 1,-2.6 -0.4,-5.2 -1.6,-4.5 0.8,-5.1 1.7,-4.8 -0.2,-1.7 -1.8,-0.7 -0.5,-3.6 -2.7,-3.4 -2,-6.5 -1.4,-6.7 -1.8,-5 -3.8,-16 -3.5,-7.9 -0.8,-5.6 0.1,-2.2 -9,0.8 -23.4,2.2 -12.2,0.8 -0.2,6.4 0.2,16.7 -0.7,31 -0.3,14.1 2.8,18.8 1.6,14.7z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M587.3,346.1 l-6.4,-0.7 0.9,-3.1 3.1,-2.6 0.6,-2.3 -1.8,-2.9 -31.9,1.2 -23.3,0.7 -23.6,0.3 1.5,6.9 0.1,8.5 1.4,10.9 0.3,38.2 2.1,1.6 3,-1.2 2.9,1.2 0.4,10.1 25.2,-0.2 26.8,-0.8 0.9,-1.9 -0.3,-3.8 -1.7,-3.1 1.5,-1.4 -1.4,-2.2 0.7,-2.4 1.1,-5.9 2.7,-2.3 -0.8,-2.2 4,-5.6 2.5,-1.1 -0.1,-1.7 -0.5,-1.7 2.9,-5.8 2.5,-1.1 0.2,-3.3 2.1,-1.4 0.9,-4.1 -1.4,-4 4.2,-2.4 0.3,-2.1 1.2,-4.2 0.9,-3.1z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M135.1,389.7 l-0.3,1.5 0.5,1 18.9,10.7 12.1,7.6 14.7,8.6 16.8,10 12.3,2.4 25.4,2.7 6,-39.6 7,-53.1 4.4,-31 -24.6,-3.6 -60.7,-11 -0.2,1.1 -2.6,16.5 -2.1,3.8 -2.8,-0.2 -1.2,-2.6 -2.6,-0.4 -1.2,-1.1 -1.1,0.1 -2.1,1.7 -0.3,6.8 -0.3,1.5 -0.5,12.5 -1.5,2.4 -0.4,3.3 2.8,5 1.1,5.5 0.7,1.1 1.1,0.9 -0.4,2.4 -1.7,1.2 -3.4,1.6 -1.6,1.8 -1.6,3.6 -0.5,4.9 -3,2.9 -1.9,0.9 -0.1,5.8 -0.6,1.6 0.5,0.8 3.9,0.4 -0.9,3 -1.7,2.4 -3.7,0.4z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M122.7,385.9 l-19.7,-2.7 -10,-1.5 -0.5,-1.8 v-9.4 l-0.3,-3.2 -2.6,-4.2 -0.8,-2.3 -3.9,-4.2 -2.9,-4.7 -2.7,-0.2 -3.2,-0.8 -0.3,-1 1.5,-0.6 -0.6,-3.2 -1.5,-2.1 -4.8,-0.8 -3.9,-2.1 -1.1,-2.3 -2.6,-4.8 -2.9,-3.1 h-2.9 l-3.9,-2.1 -4.5,-1.8 -4.2,-0.5 -2.4,-2.7 0.5,-1.9 1.8,-7.1 0.8,-1.9 v-2.4 l-1.6,-1 -0.5,-2.9 -1.5,-2.6 -3.4,-5.8 -1.3,-3.1 -1.5,-4.7 -1.6,-5.3 -3.2,-4.4 -0.5,-2.9 0.8,-3.9 h1.1 l2.1,-1.6 1.1,-3.6 -1,-2.7 -2.7,-0.5 -1.9,-2.6 -2.1,-3.7 -0.2,-8.2 0.6,-1.9 0.6,-2.3 0.5,-2.4 -5.7,-6.3 v-2.1 l0.3,-0.5 0.3,-3.2 -1.3,-4 -2.3,-4.8 -2.7,-4.5 -1.8,-3.9 1,-3.7 0.6,-5.8 1.8,-3.1 0.3,-6.5 -1.1,-3.6 -1.6,-4.2 -2.7,-4.2 0.8,-3.2 1.5,-4.2 1.8,-0.8 0.3,-1.1 3.1,-2.6 5.2,-11.8 0.2,-7.4 1.69,-4.9 38.69,11.8 25.6,6.6 -8,31.3 -8.67,33.1 12.63,19.2 42.16,62.3 17.1,26.1 -0.4,3.1 2.8,5.2 1.1,5.4 1,1.5 0.7,0.6 -0.2,1.4 -1.4,1 -3.4,1.6 -1.9,2.1 -1.7,3.9 -0.5,4.7 -2.6,2.5 -2.3,1.1 -0.1,6.2 -0.6,1.9 1,1.7 3,0.3 -0.4,1.6 -1.4,2 -3.9,0.6z m-73.9,-48.9 1.3,1.5 -0.2,1.3 -3.2,-0.1 -0.6,-1.2 -0.6,-1.5z m1.9,0 1.2,-0.6 3.6,2.1 3.1,1.2 -0.9,0.6 -4.5,-0.2 -1.6,-1.6z m20.7,19.8 1.8,2.3 0.8,1 1.5,0.6 0.6,-1.5 -1,-1.8 -2.7,-2 -1.1,0.2 v1.2z m-1.4,8.7 1.8,3.2 1.2,1.9 -1.5,0.2 -1.3,-1.2 c0,0 -0.7,-1.5 -0.7,-1.9 0,-0.4 0,-2.2 0,-2.2z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M380.2,235.5 l-36,-3.5 -79.1,-8.6 -2.2,22.1 -7,50.4 -1.9,13.7 34,3.9 37.5,4.4 34.7,3 14.3,0.6z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M852,190.9 l3.6,-3.2 1.9,-2.1 0.8,0.6 2.7,-1.5 5.2,-1.1 7,-3.5 -0.6,-4.2 -0.8,-4.4 -1.6,-6 -4.3,1.1 -21.8,4.7 0.6,3.1 1.5,7.3 v8.3 l-0.9,2.1 1.7,2.2z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M834.4,247.2 l-1,0.5 -3.6,-2.4 -1.8,-4.7 -1.9,-3.6 -2.3,-1 -2.1,-3.6 0.5,-2 0.5,-2.3 0.1,-1.1 -0.6,0.1 -1.7,1 -2,1.7 -0.2,0.3 1.4,4.1 2.3,5.6 3.7,16.1 5,-0.3 6,-1.1z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M750.2,445.2 l-5.2,-0.7 -0.7,0.8 1.5,4.4 -0.4,5.2 -4.1,-1 -0.2,-2.8 h-4.1 l-5.3,0.7 -32.4,1.9 -8.2,-0.3 -1.7,-1.7 -2.5,-4.2 h-5.9 l-6.6,0.5 -35.4,4.2 -0.3,2.8 1.6,1.6 2.9,2 0.3,8.4 3.3,-0.6 6,-2.1 6,-0.5 4.4,-0.6 7.6,1.8 8.1,3.9 1.6,1.5 2.9,1.1 1.6,1.9 0.3,2.7 3.2,-1.3 h3.9 l3.6,-1.9 3.7,-3.6 3.1,0.2 0.5,-1.1 -0.8,-1 0.2,-1.9 4,-0.8 h2.6 l2.9,1.5 4.2,1.5 2.4,3.7 2.7,1 1.1,3.4 3.4,1.6 1.6,2.6 1.9,0.6 5.2,1.3 1.3,3.1 3,3.7 v9.5 l-1.5,4.7 0.3,2.7 1.3,4.8 1.8,4 0.8,-0.5 1.5,-4.5 -2.6,-1 -0.3,-0.6 1.6,-0.6 4.5,1 0.2,1.6 -3.2,5.5 -2.1,2.4 3.6,3.7 2.6,3.1 2.9,5.3 2.9,3.9 2.1,5 1.8,0.3 1.6,-2.1 1.8,1.1 2.6,4 0.6,3.6 3.1,4.4 0.8,-1.3 3.9,0.3 3.6,2.3 3.4,5.2 0.8,3.4 0.3,2.9 1.1,1 1.3,0.5 2.4,-1 1.5,-1.6 3.9,-0.2 3.1,-1.5 2.7,-3.2 -0.5,-1.9 -0.3,-2.4 0.6,-1.9 -0.3,-1.9 2.4,-1.3 0.3,-3.4 -0.6,-1.8 -0.5,-12 -1.3,-7.6 -4.5,-8.2 -3.6,-5.8 -2.6,-5.3 -2.9,-2.9 -2.9,-7.4 0.7,-1.4 1.1,-1.3 -1.6,-2.9 -4,-3.7 -4.8,-5.5 -3.7,-6.3 -5.3,-9.4 -3.7,-9.7 -2.3,-7.3z m17.7,132.7 2.4,-0.6 1.3,-0.2 1.5,-2.3 2.3,-1.6 1.3,0.5 1.7,0.3 0.4,1.1 -3.5,1.2 -4.2,1.5 -2.3,1.2z m13.5,-5 1.2,1.1 2.7,-2.1 5.3,-4.2 3.7,-3.9 2.5,-6.6 1,-1.7 0.2,-3.4 -0.7,0.5 -1,2.8 -1.5,4.6 -3.2,5.3 -4.4,4.2 -3.4,1.9z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M750.2,444.2 l-5.6,-0.7 -1.4,1.6 1.6,4.7 -0.3,3.9 -2.2,-0.6 -0.2,-3 h-5.2 l-5.3,0.7 -32.3,1.9 -7.7,-0.3 -1.4,-1.2 -2.5,-4.3 -0.8,-3.3 -1.6,-0.9 -0.5,-0.5 0.9,-2.2 -0.4,-5.5 -1.6,-4.5 0.8,-4.9 1.7,-4.8 -0.2,-2.5 -1.9,-0.7 -0.4,-3.2 -2.8,-3.5 -1.9,-6.2 -1.5,-7 -1.7,-4.8 -3.8,-16 -3.5,-8 -0.8,-5.3 0.1,-2.3 3.3,-0.3 13.6,-1.6 18.6,-2 6.3,-1.1 0.5,1.4 -2.2,0.9 -0.9,2.2 0.4,2 1.4,1.6 4.3,2.7 3.2,-0.1 3.2,4.7 0.6,1.6 2.3,2.8 0.5,1.7 4.7,1.8 3,2.2 2.3,3 2.3,1.3 2,1.8 1.4,2.7 2.1,1.9 4.1,1.8 2.7,6 1.7,5.1 2.8,0.7 2.1,1.9 2,5.7 2.9,1.6 1.7,-0.8 0.4,1.2 -3.3,6.2 0.5,2.6 -1.5,4.2 -2.3,10 0.8,6.3z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M556.8,183.6 l2.1,2.1 0.3,0.7 -2,3 0.3,4 2.6,4.1 3.1,1.6 2.4,0.3 0.9,1.8 0.2,2.4 2.5,1 0.9,1.1 0.5,1.6 3.8,3.3 0.6,1.9 -0.7,3 -1.7,3.7 -0.6,2.4 -2.1,1.6 -1.6,0.5 -5.7,1.5 -1.6,4.8 0.8,1.8 1.7,1.5 -0.2,3.5 -1.9,1.4 -0.7,1.8 v2.4 l-1.4,0.4 -1.7,1.4 -0.5,1.7 0.4,1.7 -1.3,1 -2.3,-2.7 -1.4,-2.8 -8.3,0.8 -10,0.6 -49.2,1.2 -1.6,-4.3 -0.4,-6.7 -1.4,-4.2 -0.7,-5.2 -2.2,-3.7 -1,-4.6 -2.7,-7.8 -1.1,-5.6 -1.4,-1.9 -1.3,-2.9 1.7,-3.8 1.2,-6.1 -2.7,-2.2 -0.3,-2.4 0.7,-2.4 1.8,-0.3 61.1,-0.6 21.2,-0.7z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M175.3,27.63 l-4.8,17.41 -4.5,20.86 -3.4,16.22 -0.4,9.67 1.2,4.44 3.5,2.66 -0.2,3.91 -3.9,4.4 -4.5,6.6 -0.9,2.9 -1.2,1.1 -1.8,0.8 -4.3,5.3 -0.4,3.1 -0.4,1.1 0.6,1 2.6,-0.1 1.1,2.3 -2.4,5.8 -1.2,4.2 -8.8,35.3 20.7,4.5 39.5,7.9 34.8,6.1 4.9,-29.2 3.8,-24.1 -2.7,-2.4 -0.4,-2.6 -0.8,-1.1 -2.1,1 -0.7,2.6 -3.2,0.5 -3.9,-1.6 -3.8,0.1 -2.5,0.7 -3.4,-1.5 -2.4,0.2 -2.4,2 -2,-1.1 -0.7,-4 0.7,-2.9 -2.5,-2.9 -3.3,-2.6 -2.7,-13.1 -0.1,-4.7 -0.3,-0.1 -0.2,0.4 -5.1,3.5 -1.7,-0.2 -2.9,-3.4 -0.2,-3.1 7,-17.13 -0.4,-1.94 -3.4,-1.15 -0.6,-1.18 -2.6,-3.46 -4.6,-10.23 -3.2,-1.53 -2,-4.95 1.3,-4.63 -3.2,-7.58 4.4,-21.52z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M618.7,214.3 l-0.8,-2.6 -1.3,-3.7 -1.6,-1.8 -1.5,-2.6 -0.4,-5.5 -15.9,1.8 -17.4,1 h-12.3 l0.2,2.1 2.2,0.9 1.1,1.4 0.4,1.4 3.9,3.4 0.7,2.4 -0.7,3.3 -1.7,3.7 -0.8,2.7 -2.4,1.9 -1.9,0.6 -5.2,1.3 -1.3,4.1 0.6,1.1 1.9,1.8 -0.2,4.3 -2.1,1.6 -0.5,1.3 v2.8 l-1.8,0.6 -1.4,1.2 -0.4,1.2 0.4,2 -1.6,1.3 -0.9,2.8 0.3,3.9 2.3,7 7,7.6 5.7,3.7 v4.4 l0.7,1.2 6.6,0.6 2.7,1.4 -0.7,3.5 -2.2,6.2 -0.8,3 2,3.7 6.4,5.3 4.8,0.8 2.2,5.1 2,3.4 -0.9,2.8 1.5,3.8 1.7,2.1 1.6,-0.3 1,-2.2 2.4,-1.7 2.8,-1 6.1,2.5 0.5,-0.2 v-1.1 l-1.2,-2.7 0.4,-2.8 2.4,-1.6 3.4,-1.2 -0.5,-1.3 -0.8,-2 1.2,-1.3 1,-2.7 v-4 l0.4,-4.9 2.5,-3 1.8,-3.8 2.5,-4 -0.5,-5.3 -1.8,-3.2 -0.3,-3.3 0.8,-5.3 -0.7,-7.2 -1.1,-15.8 -1.4,-15.3 -0.9,-11.7z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M622.9,216.1 l1.5,1 1.1,-0.3 2.1,-1.9 2.5,-1.8 14.3,-1.1 18.4,-1.8 1.6,15.5 4.9,42.6 -0.6,2.9 1.3,1.6 0.2,1.3 -2.3,1.6 -3.6,1.7 -3.2,0.4 -0.5,4.8 -4.7,3.6 -2.9,4 0.2,2.4 -0.5,1.4 h-3.5 l-1.4,-1.7 -5.2,3 0.2,3.1 -0.9,0.2 -0.5,-0.9 -2.4,-1.7 -3.6,1.5 -1.4,2.9 -1.2,-0.6 -1.6,-1.8 -4.4,0.5 -5.7,1 -2.5,1.3 v-2.6 l0.4,-4.7 2.3,-2.9 1.8,-3.9 2.7,-4.2 -0.5,-5.8 -1.8,-3.1 -0.3,-3.2 0.8,-5.3 -0.7,-7.1 -0.9,-12.6 -2.5,-30.1z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M485.9,259.5 l-43.8,-0.6 -40.6,-1.2 -21.7,-0.9 -4.3,64.8 24.3,1 44.7,2.1 46.3,0.6 12.6,-0.3 0.7,-35 -1.2,-11.1 -2.5,-2 -2.4,-3 -2.3,-3.6 0.6,-3 1.7,-1.4 v-2.1 l-0.8,-0.7 -2.6,-0.2 -3.5,-3.4z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M607.2,331.8 l12.6,-0.7 0.1,-4.1 h4.3 l30.4,-3.2 45.1,-4.3 5.6,-3.6 3.9,-2.1 0.1,-1.9 6,-7.8 4.1,-3.6 2.1,-2.4 -3.3,-2 -2.5,-2.7 -3,-3.8 -0.5,-2.2 -2.6,-1.4 -0.9,-1.9 -0.2,-6.1 -2.6,-2 -1.9,-1.1 -0.5,-2.3 -1.3,0.2 -2,1.2 -2.5,2.7 -1.9,-1.7 -2.5,-0.5 -2.4,1.4 h-2.3 l-1.8,-2 -5.6,-0.1 -1.8,-4.5 -2.9,-1.5 -2.1,0.8 -4.2,0.2 -0.5,2.1 1.2,1.5 0.3,2.1 -2.8,2 -3.8,1.8 -2.6,0.4 -0.5,4.5 -4.9,3.6 -2.6,3.7 0.2,2.2 -0.9,2.3 -4.5,-0.1 -1.3,-1.3 -3.9,2.2 0.2,3.3 -2.4,0.6 -0.8,-1.4 -1.7,-1.2 -2.7,1.1 -1.8,3.5 -2.2,-1 -1.4,-1.6 -3.7,0.4 -5.6,1 -2.8,1.3 -1.2,3.4 -1,1 1.5,3.7 -4.2,1.4 -1.9,1.4 -0.4,2.2 1.2,2.4 v2.2 l-1.6,0.4 -6.1,-2.5 -2.3,0.9 -2,1.4 -0.8,1.8 1.7,2.4 -0.9,1.8 -0.1,3.3 -2.4,1.3 -2.1,1.7z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M526.9,485.9 l8.1,-0.3 10.3,3.6 6.5,1.1 3.7,-1.5 3.2,1.1 3.2,1 0.8,-2.1 -3.2,-1.1 -2.6,0.5 -2.7,-1.6 0.8,-1.5 3.1,-1 1.8,1.5 1.8,-1 3.2,0.6 1.5,2.4 0.3,2.3 4.5,0.3 1.8,1.8 -0.8,1.6 -1.3,0.8 1.6,1.6 8.4,3.6 3.6,-1.3 1,-2.4 2.6,-0.6 1.8,-1.5 1.3,1 0.8,2.9 -2.3,0.8 0.6,0.6 3.4,-1.3 2.3,-3.4 0.8,-0.5 -2.1,-0.3 0.8,-1.6 -0.2,-1.5 2.1,-0.5 1.1,-1.3 0.6,0.8 0.6,3.1 4.2,0.6 4,1.9 1,1.5 h2.9 l1.1,1 2.3,-3.1 v-1.5 h-1.3 l-3.4,-2.7 -5.8,-0.8 -3.2,-2.3 1.1,-2.7 2.3,0.3 0.2,-0.6 -1.8,-1 v-0.5 h3.2 l1.8,-3.1 -1.3,-1.9 -0.3,-2.7 -1.5,0.2 -1.9,2.1 -0.6,2.6 -3.1,-0.6 -1,-1.8 1.8,-1.9 1.9,-1.7 -2.2,-6.5 -3.4,-3.4 1,-7.3 -0.2,-0.5 -1.3,0.2 -33.1,1.4 -0.8,-2.4 0.8,-8.5 8.6,-14.8 -0.9,-2.6 1.4,-0.4 0.4,-2 -2.2,-2 0.1,-1.9 -2,-4.5 -0.4,-5.1 0.1,-0.7 -26.4,0.8 -25.2,0.1 0.4,9.7 0.7,9.5 0.5,3.7 2.6,4.5 0.9,4.4 4.3,6 0.3,3.1 0.6,0.8 -0.7,8.3 -2.8,4.6 1.2,2.4 -0.5,2.6 -0.8,7.3 -1.3,3 0.2,3.7z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M887.5,172.5 l-0.5,-2.3 0.8,-1.5 2.9,-1.5 0.8,3.1 -0.5,1.8 -2.4,1.5 v1 l1.9,-1.5 3.9,-4.5 3.9,-1.9 4.2,-1.5 -0.3,-2.4 -1,-2.9 -1.9,-2.4 -1.8,-0.8 -2.1,0.2 -0.5,0.5 1,1.3 1.5,-0.8 2.1,1.6 0.8,2.7 -1.8,1.8 -2.3,1 -3.6,-0.5 -3.9,-6 -2.3,-2.6 h-1.8 l-1.1,0.8 -1.9,-2.6 0.3,-1.5 2.4,-5.2 -2.9,-4.4 -3.7,1.8 -1.8,2.9 -18.3,4.7 -13.8,2.5 -0.6,10.6 0.7,4.9 22,-4.8 11.2,-2.8 2,1.6 3.4,4.3 2.9,4.7z m12.5,1.4 2.2,-0.7 0.5,-1.7 1,0.1 1,2.3 -1.3,0.5 -3.9,0.1z m-9.4,0.8 2.3,-2.6 h1.6 l1.8,1.5 -2.4,1 -2.2,1z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M834.8,264.1 l1.7,-3.8 0.5,-4.8 -6.3,1.1 -5.8,0.3 -3.8,-16.8 -2.3,-5.5 -1.5,-4.6 -22.2,4.3 -37.6,7.6 2,10.4 4.8,-4.9 2.5,-0.7 1.4,-1.5 1.8,-2.7 1.6,0.7 2.6,-0.2 2.6,-2.1 2,-1.5 2.1,-0.6 1.5,1.1 2.7,1.4 1.9,1.8 1.3,1.4 4.8,1.6 -0.6,2.9 5.8,2.1 2.1,-2.6 3.7,2.5 -2.1,3.3 -0.7,3.3 -1.8,2.6 v2.1 l0.3,0.8 2,1.3 3.4,1.1 4.3,-0.1 3.1,1 2.1,0.3 1,-2.1 -1.5,-2.1 v-1.8 l-2.4,-2.1 -2.1,-5.5 1.3,-5.3 -0.2,-2.1 -1.3,-1.3 c0,0 1.5,-1.6 1.5,-2.3 0,-0.6 0.5,-2.1 0.5,-2.1 l1.9,-1.3 1.9,-1.6 0.5,1 -1.5,1.6 -1.3,3.7 0.3,1.1 1.8,0.3 0.5,5.5 -2.1,1 0.3,3.6 0.5,-0.2 1.1,-1.9 1.6,1.8 -1.6,1.3 -0.3,3.4 2.6,3.4 3.9,0.5 1.6,-0.8 3.2,4.2 1,0.4z m-14.5,0.2 1.1,2.5 0.2,1.8 1.1,1.9 c0,0 0.9,-0.9 0.9,-1.2 0,-0.3 -0.7,-3.1 -0.7,-3.1 l-0.7,-2.3z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M865.8,91.9 l1.5,0.4 v-2.6 l0.8,-5.5 2.6,-4.7 1.5,-4 -1.9,-2.4 v-6 l0.8,-1 0.8,-2.7 -0.2,-1.5 -0.2,-4.8 1.8,-4.8 2.9,-8.9 2.1,-4.2 h1.3 l1.3,0.2 v1.1 l1.3,2.3 2.7,0.6 0.8,-0.8 v-1 l4,-2.9 1.8,-1.8 1.5,0.2 6,2.4 1.9,1 9.1,29.9 h6 l0.8,1.9 0.2,4.8 2.9,2.3 h0.8 l0.2,-0.5 -0.5,-1.1 2.8,-0.5 1.9,2.1 2.3,3.7 v1.9 l-2.1,4.7 -1.9,0.6 -3.4,3.1 -4.8,5.5 c0,0 -0.6,0 -1.3,0 -0.6,0 -1,-2.1 -1,-2.1 l-1.8,0.2 -1,1.5 -2.4,1.5 -1,1.5 1.6,1.5 -0.5,0.6 -0.5,2.7 -1.9,-0.2 v-1.6 l-0.3,-1.3 -1.5,0.3 -1.8,-3.2 -2.1,1.3 1.3,1.5 0.3,1.1 -0.8,1.3 0.3,3.1 0.2,1.6 -1.6,2.6 -2.9,0.5 -0.3,2.9 -5.3,3.1 -1.3,0.5 -1.6,-1.5 -3.1,3.6 1,3.2 -1.5,1.3 -0.2,4.4 -1.1,6.3 -2.2,-0.9 -0.5,-3.1 -4,-1.1 -0.2,-2.5 -11.7,-37.43z m36.5,15.6 1.5,-1.5 1.4,1.1 0.6,2.4 -1.7,0.9z m6.7,-5.9 1.8,1.9 c0,0 1.3,0.1 1.3,-0.2 0,-0.3 0.2,-2 0.2,-2 l0.9,-0.8 -0.8,-1.8 -2,0.7z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M644.5,211 l19.1,-1.9 0.2,1.1 9.9,-1.5 12,-1.7 0.1,-0.6 0.2,-1.5 2.1,-3.7 2,-1.7 -0.2,-5.1 1.6,-1.6 1.1,-0.3 0.2,-3.6 1.5,-3 1.1,0.6 0.2,0.6 0.8,0.2 1.9,-1 -0.4,-9.1 -3.2,-8.2 -2.3,-9.1 -2.4,-3.2 -2.6,-1.8 -1.6,1.1 -3.9,1.8 -1.9,5 -2.7,3.7 -1.1,0.6 -1.5,-0.6 c0,0 -2.6,-1.5 -2.4,-2.1 0.2,-0.6 0.5,-5 0.5,-5 l3.4,-1.3 0.8,-3.4 0.6,-2.6 2.4,-1.6 -0.3,-10 -1.6,-2.3 -1.3,-0.8 -0.8,-2.1 0.8,-0.8 1.6,0.3 0.2,-1.6 -2.6,-2.2 -1.3,-2.6 h-2.6 l-4.5,-1.5 -5.5,-3.4 h-2.7 l-0.6,0.6 -1,-0.5 -3.1,-2.3 -2.9,1.8 -2.9,2.3 0.3,3.6 1,0.3 2.1,0.5 0.5,0.8 -2.6,0.8 -2.6,0.3 -1.5,1.8 -0.3,2.1 0.3,1.6 0.3,5.5 -3.6,2.1 -0.6,-0.2 v-4.2 l1.3,-2.4 0.6,-2.4 -0.8,-0.8 -1.9,0.8 -1,4.2 -2.7,1.1 -1.8,1.9 -0.2,1 0.6,0.8 -0.6,2.6 -2.3,0.5 v1.1 l0.8,2.4 -1.1,6.1 -1.6,4 0.6,4.7 0.5,1.1 -0.8,2.4 -0.3,0.8 -0.3,2.7 3.6,6 2.9,6.5 1.5,4.8 -0.8,4.7 -1,6 -2.4,5.2 -0.3,2.7 -3.2,3.1z m-33.3,-72.4 -1.3,-1.1 -1.8,-10.4 -3.7,-1.3 -1.7,-2.3 -12.6,-2.8 -2.8,-1.1 -8.1,-2.2 -7.8,-1 -3.9,-5.3 0.7,-0.5 2.7,-0.8 3.6,-2.3 v-1 l0.6,-0.6 6,-1 2.4,-1.9 4.4,-2.1 0.2,-1.3 1.9,-2.9 1.8,-0.8 1.3,-1.8 2.3,-2.3 4.4,-2.4 4.7,-0.5 1.1,1.1 -0.3,1 -3.7,1 -1.5,3.1 -2.3,0.8 -0.5,2.4 -2.4,3.2 -0.3,2.6 0.8,0.5 1,-1.1 3.6,-2.9 1.3,1.3 h2.3 l3.2,1 1.5,1.1 1.5,3.1 2.7,2.7 3.9,-0.2 1.5,-1 1.6,1.3 1.6,0.5 1.3,-0.8 h1.1 l1.6,-1 4,-3.6 3.4,-1.1 6.6,-0.3 4.5,-1.9 2.6,-1.3 1.5,0.2 v5.7 l0.5,0.3 2.9,0.8 1.9,-0.5 6.1,-1.6 1.1,-1.1 1.5,0.5 v7 l3.2,3.1 1.3,0.6 1.3,1 -1.3,0.3 -0.8,-0.3 -3.7,-0.5 -2.1,0.6 -2.3,-0.2 -3.2,1.5 h-1.8 l-5.8,-1.3 -5.2,0.2 -1.9,2.6 -7,0.6 -2.4,0.8 -1.1,3.1 -1.3,1.1 -0.5,-0.2 -1.5,-1.6 -4.5,2.4 h-0.6 l-1.1,-1.6 -0.8,0.2 -1.9,4.4 -1,4 -3.2,6.9z m-29.6,-56.5 1.8,-2.1 2.2,-0.8 5.4,-3.9 2.3,-0.6 0.5,0.5 -5.1,5.1 -3.3,1.9 -2.1,0.9z m86.2,32.1 0.6,2.5 3.2,0.2 1.3,-1.2 c0,0 -0.1,-1.5 -0.4,-1.6 -0.3,-0.2 -1.6,-1.9 -1.6,-1.9 l-2.2,0.2 -1.6,0.2 -0.3,1.1z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M464.6,66.79 l-0.6,3.91 v10.27 l1.6,5.03 1.9,3.32 0.5,9.93 1.8,13.45 1.8,7.3 0.4,6.4 v5.3 l-1.6,1.8 -1.8,1.3 v1.5 l0.9,1.7 4.1,3.5 0.7,3.2 v35.9 l60.3,-0.6 21.2,-0.7 -0.5,-6 -1.8,-2.1 -7.2,-4.6 -3.6,-5.3 -3.4,-0.9 -2,-2.8 h-3.2 l-3.5,-3.8 -0.5,-7 0.1,-3.9 1.5,-3 -0.7,-2.7 -2.8,-3.1 2.2,-6.1 5.4,-4 1.2,-1.4 -0.2,-8 0.2,-3 2.6,-3 3.8,-2.9 1.3,-0.2 4.5,-5 1.8,-0.8 2.3,-3.9 2.4,-3.6 3.1,-2.6 4.8,-2 9.2,-4.1 3.9,-1.8 0.6,-2.3 -4.4,0.4 -0.7,1.1 h-0.6 l-1.8,-3.1 -8.9,0.3 -1,0.8 h-1 l-0.5,-1.3 -0.8,-1.8 -2.6,0.5 -3.2,3.2 -1.6,0.8 h-3.1 l-2.6,-1 v-2.1 l-1.3,-0.2 -0.5,0.5 -2.6,-1.3 -0.5,-2.9 -1.5,0.5 -0.5,1 -2.4,-0.5 -5.3,-2.4 -3.9,-2.6 h-2.9 l-1.3,-1 -2.3,0.6 -1.1,1.1 -0.3,1.3 h-4.8 v-2.1 l-6.3,-0.3 -0.3,-1.5 h-4.8 l-1.6,-1.6 -1.5,-6.1 -0.8,-5.5 -1.9,-0.8 -2.3,-0.5 -0.6,0.2 -0.3,8.2 -30.1,-0.03z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M593.1,338.7 l0.5,-5.9 4.2,-3.4 1.9,-1 v-2.9 l0.7,-1.6 -1.1,-1.6 -2.4,0.3 -2.1,-2.5 -1.7,-4.5 0.9,-2.6 -2,-3.2 -1.8,-4.6 -4.6,-0.7 -6.8,-5.6 -2.2,-4.2 0.8,-3.3 2.2,-6 0.6,-3 -1.9,-1 -6.9,-0.6 -1.1,-1.9 v-4.1 l-5.3,-3.5 -7.2,-7.8 -2.3,-7.3 -0.5,-4.2 0.7,-2.4 -2.6,-3.1 -1.2,-2.4 -7.7,0.8 -10,0.6 -48.8,1.2 1.3,2.6 -0.1,2.2 2.3,3.6 3,3.9 3.1,3 2.6,0.2 1.4,1.1 v2.9 l-1.8,1.6 -0.5,2.3 2.1,3.2 2.4,3 2.6,2.1 1.3,11.6 -0.8,40 0.5,5.7 23.7,-0.2 23.3,-0.7 32.5,-1.3 2.2,3.7 -0.8,3.1 -3.1,2.5 -0.5,1.8 5.2,0.5 4.1,-1.1z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M604.3,472.5 l2.6,-4.2 1.8,0.8 6.8,-1.9 2.1,0.3 1.5,0.8 h5.2 l0.4,-1.6 -1.7,-14.8 -2.8,-19 1,-45.1 -0.2,-16.7 0.2,-6.3 -4.8,0.3 -19.6,1.6 -13,0.4 -0.2,3.2 -2.8,1.3 -2.6,5.1 0.5,1.6 0.1,2.4 -2.9,1.1 -3.5,5.1 0.8,2.3 -3,2.5 -1,5.7 -0.6,1.9 1.6,2.5 -1.5,1.4 1.5,2.8 0.3,4.2 -1.2,2.5 -0.2,0.9 0.4,5 2,4.5 -0.1,1.7 2.3,2 -0.7,3.1 -0.9,0.3 0.6,1.9 -8.6,15 -0.8,8.2 0.5,1.5 24.2,-0.7 8.2,-0.7 1.9,-0.3 0.6,1.4 -1,7.1 3.3,3.3 2.2,6.4z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M361.1,70.77 l-5.3,57.13 -1.3,15.2 -59.1,-6.6 -49,-7.1 -1.4,11.2 -1.9,-1.7 -0.4,-2.5 -1.3,-1.9 -3.3,1.5 -0.7,2.5 -2.3,0.3 -3.8,-1.6 -4.1,0.1 -2.4,0.7 -3.2,-1.5 -3,0.2 -2.1,1.9 -0.9,-0.6 -0.7,-3.4 0.7,-3.2 -2.7,-3.2 -3.3,-2.5 -2.5,-12.6 -0.1,-5.3 -1.6,-0.8 -0.6,1 -4.5,3.2 -1.2,-0.1 -2.3,-2.8 -0.2,-2.8 7,-17.15 -0.6,-2.67 -3.5,-1.12 -0.4,-0.91 -2.7,-3.5 -4.6,-10.41 -3.2,-1.58 -1.8,-4.26 1.3,-4.63 -3.2,-7.57 4.4,-21.29 32.7,6.89 18.4,3.4 32.3,5.3 29.3,4 29.2,3.5 30.8,3.07z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M786.7,357.7 l-12.7,-7.7 -3.1,-0.8 -16.6,2.1 -1.6,-3 -2.8,-2.2 -16.7,0.5 -7.4,0.9 -9.2,4.5 -6.8,2.7 -6.5,1.2 -13.4,1.4 0.1,-4.1 1.7,-1.3 2.7,-0.7 0.7,-3.8 3.9,-2.5 3.9,-1.5 4.5,-3.7 4.4,-2.3 0.7,-3.2 4.1,-3.8 0.7,1 2.5,0.2 2.4,-3.6 1.7,-0.4 2.6,0.3 1.8,-4 2.5,-2.4 0.5,-1.8 0.1,-3.5 4.4,0.1 38.5,-5.6 57.5,-12.3 2,4.8 3.6,6.5 2.4,2.4 0.6,2.3 -2.4,0.2 0.8,0.6 -0.3,4.2 -2.6,1.3 -0.6,2.1 -1.3,2.9 -3.7,1.6 -2.4,-0.3 -1.5,-0.2 -1.6,-1.3 0.3,1.3 v1 h1.9 l0.8,1.3 -1.9,6.3 h4.2 l0.6,1.6 2.3,-2.3 1.3,-0.5 -1.9,3.6 -3.1,4.8 h-1.3 l-1.1,-0.5 -2.7,0.6 -5.2,2.4 -6.5,5.3 -3.4,4.7 -1.9,6.5 -0.5,2.4 -4.7,0.5 -5.1,1.5z m49.3,-26.2 2.6,-2.5 3.2,-2.6 1.5,-0.6 0.2,-2 -0.6,-6.1 -1.5,-2.3 -0.6,-1.9 0.7,-0.2 2.7,5.5 0.4,4.4 -0.2,3.4 -3.4,1.5 -2.8,2.4 -1.1,1.2z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M471,126.4 l-0.4,-6.2 -1.8,-7.3 -1.8,-13.61 -0.5,-9.7 -1.9,-3.18 -1.6,-5.32 v-10.41 l0.6,-3.85 -1.8,-5.54 -28.6,-0.59 -18.6,-0.6 -26.5,-1.3 -25.2,-2.16 -0.9,14.42 -4.7,50.94 56.8,3.9 56.9,1.7z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M470.3,204.3 l-1,-2.3 -0.5,-1.6 -2.9,-1.6 -4.8,-1.5 -2.2,-1.2 -2.6,0.1 -3.7,0.4 -4.2,1.2 -6,-4.1 -2.2,-2 -10.7,0.6 -41.5,-2.4 -35.6,-2.2 -4.3,43.7 33.1,3.3 -1.4,21.1 21.7,1 40.6,1.2 43.8,0.6 h4.5 l-2.2,-3 -2.6,-3.9 0.1,-2.3 -1.4,-2.7 -1.9,-5.2 -0.4,-6.7 -1.4,-4.1 -0.5,-5 -2.3,-3.7 -1,-4.7 -2.8,-7.9 -1,-5.3z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M881.7,141.3 l1.1,-3.2 -2.7,-1.2 -0.5,-3.1 -4.1,-1.1 -0.3,-3 -11.7,-37.48 -0.7,0.08 -0.6,1.6 -0.6,-0.5 -1,-1 -1.5,1.9 -0.2,2.29 0.5,8.41 1.9,2.8 v4.3 l-3.9,4.8 -2.4,0.9 v0.7 l1.1,1.9 v8.6 l-0.8,9.2 -0.2,4.7 1,1.4 -0.2,4.7 -0.5,1.5 1,1.1 5.1,-1.2 13.8,-3.5 1.7,-2.9 4,-1.9z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M823.7,228.3 l0.1,-1.5 2.7,-1.3 1.7,-2.8 1.7,-2.4 3.3,-3.2 v-1.2 l-6.1,-4.1 -1,-2.7 -2.7,-0.3 -0.1,-0.9 -0.7,-2.2 2.2,-1.1 0.2,-2.9 -1.3,-1.3 0.2,-1.2 1.9,-3.1 v-3.1 l2.5,-3.1 5.6,2.5 6.4,1.9 2.5,1.2 0.1,1.8 -0.5,2.7 0.4,4.5 -2.1,1.9 -1.1,1 0.5,0.5 2.7,-0.3 1.1,-0.8 1.6,3.4 0.2,9.4 0.6,1.1 -1.1,5.5 -3.1,6.5 -2.7,4 -0.8,4.8 -2.1,2.4 h-0.8 l-0.3,-2.7 0.8,-1 -0.2,-1.5 -4,-0.6 -4.8,-2.3 -3.2,-2.9 -1,-2z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M270.2,429.4 l-16.7,-2.6 -1.2,9.6 -15.8,-2 6,-39.7 7,-53.2 4.4,-30.9 34,3.9 37.4,4.4 32,2.8 -0.3,10.8 -1.4,-0.1 -7.4,97.7 -28.4,-1.8 -38.1,-3.7 0.7,6.3z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M123.1,173.6 l38.7,8.5 26,5.2 -10.6,53.1 -5.4,29.8 -3.3,15.5 -2.1,11.1 -2.6,16.4 -1.7,3.1 -1.6,-0.1 -1.2,-2.6 -2.8,-0.5 -1.3,-1.1 -1.8,0.1 -0.9,0.8 -1.8,1.3 -0.3,7.3 -0.3,1.5 -0.5,12.4 -1.1,1.8 -16.7,-25.5 -42.1,-62.1 -12.43,-19 8.55,-32.6 8.01,-31.3z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M843.4,200 l0.5,-2.7 -0.2,-2.4 -3,-1.5 -6.5,-2 -6,-2.6 -0.6,-0.4 -2.7,-0.3 -2,-1.5 -2.1,-5.9 -3.3,-0.5 -2.4,-2.4 -38.4,8.1 -31.6,6 -0.5,-6.5 1.6,-1.2 1.3,-1.1 1,-1.6 1.8,-1.1 1.9,-1.8 0.5,-1.6 2.1,-2.7 1.1,-1 -0.2,-1 -1.3,-3.1 -1.8,-0.2 -1.9,-6.1 2.9,-1.8 4.4,-1.5 4,-1.3 3.2,-0.5 6.3,-0.2 1.9,1.3 1.6,0.2 2.1,-1.3 2.6,-1.1 5.2,-0.5 2.1,-1.8 1.8,-3.2 1.6,-1.9 h2.1 l1.9,-1.1 0.2,-2.3 -1.5,-2.1 -0.3,-1.5 1.1,-2.1 v-1.5 h-1.8 l-1.8,-0.8 -0.8,-1.1 -0.2,-2.6 5.8,-5.5 0.6,-0.8 1.5,-2.9 2.9,-4.5 2.7,-3.7 2.1,-2.4 2.4,-1.8 3.1,-1.2 5.5,-1.3 3.2,0.2 4.5,-1.5 7.4,-2.2 0.7,4.9 2.4,6.5 0.8,5 -1,4.2 2.6,4.5 0.8,2 -0.9,3.2 3.7,1.7 2.7,10.2 v5.8 l-0.6,10.9 0.8,5.4 0.7,3.6 1.5,7.3 v8.1 l-1.1,2.3 2.1,2.7 0.5,0.9 -1.9,1.8 0.3,1.3 1.3,-0.3 1.5,-1.3 2.3,-2.6 1.1,-0.6 1.6,0.6 2.3,0.2 7.9,-3.9 2.9,-2.7 1.3,-1.5 4.2,1.6 -3.4,3.6 -3.9,2.9 -7.1,5.3 -2.6,1 -5.8,1.9 -4,1.1 -1,-0.4z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M663.8,211.2 l1.7,15.5 4.8,41.1 3.9,-0.2 2.3,-0.8 3.6,1.8 1.7,4.2 5.4,0.1 1.8,2 h1.7 l2.4,-1.4 3.1,0.5 1.5,1.3 1.8,-2 2.3,-1.4 2.4,-0.4 0.6,2.7 1.6,1 2.6,2 0.8,0.2 2,-0.1 1.2,-0.6 v-2.1 l1.7,-1.5 0.1,-4.8 1.1,-4.2 1.9,-1.3 1,0.7 1,1.1 0.7,0.2 0.4,-0.4 -0.9,-2.7 v-2.2 l1.1,-1.4 2.5,-3.6 1.3,-1.5 2.2,0.5 2.1,-1.5 3,-3.3 2.2,-3.7 0.2,-5.4 0.5,-5 v-4.6 l-1.2,-3.2 1.2,-1.8 1.3,-1.2 -0.6,-2.8 -4.3,-25.6 -6.2,3.7 -3.9,2.3 -3.4,3.7 -4,3.9 -3.2,0.8 -2.9,0.5 -5.5,2.6 -2.1,0.2 -3.4,-3.1 -5.2,0.6 -2.6,-1.5 -2.2,-1.3z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M411.9,334.9 l-1.8,24.3 -0.9,18 0.2,1.6 4,3.6 1.7,0.9 h0.9 l0.9,-2.1 1.5,1.9 1.6,0.1 0.3,-0.2 0.2,-1.1 2.8,1.4 -0.4,3.5 3.8,0.5 2.5,1 4.2,0.6 2.3,1.6 2.5,-1.7 3.5,0.7 2.2,3.1 1.2,0.1 v2.3 l2.1,0.7 2.5,-2.1 1.8,0.6 2.7,0.1 0.7,2.3 4.4,1.8 1.7,-0.3 1.9,-4.2 h1.3 l1.1,2.1 4.2,0.8 3.4,1.3 3,0.8 1.6,-0.7 0.7,-2.7 h4.5 l1.9,0.9 2.7,-1.9 h1.4 l0.6,1.4 h3.6 l2,-1.8 2.3,0.6 1.7,2.2 3,1.7 3.4,0.9 1.9,1.2 -0.3,-37.6 -1.4,-10.9 -0.1,-8.6 -1.5,-6.6 -0.6,-6.8 0.1,-4.3 -12.6,0.3 -46.3,-0.5 -44.7,-2.1 -41.5,-1.8 -0.4,10.7z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M67.44,158.9 l28.24,7.2 27.52,6.5 17,3.7 8.8,-35.1 1.2,-4.4 2.4,-5.5 -0.7,-1.3 -2.5,0.1 -1.3,-1.8 0.6,-1.5 0.4,-3.3 4.7,-5.7 1.9,-0.9 0.9,-0.8 0.7,-2.7 0.8,-1.1 3.9,-5.7 3.7,-4 0.2,-3.26 -3.4,-2.49 -1.2,-4.55 -13.1,-3.83 -15.3,-3.47 -14.8,0.37 -1.1,-1.31 -5.1,1.84 -4.5,-0.48 -2.4,-1.58 -1.3,0.54 -4.68,-0.29 -1.96,-1.43 -4.84,-1.77 -1.1,-0.07 -4.45,-1.27 -1.76,1.52 -6.26,-0.24 -5.31,-3.85 0.21,-9.28 -2.05,-3.5 -4.1,-0.6 -0.7,-2.5 -2.4,-0.5 -5.8,2.1 -2.3,6.5 -3.2,10 -3.2,6.5 -5,14.1 -6.5,13.6 -8.1,12.6 -1.9,2.9 -0.8,8.6 -1.3,6 2.71,3.5z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M736.6,192.2 l1.3,-0.5 5.7,-5.5 0.7,6.9 33.5,-6.5 36.9,-7.8 2.3,2.3 3.1,0.4 2,5.6 2.4,1.9 2.8,0.4 0.1,0.1 -2.6,3.2 v3.1 l-1.9,3.1 -0.2,1.9 1.3,1.3 -0.2,1.9 -2.4,1.1 1,3.4 0.2,1.1 2.8,0.3 0.9,2.5 5.9,3.9 v0.4 l-3.1,3 -1.5,2.2 -1.7,2.8 -2.7,1.2 -1.4,0.3 -2.1,1.3 -1.6,1.4 -22.4,4.3 -38.7,7.8 -11.3,1.4 -3.9,0.7 -5.1,-22.4 -4.3,-25.9z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M873.6,175.7 l-0.8,-4.4 -1.6,-6 5.7,-1.5 1.5,1.3 3.4,4.3 2.8,4.4 -2.8,1.4 -1.3,-0.2 -1.1,1.8 -2.4,1.9 -2.8,1.1z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M759,413.6 l-2.1,-1 -1.9,-5.6 -2.5,-2.3 -2.5,-0.5 -1.5,-4.6 -3,-6.5 -4.2,-1.8 -1.9,-1.8 -1.2,-2.6 -2.4,-2 -2.3,-1.3 -2.2,-2.9 -3.2,-2.4 -4.4,-1.7 -0.4,-1.4 -2.3,-2.8 -0.5,-1.5 -3.8,-5.4 -3.4,0.1 -3.9,-2.5 -1.2,-1.2 -0.2,-1.4 0.6,-1.6 2.7,-1.3 -0.8,-2 6.4,-2.7 9.2,-4.5 7.1,-0.9 16.4,-0.5 2.3,1.9 1.8,3.5 4.6,-0.8 12.6,-1.5 2.7,0.8 12.5,7.4 10.1,8.3 -5.3,5.4 -2.6,6.1 -0.5,6.3 -1.6,0.8 -1.1,2.7 -2.4,0.6 -2.1,3.6 -2.7,2.7 -2.3,3.4 -1.6,0.8 -3.6,3.4 -2.9,0.2 1,3.2 -5,5.3 -2.3,1.6z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M471,181.1 l-0.9,3.2 0.4,3 2.6,2 -1.2,5.4 -1.8,4.1 1.5,3.3 0.7,1.1 -1.3,0.1 -0.7,-1.6 -0.6,-2 -3.3,-1.8 -4.8,-1.5 -2.5,-1.3 -2.9,0.1 -3.9,0.4 -3.8,1.2 -5.3,-3.8 -2.7,-2.4 -10.9,0.8 -41.5,-2.4 -35.6,-2.2 1.5,-24.8 2.8,-34 0.4,-5 56.9,3.9 56.9,1.7 v2.7 l-1.3,1.5 -2,1.5 -0.1,2.2 1.1,2.2 4.1,3.4 0.5,2.7 v35.9z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M670.8,359.6 l-13.1,1.2 -23.3,2.2 -37.6,2.7 -11.8,0.4 0.9,-0.6 0.9,-4.5 -1.2,-3.6 3.9,-2.3 0.4,-2.5 1.2,-4.3 3,-9.5 0.5,-5.6 0.3,-0.2 12.3,-0.2 13.6,-0.8 0.1,-3.9 3.5,-0.1 30.4,-3.3 54,-5.2 10.3,-1.5 7.6,-0.2 2.4,-1.9 1.3,0.3 -0.1,3.3 -0.4,1.6 -2.4,2.2 -1.6,3.6 -2,-0.4 -2.4,0.9 -2.2,3.3 -1.4,-0.2 -0.8,-1.2 -1.1,0.4 -4.3,4 -0.8,3.1 -4.2,2.2 -4.3,3.6 -3.8,1.5 -4.4,2.8 -0.6,3.6 -2.5,0.5 -2,1.7 -0.2,4.8z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M282.8,425.6 l37,3.6 29.3,1.9 7.4,-97.7 54.4,2.4 -1.7,23.3 -1,18 0.2,2 4.4,4.1 2,1.1 h1.8 l0.5,-1.2 0.7,0.9 2.4,0.2 1.1,-0.6 v-0.2 l1,0.5 -0.4,3.7 4.5,0.7 2.4,0.9 4.2,0.7 2.6,1.8 2.8,-1.9 2.7,0.6 2.2,3.1 0.8,0.1 v2.1 l3.3,1.1 2.5,-2.1 1.5,0.5 2.1,0.1 0.6,2.1 5.2,2 2.3,-0.5 1.9,-4 h0.1 l1.1,1.9 4.6,0.9 3.4,1.3 3.2,1 2.4,-1.2 0.7,-2.3 h3.6 l2.1,1 3,-2 h0.4 l0.5,1.4 h4.7 l1.9,-1.8 1.3,0.4 1.7,2.1 3.3,1.9 3.4,1 2.5,1.4 2.7,2 3.1,-1.2 2.1,0.8 0.7,20 0.7,9.5 0.6,4.1 2.6,4.4 0.9,4.5 4.2,5.9 0.3,3.1 0.6,0.8 -0.7,7.7 -2.9,4.8 1.3,2.6 -0.5,2.4 -0.8,7.2 -1.3,3 0.3,4.2 -5.6,1.6 -9.9,4.5 -1,1.9 -2.6,1.9 -2.1,1.5 -1.3,0.8 -5.7,5.3 -2.7,2.1 -5.3,3.2 -5.7,2.4 -6.3,3.4 -1.8,1.5 -5.8,3.6 -3.4,0.6 -3.9,5.5 -4,0.3 -1,1.9 2.3,1.9 -1.5,5.5 -1.3,4.5 -1.1,3.9 -0.8,4.5 0.8,2.4 1.8,7 1,6.1 1.8,2.7 -1,1.5 -3.1,1.9 -5.7,-3.9 -5.5,-1.1 -1.3,0.5 -3.2,-0.6 -4.2,-3.1 -5.2,-1.1 -7.6,-3.4 -2.1,-3.9 -1.3,-6.5 -3.2,-1.9 -0.6,-2.3 0.6,-0.6 0.3,-3.4 -1.3,-0.6 -0.6,-1 1.3,-4.4 -1.6,-2.3 -3.2,-1.3 -3.4,-4.4 -3.6,-6.6 -4.2,-2.6 0.2,-1.9 -5.3,-12.3 -0.8,-4.2 -1.8,-1.9 -0.2,-1.5 -6,-5.3 -2.6,-3.1 v-1.1 l-2.6,-2.1 -6.8,-1.1 -7.4,-0.6 -3.1,-2.3 -4.5,1.8 -3.6,1.5 -2.3,3.2 -1,3.7 -4.4,6.1 -2.4,2.4 -2.6,-1 -1.8,-1.1 -1.9,-0.6 -3.9,-2.3 v-0.6 l-1.8,-1.9 -5.2,-2.1 -7.4,-7.8 -2.3,-4.7 v-8.1 l-3.2,-6.5 -0.5,-2.7 -1.6,-1 -1.1,-2.1 -5,-2.1 -1.3,-1.6 -7.1,-7.9 -1.3,-3.2 -4.7,-2.3 -1.5,-4.4 -2.6,-2.9 -1.7,-0.5z m174.4,141.7 -0.6,-7.1 -2.7,-7.2 -0.6,-7 1.5,-8.2 3.3,-6.9 3.5,-5.4 3.2,-3.6 0.6,0.2 -4.8,6.6 -4.4,6.5 -2,6.6 -0.3,5.2 0.9,6.1 2.6,7.2 0.5,5.2 0.2,1.5z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M228.4,305.9 l24.6,3.6 1.9,-13.7 7,-50.5 2.3,-22 -32.2,-3.5 2.2,-13.1 1.8,-10.6 -34.7,-6.1 -12.5,-2.5 -10.6,52.9 -5.4,30 -3.3,15.4 -1.7,9.2z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M834.7,265.2 l-0.2,2.8 -2.9,3.8 -0.4,4.6 0.5,3.4 -1.8,5 -2.2,1.9 -1.5,-4.6 0.4,-5.4 1.6,-4.2 0.7,-3.3 -0.1,-1.7z m-60.3,44.6 -38.6,5.6 -4.8,-0.1 -2.2,-0.3 -2.5,1.9 -7.3,0.1 -10.3,1.6 -6.7,0.6 4.1,-2.6 4.1,-2.3 v-2.1 l5.7,-7.3 4.1,-3.7 2.2,-2.5 3.6,4.3 3.8,0.9 2.7,-1 2,-1.5 2.4,1.2 4.6,-1.3 1.7,-4.4 2.4,0.7 3.2,-2.3 1.6,0.4 2.8,-3.2 0.2,-2.7 -0.8,-1.2 4.8,-10.5 1.8,-5.2 0.5,-4.7 0.7,-0.2 1.1,1.7 1.5,1.2 3.9,-0.2 1.7,-8.1 3,-0.6 0.8,-2.6 2.8,-2.2 1.1,-2.1 1.8,-4.3 0.1,-4.6 3.6,1.4 6.6,3.1 0.3,-5.2 3.4,1.2 -0.6,2.9 8.6,3.1 1.4,1.8 -0.8,3.3 -1.3,1.3 -0.5,1.7 0.5,2.4 2,1.3 3.9,1.4 2.9,1 4.9,0.9 2.2,2.1 3.2,0.4 0.9,1.2 -0.4,4.7 1.4,1.1 -0.5,1.9 1.2,0.8 -0.2,1.4 -2.7,-0.1 0.1,1.6 2.3,1.5 0.1,1.4 1.8,1.8 0.5,2.5 -2.6,1.4 1.6,1.5 5.8,-1.7 3.7,6.2z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M832.7,111.3 l2.4,6.5 0.8,5.3 -1,3.9 2.5,4.4 0.9,2.3 -0.7,2.6 3.3,1.5 2.9,10.8 v5.3 l11.5,-2.1 -1,-1.1 0.6,-1.9 0.2,-4.3 -1,-1.4 0.2,-4.7 0.8,-9.3 v-8.5 l-1.1,-1.8 v-1.6 l2.8,-1.1 3.5,-4.4 v-3.6 l-1.9,-2.7 -0.3,-5.79 -26.1,6.79z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M74.5,67.7 l-2.3,-4.3 -4.1,-0.7 -0.4,-2.4 -2.5,-0.6 -2.9,-0.5 -1.8,1 -2.3,-2.9 0.3,-2.9 2.7,-0.3 1.6,-4 -2.6,-1.1 0.2,-3.7 4.4,-0.6 -2.7,-2.7 -1.5,-7.1 0.6,-2.9 v-7.9 l-1.8,-3.2 2.3,-9.4 2.1,0.5 2.4,2.9 2.7,2.6 3.2,1.9 4.5,2.1 3.1,0.6 2.9,1.5 3.4,1 2.3,-0.2 v-2.4 l1.3,-1.1 2.1,-1.3 0.3,1.1 0.3,1.8 -2.3,0.5 -0.3,2.1 1.8,1.5 1.1,2.4 0.6,1.9 1.5,-0.2 0.2,-1.3 -1,-1.3 -0.5,-3.2 0.8,-1.8 -0.6,-1.5 v-2.6 l1.8,-3.6 -1.1,-2.6 -2.4,-4.8 0.3,-0.8 1.4,-0.8 4.4,1.5 9.7,2.7 8.6,1.9 20,5.7 23,5.7 15,3.49 -4.8,17.56 -4.5,20.83 -3.4,16.25 -0.4,9.18 v0 l-12.9,-3.72 -15.3,-3.47 -14.5,0.32 -1.1,-1.53 -5.7,2.09 -3.9,-0.42 -2.6,-1.79 -1.7,0.65 -4.15,-0.25 -1.72,-1.32 -5.16,-1.82 -1.18,-0.16 -4.8,-1.39 -1.92,1.65 -5.65,-0.25 -4.61,-3.35z m9.6,-55.4 2,-0.2 0.5,1.4 1.5,-1.6 h2.3 l0.8,1.5 -1.5,1.7 0.6,0.8 -0.7,2 -1.4,0.4 c0,0 -0.9,0.1 -0.9,-0.2 0,-0.3 1.5,-2.6 1.5,-2.6 l-1.7,-0.6 -0.3,1.5 -0.7,0.6 -1.5,-2.3z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M541.4,109.9 l2.9,0.5 2.9,-0.6 7.4,-3.2 2.9,-1.9 2.1,-0.8 1.9,1.5 -1.1,1.1 -1.9,3.1 -0.6,1.9 1,0.6 1.8,-1 1.1,-0.2 2.7,0.8 0.6,1.1 1.1,0.2 0.6,-1.1 4,5.3 8.2,1.2 8.2,2.2 2.6,1.1 12.3,2.6 1.6,2.3 3.6,1.2 1.7,10.2 1.6,1.4 1.5,0.9 -1.1,2.3 -1.8,1.6 -2.1,4.7 -1.3,2.4 0.2,1.8 1.5,0.3 1.1,-1.9 1.5,-0.8 0.8,-2.3 1.9,-1.8 2.7,-4 4.2,-6.3 0.8,-0.5 0.3,1 -0.2,2.3 -2.9,6.8 -2.7,5.7 -0.5,3.2 -0.6,2.6 0.8,1.3 -0.2,2.7 -1.9,2.4 -0.5,1.8 0.6,3.6 0.6,3.4 -1.5,2.6 -0.8,2.9 -1,3.1 1.1,2.4 0.6,6.1 1.6,4.5 -0.2,3 -15.9,1.8 -17.5,1 h-12.7 l-0.7,-1.5 -2.9,-0.4 -2.6,-1.3 -2.3,-3.7 -0.3,-3.6 2,-2.9 -0.5,-1.4 -2.1,-2.2 -0.8,-3.3 -0.6,-6.8 -2.1,-2.5 -7,-4.5 -3.8,-5.4 -3.4,-1 -2.2,-2.8 h-3.2 l-2.9,-3.3 -0.5,-6.5 0.1,-3.8 1.5,-3.1 -0.8,-3.2 -2.5,-2.8 1.8,-5.4 5.2,-3.8 1.6,-1.9 -0.2,-8.1 0.2,-2.8 2.4,-2.8z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M758.9,254.3 l5.8,-6 2.6,-0.8 1.6,-1.5 1.5,-2.2 1.1,0.3 3.1,-0.2 4.6,-3.6 1.5,-0.5 1.3,1 2.6,1.2 3,3 -0.4,4.3 -5.4,-2.6 -4.8,-1.8 -0.1,5.9 -2.6,5.7 -2.9,2.4 -0.8,2.3 -3,0.5 -1.7,8.1 -2.8,0.2 -1.1,-1 -1.2,-2 -2.2,0.5 -0.5,5.1 -1.8,5.1 -5,11 0.9,1.4 -0.1,2 -2.2,2.5 -1.6,-0.4 -3.1,2.3 -2.8,-0.8 -1.8,4.9 -3.8,1 -2.5,-1.3 -2.5,1.9 -2.3,0.7 -3.2,-0.8 -3.8,-4.5 -3.5,-2.2 -2.5,-2.5 -2.9,-3.7 -0.5,-2.3 -2.8,-1.7 -0.6,-1.3 -0.2,-5.6 0.3,0.1 2.4,-0.2 1.8,-1 v-2.2 l1.7,-1.5 0.1,-5.2 0.9,-3.6 1.1,-0.7 0.4,0.3 1,1.1 1.7,0.5 1.1,-1.3 -1,-3.1 v-1.6 l3.1,-4.6 1.2,-1.3 2,0.5 2.6,-1.8 3.1,-3.4 2.4,-4.1 0.2,-5.6 0.5,-4.8 v-4.9 l-1.1,-3 0.9,-1.3 0.8,-0.7 4.3,19.3 4.3,-0.8 11.2,-1.3z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-<path d="M353,161.9 l-1.5,25.4 -4.4,44 -2.7,-0.3 -83.3,-9.1 -27.9,-3 2,-12 6.9,-41 3.8,-24.2 1.3,-11.2 48.2,7 59.1,6.5z" fill="var(--white)" stroke="var(--border)" stroke-width="0.8" opacity="0.8"/>
-          </g>
-          <!-- Connection lines -->
-          <line x1="860" y1="130" x2="610" y2="220" stroke="#10b981" stroke-width="2" opacity="0.3" stroke-dasharray="8 5"/>
-          <line x1="860" y1="130" x2="845" y2="245" stroke="#10b981" stroke-width="2" opacity="0.3" stroke-dasharray="8 5"/>
-          <line x1="610" y1="220" x2="440" y2="430" stroke="#10b981" stroke-width="1.5" opacity="0.2" stroke-dasharray="8 5"/>
-          <line x1="845" y1="245" x2="750" y2="400" stroke="#10b981" stroke-width="1.5" opacity="0.2" stroke-dasharray="8 5"/>
-          <line x1="610" y1="220" x2="80" y2="250" stroke="#10b981" stroke-width="1" opacity="0.15" stroke-dasharray="8 5"/>
-          <!-- NYC - You -->
-          <circle cx="860" cy="130" r="18" fill="#10b981" stroke="#fff" stroke-width="3"/>
-          <text x="860" y="135" text-anchor="middle" fill="#fff" font-size="10" font-weight="800" font-family="'DM Sans',sans-serif">You</text>
-          <!-- Chicago - GS -->
-          <circle cx="610" cy="220" r="13" fill="#3b82f6"/>
-          <text x="610" y="224" text-anchor="middle" fill="#fff" font-size="8" font-weight="700" font-family="'DM Sans',sans-serif">GS</text>
-          <!-- DC - MS -->
-          <circle cx="845" cy="245" r="13" fill="#7c3aed"/>
-          <text x="845" y="249" text-anchor="middle" fill="#fff" font-size="8" font-weight="700" font-family="'DM Sans',sans-serif">MS</text>
-          <!-- Texas - JPM -->
-          <circle cx="440" cy="430" r="11" fill="#f59e0b"/>
-          <text x="440" y="434" text-anchor="middle" fill="#fff" font-size="7" font-weight="700" font-family="'DM Sans',sans-serif">JPM</text>
-          <!-- Georgia - BX -->
-          <circle cx="750" cy="400" r="11" fill="#ec4899"/>
-          <text x="750" y="404" text-anchor="middle" fill="#fff" font-size="7" font-weight="700" font-family="'DM Sans',sans-serif">BX</text>
-          <!-- California - EVC -->
-          <circle cx="80" cy="250" r="10" fill="#06b6d4"/>
-          <text x="80" y="254" text-anchor="middle" fill="#fff" font-size="7" font-weight="700" font-family="'DM Sans',sans-serif">EVC</text>
-          <!-- Small secondary dots -->
-          <circle cx="310" cy="230" r="5" fill="var(--text-3)" opacity="0.3"/>
-          <circle cx="670" cy="140" r="5" fill="var(--text-3)" opacity="0.3"/>
-          <circle cx="800" cy="520" r="5" fill="var(--text-3)" opacity="0.25"/>
-        </svg>
-      </div>
-    </div>
-    </div>
-  </div>
-
+    <div class="fl-cap fl-end">&#9733; Signed offer</div>
   </div>
 </section>
 
 <!-- ═══ SOCIAL PROOF ═══ -->
-<section class="proof reveal" id="proof">
-  <div class="proof-inner">
-  <div class="sl">Trusted By Top Students</div>
-  <div class="st">Built with students.<br><em>Backed by results.</em></div>
-  <p class="ss">Join thousands of students from top universities who landed offers with OfferBell.</p>
-  <div class="pr-stats">
-    <div><div class="pr-sn">50+</div><div class="pr-sl">Top campuses</div></div>
-    <div><div class="pr-sn">20K+</div><div class="pr-sl">Active users</div></div>
-    <div><div class="pr-sn">100K+</div><div class="pr-sl">Offers earned</div></div>
+<section class="testi" id="proof">
+  <div class="te-head">
+    <div class="te-h">What students are saying</div>
+    <div class="te-sub">From students who started exactly where you are, recruiting into the same roles you're targeting.</div>
   </div>
-  <div class="pr-quotes-wrap">
-    <div class="pr-quotes-row row1">
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"I go to a state school with basically no finance recruiting pipeline. The outreach writer helped me send around 40 cold emails, I got 6 replies, and one of those turned into a summer analyst offer at RBC."</div><div class="pr-qa">&mdash; Marcus T., Ohio State '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"Two months ago I genuinely didn't know what enterprise value was. The flashcards and concept drills got me from completely lost to comfortable on technicals. Just passed my Jefferies first round."</div><div class="pr-qa">&mdash; Jasmine R., Rutgers '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"My career center looked at my resume for ten minutes and called it fine. OfferBell's resume review caught issues I didn't know to look for and rewrote my bullets with real impact metrics. Callback rate went up noticeably after."</div><div class="pr-qa">&mdash; Tyler W., Arizona State '25</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"The mock interview feature is uncomfortable in a really useful way. I recorded myself answering questions probably 20 times before my Moelis superday, and by the actual interview my answers were sharp. Felt more prepared than anyone in the room."</div><div class="pr-qa">&mdash; Sofia L., UGA '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"I had subscriptions to WSO and Mergers &amp; Inquisitions and was bouncing between random forum threads for months. OfferBell was the first thing that gave me an actual structured system instead of a hundred conflicting opinions."</div><div class="pr-qa">&mdash; Jake P., Penn State '25</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"I practiced my walk-me-through-your-resume answer with the AI coach probably 15 times. By the day of the actual interview it was muscle memory. Ended up getting the offer at PWP."</div><div class="pr-qa">&mdash; Ananya S., UMich '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"I was tracking everyone in a messy Google Sheet that I kept forgetting to update. The outreach tracker replaced it and actually shows me who has gone cold, so I follow up with people I would have otherwise lost track of."</div><div class="pr-qa">&mdash; Chris D., Florida '25</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"I went from getting ignored on basically every email I sent to having real conversations with VPs at bulge brackets. The outreach writer makes the messages sound professional without being formulaic."</div><div class="pr-qa">&mdash; Priya K., UIUC '26</div></div>
-      <!-- duplicate for loop -->
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"I go to a state school with basically no finance recruiting pipeline. The outreach writer helped me send around 40 cold emails, I got 6 replies, and one of those turned into a summer analyst offer at RBC."</div><div class="pr-qa">&mdash; Marcus T., Ohio State '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"Two months ago I genuinely didn't know what enterprise value was. The flashcards and concept drills got me from completely lost to comfortable on technicals. Just passed my Jefferies first round."</div><div class="pr-qa">&mdash; Jasmine R., Rutgers '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"My career center looked at my resume for ten minutes and called it fine. OfferBell's resume review caught issues I didn't know to look for and rewrote my bullets with real impact metrics. Callback rate went up noticeably after."</div><div class="pr-qa">&mdash; Tyler W., Arizona State '25</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"The mock interview feature is uncomfortable in a really useful way. I recorded myself answering questions probably 20 times before my Moelis superday, and by the actual interview my answers were sharp. Felt more prepared than anyone in the room."</div><div class="pr-qa">&mdash; Sofia L., UGA '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"I had subscriptions to WSO and Mergers &amp; Inquisitions and was bouncing between random forum threads for months. OfferBell was the first thing that gave me an actual structured system instead of a hundred conflicting opinions."</div><div class="pr-qa">&mdash; Jake P., Penn State '25</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"I practiced my walk-me-through-your-resume answer with the AI coach probably 15 times. By the day of the actual interview it was muscle memory. Ended up getting the offer at PWP."</div><div class="pr-qa">&mdash; Ananya S., UMich '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"I was tracking everyone in a messy Google Sheet that I kept forgetting to update. The outreach tracker replaced it and actually shows me who has gone cold, so I follow up with people I would have otherwise lost track of."</div><div class="pr-qa">&mdash; Chris D., Florida '25</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"I went from getting ignored on basically every email I sent to having real conversations with VPs at bulge brackets. The outreach writer makes the messages sound professional without being formulaic."</div><div class="pr-qa">&mdash; Priya K., UIUC '26</div></div>
+  <div class="te-wall">
+    <div class="te-cols">
+      <div class="te-col" data-speed="0.8"></div>
+      <div class="te-col" data-speed="1.18"></div>
+      <div class="te-col" data-speed="0.95"></div>
     </div>
-    <div class="pr-quotes-row row2">
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"No banks come on campus at my school. No finance alumni network, nothing. OfferBell was the only reason I knew how to even start networking. I'm interning at Guggenheim this summer."</div><div class="pr-qa">&mdash; DeShawn M., Howard '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"The diagnostic review humbled me immediately. I thought I knew accounting cold and scored a 40. Spent two weeks drilling the weak categories, retook it, and got an 88. The category-by-category breakdown is what made the difference."</div><div class="pr-qa">&mdash; Rachel H., Wisconsin '25</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"A friend at Wharton showed me he was using this, and I figured if target school students felt they needed it, I definitely did. Most useful subscription I've paid for during recruiting, by a lot."</div><div class="pr-qa">&mdash; Kevin N., UC Davis '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"Sent 12 emails through the outreach writer on a Sunday night. Woke up Monday with 4 replies, including one from a director at Houlihan. Before this, I was lucky to get one reply out of ten."</div><div class="pr-qa">&mdash; Emily Z., SMU '25</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"The referral map surfaced connections I had no idea existed. I learned my TA's older sister works at Blackstone and got an introduction through her the next week. Warm intros are so much better than cold outreach."</div><div class="pr-qa">&mdash; Jordan A., Minnesota '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"I was about to spend $400 on a recruiting coaching service before trying OfferBell. The prep guides alone covered everything that program would have taught me, at a fraction of the cost."</div><div class="pr-qa">&mdash; Amanda F., Clemson '25</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"I'm not in finance, I'm an engineer trying to pivot into consulting. The consulting flashcards and case frameworks got me interview ready for Deloitte in about three weeks. Tight timeline that actually worked."</div><div class="pr-qa">&mdash; Ryan T., Virginia Tech '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"The outreach writer is genuinely impressive. I added the contact details, chose an angle, and it generated a cold email that read better than anything I could have written myself. Sent it that night, had a reply by the next morning."</div><div class="pr-qa">&mdash; Mia C., Maryland '25</div></div>
-      <!-- duplicate for loop -->
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"No banks come on campus at my school. No finance alumni network, nothing. OfferBell was the only reason I knew how to even start networking. I'm interning at Guggenheim this summer."</div><div class="pr-qa">&mdash; DeShawn M., Howard '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"The diagnostic review humbled me immediately. I thought I knew accounting cold and scored a 40. Spent two weeks drilling the weak categories, retook it, and got an 88. The category-by-category breakdown is what made the difference."</div><div class="pr-qa">&mdash; Rachel H., Wisconsin '25</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"A friend at Wharton showed me he was using this, and I figured if target school students felt they needed it, I definitely did. Most useful subscription I've paid for during recruiting, by a lot."</div><div class="pr-qa">&mdash; Kevin N., UC Davis '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"Sent 12 emails through the outreach writer on a Sunday night. Woke up Monday with 4 replies, including one from a director at Houlihan. Before this, I was lucky to get one reply out of ten."</div><div class="pr-qa">&mdash; Emily Z., SMU '25</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"The referral map surfaced connections I had no idea existed. I learned my TA's older sister works at Blackstone and got an introduction through her the next week. Warm intros are so much better than cold outreach."</div><div class="pr-qa">&mdash; Jordan A., Minnesota '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"I was about to spend $400 on a recruiting coaching service before trying OfferBell. The prep guides alone covered everything that program would have taught me, at a fraction of the cost."</div><div class="pr-qa">&mdash; Amanda F., Clemson '25</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"I'm not in finance, I'm an engineer trying to pivot into consulting. The consulting flashcards and case frameworks got me interview ready for Deloitte in about three weeks. Tight timeline that actually worked."</div><div class="pr-qa">&mdash; Ryan T., Virginia Tech '26</div></div>
-      <div class="pr-q"><div class="pr-stars">★★★★★</div><div class="pr-qt">"The outreach writer is genuinely impressive. I added the contact details, chose an angle, and it generated a cold email that read better than anything I could have written myself. Sent it that night, had a reply by the next morning."</div><div class="pr-qa">&mdash; Mia C., Maryland '25</div></div>
-    </div>
-  </div>
   </div>
 </section>
 <section class="pricing reveal" id="pricing">
@@ -1259,6 +908,103 @@ document.addEventListener('click',function(e){
     setTimeout(()=>{location.href=a.href},160);
   }
 });
+</script>
+<script>
+(function(){
+const TRACKS=[
+ {code:'IB',name:'Investment Banking',desc:'DCF, LBO, M&A, valuation, and accounting questions reported from top bulge brackets and elite boutiques.',cards:1356,mods:9,drills:6},
+ {code:'PE',name:'Private Equity',desc:'Fund mechanics, deal sourcing, portfolio operations, and returns analysis from mega-funds to middle market.',cards:700,mods:8,drills:6},
+ {code:'CN',name:'Consulting',desc:'Case frameworks, market sizing, profitability, and fit questions for MBB and beyond.',cards:600,mods:10,drills:6},
+ {code:'AC',name:'Accounting & Audit',desc:'Financial statements, audit procedures, tax, and the technical questions Big 4 firms ask.',cards:600,mods:10,drills:3},
+ {code:'AM',name:'Asset Management',desc:'Portfolio theory, stock pitches, risk management, and the buy-side mindset.',cards:600,mods:10,drills:3},
+ {code:'ST',name:'Sales & Trading',desc:'Trading mechanics, derivatives, macro, and market-making concepts under pressure.',cards:546,mods:10,drills:6},
+ {code:'ER',name:'Equity Research',desc:'Equity valuation, sector analysis, modeling, and building a defensible stock thesis.',cards:228,mods:10,drills:4},
+ {code:'RE',name:'Real Estate',desc:'Cap rates, NOI, waterfall structures, and property-level analysis across REPE and REITs.',cards:229,mods:10,drills:4},
+ {code:'RX',name:'Restructuring',desc:'Bankruptcy, distressed debt, fulcrum security, and turnaround strategy.',cards:600,mods:10,drills:3},
+ {code:'VC',name:'Venture Capital',desc:'Startup valuation, term sheets, due diligence, and early-stage venture mechanics.',cards:233,mods:10,drills:5},
+];
+const list=document.getElementById('trList'),panel=document.getElementById('trContent');
+list.innerHTML=TRACKS.map((t,i)=>`<div class="tr-row${i===0?' active':''}" data-i="${i}"><span class="rc">${t.code}</span><span class="rn">${t.name}</span><span class="rar">&rarr;</span></div>`).join('');
+function render(i){const t=TRACKS[i];panel.innerHTML=`
+  <div class="peyebrow">Track</div>
+  <h3>${t.name}</h3>
+  <p class="pdesc">${t.desc}</p>
+  <div class="tr-stats">
+    <div class="tr-stat"><div class="n">${t.cards.toLocaleString()}</div><div class="l">Flashcards</div></div>
+    <div class="tr-stat"><div class="n">${t.mods}</div><div class="l">Prep guide modules</div></div>
+    <div class="tr-stat"><div class="n">${t.drills}</div><div class="l">Drill topics</div></div>
+  </div>
+  <div class="tr-incl"><div class="tr-incl-label">Also included</div><div class="tr-incl-row"><span>AI mock interviews</span><span>Diagnostic review</span><span><em>${t.name}</em> AI coach</span></div></div>`;}
+list.addEventListener('click',e=>{const r=e.target.closest('.tr-row');if(!r)return;
+  list.querySelectorAll('.tr-row').forEach(x=>x.classList.remove('active'));r.classList.add('active');render(+r.dataset.i);});
+render(0);
+})();
+(function(){
+const route=document.getElementById('route'),draw=document.getElementById('routeDraw'),plane=document.getElementById('plane'),layer=document.getElementById('layer');
+const L=route.getTotalLength();
+draw.style.strokeDasharray=L;
+const nodes=[...document.querySelectorAll('.node')],stages=[...document.querySelectorAll('.stage')];
+const fracs=[0.19,0.40,0.61,0.82];
+function place(p){
+  draw.style.strokeDashoffset=L*(1-p);
+  const d=Math.max(0.5,L*p), pt=route.getPointAtLength(d), pt2=route.getPointAtLength(Math.min(d+1,L));
+  const ang=Math.atan2(pt2.y-pt.y,pt2.x-pt.x)*180/Math.PI;
+  plane.setAttribute('transform',`translate(${pt.x},${pt.y}) rotate(${ang}) translate(-13,-13)`);
+  fracs.forEach((f,i)=>{const on=p>=f;nodes[i].classList.toggle('on',on);stages[i].classList.toggle('on',on);});
+}
+function prog(){const r=layer.getBoundingClientRect(),vh=innerHeight;
+  let p=(vh*0.62 - r.top)/(r.height - vh*0.34);return Math.max(0,Math.min(1,p));}
+function tick(){place(prog());}
+addEventListener('scroll',tick,{passive:true});addEventListener('resize',tick); place(0);
+})();
+(function(){
+const T=[
+ {n:"Marcus T.",s:"Ohio State '26",sub:"RBC · IB Summer Analyst",q:"I go to a state school with basically no finance pipeline. The outreach writer helped me send around 40 cold emails, I got 6 replies, and one turned into a summer analyst offer.",h:"#2563eb"},
+ {n:"Jasmine R.",s:"Rutgers '26",sub:"Investment Banking",q:"Two months ago I didn't know what enterprise value was. The flashcards and concept drills got me from completely lost to comfortable on technicals.",h:"#0ea5e9"},
+ {n:"Tyler W.",s:"Arizona State '25",sub:"Resume Review",q:"My career center looked at my resume for ten minutes and called it fine. OfferBell caught issues I didn't know to look for and rewrote my bullets with real impact metrics.",h:"#14b8a6"},
+ {n:"Sofia L.",s:"UGA '26",sub:"Mock Interviews",q:"The mock interview tool is uncomfortable in a useful way. I recorded myself about 20 times before my superday, and by the real interview my answers were sharp.",h:"#6366f1"},
+ {n:"Jake P.",s:"Penn State '25",sub:"From scattered to structured",q:"I was bouncing between random forum threads for months. OfferBell was the first thing that gave me an actual system instead of a hundred conflicting opinions.",h:"#8b5cf6"},
+ {n:"Ananya S.",s:"UMich '26",sub:"AI Coach",q:"I practiced my walk-me-through-your-resume answer with the AI coach maybe 15 times. By the day of the interview it was muscle memory.",h:"#ec4899"},
+ {n:"Chris D.",s:"Florida '25",sub:"Outreach Tracker",q:"I tracked everyone in a messy Google Sheet I kept forgetting to update. The tracker shows me who's gone cold, so I follow up with people I'd have otherwise lost.",h:"#f59e0b"},
+ {n:"Priya K.",s:"UIUC '26",sub:"Networking",q:"I went from getting ignored on every email to having real conversations with VPs at bulge brackets. The writer makes messages sound professional without being formulaic.",h:"#ef4444"},
+ {n:"DeShawn M.",s:"Howard '26",sub:"Networking",q:"No banks come on campus at my school. No alumni network, nothing. OfferBell was the only reason I knew how to even start networking.",h:"#10b981"},
+ {n:"Rachel H.",s:"Wisconsin '25",sub:"Diagnostic Review",q:"The diagnostic humbled me immediately. I thought I knew accounting cold and scored a 40. Two weeks drilling the weak categories, retook it, got an 88.",h:"#3b82f6"},
+ {n:"Kevin N.",s:"UC Davis '26",sub:"Investment Banking",q:"A friend at a target showed me he was using this. If target-school kids felt they needed it, I definitely did. Most useful thing I paid for during recruiting.",h:"#a855f7"},
+ {n:"Emily Z.",s:"SMU '25",sub:"Outreach Writer",q:"Sent 12 emails through the writer on a Sunday night. Woke up Monday with 4 replies. Before this I was lucky to get one reply out of ten.",h:"#0891b2"},
+ {n:"Jordan A.",s:"Minnesota '26",sub:"Referral Map",q:"The referral map surfaced connections I had no idea existed. I found out a classmate's sister works at a top fund and got a warm intro the next week.",h:"#d946ef"},
+ {n:"Ryan T.",s:"Virginia Tech '26",sub:"Consulting",q:"I'm an engineer pivoting into consulting. The case frameworks and consulting flashcards got me interview-ready in about three weeks.",h:"#f97316"},
+ {n:"Mia C.",s:"Maryland '25",sub:"Outreach Writer",q:"I added the contact details, picked an angle, and it generated a cold email that read better than anything I'd have written myself. Reply by the next morning.",h:"#059669"},
+];
+const cols=[...document.querySelectorAll('.te-col')];
+function card(t){const init=t.n.split(' ').map(w=>w[0]).join('').slice(0,2);
+ return `<div class="tcard"><div class="tc-head"><div class="tc-av" style="background:${t.h}">${init}</div><div><div class="tc-name">${t.n}</div><div class="tc-school">${t.s}</div></div></div><div class="tc-sub">${t.sub}</div><div class="tc-quote">"${t.q}"</div></div>`;}
+T.forEach((t,i)=>cols[i%3].innerHTML+=card(t));
+// parallax on scroll
+const wall=document.querySelector('.te-wall');
+function tick(){const r=wall.getBoundingClientRect(),vh=innerHeight;
+ const p=Math.max(0,Math.min(1,(vh-r.top)/(vh+r.height)));
+ cols.forEach(c=>{const sp=parseFloat(c.dataset.speed);const range=c.scrollHeight-wall.clientHeight;
+   let ty=-(p*range*sp);ty=Math.max(-(c.scrollHeight-wall.clientHeight),Math.min(0,ty));
+   c.style.transform=`translateY(${ty}px)`;});}
+addEventListener('scroll',tick,{passive:true});addEventListener('resize',tick);tick();
+})();
+</script>
+<script>
+(function(){
+  var leaf=document.querySelector('.hero-art');
+  if(!leaf)return;
+  var ticking=false;
+  function upd(){
+    var y=window.scrollY||window.pageYOffset||0;
+    var off=Math.min(y*0.26,200);   // drift down, capped
+    var rot=Math.min(y*0.013,5.5);  // gentle tilt
+    leaf.style.setProperty('--leafY',off.toFixed(1)+'px');
+    leaf.style.setProperty('--leafR',rot.toFixed(2)+'deg');
+    ticking=false;
+  }
+  window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(upd);ticking=true;}},{passive:true});
+  window.addEventListener('resize',upd);upd();
+})();
 </script>
 </body>
 </html>
