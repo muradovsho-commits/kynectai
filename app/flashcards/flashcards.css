@@ -1,15 +1,348 @@
-/* ── Technical Practice ── */
-.flash-main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; background: var(--bg); }
+/* ── Interview Flashcards ───────────────────────────────────────────────
+   Same scoped pattern as dashboard, concept-drills, coach: color vars
+   scoped to .flash-app so other pages' CSS files can't pollute them. */
 
-/* ═══ LANDING ═══ */
-.flash-landing { max-width: 1100px; margin: 0 auto; padding: 48px 40px 60px; }
-.flash-landing-badge { font-size: 10px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--text); margin-bottom: 14px; }
-.flash-landing-title { font-family: 'Instrument Serif', serif; font-size: 40px; letter-spacing: -0.8px; line-height: 1.1; color: var(--text); margin-bottom: 10px; }
-.flash-landing-title em { font-style: italic; }
-.flash-landing-sub { font-size: 14px; color: var(--text-3); line-height: 1.6; max-width: 560px; margin-bottom: 28px; }
-.flash-landing-stats { display: flex; gap: 36px; margin-bottom: 40px; }
-.flash-stat-num { font-size: 26px; font-weight: 800; color: var(--text); }
-.flash-stat-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }
+:root {
+  --sidebar-w: 200px;
+}
+
+.flash-app {
+  --bg: #fafaf9;
+  --surface: #ffffff;
+  --surface-2: #f7f7f5;
+  --surface-3: #efefed;
+  --border: #ebebea;
+  --border-2: #dddcda;
+  --text: #1c1c1e;
+  --text-2: #6a6a6a;
+  --text-3: #9b9b9b;
+  --frame: #151618;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+}
+html[data-theme="dark"] .flash-app {
+  --bg: #111110;
+  --surface: #1c1d20;
+  --surface-2: #24252a;
+  --surface-3: #2a2b30;
+  --border: #2a2b30;
+  --border-2: #34353a;
+  --text: #f4f5f8;
+  --text-2: #b4b5b9;
+  --text-3: #8a8b8f;
+  --frame: #151618;
+  --accent: #60a5fa;
+  --accent-soft: #1e3a5f;
+}
+
+.flash-app {
+  display: flex;
+  min-height: 100vh;
+  background: var(--frame);
+  font-family: 'Inter', 'Sora', system-ui, -apple-system, sans-serif;
+  color: var(--text);
+}
+
+.flash-canvas {
+  flex: 1;
+  min-width: 0;
+  margin-left: var(--sidebar-w, 200px);
+  padding: 14px 18px 14px 14px;
+  background: var(--frame);
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.2s ease;
+}
+
+.flash-page {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.flash-page-inner {
+  flex: 1;
+  padding: 32px 40px 48px;
+  min-height: 0;
+}
+
+/* Header (Instrument Serif treatment - matches Concept Drills and Coach) */
+.flash-page-head {
+  margin-bottom: 28px;
+}
+.flash-page-title {
+  font-family: 'Instrument Serif', 'Times New Roman', serif;
+  font-size: 56px;
+  font-weight: 400;
+  letter-spacing: -1px;
+  line-height: 1.05;
+  color: var(--text);
+  margin: 0 0 8px;
+}
+.flash-page-title em {
+  font-style: italic;
+}
+.flash-page-sub {
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+/* ── Hub: stats grid ────────────────────────────────────────────────── */
+.flash-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.flash-stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.flash-stat-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+.flash-stat-num {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.flash-stat-sub {
+  font-size: 11.5px;
+  color: var(--text-3);
+}
+
+/* ── Hub: primary action buttons ────────────────────────────────────── */
+.flash-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.flash-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+.flash-action:not(:disabled):hover {
+  border-color: var(--text);
+  transform: translateY(-1px);
+}
+.flash-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.flash-action-primary {
+  background: var(--text);
+  color: var(--surface);
+  border-color: var(--text);
+}
+.flash-action-primary:not(:disabled):hover {
+  background: var(--text);
+  filter: brightness(1.1);
+  border-color: var(--text);
+}
+.flash-action-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.flash-action-sub {
+  font-size: 12.5px;
+  opacity: 0.75;
+}
+.flash-action-arrow {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.flash-action-arrow svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+/* ── Hub: sections (topic grid, saved cards) ────────────────────────── */
+.flash-section {
+  margin-bottom: 32px;
+}
+.flash-section-head {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-3);
+  margin-bottom: 12px;
+}
+
+.flash-topic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+.flash-topic-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.15s, background 0.15s;
+}
+.flash-topic-card:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.flash-topic-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.flash-topic-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  color: var(--text-3);
+}
+
+.flash-saved-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.flash-saved-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.15s, background 0.15s;
+}
+.flash-saved-item:hover {
+  border-color: var(--text-2);
+  background: var(--surface-2);
+}
+.flash-saved-q {
+  font-size: 13.5px;
+  color: var(--text);
+  margin-bottom: 6px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.flash-saved-meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text-3);
+}
+.flash-saved-tag {
+  padding: 2px 8px;
+  background: var(--surface-2);
+  border-radius: 4px;
+  font-weight: 500;
+}
+.flash-saved-diff {
+  color: var(--text-3);
+}
+.flash-saved-more {
+  font-size: 12px;
+  color: var(--text-3);
+  padding: 8px 4px;
+  text-align: center;
+}
+
+.flash-empty {
+  padding: 48px 20px;
+  text-align: center;
+  background: var(--surface-2);
+  border: 1px dashed var(--border-2);
+  border-radius: 10px;
+}
+.flash-empty-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.flash-empty-sub {
+  font-size: 12.5px;
+  color: var(--text-3);
+}
+
+/* Defensive: SVGs constrained inside .flash-app */
+.flash-app svg {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* ── Drill mode (existing styles, scoped under .flash-app) ─────────── */
+.flash-drill-layout { max-width: 1100px; margin: 0 auto; }
+.flash-drill { padding: 0; }
+.flash-back {
+  background: none;
+  border: none;
+  color: var(--text-3);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  padding: 6px 0;
+  font-family: inherit;
+}
+.flash-back:hover { color: var(--text); }
+.flash-back svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+.flash-drill-head { margin-bottom: 16px; }
+.flash-drill-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 36px;
+  letter-spacing: -0.6px;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+/* The old landing-page styles below are no longer rendered (kept here as
+   harmless dead CSS that other code might reference for color tokens). */
 
 /* Track grid */
 .flash-track-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }

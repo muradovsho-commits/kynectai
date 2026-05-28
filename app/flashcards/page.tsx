@@ -5,7 +5,6 @@ import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { useIsPro } from '../lib/usePlan';
 import Sidebar from '../components/Sidebar';
-import '../contact-finder/contact-finder.css';
 import './flashcards.css';
 import { IB_FLASHCARDS, Flashcard } from './ib-flashcard-data';
 import { PE_FLASHCARDS } from './pe-flashcard-data';
@@ -39,6 +38,23 @@ const TRACKS: Track[] = [
   {id:'vc',title:'Venture Capital',desc:'Term sheets, SaaS metrics, cap tables, fund economics, and startup evaluation.',cards:VC_FLASHCARDS.length,iconClass:'icon-vc',icon:<svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>},
 ];
 const CARD_MAP: Record<string, Flashcard[]> = {ib:IB_FLASHCARDS,pe:PE_FLASHCARDS,consulting:CONSULTING_FLASHCARDS,accounting:ACCT_FLASHCARDS,am:AM_FLASHCARDS,st:ST_FLASHCARDS,er:ER_FLASHCARDS,re:RE_FLASHCARDS,vc:VC_FLASHCARDS,rx:RX_FLASHCARDS};
+
+// Map sidebar industry (vertical) name to flashcards track id. Industries
+// that don't have their own flashcard set fall back to a sensible neighbor.
+const ROLE_TO_TRACK: Record<string, string> = {
+  'Investment Banking': 'ib',
+  'Private Equity': 'pe',
+  'Consulting': 'consulting',
+  'Asset Management': 'am',
+  'Accounting & Audit': 'accounting',
+  'Equity Research': 'er',
+  'Sales & Trading': 'st',
+  'Venture Capital': 'vc',
+  'Growth Equity': 'pe',     // closest neighbor
+  'Real Estate': 're',
+  'Restructuring': 'rx',
+  'Hedge Fund': 'am',         // closest neighbor
+};
 
 const ARROW_R = <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>;
 const ARROW_L = <svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>;
@@ -112,7 +128,15 @@ function FlashcardsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isPro = useIsPro();
-  const [activeTrack, setActiveTrack] = useState<string | null>(null);
+  // activeTrack is auto-set from the sidebar's Industry pill via useEffect below.
+  // Defaults to 'ib' so the hub always has data while the profile loads.
+  const [activeTrack, setActiveTrack] = useState<string | null>('ib');
+  // viewState gates whether the user sees the Hub (default) or the Drill UI.
+  const [viewState, setViewState] = useState<'hub' | 'drill'>('hub');
+  // When clicking a saved bookmark in the hub, we set this to the card's
+  // question text. After the drill mode mounts and the filtered list is
+  // ready, a useEffect seeks idx to that card and clears this.
+  const [pendingJumpQ, setPendingJumpQ] = useState<string | null>(null);
   const [idx, setIdx] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [filterCat, setFilterCat] = useState('All');
@@ -139,6 +163,30 @@ function FlashcardsContent() {
       setActiveTrack(paramTrack);
     }
   }, [router, searchParams]);
+
+  // Sync activeTrack from the sidebar's Industry pill. Reads targetRoles[0]
+  // from offerbell_onboarding_profile on mount and listens for changes via
+  // the offerbell-profile-changed custom event. Falls back to 'ib' if the
+  // user's industry has no flashcards.
+  useEffect(() => {
+    const syncTrackFromIndustry = () => {
+      try {
+        const raw = localStorage.getItem('offerbell_onboarding_profile');
+        if (!raw) return;
+        const profile = JSON.parse(raw);
+        const target = profile?.targetRoles?.[0];
+        const trackId = ROLE_TO_TRACK[target] || 'ib';
+        if (CARD_MAP[trackId] && CARD_MAP[trackId].length > 0) {
+          setActiveTrack(trackId);
+        }
+      } catch {
+        // Silent fail - profile load shouldn't break the page.
+      }
+    };
+    syncTrackFromIndustry();
+    window.addEventListener('offerbell-profile-changed', syncTrackFromIndustry);
+    return () => window.removeEventListener('offerbell-profile-changed', syncTrackFromIndustry);
+  }, []);
 
   // Load perf for active track
   useEffect(() => {
@@ -225,6 +273,21 @@ function FlashcardsContent() {
   const card = filtered[idx] || null;
   useEffect(() => { if (idx >= filtered.length && filtered.length > 0) setIdx(0); }, [idx, filtered.length]);
 
+  // When a bookmark click set pendingJumpQ and switched to drill mode, seek
+  // idx to that card once the filtered list reflects the new filter state.
+  useEffect(() => {
+    if (!pendingJumpQ || viewState !== 'drill') return;
+    const targetIdx = filtered.findIndex(c => c.q === pendingJumpQ);
+    if (targetIdx >= 0) {
+      setIdx(targetIdx);
+      setShowAnswer(false);
+      setPendingJumpQ(null);
+    } else if (filtered.length > 0) {
+      // Filter doesn't contain the target card - give up to avoid infinite loop
+      setPendingJumpQ(null);
+    }
+  }, [filtered, pendingJumpQ, viewState]);
+
   const resetCardState = useCallback(() => {
     setShowAnswer(false); setShowInsight(false);
   }, []);
@@ -255,89 +318,189 @@ function FlashcardsContent() {
     window.addEventListener('keydown', h); return () => window.removeEventListener('keydown', h);
   }, [goNext, goPrev, showAnswer, card, perfKey, savePerf]);
 
-  const openTrack = (id: string) => { setActiveTrack(id); setFilterCat('All'); setFilterDiff('All'); setIdx(0); resetCardState(); setShuffleKey(0); setShowBookmarksOnly(false); };
-  const goBack = () => { setActiveTrack(null); setIdx(0); resetCardState(); };
+  const openTrack = (id: string) => { setActiveTrack(id); setFilterCat('All'); setFilterDiff('All'); setIdx(0); resetCardState(); setShuffleKey(0); setShowBookmarksOnly(false); setViewState('drill'); };
+
+  // Return to the hub. Doesn't nullify activeTrack - the hub still needs it.
+  const goBack = () => { setViewState('hub'); setIdx(0); resetCardState(); };
+
+  // Enter drill mode from the hub. Optional topic filter or bookmarks-only mode.
+  const enterDrill = (opts: { topic?: string; bookmarksOnly?: boolean } = {}) => {
+    setFilterCat(opts.topic || 'All');
+    setFilterDiff('All');
+    setShowBookmarksOnly(!!opts.bookmarksOnly);
+    setShuffleKey(0);
+    setIdx(0);
+    resetCardState();
+    setViewState('drill');
+  };
+
+  // Click a saved bookmark in the hub to jump straight to that card. We can't
+  // set idx synchronously because the filtered list is derived from state we're
+  // about to change; instead we stash the question text and let a separate
+  // useEffect seek to it once the filter is applied.
+  const jumpToBookmark = (b: Bookmark) => {
+    const card = (activeTrack ? CARD_MAP[activeTrack] : []).find(c => c.q === b.q);
+    if (!card) return;
+    setFilterCat(card.category);
+    setFilterDiff('All');
+    setShowBookmarksOnly(false);
+    setShuffleKey(0);
+    setPendingJumpQ(b.q);
+    setViewState('drill');
+  };
 
   const trackInfo = TRACKS.find(t => t.id === activeTrack);
   const insight = card ? getInsight(card.category) : null;
 
-  // ═══ LANDING ═══
-  if (!activeTrack) {
-    const total = TRACKS.reduce((s, t) => s + t.cards, 0);
+  // ═══ HUB (default view when not drilling) ═══
+  if (viewState === 'hub') {
+    const trackCards = activeTrack ? (CARD_MAP[activeTrack] || []) : [];
+    const topics = Array.from(new Set(trackCards.map(c => c.category)));
+    const trackBookmarks = bookmarks.filter(b => b.track === activeTrack);
+    const accuracy = perf.seen > 0 ? Math.round(((perf.pass || 0) / perf.seen) * 100) : 0;
+
+    // Per-topic stats for the topic grid
+    const topicStats = topics.map(topic => {
+      const cardsInTopic = trackCards.filter(c => c.category === topic);
+      const seenInTopic = perf.byCat[topic]?.seen || 0;
+      return { name: topic, count: cardsInTopic.length, seen: seenInTopic };
+    });
+
     return (
-      <div className="app">
+      <div className="flash-app">
         <Sidebar activePage="flashcards" />
-        <main className="flash-main">
-          <div className="flash-landing">
-            <div className="flash-landing-badge">Interview Flashcards</div>
-            <div className="flash-landing-title">Interview <em>Flashcards</em></div>
-            <div className="flash-landing-sub">Master every technical concept with curated interview questions reported in actual interviews across top firms. Filter by topic and difficulty, then drill one card at a time.</div>
-            {(() => {
-              // Map Target Role (from settings) to diagnostic track key
-              const roleToTrack: Record<string, string> = {
-                'Investment Banking': 'ib', 'Private Equity': 'pe', 'Venture Capital': 'vc',
-                'Consulting': 'consulting', 'Accounting & Audit': 'accounting',
-                'Asset Management': 'am', 'Sales & Trading': 'st', 'Equity Research': 'er',
-                'Real Estate': 're', 'Restructuring': 'rx', 'Growth Equity': 'ge',
-              };
-              let targetTrack = '';
-              try {
-                const prof = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}');
-                const role = Array.isArray(prof.targetRoles) && prof.targetRoles.length > 0 ? prof.targetRoles[0] : '';
-                targetTrack = roleToTrack[role] || '';
-              } catch {}
-
-              let diagScore = 0;
-              let trackLabel = '';
-              try {
-                const h = JSON.parse(localStorage.getItem('offerbell_diag_history') || '[]');
-                if (h.length > 0 && targetTrack) {
-                  const trackDiags = h.filter((d: any) => d.track === targetTrack);
-                  if (trackDiags.length > 0) {
-                    diagScore = Math.max(...trackDiags.map((d: any) => d.score || 0));
-                    trackLabel = trackDiags[0].track;
-                  }
-                } else if (h.length > 0) {
-                  // Fallback: use most recent diagnostic if no target role set
-                  diagScore = h[0].score || 0;
-                  trackLabel = h[0].track;
-                }
-              } catch {}
-
-              const trackName = targetTrack ? Object.entries(roleToTrack).find(([, v]) => v === targetTrack)?.[0] || '' : '';
-
-              if (diagScore >= 70) return (
-                <div style={{fontSize:12,color:'#16a34a',fontWeight:600,marginBottom:6,marginTop:-4}}>
-                  Your {trackName} diagnostic score is strong ({diagScore}%) - go through every question below to lock it in.
+        <main className="flash-canvas">
+          <div className="flash-page">
+            <div className="flash-page-inner">
+              <div className="flash-page-head">
+                <h1 className="flash-page-title">Interview <em>Flashcards</em></h1>
+                <div className="flash-page-sub">
+                  {trackInfo ? `Drill ${trackInfo.title.toLowerCase()} concepts into long-term memory` : 'Drill technical concepts into long-term memory'}
                 </div>
-              );
-              if (diagScore > 0) return (
-                <div style={{fontSize:12,color:'var(--text-3)',marginBottom:6,marginTop:-4}}>
-                  You are at {diagScore}% on your {trackName} diagnostic. We recommend hitting 70%+ on <a href="/diagnostic-review" style={{color:'var(--text)',fontWeight:600,textDecoration:'underline'}}>Diagnostic Review</a> before deep-diving here.
+              </div>
+
+              {/* Stats grid */}
+              <div className="flash-stats-grid">
+                <div className="flash-stat">
+                  <div className="flash-stat-lbl">Cards seen</div>
+                  <div className="flash-stat-num">{perf.seen}</div>
+                  <div className="flash-stat-sub">In {trackInfo?.title || 'this track'}</div>
                 </div>
-              );
-              return (
-                <div style={{fontSize:12,color:'var(--text-3)',marginBottom:6,marginTop:-4}}>Tip: Start with <a href="/learn" style={{color:'var(--text)',fontWeight:600,textDecoration:'underline'}}>Prep Guides</a> and <a href="/concept-drills" style={{color:'var(--text)',fontWeight:600,textDecoration:'underline'}}>Concept Drills</a> first, then come back here.</div>
-              );
-            })()}
-            <div className="flash-landing-stats">
-              <div><div className="flash-stat-num">{total.toLocaleString()}+</div><div className="flash-stat-label">Questions</div></div>
-              <div><div className="flash-stat-num">{TRACKS.length}</div><div className="flash-stat-label">Career Tracks</div></div>
-              <div><div className="flash-stat-num">40+</div><div className="flash-stat-label">Firms Covered</div></div>
-            </div>
-            <div className="flash-track-grid">
-              {TRACKS.map(t => (
-                <div key={t.id} className={`flash-track-card${t.cards === 0 ? ' coming-soon' : ''}`} onClick={() => t.cards > 0 && openTrack(t.id)}>
-                  <div className={`flash-track-icon ${t.iconClass}`}>{t.icon}</div>
-                  <div className="flash-track-name">{t.title}</div>
-                  <div className="flash-track-desc">{t.desc}</div>
-                  <div className="flash-track-footer">
-                    <span className={`flash-track-count${t.cards === 0 ? ' soon' : ''}`}>{t.cards > 0 ? `${t.cards} QUESTIONS` : 'COMING SOON'}</span>
-                    {trackBookmarkCount[t.id] > 0 && <span className="flash-track-saved">{trackBookmarkCount[t.id]} saved</span>}
-                    {t.cards > 0 && <span className="flash-track-cta">Start {ARROW_R}</span>}
+                <div className="flash-stat">
+                  <div className="flash-stat-lbl">Accuracy</div>
+                  <div className="flash-stat-num">{accuracy}%</div>
+                  <div className="flash-stat-sub">{perf.pass} correct</div>
+                </div>
+                <div className="flash-stat">
+                  <div className="flash-stat-lbl">Bookmarked</div>
+                  <div className="flash-stat-num">{trackBookmarks.length}</div>
+                  <div className="flash-stat-sub">Saved for later</div>
+                </div>
+                <div className="flash-stat">
+                  <div className="flash-stat-lbl">Topics</div>
+                  <div className="flash-stat-num">{topics.length}</div>
+                  <div className="flash-stat-sub">In this track</div>
+                </div>
+              </div>
+
+              {/* Primary actions */}
+              <div className="flash-actions">
+                <button
+                  type="button"
+                  className="flash-action flash-action-primary"
+                  onClick={() => enterDrill({})}
+                  disabled={trackCards.length === 0}
+                >
+                  <div>
+                    <div className="flash-action-title">Start drilling</div>
+                    <div className="flash-action-sub">Work through all questions{trackInfo ? ` in ${trackInfo.title}` : ''}</div>
+                  </div>
+                  <span className="flash-action-arrow">{ARROW_R}</span>
+                </button>
+                <button
+                  type="button"
+                  className="flash-action flash-action-secondary"
+                  onClick={() => enterDrill({ bookmarksOnly: true })}
+                  disabled={trackBookmarks.length === 0}
+                >
+                  <div>
+                    <div className="flash-action-title">Review saved</div>
+                    <div className="flash-action-sub">
+                      {trackBookmarks.length === 0
+                        ? 'No bookmarks yet'
+                        : `${trackBookmarks.length} saved card${trackBookmarks.length === 1 ? '' : 's'}`}
+                    </div>
+                  </div>
+                  {trackBookmarks.length > 0 && <span className="flash-action-arrow">{ARROW_R}</span>}
+                </button>
+              </div>
+
+              {/* Topic grid */}
+              {topicStats.length > 0 && (
+                <div className="flash-section">
+                  <div className="flash-section-head">Drill by topic</div>
+                  <div className="flash-topic-grid">
+                    {topicStats.map(t => (
+                      <button
+                        key={t.name}
+                        type="button"
+                        className="flash-topic-card"
+                        onClick={() => enterDrill({ topic: t.name })}
+                      >
+                        <div className="flash-topic-name">{t.name}</div>
+                        <div className="flash-topic-meta">
+                          <span>{t.seen > 0 ? `${t.seen} seen` : 'Not started'}</span>
+                          <span>Tap to drill</span>
+                        </div>
+                      </button>
+                    ))}
                   </div>
                 </div>
-              ))}
+              )}
+
+              {/* Saved flashcards section */}
+              {trackBookmarks.length > 0 && (
+                <div className="flash-section">
+                  <div className="flash-section-head">Saved flashcards</div>
+                  <div className="flash-saved-list">
+                    {trackBookmarks
+                      .slice()
+                      .sort((a, b) => b.savedAt - a.savedAt)
+                      .slice(0, 10)
+                      .map(b => {
+                        const card = trackCards.find(c => c.q === b.q);
+                        if (!card) return null;
+                        return (
+                          <button
+                            key={`${b.track}-${b.q}`}
+                            type="button"
+                            className="flash-saved-item"
+                            onClick={() => jumpToBookmark(b)}
+                          >
+                            <div className="flash-saved-q">{card.q}</div>
+                            <div className="flash-saved-meta">
+                              <span className="flash-saved-tag">{card.category}</span>
+                              {card.difficulty && <span className="flash-saved-diff">{card.difficulty}</span>}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    {trackBookmarks.length > 10 && (
+                      <div className="flash-saved-more">
+                        + {trackBookmarks.length - 10} more saved card{trackBookmarks.length - 10 === 1 ? '' : 's'} (open them from drill mode)
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Empty state if no cards for this track */}
+              {trackCards.length === 0 && (
+                <div className="flash-empty">
+                  <div className="flash-empty-title">No flashcards available for this track yet.</div>
+                  <div className="flash-empty-sub">Switch your Industry in the sidebar to a different track to see flashcards.</div>
+                </div>
+              )}
             </div>
           </div>
         </main>
@@ -346,14 +509,17 @@ function FlashcardsContent() {
     );
   }
 
+
   // ═══ DRILL VIEW ═══
   return (
-    <div className="app">
+    <div className="flash-app">
       <Sidebar activePage="flashcards" />
-      <main className="flash-main">
+      <main className="flash-canvas">
+        <div className="flash-page">
+          <div className="flash-page-inner">
         <div className="flash-drill-layout">
           <div className="flash-drill">
-            <button className="flash-back" onClick={goBack} type="button">{ARROW_L} All Tracks</button>
+            <button className="flash-back" onClick={goBack} type="button">{ARROW_L} Back to hub</button>
             <div className="flash-drill-head">
               <div className="flash-drill-title">{trackInfo?.title}</div>
             </div>
@@ -554,6 +720,8 @@ function FlashcardsContent() {
             )}
           </div>
 
+        </div>
+          </div>
         </div>
       </main>
       {showProModal && <ProModal onClose={() => setShowProModal(false)} />}
