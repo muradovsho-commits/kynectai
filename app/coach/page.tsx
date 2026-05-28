@@ -614,6 +614,34 @@ export default function CoachPage() {
   // category of the active track by default.
   const [selectedCategory, setSelectedCategory] = useState<string>('Technical');
   const [storedChatsOpen, setStoredChatsOpen] = useState(false);
+
+  // Sync activeTrack from the sidebar's Industry pill. Reads targetRoles[0]
+  // from offerbell_onboarding_profile on mount and listens for changes via
+  // the offerbell-profile-changed custom event (same pattern as dashboard
+  // and concept drills).
+  useEffect(() => {
+    const syncTrackFromIndustry = () => {
+      try {
+        const raw = localStorage.getItem('offerbell_onboarding_profile');
+        if (!raw) return;
+        const profile = JSON.parse(raw);
+        const target = profile?.targetRoles?.[0];
+        if (target && TRACKS.includes(target)) {
+          setActiveTrack(target);
+          const cats = TRACK_CATEGORIES[target] || TRACK_CATEGORIES['Investment Banking'];
+          setSelectedCategory(cats[0].name);
+        }
+        // If target doesn't match a Coach track (e.g. "Hedge Fund" which we
+        // don't yet have content for), leave activeTrack alone.
+      } catch {
+        // Silent fail - profile load shouldn't break the coach.
+      }
+    };
+
+    syncTrackFromIndustry();
+    window.addEventListener('offerbell-profile-changed', syncTrackFromIndustry);
+    return () => window.removeEventListener('offerbell-profile-changed', syncTrackFromIndustry);
+  }, []);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -1109,32 +1137,13 @@ export default function CoachPage() {
                   New Chat
                 </button>
               </div>
-
-              <div className="coach-topbar-right">
-                <select
-                  className="coach-track-pill"
-                  value={activeTrack}
-                  onChange={e => {
-                    setActiveTrack(e.target.value);
-                    setActiveFeature(null);
-                    setMessages([]);
-                    setActiveConvoId(null);
-                    setInputVal('');
-                    setSelectedCategory((TRACK_CATEGORIES[e.target.value] || TRACK_CATEGORIES['Investment Banking'])[0].name);
-                  }}
-                >
-                  {TRACKS.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
-              </div>
             </div>
 
             {/* ── Empty state: centered hero + input + categories ── */}
             {isEmpty ? (
               <div className="coach-hero">
                 <div className="coach-hero-logo">
-                  <svg width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
-                    <path d="M12 2L9.5 8.5 3 11l6.5 2.5L12 20l2.5-6.5L21 11l-6.5-2.5z"/>
-                  </svg>
+                  <img src="/offerbell-logo.jpeg" alt="OfferBell" />
                 </div>
                 <h1 className="coach-hero-title">OfferBell <em>Coach Suite</em></h1>
                 <p className="coach-hero-sub">
