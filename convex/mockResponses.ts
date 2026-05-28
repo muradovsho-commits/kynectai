@@ -133,3 +133,21 @@ export const importResponses = mutation({
     }
   },
 });
+
+// Dashboard-only lightweight query. Returns only count + avgGrade.
+// No transcripts, no recent items, no per-day timestamps.
+// Per-page bandwidth: ~0.1KB.
+export const getMockStats = query({
+  args: { userId: v.string() },
+  handler: async (ctx, { userId }) => {
+    const rows = await ctx.db
+      .query("mockResponses")
+      .withIndex("by_user", q => q.eq("userId", userId))
+      .collect();
+    const visible = rows.filter(r => !r.hidden);
+    const count = visible.length;
+    const totalGrade = visible.reduce((s, r) => s + (r.grade || 0), 0);
+    const avgGrade = count > 0 ? Math.round(totalGrade / count) : 0;
+    return { count, avgGrade };
+  },
+});
