@@ -76,11 +76,16 @@ html[data-theme="dark"] .cd-app {
   margin-bottom: 28px;
 }
 .cd-page-title {
-  font-size: 44px;
-  font-weight: 500;
-  letter-spacing: -0.025em;
+  font-family: 'Instrument Serif', 'Times New Roman', serif;
+  font-size: 56px;
+  font-weight: 400;
+  letter-spacing: -1px;
+  line-height: 1.05;
   color: var(--text);
   margin: 0 0 8px;
+}
+.cd-page-title em {
+  font-style: italic;
 }
 .cd-page-sub {
   font-size: 14px;

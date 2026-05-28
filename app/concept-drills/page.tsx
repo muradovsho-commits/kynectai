@@ -567,7 +567,7 @@ function ConceptDrillsInner() {
         <div className="cd-page">
           <div className="cd-page-inner">
             <div className="cd-page-head">
-              <h1 className="cd-page-title">Concept Drills</h1>
+              <h1 className="cd-page-title">Concept <em>Drills</em></h1>
               <div className="cd-page-sub">
                 {selectedTrackKey
                   ? `Practice ${TRACK_LABELS[selectedTrackKey]} technicals and track your accuracy.`

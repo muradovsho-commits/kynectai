@@ -567,7 +567,7 @@ export default function DashboardPage() {
             <div className="dash-top-row">
               <div>
                 <div className="dash-greet-sub">{greeting}, {displayFirst}</div>
-                <h1 className="dash-page-title">Dashboard</h1>
+                <h1 className="dash-page-title">Your <em>Dashboard</em></h1>
                 <div className="dash-page-sub">Everything you've practiced, sent, and learned - in one view</div>
               </div>
             </div>
