@@ -24,11 +24,11 @@
 }
 [data-theme="dark"] {
   --bg: #111110;
-  --surface: #1c1d20;
-  --surface-2: #24252a;
-  --border: #2a2b30;
-  --border-2: #34353a;
-  --border-strong: #3a3b40;
+  --surface: #24262c;
+  --surface-2: #2c2e34;
+  --border: #34363c;
+  --border-2: #3d3f45;
+  --border-strong: #45474d;
   --text: #f4f5f8;
   --text-2: #b4b5b9;
   --text-3: #8a8b8f;
@@ -68,7 +68,7 @@ body {
 .dash-page {
   flex: 1;
   background: var(--surface);
-  border: 0.5px solid rgba(255,255,255,0.10);
+  border: 1px solid var(--border);
   border-radius: 12px;
   box-shadow: 0 -4px 24px rgba(0,0,0,0.08), 0 -2px 8px rgba(0,0,0,0.04);
   max-width: 1400px;
@@ -146,6 +146,21 @@ body {
   margin: 0 0 22px;
   color: var(--text);
   letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.dash-card-title-tag {
+  display: inline-block;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 .dash-card-title-sm {
   font-size: 18px;
