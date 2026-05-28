@@ -2,9 +2,11 @@
 
 import { ReactNode, useEffect, useState } from 'react';
 import { useProgressSync } from './hooks/useProgressSync';
+import { useActiveTime } from './hooks/useActiveTime';
 
 function SyncRunner() {
   useProgressSync();
+  useActiveTime();
   return null;
 }
 
