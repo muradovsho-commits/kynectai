@@ -11,25 +11,20 @@ interface SidebarProps {
   activePage: string;
 }
 
-// Full vertical list from onboarding (app/onboarding/page.tsx VERTICALS).
+// Source of truth: app/my-account/page.tsx line 17 (the settings dropdown).
+// Sidebar dropdown must show the same options the user sees in settings.
 const VERTICALS = [
   'Investment Banking',
   'Private Equity',
-  'Hedge Fund',
   'Venture Capital',
-  'Growth Equity',
+  'Consulting',
+  'Accounting & Audit',
+  'Asset Management',
   'Sales & Trading',
   'Equity Research',
-  'Asset Management',
-  'Consulting',
-  'Accounting / Audit / Tax',
-  'Corporate Finance / FP&A',
-  'Corporate Development',
   'Real Estate',
-  'Credit / Debt',
   'Restructuring',
-  'Family Office',
-  'Endowment / Pension',
+  'Growth Equity',
 ];
 
 // Map onboarding VERTICALS (from app/onboarding/page.tsx) to short pill labels.
@@ -44,6 +39,7 @@ const INDUSTRY_PILL: Record<string, string> = {
   'Equity Research': 'ER',
   'Asset Management': 'AM',
   'Consulting': 'Cons',
+  'Accounting & Audit': 'Aud',
   'Accounting / Audit / Tax': 'Aud',
   'Corporate Finance / FP&A': 'CF',
   'Corporate Development': 'CD',
@@ -119,9 +115,23 @@ export default function Sidebar({ activePage }: SidebarProps) {
   const pathname = usePathname();
 
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    try { return localStorage.getItem('offerbell_sidebar_collapsed') === 'true'; }
+    catch { return false; }
+  });
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Broadcast the sidebar's current width to the rest of the app via --sidebar-w.
+  // Everything else (dashboard canvas, contact-finder main, outreach-writer main)
+  // reads margin-left from this variable, so when collapsed flips, content slides
+  // over to fill the freed space instead of leaving a dead strip.
+  useEffect(() => {
+    document.documentElement.style.setProperty('--sidebar-w', collapsed ? '60px' : '230px');
+    try { localStorage.setItem('offerbell_sidebar_collapsed', String(collapsed)); }
+    catch {}
+  }, [collapsed]);
 
   const [industryMenuOpen, setIndustryMenuOpen] = useState(false);
   const industryMenuRef = useRef<HTMLDivElement>(null);
@@ -502,10 +512,10 @@ export default function Sidebar({ activePage }: SidebarProps) {
           dashboard.css. Self-contained, so the sidebar looks identical on
           every page regardless of which page-specific CSS is imported. */}
       <style dangerouslySetInnerHTML={{ __html: `
-        :root { --ob-sidebar-w: 230px; }
+        :root { --sidebar-w: 230px; }
         .ob-side {
           position: fixed; top: 0; left: 0;
-          width: var(--ob-sidebar-w);
+          width: var(--sidebar-w);
           height: 100vh;
           background: #151618;
           color: #f4f5f8;
@@ -514,7 +524,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
           font-family: 'Inter', 'Sora', system-ui, -apple-system, sans-serif;
           transition: width 0.2s ease;
         }
-        .ob-side.collapsed { width: 60px; }
+        .ob-side.collapsed { /* width driven by --sidebar-w via JS */ }
 
         .ob-side a, .ob-side button { font-family: inherit; }
         .ob-side svg { display: block; }
