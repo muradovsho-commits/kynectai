@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useMutation } from 'convex/react';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../../convex/_generated/api';
-import '../contact-finder/contact-finder.css';
 import './coach.css';
 
 const TRACKS = [
@@ -137,6 +136,297 @@ const TRACK_SUBS: Record<string, string> = {
   'Growth Equity': 'Mastering unit economics, growth-stage investing, and minority deal structures.',
   'Real Estate': 'Mastering pro forma modeling, cap rates, and REPE deal analysis.',
   'Restructuring': 'Building distressed analysis skills, bankruptcy fluency, and credit expertise.',
+};
+
+// Per-track category tabs + quick question chips. Inspired by Stanley's category buttons.
+type CategoryDef = { name: string; questions: string[] };
+const TRACK_CATEGORIES: Record<string, CategoryDef[]> = {
+  'Investment Banking': [
+    { name: 'Technical', questions: [
+      'Walk me through a DCF',
+      "What's the difference between enterprise value and equity value?",
+      'Explain how $10 in depreciation flows through the 3 statements',
+      'Ask me a medium-difficulty accretion/dilution merger model question',
+    ]},
+    { name: 'Behavioral', questions: [
+      'Why investment banking?',
+      'Why this firm?',
+      'Tell me about yourself',
+      "What's your biggest weakness?",
+    ]},
+    { name: 'Networking', questions: [
+      'How do I cold email an MD?',
+      'What questions should I ask on a coffee chat?',
+      'How do I follow up after a networking call?',
+      'How can I get a referral?',
+    ]},
+    { name: 'Deals', questions: [
+      'Walk me through a recent M&A deal',
+      'How do I answer "walk me through a deal" in an IB interview?',
+      'Explain how an IPO works',
+      'What are common follow-up questions after walking through a deal?',
+    ]},
+  ],
+  'Private Equity': [
+    { name: 'LBO Modeling', questions: [
+      'Walk me through a paper LBO',
+      'What drives returns in an LBO?',
+      'Ask me a quick LBO mental math question',
+      'Explain a dividend recap',
+    ]},
+    { name: 'Behavioral', questions: [
+      'Why private equity?',
+      'Why this fund?',
+      'What deals do you find interesting and why?',
+      'How do you think about value creation post-close?',
+    ]},
+    { name: 'Case Study', questions: [
+      'Give me a sample PE case study',
+      'How would you diligence this company?',
+      'What multiple would you pay and why?',
+      'Walk me through your investment thesis structure',
+    ]},
+    { name: 'Networking', questions: [
+      'How do I cold email a PE associate?',
+      'Cold email an MM PE professional',
+      'What should I ask in a PE coffee chat?',
+      'How do I prep for on-cycle recruiting?',
+    ]},
+  ],
+  'Consulting': [
+    { name: 'Case Frameworks', questions: [
+      'Profitability case framework',
+      'Market sizing case framework',
+      'M&A case framework',
+      'New product launch framework',
+    ]},
+    { name: 'Behavioral', questions: [
+      'Why consulting?',
+      'Why this firm?',
+      'Tell me about a leadership experience',
+      'Tell me about a time you had to influence someone',
+    ]},
+    { name: 'Math', questions: [
+      'Give me a mental math drill',
+      'Quick market sizing practice: coffee shops in NYC',
+      'Calculate breakeven for a SaaS company',
+      'Estimate the size of the US airline industry',
+    ]},
+    { name: 'Networking', questions: [
+      'How do I cold email a consultant?',
+      'Best questions to ask in a coffee chat with an EM',
+      'How do I prep for case interviews via networking?',
+      'How can I get a referral?',
+    ]},
+  ],
+  'Asset Management': [
+    { name: 'Stock Pitch', questions: [
+      'Walk me through your stock pitch structure',
+      'Pitch me a long idea',
+      'Pitch me a short idea',
+      'What makes a great stock pitch?',
+    ]},
+    { name: 'Market Views', questions: [
+      'What is your current market view?',
+      'How do you think about Fed policy right now?',
+      'How would you allocate $100M today?',
+      'What is your favorite sector right now and why?',
+    ]},
+    { name: 'Technical', questions: [
+      'How do you value a company in equity research?',
+      'Explain DDM vs DCF for an AM context',
+      'Walk me through how you build a sector model',
+      'How do you think about position sizing?',
+    ]},
+    { name: 'Behavioral', questions: [
+      'Why asset management?',
+      'Why this firm?',
+      'What stocks do you own personally?',
+      'How do you generate investment ideas?',
+    ]},
+  ],
+  'Accounting & Audit': [
+    { name: 'Technical', questions: [
+      'Walk me through the 3 financial statements',
+      'How does an accrual differ from a deferral?',
+      'Explain how revenue recognition works under ASC 606',
+      'What is goodwill and how is it tested for impairment?',
+    ]},
+    { name: 'Audit Standards', questions: [
+      'Explain the materiality concept',
+      'How do you assess audit risk?',
+      'Walk me through a sample test of controls',
+      'What is the difference between SOC 1 and SOC 2?',
+    ]},
+    { name: 'Behavioral', questions: [
+      'Why accounting?',
+      'Why Big 4?',
+      'Why this firm specifically?',
+      'Tell me about a time you caught an error',
+    ]},
+    { name: 'Networking', questions: [
+      'How do I cold email a Big 4 manager?',
+      'What questions do I ask in a coffee chat?',
+      'How do I switch from audit to advisory?',
+      'How do I get a referral for a CPA firm?',
+    ]},
+  ],
+  'Equity Research': [
+    { name: 'Stock Pitch', questions: [
+      'Pitch me a long idea with 3 thesis points',
+      'Pitch me a short idea',
+      'What makes a great ER pitch?',
+      'How should I structure my pitch in an interview?',
+    ]},
+    { name: 'Modeling', questions: [
+      'Walk me through building an EPS model',
+      'How do you forecast revenue for a software company?',
+      'Explain key sector KPIs you track',
+      'How do you sensitize your model?',
+    ]},
+    { name: 'Behavioral', questions: [
+      'Why equity research?',
+      'Why this firm?',
+      'Why this sector?',
+      'How do you generate ideas?',
+    ]},
+    { name: 'Networking', questions: [
+      'How do I cold email an analyst?',
+      'What questions should I ask an ER associate?',
+      'How do I break in from a non-target?',
+      'How do I get a referral?',
+    ]},
+  ],
+  'Sales & Trading': [
+    { name: 'Markets', questions: [
+      "What's moving the market today?",
+      'Pitch me a trade idea',
+      'What is your view on rates?',
+      'How do you think about FX right now?',
+    ]},
+    { name: 'Mental Math', questions: [
+      'Give me a mental math drill',
+      'Quick: 17 x 23',
+      'Practice probability questions',
+      'Brain teaser practice round',
+    ]},
+    { name: 'Behavioral', questions: [
+      'Why sales and trading?',
+      'Sales or trading - which desk and why?',
+      'Why this bank?',
+      'Tell me about a time you took a calculated risk',
+    ]},
+    { name: 'Networking', questions: [
+      'How do I cold email an S&T professional?',
+      'What questions should I ask on a desk chat?',
+      'How do I navigate a sell day?',
+      'How do I get a referral?',
+    ]},
+  ],
+  'Venture Capital': [
+    { name: 'Thesis', questions: [
+      'Help me build a sector thesis',
+      'What sectors are you most excited about?',
+      'Pitch me a thesis on AI infrastructure',
+      'How do you think about market timing in VC?',
+    ]},
+    { name: 'Startup Eval', questions: [
+      'How do you evaluate an early-stage startup?',
+      'How do you think about founder quality?',
+      'What metrics matter at seed vs Series A?',
+      'How do you size a market for a new product?',
+    ]},
+    { name: 'Behavioral', questions: [
+      'Why venture capital?',
+      'Why this fund?',
+      'What companies would you invest in today?',
+      'How do you source deals?',
+    ]},
+    { name: 'Networking', questions: [
+      'How do I cold email a VC partner?',
+      'What questions should I ask a VC associate?',
+      'How do I get a referral into a top fund?',
+      'How do I network into VC from banking?',
+    ]},
+  ],
+  'Growth Equity': [
+    { name: 'Unit Economics', questions: [
+      'Walk me through SaaS unit economics',
+      'Explain CAC, LTV, and payback period',
+      'How do you think about Rule of 40?',
+      'Calculate gross retention vs net retention',
+    ]},
+    { name: 'Deal Structures', questions: [
+      'How do minority deals differ from buyouts?',
+      'Explain a primary vs secondary investment',
+      'What are typical growth equity terms?',
+      'When would you structure as preferred equity?',
+    ]},
+    { name: 'Behavioral', questions: [
+      'Why growth equity vs PE or VC?',
+      'Why this firm?',
+      'What companies would you invest in today?',
+      'How do you think about value creation in GE?',
+    ]},
+    { name: 'Networking', questions: [
+      'How do I cold email a GE associate?',
+      'What questions should I ask in a coffee chat?',
+      'How do I differentiate myself for GE recruiting?',
+      'How do I get a referral?',
+    ]},
+  ],
+  'Real Estate': [
+    { name: 'Modeling', questions: [
+      'Walk me through a real estate pro forma',
+      'Explain cap rates and how they move',
+      'Calculate cash-on-cash return',
+      'Explain IRR vs equity multiple',
+    ]},
+    { name: 'Markets', questions: [
+      'How do you think about office right now?',
+      'What is your view on multifamily?',
+      'How do interest rates affect cap rates?',
+      'What sectors of CRE are most attractive?',
+    ]},
+    { name: 'Behavioral', questions: [
+      'Why real estate?',
+      'Why this firm?',
+      'Walk me through your favorite deal',
+      'How do you generate ideas?',
+    ]},
+    { name: 'Networking', questions: [
+      'How do I cold email a REPE associate?',
+      'What questions should I ask?',
+      'How do I break into REPE from banking?',
+      'How do I get a referral?',
+    ]},
+  ],
+  'Restructuring': [
+    { name: 'Technical', questions: [
+      'Walk me through Chapter 11 mechanics',
+      'Explain priority of claims',
+      'What is the fulcrum security?',
+      'Walk me through DIP financing',
+    ]},
+    { name: 'Distressed Cases', questions: [
+      'Walk me through the Hertz bankruptcy',
+      'Walk me through J.Crew',
+      'Quiz me on notable RX cases',
+      'What is a creditor-on-creditor violence situation?',
+    ]},
+    { name: 'Behavioral', questions: [
+      'Why restructuring vs M&A?',
+      'Why this firm?',
+      'Tell me about an interesting situation',
+      'How do you stay current on distressed news?',
+    ]},
+    { name: 'Networking', questions: [
+      'How do I cold email an RX banker?',
+      'What questions should I ask in a coffee chat?',
+      'How do I differentiate myself for RX recruiting?',
+      'How do I get a referral?',
+    ]},
+  ],
 };
 
 const QUOTES = [
@@ -318,6 +608,12 @@ export default function CoachPage() {
   const [limitInfo, setLimitInfo] = useState<{ plan: 'free' | 'pro' | 'elite'; used: number; limit: number } | null>(null);
   const [showLimitOverlay, setShowLimitOverlay] = useState(false);
   const [planLoaded, setPlanLoaded] = useState(false);
+
+  // Stanley-style UI state: which category tab is selected, and whether the
+  // Stored Chats dropdown is open. selectedCategory always shows the first
+  // category of the active track by default.
+  const [selectedCategory, setSelectedCategory] = useState<string>('Technical');
+  const [storedChatsOpen, setStoredChatsOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -648,7 +944,35 @@ export default function CoachPage() {
           setMessages(prev => [...prev, { role: 'assistant', content: ' ' + (data.error || 'Coach is temporarily unavailable.'), time: Date.now() }]);
         }
       } else {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.text || 'Something went wrong.', time: Date.now() }]);
+        // Fake-streaming: API returns full text at once, but reveal it
+        // word-by-word client-side so it FEELS like real streaming.
+        // Lower risk than rewriting the API to use Gemini's streaming endpoint.
+        const fullText = data.text || 'Something went wrong.';
+        const time = Date.now();
+        // Push an empty assistant message first; we'll grow its content.
+        setMessages(prev => [...prev, { role: 'assistant', content: '', time }]);
+        setIsLoading(false);
+
+        const words = fullText.split(/(\s+)/); // keep whitespace tokens so spacing reads naturally
+        const CHUNK_SIZE = 3;
+        const DELAY_MS = 30;
+        for (let i = 0; i < words.length; i += CHUNK_SIZE) {
+          await new Promise(r => setTimeout(r, DELAY_MS));
+          const partial = words.slice(0, i + CHUNK_SIZE).join('');
+          setMessages(prev => {
+            // Update only the last assistant message immutably.
+            const lastIdx = prev.length - 1;
+            return prev.map((m, idx) => (idx === lastIdx && m.role === 'assistant') ? { ...m, content: partial } : m);
+          });
+          // Light scroll-to-bottom during stream so user sees text growing.
+          if (i % (CHUNK_SIZE * 4) === 0) scrollBottom();
+        }
+        // Ensure final state has the full text exactly.
+        setMessages(prev => {
+          const lastIdx = prev.length - 1;
+          return prev.map((m, idx) => (idx === lastIdx && m.role === 'assistant') ? { ...m, content: fullText } : m);
+        });
+
         if (isPro) {
           incrementUsage();
         }
@@ -690,122 +1014,219 @@ export default function CoachPage() {
 
   // Show nothing until plan status is confirmed
   if (!planLoaded) return (
-    <div className="app">
+    <div className="coach-app">
       <Sidebar activePage="coach" />
-      <div className="coach-main" />
+      <main className="coach-canvas">
+        <div className="coach-page" />
+      </main>
     </div>
   );
 
   // Free users can access coach but with weekly limit (enforced in sendMessage)
 
+  // Stanley-style render: topbar + hero/chat + input. Industry-aware category
+  // chips. All existing state (activeTrack, messages, convos, limitInfo, etc.)
+  // is untouched - only the layout changes.
+
+  const trackCategories = TRACK_CATEGORIES[activeTrack] || TRACK_CATEGORIES['Investment Banking'];
+  const currentCategory = trackCategories.find(c => c.name === selectedCategory) || trackCategories[0];
+  const isEmpty = messages.length === 0 && !isLoading;
+
+  // Reset selectedCategory if it doesn't exist in the new track
+  if (currentCategory.name !== selectedCategory && trackCategories.length > 0) {
+    // We don't call setState during render; we just use the resolved current cat.
+  }
+
   return (
-    <div className="app">
+    <div className="coach-app">
       <Sidebar activePage="coach" />
 
-      <div className="coach-main">
-        {/* ── Left Panel ── */}
-        <div className="coach-left">
-          <div className="coach-left-track-title">{activeTrack} <em>Track</em></div>
-          <div className="coach-left-sub">{TRACK_SUBS[activeTrack]}</div>
+      <main className="coach-canvas">
+        <div className="coach-page">
+          <div className="coach-page-inner">
 
-          <select
-            className="coach-track-select"
-            value={activeTrack}
-            onChange={e => {
-              setActiveTrack(e.target.value);
-              setActiveFeature(null);
-              setMessages([]);
-              setActiveConvoId(null);
-              setInputVal('');
-            }}
-          >
-            {TRACKS.map(t => <option key={t} value={t}>{t}</option>)}
-          </select>
-
-          <div className="coach-left-section">Focus Areas</div>
-          <div className="coach-feature-list">
-            {features.map(f => (
-              <div
-                key={f.title}
-                className={`coach-feature-item${activeFeature === f.title ? ' active' : ''}`}
-                onClick={() => selectFeature(f.title, f.prompt)}
-              >
-                <div className="coach-feature-icon">{f.icon}</div>
-                <div>
-                  <div className="coach-feature-item-text">{f.title}</div>
-                  <div className="coach-feature-item-sub">{f.desc}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {convos.length > 0 && (
-            <div className="coach-history">
-              <div className="coach-history-head">
-                <div className="coach-left-section" style={{ marginBottom: 0 }}>Recent</div>
-                {messages.length > 0 && (
-                  <button className="coach-history-new" onClick={newConversation} type="button" title="Start a new conversation">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                    New
+            {/* ── Topbar: Stored Chats dropdown + New Chat + Track switcher ── */}
+            <div className="coach-topbar">
+              <div className="coach-topbar-left">
+                <div className="coach-stored-wrap">
+                  <button
+                    type="button"
+                    className={`coach-stored-btn${storedChatsOpen ? ' open' : ''}`}
+                    onClick={() => setStoredChatsOpen(o => !o)}
+                  >
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Stored Chats
+                    <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ transform: storedChatsOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}><polyline points="6 9 12 15 18 9"/></svg>
                   </button>
-                )}
-              </div>
-              <div className="coach-history-list">
-                {convos.slice(0, 8).map(c => {
-                  const isActive = c.id === activeConvoId;
-                  return (
-                    <div
-                      key={c.id}
-                      className={`coach-history-item${isActive ? ' active' : ''}`}
-                      onClick={() => loadConvo(c)}
-                    >
-                      <div className="coach-history-item-main">
-                        <div className="coach-history-item-meta">
-                          <span className="coach-history-item-track">{c.track}</span>
-                          {c.feature && <span className="coach-history-item-feature"> · {c.feature}</span>}
-                        </div>
-                        <div className="coach-history-item-preview">{c.preview}</div>
-                        <div className="coach-history-item-time">{timeAgo(c.updatedAt)}</div>
+                  {storedChatsOpen && (
+                    <div className="coach-stored-dropdown">
+                      <div className="coach-stored-head">
+                        <span>Recent Chats</span>
+                        <span className="coach-stored-count">{convos.length} chats</span>
                       </div>
-                      <button
-                        className="coach-history-item-delete"
-                        onClick={e => deleteConvo(c.id, e)}
-                        type="button"
-                        title="Delete conversation"
-                        aria-label="Delete conversation"
-                      >
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                      </button>
+                      {convos.length === 0 ? (
+                        <div className="coach-stored-empty">No stored chats yet.</div>
+                      ) : (
+                        <div className="coach-stored-list">
+                          {convos.slice(0, 12).map(c => {
+                            const isActive = c.id === activeConvoId;
+                            return (
+                              <div
+                                key={c.id}
+                                className={`coach-stored-item${isActive ? ' active' : ''}`}
+                                onClick={() => { loadConvo(c); setStoredChatsOpen(false); }}
+                              >
+                                <div className="coach-stored-item-body">
+                                  <div className="coach-stored-item-title">{c.preview || 'New conversation'}</div>
+                                  <div className="coach-stored-item-meta">
+                                    <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    {new Date(c.updatedAt).toLocaleDateString()}
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  className="coach-stored-item-del"
+                                  onClick={(e) => deleteConvo(c.id, e)}
+                                  title="Delete conversation"
+                                >
+                                  <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                </button>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
-                  );
-                })}
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  className="coach-new-btn"
+                  onClick={newConversation}
+                >
+                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                  New Chat
+                </button>
+              </div>
+
+              <div className="coach-topbar-right">
+                <select
+                  className="coach-track-pill"
+                  value={activeTrack}
+                  onChange={e => {
+                    setActiveTrack(e.target.value);
+                    setActiveFeature(null);
+                    setMessages([]);
+                    setActiveConvoId(null);
+                    setInputVal('');
+                    setSelectedCategory((TRACK_CATEGORIES[e.target.value] || TRACK_CATEGORIES['Investment Banking'])[0].name);
+                  }}
+                >
+                  {TRACKS.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
               </div>
             </div>
-          )}
 
-          <div className="coach-left-quote">
-            <div className="coach-left-quote-text" dangerouslySetInnerHTML={{ __html: QUOTES[quoteIdx].text }} />
-            <div className="coach-left-quote-attr">{QUOTES[quoteIdx].attr}</div>
-          </div>
-        </div>
+            {/* ── Empty state: centered hero + input + categories ── */}
+            {isEmpty ? (
+              <div className="coach-hero">
+                <div className="coach-hero-logo">
+                  <svg width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
+                    <path d="M12 2L9.5 8.5 3 11l6.5 2.5L12 20l2.5-6.5L21 11l-6.5-2.5z"/>
+                  </svg>
+                </div>
+                <h1 className="coach-hero-title">OfferBell <em>Coach Suite</em></h1>
+                <p className="coach-hero-sub">
+                  Sharpen your <span className="coach-hero-track">{activeTrack.toLowerCase()}</span> technicals, interviews, and outreach with one personalized workspace.
+                </p>
 
-        {/* ── Right Panel (Chat) ── */}
-        <div className="coach-right">
-          <div className="coach-chat-area">
-            <div className="coach-chat-area-inner">
-              {messages.length === 0 && !isLoading ? (
-                <div className="coach-empty">
-                  <div className="coach-empty-title">
-                    {activeFeature ? activeFeature : `Hey ${displayName}, pick a focus area to start.`}
+                {/* Input box (limit warnings inline above) */}
+                {limitInfo && (
+                  <div className="coach-limit-ribbon">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span><strong>Coach limit reached.</strong> Resets <strong>{getWeeklyResetDisplay().day}</strong> ({getWeeklyResetDisplay().relative}).</span>
+                    {limitInfo.plan !== 'elite' && (
+                      <a href="/checkout" className="coach-limit-upgrade">Upgrade</a>
+                    )}
                   </div>
-                  <div className="coach-empty-sub">
-                    {activeFeature
-                      ? 'Press Enter or click send to begin your coaching session.'
-                      : 'Select a topic from the left panel, or just type a question below.'}
+                )}
+                {isPro && usageWarning && !rateLimited && !limitInfo && (
+                  <div className="coach-usage-warn">
+                    <svg width="14" height="14" fill="none" stroke="#d97706" strokeWidth="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <span>You've used about <strong>{usagePct}%</strong> of your session limit. Resets {formatResetTime()}.</span>
+                  </div>
+                )}
+
+                <div className="coach-input-card">
+                  <textarea
+                    ref={textareaRef}
+                    className="coach-input"
+                    placeholder={limitInfo ? `Limit reached. Resets ${getWeeklyResetDisplay().day}.` : 'Type your message...'}
+                    rows={1}
+                    value={inputVal}
+                    onChange={e => { setInputVal(e.target.value); autoResize(e.target); }}
+                    onKeyDown={handleKey}
+                    disabled={!!limitInfo}
+                  />
+                  <div className="coach-input-actions">
+                    <input type="file" ref={fileInputRef} accept=".txt,.pdf" onChange={handleResumeUpload} style={{ display: 'none' }} />
+                    <button
+                      type="button"
+                      className="coach-input-clip"
+                      onClick={() => fileInputRef.current?.click()}
+                      title="Upload resume (PDF or TXT)"
+                    >
+                      <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                    </button>
+                    <button
+                      type="button"
+                      className="coach-send-btn"
+                      onClick={() => sendMessage(inputVal)}
+                      disabled={isLoading || !inputVal.trim() || !!limitInfo}
+                    >
+                      {isLoading ? (
+                        <div className="coach-spinner" />
+                      ) : (
+                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      )}
+                    </button>
                   </div>
                 </div>
-              ) : (
-                <>
+
+                {/* Category tabs */}
+                <div className="coach-cat-tabs">
+                  {trackCategories.map(cat => (
+                    <button
+                      key={cat.name}
+                      type="button"
+                      className={`coach-cat-tab${selectedCategory === cat.name ? ' active' : ''}`}
+                      onClick={() => setSelectedCategory(cat.name)}
+                    >
+                      {cat.name}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Quick question chips */}
+                <div className="coach-chips-grid">
+                  {currentCategory.questions.map(q => (
+                    <button
+                      key={q}
+                      type="button"
+                      className="coach-chip"
+                      onClick={() => sendMessage(q)}
+                      disabled={!!limitInfo}
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              /* ── Chat state: messages list + input pinned at bottom ── */
+              <div className="coach-chat-state">
+                <div className="coach-msgs">
                   {messages.map((m, i) => (
                     <div key={i} className="coach-msg-row">
                       {m.role === 'assistant' ? (
@@ -837,89 +1258,84 @@ export default function CoachPage() {
                       </div>
                     </div>
                   )}
-                </>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-          </div>
+                  <div ref={messagesEndRef} />
+                </div>
 
-          {isPro && rateLimited ? (
-            <div style={{ padding: '24px 20px', borderTop: '1px solid var(--border)', textAlign: 'center' }}>
-              <div style={{ maxWidth: 420, margin: '0 auto' }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 6, fontFamily: "'Instrument Serif', serif" }}>You've hit your limit for this session</div>
-                <div style={{ fontSize: 13, color: 'var(--text-3)', lineHeight: 1.6 }}>
-                  Your usage resets <strong style={{ color: 'var(--text)' }}>{formatResetTime()}</strong>. You'll be able to continue your conversation then.
-                </div>
-                <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 14 }}>
-                  Keep prepping: <a href="/flashcards" style={{ color: 'var(--text)', fontWeight: 700, textDecoration: 'underline' }}>Flashcards</a> · <a href="/concept-drills" style={{ color: 'var(--text)', fontWeight: 700, textDecoration: 'underline' }}>Concept Drills</a> · <a href="/diagnostic-review" style={{ color: 'var(--text)', fontWeight: 700, textDecoration: 'underline' }}>Diagnostic Review</a>
-                  {typeof window !== 'undefined' && localStorage.getItem('offerbell_plan') !== 'elite' && <> · <a href="/checkout" style={{ color: '#2563eb', fontWeight: 700, textDecoration: 'underline' }}>Upgrade to Elite</a> for higher limits</>}
-                </div>
-              </div>
-            </div>
-          ) : (
-          <div className="coach-input-area">
-            <div className="coach-input-area-inner">
-              {limitInfo && (
-                <div style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
-                  padding: '12px 16px', marginBottom: 10,
-                  background: 'var(--surface-2)', border: '1.5px solid var(--border)', borderRadius: 10,
-                  fontSize: 12.5, color: 'var(--text-2)',
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <svg width="15" height="15" fill="none" stroke="var(--text-3)" strokeWidth="1.6" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <span>
-                      <strong style={{ color: 'var(--text)' }}>Coach limit reached.</strong>{' '}
-                      Resets <strong style={{ color: 'var(--text)' }}>{getWeeklyResetDisplay().day}</strong> ({getWeeklyResetDisplay().relative}).
-                    </span>
+                {/* Bottom input area for chat state. Includes limit ribbons. */}
+                {isPro && rateLimited ? (
+                  <div className="coach-rate-limited">
+                    <div className="coach-rate-limited-title">You've hit your limit for this session</div>
+                    <div className="coach-rate-limited-sub">
+                      Your usage resets <strong>{formatResetTime()}</strong>. You'll be able to continue your conversation then.
+                    </div>
+                    <div className="coach-rate-limited-links">
+                      Keep prepping: <a href="/flashcards">Flashcards</a> · <a href="/concept-drills">Concept Drills</a> · <a href="/diagnostic-review">Diagnostic Review</a>
+                      {typeof window !== 'undefined' && localStorage.getItem('offerbell_plan') !== 'elite' && (
+                        <> · <a href="/checkout" style={{ color: '#2563eb' }}>Upgrade to Elite</a></>
+                      )}
+                    </div>
                   </div>
-                  {limitInfo.plan !== 'elite' && (
-                    <a href="/checkout" style={{
-                      padding: '6px 12px', borderRadius: 6,
-                      background: 'var(--text)', color: 'var(--surface)',
-                      fontSize: 11.5, fontWeight: 700, textDecoration: 'none',
-                      fontFamily: "'Sora', sans-serif", whiteSpace: 'nowrap',
-                    }}>Upgrade</a>
-                  )}
-                </div>
-              )}
-              {isPro && usageWarning && !rateLimited && !limitInfo && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 14px', marginBottom: 8, background: '#fef3c7', border: '1px solid #fde68a', borderRadius: 8, fontSize: 12, color: '#92400e' }}>
-                  <svg width="14" height="14" fill="none" stroke="#d97706" strokeWidth="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                  <span>You've used about <strong>{usagePct}%</strong> of your session limit. Resets {formatResetTime()}.</span>
-                </div>
-              )}
-              {activeFeature && (
-                <div className="coach-context-label">Context: {activeTrack} - {activeFeature}</div>
-              )}
-              <div className="coach-input-box">
-                <input type="file" ref={fileInputRef} accept=".txt,.pdf" onChange={handleResumeUpload} style={{ display: 'none' }} />
-                {isResumeFeature && (
-                <button className="coach-upload-btn" onClick={() => fileInputRef.current?.click()} type="button" title="Upload resume (PDF or TXT)" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-3)', padding: '6px', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                </button>
+                ) : (
+                  <div className="coach-bottom-input">
+                    {limitInfo && (
+                      <div className="coach-limit-ribbon">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span><strong>Coach limit reached.</strong> Resets <strong>{getWeeklyResetDisplay().day}</strong> ({getWeeklyResetDisplay().relative}).</span>
+                        {limitInfo.plan !== 'elite' && (
+                          <a href="/checkout" className="coach-limit-upgrade">Upgrade</a>
+                        )}
+                      </div>
+                    )}
+                    {isPro && usageWarning && !rateLimited && !limitInfo && (
+                      <div className="coach-usage-warn">
+                        <svg width="14" height="14" fill="none" stroke="#d97706" strokeWidth="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        <span>You've used about <strong>{usagePct}%</strong> of your session limit. Resets {formatResetTime()}.</span>
+                      </div>
+                    )}
+
+                    <div className="coach-input-card">
+                      <textarea
+                        ref={textareaRef}
+                        className="coach-input"
+                        placeholder={limitInfo ? `Limit reached. Resets ${getWeeklyResetDisplay().day}.` : 'Type your message...'}
+                        rows={1}
+                        value={inputVal}
+                        onChange={e => { setInputVal(e.target.value); autoResize(e.target); }}
+                        onKeyDown={handleKey}
+                        disabled={!!limitInfo}
+                      />
+                      <div className="coach-input-actions">
+                        <input type="file" ref={fileInputRef} accept=".txt,.pdf" onChange={handleResumeUpload} style={{ display: 'none' }} />
+                        <button
+                          type="button"
+                          className="coach-input-clip"
+                          onClick={() => fileInputRef.current?.click()}
+                          title="Upload resume (PDF or TXT)"
+                        >
+                          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                        </button>
+                        <button
+                          type="button"
+                          className="coach-send-btn"
+                          onClick={() => sendMessage(inputVal)}
+                          disabled={isLoading || !inputVal.trim() || !!limitInfo}
+                        >
+                          {isLoading ? (
+                            <div className="coach-spinner" />
+                          ) : (
+                            <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 )}
-                <textarea
-                  ref={textareaRef}
-                  className="coach-chat-input"
-                  placeholder={limitInfo ? `Limit reached. Resets ${getWeeklyResetDisplay().day}.` : "Type your strategic response..."}
-                  rows={1}
-                  value={inputVal}
-                  onChange={e => { setInputVal(e.target.value); autoResize(e.target); }}
-                  onKeyDown={handleKey}
-                  disabled={!!limitInfo}
-                  style={limitInfo ? { opacity: 0.4, cursor: 'not-allowed' } : undefined}
-                />
-                <button className="coach-send-btn" onClick={() => sendMessage(inputVal)} disabled={isLoading || !inputVal.trim() || !!limitInfo} type="button">
-                  {isLoading ? <div className="coach-spinner" /> : <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                </button>
               </div>
-              <div className="coach-input-footer">{isResumeFeature ? 'Upload your resume with the clip icon, or paste the text directly.' : 'Ask anything about your recruiting process.'}</div>
-            </div>
+            )}
           </div>
-          )}
         </div>
-      </div>
+      </main>
+
 
       {/* Usage limit overlay (all plans). Server-driven via limitInfo. */}
       {showLimitOverlay && limitInfo && (() => {
