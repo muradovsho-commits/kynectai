@@ -305,6 +305,11 @@ function ConceptDrillsInner() {
       const key = `offerbell_flash_perf_${selectedTrackKey}`;
       const raw = localStorage.getItem(key);
       const p = raw ? JSON.parse(raw) : { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
+      // Defensive: stale localStorage from older app versions might be
+      // missing byCat. Without this guard the byCat write below throws,
+      // gets swallowed by the outer try/catch, and stats silently fail to
+      // update while history still writes.
+      if (!p.byCat || typeof p.byCat !== 'object') p.byCat = {};
       p.seen = (p.seen || 0) + 1;
       if (ok) p.pass = (p.pass || 0) + 1;
       else p.fail = (p.fail || 0) + 1;
@@ -346,6 +351,7 @@ function ConceptDrillsInner() {
       const key = `offerbell_flash_perf_${selectedTrackKey}`;
       const raw = localStorage.getItem(key);
       const p = raw ? JSON.parse(raw) : { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
+      if (!p.byCat || typeof p.byCat !== 'object') p.byCat = {};
       p.seen = (p.seen || 0) + 1;
       p.fail = (p.fail || 0) + 1;
       const cat = q.topic;
