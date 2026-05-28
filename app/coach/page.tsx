@@ -143,54 +143,54 @@ type CategoryDef = { name: string; questions: string[] };
 const TRACK_CATEGORIES: Record<string, CategoryDef[]> = {
   'Investment Banking': [
     { name: 'Technical', questions: [
-      'Walk me through a DCF',
-      "What's the difference between enterprise value and equity value?",
-      'Explain how $10 in depreciation flows through the 3 statements',
-      'Ask me a medium-difficulty accretion/dilution merger model question',
+      'Run me through a full DCF, step by step',
+      'EV vs equity value - explain the bridge',
+      'How does $10 of D&A flow through all 3 statements?',
+      'Quiz me on an accretion/dilution scenario',
     ]},
     { name: 'Behavioral', questions: [
-      'Why investment banking?',
-      'Why this firm?',
-      'Tell me about yourself',
-      "What's your biggest weakness?",
+      "Help me answer 'why banking' authentically",
+      'Why would I pick one bank over another?',
+      "Workshop my 'tell me about yourself'",
+      'How should I frame a weakness without sounding fake?',
     ]},
     { name: 'Networking', questions: [
-      'How do I cold email an MD?',
-      'What questions should I ask on a coffee chat?',
-      'How do I follow up after a networking call?',
-      'How can I get a referral?',
+      'Draft a cold outreach to an MD',
+      'Best questions to ask in a coffee chat',
+      'What does a strong follow-up look like?',
+      'How do I actually ask for a referral?',
     ]},
     { name: 'Deals', questions: [
-      'Walk me through a recent M&A deal',
-      'How do I answer "walk me through a deal" in an IB interview?',
-      'Explain how an IPO works',
-      'What are common follow-up questions after walking through a deal?',
+      'Pick a recent M&A deal and break it down for me',
+      'How do I structure a "walk me through a deal" answer?',
+      'IPO mechanics in plain English',
+      'What follow-ups should I expect after pitching a deal?',
     ]},
   ],
   'Private Equity': [
     { name: 'LBO Modeling', questions: [
-      'Walk me through a paper LBO',
-      'What drives returns in an LBO?',
-      'Ask me a quick LBO mental math question',
-      'Explain a dividend recap',
+      'Run me through a paper LBO out loud',
+      'What actually drives LBO returns?',
+      'Hit me with a quick LBO mental math rep',
+      'Walk me through how a dividend recap works',
     ]},
     { name: 'Behavioral', questions: [
-      'Why private equity?',
-      'Why this fund?',
-      'What deals do you find interesting and why?',
-      'How do you think about value creation post-close?',
+      "Why PE over staying in banking?",
+      'How do I tailor "why this fund" to a specific shop?',
+      'What deals do I find genuinely interesting and why?',
+      'How do I talk about value creation thoughtfully?',
     ]},
     { name: 'Case Study', questions: [
-      'Give me a sample PE case study',
-      'How would you diligence this company?',
-      'What multiple would you pay and why?',
-      'Walk me through your investment thesis structure',
+      'Drop me a sample PE case to work through',
+      'Walk me through how to diligence a target',
+      'How do I justify the multiple I would pay?',
+      'Structure of a clean investment thesis',
     ]},
     { name: 'Networking', questions: [
-      'How do I cold email a PE associate?',
-      'Cold email an MM PE professional',
-      'What should I ask in a PE coffee chat?',
-      'How do I prep for on-cycle recruiting?',
+      'Draft me a cold email to a PE associate',
+      'Cold outreach for middle-market PE',
+      'Best coffee chat questions for a PE associate',
+      'How to start prepping for on-cycle',
     ]},
   ],
   'Consulting': [
@@ -1249,7 +1249,7 @@ export default function CoachPage() {
                 </div>
                 <h1 className="coach-hero-title">OfferBell <em>Coach Suite</em></h1>
                 <p className="coach-hero-sub">
-                  Sharpen your <span className="coach-hero-track">{activeTrack.toLowerCase()}</span> technicals, interviews, and outreach with one personalized workspace.
+                  Your private coach for <span className="coach-hero-track">{activeTrack.toLowerCase()}</span> recruiting. Drill technicals, prep stories, refine outreach - all in one place.
                 </p>
 
                 {/* Input box (limit warnings inline above) */}
