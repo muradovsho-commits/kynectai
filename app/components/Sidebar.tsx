@@ -544,7 +544,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
           white-space: nowrap;
         }
         .ob-side.collapsed .ob-side-brand-text { display: none; }
-        .ob-side.collapsed .ob-side-brand { gap: 0; }
+        .ob-side.collapsed .ob-side-brand { display: none; }
         .ob-side.collapsed .ob-side-head { justify-content: center; }
         .ob-side-collapse {
           background: transparent; border: none; color: #f4f5f8;
@@ -556,7 +556,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
           transition: background 0.12s;
         }
         .ob-side-collapse:hover { background: rgba(255,255,255,0.06); }
-        .ob-side.collapsed .ob-side-collapse { display: none; }
+        .ob-side.collapsed .ob-side-collapse { margin: 0 auto; }
 
         /* Nav */
         .ob-side-nav {
