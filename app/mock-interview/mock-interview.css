@@ -45,13 +45,15 @@ html[data-theme="dark"] .mi-app {
 }
 
 .mi-page {
+  flex: 1;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 0;
   max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   overflow: hidden;
-  padding: 56px 64px;
+  padding: 48px 56px;
   min-height: calc(100vh - 48px);
 }
 
