@@ -106,22 +106,6 @@ const ROLE_TO_TRACK: Record<string, string> = {
   'Restructuring': 'rx',
 };
 
-// Career-aware interview stage options. Each track has its own progression
-// because IB superdays, consulting case rounds, AM stock pitches, and S&T
-// markets rounds are all distinct concepts.
-const STAGES_BY_TRACK: Record<string, string[]> = {
-  ib:         ['HireVue', 'First Round', 'Superday', 'Final Round'],
-  pe:         ['HireVue', 'First Round (Behavioral)', 'LBO Modeling Test', 'Case Study', 'Partner Round', 'Final Round'],
-  rx:         ['HireVue', 'First Round', 'Case Study', 'Superday'],
-  consulting: ['Behavioral Round', 'First Case Round', 'Second Case Round', 'Partner Round'],
-  accounting: ['Phone Screen', 'First Round', 'Office Visit', 'Partner Round'],
-  am:         ['Phone Screen', 'Stock Pitch Round', 'First Round', 'Final Round'],
-  st:         ['HireVue', 'Markets Round', 'Mental Math / Brain Teasers', 'Final Round'],
-  er:         ['Phone Screen', 'Stock Pitch', 'Modeling Test', 'Final Round'],
-  re:         ['Phone Screen', 'Modeling Test', 'First Round', 'Final Round'],
-  vc:         ['Phone Screen', 'Deal Memo Review', 'Case Study', 'Partner Meeting'],
-};
-
 const QUESTIONS_PER_INTERVIEW = 10;
 const RECORDING_LIMIT_SEC = 60;
 
@@ -245,8 +229,16 @@ export default function MockInterviewPage() {
         const p = JSON.parse(raw);
         const role = Array.isArray(p?.targetRoles) ? p.targetRoles[0] : null;
         if (role && ROLE_TO_TRACK[role]) {
-          setSidebarTrackId(ROLE_TO_TRACK[role]);
-          setSetupConfig(c => ({ ...c, trackId: ROLE_TO_TRACK[role] }));
+          const newId = ROLE_TO_TRACK[role];
+          setSidebarTrackId(newId);
+          setSetupConfig(c => ({ ...c, trackId: newId }));
+          // If user is currently in single-mode track picker, swap to the new track
+          // so the page mirrors the sidebar exactly.
+          setActiveTrack(curr => {
+            if (!curr) return curr;
+            const next = TRACKS.find(t => t.id === newId);
+            return next || curr;
+          });
         }
       } catch {}
     };
@@ -695,7 +687,7 @@ export default function MockInterviewPage() {
 
   function startInterview() {
     const track = TRACKS.find(t => t.id === setupConfig.trackId);
-    if (!track || !setupConfig.type || !setupConfig.stage) return;
+    if (!track || !setupConfig.type) return;
     const qs = selectInterviewQuestions(track, setupConfig.type as InterviewType, QUESTIONS_PER_INTERVIEW);
     if (qs.length === 0) { alert('No questions available for this track.'); return; }
     setInterviewQuestions(qs);
@@ -878,12 +870,18 @@ export default function MockInterviewPage() {
             </div>
             <div className="mi-mode-body">
               <div className="mi-mode-title">Start a full interview</div>
-              <div className="mi-mode-sub">A simulated 10-question interview. Pick the stage and type, then run through it like the real thing.</div>
+              <div className="mi-mode-sub">A simulated 10-question interview. Pick the type, then run through it like the real thing.</div>
             </div>
             <div className="mi-mode-arrow">→</div>
           </button>
 
-          <button type="button" className="mi-mode" onClick={() => { setView('single'); setActiveTrack(null); }}>
+          <button type="button" className="mi-mode" onClick={() => {
+            const t = TRACKS.find(t => t.id === sidebarTrackId) || TRACKS[0];
+            setActiveTrack(t);
+            setExpandedCats(new Set());
+            setActiveQuestion(null);
+            setView('single');
+          }}>
             <div className="mi-mode-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.5-2.5 2-2.5 4M12 17.5h.01"/></svg>
             </div>
@@ -908,8 +906,6 @@ export default function MockInterviewPage() {
                     <div className="mi-session-co">{s.config.company || s.trackTitle}</div>
                     <div className="mi-session-meta">
                       <span>{s.config.type}</span>
-                      <span className="mi-dot" />
-                      <span>{s.config.stage || 'Round'}</span>
                       <span className="mi-dot" />
                       <span>{s.questions.length} questions</span>
                       <span className="mi-dot" />
@@ -946,8 +942,7 @@ export default function MockInterviewPage() {
 
   // ── SETUP MODAL (overlays hub) ─────────────────────────────
   function renderSetupModal() {
-    const canStart = setupConfig.stage && setupConfig.type && setupConfig.trackId;
-    const stageOptions = STAGES_BY_TRACK[setupConfig.trackId] || STAGES_BY_TRACK['ib'];
+    const canStart = setupConfig.type && setupConfig.trackId;
     const trackTitle = TRACKS.find(t => t.id === setupConfig.trackId)?.title || '';
     return (
       <>
@@ -981,17 +976,6 @@ export default function MockInterviewPage() {
                   value={setupConfig.location}
                   onChange={(e) => setSetupConfig({ ...setupConfig, location: e.target.value })}
                 />
-              </div>
-
-              <div className="mi-field">
-                <label>Interview stage *</label>
-                <select
-                  value={setupConfig.stage}
-                  onChange={(e) => setSetupConfig({ ...setupConfig, stage: e.target.value })}
-                >
-                  <option value="">Select interview stage</option>
-                  {stageOptions.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
               </div>
 
               <div className="mi-field">
@@ -1031,7 +1015,6 @@ export default function MockInterviewPage() {
         <div className="mi-iv-bar">
           <div className="mi-iv-bar-left">
             <span className="mi-iv-qno">Question {currentQIdx + 1}/{total}</span>
-            <span className="mi-iv-stage">{setupConfig.stage}</span>
           </div>
           <button type="button" className="mi-iv-exit" onClick={exitInterview}>Exit interview</button>
         </div>
@@ -1169,47 +1152,24 @@ export default function MockInterviewPage() {
   }
 
   // ── SINGLE MODE (preserved flow, redesigned wrapper) ───────
+  // No track picker any more. activeTrack is auto-set from the sidebar industry
+  // when the user enters single-mode (same pattern as flashcards and drills).
   function renderSingle() {
-    if (!activeTrack) return renderSingleTrackPicker();
+    if (!activeTrack) return null; // shouldn't happen — set on entry
     if (!activeQuestion) return renderSingleQuestionPicker();
     return renderSingleRecording();
-  }
-
-  function renderSingleTrackPicker() {
-    return (
-      <div className="mi-single">
-        <button type="button" className="mi-back" onClick={() => setView('hub')}>
-          <span className="mi-back-arrow">←</span> Back to hub
-        </button>
-        <h1 className="mi-page-title">Single <em>Question</em></h1>
-        <div className="mi-page-sub">Pick a career track to drill, then choose a specific question.</div>
-
-        <div className="mi-track-grid">
-          {TRACKS.map(t => {
-            const trackResponses = allResponses.filter(r => r.questionId.startsWith(`${t.id}::`));
-            return (
-              <button key={t.id} type="button" className="mi-track-card" onClick={() => { setActiveTrack(t); setExpandedCats(new Set()); }}>
-                <div className="mi-track-card-name">{t.title}</div>
-                <div className="mi-track-card-meta">
-                  <span>{t.cards.length} questions</span>
-                  {trackResponses.length > 0 && <><span className="mi-dot" /><span>{trackResponses.length} attempted</span></>}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    );
   }
 
   function renderSingleQuestionPicker() {
     return (
       <div className="mi-single">
-        <button type="button" className="mi-back" onClick={() => setActiveTrack(null)}>
-          <span className="mi-back-arrow">←</span> All tracks
+        <button type="button" className="mi-back" onClick={() => setView('hub')}>
+          <span className="mi-back-arrow">&larr;</span> Back to hub
         </button>
-        <h1 className="mi-page-title">{activeTrack!.title}</h1>
-        <div className="mi-page-sub">{activeTrack!.cards.length} questions across {categories.length} topics. Pick one to record.</div>
+        <h1 className="mi-page-title">Single <em>Question</em></h1>
+        <div className="mi-page-sub">
+          {activeTrack!.title} &middot; {activeTrack!.cards.length} questions across {categories.length} topics. Pick one to record.
+        </div>
 
         <div className="mi-cat-list">
           {categories.map(cat => {
@@ -1227,7 +1187,7 @@ export default function MockInterviewPage() {
                 >
                   <span className="mi-cat-name">{cat.name}</span>
                   <span className="mi-cat-meta">{cat.cards.length} questions</span>
-                  <span className="mi-cat-chev">{expanded ? '−' : '+'}</span>
+                  <span className="mi-cat-chev">{expanded ? '-' : '+'}</span>
                 </button>
                 {expanded && (
                   <div className="mi-cat-body">
@@ -1247,7 +1207,7 @@ export default function MockInterviewPage() {
                           <div className="mi-q-row-text">{card.q}</div>
                           <div className="mi-q-row-meta">
                             {bestG && <span className={`mi-grade mi-grade--${bestG.toLowerCase()}`}>{bestG}</span>}
-                            <span className="mi-arrow-r">→</span>
+                            <span className="mi-arrow-r">&rarr;</span>
                           </div>
                         </button>
                       );
@@ -1271,7 +1231,7 @@ export default function MockInterviewPage() {
     return (
       <div className="mi-single">
         <button type="button" className="mi-back" onClick={() => { setActiveQuestion(null); if (isRecording) stopRecording(); }}>
-          <span className="mi-back-arrow">←</span> Back to {activeTrack!.title}
+          <span className="mi-back-arrow">&larr;</span> Back to questions
         </button>
 
         <div className="mi-single-q-card">
