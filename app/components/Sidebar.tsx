@@ -11,6 +11,27 @@ interface SidebarProps {
   activePage: string;
 }
 
+// Full vertical list from onboarding (app/onboarding/page.tsx VERTICALS).
+const VERTICALS = [
+  'Investment Banking',
+  'Private Equity',
+  'Hedge Fund',
+  'Venture Capital',
+  'Growth Equity',
+  'Sales & Trading',
+  'Equity Research',
+  'Asset Management',
+  'Consulting',
+  'Accounting / Audit / Tax',
+  'Corporate Finance / FP&A',
+  'Corporate Development',
+  'Real Estate',
+  'Credit / Debt',
+  'Restructuring',
+  'Family Office',
+  'Endowment / Pension',
+];
+
 // Map onboarding VERTICALS (from app/onboarding/page.tsx) to short pill labels.
 // If the user picks a vertical not listed here, falls back to first 3 chars.
 const INDUSTRY_PILL: Record<string, string> = {
@@ -73,6 +94,18 @@ export default function Sidebar({ activePage }: SidebarProps) {
     return 'IB';
   });
 
+  const [currentVertical, setCurrentVertical] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    try {
+      const raw = localStorage.getItem('offerbell_onboarding_profile');
+      if (raw) {
+        const p = JSON.parse(raw);
+        return (Array.isArray(p.targetRoles) && p.targetRoles[0]) || '';
+      }
+    } catch {}
+    return '';
+  });
+
   // Plan from Convex-backed hook. Source of truth, side-effects to localStorage.
   // Same one-time-fetch pattern as original Sidebar - no live blob subscription.
   const userPlan = useUserPlan();
@@ -90,7 +123,12 @@ export default function Sidebar({ activePage }: SidebarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  const [industryMenuOpen, setIndustryMenuOpen] = useState(false);
+  const industryMenuRef = useRef<HTMLDivElement>(null);
+
   // Refresh username/industry on storage changes (e.g. user edits profile elsewhere)
+  // Plus a custom 'offerbell-profile-changed' event since same-window localStorage
+  // updates don't trigger storage events (browsers only fire those for OTHER tabs).
   useEffect(() => {
     const refresh = () => {
       try {
@@ -100,6 +138,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
           setUserName({ first: p.firstName || '', last: p.lastName || '', email: p.email || '' });
           const target = Array.isArray(p.targetRoles) && p.targetRoles.length > 0 ? p.targetRoles[0] : '';
           setIndustryPill(abbreviateIndustry(target));
+          setCurrentVertical(target);
         }
       } catch {}
     };
@@ -107,16 +146,18 @@ export default function Sidebar({ activePage }: SidebarProps) {
       if (e.key === 'offerbell_onboarding_profile') refresh();
     };
     window.addEventListener('storage', onStorage);
+    window.addEventListener('offerbell-profile-changed', refresh);
     const onVisible = () => { if (document.visibilityState === 'visible') refresh(); };
     document.addEventListener('visibilitychange', onVisible);
     return () => {
       window.removeEventListener('storage', onStorage);
+      window.removeEventListener('offerbell-profile-changed', refresh);
       document.removeEventListener('visibilitychange', onVisible);
     };
   }, []);
 
   // Close mobile sidebar on route change.
-  useEffect(() => { setMobileOpen(false); setMenuOpen(false); }, [pathname]);
+  useEffect(() => { setMobileOpen(false); setMenuOpen(false); setIndustryMenuOpen(false); }, [pathname]);
 
   // Click-outside close for profile menu.
   useEffect(() => {
@@ -129,6 +170,34 @@ export default function Sidebar({ activePage }: SidebarProps) {
     document.addEventListener('mousedown', onClick);
     return () => document.removeEventListener('mousedown', onClick);
   }, [menuOpen]);
+
+  // Click-outside close for industry menu.
+  useEffect(() => {
+    if (!industryMenuOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (industryMenuRef.current && !industryMenuRef.current.contains(e.target as Node)) {
+        setIndustryMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
+  }, [industryMenuOpen]);
+
+  function selectVertical(v: string): void {
+    try {
+      const raw = localStorage.getItem('offerbell_onboarding_profile');
+      const p = raw ? JSON.parse(raw) : {};
+      // Put selected vertical first; keep up to 2 others as secondary targets.
+      const others = Array.isArray(p.targetRoles) ? p.targetRoles.filter((r: string) => r !== v).slice(0, 2) : [];
+      const updated = { ...p, targetRoles: [v, ...others] };
+      localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(updated));
+      setIndustryPill(abbreviateIndustry(v));
+      setCurrentVertical(v);
+      setIndustryMenuOpen(false);
+      // Notify other components in this same window (storage events only fire cross-tab).
+      window.dispatchEvent(new CustomEvent('offerbell-profile-changed'));
+    } catch {}
+  }
 
   // Body scroll lock when mobile menu open.
   useEffect(() => {
@@ -322,12 +391,33 @@ export default function Sidebar({ activePage }: SidebarProps) {
           </div>
         </nav>
 
-        {/* Industry pill in footer (above profile) */}
-        <div className="ob-side-foot">
-          <Link href="/my-account" className="ob-industry-row" title="Change in account settings">
+        {/* Industry pill in footer with dropdown to switch career */}
+        <div className="ob-side-foot" ref={industryMenuRef}>
+          {industryMenuOpen && (
+            <div className="ob-industry-menu">
+              <div className="ob-industry-menu-head">Switch industry</div>
+              {VERTICALS.map(v => (
+                <button
+                  key={v}
+                  type="button"
+                  className={`ob-industry-menu-item${v === currentVertical ? ' active' : ''}`}
+                  onClick={() => selectVertical(v)}
+                >
+                  <span className="ob-industry-menu-pill">{abbreviateIndustry(v)}</span>
+                  <span className="ob-industry-menu-label">{v}</span>
+                </button>
+              ))}
+            </div>
+          )}
+          <button
+            type="button"
+            className={`ob-industry-row${industryMenuOpen ? ' open' : ''}`}
+            onClick={() => setIndustryMenuOpen(o => !o)}
+            title="Click to switch industry"
+          >
             <span className="ob-industry-lbl">Industry</span>
             <span className="ob-industry-pill">{industryPill}</span>
-          </Link>
+          </button>
         </div>
 
         {/* Profile section with dropdown */}
@@ -514,11 +604,12 @@ export default function Sidebar({ activePage }: SidebarProps) {
         .ob-side.collapsed .ob-side-item { justify-content: center; padding: 7px 0; margin: 0 8px; }
         .ob-side.collapsed .ob-side-item span { display: none; }
 
-        /* Foot: industry pill */
+        /* Foot: industry pill (with dropdown to switch career) */
         .ob-side-foot {
           padding: 4px 16px 8px;
           flex-shrink: 0;
           border-top: 0.5px solid rgba(255,255,255,0.05);
+          position: relative;
         }
         .ob-industry-row {
           display: flex; align-items: center; justify-content: space-between;
@@ -526,10 +617,16 @@ export default function Sidebar({ activePage }: SidebarProps) {
           padding: 6px 12px;
           border-radius: 8px;
           gap: 10px;
-          text-decoration: none;
+          width: 100%;
+          border: none;
+          color: #f4f5f8;
+          text-align: left;
+          cursor: pointer;
+          font-family: inherit;
           transition: background 0.12s;
         }
         .ob-industry-row:hover { background: rgba(255,255,255,0.10); }
+        .ob-industry-row.open { background: rgba(255,255,255,0.10); }
         .ob-industry-lbl { font-size: 12px; color: #f4f5f8; }
         .ob-industry-pill {
           background: #3b82f6; color: #fff;
@@ -538,8 +635,65 @@ export default function Sidebar({ activePage }: SidebarProps) {
           border-radius: 999px;
           min-width: 28px; text-align: center;
         }
-        .ob-side.collapsed .ob-industry-row { justify-content: center; padding: 6px 0; }
-        .ob-side.collapsed .ob-industry-lbl { display: none; }
+        /* When collapsed, hide the entire foot to keep the sidebar clean */
+        .ob-side.collapsed .ob-side-foot { display: none; }
+
+        /* Industry switch menu */
+        .ob-industry-menu {
+          position: absolute;
+          bottom: calc(100% + 4px);
+          left: 16px; right: 16px;
+          background: #1f2024;
+          border: 1px solid rgba(255,255,255,0.08);
+          border-radius: 10px;
+          padding: 5px;
+          box-shadow: 0 12px 32px rgba(0,0,0,0.45);
+          max-height: 380px;
+          overflow-y: auto;
+          z-index: 60;
+        }
+        .ob-industry-menu::-webkit-scrollbar { width: 6px; }
+        .ob-industry-menu::-webkit-scrollbar-thumb {
+          background: rgba(255,255,255,0.1);
+          border-radius: 3px;
+        }
+        .ob-industry-menu-head {
+          padding: 6px 10px 4px;
+          font-size: 10px; font-weight: 500;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: rgba(244,245,248,0.5);
+        }
+        .ob-industry-menu-item {
+          display: flex; align-items: center; gap: 10px;
+          width: 100%; text-align: left;
+          background: transparent; border: none;
+          padding: 7px 10px;
+          border-radius: 6px;
+          color: #f4f5f8;
+          font-size: 12.5px; font-weight: 400;
+          cursor: pointer;
+          font-family: inherit;
+          transition: background 0.12s;
+        }
+        .ob-industry-menu-item:hover { background: rgba(255,255,255,0.08); }
+        .ob-industry-menu-item.active { background: rgba(59,130,246,0.18); }
+        .ob-industry-menu-pill {
+          background: rgba(255,255,255,0.08);
+          color: #f4f5f8;
+          border-radius: 999px;
+          padding: 2px 8px;
+          font-size: 10.5px; font-weight: 600;
+          min-width: 38px; text-align: center;
+          flex-shrink: 0;
+        }
+        .ob-industry-menu-item.active .ob-industry-menu-pill {
+          background: #3b82f6; color: #fff;
+        }
+        .ob-industry-menu-label {
+          flex: 1; min-width: 0;
+          overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
 
         /* Profile section */
         .ob-profile-section {
