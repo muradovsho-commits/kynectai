@@ -66,7 +66,7 @@ body {
   flex: 1;
   min-width: 0;
   margin-left: var(--sidebar-w, 230px);
-  padding: 14px 18px 14px 0;
+  padding: 14px 18px 14px 14px;
   background: var(--frame);
   min-height: 100vh;
   box-sizing: border-box;
@@ -83,7 +83,7 @@ body {
   box-shadow: 0 -4px 24px rgba(0,0,0,0.08), 0 -2px 8px rgba(0,0,0,0.04);
   max-width: 1400px;
   width: 100%;
-  margin: 0 auto;
+  margin: 0;
   overflow: hidden;
   transition: background 0.2s;
 }
