@@ -22,14 +22,14 @@
 }
 html[data-theme="dark"] .coach-app {
   --bg: #111110;
-  --surface: #1c1d20;
-  --surface-2: #24252a;
-  --surface-3: #2a2b30;
-  --border: #2a2b30;
-  --border-2: #34353a;
-  --text: #f4f5f8;
-  --text-2: #b4b5b9;
-  --text-3: #8a8b8f;
+  --surface: #1a1a19;
+  --surface-2: #222221;
+  --surface-3: #2a2a29;
+  --border: #2a2a29;
+  --border-2: #353534;
+  --text: #f0efed;
+  --text-2: #a8a6a3;
+  --text-3: #6b6a67;
   --frame: #151618;
   --accent: #60a5fa;
   --accent-soft: #1e3a5f;

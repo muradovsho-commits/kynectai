@@ -22,14 +22,14 @@
   font-family: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 html[data-theme="dark"] .mi-app {
-  --bg: #18181b;
-  --surface: #1c1c1f;
-  --surface-2: #232327;
-  --border: #2a2a2e;
-  --border-strong: #3a3a3e;
-  --text: #fafafa;
-  --text-2: #a1a1aa;
-  --text-3: #71717a;
+  --bg: #111110;
+  --surface: #1a1a19;
+  --surface-2: #222221;
+  --border: #2a2a29;
+  --border-strong: #3a3a39;
+  --text: #f0efed;
+  --text-2: #a8a6a3;
+  --text-3: #6b6a67;
   --frame: #0a0a0b;
   --accent: #3b82f6;
   --accent-soft: #1e293b;
@@ -65,7 +65,7 @@ html[data-theme="dark"] .mi-app {
 ─────────────────────────────────────────────────────────────── */
 .mi-page-title {
   font-family: 'Instrument Serif', 'Times New Roman', serif;
-  font-size: 56px;
+  font-size: 36px;
   font-weight: 400;
   letter-spacing: -1px;
   line-height: 1.05;
@@ -131,7 +131,7 @@ html[data-theme="dark"] .mi-app {
 }
 .mi-stat-num {
   font-family: 'Instrument Serif', serif;
-  font-size: 44px;
+  font-size: 32px;
   font-weight: 400;
   color: var(--text);
   line-height: 1;
@@ -1090,7 +1090,7 @@ html[data-theme="dark"] .mi-q-card-fb { background: rgba(22, 163, 74, 0.15); }
 @media (max-width: 720px) {
   .mi-hub-head { flex-direction: column; align-items: stretch; }
   .mi-start-btn { width: 100%; }
-  .mi-page-title { font-size: 42px; }
+  .mi-page-title { font-size: 28px; }
   .mi-stats-grid--3 { grid-template-columns: 1fr; }
   .mi-results-cta { flex-direction: column; }
   .mi-iv-actions { flex-direction: column; }

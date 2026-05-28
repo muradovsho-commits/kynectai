@@ -23,14 +23,14 @@
 }
 html[data-theme="dark"] .cd-app {
   --bg: #111110;
-  --surface: #1c1d20;
-  --surface-2: #24252a;
-  --border: #2a2b30;
-  --border-2: #34353a;
-  --border-strong: #3a3b40;
-  --text: #f4f5f8;
-  --text-2: #b4b5b9;
-  --text-3: #8a8b8f;
+  --surface: #1a1a19;
+  --surface-2: #222221;
+  --border: #2a2a29;
+  --border-2: #353534;
+  --border-strong: #3a3a39;
+  --text: #f0efed;
+  --text-2: #a8a6a3;
+  --text-3: #6b6a67;
   --frame: #151618;
   --accent: #3b82f6;
 }
@@ -77,7 +77,7 @@ html[data-theme="dark"] .cd-app {
 }
 .cd-page-title {
   font-family: 'Instrument Serif', 'Times New Roman', serif;
-  font-size: 56px;
+  font-size: 36px;
   font-weight: 400;
   letter-spacing: -1px;
   line-height: 1.05;
@@ -163,11 +163,12 @@ html[data-theme="dark"] .cd-app {
   margin-bottom: 8px;
 }
 .cd-stat-num {
-  font-size: 28px;
-  font-weight: 500;
+  font-family: 'Instrument Serif', 'Times New Roman', serif;
+  font-size: 32px;
+  font-weight: 400;
   color: var(--text);
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+  letter-spacing: -0.5px;
+  line-height: 1;
 }
 .cd-stat-sub {
   font-size: 12px;
