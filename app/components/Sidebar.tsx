@@ -437,8 +437,29 @@ export default function Sidebar({ activePage }: SidebarProps) {
             onClick={() => setIndustryMenuOpen(o => !o)}
             title="Click to switch industry"
           >
-            <span className="ob-industry-lbl">Industry</span>
+            <div className="ob-industry-text">
+              <span className="ob-industry-eyebrow">Industry</span>
+              <span className="ob-industry-name">{currentVertical}</span>
+            </div>
             <span className="ob-industry-pill">{industryPill}</span>
+          </button>
+
+          {/* Dark mode toggle - lives right next to Industry */}
+          <button
+            type="button"
+            className="ob-dark-row"
+            onClick={(e) => { e.preventDefault(); toggleTheme(); }}
+            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            <span className="ob-dark-icon">
+              {isDark ? (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/></svg>
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              )}
+            </span>
+            <span className="ob-dark-lbl">Dark mode</span>
+            <span className={`ob-dark-switch${isDark ? ' on' : ''}`}><span className="ob-dark-switch-knob" /></span>
           </button>
         </div>
 
@@ -456,29 +477,15 @@ export default function Sidebar({ activePage }: SidebarProps) {
                 <div className="ob-pm-email">{userName.email || 'No email on file'}</div>
               </div>
               {userPlan !== 'elite' && (
-                <Link className="ob-pm-item ob-pm-item-accent" href="/checkout">
+                <Link className="ob-pm-item ob-pm-item-accent" href="/my-account">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  Upgrade to Elite
+                  Manage plan
                 </Link>
               )}
               <Link className="ob-pm-item" href="/my-account">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3 1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8 1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
                 Settings
               </Link>
-              <button
-                className="ob-pm-item ob-pm-item-toggle"
-                type="button"
-                onClick={(e) => { e.preventDefault(); toggleTheme(); }}
-              >
-                {isDark ? (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                ) : (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                )}
-                Dark mode
-                <span className="ob-pm-spacer" />
-                <span className={`ob-pm-switch${isDark ? ' on' : ''}`}><span className="ob-pm-switch-knob" /></span>
-              </button>
               <Link className="ob-pm-item" href="/feedback">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                 Report a Bug
@@ -493,6 +500,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
           <button
             className={`ob-profile-trigger${menuOpen ? ' open' : ''}`}
             type="button"
+            data-plan={userPlan}
             onClick={(e) => { e.stopPropagation(); setMenuOpen(o => !o); }}
           >
             <input
@@ -514,6 +522,9 @@ export default function Sidebar({ activePage }: SidebarProps) {
               ) : displayInitials}
             </span>
             <span className="ob-pname">{displayName}</span>
+            {(userPlan === 'pro' || userPlan === 'elite') && (
+              <span className={`ob-plan-chip ob-plan-chip--${userPlan}`}>{userPlan === 'elite' ? 'Elite' : 'Pro'}</span>
+            )}
             <svg className="ob-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
         </div>
@@ -635,28 +646,76 @@ export default function Sidebar({ activePage }: SidebarProps) {
         }
         .ob-industry-row {
           display: flex; align-items: center; justify-content: space-between;
-          background: rgba(255,255,255,0.05);
-          padding: 6px 12px;
-          border-radius: 8px;
-          gap: 10px;
+          background: rgba(255,255,255,0.06);
+          border: 1px solid rgba(255,255,255,0.08);
+          padding: 10px 14px;
+          border-radius: 10px;
+          gap: 12px;
           width: 100%;
-          border: none;
           color: #f4f5f8;
           text-align: left;
           cursor: pointer;
           font-family: inherit;
-          transition: background 0.12s;
+          transition: background 0.15s, border-color 0.15s;
         }
-        .ob-industry-row:hover { background: rgba(255,255,255,0.10); }
-        .ob-industry-row.open { background: rgba(255,255,255,0.10); }
+        .ob-industry-row:hover { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.14); }
+        .ob-industry-row.open { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.18); }
+        .ob-industry-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+        .ob-industry-eyebrow {
+          font-size: 9.5px; font-weight: 700; letter-spacing: 1.2px;
+          text-transform: uppercase;
+          color: rgba(244,245,248,0.55);
+        }
+        .ob-industry-name {
+          font-size: 12.5px; font-weight: 600;
+          color: #f4f5f8;
+          overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
         .ob-industry-lbl { font-size: 12px; color: #f4f5f8; }
         .ob-industry-pill {
           background: #3b82f6; color: #fff;
-          font-size: 11px; font-weight: 500;
-          padding: 2px 8px;
+          font-size: 11px; font-weight: 600;
+          padding: 3px 9px;
           border-radius: 999px;
           min-width: 28px; text-align: center;
+          flex-shrink: 0;
         }
+
+        /* Dark mode toggle row - sits right under Industry */
+        .ob-dark-row {
+          display: flex; align-items: center;
+          gap: 10px;
+          width: 100%;
+          margin-top: 8px;
+          padding: 9px 14px;
+          background: rgba(255,255,255,0.03);
+          border: 1px solid rgba(255,255,255,0.06);
+          border-radius: 10px;
+          color: #f4f5f8;
+          font-family: inherit;
+          cursor: pointer;
+          transition: background 0.15s, border-color 0.15s;
+        }
+        .ob-dark-row:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.12); }
+        .ob-dark-icon { display: inline-flex; align-items: center; justify-content: center; color: rgba(244,245,248,0.7); flex-shrink: 0; }
+        .ob-dark-lbl { flex: 1; font-size: 12.5px; font-weight: 500; color: #f4f5f8; }
+        .ob-dark-switch {
+          width: 30px; height: 17px;
+          background: rgba(255,255,255,0.18);
+          border-radius: 999px;
+          position: relative;
+          flex-shrink: 0;
+          transition: background 0.18s;
+        }
+        .ob-dark-switch.on { background: #3b82f6; }
+        .ob-dark-switch-knob {
+          position: absolute; top: 2px; left: 2px;
+          width: 13px; height: 13px;
+          background: #fff;
+          border-radius: 50%;
+          transition: transform 0.18s;
+        }
+        .ob-dark-switch.on .ob-dark-switch-knob { transform: translateX(13px); }
         /* When collapsed, hide the entire foot to keep the sidebar clean */
         .ob-side.collapsed .ob-side-foot { display: none; }
 
@@ -735,9 +794,38 @@ export default function Sidebar({ activePage }: SidebarProps) {
           cursor: pointer;
           width: 100%;
           text-align: left;
-          transition: background 0.12s;
+          transition: background 0.12s, border-color 0.15s, box-shadow 0.15s;
         }
         .ob-profile-trigger:hover { background: rgba(255,255,255,0.08); }
+        /* Plan-colored outline: green for Pro, blue for Elite */
+        .ob-profile-trigger[data-plan="pro"] {
+          border: 1.5px solid #22c55e;
+          box-shadow: 0 0 0 1px rgba(34,197,94,0.15);
+        }
+        .ob-profile-trigger[data-plan="elite"] {
+          border: 1.5px solid #3b82f6;
+          box-shadow: 0 0 0 1px rgba(59,130,246,0.18);
+        }
+        .ob-plan-chip {
+          font-size: 9.5px; font-weight: 700;
+          letter-spacing: 0.5px;
+          text-transform: uppercase;
+          padding: 3px 8px;
+          border-radius: 999px;
+          flex-shrink: 0;
+          line-height: 1;
+        }
+        .ob-plan-chip--pro {
+          background: rgba(34,197,94,0.18);
+          color: #4ade80;
+          border: 0.5px solid rgba(34,197,94,0.35);
+        }
+        .ob-plan-chip--elite {
+          background: rgba(59,130,246,0.20);
+          color: #93c5fd;
+          border: 0.5px solid rgba(59,130,246,0.40);
+        }
+        .ob-side.collapsed .ob-plan-chip { display: none; }
         .ob-avatar {
           width: 28px; height: 28px;
           border-radius: 999px;
