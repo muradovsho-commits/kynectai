@@ -4,10 +4,19 @@
    The frame and sidebar share the same charcoal color so they read as
    one continuous canvas. Only the inner card switches color with the theme. */
 
-/* Theme variables scoped to .dash-app so other pages' CSS files (which also
-   declare :root variables) can't override them when their stylesheets
-   end up later in the cascade after navigation. The dashboard now reads
-   its theme from its own scope, isolated from the rest of the app. */
+/* Layout variables stay at :root - other pages (coach, mock-interview,
+   flashcards, etc.) all rely on --sidebar-w for their main content margin.
+   JS overrides this on documentElement when the user collapses the sidebar.
+   This var is universal and doesn't conflict with other files. */
+:root {
+  --sidebar-w: 230px;
+}
+
+/* Theme COLOR variables scoped to .dash-app so other pages' CSS files
+   (which also declare :root color variables like --surface, --bg) can't
+   override them when their stylesheets end up later in the cascade after
+   navigation. The dashboard now reads its colors from its own scope,
+   isolated from the rest of the app's CSS. */
 .dash-app {
   --bg: #fafaf9;
   --surface: #ffffff;
@@ -56,7 +65,7 @@ body {
 .dash-canvas {
   flex: 1;
   min-width: 0;
-  margin-left: var(--sidebar-w);
+  margin-left: var(--sidebar-w, 230px);
   padding: 14px 18px 14px 0;
   background: var(--frame);
   min-height: 100vh;
