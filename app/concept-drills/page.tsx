@@ -1,8 +1,6 @@
 // Build: v6-career-aware-tabs
 'use client';
 import { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
-import { useMutation } from 'convex/react';
-import { api } from '../../convex/_generated/api';
 import Sidebar from '../components/Sidebar';
 import './drills.css';
 import { TRACKS as DRILL_TRACKS, DrillQ } from './drill-data';
@@ -99,9 +97,6 @@ export default function ConceptDrills() {
 }
 
 function ConceptDrillsInner() {
-  // Records activity for streak tracking. Reused from the existing setup.
-  const saveProgressMut = useMutation((api as any).progress?.saveProgress);
-
   // ─── User identity + selected vertical ───────────────────────────────────
   const [profile, setProfile] = useState<{ first: string; vertical: string; userId: string }>({
     first: '',
@@ -291,21 +286,6 @@ function ConceptDrillsInner() {
     setWrongCount(0);
     setDrillFilter({ topic, difficulty });
     setPhase('drilling');
-
-    // Mark activity for streak tracking (mirrors what the original page did).
-    // Best-effort: failure is silent. We only need this to fire on drill start.
-    if (profile.userId && saveProgressMut) {
-      try {
-        const today = new Date();
-        const ds = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-        const raw = localStorage.getItem('offerbell_activity_days');
-        const days = raw ? JSON.parse(raw) : [];
-        if (Array.isArray(days) && !days.includes(ds)) {
-          days.push(ds);
-          localStorage.setItem('offerbell_activity_days', JSON.stringify(days));
-        }
-      } catch {}
-    }
   }
 
   // ─── Answer / skip ───────────────────────────────────────────────────────
