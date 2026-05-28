@@ -9,7 +9,7 @@
    JS overrides this on documentElement when the user collapses the sidebar.
    This var is universal and doesn't conflict with other files. */
 :root {
-  --sidebar-w: 230px;
+  --sidebar-w: 200px;
 }
 
 /* Theme COLOR variables scoped to .dash-app so other pages' CSS files
@@ -65,7 +65,7 @@ body {
 .dash-canvas {
   flex: 1;
   min-width: 0;
-  margin-left: var(--sidebar-w, 230px);
+  margin-left: var(--sidebar-w, 200px);
   padding: 14px 18px 14px 14px;
   background: var(--frame);
   min-height: 100vh;
