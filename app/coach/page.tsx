@@ -955,11 +955,10 @@ export default function CoachPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: newMessages, system: systemPrompt, track: activeTrack }),
       });
-      const data = await res.json();
+
       if (!res.ok) {
-        // Server-side limit reached. Strip the user's just-sent message from
-        // the chat (it never got processed) and surface the limit screen
-        // instead of dumping "limit_reached" into a Coach bubble.
+        // Error responses are JSON. Parse and handle (429 limit, etc.).
+        const data = await res.json().catch(() => ({}));
         if (res.status === 429 && data?.error === 'limit_reached') {
           setMessages(prev => prev.slice(0, -1));
           setLimitInfo({
@@ -971,41 +970,58 @@ export default function CoachPage() {
         } else {
           setMessages(prev => [...prev, { role: 'assistant', content: ' ' + (data.error || 'Coach is temporarily unavailable.'), time: Date.now() }]);
         }
-      } else {
-        // Fake-streaming: API returns full text at once, but reveal it
-        // word-by-word client-side so it FEELS like real streaming.
-        // Lower risk than rewriting the API to use Gemini's streaming endpoint.
-        const fullText = data.text || 'Something went wrong.';
-        const time = Date.now();
-        // Push an empty assistant message first; we'll grow its content.
-        setMessages(prev => [...prev, { role: 'assistant', content: '', time }]);
         setIsLoading(false);
+        scrollBottom();
+        return;
+      }
 
-        const words = fullText.split(/(\s+)/); // keep whitespace tokens so spacing reads naturally
-        const CHUNK_SIZE = 3;
-        const DELAY_MS = 30;
-        for (let i = 0; i < words.length; i += CHUNK_SIZE) {
-          await new Promise(r => setTimeout(r, DELAY_MS));
-          const partial = words.slice(0, i + CHUNK_SIZE).join('');
+      // Success: real streaming response from /api/coach. Each chunk arrives
+      // as Gemini generates it - perceived latency drops to <1s before first
+      // text appears. Append chunks to the last assistant message immutably.
+      if (!res.body) {
+        setMessages(prev => [...prev, { role: 'assistant', content: 'Coach returned an empty response.', time: Date.now() }]);
+        setIsLoading(false);
+        return;
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      const time = Date.now();
+
+      // Push an empty assistant message; we'll grow its content as chunks arrive.
+      setMessages(prev => [...prev, { role: 'assistant', content: '', time }]);
+      setIsLoading(false);
+
+      let fullText = '';
+      let chunkCount = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        if (chunk) {
+          fullText += chunk;
           setMessages(prev => {
-            // Update only the last assistant message immutably.
             const lastIdx = prev.length - 1;
-            return prev.map((m, idx) => (idx === lastIdx && m.role === 'assistant') ? { ...m, content: partial } : m);
+            return prev.map((m, idx) => (idx === lastIdx && m.role === 'assistant') ? { ...m, content: fullText } : m);
           });
-          // Light scroll-to-bottom during stream so user sees text growing.
-          if (i % (CHUNK_SIZE * 4) === 0) scrollBottom();
+          // Throttle scroll-to-bottom so it doesn't fight the user's scroll position
+          chunkCount++;
+          if (chunkCount % 4 === 0) scrollBottom();
         }
-        // Ensure final state has the full text exactly.
+      }
+      // Final flush of remaining decoder state
+      const tail = decoder.decode();
+      if (tail) {
+        fullText += tail;
         setMessages(prev => {
           const lastIdx = prev.length - 1;
           return prev.map((m, idx) => (idx === lastIdx && m.role === 'assistant') ? { ...m, content: fullText } : m);
         });
+      }
 
-        if (isPro) {
-          incrementUsage();
-        }
-        // Free / Pro / Elite usage is now tracked server-side in Convex.
-        // No more localStorage counting.
+      if (isPro) {
+        incrementUsage();
       }
     } catch (err: any) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Connection error: ' + (err?.message || 'please try again.'), time: Date.now() }]);

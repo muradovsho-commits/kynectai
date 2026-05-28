@@ -40,14 +40,11 @@ export async function POST(req: NextRequest) {
     }
 
     // Truncate conversation history to prevent exceeding token limits
-    // Keep system + last 10 messages, trim any single message over 3000 chars
     const trimmedMessages = messages.slice(-10).map((m) => ({
       ...m,
       content: m.content.length > 3000 ? m.content.slice(0, 3000) + "\n\n[Message trimmed for length - paste shorter sections for better feedback]" : m.content,
     }));
 
-    // Build Gemini request
-    // Convert chat messages to Gemini format
     const geminiContents = trimmedMessages.map((m) => ({
       role: m.role === "assistant" ? "model" : "user",
       parts: [{ text: m.content }],
@@ -62,13 +59,16 @@ Be direct, specific, and warm - like a brilliant older friend who went through t
 
 The user is currently on the "${track || "Investment Banking"}" recruiting track. Tailor your advice specifically for ${track || "Investment Banking"} recruiting when relevant.`;
 
-    // Try models in order of preference
+    // Try models in order. First successful streaming response wins.
     const models = ["gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.5-flash-lite"];
-    
-    for (const model of models) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-      // Try with systemInstruction first
+    let upstream: Response | null = null;
+    let lastError = "";
+
+    for (const model of models) {
+      // Use streamGenerateContent with SSE format for real-time chunks
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
+
       const geminiBody = {
         contents: geminiContents,
         systemInstruction: { parts: [{ text: systemInstruction }] },
@@ -82,50 +82,89 @@ The user is currently on the "${track || "Investment Banking"}" recruiting track
           body: JSON.stringify(geminiBody),
         });
 
-        if (res.ok) {
-          const data = await res.json();
-          const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Something went wrong - please try again.";
-          await incrementUsageInConvex(userId, "coach");
-          return NextResponse.json({ text }, { headers: corsHeaders });
+        if (res.ok && res.body) {
+          upstream = res;
+          break;
         }
-
-        // If systemInstruction isn't supported, try inlining it
-        const fallbackBody = {
-          contents: [
-            { role: "user", parts: [{ text: systemInstruction + "\n\n---\n\nUser message: " + messages[0].content }] },
-            ...geminiContents.slice(1),
-          ],
-          generationConfig: { temperature: 0.8, topP: 0.95, maxOutputTokens: 2048 },
-        };
-
-        const res2 = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(fallbackBody),
-        });
-
-        if (res2.ok) {
-          const data2 = await res2.json();
-          const text2 = data2.candidates?.[0]?.content?.parts?.[0]?.text || "Something went wrong - please try again.";
-          await incrementUsageInConvex(userId, "coach");
-          return NextResponse.json({ text: text2 }, { headers: corsHeaders });
-        }
-
-        // This model didn't work, try next
-        const errText = await res2.text();
-        console.error(`Model ${model} failed:`, res2.status, errText.slice(0, 200));
-        continue;
-      } catch (fetchErr) {
-        console.error(`Model ${model} fetch error:`, fetchErr);
+        lastError = `Model ${model} returned ${res.status}`;
+        // Read body to release it, then try next model
+        try { await res.text(); } catch {}
+      } catch (fetchErr: any) {
+        lastError = `Model ${model} fetch error: ${fetchErr?.message || fetchErr}`;
         continue;
       }
     }
 
-    // All models failed
-    return NextResponse.json(
-      { error: "Coach is temporarily unavailable. Please try again in a moment, or try sending a shorter message." },
-      { status: 502, headers: corsHeaders }
-    );
+    if (!upstream || !upstream.body) {
+      console.error("All Gemini models failed:", lastError);
+      return NextResponse.json(
+        { error: "Coach is temporarily unavailable. Please try again in a moment." },
+        { status: 502, headers: corsHeaders }
+      );
+    }
+
+    // Pipe Gemini's SSE stream to the client as plain text chunks. Each Gemini
+    // SSE line is `data: {...json...}`; we extract the text part and forward
+    // only that. Client receives a smooth stream of text tokens.
+    const upstreamBody = upstream.body;
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+
+    const stream = new ReadableStream({
+      async start(controller) {
+        const reader = upstreamBody.getReader();
+        let buffer = "";
+
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            // Split on newlines but keep partial last line in buffer
+            const lines = buffer.split("\n");
+            buffer = lines.pop() || "";
+
+            for (const line of lines) {
+              if (!line.startsWith("data: ")) continue;
+              const payload = line.slice(6).trim();
+              if (!payload || payload === "[DONE]") continue;
+              try {
+                const json = JSON.parse(payload);
+                const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (text) {
+                  controller.enqueue(encoder.encode(text));
+                }
+              } catch {
+                // Malformed line - skip
+              }
+            }
+          }
+
+          // Stream complete. Best-effort increment - don't fail the response
+          // if Convex is briefly unreachable.
+          try {
+            await incrementUsageInConvex(userId, "coach");
+          } catch (usageErr) {
+            console.error("Usage increment failed:", usageErr);
+          }
+          controller.close();
+        } catch (streamErr: any) {
+          console.error("Stream error:", streamErr);
+          controller.enqueue(encoder.encode("\n\n[Connection interrupted. Please try again.]"));
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Content-Type-Options": "nosniff",
+        "Cache-Control": "no-cache, no-transform",
+      },
+    });
   } catch (error) {
     console.error("Coach API error:", error);
     return NextResponse.json(
