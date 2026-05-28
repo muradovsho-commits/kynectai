@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Sidebar from '../components/Sidebar';
 import TutorialOverlay from '../components/TutorialOverlay';
 import { useIsPro } from '../lib/usePlan';
-import '../contact-finder/contact-finder.css';
 import './learn.css';
 
 const GUIDES = [
@@ -139,12 +138,14 @@ export default function LearnPage() {
   }, []);
 
   return (
-    <div className="app">
+    <div className="learn-app">
       {/* ── Sidebar ── */}
       <Sidebar activePage="learn" />
 
-      {/* ── Main Content ── */}
-      <main className="learn-main">
+      {/* ── Main Content (frame area + rounded card pattern) ── */}
+      <main className="learn-canvas">
+        <div className="learn-page">
+          <div className="learn-page-inner">
         {/* Career Roadmaps Hero (Rectangle Style) */}
         <div className="learn-hero">
           <div className="learn-hero-badge">Expert Curated</div>
@@ -246,6 +247,8 @@ export default function LearnPage() {
         {/* Footer */}
         <div className="learn-footer">
           <div className="learn-footer-copy">&copy; 2026 OfferBell. All rights reserved.</div>
+        </div>
+          </div>
         </div>
       </main>
 
