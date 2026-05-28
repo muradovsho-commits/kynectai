@@ -38,8 +38,8 @@ html[data-theme="dark"] .mi-app {
 .mi-canvas {
   flex: 1;
   margin-left: var(--sidebar-w);
-  padding: 24px;
-  background: var(--frame);
+  padding: 0;
+  background: var(--surface);
   transition: margin-left 0.2s ease;
   min-height: 100vh;
 }
@@ -47,13 +47,13 @@ html[data-theme="dark"] .mi-app {
 .mi-page {
   flex: 1;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: none;
   border-radius: 0;
   max-width: 1400px;
   width: 100%;
   margin: 0;
   overflow: hidden;
-  padding: 48px 56px;
+  padding: 32px 40px;
   min-height: calc(100vh - 48px);
 }
 

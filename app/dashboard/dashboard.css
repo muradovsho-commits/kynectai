@@ -66,8 +66,8 @@ body {
   flex: 1;
   min-width: 0;
   margin-left: var(--sidebar-w, 240px);
-  padding: 14px 18px 14px 14px;
-  background: var(--frame);
+  padding: 0;
+  background: var(--surface);
   min-height: 100vh;
   box-sizing: border-box;
   display: flex;
@@ -78,7 +78,7 @@ body {
 .dash-page {
   flex: 1;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: none;
   border-radius: 0;
   box-shadow: 0 -4px 24px rgba(0,0,0,0.08), 0 -2px 8px rgba(0,0,0,0.04);
   max-width: 1400px;
@@ -550,7 +550,7 @@ body {
 @media (max-width: 768px) {
   .dash-canvas {
     margin-left: 0;
-    padding: 12px;
+    padding: 0;
   }
   .dash-page-inner { padding: 24px 18px 40px; }
   .dash-page-title { font-size: 32px; }
