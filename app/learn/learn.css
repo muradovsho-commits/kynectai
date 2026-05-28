@@ -65,6 +65,13 @@ html[data-theme="dark"] .learn-app {
   padding: 0 0 48px;
 }
 
+/* Defense in depth: no SVG inside the learn page may exceed its container.
+   Protects against rogue inline SVGs without explicit size attributes. */
+.learn-app svg {
+  max-width: 100%;
+  max-height: 100%;
+}
+
 .learn-hero {
   margin: 40px 40px 0;
   background: var(--surface-2);
