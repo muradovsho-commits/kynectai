@@ -199,13 +199,25 @@ export default function Sidebar({ activePage }: SidebarProps) {
       const p = raw ? JSON.parse(raw) : {};
       // Put selected vertical first; keep up to 2 others as secondary targets.
       const others = Array.isArray(p.targetRoles) ? p.targetRoles.filter((r: string) => r !== v).slice(0, 2) : [];
-      const updated = { ...p, targetRoles: [v, ...others] };
+      const newTargets = [v, ...others];
+      const updated = { ...p, targetRoles: newTargets };
       localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(updated));
       setIndustryPill(abbreviateIndustry(v));
       setCurrentVertical(v);
       setIndustryMenuOpen(false);
       // Notify other components in this same window (storage events only fire cross-tab).
       window.dispatchEvent(new CustomEvent('offerbell-profile-changed'));
+
+      // Mirror the change to the Convex `users` table so My Account's Target Role
+      // stays in sync. This is a single small mutation against a dedicated
+      // table, NOT the userProgress.data blob, so it does not affect the
+      // bandwidth pattern from the Capacity Reached V1 fix.
+      try {
+        const uid = localStorage.getItem('offerbell_user_id');
+        if (uid && updateProfileMut) {
+          void updateProfileMut({ userId: uid, targetRoles: newTargets });
+        }
+      } catch {}
     } catch {}
   }
 

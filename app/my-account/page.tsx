@@ -164,6 +164,26 @@ export default function MyAccountPage() {
     if (!uid) setProfileLoaded(true);
   }, []);
 
+  // Live-sync with sidebar industry pill: if the user changes their industry
+  // anywhere else in the app (notably the sidebar) while this page is open,
+  // re-read the profile so the Target Role select reflects the new choice
+  // without a page reload. Pure read on a small localStorage key, no Convex
+  // round-trip.
+  useEffect(() => {
+    const refresh = () => {
+      try {
+        const raw = localStorage.getItem('offerbell_onboarding_profile');
+        if (!raw) return;
+        const p = JSON.parse(raw);
+        if (Array.isArray(p.targetRoles) && p.targetRoles.length > 0) {
+          setTargetRole(p.targetRoles[0]);
+        }
+      } catch {}
+    };
+    window.addEventListener('offerbell-profile-changed', refresh);
+    return () => window.removeEventListener('offerbell-profile-changed', refresh);
+  }, []);
+
   // Fetch weekly usage from Convex weeklyUsage table. Source of truth for
   // the Usage tab. Falls back gracefully on error or pre-deploy code paths.
   useEffect(() => {
