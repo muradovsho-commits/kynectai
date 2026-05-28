@@ -94,3 +94,20 @@ export const importConvos = mutation({
     }
   },
 });
+
+// Dashboard-only lightweight query. Returns just count + thisWeek count.
+// No messages JSON, no duration data (we don't track coach session length).
+// Per-page bandwidth: ~0.2KB.
+export const getCoachStats = query({
+  args: { userId: v.string() },
+  handler: async (ctx, { userId }) => {
+    const rows = await ctx.db
+      .query("coachConvos")
+      .withIndex("by_user", q => q.eq("userId", userId))
+      .collect();
+    const count = rows.length;
+    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const thisWeek = rows.filter(r => r.updatedAt >= sevenDaysAgo).length;
+    return { count, thisWeek };
+  },
+});
