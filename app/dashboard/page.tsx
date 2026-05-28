@@ -42,6 +42,7 @@ const VERTICAL_TO_TRACK: Record<string, string> = {
   'Equity Research': 'er',
   'Asset Management': 'am',
   'Consulting': 'consulting',
+  'Accounting & Audit': 'accounting',
   'Accounting / Audit / Tax': 'accounting',
   'Real Estate': 're',
   'Restructuring': 'rx',
