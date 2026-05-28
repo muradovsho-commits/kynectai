@@ -28,6 +28,62 @@ const TRACK_LABELS: Record<string, string> = {
   re: 'Real Estate',
   vc: 'Venture Capital',
 };
+
+// ─── Dashboard widget configuration ────────────────────────────────────────
+// Stored in `offerbell_dashboard_config` localStorage (small ~200 bytes
+// payload, syncs via the normal blob path without bandwidth impact).
+type DashboardWidgetKey =
+  | 'weeklySummary'
+  | 'weeklyActivity'
+  | 'skillHeatmap'
+  | 'calendar'
+  | 'focus'
+  | 'outreach';
+
+type DashboardConfig = { widgets: Record<DashboardWidgetKey, boolean> };
+
+const WIDGET_DEFS: { key: DashboardWidgetKey; label: string; desc: string; col: 'left' | 'right' }[] = [
+  { key: 'weeklySummary',  label: 'Weekly Summary', desc: 'Drills, mock interviews, coach chats, avg score', col: 'left' },
+  { key: 'weeklyActivity', label: 'Weekly Activity', desc: 'Hours per day bar chart, Monday through Sunday', col: 'left' },
+  { key: 'skillHeatmap',   label: 'Skill Heatmap', desc: 'Per-topic accuracy across your active track', col: 'left' },
+  { key: 'calendar',       label: 'Calendar & Streak', desc: 'Monthly activity grid with current streak', col: 'right' },
+  { key: 'focus',          label: 'What to Focus On', desc: 'Personalized recommendations based on your data', col: 'right' },
+  { key: 'outreach',       label: 'Outreach Pipeline', desc: 'Contact pipeline summary by status', col: 'right' },
+];
+
+// Divy spec: simple default — Weekly Summary, Skill Heatmap, Calendar, Focus.
+// Weekly Activity and Outreach are opt-in via Customize.
+const DEFAULT_DASHBOARD_CONFIG: DashboardConfig = {
+  widgets: {
+    weeklySummary: true,
+    weeklyActivity: false,
+    skillHeatmap: true,
+    calendar: true,
+    focus: true,
+    outreach: false,
+  },
+};
+
+const DASHBOARD_CONFIG_KEY = 'offerbell_dashboard_config';
+
+function loadDashboardConfig(): DashboardConfig {
+  try {
+    const raw = localStorage.getItem(DASHBOARD_CONFIG_KEY);
+    if (!raw) return DEFAULT_DASHBOARD_CONFIG;
+    const parsed = JSON.parse(raw);
+    // Defensive merge: ensure every widget key exists (in case new ones were added)
+    const widgets = { ...DEFAULT_DASHBOARD_CONFIG.widgets };
+    if (parsed?.widgets && typeof parsed.widgets === 'object') {
+      for (const k of Object.keys(widgets) as DashboardWidgetKey[]) {
+        if (typeof parsed.widgets[k] === 'boolean') widgets[k] = parsed.widgets[k];
+      }
+    }
+    return { widgets };
+  } catch { return DEFAULT_DASHBOARD_CONFIG; }
+}
+function saveDashboardConfig(cfg: DashboardConfig) {
+  try { localStorage.setItem(DASHBOARD_CONFIG_KEY, JSON.stringify(cfg)); } catch {}
+}
 const TRACK_ORDER = ['ib', 'pe', 'rx', 'consulting', 'accounting', 'am', 'st', 'er', 're', 'vc'];
 
 // Map onboarding verticals (17 of them) to flash_perf track keys (10 of them).
@@ -93,6 +149,8 @@ export default function DashboardPage() {
   // Tutorial overlay (preserve existing logic)
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
+  const [dashConfig, setDashConfig] = useState<DashboardConfig>(DEFAULT_DASHBOARD_CONFIG);
+  const [showCustomize, setShowCustomize] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
     const complete = localStorage.getItem('offerbell_tutorial_complete');
@@ -115,6 +173,27 @@ export default function DashboardPage() {
     const saved = typeof window !== "undefined" ? localStorage.getItem("offerbell-theme") : null;
     if (saved && typeof document !== "undefined") document.documentElement.setAttribute("data-theme", saved);
   }, []);
+
+  // Load dashboard widget config + listen for storage changes from other tabs
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    setDashConfig(loadDashboardConfig());
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === DASHBOARD_CONFIG_KEY) setDashConfig(loadDashboardConfig());
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
+  function toggleWidget(key: DashboardWidgetKey) {
+    const next: DashboardConfig = { widgets: { ...dashConfig.widgets, [key]: !dashConfig.widgets[key] } };
+    setDashConfig(next);
+    saveDashboardConfig(next);
+  }
+  function resetDashConfig() {
+    setDashConfig(DEFAULT_DASHBOARD_CONFIG);
+    saveDashboardConfig(DEFAULT_DASHBOARD_CONFIG);
+  }
 
   // Upgrade toast from query param
   const [upgradeToast, setUpgradeToast] = useState("");
@@ -568,14 +647,19 @@ export default function DashboardPage() {
               <div>
                 <div className="dash-greet-sub">{greeting}, {displayFirst}</div>
                 <h1 className="dash-page-title">Your <em>Dashboard</em></h1>
-                <div className="dash-page-sub">Everything you've practiced, sent, and learned - in one view</div>
+                <div className="dash-page-sub">Everything you&apos;ve practiced, sent, and learned - in one view</div>
               </div>
+              <button type="button" className="dash-customize-btn" onClick={() => setShowCustomize(true)}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                Customize
+              </button>
             </div>
 
             <div className="dash-grid">
               {/* ─── LEFT COLUMN ─── */}
               <div className="dash-col-left">
                 {/* Weekly Summary */}
+                {dashConfig.widgets.weeklySummary && (
                 <div className="dash-card">
                   <h2 className="dash-card-title">Weekly Summary</h2>
                   <div className="dash-stats-grid">
@@ -601,8 +685,10 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 </div>
+                )}
 
                 {/* Weekly Activity */}
+                {dashConfig.widgets.weeklyActivity && (
                 <div className="dash-card">
                   <h2 className="dash-card-title">Weekly Activity</h2>
                   <div className="dash-activity-sub">Hours per day</div>
@@ -623,8 +709,10 @@ export default function DashboardPage() {
                     })}
                   </div>
                 </div>
+                )}
 
                 {/* Skill Heatmap - per-topic accuracy within selected track */}
+                {dashConfig.widgets.skillHeatmap && (
                 <div className="dash-card">
                   <h2 className="dash-card-title">
                     Skill Heatmap
@@ -664,11 +752,13 @@ export default function DashboardPage() {
                     </div>
                   )}
                 </div>
+                )}
               </div>
 
               {/* ─── RIGHT COLUMN ─── */}
               <div className="dash-col-right">
                 {/* Calendar (compact) */}
+                {dashConfig.widgets.calendar && (
                 <div className="dash-card dash-card-sm">
                   <div className="dash-cal-head">
                     <div className="dash-cal-title">{calendar.monthLabel}</div>
@@ -695,8 +785,10 @@ export default function DashboardPage() {
                   </div>
                   <Link className="dash-cal-link" href="/dashboard">View activity history</Link>
                 </div>
+                )}
 
                 {/* What to Focus On */}
+                {dashConfig.widgets.focus && (
                 <div className="dash-card dash-card-sm">
                   <h2 className="dash-card-title-sm">What to Focus On</h2>
                   {focusItems.length === 0 ? (
@@ -719,8 +811,10 @@ export default function DashboardPage() {
                     ))
                   )}
                 </div>
+                )}
 
                 {/* Outreach */}
+                {dashConfig.widgets.outreach && (
                 <div className="dash-card dash-card-sm">
                   <h2 className="dash-card-title-sm">Outreach</h2>
                   <div className="dash-pipe-row dash-pipe-row-strong">
@@ -735,11 +829,57 @@ export default function DashboardPage() {
                   ))}
                   <Link className="dash-solid-btn" href="/outreach-tracker">Open Outreach Tracker</Link>
                 </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {showCustomize && (
+        <div className="dash-customize-overlay" onClick={() => setShowCustomize(false)}>
+          <div className="dash-customize-modal" onClick={e => e.stopPropagation()}>
+            <div className="dash-customize-head">
+              <div>
+                <div className="dash-customize-title">Customize <em>Dashboard</em></div>
+                <div className="dash-customize-sub">Toggle widgets to show or hide. Changes save automatically.</div>
+              </div>
+              <button type="button" className="dash-customize-x" onClick={() => setShowCustomize(false)} aria-label="Close">×</button>
+            </div>
+            <div className="dash-customize-body">
+              <div className="dash-customize-section-lbl">Available Widgets</div>
+              <div className="dash-customize-list">
+                {WIDGET_DEFS.map(w => {
+                  const on = dashConfig.widgets[w.key];
+                  return (
+                    <button
+                      key={w.key}
+                      type="button"
+                      className={`dash-customize-row${on ? ' is-on' : ''}`}
+                      onClick={() => toggleWidget(w.key)}
+                    >
+                      <div className={`dash-customize-check${on ? ' is-on' : ''}`}>
+                        {on && (
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--surface)" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                        )}
+                      </div>
+                      <div className="dash-customize-text">
+                        <div className="dash-customize-name">{w.label}</div>
+                        <div className="dash-customize-desc">{w.desc}</div>
+                      </div>
+                      <div className="dash-customize-col-tag">{w.col === 'left' ? 'Main' : 'Side'}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="dash-customize-foot">
+              <button type="button" className="dash-customize-reset" onClick={resetDashConfig}>Reset to default</button>
+              <button type="button" className="dash-customize-done" onClick={() => setShowCustomize(false)}>Done</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {upgradeToast && (
         <div className="dash-upgrade-toast">
