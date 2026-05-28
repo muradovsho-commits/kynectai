@@ -192,15 +192,26 @@ function FlashcardsContent() {
   useEffect(() => {
     if (!activeTrack) { setPerf({ seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} }); return; }
     const key = `offerbell_flash_perf_${activeTrack}`;
+    // Pre-existing bug: stale localStorage from older app versions can have
+    // perf data without a `byCat` field. The hub render reads
+    // perf.byCat[topic] without guarding against undefined byCat, which
+    // crashes the entire flashcards tab. Sanitize on every load.
+    const sanitize = (raw: any): PerfData => ({
+      seen: typeof raw?.seen === 'number' ? raw.seen : 0,
+      pass: typeof raw?.pass === 'number' ? raw.pass : 0,
+      partial: typeof raw?.partial === 'number' ? raw.partial : 0,
+      fail: typeof raw?.fail === 'number' ? raw.fail : 0,
+      byCat: (raw?.byCat && typeof raw.byCat === 'object') ? raw.byCat : {},
+    });
     try {
       const saved = localStorage.getItem(key);
-      if (saved) { setPerf(JSON.parse(saved)); return; }
+      if (saved) { setPerf(sanitize(JSON.parse(saved))); return; }
     } catch {}
     // Migrate old global data on first use for this track
     try {
       const oldGlobal = localStorage.getItem('offerbell_flash_perf');
       if (oldGlobal && !localStorage.getItem('offerbell_flash_perf_migrated')) {
-        const oldData = JSON.parse(oldGlobal);
+        const oldData = sanitize(JSON.parse(oldGlobal));
         // Assign old global data to the first track the user opens (best effort)
         localStorage.setItem(key, JSON.stringify(oldData));
         localStorage.setItem('offerbell_flash_perf_migrated', 'true');
@@ -308,7 +319,7 @@ function FlashcardsContent() {
             const p = raw ? JSON.parse(raw) : { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
             p.seen = (p.seen || 0) + 1;
             const cat = card.category;
-            if (!p.byCat[cat]) p.byCat[cat] = { seen: 0, pass: 0 };
+            if (!p.byCat) p.byCat = {}; if (!p.byCat[cat]) p.byCat[cat] = { seen: 0, pass: 0 };
             p.byCat[cat].seen++;
             savePerf(p);
           } catch {}
@@ -362,7 +373,7 @@ function FlashcardsContent() {
     // Per-topic stats for the topic grid
     const topicStats = topics.map(topic => {
       const cardsInTopic = trackCards.filter(c => c.category === topic);
-      const seenInTopic = perf.byCat[topic]?.seen || 0;
+      const seenInTopic = perf.byCat?.[topic]?.seen || 0;
       return { name: topic, count: cardsInTopic.length, seen: seenInTopic };
     });
 
@@ -608,7 +619,7 @@ function FlashcardsContent() {
                               const p = raw ? JSON.parse(raw) : { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
                               p.seen = (p.seen || 0) + 1;
                               const cat = card.category;
-                              if (!p.byCat[cat]) p.byCat[cat] = { seen: 0, pass: 0 };
+                              if (!p.byCat) p.byCat = {}; if (!p.byCat[cat]) p.byCat[cat] = { seen: 0, pass: 0 };
                               p.byCat[cat].seen++;
                               savePerf(p);
                             } catch {}
@@ -681,7 +692,7 @@ function FlashcardsContent() {
                           const p = raw ? JSON.parse(raw) : { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
                           p.seen = (p.seen || 0) + 1;
                           const cat = c.category;
-                          if (!p.byCat[cat]) p.byCat[cat] = { seen: 0, pass: 0 };
+                          if (!p.byCat) p.byCat = {}; if (!p.byCat[cat]) p.byCat[cat] = { seen: 0, pass: 0 };
                           p.byCat[cat].seen++;
                           savePerf(p);
                         } catch {}
