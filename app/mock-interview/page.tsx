@@ -5,6 +5,7 @@ import { useMutation } from 'convex/react';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../../convex/_generated/api';
 import Sidebar from '../components/Sidebar';
+import { useIsPro } from '../lib/usePlan';
 import './mock-interview.css';
 import { IB_FLASHCARDS, Flashcard } from '../flashcards/ib-flashcard-data';
 import { PE_FLASHCARDS } from '../flashcards/pe-flashcard-data';
@@ -172,6 +173,7 @@ type ViewMode = 'hub' | 'single' | 'setup' | 'interview' | 'results';
 
 export default function MockInterviewPage() {
   const router = useRouter();
+  const isPro = useIsPro();
 
   const upsertResponseMut = useMutation(api.mockResponses.upsertResponse);
   const setResponseHiddenMut = useMutation(api.mockResponses.setResponseHidden);
@@ -180,6 +182,7 @@ export default function MockInterviewPage() {
   // View routing
   const [view, setView] = useState<ViewMode>('hub');
   const [sidebarTrackId, setSidebarTrackId] = useState<string>('ib');
+  const [showProGate, setShowProGate] = useState(false);
 
   // Single-mode state (preserved from original)
   const [activeTrack, setActiveTrack] = useState<TrackDef | null>(null);
@@ -679,6 +682,10 @@ export default function MockInterviewPage() {
   // ══════════════════════════════════════════════════════════════
 
   function openSetup() {
+    if (!isPro) {
+      setShowProGate(true);
+      return;
+    }
     setSetupConfig({
       company: '', stage: '', trackId: sidebarTrackId, location: '', type: '',
     });
@@ -686,6 +693,8 @@ export default function MockInterviewPage() {
   }
 
   function startInterview() {
+    // Belt-and-suspenders: also gate at start time in case state was forced
+    if (!isPro) { setShowProGate(true); return; }
     const track = TRACKS.find(t => t.id === setupConfig.trackId);
     if (!track || !setupConfig.type) return;
     const qs = selectInterviewQuestions(track, setupConfig.type as InterviewType, QUESTIONS_PER_INTERVIEW);
@@ -823,6 +832,48 @@ export default function MockInterviewPage() {
 
         </div>
       </div>
+
+      {showProGate && (
+        <div className="mi-modal-overlay" onClick={() => setShowProGate(false)}>
+          <div className="mi-modal mi-pro-modal" onClick={(e) => e.stopPropagation()}>
+            <button type="button" className="mi-modal-x mi-modal-x--abs" onClick={() => setShowProGate(false)}>&times;</button>
+            <div className="mi-pro-modal-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <div className="mi-pro-modal-title">Full interviews are a Pro feature</div>
+            <div className="mi-pro-modal-desc">
+              Upgrade to run unlimited 10-question simulated interviews with AI feedback on every answer. Single-question practice stays free.
+            </div>
+            <div className="mi-pro-modal-feats">
+              <div className="mi-pro-modal-feat">
+                <span className="mi-pro-modal-dot" />
+                <div>
+                  <strong>Unlimited full interviews</strong>
+                  <br/>10 questions per session pulled from your selected track
+                </div>
+              </div>
+              <div className="mi-pro-modal-feat">
+                <span className="mi-pro-modal-dot" />
+                <div>
+                  <strong>Per-question AI grading</strong>
+                  <br/>Accuracy, depth, and clarity scores with feedback for every answer
+                </div>
+              </div>
+              <div className="mi-pro-modal-feat">
+                <span className="mi-pro-modal-dot" />
+                <div>
+                  <strong>Interview history</strong>
+                  <br/>Track your average score, best score, and trends over time
+                </div>
+              </div>
+            </div>
+            <div className="mi-pro-modal-actions">
+              <button type="button" className="mi-btn-ghost" onClick={() => setShowProGate(false)}>Maybe later</button>
+              <button type="button" className="mi-btn-primary" onClick={() => router.push('/my-account')}>View Pro plans</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -836,7 +887,8 @@ export default function MockInterviewPage() {
             <div className="mi-page-sub">Practice and track your interview performance</div>
           </div>
           <button type="button" className="mi-start-btn" onClick={openSetup}>
-            Start full interview
+            {isPro ? 'Start full interview' : 'Start full interview'}
+            {!isPro && <span className="mi-pro-badge">Pro</span>}
           </button>
         </div>
 
@@ -869,7 +921,10 @@ export default function MockInterviewPage() {
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-6 4 6 4V8z"/></svg>
             </div>
             <div className="mi-mode-body">
-              <div className="mi-mode-title">Start a full interview</div>
+              <div className="mi-mode-title">
+                Start a full interview
+                {!isPro && <span className="mi-pro-badge mi-pro-badge--on-dark">Pro</span>}
+              </div>
               <div className="mi-mode-sub">A simulated 10-question interview. Pick the type, then run through it like the real thing.</div>
             </div>
             <div className="mi-mode-arrow">→</div>
@@ -933,7 +988,9 @@ export default function MockInterviewPage() {
             </div>
             <div className="mi-empty-title">No interviews yet</div>
             <div className="mi-empty-sub">Start your first mock interview to see your results here</div>
-            <button type="button" className="mi-empty-btn" onClick={openSetup}>Start your first interview</button>
+            <button type="button" className="mi-empty-btn" onClick={openSetup}>
+              {isPro ? 'Start your first interview' : 'Unlock with Pro'}
+            </button>
           </div>
         )}
       </div>
