@@ -24,11 +24,11 @@
 }
 [data-theme="dark"] {
   --bg: #111110;
-  --surface: #24262c;
-  --surface-2: #2c2e34;
-  --border: #34363c;
-  --border-2: #3d3f45;
-  --border-strong: #45474d;
+  --surface: #1c1d20;
+  --surface-2: #24252a;
+  --border: #2a2b30;
+  --border-2: #34353a;
+  --border-strong: #3a3b40;
   --text: #f4f5f8;
   --text-2: #b4b5b9;
   --text-3: #8a8b8f;
