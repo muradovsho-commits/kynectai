@@ -4,9 +4,11 @@
    The frame and sidebar share the same charcoal color so they read as
    one continuous canvas. Only the inner card switches color with the theme. */
 
-/* Theme variables. The sidebar uses its own scoped variables (in Sidebar.tsx
-   inline styles) so the frame stays #151618 regardless of theme. */
-:root, [data-theme="light"] {
+/* Theme variables scoped to .dash-app so other pages' CSS files (which also
+   declare :root variables) can't override them when their stylesheets
+   end up later in the cascade after navigation. The dashboard now reads
+   its theme from its own scope, isolated from the rest of the app. */
+.dash-app {
   --bg: #fafaf9;
   --surface: #ffffff;
   --surface-2: #f7f7f5;
@@ -16,13 +18,12 @@
   --text: #1c1c1e;
   --text-2: #6a6a6a;
   --text-3: #9b9b9b;
-  --sidebar-w: 230px;
   --frame: #151618;
   --card-shadow: 0 1px 2px 0 rgba(0,0,0,0.03);
   --solid-bg: #000000;
   --solid-fg: #ffffff;
 }
-[data-theme="dark"] {
+html[data-theme="dark"] .dash-app {
   --bg: #111110;
   --surface: #1c1d20;
   --surface-2: #24252a;
@@ -32,6 +33,7 @@
   --text: #f4f5f8;
   --text-2: #b4b5b9;
   --text-3: #8a8b8f;
+  --frame: #151618;
   --card-shadow: 0 1px 2px 0 rgba(0,0,0,0.2);
   --solid-bg: #f4f5f8;
   --solid-fg: #1c1d20;
@@ -39,8 +41,6 @@
 
 body {
   font-family: 'Inter', 'Sora', system-ui, -apple-system, sans-serif;
-  background: var(--frame);
-  color: var(--text);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
@@ -63,6 +63,7 @@ body {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  transition: margin-left 0.2s ease;
 }
 
 .dash-page {
