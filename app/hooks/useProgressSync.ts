@@ -58,6 +58,9 @@ const SYNC_KEYS = [
   'offerbell_flash_review_log',
   // Diagnostic
   'offerbell_diag_history',
+  // Concept drills - per-question history for the Question History tab.
+  // Per-device only (the aggregate byCat stats DO sync via flash_perf_*).
+  'offerbell_drill_history',
   // Mock interview
   'offerbell_mock_responses',
   'offerbell_mock_weekly',
