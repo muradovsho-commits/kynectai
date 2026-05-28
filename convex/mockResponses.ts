@@ -137,6 +137,11 @@ export const importResponses = mutation({
 // Dashboard-only lightweight query. Returns only count + avgGrade.
 // No transcripts, no recent items, no per-day timestamps.
 // Per-page bandwidth: ~0.1KB.
+//
+// `grade` is stored as a categorical string ('Great' | 'Good' | 'Bad') per
+// the schema and mock-interview page. We map to numeric scores so the
+// dashboard can display "Avg score X%". Same conventions as the existing
+// scoring elsewhere: Great=100, Good=70, Bad=30.
 export const getMockStats = query({
   args: { userId: v.string() },
   handler: async (ctx, { userId }) => {
@@ -146,8 +151,14 @@ export const getMockStats = query({
       .collect();
     const visible = rows.filter(r => !r.hidden);
     const count = visible.length;
-    const totalGrade = visible.reduce((s, r) => s + (r.grade || 0), 0);
-    const avgGrade = count > 0 ? Math.round(totalGrade / count) : 0;
+    const gradeToScore = (g: string): number => {
+      if (g === 'Great') return 100;
+      if (g === 'Good') return 70;
+      if (g === 'Bad') return 30;
+      return 0;
+    };
+    const totalScore = visible.reduce((s, r) => s + gradeToScore(r.grade), 0);
+    const avgGrade = count > 0 ? Math.round(totalScore / count) : 0;
     return { count, avgGrade };
   },
 });
