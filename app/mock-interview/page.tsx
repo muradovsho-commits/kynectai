@@ -388,6 +388,9 @@ export default function MockInterviewPage() {
 
   // ══════════════════════════════════════════════════════════════
   // CATEGORIES (single mode)
+  // Free users see only 10% of cards per category (matching flashcards
+  // gating). Without this, free users could read every question via single
+  // mode and bypass the flashcards paywall entirely.
   // ══════════════════════════════════════════════════════════════
   const categories = useMemo(() => {
     if (!activeTrack) return [];
@@ -397,8 +400,25 @@ export default function MockInterviewPage() {
       list.push(c);
       map.set(c.category, list);
     }
+    // For free users, take 10% (rounded up, min 1) of each category
+    if (!isPro) {
+      const gated = new Map<string, Flashcard[]>();
+      for (const [name, cards] of map.entries()) {
+        const n = Math.max(1, Math.ceil(cards.length * 0.1));
+        gated.set(name, cards.slice(0, n));
+      }
+      return Array.from(gated.entries()).map(([name, cards]) => ({ name, cards }));
+    }
     return Array.from(map.entries()).map(([name, cards]) => ({ name, cards }));
-  }, [activeTrack]);
+  }, [activeTrack, isPro]);
+
+  // Total locked-question count for the upgrade nudge in single-mode picker
+  const lockedQuestionCount = useMemo(() => {
+    if (!activeTrack || isPro) return 0;
+    const total = activeTrack.cards.length;
+    const visible = categories.reduce((sum, cat) => sum + cat.cards.length, 0);
+    return total - visible;
+  }, [activeTrack, categories, isPro]);
 
   // ══════════════════════════════════════════════════════════════
   // RECORDING (shared by single + interview modes)
@@ -1218,6 +1238,7 @@ export default function MockInterviewPage() {
   }
 
   function renderSingleQuestionPicker() {
+    const visibleCount = categories.reduce((sum, c) => sum + c.cards.length, 0);
     return (
       <div className="mi-single">
         <button type="button" className="mi-back" onClick={() => setView('hub')}>
@@ -1225,8 +1246,28 @@ export default function MockInterviewPage() {
         </button>
         <h1 className="mi-page-title">Single <em>Question</em></h1>
         <div className="mi-page-sub">
-          {activeTrack!.title} &middot; {activeTrack!.cards.length} questions across {categories.length} topics. Pick one to record.
+          {activeTrack!.title} &middot; {visibleCount} question{visibleCount === 1 ? '' : 's'} across {categories.length} topic{categories.length === 1 ? '' : 's'}. Pick one to record.
         </div>
+
+        {!isPro && lockedQuestionCount > 0 && (
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '12px 18px', marginTop: 16, marginBottom: 16,
+            background: 'var(--surface)', border: '1.5px solid var(--border)',
+            borderRadius: 10, fontSize: 12, color: 'var(--text-3)', gap: 12,
+          }}>
+            <span>
+              Showing <strong style={{ color: 'var(--text)' }}>{visibleCount}</strong> of <strong style={{ color: 'var(--text)' }}>{activeTrack!.cards.length}</strong> questions in this track.
+              Upgrade to unlock all {activeTrack!.cards.length}.
+            </span>
+            <a href="/my-account" style={{
+              flexShrink: 0, padding: '6px 14px', borderRadius: 100,
+              background: 'var(--text)', color: 'var(--surface)',
+              fontSize: 11, fontWeight: 700, textDecoration: 'none',
+              fontFamily: "'Sora', sans-serif", letterSpacing: '0.3px',
+            }}>Upgrade</a>
+          </div>
+        )}
 
         <div className="mi-cat-list">
           {categories.map(cat => {

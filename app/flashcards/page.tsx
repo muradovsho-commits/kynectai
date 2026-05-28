@@ -264,11 +264,25 @@ function FlashcardsContent() {
 
   const allCards = useMemo(() => activeTrack ? (CARD_MAP[activeTrack] || []) : [], [activeTrack]);
 
-  // Free users only see 10% of cards per track
+  // Free users only see 10% of cards PER CATEGORY (so they get exposure to
+  // every concept, not just the first one). Pro users see everything.
   const accessibleCards = useMemo(() => {
     if (isPro) return allCards;
-    const limit = Math.max(1, Math.ceil(allCards.length * 0.1));
-    return allCards.slice(0, limit);
+    // Group by category (preserves first-seen order via Map insertion order)
+    const byCategory = new Map<string, typeof allCards>();
+    for (const c of allCards) {
+      const list = byCategory.get(c.category) || [];
+      list.push(c);
+      byCategory.set(c.category, list);
+    }
+    // Take 10% (rounded up, minimum 1) of each category, then flatten
+    // preserving original category order
+    const result: typeof allCards = [];
+    for (const [, list] of byCategory) {
+      const n = Math.max(1, Math.ceil(list.length * 0.1));
+      result.push(...list.slice(0, n));
+    }
+    return result;
   }, [allCards, isPro]);
 
   const categories = useMemo(() => ['All', ...Array.from(new Set(accessibleCards.map(c => c.category)))], [accessibleCards]);
