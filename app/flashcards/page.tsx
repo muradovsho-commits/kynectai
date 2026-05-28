@@ -387,9 +387,9 @@ function FlashcardsContent() {
                   <div className="flash-stat-sub">In {trackInfo?.title || 'this track'}</div>
                 </div>
                 <div className="flash-stat">
-                  <div className="flash-stat-lbl">Accuracy</div>
-                  <div className="flash-stat-num">{accuracy}%</div>
-                  <div className="flash-stat-sub">{perf.pass} correct</div>
+                  <div className="flash-stat-lbl">Total cards</div>
+                  <div className="flash-stat-num">{trackCards.length}</div>
+                  <div className="flash-stat-sub">Available to drill</div>
                 </div>
                 <div className="flash-stat">
                   <div className="flash-stat-lbl">Bookmarked</div>
@@ -412,8 +412,8 @@ function FlashcardsContent() {
                   disabled={trackCards.length === 0}
                 >
                   <div>
-                    <div className="flash-action-title">Start drilling</div>
-                    <div className="flash-action-sub">Work through all questions{trackInfo ? ` in ${trackInfo.title}` : ''}</div>
+                    <div className="flash-action-title">Browse all flashcards</div>
+                    <div className="flash-action-sub">See every card{trackInfo ? ` in ${trackInfo.title}` : ''} - flip, study, bookmark</div>
                   </div>
                   <span className="flash-action-arrow">{ARROW_R}</span>
                 </button>
@@ -449,7 +449,7 @@ function FlashcardsContent() {
                       >
                         <div className="flash-topic-name">{t.name}</div>
                         <div className="flash-topic-meta">
-                          <span>{t.seen > 0 ? `${t.seen} seen` : 'Not started'}</span>
+                          <span>{t.count} card{t.count === 1 ? '' : 's'}</span>
                           <span>Tap to drill</span>
                         </div>
                       </button>
