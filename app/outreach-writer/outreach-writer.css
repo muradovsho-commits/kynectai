@@ -6,7 +6,7 @@
   --text: #0c0c0c; --text-2: #636160; --text-3: #9b9997; --text-4: #c4c3c0;
   --inv-bg: #0c0c0c; --inv-text: #ffffff; --inv-text-2: rgba(255,255,255,0.6);
   --inv-text-3: rgba(255,255,255,0.3); --inv-border: rgba(255,255,255,0.1);
-  --sidebar-w: 200px;
+  --sidebar-w: 240px;
 }
 
 [data-theme="dark"] {

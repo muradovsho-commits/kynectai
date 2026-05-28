@@ -3,7 +3,7 @@
    scoped to .flash-app so other pages' CSS files can't pollute them. */
 
 :root {
-  --sidebar-w: 200px;
+  --sidebar-w: 240px;
 }
 
 .flash-app {
@@ -46,7 +46,7 @@ html[data-theme="dark"] .flash-app {
 .flash-canvas {
   flex: 1;
   min-width: 0;
-  margin-left: var(--sidebar-w, 200px);
+  margin-left: var(--sidebar-w, 240px);
   padding: 14px 18px 14px 14px;
   background: var(--frame);
   min-height: 100vh;

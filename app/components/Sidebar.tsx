@@ -128,7 +128,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
   // reads margin-left from this variable, so when collapsed flips, content slides
   // over to fill the freed space instead of leaving a dead strip.
   useEffect(() => {
-    document.documentElement.style.setProperty('--sidebar-w', collapsed ? '60px' : '200px');
+    document.documentElement.style.setProperty('--sidebar-w', collapsed ? '60px' : '240px');
     try { localStorage.setItem('offerbell_sidebar_collapsed', String(collapsed)); }
     catch {}
   }, [collapsed]);
@@ -524,7 +524,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
           dashboard.css. Self-contained, so the sidebar looks identical on
           every page regardless of which page-specific CSS is imported. */}
       <style dangerouslySetInnerHTML={{ __html: `
-        :root { --sidebar-w: 200px; }
+        :root { --sidebar-w: 240px; }
         .ob-side {
           position: fixed; top: 0; left: 0;
           width: var(--sidebar-w);
