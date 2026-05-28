@@ -30,6 +30,23 @@ const TRACK_LABELS: Record<string, string> = {
 };
 const TRACK_ORDER = ['ib', 'pe', 'rx', 'consulting', 'accounting', 'am', 'st', 'er', 're', 'vc'];
 
+// Map onboarding verticals (17 of them) to flash_perf track keys (10 of them).
+// Tracks NOT in flash_perf yet (Hedge Fund, Growth Equity, FP&A, Corporate Dev,
+// Credit, Family Office, Endowment) return empty string -> dashboard shows
+// "coming soon" empty state for the heatmap.
+const VERTICAL_TO_TRACK: Record<string, string> = {
+  'Investment Banking': 'ib',
+  'Private Equity': 'pe',
+  'Venture Capital': 'vc',
+  'Sales & Trading': 'st',
+  'Equity Research': 'er',
+  'Asset Management': 'am',
+  'Consulting': 'consulting',
+  'Accounting / Audit / Tax': 'accounting',
+  'Real Estate': 're',
+  'Restructuring': 'rx',
+};
+
 // Read outreach tracker statuses from user's config (or defaults from
 // app/outreach-tracker/page.tsx line 36). Match exactly so dashboard mirrors
 // what the user sees in the tracker, including renamed statuses.
@@ -111,17 +128,32 @@ export default function DashboardPage() {
     }
   }, []);
 
-  // ─── User identity (from localStorage)
-  const [userName, setUserName] = useState({ first: "" });
-  useEffect(() => {
+  // ─── User identity + selected vertical (from localStorage)
+  const [profile, setProfile] = useState<{ first: string; vertical: string }>({ first: "", vertical: "" });
+  const loadProfile = useCallback(() => {
     try {
       const raw = localStorage.getItem("offerbell_onboarding_profile");
       if (raw) {
-        const profile = JSON.parse(raw);
-        setUserName({ first: profile.firstName || "" });
+        const p = JSON.parse(raw);
+        setProfile({
+          first: p.firstName || "",
+          vertical: (Array.isArray(p.targetRoles) && p.targetRoles[0]) || "",
+        });
       }
     } catch {}
   }, []);
+  useEffect(() => {
+    loadProfile();
+    // Listen for in-window profile changes (e.g. user switched industry via sidebar).
+    // Storage events only fire cross-tab so we use a custom event for same-window.
+    const onChanged = () => loadProfile();
+    window.addEventListener('offerbell-profile-changed', onChanged);
+    return () => window.removeEventListener('offerbell-profile-changed', onChanged);
+  }, [loadProfile]);
+
+  // Selected flash_perf track key for the user's primary vertical.
+  // Empty string for verticals that don't have a flashcard track yet.
+  const selectedTrackKey = VERTICAL_TO_TRACK[profile.vertical] || '';
 
   // ─── User ID for Convex queries
   const [userId, setUserId] = useState<string>("");
@@ -193,10 +225,12 @@ export default function DashboardPage() {
 
   // ─── Flashcard performance per track (from localStorage, no Convex hit)
   // Each offerbell_flash_perf_{track} stores { seen, pass, partial, fail, byCat }
-  const [flashPerf, setFlashPerf] = useState<Record<string, { seen: number; pass: number; partial: number; fail: number }>>({});
+  // where byCat is Record<categoryName, { seen, pass }>
+  type FlashTrack = { seen: number; pass: number; partial: number; fail: number; byCat: Record<string, { seen: number; pass: number }> };
+  const [flashPerf, setFlashPerf] = useState<Record<string, FlashTrack>>({});
   const [drillCount, setDrillCount] = useState(0);
   const loadLocalProgress = useCallback(() => {
-    const next: Record<string, { seen: number; pass: number; partial: number; fail: number }> = {};
+    const next: Record<string, FlashTrack> = {};
     for (const t of TRACK_ORDER) {
       try {
         const raw = localStorage.getItem(`offerbell_flash_perf_${t}`);
@@ -207,12 +241,13 @@ export default function DashboardPage() {
             pass: parsed.pass || 0,
             partial: parsed.partial || 0,
             fail: parsed.fail || 0,
+            byCat: (parsed.byCat && typeof parsed.byCat === 'object') ? parsed.byCat : {},
           };
         } else {
-          next[t] = { seen: 0, pass: 0, partial: 0, fail: 0 };
+          next[t] = { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
         }
       } catch {
-        next[t] = { seen: 0, pass: 0, partial: 0, fail: 0 };
+        next[t] = { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
       }
     }
     setFlashPerf(next);
@@ -353,20 +388,32 @@ export default function DashboardPage() {
 
   const maxWeekly = Math.max(0.01, ...weeklyActivity);
 
-  // ─── Computed: skill heatmap (10 tracks)
-  const skillRows = useMemo(() => {
-    return TRACK_ORDER.map(t => {
-      const p = flashPerf[t] || { seen: 0, pass: 0, partial: 0, fail: 0 };
-      const accuracy = p.seen > 0 ? Math.round(((p.pass + p.partial * 0.5) / p.seen) * 100) : 0;
-      return { track: t, label: TRACK_LABELS[t], seen: p.seen, accuracy };
-    });
-  }, [flashPerf]);
+  // ─── Computed: skill heatmap — per-topic accuracy WITHIN the selected track
+  // (not per-track across the platform). Reads byCat for the user's selected
+  // vertical's flash_perf track. Sorted by accuracy ascending so weakest
+  // topics appear first.
+  const topicRows = useMemo(() => {
+    if (!selectedTrackKey) return [];
+    const perf = flashPerf[selectedTrackKey];
+    if (!perf) return [];
+    return Object.entries(perf.byCat)
+      .map(([topic, data]) => ({
+        topic,
+        seen: data.seen || 0,
+        accuracy: data.seen > 0 ? Math.round((data.pass / data.seen) * 100) : 0,
+      }))
+      .filter(r => r.seen > 0)
+      .sort((a, b) => a.accuracy - b.accuracy);
+  }, [flashPerf, selectedTrackKey]);
 
-  const hasAnyFlashData = skillRows.some(r => r.seen > 0);
+  const hasAnyTopicData = topicRows.length > 0;
 
-  // ─── Computed: what to focus on (real recommendations based on user data)
+  // ─── Computed: what to focus on (real recommendations, career-aware)
+  // All recommendations reference the user's SELECTED vertical, not some
+  // unrelated track that happens to have low accuracy.
   const focusItems = useMemo(() => {
     const recs: Array<{ title: string; desc: string; href: string; urgency: 'amber' | 'red'; icon: 'mock' | 'flash' | 'coach' | 'outreach' | 'resume' }> = [];
+    const trackLabel = TRACK_LABELS[selectedTrackKey] || profile.vertical || 'your track';
 
     // No mock interviews
     if (mockStats && mockStats.count === 0) {
@@ -378,26 +425,38 @@ export default function DashboardPage() {
         icon: 'mock',
       });
     }
-    // Find weakest track or untouched track
-    if (hasAnyFlashData) {
-      // Recommend the track with lowest accuracy where seen > 0
-      const sorted = skillRows.filter(r => r.seen > 0).sort((a, b) => a.accuracy - b.accuracy);
-      if (sorted.length > 0 && sorted[0].accuracy < 70) {
+    // Flashcards: recommend the user's selected track specifically.
+    if (selectedTrackKey) {
+      // User has data — find their weakest topic IN this track if any are <70%.
+      if (hasAnyTopicData) {
+        const weakest = topicRows[0]; // already sorted ascending by accuracy
+        if (weakest && weakest.accuracy < 70) {
+          recs.push({
+            title: `Practice ${weakest.topic} (${trackLabel})`,
+            desc: `You're at ${weakest.accuracy}% accuracy here. Closing this gap matters.`,
+            href: `/flashcards?track=${selectedTrackKey}`,
+            urgency: 'amber',
+            icon: 'flash',
+          });
+        }
+      } else {
+        // No flashcard data for this track yet.
         recs.push({
-          title: `Practice ${sorted[0].label} flashcards`,
-          desc: `You're at ${sorted[0].accuracy}% accuracy. Closing this gap matters.`,
-          href: '/flashcards',
+          title: `Start ${trackLabel} flashcards`,
+          desc: 'Test where you stand on technical knowledge.',
+          href: `/flashcards?track=${selectedTrackKey}`,
           urgency: 'amber',
           icon: 'flash',
         });
       }
-    } else {
+    } else if (profile.vertical) {
+      // User has a vertical selected but it doesn't have a flash_perf track yet.
       recs.push({
-        title: 'Start your first flashcards',
-        desc: 'Test where you stand on technical knowledge.',
-        href: '/flashcards',
+        title: `Explore other prep for ${profile.vertical}`,
+        desc: 'Flashcards for this track are coming soon. Try Coach or Mock Interview.',
+        href: '/coach',
         urgency: 'amber',
-        icon: 'flash',
+        icon: 'coach',
       });
     }
     // No coach chats
@@ -436,7 +495,7 @@ export default function DashboardPage() {
     } catch {}
 
     return recs.slice(0, 3);
-  }, [mockStats, coachStats, hasAnyFlashData, skillRows, outreachContacts]);
+  }, [mockStats, coachStats, hasAnyTopicData, topicRows, selectedTrackKey, profile.vertical, outreachContacts]);
 
   // ─── Computed: outreach pipeline counts
   const outreachCounts = useMemo(() => {
@@ -472,7 +531,7 @@ export default function DashboardPage() {
   }, [activityDaysSet]);
 
   // ─── Render
-  const displayFirst = userName.first || "there";
+  const displayFirst = profile.first || "there";
   const greeting = (() => {
     const h = new Date().getHours();
     if (h < 12) return "Good morning";
@@ -564,28 +623,41 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                {/* Skill Heatmap */}
+                {/* Skill Heatmap - per-topic accuracy within selected track */}
                 <div className="dash-card">
-                  <h2 className="dash-card-title">Skill Heatmap</h2>
-                  {!hasAnyFlashData ? (
-                    <div className="dash-empty">Complete flashcards or concept drills to see accuracy per track here.</div>
+                  <h2 className="dash-card-title">
+                    Skill Heatmap
+                    {selectedTrackKey && (
+                      <span className="dash-card-title-tag">{TRACK_LABELS[selectedTrackKey]}</span>
+                    )}
+                  </h2>
+                  {!profile.vertical ? (
+                    <div className="dash-empty">Pick an industry in the sidebar to see your topic-level accuracy.</div>
+                  ) : !selectedTrackKey ? (
+                    <div className="dash-empty">Flashcards for {profile.vertical} aren&apos;t available yet. Try Coach or Mock Interview for this track.</div>
+                  ) : !hasAnyTopicData ? (
+                    <div className="dash-empty">
+                      Complete a few {TRACK_LABELS[selectedTrackKey]} flashcards to see your topic-level accuracy.
+                    </div>
                   ) : (
                     <div className="dash-heatmap">
-                      {skillRows.map(row => (
-                        <Link key={row.track} className="dash-heatmap-row" href={`/flashcards?track=${row.track}`}>
-                          <div className="dash-heatmap-label">{row.label}</div>
+                      {topicRows.map(row => (
+                        <Link
+                          key={row.topic}
+                          className="dash-heatmap-row"
+                          href={`/flashcards?track=${selectedTrackKey}`}
+                        >
+                          <div className="dash-heatmap-label">{row.topic}</div>
                           <div className="dash-heatmap-bar-wrap">
                             <div
                               className="dash-heatmap-bar"
                               style={{
-                                width: row.seen > 0 ? `${row.accuracy}%` : '0%',
-                                background: row.seen === 0 ? 'var(--border)' : row.accuracy >= 75 ? '#16a34a' : row.accuracy >= 50 ? '#f59e0b' : '#ef4444',
+                                width: `${row.accuracy}%`,
+                                background: row.accuracy >= 75 ? '#16a34a' : row.accuracy >= 50 ? '#f59e0b' : '#ef4444',
                               }}
                             />
                           </div>
-                          <div className="dash-heatmap-val">
-                            {row.seen > 0 ? `${row.accuracy}%` : <span style={{ color: 'var(--text-3)' }}>—</span>}
-                          </div>
+                          <div className="dash-heatmap-val">{row.accuracy}%</div>
                         </Link>
                       ))}
                     </div>
