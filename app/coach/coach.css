@@ -391,6 +391,44 @@ html[data-theme="dark"] .coach-app {
   color: var(--text);
 }
 
+/* Mic button (replaces file upload). When .listening, pulses red to indicate
+   active recording. Free Web Speech API - no cost. */
+.coach-input-mic {
+  background: none;
+  border: none;
+  color: var(--text-3);
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: background 0.12s, color 0.12s;
+  width: 32px;
+  height: 32px;
+}
+.coach-input-mic:not(:disabled):hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.coach-input-mic:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.coach-input-mic.listening {
+  color: #dc2626;
+  background: #fef2f2;
+  animation: coachMicPulse 1.4s ease-in-out infinite;
+}
+[data-theme="dark"] .coach-input-mic.listening {
+  background: #4a1520;
+  color: #fca5a5;
+}
+@keyframes coachMicPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
+}
+
 .coach-send-btn {
   width: 32px;
   height: 32px;
@@ -568,6 +606,49 @@ html[data-theme="dark"] .coach-app {
   color: var(--text-3);
 }
 .coach-msg-time.right { text-align: right; }
+
+/* Footer row under each assistant message: holds the copy button + timestamp */
+.coach-msg-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.coach-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-3);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.coach-copy-btn:not(:disabled):hover {
+  background: var(--surface-2);
+  color: var(--text);
+  border-color: var(--border);
+}
+.coach-copy-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.coach-copy-btn.copied {
+  color: #16a34a;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+[data-theme="dark"] .coach-copy-btn.copied {
+  color: #4ade80;
+  background: #14332a;
+  border-color: #166534;
+}
 
 .coach-typing {
   display: inline-flex;

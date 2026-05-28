@@ -55,7 +55,9 @@ export async function POST(req: NextRequest) {
 
 Today's date is ${today}. Use this when evaluating resume dates - any dates before today are in the past, any dates after today are in the future. Do not flag past dates as upcoming or future dates as past.
 
-Be direct, specific, and warm - like a brilliant older friend who went through the process. Never give generic advice. When reviewing resumes, pay careful attention to the chronological order of experiences and dates. When reviewing emails or stories, rewrite them. Remember everything in the conversation and build on it. Keep responses well-formatted with clear paragraphs. Use bullet points when listing multiple things. Always end with a specific follow-up question or next action.
+CRITICAL: Be concise. Default to short, punchy answers. Most responses should be 2-5 sentences or a tight 3-5 bullet list. Only go longer when the user explicitly asks for a deep walkthrough. Never pad with throat-clearing, restatement of the question, or unnecessary caveats.
+
+Be direct, specific, and warm - like a brilliant older friend who went through the process. Never give generic advice. When reviewing resumes, pay careful attention to the chronological order of experiences and dates. When reviewing emails or stories, rewrite them quickly with the key changes. End with a specific follow-up question only when it advances the conversation - don't force one if the answer is complete.
 
 The user is currently on the "${track || "Investment Banking"}" recruiting track. Tailor your advice specifically for ${track || "Investment Banking"} recruiting when relevant.`;
 
@@ -72,7 +74,7 @@ The user is currently on the "${track || "Investment Banking"}" recruiting track
       const geminiBody = {
         contents: geminiContents,
         systemInstruction: { parts: [{ text: systemInstruction }] },
-        generationConfig: { temperature: 0.8, topP: 0.95, maxOutputTokens: 2048 },
+        generationConfig: { temperature: 0.8, topP: 0.95, maxOutputTokens: 1024 },
       };
 
       try {

@@ -437,7 +437,9 @@ const QUOTES = [
 
 const SYSTEM = `You are Coach - an elite finance recruiting advisor. You have deep expertise in investment banking, private equity, hedge funds, consulting, and all aspects of finance recruiting. You help students with cold emails, networking, coffee chats, interview prep, recruiting stories, and offer decisions.
 
-Be direct, specific, and warm - like a brilliant older friend who went through the process. Never give generic advice. When reviewing emails or stories, rewrite them. Remember everything in the conversation and build on it. Keep responses well-formatted with clear paragraphs. Use bullet points when listing multiple things. Always end with a specific follow-up question or next action.`;
+CRITICAL: Be concise. Default to short, punchy answers. Most responses should be 2-5 sentences or a tight 3-5 bullet list. Only go longer when the user explicitly asks for a deep walkthrough (e.g., "walk me through a DCF in detail"). Never pad with throat-clearing, restatement of the question, or unnecessary caveats.
+
+Be direct, specific, and warm - like a brilliant older friend who went through the process. Never give generic advice. When reviewing emails or stories, rewrite them quickly with the key changes. Remember everything in the conversation and build on it. End with a specific follow-up question only when it advances the conversation - don't force one if the answer is complete.`;
 
 type Message = { role: 'user' | 'assistant'; content: string; time?: number };
 
@@ -614,6 +616,90 @@ export default function CoachPage() {
   // category of the active track by default.
   const [selectedCategory, setSelectedCategory] = useState<string>('Technical');
   const [storedChatsOpen, setStoredChatsOpen] = useState(false);
+
+  // Voice input via the Web Speech API. Free, runs locally in Chrome/Safari/Edge.
+  // hasMicSupport is set on mount; isListening drives the UI red-pulse state.
+  const [isListening, setIsListening] = useState(false);
+  const [hasMicSupport, setHasMicSupport] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  // Copy-to-clipboard state. copiedMsgIdx tracks which message just got copied
+  // so we can flash "Copied!" on the right button briefly.
+  const [copiedMsgIdx, setCopiedMsgIdx] = useState<number | null>(null);
+
+  const copyMessage = (idx: number, content: string) => {
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(content).then(() => {
+      setCopiedMsgIdx(idx);
+      setTimeout(() => setCopiedMsgIdx(curr => (curr === idx ? null : curr)), 1500);
+    }).catch(err => {
+      console.error('Copy failed:', err);
+    });
+  };
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const supported = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
+    setHasMicSupport(supported);
+  }, []);
+
+  const toggleMic = () => {
+    if (!hasMicSupport) {
+      alert('Voice input is not supported in this browser. Try Chrome, Safari, or Edge.');
+      return;
+    }
+
+    // If currently listening, stop and bail
+    if (isListening) {
+      try { recognitionRef.current?.stop(); } catch {}
+      setIsListening(false);
+      return;
+    }
+
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = (event: any) => {
+      // Only final transcripts come through (interimResults=false)
+      let newText = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          newText += event.results[i][0].transcript;
+        }
+      }
+      if (!newText) return;
+      setInputVal(prev => {
+        const next = prev ? (prev.trimEnd() + ' ' + newText.trim()) : newText.trim();
+        return next;
+      });
+      // Resize textarea to fit new content
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+        textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+      }
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error('Speech recognition error:', event.error);
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    try {
+      recognition.start();
+      recognitionRef.current = recognition;
+      setIsListening(true);
+    } catch (err) {
+      console.error('Failed to start speech recognition:', err);
+      setIsListening(false);
+    }
+  };
 
   // Sync activeTrack from the sidebar's Industry pill. Reads targetRoles[0]
   // from offerbell_onboarding_profile on mount and listens for changes via
@@ -1195,14 +1281,19 @@ export default function CoachPage() {
                     disabled={!!limitInfo}
                   />
                   <div className="coach-input-actions">
-                    <input type="file" ref={fileInputRef} accept=".txt,.pdf" onChange={handleResumeUpload} style={{ display: 'none' }} />
                     <button
                       type="button"
-                      className="coach-input-clip"
-                      onClick={() => fileInputRef.current?.click()}
-                      title="Upload resume (PDF or TXT)"
+                      className={`coach-input-mic${isListening ? ' listening' : ''}`}
+                      onClick={toggleMic}
+                      title={isListening ? 'Stop listening' : (hasMicSupport ? 'Tap to talk' : 'Voice input not supported in this browser')}
+                      disabled={!hasMicSupport || !!limitInfo}
                     >
-                      <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                      <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                        <line x1="12" y1="19" x2="12" y2="22"/>
+                        <line x1="8" y1="22" x2="16" y2="22"/>
+                      </svg>
                     </button>
                     <button
                       type="button"
@@ -1261,7 +1352,28 @@ export default function CoachPage() {
                             Coach
                           </div>
                           <div className="coach-bubble coach-bubble-ai" dangerouslySetInnerHTML={{ __html: formatText(m.content) }} />
-                          <div className="coach-msg-time">{fmtTime(m.time)}</div>
+                          <div className="coach-msg-foot">
+                            <button
+                              type="button"
+                              className={`coach-copy-btn${copiedMsgIdx === i ? ' copied' : ''}`}
+                              onClick={() => copyMessage(i, m.content)}
+                              disabled={!m.content}
+                              title="Copy response"
+                            >
+                              {copiedMsgIdx === i ? (
+                                <>
+                                  <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                                  Copied
+                                </>
+                              ) : (
+                                <>
+                                  <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                  Copy
+                                </>
+                              )}
+                            </button>
+                            <span className="coach-msg-time">{fmtTime(m.time)}</span>
+                          </div>
                         </>
                       ) : (
                         <>
@@ -1330,14 +1442,19 @@ export default function CoachPage() {
                         disabled={!!limitInfo}
                       />
                       <div className="coach-input-actions">
-                        <input type="file" ref={fileInputRef} accept=".txt,.pdf" onChange={handleResumeUpload} style={{ display: 'none' }} />
                         <button
                           type="button"
-                          className="coach-input-clip"
-                          onClick={() => fileInputRef.current?.click()}
-                          title="Upload resume (PDF or TXT)"
+                          className={`coach-input-mic${isListening ? ' listening' : ''}`}
+                          onClick={toggleMic}
+                          title={isListening ? 'Stop listening' : (hasMicSupport ? 'Tap to talk' : 'Voice input not supported in this browser')}
+                          disabled={!hasMicSupport || !!limitInfo}
                         >
-                          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                            <line x1="12" y1="19" x2="12" y2="22"/>
+                            <line x1="8" y1="22" x2="16" y2="22"/>
+                          </svg>
                         </button>
                         <button
                           type="button"
