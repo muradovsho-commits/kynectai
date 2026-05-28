@@ -39,14 +39,12 @@ type ResponseEntry = {
 type TrackDef = { id: string; title: string; cards: Flashcard[] };
 
 type InterviewType = 'behavioral' | 'technical' | 'mixed';
-type InterviewStage = 'HireVue' | 'First Round' | 'Second Round' | 'Superday';
 
 type InterviewConfig = {
   company: string;
-  stage: InterviewStage | '';
+  stage: string;
   trackId: string;
   location: string;
-  durationMin: number;
   type: InterviewType | '';
 };
 
@@ -108,8 +106,22 @@ const ROLE_TO_TRACK: Record<string, string> = {
   'Restructuring': 'rx',
 };
 
-const INTERVIEW_STAGES: InterviewStage[] = ['HireVue', 'First Round', 'Second Round', 'Superday'];
-const DURATIONS = [15, 30, 45, 60, 90];
+// Career-aware interview stage options. Each track has its own progression
+// because IB superdays, consulting case rounds, AM stock pitches, and S&T
+// markets rounds are all distinct concepts.
+const STAGES_BY_TRACK: Record<string, string[]> = {
+  ib:         ['HireVue', 'First Round', 'Superday', 'Final Round'],
+  pe:         ['HireVue', 'First Round (Behavioral)', 'LBO Modeling Test', 'Case Study', 'Partner Round', 'Final Round'],
+  rx:         ['HireVue', 'First Round', 'Case Study', 'Superday'],
+  consulting: ['Behavioral Round', 'First Case Round', 'Second Case Round', 'Partner Round'],
+  accounting: ['Phone Screen', 'First Round', 'Office Visit', 'Partner Round'],
+  am:         ['Phone Screen', 'Stock Pitch Round', 'First Round', 'Final Round'],
+  st:         ['HireVue', 'Markets Round', 'Mental Math / Brain Teasers', 'Final Round'],
+  er:         ['Phone Screen', 'Stock Pitch', 'Modeling Test', 'Final Round'],
+  re:         ['Phone Screen', 'Modeling Test', 'First Round', 'Final Round'],
+  vc:         ['Phone Screen', 'Deal Memo Review', 'Case Study', 'Partner Meeting'],
+};
+
 const QUESTIONS_PER_INTERVIEW = 10;
 const RECORDING_LIMIT_SEC = 60;
 
@@ -140,20 +152,29 @@ function gradeToScore(g: Grade): number {
   return g === 'Great' ? 10 : g === 'Good' ? 6 : 2;
 }
 
-// Select N questions from track filtered by interview type. Behavioral keywords
-// in category match → behavioral pool; everything else → technical pool. Mixed
-// pulls from both. Always falls back to all cards if a filter yields nothing.
+// Select N questions from track filtered by interview type.
+// Filtering is strictly by category === 'Behavioral'. Matching against the
+// question text was poisoning the pool: technical questions like
+// 'Why does depreciation add back to cash flow?' were getting classified
+// as behavioral because of the word 'why'.
 function selectInterviewQuestions(track: TrackDef, type: InterviewType, count: number): Flashcard[] {
-  const behavioralRx = /behav|fit|story|why|tell me/i;
   const all = track.cards;
-
-  const behavioralPool = all.filter(c => behavioralRx.test(c.category) || behavioralRx.test(c.q));
-  const technicalPool = all.filter(c => !behavioralRx.test(c.category) && !behavioralRx.test(c.q));
+  const behavioralPool = all.filter(c => c.category === 'Behavioral');
+  const technicalPool = all.filter(c => c.category !== 'Behavioral');
 
   let pool: Flashcard[];
-  if (type === 'behavioral') pool = behavioralPool.length ? behavioralPool : all;
-  else if (type === 'technical') pool = technicalPool.length ? technicalPool : all;
-  else pool = all;
+  if (type === 'behavioral') {
+    pool = behavioralPool.length ? behavioralPool : all;
+  } else if (type === 'technical') {
+    pool = technicalPool.length ? technicalPool : all;
+  } else {
+    // Mixed: roughly 30% behavioral, 70% technical, shuffled together
+    const behCount = Math.min(Math.floor(count * 0.3), behavioralPool.length);
+    const techCount = count - behCount;
+    const shuffledBeh = [...behavioralPool].sort(() => Math.random() - 0.5).slice(0, behCount);
+    const shuffledTec = [...technicalPool].sort(() => Math.random() - 0.5).slice(0, techCount);
+    return [...shuffledBeh, ...shuffledTec].sort(() => Math.random() - 0.5);
+  }
 
   const shuffled = [...pool].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, Math.min(count, shuffled.length));
@@ -195,12 +216,11 @@ export default function MockInterviewPage() {
 
   // Interview-mode state
   const [setupConfig, setSetupConfig] = useState<InterviewConfig>({
-    company: '', stage: '', trackId: 'ib', location: '', durationMin: 30, type: '',
+    company: '', stage: '', trackId: 'ib', location: '', type: '',
   });
   const [interviewQuestions, setInterviewQuestions] = useState<Flashcard[]>([]);
   const [currentQIdx, setCurrentQIdx] = useState(0);
   const [interviewResults, setInterviewResults] = useState<InterviewQAEntry[]>([]);
-  const [totalTimeLeft, setTotalTimeLeft] = useState(0);
   const [allSessions, setAllSessions] = useState<InterviewSession[]>([]);
   const [viewingSession, setViewingSession] = useState<InterviewSession | null>(null);
 
@@ -210,7 +230,6 @@ export default function MockInterviewPage() {
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const totalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const transcriptRef = useRef('');
   const recognitionRef = useRef<any>(null);
   const recordingStartRef = useRef<number>(0);
@@ -363,25 +382,6 @@ export default function MockInterviewPage() {
     }
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [isRecording]);
-
-  // ── Total interview timer ──────────────────────────────────
-  useEffect(() => {
-    if (view !== 'interview') {
-      if (totalTimerRef.current) { clearInterval(totalTimerRef.current); totalTimerRef.current = null; }
-      return;
-    }
-    totalTimerRef.current = setInterval(() => {
-      setTotalTimeLeft(t => {
-        if (t <= 1) {
-          setTimeout(() => endInterview(), 0);
-          return 0;
-        }
-        return t - 1;
-      });
-    }, 1000);
-    return () => { if (totalTimerRef.current) clearInterval(totalTimerRef.current); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view]);
 
   // Cleanup video object URLs on unmount
   useEffect(() => {
@@ -687,10 +687,9 @@ export default function MockInterviewPage() {
   // ══════════════════════════════════════════════════════════════
 
   function openSetup() {
-    setSetupConfig(c => ({
-      company: '', stage: '', trackId: sidebarTrackId, location: '',
-      durationMin: 30, type: '',
-    }));
+    setSetupConfig({
+      company: '', stage: '', trackId: sidebarTrackId, location: '', type: '',
+    });
     setView('setup');
   }
 
@@ -702,7 +701,6 @@ export default function MockInterviewPage() {
     setInterviewQuestions(qs);
     setCurrentQIdx(0);
     setInterviewResults([]);
-    setTotalTimeLeft(setupConfig.durationMin * 60);
     interviewStartRef.current = Date.now();
     setView('interview');
   }
@@ -880,7 +878,7 @@ export default function MockInterviewPage() {
             </div>
             <div className="mi-mode-body">
               <div className="mi-mode-title">Start a full interview</div>
-              <div className="mi-mode-sub">10-question simulated round. Pick stage, type, and duration. AskStanley-style.</div>
+              <div className="mi-mode-sub">A simulated 10-question interview. Pick the stage and type, then run through it like the real thing.</div>
             </div>
             <div className="mi-mode-arrow">→</div>
           </button>
@@ -948,15 +946,20 @@ export default function MockInterviewPage() {
 
   // ── SETUP MODAL (overlays hub) ─────────────────────────────
   function renderSetupModal() {
-    const canStart = setupConfig.stage && setupConfig.type && setupConfig.trackId && setupConfig.durationMin > 0;
+    const canStart = setupConfig.stage && setupConfig.type && setupConfig.trackId;
+    const stageOptions = STAGES_BY_TRACK[setupConfig.trackId] || STAGES_BY_TRACK['ib'];
+    const trackTitle = TRACKS.find(t => t.id === setupConfig.trackId)?.title || '';
     return (
       <>
         {renderHub()}
         <div className="mi-modal-overlay" onClick={() => setView('hub')}>
           <div className="mi-modal" onClick={(e) => e.stopPropagation()}>
             <div className="mi-modal-head">
-              <div className="mi-modal-title">Setup Your Mock Interview</div>
-              <button type="button" className="mi-modal-x" onClick={() => setView('hub')}>×</button>
+              <div>
+                <div className="mi-modal-title">Set up your mock interview</div>
+                <div className="mi-modal-track">For <strong>{trackTitle}</strong> &middot; change in sidebar</div>
+              </div>
+              <button type="button" className="mi-modal-x" onClick={() => setView('hub')}>&times;</button>
             </div>
 
             <div className="mi-modal-body">
@@ -964,63 +967,43 @@ export default function MockInterviewPage() {
                 <label>Company <span className="mi-field-opt">optional</span></label>
                 <input
                   type="text"
-                  placeholder="e.g., Goldman Sachs, JP Morgan, Vista, etc"
+                  placeholder="e.g., Goldman Sachs, JP Morgan, Vista"
                   value={setupConfig.company}
                   onChange={(e) => setSetupConfig({ ...setupConfig, company: e.target.value })}
                 />
               </div>
 
               <div className="mi-field">
-                <label>Interview Stage *</label>
-                <select
-                  value={setupConfig.stage}
-                  onChange={(e) => setSetupConfig({ ...setupConfig, stage: e.target.value as InterviewStage })}
-                >
-                  <option value="">Select interview stage</option>
-                  {INTERVIEW_STAGES.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-
-              <div className="mi-field">
-                <label>Industry Group *</label>
-                <select
-                  value={setupConfig.trackId}
-                  onChange={(e) => setSetupConfig({ ...setupConfig, trackId: e.target.value })}
-                >
-                  {TRACKS.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-                </select>
-              </div>
-
-              <div className="mi-field">
-                <label>Office Location <span className="mi-field-opt">optional</span></label>
+                <label>Office location <span className="mi-field-opt">optional</span></label>
                 <input
                   type="text"
-                  placeholder="e.g., New York"
+                  placeholder="e.g., New York, Cleveland"
                   value={setupConfig.location}
                   onChange={(e) => setSetupConfig({ ...setupConfig, location: e.target.value })}
                 />
               </div>
 
               <div className="mi-field">
-                <label>Interview Duration *</label>
+                <label>Interview stage *</label>
                 <select
-                  value={setupConfig.durationMin}
-                  onChange={(e) => setSetupConfig({ ...setupConfig, durationMin: parseInt(e.target.value) })}
+                  value={setupConfig.stage}
+                  onChange={(e) => setSetupConfig({ ...setupConfig, stage: e.target.value })}
                 >
-                  {DURATIONS.map(d => <option key={d} value={d}>{d} minutes</option>)}
+                  <option value="">Select interview stage</option>
+                  {stageOptions.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
 
               <div className="mi-field">
-                <label>Interview Type *</label>
+                <label>Interview type *</label>
                 <select
                   value={setupConfig.type}
                   onChange={(e) => setSetupConfig({ ...setupConfig, type: e.target.value as InterviewType })}
                 >
                   <option value="">Select interview type</option>
-                  <option value="behavioral">Behavioral Interview</option>
-                  <option value="technical">Technical Interview</option>
-                  <option value="mixed">Mixed Interview (Behavioral + Technical)</option>
+                  <option value="behavioral">Behavioral</option>
+                  <option value="technical">Technical</option>
+                  <option value="mixed">Mixed (behavioral + technical)</option>
                 </select>
               </div>
             </div>
@@ -1028,7 +1011,7 @@ export default function MockInterviewPage() {
             <div className="mi-modal-foot">
               <button type="button" className="mi-btn-ghost" onClick={() => setView('hub')}>Cancel</button>
               <button type="button" className="mi-btn-primary" disabled={!canStart} onClick={startInterview}>
-                Start Interview
+                Start interview
               </button>
             </div>
           </div>
@@ -1048,9 +1031,9 @@ export default function MockInterviewPage() {
         <div className="mi-iv-bar">
           <div className="mi-iv-bar-left">
             <span className="mi-iv-qno">Question {currentQIdx + 1}/{total}</span>
-            <span className="mi-iv-time">Time: {fmtTime(totalTimeLeft)}</span>
+            <span className="mi-iv-stage">{setupConfig.stage}</span>
           </div>
-          <button type="button" className="mi-iv-exit" onClick={exitInterview}>Exit Interview</button>
+          <button type="button" className="mi-iv-exit" onClick={exitInterview}>Exit interview</button>
         </div>
 
         <div className="mi-iv-q-card">
