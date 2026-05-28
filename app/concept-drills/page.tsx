@@ -614,11 +614,6 @@ function ConceptDrillsInner() {
                         <div className="cd-stat-num">{trackDef?.topics.length || 0}</div>
                         <div className="cd-stat-sub">Available to drill</div>
                       </div>
-                      <div className="cd-stat">
-                        <div className="cd-stat-lbl">Question bank</div>
-                        <div className="cd-stat-num">{trackDef?.questions.length || 0}</div>
-                        <div className="cd-stat-sub">Total questions</div>
-                      </div>
                     </div>
 
                     <div className="cd-filter-row">
@@ -680,7 +675,7 @@ function ConceptDrillsInner() {
                             />
                           </div>
                           <div className="cd-topic-meta">
-                            <span>{t.seen} / {t.available} questions</span>
+                            <span>{t.seen > 0 ? `${t.seen} answered` : 'Not started'}</span>
                             <span>{t.available > 0 ? 'Tap to drill' : 'No questions yet'}</span>
                           </div>
                         </button>
