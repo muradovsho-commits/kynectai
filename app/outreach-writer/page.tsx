@@ -51,6 +51,7 @@ export default function OutreachWriterPage() {
 
   // ── State ──
   const [userPlan, setUserPlan] = useState('free');
+  const [hydrated, setHydrated] = useState(false);
   const [messagesSent, setMessagesSent] = useState(0);
   const [weeklyUsed, setWeeklyUsed] = useState(0);
 
@@ -194,6 +195,7 @@ export default function OutreachWriterPage() {
           } catch {}
         }
       } catch { /* swallow - localStorage fallback already populated */ }
+      finally { if (!cancelled) setHydrated(true); }
     })();
     return () => { cancelled = true; };
   }, []);
@@ -396,7 +398,7 @@ Rules:
                 </div>
               </div>
               <div className="ow-top-chips">
-                <div className={chipClass}>
+                <div className={chipClass} style={{ opacity: hydrated ? 1 : 0, transition: 'opacity 0.15s' }}>
                   <span className="ow-chip-dot" />
                   {atLimit
                     ? 'Weekly limit reached'

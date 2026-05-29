@@ -72,6 +72,7 @@ export default function ResumeReviewPage() {
   const [viewingPast, setViewingPast] = useState<SavedReview | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const [userPlan, setUserPlan] = useState('free');
+  const [hydrated, setHydrated] = useState(false);
   const trackMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -117,6 +118,7 @@ export default function ResumeReviewPage() {
           try { localStorage.setItem('offerbell_resume_usage', JSON.stringify({ week: getWeekStart(), count: usage.resumeReview })); } catch {}
         }
       } catch { /* swallow - localStorage fallback already populated */ }
+      finally { if (!cancelled) setHydrated(true); }
     })();
     return () => { cancelled = true; };
   }, []);
@@ -381,7 +383,7 @@ export default function ResumeReviewPage() {
                         </div>
                       )}
                     </div>
-                    <div className={usageChipClass}>
+                    <div className={usageChipClass} style={{ opacity: hydrated ? 1 : 0, transition: 'opacity 0.15s' }}>
                       {atLimit
                         ? `Weekly limit reached`
                         : `${remainingReviews} of ${maxAllowed} review${maxAllowed !== 1 ? 's' : ''} left`}
