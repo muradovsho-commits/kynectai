@@ -1,6 +1,8 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { ConvexHttpClient } from 'convex/browser';
+import { api } from '../../convex/_generated/api';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
 import './resume.css';
@@ -83,6 +85,41 @@ export default function ResumeReviewPage() {
       if (raw) setReviewHistory(JSON.parse(raw));
     } catch {}
   }, [router]);
+
+  // Hydrate plan + weekly usage from Convex (source of truth). Without this,
+  // the initial chip reads from localStorage which can be stale (e.g. plan
+  // was changed in Convex, or weekly counter is wrong). One-shot HTTP fetch
+  // - not a reactive useQuery - so no live-subscription bandwidth cost.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const userId = localStorage.getItem('offerbell_user_id');
+    if (!userId) return;
+    const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+    if (!url) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const client = new ConvexHttpClient(url);
+        // Plan (server source of truth). Note: deliberately DOES NOT write
+        // to localStorage. During a Stripe webhook delay window, Convex
+        // may briefly lag behind the optimistic localStorage value set by
+        // /checkout/success. Writing here would downgrade a paying user
+        // across the whole app. Only this page's chip updates - other
+        // pages keep their own state.
+        const userRow: any = await client.query((api as any).users.getUser, { userId });
+        if (!cancelled && userRow?.found && (userRow.plan === 'free' || userRow.plan === 'pro' || userRow.plan === 'elite')) {
+          setUserPlan(userRow.plan);
+        }
+        // Weekly usage (server source of truth)
+        const usage: any = await client.query((api as any).usage?.getUsage, { userId });
+        if (!cancelled && usage && typeof usage.resumeReview === 'number') {
+          setUsageCount(usage.resumeReview);
+          try { localStorage.setItem('offerbell_resume_usage', JSON.stringify({ week: getWeekStart(), count: usage.resumeReview })); } catch {}
+        }
+      } catch { /* swallow - localStorage fallback already populated */ }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   // Listen for sidebar industry changes to re-default the track when user hasn't picked yet
   useEffect(() => {
