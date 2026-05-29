@@ -238,7 +238,25 @@ export default function ResumeReviewPage() {
       });
       const data = await res.json();
 
-      if (data.error) { setError(data.error); }
+      if (data.error) {
+        // Server returns { error: "limit_reached", message, plan, used, limit, ... }
+        // Prefer the friendly message; fall back to error code mapping; sync state.
+        const friendly = data.message
+          || (data.error === 'limit_reached'
+              ? `You've hit your weekly limit. ${data.limit ? `(${data.used}/${data.limit} used)` : ''} Resets Monday.`
+              : data.error === 'Resume text too short or missing'
+                ? 'That file looks empty. Try a different PDF or paste the text directly.'
+                : data.error === 'All models failed'
+                  ? 'Our reviewer is having trouble right now. Try again in a moment.'
+                  : data.error);
+        setError(friendly);
+        // Convex is source of truth - sync local plan + usage to match server's view
+        if (typeof data.plan === 'string') setUserPlan(data.plan);
+        if (typeof data.used === 'number') {
+          setUsageCount(data.used);
+          try { localStorage.setItem('offerbell_resume_usage', JSON.stringify({ week: getWeekStart(), count: data.used })); } catch {}
+        }
+      }
       else if (data.review) {
         setReview(data.review);
         saveReviewToHistory(data.review);
@@ -371,7 +389,7 @@ export default function ResumeReviewPage() {
                             <svg width="26" height="26" fill="none" stroke="var(--text-2)" strokeWidth="1.6" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                           </div>
                           <div className="rr-drop-text">Drop your resume here or click to upload</div>
-                          <div className="rr-drop-hint">PDF, TXT, or DOC · Max 5 pages</div>
+                          <div className="rr-drop-hint">PDF, TXT, or DOC · 1 page recommended</div>
                         </>
                       )}
                     </div>
