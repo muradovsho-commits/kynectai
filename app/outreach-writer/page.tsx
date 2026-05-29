@@ -2,6 +2,7 @@
 
 import Sidebar from "../components/Sidebar";
 import { useState, useEffect } from 'react';
+import { ConvexHttpClient } from 'convex/browser';
 import '../contact-finder/contact-finder.css';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
@@ -153,6 +154,48 @@ export default function OutreachWriterPage() {
     }
     window.addEventListener('offerbell-profile-changed', refresh);
     return () => window.removeEventListener('offerbell-profile-changed', refresh);
+  }, []);
+
+  // Hydrate plan + outreach usage from Convex (source of truth). Without this,
+  // the chip reads from stale localStorage (e.g. plan was changed in Convex,
+  // or the weekly counter is wrong). One-shot HTTP fetch - not a reactive
+  // useQuery - so no live-subscription bandwidth cost. Plan local state ONLY,
+  // never writes 'offerbell_plan' localStorage to avoid downgrading a paying
+  // user during a Stripe webhook delay window.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const userId = localStorage.getItem('offerbell_user_id');
+    if (!userId) return;
+    const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+    if (!url) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const client = new ConvexHttpClient(url);
+        const userRow: any = await client.query((api as any).users.getUser, { userId });
+        if (cancelled) return;
+        if (userRow?.found) {
+          if (userRow.plan === 'free' || userRow.plan === 'pro' || userRow.plan === 'elite') {
+            setUserPlan(userRow.plan);
+          }
+          // Free-plan lifetime count is authoritative on the server (users.outreachCount,
+          // surfaced as messagesUsed). This IS a page-specific local mirror so writing
+          // localStorage is safe.
+          if (typeof userRow.messagesUsed === 'number') {
+            setMessagesSent(userRow.messagesUsed);
+            try { localStorage.setItem('offerbell_messages_sent', String(userRow.messagesUsed)); } catch {}
+          }
+        }
+        const usage: any = await client.query((api as any).usage?.getUsage, { userId });
+        if (!cancelled && usage && typeof usage.outreachWriter === 'number') {
+          setWeeklyUsed(usage.outreachWriter);
+          try {
+            localStorage.setItem('offerbell_outreach_weekly', JSON.stringify({ week: getMondayWeekStart(), count: usage.outreachWriter }));
+          } catch {}
+        }
+      } catch { /* swallow - localStorage fallback already populated */ }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   function showToast(msg: string) {
