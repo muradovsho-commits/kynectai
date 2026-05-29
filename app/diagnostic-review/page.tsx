@@ -155,6 +155,13 @@ export default function DiagnosticReviewPage() {
   const userPlan = useUserPlan();
   const [savedProgress, setSavedProgress] = useState<InProgressState | null>(null);
   const [resetTarget, setResetTarget] = useState<string | null>(null);
+  // For free users: a flag that says they've clicked Start at least once.
+  // Persists across discards, save&exit, and track switches, so a free
+  // user gets exactly one diagnostic attempt - whether they complete it
+  // or not. Without this, they could Start -> Save&exit -> Discard ->
+  // Start on a different track indefinitely.
+  const [freeUsedFlag, setFreeUsedFlag] = useState(false);
+  const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
   const [userId, setUserId] = useState<string>('');
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -169,20 +176,33 @@ export default function DiagnosticReviewPage() {
     const theme = localStorage.getItem('offerbell-theme');
     if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
     setHistory(loadHistory());
-    setSavedProgress(loadInProgress());
+    const sp = loadInProgress();
+    setSavedProgress(sp);
     setUserId(localStorage.getItem('offerbell_user_id') || '');
-    setTrackKey(getSidebarTrack());
+    setFreeUsedFlag(localStorage.getItem('offerbell_diag_free_used') === '1');
+    // If a free user has saved progress, force them onto that track so they
+    // can't even view a different track's hub (and accidentally start one,
+    // were the CTA ever to slip through). Paid users follow the sidebar.
+    const plan = (localStorage.getItem('offerbell_plan') || 'free').toLowerCase();
+    if (plan === 'free' && sp && TRACKS[sp.trackKey]) {
+      setTrackKey(sp.trackKey);
+    } else {
+      setTrackKey(getSidebarTrack());
+    }
   }, []);
 
   // ── Listen for sidebar industry changes ──
   useEffect(() => {
     function onProfileChanged() {
-      // Only switch the track if not in middle of an assessment
-      if (phase === 'home') setTrackKey(getSidebarTrack());
+      if (phase !== 'home') return;
+      // Free user with in-progress diagnostic: ignore sidebar changes. They
+      // are locked to their committed track until they finish or discard.
+      if (userPlan === 'free' && savedProgress) return;
+      setTrackKey(getSidebarTrack());
     }
     window.addEventListener('offerbell-profile-changed', onProfileChanged);
     return () => window.removeEventListener('offerbell-profile-changed', onProfileChanged);
-  }, [phase]);
+  }, [phase, userPlan, savedProgress]);
 
   // ── Timer ──
   useEffect(() => {
@@ -207,6 +227,13 @@ export default function DiagnosticReviewPage() {
     if (!trackKey) return;
     const track = TRACKS[trackKey];
     if (!track) return;
+    // For free users: commit the attempt the moment they click Start.
+    // Persists across discards so they can't game the system by
+    // start -> discard -> start on a different track.
+    if (userPlan === 'free' && !freeUsedFlag) {
+      try { localStorage.setItem('offerbell_diag_free_used', '1'); } catch {}
+      setFreeUsedFlag(true);
+    }
     const qs = buildAssessment(track);
     setQuestions(qs); setIdx(0); setSelected(null); setShowExp(false); setTimer(TIME_PER_Q);
     setCatResults({}); setTotalCorrect(0); setTotalAnswered(0); setMissed([]);
@@ -229,7 +256,20 @@ export default function DiagnosticReviewPage() {
     setSavedProgress(null);
   };
 
-  const discardProgress = () => { saveInProgress(null); setSavedProgress(null); };
+  const discardProgress = () => {
+    // Free users get a warning - they've already burned their attempt by
+    // starting. Discarding doesn't restore it; this just makes it explicit.
+    if (userPlan === 'free') {
+      setShowDiscardConfirm(true);
+      return;
+    }
+    doDiscard();
+  };
+  const doDiscard = () => {
+    saveInProgress(null);
+    setSavedProgress(null);
+    setShowDiscardConfirm(false);
+  };
 
   const handleSelect = (ci: number) => {
     if (selected !== null) return;
@@ -360,19 +400,21 @@ export default function DiagnosticReviewPage() {
                     <span style={{ color: timerColor }}>{String(timer).padStart(2, '0')}s</span>
                   </div>
                   <div className="diag-q-counter">Q{idx + 1} <span>/ {questions.length}</span></div>
-                  <button
-                    type="button"
-                    className="diag-save-exit"
-                    onClick={() => {
-                      saveInProgress({ trackKey, questions, idx, catResults: { ...catResults }, totalCorrect, totalAnswered, missed: [...missed], savedAt: Date.now() });
-                      setSavedProgress({ trackKey, questions, idx, catResults: { ...catResults }, totalCorrect, totalAnswered, missed: [...missed], savedAt: Date.now() });
-                      setPhase('home');
-                    }}
-                    title="Your progress saves. Resume from the hub anytime within 24 hours."
-                  >
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
-                    Save &amp; exit
-                  </button>
+                  {userPlan !== 'free' && (
+                    <button
+                      type="button"
+                      className="diag-save-exit"
+                      onClick={() => {
+                        saveInProgress({ trackKey, questions, idx, catResults: { ...catResults }, totalCorrect, totalAnswered, missed: [...missed], savedAt: Date.now() });
+                        setSavedProgress({ trackKey, questions, idx, catResults: { ...catResults }, totalCorrect, totalAnswered, missed: [...missed], savedAt: Date.now() });
+                        setPhase('home');
+                      }}
+                      title="Your progress saves. Resume from the hub anytime within 24 hours."
+                    >
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+                      Save &amp; exit
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -581,9 +623,11 @@ export default function DiagnosticReviewPage() {
   const scoreColor = readinessScore >= 70 ? 'var(--good)' : readinessScore >= 50 ? 'var(--warn)' : readinessScore > 0 ? 'var(--bad)' : 'var(--text-3)';
   const weakCats = st.cats.filter(c => c.pct < 50 && c.total >= 2);
 
-  // Free tier: 1 diagnostic LIFETIME (across all tracks). After that, must upgrade.
+  // Free tier: 1 diagnostic LIFETIME total. The freeUsedFlag closes the
+  // start->save&exit->discard->start-on-new-track loophole - the moment
+  // a free user clicks Start, their attempt is committed.
   const totalAllTracksTaken = history.length;
-  const freeUsedQuota = userPlan === 'free' && totalAllTracksTaken >= 1;
+  const freeUsedQuota = userPlan === 'free' && (totalAllTracksTaken >= 1 || freeUsedFlag);
   // But if user already has data on THIS track, they can still see their report
   const canStartNew = !freeUsedQuota || st.diagsTaken > 0;
 
@@ -739,25 +783,27 @@ export default function DiagnosticReviewPage() {
               </div>
             )}
 
-            {/* CTA / upgrade gate */}
-            {freeUsedQuota && st.diagsTaken === 0 ? (
-              <div className="diag-upgrade">
-                <div className="diag-upgrade-title">You&apos;ve used your free <em>diagnostic</em></div>
-                <div className="diag-upgrade-sub">Upgrade to Pro for unlimited diagnostics across every track.</div>
-                <Link href="/my-account" className="diag-upgrade-btn">Upgrade plan</Link>
-              </div>
-            ) : st.diagsTaken === 0 ? (
-              <div className="diag-empty" style={{ padding: 0, border: 'none', marginBottom: 0 }}>
+            {/* CTA / upgrade gate. Hidden when savedProgress exists - the resume
+                banner above is the action. Free users who have used their quota
+                see the upgrade gate regardless of this track's history. */}
+            {!savedProgress && (
+              freeUsedQuota ? (
+                <div className="diag-upgrade">
+                  <div className="diag-upgrade-title">You&apos;ve used your free <em>diagnostic</em></div>
+                  <div className="diag-upgrade-sub">Upgrade to Pro for unlimited diagnostics across every track.</div>
+                  <Link href="/my-account" className="diag-upgrade-btn">Upgrade plan</Link>
+                </div>
+              ) : st.diagsTaken === 0 ? (
                 <button type="button" className="diag-cta" onClick={startAssessment}>
                   Start {track.title} diagnostic
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </button>
-              </div>
-            ) : (
-              <button type="button" className="diag-cta" onClick={startAssessment} disabled={freeUsedQuota && st.diagsTaken === 0}>
-                Take another diagnostic
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </button>
+              ) : (
+                <button type="button" className="diag-cta" onClick={startAssessment}>
+                  Take another diagnostic
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+              )
             )}
 
             {st.diagsTaken > 0 && canReset && (
@@ -776,6 +822,24 @@ export default function DiagnosticReviewPage() {
           onCancel={() => setResetTarget(null)}
           onConfirm={doReset}
         />
+      )}
+
+      {showDiscardConfirm && (
+        <div onClick={() => setShowDiscardConfirm(false)} className="diag-modal-overlay">
+          <div onClick={e => e.stopPropagation()} className="diag-modal">
+            <div className="diag-modal-eyebrow">Discard saved progress</div>
+            <div className="diag-modal-title">Are you <em>sure?</em></div>
+            <div className="diag-modal-text">
+              You&apos;ve already used your free diagnostic by starting one. Discarding
+              this saved progress will <strong style={{ color: 'var(--text)' }}>not</strong> give you another attempt -
+              you&apos;ll need to upgrade to Pro to take a new diagnostic on any track.
+            </div>
+            <div className="diag-modal-actions">
+              <button type="button" className="diag-modal-cancel" onClick={() => setShowDiscardConfirm(false)}>Keep progress</button>
+              <button type="button" className="diag-modal-confirm" onClick={doDiscard}>Discard anyway</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
