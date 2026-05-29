@@ -522,35 +522,40 @@ export default function ReferralMapPage() {
   };
 
   return (
-    <div className="app">
+    <div className="rm-app">
       <Sidebar activePage="referral-map" />
-      <main className="main rm-main">
-        <div className="rm-wrap">
-          <div className="rm-header">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div className="rm-title">Referral <em>Map</em></div>
-              <button onClick={() => setShowHelp(true)} style={{ width: 24, height: 24, borderRadius: '50%', border: '1.5px solid var(--border)', background: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0, marginTop: 4 }} type="button" title="How to use">
-                <svg width="12" height="12" fill="none" stroke="var(--text-3)" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="var(--text-3)"/></svg>
-              </button>
-            </div>
-            <div className="rm-sub">Visualize your network. Add your central location and trace chains state by state.</div>
-          </div>
-
-          {/* Actions */}
-          <div className="rm-actions">
-            <button className="rm-btn-primary" onClick={() => openAdd()} type="button">
-              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add Contact
-            </button>
-            <button className="rm-btn-secondary" onClick={openImport} type="button">
-              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Import from Tracker
-            </button>
-            {totalContacts > 0 && (
-              <div className="rm-search-wrap">
-                <svg width="14" height="14" fill="none" stroke="var(--text-3)" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                <input className="rm-search" placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)} />
+      <div className="rm-canvas">
+        <div className="rm-page">
+          <div className="rm-page-inner">
+            {/* ─── Top row: title block + actions on the right ─── */}
+            <div className="rm-top-row">
+              <div className="rm-title-block">
+                <div className="rm-title-row">
+                  <h1 className="rm-page-title">Referral <em>Map</em></h1>
+                  <button onClick={() => setShowHelp(true)} className="rm-help-btn" type="button" title="How to use">
+                    <svg width="12" height="12" fill="none" stroke="var(--text-3)" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="var(--text-3)"/></svg>
+                  </button>
+                </div>
+                <div className="rm-page-sub">Visualize your network. Add your central location and trace chains state by state.</div>
               </div>
-            )}
-          </div>
+
+              <div className="rm-actions">
+                {totalContacts > 0 && (
+                  <div className="rm-search-wrap">
+                    <svg className="rm-search-icon" width="14" height="14" fill="none" stroke="var(--text-3)" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input className="rm-search" placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)} />
+                  </div>
+                )}
+                <button className="rm-btn-secondary" onClick={openImport} type="button">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Import from Tracker
+                </button>
+                <button className="rm-btn-primary" onClick={() => openAdd()} type="button">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                  Add Contact
+                </button>
+              </div>
+            </div>
 
           {/* Stats & Search Results */}
           {search ? (
@@ -760,8 +765,9 @@ export default function ReferralMapPage() {
               </>
             );
           })()}
+          </div>
         </div>
-      </main>
+      </div>
 
       {/* ═══ ADD/EDIT MODAL ═══ */}
       {(modal === 'add' || modal === 'edit') && (
