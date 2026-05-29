@@ -5,7 +5,7 @@ import TutorialOverlay from "../components/TutorialOverlay";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useQuery } from "convex/react";
+import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../convex/_generated/api";
 import "./dashboard.css";
 
@@ -291,17 +291,33 @@ export default function DashboardPage() {
     };
   }, [loadActivity]);
 
-  // ─── Mock interview stats (Convex lightweight query, only ~1KB downloaded)
-  const mockStats = useQuery(
-    (api as any).mockResponses.getMockStats,
-    userId ? { userId } : 'skip' as any
-  );
-
-  // ─── Coach chat stats (Convex lightweight query)
-  const coachStats = useQuery(
-    (api as any).coachConvos.getCoachStats,
-    userId ? { userId } : 'skip' as any
-  );
+  // ─── Mock interview + coach stats: ONE-SHOT HTTP fetch (not reactive useQuery).
+  // Reactive subscriptions burn bandwidth on every mutation to those tables.
+  // These stats are aggregate counts that don't need live updates - mount fetch
+  // is enough. A page refresh picks up the latest.
+  const [mockStats, setMockStats] = useState<any>(undefined);
+  const [coachStats, setCoachStats] = useState<any>(undefined);
+  useEffect(() => {
+    if (!userId) return;
+    if (typeof window === 'undefined') return;
+    const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+    if (!url) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const client = new ConvexHttpClient(url);
+        const [m, c] = await Promise.all([
+          client.query((api as any).mockResponses.getMockStats, { userId }),
+          client.query((api as any).coachConvos.getCoachStats, { userId }),
+        ]);
+        if (!cancelled) {
+          setMockStats(m);
+          setCoachStats(c);
+        }
+      } catch {}
+    })();
+    return () => { cancelled = true; };
+  }, [userId]);
 
   // ─── Flashcard performance per track (from localStorage, no Convex hit)
   // Each offerbell_flash_perf_{track} stores { seen, pass, partial, fail, byCat }
