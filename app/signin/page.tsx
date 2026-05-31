@@ -28,15 +28,20 @@ function SigninContent() {
       const userId = (result && (result.userId ?? result.id ?? result)) ?? undefined;
       if (typeof window !== "undefined" && userId) {
         const id = String(userId);
-
+        
+        // ── ALWAYS clear previous session data to prevent any bleed-over ──
+        // This is the nuclear option: every signin starts with a clean slate.
+        // We preserve only offerbell-theme (visual preference).
         const allKeys: string[] = [];
         for (let i = 0; i < localStorage.length; i++) {
           const k = localStorage.key(i);
-          if (k && k.startsWith('offerbell') && k !== 'offerbell-theme' && k !== 'offerbell_tutorial_complete' && k !== 'offerbell_tutorial_step') allKeys.push(k);
+          if (k && k.startsWith('offerbell') && k !== 'offerbell-theme') allKeys.push(k);
         }
         allKeys.forEach(k => localStorage.removeItem(k));
+        // Also clear the cookie in case it's stale
         document.cookie = 'offerbell_user_id=; path=/; max-age=0';
-
+        
+        // ── Write the new session ──
         let finalPlan = result?.plan || 'free';
         window.localStorage.setItem("offerbell_user_id", id);
         window.localStorage.setItem("offerbell_messages_sent", String(result?.outreachCount || 0));
@@ -48,53 +53,90 @@ function SigninContent() {
           window.localStorage.setItem("offerbell_promo_code", result.promoCode);
         }
 
+        // ── Restore cloud progress data ──
+        let cloudProfile: Record<string, any> | null = null;
         try {
-          if (result?.onboardingComplete !== undefined) {
-            window.localStorage.setItem("offerbell_onboarding_complete", String(!!result.onboardingComplete));
-          }
-          if (result && typeof result === "object") {
-            const profile: any = {};
-            for (const key of Object.keys(result)) {
-              if (key === 'offerbell_onboarding_profile') {
-                try { Object.assign(profile, JSON.parse((result as any)[key] || '{}')); } catch {}
-              } else if (typeof (result as any)[key] !== 'object') {
-                profile[key] = (result as any)[key];
+          const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+          if (convexUrl) {
+            const httpClient = new ConvexHttpClient(convexUrl);
+            const cloudResult = await httpClient.query(api.progress.loadProgress, { userId: id });
+            if (cloudResult && cloudResult.data) {
+              const cloud: Record<string, string> = JSON.parse(cloudResult.data);
+              for (const [key, val] of Object.entries(cloud)) {
+                if (key && val && key !== 'offerbell_user_id' && key !== 'offerbell_plan') {
+                  if (key === 'offerbell_onboarding_profile') {
+                    try { cloudProfile = JSON.parse(val); } catch {}
+                  } else {
+                    localStorage.setItem(key, val);
+                  }
+                }
+              }
+              // One-time repair: if cloud has higher plan than DB
+              // One-time repair from cloud: SECURITY - we no longer call any
+              // upgrade mutation from the client. Plan source of truth is the
+              // users table in Convex, written only by the Stripe webhook
+              // after signature verification. If the cloud blob still has a
+              // stale offerbell_plan from before that change, we read it for
+              // warm-start UI only - the hook reconciles against Convex
+              // truth within ~200ms.
+              const cloudPlan = cloud['offerbell_plan'] || '';
+              const planRank: Record<string, number> = { free: 0, pro: 1, elite: 2 };
+              if (cloudPlan && (planRank[cloudPlan] || 0) > (planRank[finalPlan] || 0)) {
+                finalPlan = cloudPlan;
               }
             }
-            if (Object.keys(profile).length > 0) {
-              window.localStorage.setItem("offerbell_onboarding_profile", JSON.stringify(profile));
-            }
           }
-        } catch {}
+        } catch (e) {
+          console.error('Cloud restore failed:', e);
+        }
 
-        try {
-          const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
-          const progress = await convex.query((api as any).progress?.loadProgress, { userId: id });
-          if (progress && typeof progress === 'object') {
-            for (const key of Object.keys(progress)) {
-              if (typeof (progress as any)[key] === 'string') {
-                window.localStorage.setItem(key, (progress as any)[key]);
-              }
-            }
-          }
-        } catch (e) {}
-
+        // ── Set the final plan ──
         window.localStorage.setItem("offerbell_plan", finalPlan);
 
+        // ── Build onboarding profile: cloud data first, then fill gaps from DB ──
+        const nm = result?.name || "";
+        const pts = nm.split(" ");
+        const onboardingDone = result?.onboardingComplete || false;
+        const profile = {
+          firstName: cloudProfile?.firstName || pts[0] || "",
+          lastName: cloudProfile?.lastName || pts.slice(1).join(" ") || "",
+          university: cloudProfile?.university || "",
+          targetRoles: cloudProfile?.targetRoles || [],
+          targetFirms: cloudProfile?.targetFirms || [],
+          major: cloudProfile?.major || "",
+          year: cloudProfile?.year || "",
+          recruitYear: cloudProfile?.recruitYear || "",
+          email: email,
+          plan: finalPlan,
+          tutorialComplete: onboardingDone || cloudProfile?.tutorialComplete || false,
+        };
+        window.localStorage.setItem("offerbell_onboarding_profile", JSON.stringify(profile));
+        if (onboardingDone || profile.tutorialComplete) {
+          window.localStorage.setItem("offerbell_tutorial_complete", "true");
+        }
+
+        // Sync to Chrome extension if installed
         try {
-          if ((window as any).chrome?.runtime?.sendMessage) {
-            const extId = process.env.NEXT_PUBLIC_EXTENSION_ID;
+          if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
+            const extId = 'ecmiggmdjpohgidmdonhbcbnlhdagmkp';
             if (extId) {
-              (window as any).chrome.runtime.sendMessage(extId, { type: "OFFERBELL_SIGNIN", userId: id });
+              chrome.runtime.sendMessage(extId, {
+                action: 'updateCount',
+                userId: id,
+                messagesSent: result?.outreachCount || 0,
+                plan: finalPlan
+              }, () => {});
             }
           }
         } catch {}
+
       }
+      // Always go to dashboard
       router.push("/dashboard");
     } catch (err: any) {
-      const msg = err?.data ? String(err.data) : (err instanceof Error ? err.message : (err?.message || "Sign-in failed."));
-      setError(msg.replace("Uncaught Error: ", ""));
       console.error("Sign in failed", err);
+      const msg = err?.data ? String(err.data) : (err instanceof Error ? err.message : (err?.message || "Invalid email or password."));
+      setError(msg.replace("Uncaught Error: ", ""));
     } finally {
       setSubmitting(false);
     }
@@ -109,6 +151,7 @@ function SigninContent() {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", background: "#0a0a0a" }}>
+      {/* Left brand panel with photography */}
       <div style={{ width: 480, position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
         <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=960&h=1200&fit=crop&crop=faces" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.35) saturate(0.8)' }} />
         <div style={{ position: 'relative', zIndex: 1, padding: "48px 44px", display: "flex", flexDirection: "column", justifyContent: "space-between", height: '100%' }}>
@@ -141,6 +184,7 @@ function SigninContent() {
         </div>
       </div>
 
+      {/* Right form panel */}
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", background: "#f8f8f7", padding: 40 }}>
         <div style={{ width: "100%", maxWidth: 420 }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#9e9b96", marginBottom: 12 }}>Sign In</div>
@@ -156,7 +200,8 @@ function SigninContent() {
               <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#0a0a0a", marginBottom: 6 }}>Email</label>
               <input
                 type="email" placeholder="you@school.edu" value={email}
-                onChange={(e) => setEmail(e.target.value)} required style={inp}
+                onChange={(e) => setEmail(e.target.value)} required
+                style={inp}
                 onFocus={(e) => { e.currentTarget.style.borderColor = "#0a0a0a"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(10,10,10,0.06)"; }}
                 onBlur={(e) => { e.currentTarget.style.borderColor = "#e4e2de"; e.currentTarget.style.boxShadow = "none"; }}
               />
@@ -166,7 +211,8 @@ function SigninContent() {
               <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#0a0a0a", marginBottom: 6 }}>Password</label>
               <input
                 type="password" value={password}
-                onChange={(e) => setPassword(e.target.value)} required minLength={8} style={inp}
+                onChange={(e) => setPassword(e.target.value)} required minLength={8}
+                style={inp}
                 onFocus={(e) => { e.currentTarget.style.borderColor = "#0a0a0a"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(10,10,10,0.06)"; }}
                 onBlur={(e) => { e.currentTarget.style.borderColor = "#e4e2de"; e.currentTarget.style.boxShadow = "none"; }}
               />
@@ -204,7 +250,10 @@ function SigninContent() {
                         setResendStatus("error");
                       }
                     }}
-                    style={{ background: "none", border: "none", color: "#6b6860", textDecoration: "underline", fontSize: 13, cursor: "pointer", fontWeight: 500 }}
+                    style={{
+                      background: "none", border: "none", color: "#6b6860", textDecoration: "underline",
+                      fontSize: 13, cursor: "pointer", fontWeight: 500
+                    }}
                   >
                     {resendStatus === "loading" ? "Sending..." : "Didn't receive the email? Click to resend."}
                   </button>
@@ -227,7 +276,8 @@ function SigninContent() {
                 width: "100%", height: 48, borderRadius: 10, border: "none",
                 background: "#0a0a0a", color: "#ffffff", fontSize: 14, fontWeight: 700,
                 fontFamily: "'Sora', sans-serif", cursor: submitting ? "not-allowed" : "pointer",
-                opacity: submitting ? 0.6 : 1, marginBottom: 20,
+                opacity: submitting ? 0.6 : 1, display: "flex", alignItems: "center",
+                justifyContent: "center", gap: 8, marginBottom: 20,
               }}
             >
               {submitting ? "Signing in..." : "Sign in"}
@@ -244,15 +294,6 @@ function SigninContent() {
             <a href="/" style={{ fontSize: 12, color: "#9e9b96", textDecoration: "none", fontWeight: 500 }}>
               ← Back to home
             </a>
-          </div>
-          <div style={{ textAlign: "center", marginTop: 18, fontSize: 11, color: "#9e9b96", display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <a href="/privacy" style={{ color: "#9e9b96", textDecoration: "none" }}>Privacy</a>
-            <span>·</span>
-            <a href="/terms" style={{ color: "#9e9b96", textDecoration: "none" }}>Terms</a>
-            <span>·</span>
-            <a href="/refund" style={{ color: "#9e9b96", textDecoration: "none" }}>Refund</a>
-            <span>·</span>
-            <a href="/cookies" style={{ color: "#9e9b96", textDecoration: "none" }}>Cookies</a>
           </div>
         </div>
       </div>
