@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { getUserEmail } from "./_helpers";
 
 // List all diagnostic history entries for a user, newest first.
 // Cap at 50 to match the client-side cap.
@@ -45,6 +46,7 @@ export const appendResult = mutation({
       .query("diagHistory")
       .withIndex("by_user_entry", q => q.eq("userId", args.userId).eq("entryId", args.entryId))
       .first();
+    const userEmail = await getUserEmail(ctx, args.userId);
     if (existing) {
       await ctx.db.patch(existing._id, {
         track: args.track,
@@ -54,9 +56,10 @@ export const appendResult = mutation({
         totalAnswered: args.totalAnswered,
         catScores: args.catScores,
         timestamp: args.timestamp,
+        userEmail,
       });
     } else {
-      await ctx.db.insert("diagHistory", args);
+      await ctx.db.insert("diagHistory", { ...args, userEmail });
     }
   },
 });
@@ -78,13 +81,14 @@ export const importHistory = mutation({
     })),
   },
   handler: async (ctx, { userId, entries }) => {
+    const userEmail = await getUserEmail(ctx, userId);
     for (const e of entries) {
       const existing = await ctx.db
         .query("diagHistory")
         .withIndex("by_user_entry", q => q.eq("userId", userId).eq("entryId", e.entryId))
         .first();
       if (existing) continue;
-      await ctx.db.insert("diagHistory", { userId, ...e });
+      await ctx.db.insert("diagHistory", { userId, ...e, userEmail });
     }
   },
 });

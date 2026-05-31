@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { getUserEmail } from "./_helpers";
 
 // List all coach conversations for a user. Capped at 50 newest by the
 // client, but query returns everything; client sorts/caps.
@@ -39,6 +40,7 @@ export const upsertConvo = mutation({
       .query("coachConvos")
       .withIndex("by_user_convo", q => q.eq("userId", args.userId).eq("convoId", args.convoId))
       .first();
+    const userEmail = await getUserEmail(ctx, args.userId);
     if (existing) {
       await ctx.db.patch(existing._id, {
         track: args.track,
@@ -46,9 +48,10 @@ export const upsertConvo = mutation({
         preview: args.preview,
         messages: args.messages,
         updatedAt: args.updatedAt,
+        userEmail,
       });
     } else {
-      await ctx.db.insert("coachConvos", args);
+      await ctx.db.insert("coachConvos", { ...args, userEmail });
     }
   },
 });
@@ -83,13 +86,14 @@ export const importConvos = mutation({
     })),
   },
   handler: async (ctx, { userId, convos }) => {
+    const userEmail = await getUserEmail(ctx, userId);
     for (const c of convos) {
       const existing = await ctx.db
         .query("coachConvos")
         .withIndex("by_user_convo", q => q.eq("userId", userId).eq("convoId", c.convoId))
         .first();
       if (!existing) {
-        await ctx.db.insert("coachConvos", { userId, ...c });
+        await ctx.db.insert("coachConvos", { userId, ...c, userEmail });
       }
     }
   },

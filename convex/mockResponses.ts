@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { getUserEmail } from "./_helpers";
 
 // List all mock interview responses for a user. Returned in insertion order
 // (newest first); pages can re-sort as needed.
@@ -51,6 +52,7 @@ export const upsertResponse = mutation({
       .query("mockResponses")
       .withIndex("by_user_entry", q => q.eq("userId", args.userId).eq("entryId", args.entryId))
       .first();
+    const userEmail = await getUserEmail(ctx, args.userId);
     if (existing) {
       await ctx.db.patch(existing._id, {
         questionId: args.questionId,
@@ -64,9 +66,10 @@ export const upsertResponse = mutation({
         durationSec: args.durationSec,
         timestamp: args.timestamp,
         hidden: args.hidden,
+        userEmail,
       });
     } else {
-      await ctx.db.insert("mockResponses", args);
+      await ctx.db.insert("mockResponses", { ...args, userEmail });
     }
   },
 });
@@ -122,13 +125,14 @@ export const importResponses = mutation({
     })),
   },
   handler: async (ctx, { userId, entries }) => {
+    const userEmail = await getUserEmail(ctx, userId);
     for (const e of entries) {
       const existing = await ctx.db
         .query("mockResponses")
         .withIndex("by_user_entry", q => q.eq("userId", userId).eq("entryId", e.entryId))
         .first();
       if (!existing) {
-        await ctx.db.insert("mockResponses", { userId, ...e });
+        await ctx.db.insert("mockResponses", { userId, ...e, userEmail });
       }
     }
   },

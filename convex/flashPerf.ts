@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { getUserEmail } from "./_helpers";
 
 // List all flashcard performance rows for a user. Returned as a record
 // keyed by track, so the client can do `data[track]` directly.
@@ -43,10 +44,11 @@ export const upsertPerf = mutation({
       .withIndex("by_user_track", q => q.eq("userId", userId).eq("track", track))
       .first();
     const now = Date.now();
+    const userEmail = await getUserEmail(ctx, userId);
     if (existing) {
-      await ctx.db.patch(existing._id, { data, updatedAt: now });
+      await ctx.db.patch(existing._id, { data, updatedAt: now, userEmail });
     } else {
-      await ctx.db.insert("flashPerf", { userId, track, data, updatedAt: now });
+      await ctx.db.insert("flashPerf", { userId, track, data, updatedAt: now, userEmail });
     }
   },
 });
@@ -63,15 +65,16 @@ export const importPerf = mutation({
   },
   handler: async (ctx, { userId, entries }) => {
     const now = Date.now();
+    const userEmail = await getUserEmail(ctx, userId);
     for (const e of entries) {
       const existing = await ctx.db
         .query("flashPerf")
         .withIndex("by_user_track", q => q.eq("userId", userId).eq("track", e.track))
         .first();
       if (existing) {
-        await ctx.db.patch(existing._id, { data: e.data, updatedAt: now });
+        await ctx.db.patch(existing._id, { data: e.data, updatedAt: now, userEmail });
       } else {
-        await ctx.db.insert("flashPerf", { userId, track: e.track, data: e.data, updatedAt: now });
+        await ctx.db.insert("flashPerf", { userId, track: e.track, data: e.data, updatedAt: now, userEmail });
       }
     }
   },

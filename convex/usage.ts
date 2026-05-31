@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { getUserEmail } from "./_helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // SERVER-SIDE PLAN ENFORCEMENT
@@ -67,16 +68,19 @@ export const incrementUsage = mutation({
       .withIndex("by_user_week", (q) => q.eq("userId", args.userId).eq("weekStart", weekStart))
       .unique();
 
+    const userEmail = await getUserEmail(ctx, args.userId);
     if (existing) {
       const current = (existing as any)[feature] || 0;
       await ctx.db.patch(existing._id, {
         [feature]: current + 1,
         updatedAt: Date.now(),
+        userEmail,
       } as any);
       return current + 1;
     } else {
       const insert: any = {
         userId: args.userId,
+        userEmail,
         weekStart,
         updatedAt: Date.now(),
       };

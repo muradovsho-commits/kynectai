@@ -158,6 +158,7 @@ export default defineSchema({
 
   userProgress: defineTable({
     userId: v.string(),
+    userEmail: v.optional(v.string()), // Denormalized from users.email so the Convex dashboard shows who each row belongs to without clicking through references.
     data: v.string(),
     updatedAt: v.number(),
   }).index("by_userId", ["userId"]),
@@ -167,6 +168,7 @@ export default defineSchema({
   // save (was ~500KB per write; now ~1KB per response).
   mockResponses: defineTable({
     userId: v.string(),
+    userEmail: v.optional(v.string()), // Denormalized for dashboard readability.
     entryId: v.string(),
     questionId: v.string(),
     trackId: v.string(),
@@ -189,6 +191,7 @@ export default defineSchema({
   // new message patches one ~5KB row instead of re-writing the whole blob.
   coachConvos: defineTable({
     userId: v.string(),
+    userEmail: v.optional(v.string()), // Denormalized for dashboard readability.
     convoId: v.string(),
     track: v.string(),
     feature: v.optional(v.string()),
@@ -206,6 +209,7 @@ export default defineSchema({
   // as a unit for a given track view.
   flashPerf: defineTable({
     userId: v.string(),
+    userEmail: v.optional(v.string()), // Denormalized for dashboard readability.
     track: v.string(),
     data: v.string(),
     updatedAt: v.number(),
@@ -218,6 +222,7 @@ export default defineSchema({
   // every diagnostic completion.
   diagHistory: defineTable({
     userId: v.string(),
+    userEmail: v.optional(v.string()), // Denormalized for dashboard readability.
     entryId: v.string(),
     track: v.string(),
     date: v.string(),
@@ -237,6 +242,7 @@ export default defineSchema({
   // successful API calls per feature in the current week.
   weeklyUsage: defineTable({
     userId: v.string(),
+    userEmail: v.optional(v.string()), // Denormalized for dashboard readability.
     weekStart: v.string(),
     coach: v.optional(v.number()),
     resumeReview: v.optional(v.number()),

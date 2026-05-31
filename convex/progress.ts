@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { getUserEmail } from "./_helpers";
 
 // Truncates an array stored as a JSON string to max N elements.
 // Returns the (possibly truncated) JSON string. Safe on bad JSON.
@@ -80,10 +81,12 @@ export const saveProgress = mutation({
       await ctx.db.patch(existing._id, {
         data: JSON.stringify(merged),
         updatedAt: Date.now(),
+        userEmail: await getUserEmail(ctx, args.userId),
       });
     } else {
       await ctx.db.insert("userProgress", {
         userId: args.userId,
+        userEmail: await getUserEmail(ctx, args.userId),
         data: JSON.stringify(newData),
         updatedAt: Date.now(),
       });
