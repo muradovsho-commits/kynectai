@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { getAuthUserId, unauthorizedResponse, getCorsHeaders } from "../_lib/auth";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-02-25.clover" as any,
@@ -7,6 +8,10 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(request: NextRequest) {
   try {
+    const corsHeaders = getCorsHeaders(request);
+    const authUserId = getAuthUserId(request);
+    if (!authUserId) return unauthorizedResponse(corsHeaders);
+
     const body = await request.json().catch(() => ({}));
     const email = typeof body.email === "string" ? body.email : undefined;
     // Critical: userId is what the webhook uses to attribute the resulting
@@ -19,6 +24,12 @@ export async function POST(request: NextRequest) {
         { error: "Missing userId. Please refresh and sign in again." },
         { status: 400 }
       );
+    }
+    // Auth check: prevent creating a checkout session against someone else's
+    // userId (which would route their successful-payment webhook to attach
+    // the subscription to the attacker's account).
+    if (authUserId !== userId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403, headers: corsHeaders });
     }
     const plan = body.plan === "elite" ? "elite" : "pro";
     const billing = body.billing === "annual" ? "annual" : body.billing === "6month" ? "6month" : "monthly";
@@ -67,6 +78,17 @@ export async function POST(request: NextRequest) {
       success_url: `${request.nextUrl.origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}&plan=${plan}&billing=${billing}`,
       cancel_url: `${request.nextUrl.origin}/checkout`,
       allow_promotion_codes: true,
+      // Adds a small note below Stripe's "Subscribe" button with markdown
+      // links to our policies. This works without any extra Stripe dashboard
+      // setup. (consent_collection.terms_of_service requires you to first
+      // configure a "Public business name" and "Terms link" in Stripe
+      // Settings - we don't enforce that path to avoid breaking checkout if
+      // the dashboard config is missing.)
+      custom_text: {
+        submit: {
+          message: "By subscribing, you agree to our [Terms of Service](https://offerbell.org/terms), [Privacy Policy](https://offerbell.org/privacy), and [Refund Policy](https://offerbell.org/refund).",
+        },
+      },
     });
 
     return NextResponse.json({ url: session.url });

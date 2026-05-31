@@ -9,7 +9,9 @@ import MobileGate from "../components/MobileGate";
 
 function SigninContent() {
   const router = useRouter();
-  const signIn = useMutation((api as any).auth?.signIn);
+  // Used only by the "resend verification email" path. Sign-in itself goes
+  // through /api/auth/signin so the server can rate-limit and issue a
+  // signed HttpOnly cookie.
   const generateVerificationToken = useMutation((api as any).auth?.generateVerificationToken);
 
   const [email, setEmail] = useState("");
@@ -24,13 +26,23 @@ function SigninContent() {
 
     try {
       setSubmitting(true);
-      const result = await signIn({ email, password });
-      const userId = (result && (result.userId ?? result.id ?? result)) ?? undefined;
+      // Server-side signin: rate-limited, HMAC-signed HttpOnly cookie issued
+      // by the API route. We never call Convex auth.signIn directly from the
+      // client anymore - that bypassed cookie signing.
+      const res = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        throw new Error(result?.error || "Invalid email or password.");
+      }
+      const userId = result?.userId ?? result?.id ?? result;
       if (typeof window !== "undefined" && userId) {
         const id = String(userId);
-        
+
         // ── ALWAYS clear previous session data to prevent any bleed-over ──
-        // This is the nuclear option: every signin starts with a clean slate.
         // We preserve only offerbell-theme (visual preference).
         const allKeys: string[] = [];
         for (let i = 0; i < localStorage.length; i++) {
@@ -38,14 +50,13 @@ function SigninContent() {
           if (k && k.startsWith('offerbell') && k !== 'offerbell-theme') allKeys.push(k);
         }
         allKeys.forEach(k => localStorage.removeItem(k));
-        // Also clear the cookie in case it's stale
-        document.cookie = 'offerbell_user_id=; path=/; max-age=0';
-        
+
         // ── Write the new session ──
+        // Cookie is set HttpOnly by the server. We only mirror userId to
+        // localStorage for client-side reads (page mount hydration).
         let finalPlan = result?.plan || 'free';
         window.localStorage.setItem("offerbell_user_id", id);
         window.localStorage.setItem("offerbell_messages_sent", String(result?.outreachCount || 0));
-        document.cookie = `offerbell_user_id=${encodeURIComponent(id)}; path=/; max-age=${60 * 60 * 24 * 30}`;
         if (result?.planActivatedAt) {
           window.localStorage.setItem("offerbell_plan_activated_at", String(result.planActivatedAt));
         }
@@ -294,6 +305,15 @@ function SigninContent() {
             <a href="/" style={{ fontSize: 12, color: "#9e9b96", textDecoration: "none", fontWeight: 500 }}>
               ← Back to home
             </a>
+          </div>
+          <div style={{ textAlign: "center", marginTop: 18, fontSize: 11, color: "#9e9b96", display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <a href="/privacy" style={{ color: "#9e9b96", textDecoration: "none" }}>Privacy</a>
+            <span>·</span>
+            <a href="/terms" style={{ color: "#9e9b96", textDecoration: "none" }}>Terms</a>
+            <span>·</span>
+            <a href="/refund" style={{ color: "#9e9b96", textDecoration: "none" }}>Refund</a>
+            <span>·</span>
+            <a href="/cookies" style={{ color: "#9e9b96", textDecoration: "none" }}>Cookies</a>
           </div>
         </div>
       </div>

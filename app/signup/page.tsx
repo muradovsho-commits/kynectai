@@ -1,14 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
-import { api } from "../../convex/_generated/api";
 import MobileGate from "../components/MobileGate";
 
 function SignupContent() {
   const router = useRouter();
-  const signUp = useMutation((api as any).auth?.signUp);
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,13 +19,24 @@ function SignupContent() {
     event.preventDefault();
     setError(null);
     if (password !== confirmPassword) { setError("Passwords do not match."); return; }
+    if (password.length < 8) { setError("Password must be at least 8 characters."); return; }
 
     try {
       setSubmitting(true);
-      const result = await signUp({ fullName, email, password });
-      
+      // Server-side signup: rate-limited per IP, password hashed by Convex,
+      // signed HttpOnly session cookie issued on success.
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fullName, email, password }),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        throw new Error(result?.error || "Signup failed.");
+      }
+
       const verificationToken = result?.verificationToken;
-      
+
       if (verificationToken) {
         // Send verification email
         await fetch("/api/send-verification", {
@@ -38,16 +46,13 @@ function SignupContent() {
         });
       }
 
-      // Flag that this is a new user who needs onboarding
-      // NOTE: We do NOT set any localStorage here. The user must verify
-      // their email first, then sign in. Only the signin flow creates
-      // the session. This prevents orphaned keys from interfering with
-      // subsequent logins.
+      // No localStorage writes here. User must verify their email, then sign
+      // in - that flow establishes the local state.
       setSuccess(true);
     } catch (err: any) {
-      const msg = err?.data ? String(err.data) : (err instanceof Error ? err.message : (err?.message || "Something went wrong."));
-      if (msg.includes("already exists")) setError("An account with this email already exists. Please sign in instead.");
-      else if (msg.includes("6 characters")) setError("Password must be at least 6 characters.");
+      const msg = err?.message || "Something went wrong.";
+      if (/already exists|already/i.test(msg)) setError("An account with this email already exists. Please sign in instead.");
+      else if (/8 characters|6 characters/i.test(msg)) setError("Password must be at least 8 characters.");
       else setError(msg.replace("Uncaught Error: ", ""));
     } finally { setSubmitting(false); }
   };
@@ -151,7 +156,9 @@ function SignupContent() {
 
             <div style={{ fontSize: 11.5, color: "#9e9b96", lineHeight: 1.55, textAlign: "center", marginBottom: 18 }}>
               By creating an account, you agree to our{" "}
-              <a href="/terms.html" target="_blank" rel="noopener noreferrer" style={{ color: "#6b6860", textDecoration: "underline", textUnderlineOffset: 2 }}>Terms of Service</a>.
+              <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#6b6860", textDecoration: "underline", textUnderlineOffset: 2 }}>Terms of Service</a>
+              {" "}and{" "}
+              <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "#6b6860", textDecoration: "underline", textUnderlineOffset: 2 }}>Privacy Policy</a>.
             </div>
           </form>
           )}
@@ -164,6 +171,15 @@ function SignupContent() {
             <a href="/" style={{ fontSize: 12, color: "#9e9b96", textDecoration: "none", fontWeight: 500 }}>
               ← Back to home
             </a>
+          </div>
+          <div style={{ textAlign: "center", marginTop: 18, fontSize: 11, color: "#9e9b96", display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <a href="/privacy" style={{ color: "#9e9b96", textDecoration: "none" }}>Privacy</a>
+            <span>·</span>
+            <a href="/terms" style={{ color: "#9e9b96", textDecoration: "none" }}>Terms</a>
+            <span>·</span>
+            <a href="/refund" style={{ color: "#9e9b96", textDecoration: "none" }}>Refund</a>
+            <span>·</span>
+            <a href="/cookies" style={{ color: "#9e9b96", textDecoration: "none" }}>Cookies</a>
           </div>
         </div>
       </div>
