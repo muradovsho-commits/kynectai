@@ -46,6 +46,7 @@ export default function MyAccountPage() {
   const [billingCycle, setBillingCycle] = useState<string>('monthly');
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const [pendingPlanChange, setPendingPlanChange] = useState<{ targetPlan: string; effectiveAt: number } | null>(null);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string>('');
   const [resumingPlan, setResumingPlan] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
   const picInputRef = useRef<HTMLInputElement>(null);
@@ -242,6 +243,7 @@ export default function MyAccountPage() {
         setUserPlan(u.plan || 'free');
         try { localStorage.setItem('offerbell_plan', u.plan || 'free'); } catch {}
         setPendingPlanChange(u.pendingPlanChange ?? null);
+        setSubscriptionStatus(u.subscriptionStatus ?? '');
 
         // Sync DB → localStorage cache so sidebar / other pages see truth.
         try {
@@ -433,7 +435,7 @@ export default function MyAccountPage() {
     for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('offerbell') && k !== 'offerbell-theme') keys.push(k); }
     keys.forEach(k => localStorage.removeItem(k));
     localStorage.removeItem('userId');
-    document.cookie = 'offerbell_user_id=; path=/; max-age=0';
+    try { await fetch('/api/auth/signout', { method: 'POST' }); } catch {}
     router.push('/');
   };
 
@@ -559,8 +561,45 @@ export default function MyAccountPage() {
           </button>
         </div>
 
+        {/* ════════════════ PAST-DUE BANNER ════════════════ */}
+        {/* Shown when Stripe has marked the subscription past_due (card was
+            declined). Stripe retries the charge per its default policy
+            (~3 weeks across 4 retries). Until then the user keeps full
+            access, but they need to know their payment failed - otherwise
+            they're blindsided when Stripe gives up and downgrades them. */}
+        {subscriptionStatus === 'past_due' && (
+          <div style={{
+            marginBottom: 20, padding: '13px 16px',
+            borderRadius: 10, background: 'rgba(220, 38, 38, 0.07)',
+            border: '1.5px solid rgba(220, 38, 38, 0.3)',
+            display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap',
+          }}>
+            <div style={{ flex: 1, minWidth: 220 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
+                Payment failed — please update your payment method
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--text-3)' }}>
+                Your last charge was declined. Stripe will retry automatically, but if it keeps failing your subscription will be cancelled.
+              </div>
+            </div>
+            <a
+              href="mailto:support@offerbell.org?subject=Payment%20Failed%20-%20Update%20Card"
+              style={{
+                padding: '7px 14px', borderRadius: 7,
+                background: 'var(--text)', color: 'var(--bg)',
+                fontSize: 12, fontWeight: 700, textDecoration: 'none',
+                fontFamily: "'Sora', sans-serif",
+              }}
+            >Contact support</a>
+          </div>
+        )}
+
         {/* ════════════════ PENDING PLAN BANNER ════════════════ */}
-        {pendingPlanChange && (
+        {/* Hide if effectiveAt is in the past - the change has already taken
+            effect and the webhook auto-clears, but this gives us UI-side
+            protection against a stale Convex value loaded just before the
+            webhook clear lands. */}
+        {pendingPlanChange && pendingPlanChange.effectiveAt > Date.now() && (
           <div style={{
             marginBottom: 20, padding: '13px 16px',
             borderRadius: 10, background: 'rgba(251, 146, 60, 0.07)',

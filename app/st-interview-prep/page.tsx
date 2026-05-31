@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useUserPlanStatus } from '../lib/usePlan';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/guide-base.css';
 import '../interview-prep/st-theme.css';
@@ -40,12 +41,18 @@ export default function STInterviewPrepPage() {
   const contentRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
+  // ─── Plan gate (server-truth via Convex one-shot) ────────────────────────
+  // Replaces a raw localStorage check, which a free user could bypass by
+  // editing devtools. Now we wait for Convex verification before allowing
+  // content to render. During warm-start (isVerified=false), we trust
+  // localStorage so paying users on slow networks aren't bounced.
+  const { plan: userPlan, isVerified } = useUserPlanStatus();
+  const isPaid = userPlan === 'pro' || userPlan === 'elite';
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!window.localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
-    const plan = localStorage.getItem('offerbell_plan') || 'free';
-    try { const p = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}'); if ((p.plan || plan) !== 'pro' && (p.plan || plan) !== 'elite') { router.replace('/checkout'); return; } } catch { router.replace('/checkout'); }
-  }, [router]);
+    if (isVerified && !isPaid) { router.replace('/checkout'); }
+  }, [router, isVerified, isPaid]);
 
   const [isDark, setIsDark] = useState(false);
   useEffect(() => {
@@ -65,7 +72,9 @@ export default function STInterviewPrepPage() {
     if (contentRef.current) contentRef.current.scrollTo({ top: 0 });
   }, [activeModule]);
 
-  return (
+  if (!isPaid) return <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#fafaf9',fontFamily:"'Sora',-apple-system,sans-serif",color:'#52525b',fontSize:14}}>Loading…</div>;
+
+    return (
     <div className="app">
       <Sidebar activePage="st-interview-prep" />
 

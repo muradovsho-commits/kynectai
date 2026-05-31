@@ -392,6 +392,20 @@ export const applyStripeSubscriptionUpdate = mutation({
     }
     if (args.clearPendingChange) {
       patch.pendingPlanChange = undefined;
+    } else if (user.pendingPlanChange) {
+      // Auto-clear a stale pendingPlanChange when the scheduled change has
+      // already taken effect. Two signals:
+      //   1. The new plan now matches what they were waiting for, OR
+      //   2. The scheduled effectiveAt has already passed.
+      // Without this clear, the UI banner ("Plan switches to Pro on Dec 31")
+      // would stay visible forever even after the change applied.
+      const pending = user.pendingPlanChange as { targetPlan?: string; effectiveAt?: number };
+      const newPlan = args.plan ?? user.plan;
+      const matchedTarget = pending.targetPlan && newPlan === pending.targetPlan;
+      const isPast = typeof pending.effectiveAt === 'number' && pending.effectiveAt <= Date.now();
+      if (matchedTarget || isPast) {
+        patch.pendingPlanChange = undefined;
+      }
     }
     await ctx.db.patch(user._id, patch);
     return { success: true };

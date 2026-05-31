@@ -36,13 +36,26 @@ function tierFromAmount(unitAmount: number | null | undefined): 'pro' | 'elite' 
 // Pull the plan tier from a Stripe subscription object by inspecting its
 // first item's price. Fallback to the description if amount lookup fails.
 function tierFromSubscription(sub: Stripe.Subscription): 'pro' | 'elite' | null {
+  // Primary signal: subscription metadata. Our checkout flow sets
+  // `subscription_data.metadata: { plan }` on every checkout session, and
+  // stripe-change-plan sets it on every tier update. Reading metadata is
+  // robust to coupons (which alter unit_amount), promo codes, and future
+  // price changes - the amount lookup below is just a safety net.
+  const metaPlan = (sub.metadata?.plan || '').toLowerCase();
+  if (metaPlan === 'elite') return 'elite';
+  if (metaPlan === 'pro') return 'pro';
+
+  // Fallback 1: amount → tier. Works for the standard checkout amounts.
+  // Fails if a coupon altered unit_amount or if pricing ever changes.
   const item = sub.items?.data?.[0];
   if (!item) return null;
   const price = item.price;
   const fromAmount = tierFromAmount(price?.unit_amount);
   if (fromAmount) return fromAmount;
-  // Fallback: scan the product name. Won't always be available depending on
-  // expand settings, so we treat it as best-effort.
+
+  // Fallback 2: product name scan. Only works when product is expanded
+  // (true on checkout.session.completed where we explicitly expand, false
+  // on raw customer.subscription.updated events).
   const product = price?.product;
   if (typeof product === 'object' && product && 'name' in product) {
     const name = (product as Stripe.Product).name?.toLowerCase() || '';

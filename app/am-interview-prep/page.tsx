@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useUserPlanStatus } from '../lib/usePlan';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/guide-base.css';
 import '../interview-prep/am-theme.css';
@@ -42,21 +43,23 @@ export default function AMInterviewPrepPage() {
 
   const [_userName, _setUserName] = useState({ first: '', last: '' });
   const [messagesSent, setMessagesSent] = useState(0);
-  const [userPlan, setUserPlan] = useState('free');
 
+
+  // ─── Plan gate (server-truth via Convex one-shot) ────────────────────────
+  // Replaces a raw localStorage check, which a free user could bypass by
+  // editing devtools. Now we wait for Convex verification before allowing
+  // content to render. During warm-start (isVerified=false), we trust
+  // localStorage so paying users on slow networks aren't bounced.
+  const { plan: userPlan, isVerified } = useUserPlanStatus();
+  const isPaid = userPlan === 'pro' || userPlan === 'elite';
   useEffect(() => {
     try { setMessagesSent(parseInt(localStorage.getItem('offerbell_messages_sent') || '0', 10)); } catch {}
-    try {
-      const plan = localStorage.getItem('offerbell_plan') || 'free';
-      const prof = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}');
-      const effectivePlan = prof.plan || plan;
-      setUserPlan(effectivePlan);
-      if (effectivePlan !== 'pro' && effectivePlan !== 'elite') {
-        router.replace('/checkout');
-        return;
-      }
-    } catch { setUserPlan('free'); router.replace('/checkout'); }
   }, []);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!window.localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
+    if (isVerified && !isPaid) { router.replace('/checkout'); }
+  }, [router, isVerified, isPaid]);
 
   useEffect(() => {
     try {
@@ -65,10 +68,7 @@ export default function AMInterviewPrepPage() {
     } catch {}
   }, []);
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (!window.localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); }
-  }, [router]);
+
 
   const [isDark, setIsDark] = useState(false);
   useEffect(() => {
@@ -88,7 +88,9 @@ export default function AMInterviewPrepPage() {
     if (contentRef.current) contentRef.current.scrollTo({ top: 0 });
   }, [activeModule]);
 
-  return (
+  if (!isPaid) return <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#fafaf9',fontFamily:"'Sora',-apple-system,sans-serif",color:'#52525b',fontSize:14}}>Loading…</div>;
+
+    return (
     <div className="app">
       <Sidebar activePage="am-interview-prep" />
 

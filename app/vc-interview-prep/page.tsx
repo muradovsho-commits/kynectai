@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useUserPlanStatus } from '../lib/usePlan';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/guide-base.css';
 import '../interview-prep/vc-theme.css';
@@ -40,7 +41,14 @@ export default function VCInterviewPrepPage() {
   const contentRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  useEffect(() => { if (typeof window === 'undefined') return; if (!window.localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; } const plan = localStorage.getItem('offerbell_plan') || 'free'; try { const p = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}'); if ((p.plan || plan) !== 'pro' && (p.plan || plan) !== 'elite') { router.replace('/checkout'); return; } } catch { router.replace('/checkout'); } }, [router]);
+  // ─── Plan gate (server-truth via Convex one-shot) ────────────────────────
+  const { plan: userPlan, isVerified } = useUserPlanStatus();
+  const isPaid = userPlan === 'pro' || userPlan === 'elite';
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!window.localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
+    if (isVerified && !isPaid) { router.replace('/checkout'); }
+  }, [router, isVerified, isPaid]);
   const [isDark, setIsDark] = useState(false);
   useEffect(() => { if (typeof window === 'undefined') return; const saved = localStorage.getItem('offerbell-theme'); if (saved) { document.documentElement.setAttribute('data-theme', saved); setIsDark(saved === 'dark'); } }, []);
 
@@ -48,7 +56,9 @@ export default function VCInterviewPrepPage() {
   const scrollToSection = (idx: number) => { const el = sectionRefs.current[`${activeModule}-${idx}`]; if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
   useEffect(() => { if (contentRef.current) contentRef.current.scrollTo({ top: 0 }); }, [activeModule]);
 
-  return (
+  if (!isPaid) return <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#fafaf9',fontFamily:"'Sora',-apple-system,sans-serif",color:'#52525b',fontSize:14}}>Loading…</div>;
+
+    return (
     <div className="app">
       <Sidebar activePage="vc-interview-prep" />
       <main className="main ib-guide-main vc-theme" ref={contentRef}>

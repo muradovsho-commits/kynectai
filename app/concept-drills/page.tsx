@@ -2,6 +2,7 @@
 'use client';
 import { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import Sidebar from '../components/Sidebar';
+import { useUserPlan } from '../lib/usePlan';
 import './drills.css';
 import { TRACKS as DRILL_TRACKS, DrillQ } from './drill-data';
 
@@ -38,7 +39,8 @@ const TRACK_LABELS: Record<string, string> = {
   rx: 'Restructuring',
 };
 
-const DRILL_SIZE = 10;
+const DRILL_SIZE_FREE = 5;
+const DRILL_SIZE_PAID = 10;
 const HISTORY_CAP = 100;
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -160,6 +162,10 @@ function ConceptDrillsInner() {
   const [tab, setTab] = useState<Tab>('practice');
   const [phase, setPhase] = useState<Phase>('landing');
 
+  // ─── Plan-aware drill size: free=5 q/drill, pro/elite=10 q/drill ────────
+  const userPlan = useUserPlan();
+  const drillSize = userPlan === 'free' ? DRILL_SIZE_FREE : DRILL_SIZE_PAID;
+
   // ─── Drilling state ──────────────────────────────────────────────────────
   const [questions, setQuestions] = useState<DrillQ[]>([]);
   const [idx, setIdx] = useState(0);
@@ -277,7 +283,7 @@ function ConceptDrillsInner() {
     if (topic) pool = pool.filter(q => q.topic === topic);
     if (difficulty !== 'any') pool = pool.filter(q => q.difficulty === difficulty);
     if (pool.length === 0) return;
-    const shuffled = shuffle(pool).slice(0, DRILL_SIZE);
+    const shuffled = shuffle(pool).slice(0, drillSize);
     setQuestions(shuffled);
     setIdx(0);
     setSelected(null);
@@ -645,7 +651,7 @@ function ConceptDrillsInner() {
                     >
                       <div className="cd-quick-start-text">
                         <div className="cd-quick-start-title">Mixed drill</div>
-                        <div className="cd-quick-start-sub">{DRILL_SIZE} random questions across all {trackDef?.topics.length || 0} topics</div>
+                        <div className="cd-quick-start-sub">{drillSize} random questions across all {trackDef?.topics.length || 0} topics</div>
                       </div>
                       <div className="cd-quick-start-arrow">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
