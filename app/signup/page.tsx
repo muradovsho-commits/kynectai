@@ -22,14 +22,15 @@ function SignupContent() {
     event.preventDefault();
     setError(null);
     if (password !== confirmPassword) { setError("Passwords do not match."); return; }
-    if (password.length < 8) { setError("Password must be at least 8 characters."); return; }
 
     try {
       setSubmitting(true);
       const result = await signUp({ fullName, email, password });
-
+      
       const verificationToken = result?.verificationToken;
+      
       if (verificationToken) {
+        // Send verification email
         await fetch("/api/send-verification", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -37,11 +38,16 @@ function SignupContent() {
         });
       }
 
+      // Flag that this is a new user who needs onboarding
+      // NOTE: We do NOT set any localStorage here. The user must verify
+      // their email first, then sign in. Only the signin flow creates
+      // the session. This prevents orphaned keys from interfering with
+      // subsequent logins.
       setSuccess(true);
     } catch (err: any) {
       const msg = err?.data ? String(err.data) : (err instanceof Error ? err.message : (err?.message || "Something went wrong."));
       if (msg.includes("already exists")) setError("An account with this email already exists. Please sign in instead.");
-      else if (msg.includes("6 characters") || msg.includes("8 characters")) setError("Password must be at least 8 characters.");
+      else if (msg.includes("6 characters")) setError("Password must be at least 6 characters.");
       else setError(msg.replace("Uncaught Error: ", ""));
     } finally { setSubmitting(false); }
   };
@@ -59,15 +65,9 @@ function SignupContent() {
         <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=960&h=1200&fit=crop&crop=faces" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.3) saturate(0.8)' }} />
         <div style={{ position: 'relative', zIndex: 1, padding: "48px 44px", display: "flex", flexDirection: "column", justifyContent: "space-between", height: '100%' }}>
           <div>
-            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, letterSpacing: "-.5px", marginBottom: 64 }}>
-              <a href="/" style={{ color: "#fff", textDecoration: "none" }}>OfferBell<em style={{ fontStyle: "italic" }}>.</em></a>
-            </div>
-            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 42, lineHeight: 1.1, letterSpacing: "-1.2px", color: '#fff', marginBottom: 16 }}>
-              Start your recruiting <em style={{ fontStyle: "italic" }}>journey.</em>
-            </div>
-            <div style={{ fontSize: 14, color: "rgba(255,255,255,.55)", lineHeight: 1.7, maxWidth: 340, marginBottom: 36 }}>
-              Join thousands of finance students using OfferBell to land offers at top firms.
-            </div>
+            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, letterSpacing: "-.5px", marginBottom: 64 }}><a href="/" style={{ color: "#fff", textDecoration: "none" }}>OfferBell<em style={{ fontStyle: "italic" }}>.</em></a></div>
+            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 42, lineHeight: 1.1, letterSpacing: "-1.2px", color: '#fff', marginBottom: 16 }}>Start your recruiting <em style={{ fontStyle: "italic" }}>journey.</em></div>
+            <div style={{ fontSize: 14, color: "rgba(255,255,255,.55)", lineHeight: 1.7, maxWidth: 340, marginBottom: 36 }}>Join thousands of finance students using OfferBell to land offers at top firms.</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {["AI-powered outreach that gets replies", "Track every networking conversation", "Interview prep for IB, PE, consulting & more", "Resume review, mock interviews, and coaching"].map((t, i) => (
                 <div key={i} style={{ display: "flex", gap: 10, alignItems: "center", fontSize: 13, color: "rgba(255,255,255,.6)" }}>
@@ -81,8 +81,8 @@ function SignupContent() {
           </div>
           <div>
             <div style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '16px 18px', marginBottom: 20 }}>
-              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', fontStyle: 'italic', lineHeight: 1.6, marginBottom: 8 }}>&ldquo;OfferBell helped me go from confused to confident.&rdquo;</div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>- Wharton &apos;25</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', fontStyle: 'italic', lineHeight: 1.6, marginBottom: 8 }}>"OfferBell helped me go from confused to confident."</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>- Wharton '25</div>
             </div>
             <div style={{ fontSize: 12, color: "rgba(255,255,255,.25)" }}>officialofferbell@gmail.com</div>
           </div>
@@ -124,13 +124,13 @@ function SignupContent() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 24 }}>
               <div>
                 <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#0a0a0a", marginBottom: 6 }}>Password</label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} style={inp}
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} style={inp}
                   onFocus={(e) => { e.currentTarget.style.borderColor = "#0a0a0a"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(10,10,10,0.06)"; }}
                   onBlur={(e) => { e.currentTarget.style.borderColor = "#e4e2de"; e.currentTarget.style.boxShadow = "none"; }} />
               </div>
               <div>
                 <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#0a0a0a", marginBottom: 6 }}>Confirm</label>
-                <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required minLength={8} style={inp}
+                <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required minLength={6} style={inp}
                   onFocus={(e) => { e.currentTarget.style.borderColor = "#0a0a0a"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(10,10,10,0.06)"; }}
                   onBlur={(e) => { e.currentTarget.style.borderColor = "#e4e2de"; e.currentTarget.style.boxShadow = "none"; }} />
               </div>
@@ -151,9 +151,7 @@ function SignupContent() {
 
             <div style={{ fontSize: 11.5, color: "#9e9b96", lineHeight: 1.55, textAlign: "center", marginBottom: 18 }}>
               By creating an account, you agree to our{" "}
-              <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#6b6860", textDecoration: "underline", textUnderlineOffset: 2 }}>Terms of Service</a>
-              {" "}and{" "}
-              <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "#6b6860", textDecoration: "underline", textUnderlineOffset: 2 }}>Privacy Policy</a>.
+              <a href="/terms.html" target="_blank" rel="noopener noreferrer" style={{ color: "#6b6860", textDecoration: "underline", textUnderlineOffset: 2 }}>Terms of Service</a>.
             </div>
           </form>
           )}
@@ -166,15 +164,6 @@ function SignupContent() {
             <a href="/" style={{ fontSize: 12, color: "#9e9b96", textDecoration: "none", fontWeight: 500 }}>
               ← Back to home
             </a>
-          </div>
-          <div style={{ textAlign: "center", marginTop: 18, fontSize: 11, color: "#9e9b96", display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <a href="/privacy" style={{ color: "#9e9b96", textDecoration: "none" }}>Privacy</a>
-            <span>·</span>
-            <a href="/terms" style={{ color: "#9e9b96", textDecoration: "none" }}>Terms</a>
-            <span>·</span>
-            <a href="/refund" style={{ color: "#9e9b96", textDecoration: "none" }}>Refund</a>
-            <span>·</span>
-            <a href="/cookies" style={{ color: "#9e9b96", textDecoration: "none" }}>Cookies</a>
           </div>
         </div>
       </div>
