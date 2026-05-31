@@ -24,11 +24,15 @@ function SigninContent() {
 
     try {
       setSubmitting(true);
+      // Direct Convex call - matches pre-hardening behavior. The HMAC-signed
+      // /api/auth/signin endpoint exists in code but was never deployed (the
+      // hardening zip was intentionally skipped), so we keep the original flow.
       const result = await signIn({ email, password });
       const userId = (result && (result.userId ?? result.id ?? result)) ?? undefined;
       if (typeof window !== "undefined" && userId) {
         const id = String(userId);
 
+        // Clear previous session data to prevent any bleed-over.
         const allKeys: string[] = [];
         for (let i = 0; i < localStorage.length; i++) {
           const k = localStorage.key(i);
@@ -37,6 +41,7 @@ function SigninContent() {
         allKeys.forEach(k => localStorage.removeItem(k));
         document.cookie = 'offerbell_user_id=; path=/; max-age=0';
 
+        // Write the new session.
         let finalPlan = result?.plan || 'free';
         window.localStorage.setItem("offerbell_user_id", id);
         window.localStorage.setItem("offerbell_messages_sent", String(result?.outreachCount || 0));
@@ -56,7 +61,7 @@ function SigninContent() {
             const profile: any = {};
             for (const key of Object.keys(result)) {
               if (key === 'offerbell_onboarding_profile') {
-                try { Object.assign(profile, JSON.parse((result as any)[key] || '{}')); } catch {}
+                try { Object.assign(profile, JSON.parse(result[key] || '{}')); } catch {}
               } else if (typeof (result as any)[key] !== 'object') {
                 profile[key] = (result as any)[key];
               }
@@ -67,6 +72,7 @@ function SigninContent() {
           }
         } catch {}
 
+        // Hydrate progress before navigating away.
         try {
           const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
           const progress = await convex.query((api as any).progress?.loadProgress, { userId: id });
@@ -77,7 +83,7 @@ function SigninContent() {
               }
             }
           }
-        } catch (e) { /* dashboard will pull again */ }
+        } catch (e) { /* dashboard will pull again on mount */ }
 
         window.localStorage.setItem("offerbell_plan", finalPlan);
 
@@ -100,168 +106,183 @@ function SigninContent() {
     }
   };
 
-  const inp: React.CSSProperties = {
+  const inputStyle: React.CSSProperties = {
     width: "100%", height: 48, padding: "0 16px",
-    border: "1.5px solid #e4e2de", borderRadius: 10,
+    border: "1.5px solid #e6e3dc", borderRadius: 10,
     fontSize: 14, fontFamily: "'Sora', sans-serif",
-    color: "#0a0a0a", background: "#ffffff", outline: "none",
+    color: "#0f0f0f", background: "#ffffff", outline: "none",
+    transition: "border-color 0.15s, box-shadow 0.15s",
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", background: "#0a0a0a" }}>
-      <div style={{ width: 480, position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
-        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=960&h=1200&fit=crop&crop=faces" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.35) saturate(0.8)' }} />
-        <div style={{ position: 'relative', zIndex: 1, padding: "48px 44px", display: "flex", flexDirection: "column", justifyContent: "space-between", height: '100%' }}>
-          <div>
-            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, letterSpacing: "-.5px", marginBottom: 64 }}>
-              <a href="/" style={{ color: "#fff", textDecoration: "none" }}>OfferBell<em style={{ fontStyle: "italic" }}>.</em></a>
-            </div>
-            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 42, lineHeight: 1.1, letterSpacing: "-1.2px", color: '#fff', marginBottom: 16 }}>
-              Welcome <em style={{ fontStyle: "italic" }}>back.</em>
-            </div>
-            <div style={{ fontSize: 14, color: "rgba(255,255,255,.55)", lineHeight: 1.7, maxWidth: 320 }}>
-              Sign in to access your dashboard, outreach tools, and recruiting resources.
-            </div>
+    <div style={{
+      minHeight: "100vh", background: "#fafafa",
+      display: "flex", flexDirection: "column", alignItems: "center",
+      fontFamily: "'Sora', -apple-system, BlinkMacSystemFont, sans-serif",
+      color: "#0f0f0f", padding: "40px 24px 60px",
+    }}>
+      {/* Back to home pill */}
+      <div style={{ width: "100%", maxWidth: 920, marginBottom: 40 }}>
+        <a href="/" style={{
+          display: "inline-flex", alignItems: "center", gap: 6,
+          color: "#5c5c5c", textDecoration: "none",
+          fontSize: 14, fontWeight: 600,
+          padding: "8px 14px", borderRadius: 8,
+          background: "#ffffff", border: "1.5px solid #e6e3dc",
+          transition: "border-color 0.15s, color 0.15s",
+        }}
+        onMouseOver={(e) => { e.currentTarget.style.borderColor = "#0f0f0f"; e.currentTarget.style.color = "#0f0f0f"; }}
+        onMouseOut={(e) => { e.currentTarget.style.borderColor = "#e6e3dc"; e.currentTarget.style.color = "#5c5c5c"; }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+          Back to home
+        </a>
+      </div>
+
+      {/* Centered wordmark */}
+      <a href="/" style={{
+        fontFamily: "'Instrument Serif', 'Times New Roman', serif",
+        fontSize: 26, letterSpacing: "-0.5px",
+        color: "#0f0f0f", textDecoration: "none", marginBottom: 40,
+      }}>
+        OfferBell<em style={{ fontStyle: "italic" }}>.</em>
+      </a>
+
+      <div style={{ width: "100%", maxWidth: 420 }}>
+        <div style={{
+          fontSize: 11, fontWeight: 700, letterSpacing: 1.6, textTransform: "uppercase",
+          color: "#9a9a9a", marginBottom: 14,
+        }}>Sign In</div>
+
+        <h1 style={{
+          fontFamily: "'Instrument Serif', 'Times New Roman', serif",
+          fontSize: 48, fontWeight: 400, letterSpacing: "-1.2px", lineHeight: 1.05,
+          margin: "0 0 14px 0",
+        }}>
+          Welcome <em style={{ fontStyle: "italic" }}>back</em>.
+        </h1>
+
+        <p style={{ fontSize: 14, color: "#5c5c5c", lineHeight: 1.6, margin: "0 0 36px 0" }}>
+          Pick up where you left off &mdash; your dashboard, outreach, and prep are waiting.
+        </p>
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#0f0f0f", marginBottom: 7 }}>Email</label>
+            <input
+              type="email" placeholder="you@school.edu" value={email}
+              onChange={(e) => setEmail(e.target.value)} required style={inputStyle}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "#0f0f0f"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(15,15,15,0.06)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "#e6e3dc"; e.currentTarget.style.boxShadow = "none"; }}
+            />
           </div>
-          <div>
-            <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
-              {[
-                { n: '5,000+', l: 'Questions' },
-                { n: '10', l: 'Career Tracks' },
-                { n: '200+', l: 'Campuses' },
-              ].map((s, i) => (
-                <div key={i} style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '12px 16px', flex: 1 }}>
-                  <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: '#fff', letterSpacing: '-0.5px' }}>{s.n}</div>
-                  <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{s.l}</div>
+
+          <div style={{ marginBottom: 8 }}>
+            <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#0f0f0f", marginBottom: 7 }}>Password</label>
+            <input
+              type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+              required minLength={8} style={inputStyle}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "#0f0f0f"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(15,15,15,0.06)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "#e6e3dc"; e.currentTarget.style.boxShadow = "none"; }}
+            />
+          </div>
+
+          <div style={{ textAlign: "right", marginBottom: 22 }}>
+            <a href="/forgot-password" style={{ color: "#5c5c5c", fontSize: 13, textDecoration: "none", fontWeight: 500 }}>
+              Forgot password?
+            </a>
+          </div>
+
+          {error && (
+            <div style={{
+              padding: "11px 14px", borderRadius: 9, background: "#fef2f2",
+              border: "1px solid #fecaca", color: "#b91c1c",
+              fontSize: 13, fontWeight: 500, marginBottom: 16, lineHeight: 1.5,
+            }}>{error}</div>
+          )}
+
+          {error && error.toLowerCase().includes("verify your email") && (
+            <div style={{ marginBottom: 16, textAlign: "center" }}>
+              {resendStatus === "sent" ? (
+                <div style={{ color: "#15803d", fontSize: 13, fontWeight: 500 }}>
+                  Verification email sent. Check your inbox.
                 </div>
-              ))}
+              ) : (
+                <button
+                  type="button" disabled={resendStatus === "loading"}
+                  onClick={async () => {
+                    try {
+                      setResendStatus("loading");
+                      const res = await generateVerificationToken({ email });
+                      const emailRes = await fetch("/api/send-verification", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email, token: res.verificationToken, name: res.name }),
+                      });
+                      if (!emailRes.ok) throw new Error("Failed");
+                      setResendStatus("sent");
+                    } catch (err: any) {
+                      console.error(err);
+                      setResendStatus("error");
+                    }
+                  }}
+                  style={{
+                    background: "none", border: "none", color: "#5c5c5c",
+                    textDecoration: "underline", textUnderlineOffset: 2,
+                    fontSize: 13, cursor: resendStatus === "loading" ? "not-allowed" : "pointer",
+                    fontWeight: 500, opacity: resendStatus === "loading" ? 0.6 : 1,
+                  }}
+                >
+                  {resendStatus === "loading" ? "Sending..." : "Didn't get the email? Resend it."}
+                </button>
+              )}
+              {resendStatus === "error" && (
+                <div style={{ color: "#b91c1c", fontSize: 12, marginTop: 6 }}>
+                  Failed to send. Please try again in a moment.
+                </div>
+              )}
             </div>
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,.25)" }}>officialofferbell@gmail.com</div>
-          </div>
+          )}
+
+          <button
+            type="submit" disabled={submitting}
+            style={{
+              width: "100%", height: 48, borderRadius: 10, border: "none",
+              background: "#0a0a0a", color: "#ffffff",
+              fontSize: 14, fontWeight: 700, fontFamily: "'Sora', sans-serif",
+              cursor: submitting ? "not-allowed" : "pointer",
+              opacity: submitting ? 0.55 : 1,
+              transition: "opacity 0.15s, transform 0.06s", marginBottom: 22,
+            }}
+          >
+            {submitting ? "Signing in..." : "Sign in"}
+          </button>
+        </form>
+
+        <div style={{ textAlign: "center", fontSize: 13.5, color: "#5c5c5c", marginBottom: 32 }}>
+          Don&apos;t have an account?{" "}
+          <a href="/signup" style={{ color: "#0a0a0a", fontWeight: 700, textDecoration: "none" }}>Sign up</a>
+        </div>
+
+        <div style={{ height: 1, background: "#e6e6e6", margin: "0 0 22px 0" }} />
+
+        <div style={{
+          textAlign: "center", fontSize: 11, color: "#9a9a9a",
+          display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap",
+        }}>
+          <a href="/privacy" style={{ color: "#9a9a9a", textDecoration: "none" }}>Privacy</a>
+          <span>·</span>
+          <a href="/terms" style={{ color: "#9a9a9a", textDecoration: "none" }}>Terms</a>
+          <span>·</span>
+          <a href="/refund" style={{ color: "#9a9a9a", textDecoration: "none" }}>Refund</a>
+          <span>·</span>
+          <a href="/cookies" style={{ color: "#9a9a9a", textDecoration: "none" }}>Cookies</a>
         </div>
       </div>
 
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", background: "#f8f8f7", padding: 40 }}>
-        <div style={{ width: "100%", maxWidth: 420 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#9e9b96", marginBottom: 12 }}>Sign In</div>
-          <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 30, letterSpacing: "-.5px", color: "#0a0a0a", marginBottom: 8 }}>
-            Continue where you <em style={{ fontStyle: "italic" }}>left off</em>
-          </div>
-          <div style={{ fontSize: 14, color: "#6b6860", marginBottom: 36 }}>
-            Enter your credentials to access your account.
-          </div>
-
-          <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: 18 }}>
-              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#0a0a0a", marginBottom: 6 }}>Email</label>
-              <input
-                type="email" placeholder="you@school.edu" value={email}
-                onChange={(e) => setEmail(e.target.value)} required
-                style={inp}
-                onFocus={(e) => { e.currentTarget.style.borderColor = "#0a0a0a"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(10,10,10,0.06)"; }}
-                onBlur={(e) => { e.currentTarget.style.borderColor = "#e4e2de"; e.currentTarget.style.boxShadow = "none"; }}
-              />
-            </div>
-
-            <div style={{ marginBottom: 24 }}>
-              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#0a0a0a", marginBottom: 6 }}>Password</label>
-              <input
-                type="password" value={password}
-                onChange={(e) => setPassword(e.target.value)} required minLength={8}
-                style={inp}
-                onFocus={(e) => { e.currentTarget.style.borderColor = "#0a0a0a"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(10,10,10,0.06)"; }}
-                onBlur={(e) => { e.currentTarget.style.borderColor = "#e4e2de"; e.currentTarget.style.boxShadow = "none"; }}
-              />
-            </div>
-
-            {error && (
-              <div style={{ padding: "10px 14px", borderRadius: 8, background: "#fef2f2", border: "1px solid #fecaca", color: "#dc2626", fontSize: 13, fontWeight: 500, marginBottom: 18 }}>
-                {error}
-              </div>
-            )}
-
-            {error && error.toLowerCase().includes("verify your email") && (
-              <div style={{ marginBottom: 18, textAlign: "center" }}>
-                {resendStatus === "sent" ? (
-                  <div style={{ color: "#16a34a", fontSize: 13, fontWeight: 500 }}>
-                    Verification email sent! Please check your inbox.
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    disabled={resendStatus === "loading"}
-                    onClick={async () => {
-                      try {
-                        setResendStatus("loading");
-                        const res = await generateVerificationToken({ email });
-                        const emailRes = await fetch("/api/send-verification", {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ email, token: res.verificationToken, name: res.name })
-                        });
-                        if (!emailRes.ok) throw new Error("Failed");
-                        setResendStatus("sent");
-                      } catch (err: any) {
-                        console.error(err);
-                        setResendStatus("error");
-                      }
-                    }}
-                    style={{
-                      background: "none", border: "none", color: "#6b6860", textDecoration: "underline",
-                      fontSize: 13, cursor: "pointer", fontWeight: 500
-                    }}
-                  >
-                    {resendStatus === "loading" ? "Sending..." : "Didn't receive the email? Click to resend."}
-                  </button>
-                )}
-                {resendStatus === "error" && (
-                  <div style={{ color: "#dc2626", fontSize: 12, marginTop: 4 }}>Failed to send. Please try again.</div>
-                )}
-              </div>
-            )}
-
-            <div style={{ textAlign: "right", marginTop: "-12px", marginBottom: "20px" }}>
-              <a href="/forgot-password" style={{ color: "#6b6860", fontSize: 13, textDecoration: "none", fontWeight: 500 }}>
-                Forgot password?
-              </a>
-            </div>
-
-            <button
-              type="submit" disabled={submitting}
-              style={{
-                width: "100%", height: 48, borderRadius: 10, border: "none",
-                background: "#0a0a0a", color: "#ffffff", fontSize: 14, fontWeight: 700,
-                fontFamily: "'Sora', sans-serif", cursor: submitting ? "not-allowed" : "pointer",
-                opacity: submitting ? 0.6 : 1, display: "flex", alignItems: "center",
-                justifyContent: "center", gap: 8, marginBottom: 20,
-              }}
-            >
-              {submitting ? "Signing in..." : "Sign in"}
-            </button>
-          </form>
-
-          <div style={{ textAlign: "center", fontSize: 13, color: "#6b6860" }}>
-            Don&apos;t have an account?{" "}
-            <a href="/signup" style={{ color: "#0a0a0a", fontWeight: 700, textDecoration: "none" }}>
-              Sign up
-            </a>
-          </div>
-          <div style={{ textAlign: "center", marginTop: 12 }}>
-            <a href="/" style={{ fontSize: 12, color: "#9e9b96", textDecoration: "none", fontWeight: 500 }}>
-              ← Back to home
-            </a>
-          </div>
-          <div style={{ textAlign: "center", marginTop: 18, fontSize: 11, color: "#9e9b96", display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <a href="/privacy" style={{ color: "#9e9b96", textDecoration: "none" }}>Privacy</a>
-            <span>·</span>
-            <a href="/terms" style={{ color: "#9e9b96", textDecoration: "none" }}>Terms</a>
-            <span>·</span>
-            <a href="/refund" style={{ color: "#9e9b96", textDecoration: "none" }}>Refund</a>
-            <span>·</span>
-            <a href="/cookies" style={{ color: "#9e9b96", textDecoration: "none" }}>Cookies</a>
-          </div>
-        </div>
-      </div>
+      <div style={{ flex: 1, minHeight: 32 }} />
     </div>
   );
 }
