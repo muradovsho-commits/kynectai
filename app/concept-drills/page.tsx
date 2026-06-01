@@ -232,6 +232,15 @@ function ConceptDrillsInner() {
     loadHistory();
   }, [loadHistory]);
 
+  // After login, the sync hook hydrates flash_perf into localStorage
+  // asynchronously; re-read profile, history, and stats once it lands so the
+  // page doesn't show 0 / "select a track" until a manual refresh.
+  useEffect(() => {
+    const onHydrated = () => { loadProfile(); loadHistory(); setPerfTick(t => t + 1); };
+    window.addEventListener('offerbell-progress-hydrated', onHydrated);
+    return () => window.removeEventListener('offerbell-progress-hydrated', onHydrated);
+  }, [loadProfile, loadHistory]);
+
   // Filter history to the current track (switching industry hides past
   // drills from other tracks - keeps the view focused).
   const trackHistory = useMemo(() => {

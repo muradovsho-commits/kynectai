@@ -251,6 +251,7 @@ function mergeBlobs(cloud: Record<string, string>, local: Record<string, string>
 export function useProgressSync() {
   const userId = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
   const saveProgress = useMutation(api.progress.saveProgress);
+  const upsertPerf = useMutation(api.flashPerf.upsertPerf);
 
   const hasSyncedRef = useRef(false);
   const lastPushedHashRef = useRef<string | null>(null);
@@ -258,6 +259,11 @@ export function useProgressSync() {
   const isPushingRef = useRef(false);
   const userIdRef = useRef<string | null>(userId);
   userIdRef.current = userId;
+  // flash_perf_* keys are excluded from the blob, so they are persisted to
+  // their own Convex table here (debounced). Without this, drill/flashcard
+  // stats never reach the cloud and are lost on logout.
+  const dirtyFlashTracksRef = useRef<Set<string>>(new Set());
+  const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ── Initial sync (one-time HTTP fetch, not a live subscription) ──────────
   useEffect(() => {
@@ -286,6 +292,7 @@ export function useProgressSync() {
             for (const [track, row] of Object.entries(rows)) {
               try { localStorage.setItem(`offerbell_flash_perf_${track}`, row.data); } catch {}
             }
+            try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
             // One-time migration: if cloud has no rows but localStorage has
             // legacy flash_perf data, push everything up.
             if (Object.keys(rows).length === 0) {
@@ -324,6 +331,7 @@ export function useProgressSync() {
                 catScores: (() => { try { return JSON.parse(r.catScores); } catch { return {}; } })(),
               }));
               try { localStorage.setItem('offerbell_diag_history', JSON.stringify(legacy)); } catch {}
+              try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
             } else {
               // One-time migration from legacy localStorage.
               try {
@@ -440,17 +448,41 @@ export function useProgressSync() {
     }
   }
 
+  function flushFlashPerf() {
+    const uid = userIdRef.current;
+    if (!uid) return;
+    const tracks = Array.from(dirtyFlashTracksRef.current);
+    dirtyFlashTracksRef.current.clear();
+    for (const track of tracks) {
+      try {
+        const data = localStorage.getItem(`offerbell_flash_perf_${track}`);
+        if (data) void upsertPerf({ userId: uid, track, data }).catch(() => {});
+      } catch {}
+    }
+  }
+  function scheduleFlashPush(track: string) {
+    dirtyFlashTracksRef.current.add(track);
+    if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
+    flashTimerRef.current = setTimeout(() => { flushFlashPerf(); }, 3000);
+  }
+
   // ── Detect mutations: intercept setItem + listen for storage events ──────
   useEffect(() => {
     if (!userId) return;
     const origSetItem = localStorage.setItem.bind(localStorage);
     localStorage.setItem = function (key: string, value: string) {
       origSetItem(key, value);
+      if (key.startsWith('offerbell_flash_perf_')) {
+        scheduleFlashPush(key.slice('offerbell_flash_perf_'.length));
+      }
       if (SYNC_KEYS.includes(key) && !EXCLUDE_FROM_SYNC.has(key)) {
         schedulePush();
       }
     };
     const onStorage = (e: StorageEvent) => {
+      if (e.key && e.key.startsWith('offerbell_flash_perf_')) {
+        scheduleFlashPush(e.key.slice('offerbell_flash_perf_'.length));
+      }
       if (e.key && SYNC_KEYS.includes(e.key) && !EXCLUDE_FROM_SYNC.has(e.key)) {
         schedulePush();
       }
@@ -480,9 +512,10 @@ export function useProgressSync() {
         navigator.sendBeacon('/api/progress-save', blob);
         lastPushedHashRef.current = localHash;
       } catch {}
+      flushFlashPerf();
     };
     const onVis = () => {
-      if (document.visibilityState === 'hidden') void pushIfDirty();
+      if (document.visibilityState === 'hidden') { void pushIfDirty(); flushFlashPerf(); }
       else recordActivityToday();
     };
     window.addEventListener('beforeunload', flushBeacon);

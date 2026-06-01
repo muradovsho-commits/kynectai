@@ -412,7 +412,14 @@ export default function DashboardPage() {
     loadLocalProgress();
     const onVisible = () => { if (document.visibilityState === 'visible') loadLocalProgress(); };
     document.addEventListener('visibilitychange', onVisible);
-    return () => document.removeEventListener('visibilitychange', onVisible);
+    // After login, the sync hook hydrates flash_perf/diagnostic into
+    // localStorage asynchronously; re-read once that lands so stats aren't 0.
+    const onHydrated = () => loadLocalProgress();
+    window.addEventListener('offerbell-progress-hydrated', onHydrated);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('offerbell-progress-hydrated', onHydrated);
+    };
   }, [loadLocalProgress]);
 
   // ─── Outreach tracker data (from localStorage)
@@ -797,25 +804,20 @@ export default function DashboardPage() {
                     </div>
                   ) : (
                     <div className="dash-heatmap">
-                      {topicRows.map(row => (
-                        <Link
-                          key={row.topic}
-                          className="dash-heatmap-row"
-                          href={`/flashcards?track=${selectedTrackKey}`}
-                        >
-                          <div className="dash-heatmap-label">{row.topic}</div>
-                          <div className="dash-heatmap-bar-wrap">
-                            <div
-                              className="dash-heatmap-bar"
-                              style={{
-                                width: `${row.accuracy}%`,
-                                background: row.accuracy >= 75 ? '#16a34a' : row.accuracy >= 50 ? '#f59e0b' : '#ef4444',
-                              }}
-                            />
-                          </div>
-                          <div className="dash-heatmap-val">{row.accuracy}%</div>
-                        </Link>
-                      ))}
+                      {topicRows.map(row => {
+                        const hue = Math.round((row.accuracy / 100) * 120); // 0=red -> 120=green
+                        return (
+                          <Link
+                            key={row.topic}
+                            className="dash-heat-cell"
+                            href={`/flashcards?track=${selectedTrackKey}`}
+                            style={{ background: `hsl(${hue}, 60%, 42%)` }}
+                          >
+                            <div className="dash-heat-cell-val">{row.accuracy}%</div>
+                            <div className="dash-heat-cell-label">{row.topic}</div>
+                          </Link>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
