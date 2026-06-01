@@ -344,6 +344,9 @@ export default function DashboardPage() {
   type FlashTrack = { seen: number; pass: number; partial: number; fail: number; byCat: Record<string, { seen: number; pass: number }> };
   const [flashPerf, setFlashPerf] = useState<Record<string, FlashTrack>>({});
   const [drillCount, setDrillCount] = useState(0);
+  // Diagnostic Review contributes to Avg Score only (NOT drills/heatmap). Read
+  // from its own history store so it never touches flash_perf again.
+  const [diagAgg, setDiagAgg] = useState<{ items: number; scoreSum: number }>({ items: 0, scoreSum: 0 });
   const loadLocalProgress = useCallback(() => {
     const next: Record<string, FlashTrack> = {};
     for (const t of TRACK_ORDER) {
@@ -383,6 +386,26 @@ export default function DashboardPage() {
       }
     } catch {
       setDrillCount(0);
+    }
+
+    // Diagnostic Review history -> avg-score contribution.
+    try {
+      const raw = localStorage.getItem('offerbell_diag_history');
+      const hist = raw ? JSON.parse(raw) : [];
+      if (Array.isArray(hist)) {
+        let items = 0; let scoreSum = 0;
+        for (const r of hist) {
+          const answered = Number(r?.totalAnswered) || 0;
+          const correct = Number(r?.totalCorrect) || 0;
+          items += answered;
+          scoreSum += correct * 100; // each correct answer = 100%
+        }
+        setDiagAgg({ items, scoreSum });
+      } else {
+        setDiagAgg({ items: 0, scoreSum: 0 });
+      }
+    } catch {
+      setDiagAgg({ items: 0, scoreSum: 0 });
     }
   }, []);
   useEffect(() => {
@@ -441,10 +464,11 @@ export default function DashboardPage() {
     const flashScoreSum = flashWeighted * 100; // in percentage-points
     const mockCount = (mockStats && mockStats.count) || 0;
     const mockScoreSum = mockCount * ((mockStats && mockStats.avgGrade) || 0);
-    const items = flashSeen + mockCount;
-    const score = items > 0 ? Math.round((flashScoreSum + mockScoreSum) / items) : 0;
+    const items = flashSeen + mockCount + diagAgg.items;
+    const scoreSum = flashScoreSum + mockScoreSum + diagAgg.scoreSum;
+    const score = items > 0 ? Math.round(scoreSum / items) : 0;
     return { score, items };
-  }, [flashPerf, mockStats]);
+  }, [flashPerf, mockStats, diagAgg]);
   const avgScore = avgScoreData.score;
 
   // ─── Active time per day (set by useActiveTime hook running app-wide)

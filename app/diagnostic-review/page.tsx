@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
@@ -54,7 +54,6 @@ function getSidebarTrack(): string {
   return 'ib';
 }
 
-const TIME_PER_Q = 45;
 const STORAGE_KEY = 'offerbell_diag_history';
 const PROGRESS_KEY = 'offerbell_diag_in_progress';
 
@@ -146,7 +145,6 @@ export default function DiagnosticReviewPage() {
   const [idx, setIdx] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [showExp, setShowExp] = useState(false);
-  const [timer, setTimer] = useState(TIME_PER_Q);
   const [catResults, setCatResults] = useState<Record<string, CatResult>>({});
   const [totalCorrect, setTotalCorrect] = useState(0);
   const [totalAnswered, setTotalAnswered] = useState(0);
@@ -163,7 +161,6 @@ export default function DiagnosticReviewPage() {
   const [freeUsedFlag, setFreeUsedFlag] = useState(false);
   const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
   const [userId, setUserId] = useState<string>('');
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const saveProgressMut = useMutation((api as any).progress?.saveProgress);
   const appendDiagResultMut = useMutation((api as any).diagHistory?.appendResult);
@@ -204,25 +201,6 @@ export default function DiagnosticReviewPage() {
     return () => window.removeEventListener('offerbell-profile-changed', onProfileChanged);
   }, [phase, userPlan, savedProgress]);
 
-  // ── Timer ──
-  useEffect(() => {
-    if (phase !== 'assess' || showExp) { if (timerRef.current) clearInterval(timerRef.current); return; }
-    timerRef.current = setInterval(() => {
-      setTimer(t => { if (t <= 1) { handleTimeUp(); return 0; } return t - 1; });
-    }, 1000);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, idx, showExp]);
-
-  const handleTimeUp = useCallback(() => {
-    if (selected !== null) return;
-    setSelected(-1); setShowExp(true);
-    const q = questions[idx];
-    setCatResults(p => { const c = p[q.category] || { total: 0, correct: 0 }; return { ...p, [q.category]: { total: c.total + 1, correct: c.correct } }; });
-    setTotalAnswered(a => a + 1);
-    setMissed(m => [...m, { q: q.q, explanation: q.explanation, category: q.category }]);
-  }, [selected, questions, idx]);
-
   const startAssessment = () => {
     if (!trackKey) return;
     const track = TRACKS[trackKey];
@@ -235,7 +213,7 @@ export default function DiagnosticReviewPage() {
       setFreeUsedFlag(true);
     }
     const qs = buildAssessment(track);
-    setQuestions(qs); setIdx(0); setSelected(null); setShowExp(false); setTimer(TIME_PER_Q);
+    setQuestions(qs); setIdx(0); setSelected(null); setShowExp(false);
     setCatResults({}); setTotalCorrect(0); setTotalAnswered(0); setMissed([]);
     setPhase('assess');
     setSavedProgress(null);
@@ -251,7 +229,7 @@ export default function DiagnosticReviewPage() {
     setTotalCorrect(savedProgress.totalCorrect);
     setTotalAnswered(savedProgress.totalAnswered);
     setMissed(savedProgress.missed);
-    setSelected(null); setShowExp(false); setTimer(TIME_PER_Q);
+    setSelected(null); setShowExp(false);
     setPhase('assess');
     setSavedProgress(null);
   };
@@ -289,7 +267,7 @@ export default function DiagnosticReviewPage() {
   const nextQ = () => {
     if (idx + 1 >= questions.length) { finishAssessment(); return; }
     const nextIdx = idx + 1;
-    setIdx(nextIdx); setSelected(null); setShowExp(false); setTimer(TIME_PER_Q);
+    setIdx(nextIdx); setSelected(null); setShowExp(false);
     saveInProgress({
       trackKey, questions, idx: nextIdx,
       catResults: { ...catResults },
@@ -365,7 +343,6 @@ export default function DiagnosticReviewPage() {
   // ═══════════════════════════════════════════════════════════════════════
   if (phase === 'assess' && q && track) {
     const progressPct = ((idx + 1) / questions.length) * 100;
-    const timerColor = timer > 20 ? 'var(--text)' : timer > 10 ? 'var(--warn)' : 'var(--bad)';
     const showResult = selected !== null;
     const isCorrect = selected === q.correct;
     const isTimeOut = selected === -1;
@@ -388,10 +365,6 @@ export default function DiagnosticReviewPage() {
                   </span>
                 </div>
                 <div className="diag-assess-meta">
-                  <div className="diag-timer">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={timerColor} strokeWidth="2.2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
-                    <span style={{ color: timerColor }}>{String(timer).padStart(2, '0')}s</span>
-                  </div>
                   <div className="diag-q-counter">Q{idx + 1} <span>/ {questions.length}</span></div>
                   {userPlan !== 'free' && (
                     <button
@@ -412,7 +385,7 @@ export default function DiagnosticReviewPage() {
               </div>
 
               <div className="diag-progress-bar">
-                <div className="diag-progress-fill" style={{ width: `${progressPct}%`, background: timerColor }} />
+                <div className="diag-progress-fill" style={{ width: `${progressPct}%`, background: '#3b82f6' }} />
               </div>
 
               <div className="diag-q-card">
