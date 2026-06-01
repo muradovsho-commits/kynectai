@@ -228,7 +228,11 @@ export default function DashboardPage() {
     // Storage events only fire cross-tab so we use a custom event for same-window.
     const onChanged = () => loadProfile();
     window.addEventListener('offerbell-profile-changed', onChanged);
-    return () => window.removeEventListener('offerbell-profile-changed', onChanged);
+    window.addEventListener('offerbell-progress-hydrated', onChanged);
+    return () => {
+      window.removeEventListener('offerbell-profile-changed', onChanged);
+      window.removeEventListener('offerbell-progress-hydrated', onChanged);
+    };
   }, [loadProfile]);
 
   // Selected flash_perf track key for the user's primary vertical.
@@ -804,20 +808,25 @@ export default function DashboardPage() {
                     </div>
                   ) : (
                     <div className="dash-heatmap">
-                      {topicRows.map(row => {
-                        const hue = Math.round((row.accuracy / 100) * 120); // 0=red -> 120=green
-                        return (
-                          <Link
-                            key={row.topic}
-                            className="dash-heat-cell"
-                            href={`/flashcards?track=${selectedTrackKey}`}
-                            style={{ background: `hsl(${hue}, 60%, 42%)` }}
-                          >
-                            <div className="dash-heat-cell-val">{row.accuracy}%</div>
-                            <div className="dash-heat-cell-label">{row.topic}</div>
-                          </Link>
-                        );
-                      })}
+                      {topicRows.map(row => (
+                        <Link
+                          key={row.topic}
+                          className="dash-heatmap-row"
+                          href={`/flashcards?track=${selectedTrackKey}`}
+                        >
+                          <div className="dash-heatmap-label">{row.topic}</div>
+                          <div className="dash-heatmap-bar-wrap">
+                            <div
+                              className="dash-heatmap-bar"
+                              style={{
+                                width: `${row.accuracy}%`,
+                                background: row.accuracy >= 75 ? '#16a34a' : row.accuracy >= 50 ? '#f59e0b' : '#ef4444',
+                              }}
+                            />
+                          </div>
+                          <div className="dash-heatmap-val">{row.accuracy}%</div>
+                        </Link>
+                      ))}
                     </div>
                   )}
                 </div>

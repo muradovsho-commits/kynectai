@@ -11,15 +11,34 @@ function SyncRunner() {
 }
 
 export function ProgressSyncProvider({ children }: { children: ReactNode }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // Track the logged-in user reactively. Logout/login is a client-side
+  // navigation (no full reload), so a one-time mount check would keep stale
+  // state: the sync hook would never re-run its initial hydration after a
+  // re-login, leaving drill/flashcard stats and the selected track blank until
+  // a manual refresh. Polling localStorage (plus storage/focus events) catches
+  // the change, and keying SyncRunner by userId remounts it on any login change
+  // so useProgressSync re-runs its hydration for the new session.
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem('offerbell_user_id'));
+    const read = () => {
+      const id = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
+      setUserId(prev => (prev === id ? prev : id));
+    };
+    read();
+    const interval = setInterval(read, 1000);
+    window.addEventListener('storage', read);
+    window.addEventListener('focus', read);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', read);
+      window.removeEventListener('focus', read);
+    };
   }, []);
 
   return (
     <>
-      {isLoggedIn && <SyncRunner />}
+      {userId && <SyncRunner key={userId} />}
       {children}
     </>
   );
