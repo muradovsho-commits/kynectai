@@ -178,6 +178,17 @@ function ConceptDrillsInner() {
   // Currently-selected filter shown on the Practice tab.
   const [practiceDifficulty, setPracticeDifficulty] = useState<Difficulty>('any');
 
+  // Only offer difficulty filters that actually exist for this track, so the
+  // user can't pick a difficulty that yields an empty drill (some tracks are
+  // entirely 'hard', etc.).
+  const availableDifficulties = useMemo<Difficulty[]>(() => {
+    const present = new Set((trackDef?.questions || []).map(q => q.difficulty));
+    return (['any', 'easy', 'medium', 'hard'] as Difficulty[]).filter(d => d === 'any' || present.has(d));
+  }, [trackDef]);
+  useEffect(() => {
+    if (!availableDifficulties.includes(practiceDifficulty)) setPracticeDifficulty('any');
+  }, [availableDifficulties, practiceDifficulty]);
+
   // ─── Flash perf (per-track) for current track ────────────────────────────
   // Reads from offerbell_flash_perf_{trackKey}. Same shape the dashboard
   // reads. perfTick increments after each answer to force a re-read of the
@@ -640,7 +651,7 @@ function ConceptDrillsInner() {
                     <div className="cd-filter-row">
                       <div className="cd-filter-lbl">Difficulty</div>
                       <div className="cd-filter-options">
-                        {(['any', 'easy', 'medium', 'hard'] as Difficulty[]).map(d => (
+                        {availableDifficulties.map(d => (
                           <button
                             key={d}
                             type="button"
