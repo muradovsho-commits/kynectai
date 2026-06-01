@@ -303,7 +303,24 @@ function ConceptDrillsInner() {
     if (topic) pool = pool.filter(q => q.topic === topic);
     if (difficulty !== 'any') pool = pool.filter(q => q.difficulty === difficulty);
     if (pool.length === 0) return;
-    const shuffled = shuffle(pool).slice(0, drillSize);
+    // Smart cycling: serve questions the user hasn't seen yet first (guarantees
+    // coverage), then resurface ones they previously got wrong (spaced
+    // repetition), then the least-recently-seen. Falls back to pure random when
+    // there's no history. Seen-state comes from drill history (capped), so this
+    // reflects recent history rather than all-time.
+    const lastSeen = new Map<string, { ts: number; correct: boolean }>();
+    for (const h of history) {
+      if (h.trackKey !== selectedTrackKey) continue;
+      const prev = lastSeen.get(h.question);
+      if (!prev || h.timestamp > prev.ts) lastSeen.set(h.question, { ts: h.timestamp, correct: h.correct });
+    }
+    const unseen = pool.filter(q => !lastSeen.has(q.q));
+    const missed = pool.filter(q => lastSeen.get(q.q)?.correct === false)
+      .sort((a, b) => (lastSeen.get(a.q)?.ts ?? 0) - (lastSeen.get(b.q)?.ts ?? 0));
+    const passed = pool.filter(q => lastSeen.get(q.q)?.correct === true)
+      .sort((a, b) => (lastSeen.get(a.q)?.ts ?? 0) - (lastSeen.get(b.q)?.ts ?? 0));
+    const ordered = [...shuffle(unseen), ...missed, ...passed];
+    const shuffled = shuffle(ordered.slice(0, drillSize));
     setQuestions(shuffled);
     setIdx(0);
     setSelected(null);
