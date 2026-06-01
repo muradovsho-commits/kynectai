@@ -25,6 +25,7 @@ export const listResponses = query({
       durationSec: r.durationSec,
       timestamp: r.timestamp,
       hidden: r.hidden,
+      category: r.category,
     }));
   },
 });
@@ -46,6 +47,7 @@ export const upsertResponse = mutation({
     durationSec: v.number(),
     timestamp: v.number(),
     hidden: v.optional(v.boolean()),
+    category: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const existing = await ctx.db
@@ -66,6 +68,7 @@ export const upsertResponse = mutation({
         durationSec: args.durationSec,
         timestamp: args.timestamp,
         hidden: args.hidden,
+        category: args.category,
         userEmail,
       });
     } else {
@@ -122,6 +125,7 @@ export const importResponses = mutation({
       durationSec: v.number(),
       timestamp: v.number(),
       hidden: v.optional(v.boolean()),
+      category: v.optional(v.string()),
     })),
   },
   handler: async (ctx, { userId, entries }) => {
@@ -153,16 +157,71 @@ export const getMockStats = query({
       .query("mockResponses")
       .withIndex("by_user", q => q.eq("userId", userId))
       .collect();
-    const visible = rows.filter(r => !r.hidden);
-    const count = visible.length;
+    // 'hidden' now only collapses the review in the UI; the attempt still
+    // counts toward stats, so we aggregate over ALL rows.
+    const count = rows.length;
     const gradeToScore = (g: string): number => {
       if (g === 'Great') return 100;
       if (g === 'Good') return 70;
       if (g === 'Bad') return 30;
       return 0;
     };
-    const totalScore = visible.reduce((s, r) => s + gradeToScore(r.grade), 0);
+    const totalScore = rows.reduce((s, r) => s + gradeToScore(r.grade), 0);
     const avgGrade = count > 0 ? Math.round(totalScore / count) : 0;
     return { count, avgGrade };
+  },
+});
+
+// Per-topic aggregate for the Skill Heatmap. Buckets a user's mock responses
+// for one track by the question's category, mapping grade -> score
+// (Great=100, Good=70, Bad=30). Lightweight: returns only per-category counts
+// and score sums, no transcripts. Counts all attempts (hidden = collapsed UI).
+export const getMockTopicStats = query({
+  args: { userId: v.string(), trackId: v.string() },
+  handler: async (ctx, { userId, trackId }) => {
+    const rows = await ctx.db
+      .query("mockResponses")
+      .withIndex("by_user", q => q.eq("userId", userId))
+      .collect();
+    const gradeToScore = (g: string): number => {
+      if (g === 'Great') return 100;
+      if (g === 'Good') return 70;
+      if (g === 'Bad') return 30;
+      return 0;
+    };
+    const byCat: Record<string, { count: number; scoreSum: number }> = {};
+    for (const r of rows) {
+      if (r.trackId !== trackId) continue;
+      if (!r.category) continue;
+      const c = byCat[r.category] || { count: 0, scoreSum: 0 };
+      c.count += 1;
+      c.scoreSum += gradeToScore(r.grade);
+      byCat[r.category] = c;
+    }
+    return Object.entries(byCat).map(([category, d]) => ({
+      category, count: d.count, scoreSum: d.scoreSum,
+    }));
+  },
+});
+
+// One-time backfill: set category on rows that don't have one yet. The client
+// derives the category from its flashcard data and sends entryId->category
+// pairs. Only patches rows where category is currently empty, so it is safe to
+// call repeatedly and never overwrites real data.
+export const backfillCategories = mutation({
+  args: {
+    userId: v.string(),
+    items: v.array(v.object({ entryId: v.string(), category: v.string() })),
+  },
+  handler: async (ctx, { userId, items }) => {
+    for (const it of items) {
+      const existing = await ctx.db
+        .query("mockResponses")
+        .withIndex("by_user_entry", q => q.eq("userId", userId).eq("entryId", it.entryId))
+        .first();
+      if (existing && !existing.category) {
+        await ctx.db.patch(existing._id, { category: it.category });
+      }
+    }
   },
 });

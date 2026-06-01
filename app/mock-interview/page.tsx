@@ -35,6 +35,7 @@ type ResponseEntry = {
   durationSec: number;
   timestamp: number;
   hidden?: boolean;
+  category?: string;
 };
 
 type TrackDef = { id: string; title: string; cards: Flashcard[] };
@@ -181,6 +182,7 @@ export default function MockInterviewPage() {
   const upsertResponseMut = useMutation(api.mockResponses.upsertResponse);
   const setResponseHiddenMut = useMutation(api.mockResponses.setResponseHidden);
   const importResponsesMut = useMutation(api.mockResponses.importResponses);
+  const backfillCategoriesMut = useMutation((api as any).mockResponses.backfillCategories);
 
   // View routing
   const [view, setView] = useState<ViewMode>('hub');
@@ -333,6 +335,39 @@ export default function MockInterviewPage() {
       }
     })();
     return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allResponses]);
+
+  // ── One-time backfill: tag older mock responses with their question category
+  // so the dashboard Skill Heatmap can bucket them by topic. Categories are
+  // derived locally from the flashcard data this page already imports, then
+  // persisted. The mutation only fills rows that currently lack a category.
+  const backfilledRef = useRef(false);
+  useEffect(() => {
+    if (backfilledRef.current) return;
+    if (allResponses.length === 0) return;
+    const uid = localStorage.getItem('offerbell_user_id');
+    if (!uid) return;
+    const missing = allResponses.filter(r => !r.category);
+    if (missing.length === 0) { backfilledRef.current = true; return; }
+    const needTracks = new Set(missing.map(r => r.questionId.split('::')[0]));
+    const qidToCat: Record<string, string> = {};
+    for (const t of TRACKS) {
+      if (!needTracks.has(t.id)) continue;
+      for (const c of t.cards) {
+        if (c.category) qidToCat[makeQid(t.id, c.q)] = c.category;
+      }
+    }
+    const items = missing
+      .map(r => ({ entryId: r.id, category: qidToCat[r.questionId] }))
+      .filter((x): x is { entryId: string; category: string } => !!x.category);
+    backfilledRef.current = true;
+    if (items.length === 0) return;
+    setAllResponses(prev => prev.map(r => {
+      const hit = items.find(i => i.entryId === r.id);
+      return hit ? { ...r, category: hit.category } : r;
+    }));
+    backfillCategoriesMut({ userId: uid, items }).catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allResponses]);
 
@@ -566,6 +601,7 @@ export default function MockInterviewPage() {
       id: entryId, questionId, videoUrl: null,
       transcript, grade, overallFeedback, strengths, weaknesses,
       wordsPerMin: wpm, durationSec: actualDuration, timestamp: Date.now(),
+      category: activeQuestion.category,
     };
 
     setSessionVideos(prev => ({ ...prev, [entryId]: videoUrl }));
@@ -579,6 +615,7 @@ export default function MockInterviewPage() {
         userId: currentUid, entryId, questionId, trackId: activeTrack.id,
         transcript, grade, overallFeedback, strengths, weaknesses,
         wordsPerMin: wpm, durationSec: actualDuration, timestamp: entry.timestamp,
+        category: activeQuestion.category,
       }).catch(() => {});
     }
     saveVideoBlob(entryId, blob).catch(() => {});
@@ -632,6 +669,7 @@ export default function MockInterviewPage() {
       id: entryId, questionId, videoUrl: null,
       transcript, grade, overallFeedback, strengths, weaknesses,
       wordsPerMin: wpm, durationSec: actualDuration, timestamp: Date.now(),
+      category: q.category,
     };
     setSessionVideos(prev => ({ ...prev, [entryId]: videoUrl }));
     const updatedResponses = [resp, ...allResponses];
@@ -644,6 +682,7 @@ export default function MockInterviewPage() {
         userId: currentUid, entryId, questionId, trackId,
         transcript, grade, overallFeedback, strengths, weaknesses,
         wordsPerMin: wpm, durationSec: actualDuration, timestamp: resp.timestamp,
+        category: q.category,
       }).catch(() => {});
     }
     saveVideoBlob(entryId, blob).catch(() => {});

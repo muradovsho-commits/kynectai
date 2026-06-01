@@ -319,6 +319,25 @@ export default function DashboardPage() {
     return () => { cancelled = true; };
   }, [userId]);
 
+  // ─── Mock per-topic stats for the selected track (one-shot HTTP fetch).
+  // Powers the Skill Heatmap alongside flashcard data. Lightweight aggregate.
+  const [mockTopicStats, setMockTopicStats] = useState<Array<{ category: string; count: number; scoreSum: number }>>([]);
+  useEffect(() => {
+    if (!userId || !selectedTrackKey) { setMockTopicStats([]); return; }
+    if (typeof window === 'undefined') return;
+    const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+    if (!url) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const client = new ConvexHttpClient(url);
+        const t = await client.query((api as any).mockResponses.getMockTopicStats, { userId, trackId: selectedTrackKey });
+        if (!cancelled) setMockTopicStats(Array.isArray(t) ? t : []);
+      } catch {}
+    })();
+    return () => { cancelled = true; };
+  }, [userId, selectedTrackKey]);
+
   // ─── Flashcard performance per track (from localStorage, no Convex hit)
   // Each offerbell_flash_perf_{track} stores { seen, pass, partial, fail, byCat }
   // where byCat is Record<categoryName, { seen, pass }>
@@ -408,27 +427,25 @@ export default function DashboardPage() {
     return flashTotal + drillCount;
   }, [flashPerf, drillCount]);
 
-  const avgScore = useMemo(() => {
-    // Weighted average across flash_perf (pass + 0.5*partial) / seen,
-    // combined with mock average grade (already a percentage).
-    let totalSeen = 0;
-    let totalWeighted = 0;
+  // Avg score across EVERYTHING that produces a score: flashcards + concept
+  // drills (both in flash_perf) and mock interviews (single + full, from
+  // mockResponses). Count-weighted so a mode with more attempts counts more,
+  // rather than naively averaging two percentages of unequal sample size.
+  const avgScoreData = useMemo(() => {
+    let flashSeen = 0;
+    let flashWeighted = 0;
     for (const p of Object.values(flashPerf)) {
-      totalSeen += p.seen;
-      totalWeighted += p.pass + p.partial * 0.5;
+      flashSeen += p.seen;
+      flashWeighted += p.pass + p.partial * 0.5;
     }
-    const flashPct = totalSeen > 0 ? (totalWeighted / totalSeen) * 100 : 0;
-    const mockAvg = mockStats?.avgGrade || 0;
-    // If both have data, average them. Otherwise use whichever has data.
-    if (totalSeen > 0 && mockStats && mockStats.count > 0) {
-      return Math.round((flashPct + mockAvg) / 2);
-    } else if (totalSeen > 0) {
-      return Math.round(flashPct);
-    } else if (mockStats && mockStats.count > 0) {
-      return Math.round(mockAvg);
-    }
-    return 0;
+    const flashScoreSum = flashWeighted * 100; // in percentage-points
+    const mockCount = (mockStats && mockStats.count) || 0;
+    const mockScoreSum = mockCount * ((mockStats && mockStats.avgGrade) || 0);
+    const items = flashSeen + mockCount;
+    const score = items > 0 ? Math.round((flashScoreSum + mockScoreSum) / items) : 0;
+    return { score, items };
   }, [flashPerf, mockStats]);
+  const avgScore = avgScoreData.score;
 
   // ─── Active time per day (set by useActiveTime hook running app-wide)
   const [activeMinutes, setActiveMinutes] = useState<Record<string, number>>({});
@@ -490,17 +507,27 @@ export default function DashboardPage() {
   // topics appear first.
   const topicRows = useMemo(() => {
     if (!selectedTrackKey) return [];
-    const perf = flashPerf[selectedTrackKey];
-    if (!perf) return [];
-    return Object.entries(perf.byCat)
-      .map(([topic, data]) => ({
-        topic,
-        seen: data.seen || 0,
-        accuracy: data.seen > 0 ? Math.round((data.pass / data.seen) * 100) : 0,
-      }))
+    const flashByCat = flashPerf[selectedTrackKey]?.byCat || {};
+    // Union of topics seen in flashcards/drills (flash_perf) and mock interviews.
+    const cats = new Set<string>([
+      ...Object.keys(flashByCat),
+      ...mockTopicStats.map(m => m.category),
+    ]);
+    return Array.from(cats)
+      .map(topic => {
+        const f = flashByCat[topic] || { seen: 0, pass: 0 };
+        const m = mockTopicStats.find(x => x.category === topic);
+        const flashSeen = f.seen || 0;
+        const flashScoreSum = (f.pass || 0) * 100; // each flash pass = 100%
+        const mockCount = m?.count || 0;
+        const mockScoreSum = m?.scoreSum || 0;     // already 0-100 per attempt
+        const seen = flashSeen + mockCount;
+        const accuracy = seen > 0 ? Math.round((flashScoreSum + mockScoreSum) / seen) : 0;
+        return { topic, seen, accuracy };
+      })
       .filter(r => r.seen > 0)
       .sort((a, b) => a.accuracy - b.accuracy);
-  }, [flashPerf, selectedTrackKey]);
+  }, [flashPerf, selectedTrackKey, mockTopicStats]);
 
   const hasAnyTopicData = topicRows.length > 0;
 
@@ -697,7 +724,7 @@ export default function DashboardPage() {
                     <div>
                       <div className="dash-stat-lbl">Avg Score</div>
                       <div className="dash-stat-num">{avgScore}%</div>
-                      <div className="dash-stat-sub">Based on {totalDrills} drills</div>
+                      <div className="dash-stat-sub">{avgScoreData.items === 0 ? 'No scored activity yet' : `Based on ${avgScoreData.items} graded ${avgScoreData.items === 1 ? 'item' : 'items'}`}</div>
                     </div>
                   </div>
                 </div>
@@ -742,7 +769,7 @@ export default function DashboardPage() {
                     <div className="dash-empty">Flashcards for {profile.vertical} aren&apos;t available yet. Try Coach or Mock Interview for this track.</div>
                   ) : !hasAnyTopicData ? (
                     <div className="dash-empty">
-                      Complete a few {TRACK_LABELS[selectedTrackKey]} flashcards to see your topic-level accuracy.
+                      Complete a few {TRACK_LABELS[selectedTrackKey]} flashcards or mock questions to see your topic-level accuracy.
                     </div>
                   ) : (
                     <div className="dash-heatmap">

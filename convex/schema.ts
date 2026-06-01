@@ -181,6 +181,7 @@ export default defineSchema({
     durationSec: v.number(),
     timestamp: v.number(),
     hidden: v.optional(v.boolean()),
+    category: v.optional(v.string()), // Topic/category of the question, for per-topic heatmap.
   })
     .index("by_user", ["userId"])
     .index("by_user_entry", ["userId", "entryId"]),
