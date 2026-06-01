@@ -507,8 +507,10 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 .stage.right{transform:translateX(-14px)}
 .stg-name{font-family:'Instrument Serif',serif;font-size:30px;color:var(--black);line-height:1;margin-bottom:9px}
 .stg-desc{font-size:14.5px;color:var(--text-2);line-height:1.5;margin-bottom:13px}
-.stg-tools span{font-size:13.5px;color:var(--text);font-weight:500}
-.stg-tools span:not(:last-child)::after{content:"·";margin:0 9px;color:var(--brown);font-weight:700}
+.stg-tools{display:flex;flex-wrap:wrap;gap:6px}
+.stg-tools span{font-size:12px;color:var(--text);font-weight:500;background:var(--warm);border:1px solid var(--border);border-radius:100px;padding:4px 11px;white-space:nowrap}
+.stage.left .stg-tools{justify-content:flex-end}
+.stage.right .stg-tools{justify-content:flex-start}
 @media(max-width:920px){.fl-layer{transform-origin:top center}}
 /* ===== REDESIGN: testimonials ===== */
 .testi{position:relative;overflow:hidden;padding:84px 0 90px;
