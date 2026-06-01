@@ -117,13 +117,16 @@ function loadResponses(): ResponseEntry[] {
   try { const raw = localStorage.getItem(RESPONSES_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; }
 }
 function saveResponses(entries: ResponseEntry[]) {
-  localStorage.setItem(RESPONSES_KEY, JSON.stringify(entries.slice(0, 200)));
+  // Best-effort cache. Must never throw: a localStorage failure (e.g. quota)
+  // used to abort the caller before the durable Convex save ran, silently
+  // dropping the attempt from both stores. Convex is the source of truth.
+  try { localStorage.setItem(RESPONSES_KEY, JSON.stringify(entries.slice(0, 200))); } catch {}
 }
 function loadInterviews(): InterviewSession[] {
   try { const raw = localStorage.getItem(SESSIONS_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; }
 }
 function saveInterviews(s: InterviewSession[]) {
-  localStorage.setItem(SESSIONS_KEY, JSON.stringify(s.slice(0, 50)));
+  try { localStorage.setItem(SESSIONS_KEY, JSON.stringify(s.slice(0, 50))); } catch {}
 }
 function makeQid(trackId: string, q: string): string {
   return `${trackId}::${q.slice(0, 80)}`;
@@ -1379,16 +1382,21 @@ export default function MockInterviewPage() {
           </div>
         )}
 
-        {visible.length > 0 && (
+        {myResponses.length > 0 && (
           <div className="mi-attempts">
             <div className="mi-section-head" style={{ marginTop: 28 }}>
               <div className="mi-section-title">Past attempts on this question ({visible.length})</div>
               {myResponses.some(r => r.hidden) && (
                 <button type="button" className="mi-toggle-hidden" onClick={() => setShowHidden(!showHidden)}>
-                  {showHidden ? 'Hide hidden' : 'Show hidden'}
+                  {showHidden ? 'Hide hidden' : `Show hidden (${myResponses.filter(r => r.hidden).length})`}
                 </button>
               )}
             </div>
+            {visible.length === 0 ? (
+              <div className="mi-attempts-empty" style={{ fontSize: 13, color: 'var(--text-3)', padding: '6px 0 0' }}>
+                Every attempt on this question is hidden. Use &ldquo;Show hidden&rdquo; above to view them.
+              </div>
+            ) : (
             <div className="mi-attempts-list">
               {visible.map(r => (
                 <div key={r.id} className="mi-attempt">
@@ -1430,6 +1438,7 @@ export default function MockInterviewPage() {
                 </div>
               ))}
             </div>
+            )}
           </div>
         )}
       </div>
