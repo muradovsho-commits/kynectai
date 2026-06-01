@@ -8,6 +8,7 @@ import { useUserPlanStatus } from '../lib/usePlan';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/guide-base.css';
 import '../interview-prep/ge-theme.css';
+import '../interview-prep/guide-refresh.css';
 
 import { GE_INDUSTRY_SECTIONS } from './ge-industry-data';
 import { GE_CRITERIA_SECTIONS } from './ge-criteria-data';

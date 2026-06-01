@@ -286,6 +286,13 @@ export default function Sidebar({ activePage }: SidebarProps) {
   // Helper to compute active state class
   const cls = (page: string) => `ob-side-item${activePage === page ? ' active' : ''}`;
 
+  // Learning Hub stays highlighted while reading anything launched from it:
+  // the IB guide, the 10 track guides, and the recruiting manual.
+  const learnActive = activePage === 'learn'
+    || activePage === 'interview-prep'
+    || activePage.endsWith('-interview-prep')
+    || activePage === 'recruiting-manual';
+
   const planLabel = userPlan === 'elite' ? 'Elite plan' : userPlan === 'pro' ? 'Pro plan' : 'Free plan';
   const planColor = userPlan === 'elite' ? '#3b82f6' : userPlan === 'pro' ? '#22c55e' : '#9ca3af';
 
@@ -347,7 +354,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
           <div className="ob-side-group">
             <span className="ob-side-group-label">Learn</span>
             <div className="ob-side-item-list">
-              <Link className={cls('learn')} href="/learn">
+              <Link className={`ob-side-item${learnActive ? ' active' : ''}`} href="/learn">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                 <span>Learning Hub</span>
               </Link>

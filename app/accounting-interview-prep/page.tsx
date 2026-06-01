@@ -8,6 +8,7 @@ import { useUserPlanStatus } from '../lib/usePlan';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/guide-base.css';
 import '../interview-prep/acct-theme.css';
+import '../interview-prep/guide-refresh.css';
 
 import { ACCT_OVERVIEW_SECTIONS } from './acct-overview-data';
 import { ACCT_STATEMENTS_SECTIONS } from './acct-statements-data';

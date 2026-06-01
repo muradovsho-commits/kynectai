@@ -1,0 +1,272 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   GUIDE REFRESH — editorial overrides for all prep guides
+   ---------------------------------------------------------------------------
+   Imported AFTER guide-base.css and each <track>-theme.css. Scoped to
+   .ib-guide-main (present on every guide regardless of track) so a single
+   sheet restyles all 11 guides. Reads the per-track --g-* tokens the theme
+   files define, so each track keeps its accent identity. Pulls the guides
+   into OfferBell's editorial look: Instrument Serif display + Inter body,
+   flat surfaces, restrained accent. No saturated gradient heroes, no glow
+   decorations, no Playfair Display.
+   Matching specificity + later load order means these win without !important.
+   =========================================================================== */
+
+/* ── Hero: flat, left-aligned, editorial ─────────────────────────────────── */
+.ib-guide-main .ib-hero {
+  background: var(--g-bg);
+  color: var(--g-heading);
+  text-align: left;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 44px 28px 30px;
+  border-bottom: none;
+}
+.ib-guide-main .ib-hero h1 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  font-size: 46px;
+  line-height: 1.04;
+  letter-spacing: -0.5px;
+  color: var(--g-heading);
+  margin: 0 0 14px;
+  max-width: 760px;
+}
+.ib-guide-main .ib-hero-sub {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--g-text-2);
+  opacity: 1;
+  max-width: 660px;
+  margin: 0;
+}
+
+/* ── Module navigation: light sticky bar, underline-active tabs ───────────── */
+.ib-guide-main .ib-module-nav {
+  background: var(--g-bg);
+  border-bottom: 1px solid var(--g-border);
+}
+.ib-guide-main .ib-module-nav-inner {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.ib-guide-main .ib-nav-tab {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0;
+  color: var(--g-text-2);
+  border: none;
+  border-right: none;
+  border-bottom: 2px solid transparent;
+  padding: 13px 8px;
+  margin-bottom: -1px;
+}
+.ib-guide-main .ib-nav-tab:hover {
+  background: transparent;
+  color: var(--g-heading);
+}
+.ib-guide-main .ib-nav-tab.active {
+  background: transparent;
+  color: var(--g-accent);
+  border-bottom-color: var(--g-accent);
+}
+.ib-guide-main .ib-nav-divider { background: var(--g-border); }
+
+/* ── Shared container softening ──────────────────────────────────────────── */
+.ib-guide-main .ib-toc,
+.ib-guide-main .ib-section-toc,
+.ib-guide-main .ib-module-card,
+.ib-guide-main .ib-module-header-card,
+.ib-guide-main .ib-quiz-card {
+  border-radius: 12px;
+}
+
+/* ── Table of Contents ───────────────────────────────────────────────────── */
+.ib-guide-main .ib-toc,
+.ib-guide-main .ib-section-toc {
+  background: var(--g-card-bg);
+  border: 1px solid var(--g-border);
+  padding: 22px 26px;
+}
+.ib-guide-main .ib-toc h4,
+.ib-guide-main .ib-section-toc h4 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  font-size: 20px;
+  color: var(--g-heading);
+}
+.ib-guide-main .ib-toc-link {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--g-accent);
+}
+
+/* ── How to use ──────────────────────────────────────────────────────────── */
+.ib-guide-main .ib-how-to-use {
+  background: var(--g-card-bg);
+  border: 1px solid var(--g-border);
+  border-left: 3px solid var(--g-accent);
+  border-radius: 12px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.ib-guide-main .ib-how-to-use h4 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  font-size: 18px;
+  color: var(--g-heading);
+}
+.ib-guide-main .ib-how-to-use p { color: var(--g-text-2); }
+.ib-guide-main .ib-how-to-use strong { color: var(--g-accent); }
+
+/* ── Module cards: flat, no glow, no lift ────────────────────────────────── */
+.ib-guide-main .ib-module-card {
+  background: var(--g-card-bg);
+  color: var(--g-text);
+  border: 1px solid var(--g-border);
+  box-shadow: none;
+  padding: 22px 24px;
+}
+.ib-guide-main .ib-module-card::before { display: none; }
+.ib-guide-main .ib-module-card:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--g-accent);
+}
+.ib-guide-main .ib-module-card-num {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--g-accent);
+  opacity: 1;
+}
+.ib-guide-main .ib-module-card-title {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: -0.2px;
+  color: var(--g-heading);
+}
+.ib-guide-main .ib-module-card-sub {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--g-text-2);
+  opacity: 1;
+}
+.ib-guide-main .ib-module-card-meta {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--g-text-2);
+  opacity: 0.7;
+}
+
+/* ── Module header card: flat editorial, no glow ─────────────────────────── */
+.ib-guide-main .ib-module-header-card {
+  background: var(--g-card-bg);
+  color: var(--g-text);
+  border: 1px solid var(--g-border);
+  border-left: 3px solid var(--g-accent);
+  padding: 28px 30px 24px;
+}
+.ib-guide-main .ib-module-header-card::before { display: none; }
+.ib-guide-main .ib-mh-num {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--g-accent);
+  opacity: 1;
+}
+.ib-guide-main .ib-module-header-card h2 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  font-size: 30px;
+  letter-spacing: -0.3px;
+  color: var(--g-heading);
+}
+.ib-guide-main .ib-module-header-card p {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--g-text-2);
+  opacity: 1;
+}
+/* Summary module header used a green gradient; flatten it to match. */
+.ib-guide-main .ib-mh-summary {
+  background: var(--g-card-bg);
+  border-left-color: var(--g-green, var(--g-accent));
+}
+.ib-guide-main .ib-mh-summary::before { display: none; }
+
+/* ── Reading content: Instrument Serif headings, Inter body ──────────────── */
+.ib-guide-main .ib-section > h3 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  font-size: 26px;
+  letter-spacing: -0.3px;
+  color: var(--g-heading);
+  border-bottom: 1px solid var(--g-border);
+}
+.ib-guide-main .ib-section-body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--g-text);
+}
+.ib-guide-main .ib-section-body h4 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  font-size: 20px;
+  color: var(--g-accent);
+}
+.ib-guide-main .ib-section-body h5 {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  color: var(--g-heading);
+}
+
+/* ── Back link ───────────────────────────────────────────────────────────── */
+.ib-guide-main .ib-back-link {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--g-text-2);
+}
+.ib-guide-main .ib-back-link:hover { color: var(--g-accent); }
+
+/* ── Quiz: editorial fonts ───────────────────────────────────────────────── */
+.ib-guide-main .ib-quiz-card { background: var(--g-card-bg); border: 1px solid var(--g-border); }
+.ib-guide-main .ib-quiz-card-num {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--g-accent);
+  color: #fff;
+}
+.ib-guide-main .ib-quiz-card-cat {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--g-accent);
+}
+.ib-guide-main .ib-quiz-card-q {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--g-heading);
+}
+.ib-guide-main .ib-quiz-reveal {
+  font-family: 'Inter', system-ui, sans-serif;
+  border: 1px solid var(--g-border);
+  background: transparent;
+  color: var(--g-accent);
+}
+.ib-guide-main .ib-quiz-reveal:hover { background: var(--g-accent); color: #fff; }
+.ib-guide-main .ib-quiz-card-a { font-family: 'Inter', system-ui, sans-serif; color: var(--g-text-2); }
+.ib-guide-main .ib-quiz-filter { font-family: 'Inter', system-ui, sans-serif; }
+.ib-guide-main .ib-quiz-new-set { font-family: 'Inter', system-ui, sans-serif; background: var(--g-accent); }
+.ib-guide-main .ib-quiz-footer { font-family: 'Inter', system-ui, sans-serif; }
+
+/* ── Bottom nav ──────────────────────────────────────────────────────────── */
+.ib-guide-main .ib-bottom-nav { border-top: 1px solid var(--g-border); }
+.ib-guide-main .ib-bottom-nav-btn {
+  font-family: 'Inter', system-ui, sans-serif;
+  border: 1px solid var(--g-border);
+  color: var(--g-text-2);
+  border-radius: 8px;
+}
+.ib-guide-main .ib-bottom-nav-btn:hover { border-color: var(--g-accent); color: var(--g-accent); }
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .ib-guide-main .ib-hero { padding: 32px 18px 24px; }
+  .ib-guide-main .ib-hero h1 { font-size: 34px; }
+  .ib-guide-main .ib-module-header-card h2 { font-size: 24px; }
+  .ib-guide-main .ib-section > h3 { font-size: 22px; }
+}

@@ -8,6 +8,7 @@ import { useUserPlanStatus } from '../lib/usePlan';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/guide-base.css';
 import '../interview-prep/rx-theme.css';
+import '../interview-prep/guide-refresh.css';
 
 import { RX_OVERVIEW_SECTIONS } from './rx-overview-data';
 import { RX_DISTRESS_SECTIONS } from './rx-distress-data';

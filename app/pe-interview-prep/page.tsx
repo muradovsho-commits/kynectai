@@ -8,6 +8,7 @@ import { useUserPlanStatus } from '../lib/usePlan';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/guide-base.css';
 import '../interview-prep/pe-theme.css';
+import '../interview-prep/guide-refresh.css';
 
 import { PE_INDUSTRY_SECTIONS } from './pe-industry-data';
 import { PE_FUND_SECTIONS } from './pe-fund-data';

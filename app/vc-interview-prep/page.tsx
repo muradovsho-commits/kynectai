@@ -8,6 +8,7 @@ import { useUserPlanStatus } from '../lib/usePlan';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/guide-base.css';
 import '../interview-prep/vc-theme.css';
+import '../interview-prep/guide-refresh.css';
 
 import { VC_INDUSTRY_SECTIONS } from './vc-industry-data';
 import { VC_FUND_SECTIONS } from './vc-fund-data';

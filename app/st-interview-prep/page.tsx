@@ -8,6 +8,7 @@ import { useUserPlanStatus } from '../lib/usePlan';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/guide-base.css';
 import '../interview-prep/st-theme.css';
+import '../interview-prep/guide-refresh.css';
 
 import { ST_INDUSTRY_SECTIONS } from './st-industry-data';
 import { ST_MARKET_STRUCTURE_SECTIONS } from './st-market-structure-data';
