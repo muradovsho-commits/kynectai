@@ -55,11 +55,16 @@ function SigninContent() {
 
         // ── Restore cloud progress data ──
         let cloudProfile: Record<string, any> | null = null;
+        // Authoritative profile fields (esp. selected industry / targetRoles) live
+        // in the Convex users table - the sidebar persists industry changes there
+        // via updateUserProfile, and those changes never reach the progress blob.
+        let dbProfile: { targetRoles?: string[] } | null = null;
         try {
           const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
           if (convexUrl) {
             const httpClient = new ConvexHttpClient(convexUrl);
             const cloudResult = await httpClient.query(api.progress.loadProgress, { userId: id });
+            try { dbProfile = await httpClient.query((api as any).users.getUser, { userId: id }); } catch {}
             if (cloudResult && cloudResult.data) {
               const cloud: Record<string, string> = JSON.parse(cloudResult.data);
               for (const [key, val] of Object.entries(cloud)) {
@@ -101,7 +106,9 @@ function SigninContent() {
           firstName: cloudProfile?.firstName || pts[0] || "",
           lastName: cloudProfile?.lastName || pts.slice(1).join(" ") || "",
           university: cloudProfile?.university || "",
-          targetRoles: cloudProfile?.targetRoles || [],
+          targetRoles: (Array.isArray(dbProfile?.targetRoles) && dbProfile.targetRoles.length > 0)
+            ? dbProfile.targetRoles
+            : (cloudProfile?.targetRoles || []),
           targetFirms: cloudProfile?.targetFirms || [],
           major: cloudProfile?.major || "",
           year: cloudProfile?.year || "",
