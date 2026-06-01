@@ -415,7 +415,7 @@ export default function OutreachTrackerPage() {
             ].map(s => (
               <div key={s.label} style={{ background: s.highlight ? '#0c0c0c' : 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12, padding: '14px 18px', flex: 1, minWidth: 100 }}>
                 <div style={{ fontSize: 11, fontWeight: 600, color: s.highlight ? 'rgba(255,255,255,0.5)' : 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.5px', marginBottom: 6 }}>{s.label}</div>
-                <div style={{ fontSize: 24, fontWeight: 800, color: s.highlight ? '#ffffff' : 'var(--text)', letterSpacing: '-1px', lineHeight: 1 }}>{s.val}</div>
+                <div style={{ fontFamily: "'Instrument Serif', 'Times New Roman', serif", fontSize: 32, fontWeight: 400, color: s.highlight ? '#ffffff' : 'var(--text)', letterSpacing: '-0.5px', lineHeight: 1 }}>{s.val}</div>
                 <div style={{ fontSize: 11, color: s.highlight ? 'rgba(255,255,255,0.5)' : 'var(--text-3)', marginTop: 4 }}>{s.sub}</div>
               </div>
             ))}
