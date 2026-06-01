@@ -192,7 +192,6 @@ export default function MockInterviewPage() {
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set());
   const [activeQuestion, setActiveQuestion] = useState<Flashcard | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
-  const [showHidden, setShowHidden] = useState(false);
 
   // Shared camera/recording state
   const [cameraReady, setCameraReady] = useState(false);
@@ -1294,7 +1293,7 @@ export default function MockInterviewPage() {
                   <div className="mi-cat-body">
                     {cat.cards.map((card, i) => {
                       const qid = makeQid(activeTrack!.id, card.q);
-                      const responses = allResponses.filter(r => r.questionId === qid && !r.hidden);
+                      const responses = allResponses.filter(r => r.questionId === qid);
                       const bestG: Grade | null = responses.some(r => r.grade === 'Great') ? 'Great'
                         : responses.some(r => r.grade === 'Good') ? 'Good'
                         : responses.length > 0 ? 'Bad' : null;
@@ -1327,7 +1326,6 @@ export default function MockInterviewPage() {
     const q = activeQuestion!;
     const qid = makeQid(activeTrack!.id, q.q);
     const myResponses = allResponses.filter(r => r.questionId === qid);
-    const visible = showHidden ? myResponses : myResponses.filter(r => !r.hidden);
 
     return (
       <div className="mi-single">
@@ -1385,60 +1383,52 @@ export default function MockInterviewPage() {
         {myResponses.length > 0 && (
           <div className="mi-attempts">
             <div className="mi-section-head" style={{ marginTop: 28 }}>
-              <div className="mi-section-title">Past attempts on this question ({visible.length})</div>
-              {myResponses.some(r => r.hidden) && (
-                <button type="button" className="mi-toggle-hidden" onClick={() => setShowHidden(!showHidden)}>
-                  {showHidden ? 'Hide hidden' : `Show hidden (${myResponses.filter(r => r.hidden).length})`}
-                </button>
-              )}
+              <div className="mi-section-title">Past attempts on this question ({myResponses.length})</div>
             </div>
-            {visible.length === 0 ? (
-              <div className="mi-attempts-empty" style={{ fontSize: 13, color: 'var(--text-3)', padding: '6px 0 0' }}>
-                Every attempt on this question is hidden. Use &ldquo;Show hidden&rdquo; above to view them.
-              </div>
-            ) : (
             <div className="mi-attempts-list">
-              {visible.map(r => (
+              {myResponses.map(r => (
                 <div key={r.id} className="mi-attempt">
                   <div className="mi-attempt-head">
                     <span className={`mi-grade mi-grade--${r.grade.toLowerCase()}`}>{r.grade}</span>
                     <span className="mi-attempt-meta">{r.wordsPerMin} wpm <span className="mi-dot" /> {r.durationSec}s <span className="mi-dot" /> {new Date(r.timestamp).toLocaleString()}</span>
                     <div className="mi-attempt-actions">
-                      <button type="button" onClick={() => toggleHideResponse(r.id)} title={r.hidden ? 'Show' : 'Hide'}>
-                        {r.hidden ? 'Unhide' : 'Hide'}
+                      <button type="button" onClick={() => toggleHideResponse(r.id)} title={r.hidden ? 'Show the full review for this attempt' : 'Collapse the full review for this attempt'}>
+                        {r.hidden ? 'Show review' : 'Hide review'}
                       </button>
-                      <button type="button" onClick={() => deleteResponse(r.id)}>Delete</button>
                     </div>
                   </div>
-                  {sessionVideos[r.id] && (
-                    <video src={sessionVideos[r.id]} controls className="mi-attempt-video" />
-                  )}
-                  <div className="mi-attempt-section">
-                    <div className="mi-attempt-lbl">Transcript</div>
-                    <div className="mi-attempt-body">{r.transcript}</div>
-                  </div>
-                  {r.overallFeedback && (
-                    <div className="mi-attempt-section">
-                      <div className="mi-attempt-lbl">Feedback</div>
-                      <div className="mi-attempt-body">{r.overallFeedback}</div>
-                    </div>
-                  )}
-                  {r.strengths.length > 0 && (
-                    <div className="mi-attempt-section">
-                      <div className="mi-attempt-lbl">Strengths</div>
-                      <ul className="mi-attempt-list">{r.strengths.map((s, i) => <li key={i}>{s}</li>)}</ul>
-                    </div>
-                  )}
-                  {r.weaknesses.length > 0 && (
-                    <div className="mi-attempt-section">
-                      <div className="mi-attempt-lbl">Improve</div>
-                      <ul className="mi-attempt-list">{r.weaknesses.map((w, i) => <li key={i}>{w}</li>)}</ul>
-                    </div>
+                  {!r.hidden && (
+                    <>
+                      {sessionVideos[r.id] && (
+                        <video src={sessionVideos[r.id]} controls className="mi-attempt-video" />
+                      )}
+                      <div className="mi-attempt-section">
+                        <div className="mi-attempt-lbl">Transcript</div>
+                        <div className="mi-attempt-body">{r.transcript}</div>
+                      </div>
+                      {r.overallFeedback && (
+                        <div className="mi-attempt-section">
+                          <div className="mi-attempt-lbl">Feedback</div>
+                          <div className="mi-attempt-body">{r.overallFeedback}</div>
+                        </div>
+                      )}
+                      {r.strengths.length > 0 && (
+                        <div className="mi-attempt-section">
+                          <div className="mi-attempt-lbl">Strengths</div>
+                          <ul className="mi-attempt-list">{r.strengths.map((s, i) => <li key={i}>{s}</li>)}</ul>
+                        </div>
+                      )}
+                      {r.weaknesses.length > 0 && (
+                        <div className="mi-attempt-section">
+                          <div className="mi-attempt-lbl">Improve</div>
+                          <ul className="mi-attempt-list">{r.weaknesses.map((w, i) => <li key={i}>{w}</li>)}</ul>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               ))}
             </div>
-            )}
           </div>
         )}
       </div>
