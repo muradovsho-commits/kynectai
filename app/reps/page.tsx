@@ -3,20 +3,25 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../components/Sidebar';
-import '../contact-finder/contact-finder.css'; // shared .app / .main layout
+import '../contact-finder/contact-finder.css'; // global color vars + full-screen session theming
+import './desk.css'; // The Desk landing + scenario-list chrome
 import { REPS_TRACKS, REPS_SCENARIOS, type RepsTrackId, type Scenario, type Persona, type ArtifactSpec } from './reps-data';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Reps career-simulator page.
+// The Desk — career simulator.
 //
-// Three top-level views:
-//   1. Track grid: pick one of 10 careers
-//   2. Scenario list: pick a workday scenario in that career
-//   3. Session: chat panel on left, artifact workspace on right
+// Career is driven by the Industry selector in the sidebar (same source of
+// truth as Concept Drills and the interview-prep pages): the active vertical
+// is read from offerbell_onboarding_profile.targetRoles[0]. There is no
+// in-page career grid. Switching career happens in the sidebar.
+//
+// Two views once a career resolves:
+//   1. Scenario list: pick a workday scenario for the selected career
+//   2. Session: chat panel on left, artifact workspace on right
 //
 // Personas drop opening messages. The student replies in chat OR uploads work.
 // On upload, the file is parsed server-side, sent to the AI with the rubric,
-// and the AI grades on craft. Feedback lands in chat in the persona's voice.
+// and graded on craft. Feedback lands in chat in the persona's voice.
 // ─────────────────────────────────────────────────────────────────────────────
 
 type ChatMsg = {
@@ -31,18 +36,37 @@ type ChatMsg = {
 type UploadStatus = 'idle' | 'parsing' | 'grading' | 'done' | 'error';
 
 // Plan-gate state. 'loading' is the first paint after mount, before we've
-// inspected localStorage. 'elite' renders the full Reps experience. Anything
-// else renders the paywall. Loading guard prevents a flash of paywall for
-// Elite users on every Reps navigation.
+// inspected localStorage. 'elite' renders the full Desk experience. Anything
+// else renders the paywall.
 type PlanStatus = 'loading' | 'elite' | 'gated';
+
+// Maps the sidebar's selected vertical (offerbell_onboarding_profile.targetRoles[0])
+// to a Desk track id. Verticals without a Desk track yet (e.g. Growth Equity,
+// Hedge Fund) resolve to null and show a "coming soon" empty state. Mirrors the
+// VERTICAL_TO_TRACK pattern in concept-drills, using The Desk's own track ids.
+const VERTICAL_TO_TRACK: Record<string, RepsTrackId> = {
+  'Investment Banking': 'ib',
+  'Private Equity': 'pe',
+  'Venture Capital': 'vc',
+  'Consulting': 'consulting',
+  'Accounting & Audit': 'audit',
+  'Accounting / Audit / Tax': 'audit',
+  'Asset Management': 'am',
+  'Sales & Trading': 'st',
+  'Equity Research': 'er',
+  'Real Estate': 're',
+  'Restructuring': 'rx',
+};
 
 export default function RepsPage() {
   const router = useRouter();
-  const [activeTrack, setActiveTrack] = useState<RepsTrackId | null>(null);
-  const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null);
   const [planStatus, setPlanStatus] = useState<PlanStatus>('loading');
   const [currentPlan, setCurrentPlan] = useState<string | null>(null);
+  const [vertical, setVertical] = useState<string>('');
+  const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null);
 
+  // Auth + plan gate (localStorage UI hint; the /api/reps routes enforce Elite
+  // server-side against Convex truth).
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!localStorage.getItem('offerbell_user_id')) {
@@ -54,16 +78,54 @@ export default function RepsPage() {
     setPlanStatus(plan === 'elite' ? 'elite' : 'gated');
   }, [router]);
 
-  const track = activeTrack ? REPS_TRACKS.find(t => t.id === activeTrack) : null;
-  const scenarios = activeTrack ? REPS_SCENARIOS[activeTrack] : [];
-  const scenario = activeScenarioId ? scenarios.find(s => s.id === activeScenarioId) : null;
+  // Selected vertical from the sidebar. Re-reads on the in-window
+  // 'offerbell-profile-changed' event (fired by the sidebar when the user
+  // switches industry) and on cross-tab storage events.
+  const loadVertical = useCallback(() => {
+    try {
+      const raw = localStorage.getItem('offerbell_onboarding_profile');
+      if (raw) {
+        const p = JSON.parse(raw);
+        setVertical((Array.isArray(p.targetRoles) && p.targetRoles[0]) || '');
+      } else {
+        setVertical('');
+      }
+    } catch {}
+  }, []);
 
-  // Loading state: render shell to avoid layout shift, no content.
+  useEffect(() => {
+    loadVertical();
+    const onChanged = () => loadVertical();
+    const onStorage = (e: StorageEvent) => { if (e.key === 'offerbell_onboarding_profile') loadVertical(); };
+    window.addEventListener('offerbell-profile-changed', onChanged);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener('offerbell-profile-changed', onChanged);
+      window.removeEventListener('storage', onStorage);
+    };
+  }, [loadVertical]);
+
+  // Apply saved theme on mount (mirrors other pages).
+  useEffect(() => {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('offerbell-theme') : null;
+    if (saved && typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', saved);
+  }, []);
+
+  const trackId = VERTICAL_TO_TRACK[vertical] || null;
+  const track = trackId ? REPS_TRACKS.find(t => t.id === trackId) ?? null : null;
+  const scenarios = trackId ? (REPS_SCENARIOS[trackId] || []) : [];
+  const scenario = activeScenarioId ? scenarios.find(s => s.id === activeScenarioId) ?? null : null;
+
+  // Switching career (in the sidebar) drops any open scenario so you don't
+  // carry an IB session into the PE desk.
+  useEffect(() => { setActiveScenarioId(null); }, [trackId]);
+
+  // Loading: render the frame only, no content, to avoid layout shift.
   if (planStatus === 'loading') {
     return (
-      <div className="app">
+      <div className="desk-app">
         <Sidebar activePage="reps" />
-        <main className="main" style={{ padding: '32px 36px', maxWidth: 1200 }} />
+        <main className="desk-canvas"><div className="desk-page" /></main>
       </div>
     );
   }
@@ -71,38 +133,64 @@ export default function RepsPage() {
   // Paywall: anything that isn't Elite.
   if (planStatus === 'gated') {
     return (
-      <div className="app">
+      <div className="desk-app">
         <Sidebar activePage="reps" />
-        <main className="main" style={{ padding: '32px 36px', maxWidth: 1200 }}>
-          <ElitePaywall currentPlan={currentPlan} />
+        <main className="desk-canvas">
+          <div className="desk-page">
+            <div className="desk-page-inner">
+              <ElitePaywall currentPlan={currentPlan} />
+            </div>
+          </div>
         </main>
       </div>
     );
   }
 
-  // Elite: full experience.
-  return (
-    <div className="app">
-      <Sidebar activePage="reps" />
-      <main className="main" style={{ padding: scenario ? 0 : '32px 36px', maxWidth: scenario ? '100%' : 1200 }}>
-
-        {!scenario && activeTrack && (
-          <div style={{ marginBottom: 20, fontSize: 12, color: 'var(--text-3)', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button type="button" onClick={() => { setActiveTrack(null); setActiveScenarioId(null); }} style={breadcrumbBtn}>The Desk</button>
-            {track && <>
-              <span>/</span>
-              <span style={{ color: 'var(--text)' }}>{track.title}</span>
-            </>}
-          </div>
-        )}
-
-        {!activeTrack && <TrackGrid onPick={(id) => setActiveTrack(id)} />}
-        {activeTrack && !activeScenarioId && track && (
-          <ScenarioList track={track} scenarios={scenarios} onPick={(id) => setActiveScenarioId(id)} />
-        )}
-        {scenario && (
+  // Live session: full-height split (chat | workspace) beside the sidebar.
+  if (scenario) {
+    return (
+      <div className="desk-app">
+        <Sidebar activePage="reps" />
+        <main className="desk-canvas">
           <SessionView key={scenario.id} scenario={scenario} onExit={() => setActiveScenarioId(null)} />
-        )}
+        </main>
+      </div>
+    );
+  }
+
+  // Elite + no open session: the scenario list for the selected career, or an
+  // empty state when the vertical has no Desk track yet.
+  return (
+    <div className="desk-app">
+      <Sidebar activePage="reps" />
+      <main className="desk-canvas">
+        <div className="desk-page">
+          <div className="desk-page-inner">
+            <header className="desk-head">
+              <div className="desk-eyebrow">The Desk</div>
+              <h1 className="desk-title">
+                {track
+                  ? <>Live a day in <em>{track.title}</em>.</>
+                  : <>Live a day in <em>the seat</em>.</>}
+              </h1>
+              <p className="desk-sub">
+                {track
+                  ? 'Pick a workday scenario below. Build the deliverable, upload it, and get graded on craft against the rubric an MD would actually use. Switch career from the Industry selector in the sidebar.'
+                  : 'The Desk drops you into a junior seat on a real workday. Choose your career from the Industry selector in the sidebar to begin.'}
+              </p>
+            </header>
+
+            {!track ? (
+              <div className="desk-empty">
+                {!vertical
+                  ? 'Pick an industry in the sidebar to start a workday.'
+                  : `The Desk for ${vertical} is coming soon. Switch industry in the sidebar to try another career.`}
+              </div>
+            ) : (
+              <ScenarioList track={track} scenarios={scenarios} onPick={(id) => setActiveScenarioId(id)} />
+            )}
+          </div>
+        </div>
       </main>
     </div>
   );
@@ -322,11 +410,6 @@ function ElitePaywall({ currentPlan }: { currentPlan: string | null }) {
   );
 }
 
-const breadcrumbBtn: React.CSSProperties = {
-  background: 'none', border: 'none', color: 'var(--text-3)',
-  cursor: 'pointer', fontFamily: "'Sora',sans-serif", fontSize: 12, padding: 0,
-};
-
 // ═══════════════════════════════════════════════════════════════════════════
 // PersonaAvatar
 //
@@ -456,111 +539,6 @@ function InitialsAvatar({ persona, size }: { persona: Persona; size: number }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// WelcomeBanner
-// ═══════════════════════════════════════════════════════════════════════════
-function WelcomeBanner({ onDismiss }: { onDismiss: () => void }) {
-  return (
-    <div style={{
-      marginBottom: 28,
-      padding: '22px 26px',
-      border: '1.5px solid var(--border)',
-      background: 'var(--surface)',
-      borderRadius: 14,
-      position: 'relative',
-    }}>
-      <button
-        type="button" onClick={onDismiss} aria-label="Dismiss"
-        style={{ position: 'absolute', top: 14, right: 14, background: 'none', border: 'none', color: 'var(--text-3)', cursor: 'pointer', padding: 4 }}
-      >
-        <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-      </button>
-      <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 6 }}>How Reps work</div>
-      <div style={{ fontSize: 14, color: 'var(--text)', lineHeight: 1.55, marginBottom: 16, maxWidth: 620 }}>
-        Reps put you in a junior seat on a real workday. Personas message you, you build the actual deliverable, and the AI grades the file on craft, citing specific cells, numbers, and lines.
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
-        {[
-          { n: '1', title: 'Pick a career', body: 'Choose from 10 finance careers: IB, PE, consulting, restructuring, S&T, AM, VC, RE, ER, audit.' },
-          { n: '2', title: 'Choose a scenario', body: 'Three workday scenarios per career, ranging from intro to advanced. Pick the one that matches where you are.' },
-          { n: '3', title: 'Do the work', body: 'Build the deliverable in your own tools (Excel, Word, PowerPoint), upload it, and get graded on craft.' },
-        ].map(s => (
-          <div key={s.n} style={{ padding: '12px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10 }}>
-            <div style={{ fontSize: 11, fontFamily: "'Instrument Serif',serif", fontStyle: 'italic', color: 'var(--text-3)', marginBottom: 4 }}>{s.n}</div>
-            <div style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>{s.title}</div>
-            <div style={{ fontSize: 11.5, color: 'var(--text-3)', lineHeight: 1.5 }}>{s.body}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// VIEW 1: Track grid
-// ═══════════════════════════════════════════════════════════════════════════
-function TrackGrid({ onPick }: { onPick: (id: RepsTrackId) => void }) {
-  const [showWelcome, setShowWelcome] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const dismissed = localStorage.getItem('offerbell_reps_welcomed');
-    if (!dismissed) setShowWelcome(true);
-  }, []);
-
-  function dismissWelcome() {
-    setShowWelcome(false);
-    if (typeof window !== 'undefined') localStorage.setItem('offerbell_reps_welcomed', '1');
-  }
-
-  return (
-    <>
-      <header style={{ marginBottom: 28, paddingBottom: 22, borderBottom: '1px solid var(--border)' }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase', marginBottom: 10 }}>The Desk</div>
-        <h1 style={{ fontFamily: "'Instrument Serif',serif", fontSize: 46, lineHeight: 1.04, letterSpacing: '-0.6px', color: 'var(--text)', margin: 0, marginBottom: 12 }}>
-          Live a day in <em style={{ fontStyle: 'italic' }}>the career.</em>
-        </h1>
-        <p style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.65, maxWidth: 640, margin: 0 }}>
-          Pick a career, pick a scenario, build the deliverable. Graded on craft against the rubric an MD would actually use.
-        </p>
-      </header>
-
-      {showWelcome && <WelcomeBanner onDismiss={dismissWelcome} />}
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 14 }}>
-        {REPS_TRACKS.map(t => (
-          <button
-            key={t.id}
-            type="button"
-            onClick={() => onPick(t.id)}
-            style={{
-              textAlign: 'left', padding: '22px 24px',
-              border: '1.5px solid var(--border)', background: 'var(--surface)',
-              borderRadius: 14, cursor: 'pointer',
-              transition: 'border-color .15s, transform .15s',
-              fontFamily: "'Sora',sans-serif",
-              display: 'flex', flexDirection: 'column', gap: 12, minHeight: 168,
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text)'; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ width: 38, height: 38, borderRadius: 10, background: t.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: "'Instrument Serif',serif", fontSize: 18, fontStyle: 'italic' }}>
-                {t.abbr}
-              </div>
-              <span style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase' }}>{REPS_SCENARIOS[t.id]?.length || 0} scenarios</span>
-            </div>
-            <div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 5 }}>{t.title}</div>
-              <div style={{ fontSize: 12.5, color: 'var(--text-3)', lineHeight: 1.55 }}>{t.tagline}</div>
-            </div>
-          </button>
-        ))}
-      </div>
-    </>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
 // Helpers
 // ═══════════════════════════════════════════════════════════════════════════
 function whatYoullBuild(scenario: Scenario): string {
@@ -596,12 +574,59 @@ const DIFFICULTY_ORDER: Record<string, number> = {
   'Advanced': 2,
 };
 
+function difficultyClass(d: string): string {
+  if (d === 'Intro') return 'desk-diff-intro';
+  if (d === 'Advanced') return 'desk-diff-adv';
+  return 'desk-diff-mid';
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
-// VIEW 2: Scenario list
+// How-it-works strip (dismissible, once per user)
+// ═══════════════════════════════════════════════════════════════════════════
+function DeskHowTo({ onDismiss }: { onDismiss: () => void }) {
+  return (
+    <div className="desk-howto">
+      <button type="button" className="desk-howto-x" onClick={onDismiss} aria-label="Dismiss">
+        <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+      </button>
+      <div className="desk-howto-eyebrow">How a workday works</div>
+      <div className="desk-howto-body">
+        You drop into a junior seat. Personas message you in the voice of MDs and senior associates, you build the actual deliverable in your own tools, and the AI grades the file on craft, citing specific cells, numbers, and lines.
+      </div>
+      <div className="desk-howto-steps">
+        {[
+          { n: '1', title: 'Pick a scenario', body: 'Choose a workday below, ordered from intro to advanced.' },
+          { n: '2', title: 'Do the work', body: 'Build it in Excel, Word, or PowerPoint and upload the file.' },
+          { n: '3', title: 'Get graded', body: 'The persona reviews your file and pushes back in chat.' },
+        ].map(s => (
+          <div key={s.n} className="desk-howto-step">
+            <div className="desk-howto-step-n">{s.n}</div>
+            <div className="desk-howto-step-title">{s.title}</div>
+            <div className="desk-howto-step-body">{s.body}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Scenario list — scenarios for the career selected in the sidebar
 // ═══════════════════════════════════════════════════════════════════════════
 function ScenarioList({ track, scenarios, onPick }: { track: typeof REPS_TRACKS[number]; scenarios: Scenario[]; onPick: (id: string) => void; }) {
-  // Sort by difficulty ascending (Intro first, Advanced last). Stable order
-  // within a difficulty preserves the source order from reps-data.ts.
+  const [showHowTo, setShowHowTo] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!localStorage.getItem('offerbell_reps_welcomed')) setShowHowTo(true);
+  }, []);
+
+  function dismissHowTo() {
+    setShowHowTo(false);
+    if (typeof window !== 'undefined') localStorage.setItem('offerbell_reps_welcomed', '1');
+  }
+
+  // Sort by difficulty ascending (Intro first). Stable within a difficulty.
   const sortedScenarios = useMemo(() => {
     return [...scenarios].sort((a, b) => {
       const da = DIFFICULTY_ORDER[a.difficulty] ?? 99;
@@ -611,74 +636,35 @@ function ScenarioList({ track, scenarios, onPick }: { track: typeof REPS_TRACKS[
   }, [scenarios]);
 
   return (
-    <>
-      <header style={{ marginBottom: 28, paddingBottom: 22, borderBottom: '1px solid var(--border)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 }}>
-          <div style={{ width: 50, height: 50, borderRadius: 12, background: track.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: "'Instrument Serif',serif", fontSize: 22, fontStyle: 'italic' }}>
-            {track.abbr}
-          </div>
-          <div>
-            <h1 style={{ fontFamily: "'Instrument Serif',serif", fontSize: 34, lineHeight: 1.05, color: 'var(--text)', margin: 0, marginBottom: 4 }}>
-              {track.title}
-            </h1>
-            <p style={{ fontSize: 13, color: 'var(--text-3)', margin: 0 }}>{track.tagline}</p>
-          </div>
-        </div>
-        <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.65, maxWidth: 660, margin: 0, marginBottom: 14 }}>{track.description}</p>
-        <div style={{ fontSize: 11.5, color: 'var(--text-3)', lineHeight: 1.55, maxWidth: 660 }}>
-          Scenarios are ordered by difficulty. Start with an Intro or Intermediate scenario if it's your first time in this career.
-        </div>
-      </header>
+    <div className="desk-tab-pane">
+      {showHowTo && <DeskHowTo onDismiss={dismissHowTo} />}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div className="desk-scn-list">
         {sortedScenarios.map(s => (
-          <button
-            key={s.id}
-            type="button"
-            onClick={() => onPick(s.id)}
-            style={{
-              textAlign: 'left', padding: '20px 24px',
-              border: '1.5px solid var(--border)', background: 'var(--surface)',
-              borderRadius: 12, cursor: 'pointer',
-              transition: 'border-color .15s',
-              fontFamily: "'Sora',sans-serif",
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text)'; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; }}
-          >
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 7, flexWrap: 'wrap' }}>
-                <span style={metaTag}>{s.timeframe}</span>
-                <span style={dotSep} />
-                <span style={metaTag}>{s.duration}</span>
-                <span style={dotSep} />
-                <span style={{ ...metaTag, color: difficultyColor(s.difficulty) }}>{s.difficulty}</span>
+          <button key={s.id} type="button" className="desk-scn-card" onClick={() => onPick(s.id)}>
+            <div className="desk-scn-main">
+              <div className="desk-scn-meta">
+                <span className="desk-scn-tag">{s.timeframe}</span>
+                <span className="desk-scn-dot" />
+                <span className="desk-scn-tag">{s.duration}</span>
+                <span className="desk-scn-dot" />
+                <span className={`desk-scn-tag ${difficultyClass(s.difficulty)}`}>{s.difficulty}</span>
               </div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>{s.title}</div>
-              <div style={{ fontSize: 12.5, color: 'var(--text-3)', lineHeight: 1.55, marginBottom: 10 }}>{s.summary}</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <span style={{ fontSize: 11.5, color: 'var(--text-2)', fontWeight: 600 }}>{whatYoullBuild(s)}</span>
-                <div style={{ display: 'flex', gap: 4 }}>
+              <div className="desk-scn-title">{s.title}</div>
+              <div className="desk-scn-summary">{s.summary}</div>
+              <div className="desk-scn-build">
+                <span className="desk-scn-build-text">{whatYoullBuild(s)}</span>
+                <span className="desk-scn-fmts">
                   {s.artifacts.map(a => <FormatPill key={a.id} format={a.format} />)}
-                </div>
+                </span>
               </div>
             </div>
-            <svg width="18" height="18" fill="none" stroke="var(--text-3)" strokeWidth="2" viewBox="0 0 24 24" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6" /></svg>
+            <svg className="desk-scn-chev" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6" /></svg>
           </button>
         ))}
       </div>
-    </>
+    </div>
   );
-}
-
-const metaTag: React.CSSProperties = { fontSize: 10, fontWeight: 700, color: 'var(--text-3)', letterSpacing: '.5px', textTransform: 'uppercase' };
-const dotSep: React.CSSProperties = { width: 3, height: 3, borderRadius: '50%', background: 'var(--text-3)' };
-
-function difficultyColor(d: string): string {
-  if (d === 'Intro') return '#166534';
-  if (d === 'Advanced') return '#991b1b';
-  return '#854d0e';
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
