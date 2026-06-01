@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import '../contact-finder/contact-finder.css';
 import './guide-base.css';
 import './ib-theme.css';
-import './guide-refresh.css';
 
 import { CORE_SECTIONS } from './core-data';
 import { ACCOUNTING_SECTIONS } from './accounting-data';

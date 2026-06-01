@@ -8,7 +8,6 @@ import { useUserPlanStatus } from '../lib/usePlan';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/guide-base.css';
 import '../interview-prep/am-theme.css';
-import '../interview-prep/guide-refresh.css';
 
 import { AM_INDUSTRY_SECTIONS } from './am-industry-data';
 import { AM_RESEARCH_SECTIONS } from './am-research-data';

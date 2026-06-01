@@ -8,7 +8,6 @@ import { useUserPlanStatus } from '../lib/usePlan';
 import '../contact-finder/contact-finder.css';
 import '../interview-prep/guide-base.css';
 import '../interview-prep/cons-theme.css';
-import '../interview-prep/guide-refresh.css';
 
 import { CONS_INDUSTRY_SECTIONS } from './cons-industry-data';
 import { CONS_FRAMEWORKS_SECTIONS } from './cons-frameworks-data';
