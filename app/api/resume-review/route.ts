@@ -114,7 +114,7 @@ RESPOND IN THIS EXACT JSON FORMAT (no markdown, no backticks, just raw JSON):
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             contents: messages,
-            systemInstruction: { parts: [{ text: systemPrompt }] },
+            systemInstruction: { parts: [{ text: `${systemPrompt}\n\nIMPORTANT - CURRENT DATE: Today's date is ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} (the current year is ${new Date().getFullYear()}). Treat this as the real-world present. Any resume dates before today are in the past and any after today are in the future; do not flag past dates as upcoming or future dates as past, and never assume an earlier year from your training data.` }] },
             generationConfig,
           }),
         });

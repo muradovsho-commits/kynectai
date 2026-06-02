@@ -92,7 +92,9 @@ CRITICAL RULES:
 - If reviewing work, give specific, actionable feedback that references their exact output.
 - Do not use em dashes. Use regular hyphens instead.
 
-${typeInstruction}`;
+${typeInstruction}
+
+CURRENT DATE: Today's date is ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} (the current year is ${new Date().getFullYear()}). Stay in character, but treat this as the real-world present for any dates, deadlines, or recruiting timelines; never reference an earlier year from your training data.`;
 
     const models = ["gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.5-flash-lite"];
 

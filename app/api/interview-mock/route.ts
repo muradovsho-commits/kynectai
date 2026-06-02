@@ -96,7 +96,9 @@ Where accuracy, depth, clarity are 1-10 scores.
 - "strengths" = 1-3 specific things the candidate did well
 - "weaknesses" = 1-3 specific areas to improve
 
-The score block is parsed programmatically. Do not include it inside your written feedback.`;
+The score block is parsed programmatically. Do not include it inside your written feedback.
+
+CURRENT DATE: Today's date is ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} (the current year is ${new Date().getFullYear()}). Treat this as the real-world present and do not assume an earlier year from your training data.`;
 
     const messages = history && history.length > 0
       ? [
