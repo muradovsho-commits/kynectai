@@ -1035,7 +1035,15 @@ export default function CoachPage() {
     if (textareaRef.current) textareaRef.current.style.height = 'auto';
 
     try {
-      const systemPrompt = SYSTEM + `\n\nThe user is on the "${activeTrack}" track. Tailor advice for ${activeTrack} recruiting.`;
+      let gradYear = '';
+      try {
+        const p = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}');
+        gradYear = (p.year || p.graduationYear || '').toString().trim();
+      } catch {}
+      const gradLine = gradYear
+        ? `\n\nThe user's expected graduation year is ${gradYear}. Treat this as their graduation year (G) for all recruiting-timeline reasoning.`
+        : `\n\nThe user's graduation year is not on file. Before giving any timeline-specific advice, ask for their graduation year or current class standing - do not assume it.`;
+      const systemPrompt = SYSTEM + `\n\nThe user is on the "${activeTrack}" track. Tailor advice for ${activeTrack} recruiting.` + gradLine;
       const res = await fetch('/api/coach', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

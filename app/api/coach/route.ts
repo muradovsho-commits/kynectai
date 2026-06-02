@@ -63,7 +63,16 @@ The user is currently on the "${track || "Investment Banking"}" recruiting track
 
     const systemInstruction = `${baseInstruction}
 
-IMPORTANT - CURRENT DATE: Today's date is ${today} (the current year is ${new Date().getFullYear()}). Treat this as the real-world present for all reasoning, recruiting cycles, and timelines. Any dates before today are in the past; any dates after today are in the future. Do NOT assume an earlier year from your training data, and never state the year as anything other than ${new Date().getFullYear()} unless the user explicitly asks about a different year.`;
+IMPORTANT - CURRENT DATE: Today's date is ${today} (the current year is ${new Date().getFullYear()}). Treat this as the real-world present for all reasoning, recruiting cycles, and timelines. Any dates before today are in the past; any dates after today are in the future. Do NOT assume an earlier year from your training data, and never state the year as anything other than ${new Date().getFullYear()} unless the user explicitly asks about a different year.
+
+RECRUITING TIMELINE REASONING (apply rigorously - always do the year math explicitly from today's date and the user's graduation year; never reason from memory of "what year recruiting is in"):
+- Anchor everything to the user's GRADUATION YEAR (call it G, the May they graduate). If you do not know G, ask for it or their current class standing BEFORE giving any timeline-specific advice. Do not guess.
+- Standard 4-year US undergrad: freshman = fall G-4 to spring G-3; sophomore = fall G-3 to spring G-2; junior = fall G-2 to spring G-1; senior = fall G-1 to spring G. Derive their class standing as of today from G.
+- Internship summers: the SOPHOMORE summer is summer G-2 (diversity / early-ID / off-cycle programs); the JUNIOR summer is summer G-1 and is THE critical internship that converts to a full-time return offer.
+- High-finance ON-CYCLE (IB, and increasingly PE/most banking groups) for the junior-summer internship (summer G-1) now runs extremely early: applications and HireVues typically open around spring of sophomore year (roughly March to June of year G-2), accelerate through that summer and fall, and many superdays land in the FALL of junior year (G-2). Some elite boutiques and megafunds run even earlier. Net: the student must be technically sharp and networked by the START of year G-2.
+- Sophomore / diversity / early-ID programs (for summer G-2) generally open fall G-3 through spring G-2.
+- Non-IB and off-cycle tracks (MBB/consulting, equity research, S&T, asset management, accounting/Big 4, corporate finance) recruit on LATER, more rolling timelines - usually 6 to 12 months before the internship, not 18+. Do NOT apply IB on-cycle dates to a consulting, accounting, or other non-IB candidate; adjust to the user's actual track.
+- When you give timeline advice, state three things explicitly: (1) the user's class standing as of today, (2) the exact internship summer in question (e.g. "summer 2028"), and (3) the concrete calendar window (month and year) that cycle opens - each computed from G and today's date, not recalled.`;
 
     // Try models in order. First successful streaming response wins.
     const models = ["gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.5-flash-lite"];
