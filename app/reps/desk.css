@@ -9,37 +9,39 @@
 }
 
 .desk-app {
-  --bg: #fafaf9;
+  --bg: #ffffff;
   --surface: #ffffff;
-  --surface-2: #f7f7f5;
-  --border: #ebebea;
-  --border-2: #dddcda;
-  --border-strong: #d4d4d2;
-  --text: #1c1c1e;
-  --text-2: #6a6a6a;
-  --text-3: #9b9b9b;
-  --frame: #151618;
-  --accent: #3b82f6;
+  --surface-2: #f8f9fa;
+  --border: #e8e8e8;
+  --border-2: #d4d4d4;
+  --border-strong: #d4d4d4;
+  --text: #18181b;
+  --text-2: #52525b;
+  --text-3: #a1a1aa;
+  --frame: #ffffff;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
 }
 html[data-theme="dark"] .desk-app {
   --bg: #111110;
   --surface: #1a1a19;
   --surface-2: #222221;
   --border: #2a2a29;
-  --border-2: #353534;
+  --border-2: #3a3a39;
   --border-strong: #3a3a39;
   --text: #f0efed;
   --text-2: #a8a6a3;
   --text-3: #6b6a67;
-  --frame: #151618;
+  --frame: #111110;
   --accent: #3b82f6;
+  --accent-soft: #1e293b;
 }
 
 .desk-app {
   display: flex;
   min-height: 100vh;
-  background: var(--frame);
-  font-family: 'Inter', 'Sora', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  font-family: 'Sora', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
 .desk-canvas {
@@ -122,87 +124,91 @@ html[data-theme="dark"] .desk-app {
   position: relative;
   background: var(--surface-2);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 22px 24px;
+  border-radius: 16px;
+  padding: 26px 28px;
 }
 .desk-howto-x {
   position: absolute;
-  top: 14px; right: 14px;
+  top: 18px; right: 18px;
   background: none; border: none;
   color: var(--text-3);
   cursor: pointer;
   padding: 4px;
   line-height: 0;
+  transition: color 0.12s;
 }
 .desk-howto-x:hover { color: var(--text); }
 .desk-howto-eyebrow {
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-3);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .desk-howto-body {
   font-size: 14px;
-  color: var(--text);
-  line-height: 1.55;
-  max-width: 640px;
-  margin-bottom: 18px;
+  color: var(--text-2);
+  line-height: 1.6;
+  max-width: 660px;
+  margin-bottom: 22px;
 }
 .desk-howto-steps {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 10px;
+  gap: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
 }
 .desk-howto-step {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 14px;
+  background: none;
+  border: none;
+  padding: 0;
 }
 .desk-howto-step-n {
   font-family: 'Instrument Serif', 'Times New Roman', serif;
   font-style: italic;
-  font-size: 13px;
+  font-size: 24px;
+  line-height: 1;
   color: var(--text-3);
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 .desk-howto-step-title {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--text);
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 .desk-howto-step-body {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--text-3);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 /* ── Scenario list ───────────────────────────────────────────────────────── */
 .desk-scn-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 .desk-scn-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 20px;
   width: 100%;
   text-align: left;
-  background: var(--surface-2);
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px 22px;
+  border-radius: 14px;
+  padding: 22px 24px;
   cursor: pointer;
   font-family: inherit;
-  transition: border-color 0.12s, background 0.12s;
+  transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
 }
 .desk-scn-card:hover {
   border-color: var(--border-strong);
+  background: var(--surface-2);
 }
 .desk-scn-card:hover .desk-scn-chev {
   color: var(--text);
@@ -215,14 +221,14 @@ html[data-theme="dark"] .desk-app {
 .desk-scn-meta {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   flex-wrap: wrap;
-  margin-bottom: 8px;
+  margin-bottom: 9px;
 }
 .desk-scn-tag {
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-3);
 }
@@ -232,27 +238,31 @@ html[data-theme="dark"] .desk-app {
 .desk-scn-dot {
   width: 3px; height: 3px;
   border-radius: 50%;
-  background: var(--text-3);
+  background: var(--border-2);
   flex-shrink: 0;
 }
 .desk-scn-title {
-  font-size: 15.5px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text);
   margin-bottom: 6px;
   letter-spacing: -0.01em;
 }
 .desk-scn-summary {
-  font-size: 12.5px;
-  color: var(--text-3);
-  line-height: 1.55;
-  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin-bottom: 0;
+  max-width: 720px;
 }
 .desk-scn-build {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
 }
 .desk-scn-build-text {
   font-size: 11.5px;
@@ -261,7 +271,7 @@ html[data-theme="dark"] .desk-app {
 }
 .desk-scn-fmts {
   display: flex;
-  gap: 4px;
+  gap: 5px;
 }
 .desk-scn-chev {
   flex-shrink: 0;

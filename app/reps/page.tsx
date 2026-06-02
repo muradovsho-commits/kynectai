@@ -557,12 +557,12 @@ const FORMAT_PILL_STYLE: Record<string, { bg: string; fg: string }> = {
 };
 
 function FormatPill({ format }: { format: string }) {
-  const s = FORMAT_PILL_STYLE[format] || { bg: 'var(--bg)', fg: 'var(--text-2)' };
   return (
     <span style={{
-      fontSize: 9, fontWeight: 800, letterSpacing: '.5px',
-      padding: '2px 6px', borderRadius: 4,
-      background: s.bg, color: s.fg,
+      fontSize: 9, fontWeight: 700, letterSpacing: '.6px',
+      padding: '3px 7px', borderRadius: 5,
+      background: 'transparent', color: 'var(--text-2)',
+      border: '1px solid var(--border-2)',
       textTransform: 'uppercase',
     }}>{format}</span>
   );
