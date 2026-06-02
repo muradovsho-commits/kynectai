@@ -8,33 +8,37 @@
 }
 
 .learn-app {
-  --bg: #fafaf9;
+  --bg: #ffffff;
   --surface: #ffffff;
-  --surface-2: #f7f7f5;
-  --border: #ebebea;
-  --border-2: #dddcda;
-  --text: #1c1c1e;
-  --text-2: #6a6a6a;
-  --text-3: #9b9b9b;
-  --frame: #151618;
+  --surface-2: #f8f9fa;
+  --border: #e8e8e8;
+  --border-2: #d4d4d4;
+  --text: #18181b;
+  --text-2: #52525b;
+  --text-3: #a1a1aa;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --frame: #ffffff;
 }
 html[data-theme="dark"] .learn-app {
   --bg: #111110;
   --surface: #1a1a19;
   --surface-2: #222221;
   --border: #2a2a29;
-  --border-2: #353534;
+  --border-2: #3a3a39;
   --text: #f0efed;
   --text-2: #a8a6a3;
   --text-3: #6b6a67;
-  --frame: #151618;
+  --accent: #3b82f6;
+  --accent-soft: #1e293b;
+  --frame: #111110;
 }
 
 .learn-app {
   display: flex;
   min-height: 100vh;
-  background: var(--frame);
-  font-family: 'Inter', 'Sora', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  font-family: 'Sora', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
 .learn-canvas {
@@ -74,14 +78,14 @@ html[data-theme="dark"] .learn-app {
 
 .learn-hero {
   margin: 40px 40px 0;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 36px 40px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
 }
 [data-theme="dark"] .learn-hero {
-  background: var(--surface-2);
-  border-color: var(--border);
+  background: transparent;
+  border-color: transparent;
 }
 .learn-hero-badge {
   display: inline-block;
@@ -89,7 +93,7 @@ html[data-theme="dark"] .learn-app {
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: #2563eb;
+  color: var(--text-3);
   margin-bottom: 14px;
 }
 .learn-hero-title {
@@ -179,31 +183,31 @@ html[data-theme="dark"] .learn-app {
   fill: none;
   stroke-width: 1.5;
 }
-.learn-card-icon.icon-ib   { background: #eff6ff; color: #2563eb; }
-.learn-card-icon.icon-pe   { background: #f0fdf4; color: #16a34a; }
-.learn-card-icon.icon-consulting { background: #faf5ff; color: #7c3aed; }
-.learn-card-icon.icon-accounting { background: #fef3c7; color: #b45309; }
-.learn-card-icon.icon-am   { background: #ecfeff; color: #0891b2; }
-.learn-card-icon.icon-roadmaps { background: #fce4ec; color: #c62828; }
-.learn-card-icon.icon-ge   { background: #f0fdf4; color: #059669; }
-.learn-card-icon.icon-st   { background: #fef2f2; color: #dc2626; }
-.learn-card-icon.icon-er   { background: #eff6ff; color: #3b82f6; }
-.learn-card-icon.icon-re   { background: #fefce8; color: #ca8a04; }
-.learn-card-icon.icon-vc   { background: #f5f3ff; color: #8b5cf6; }
-.learn-card-icon.icon-rx   { background: #fff1f2; color: #e11d48; }
+.learn-card-icon.icon-ib   { background: #dbeafe; color: #2563eb; }
+.learn-card-icon.icon-pe   { background: var(--surface-2); color: var(--text); }
+.learn-card-icon.icon-consulting { background: #fef3c7; color: #d97706; }
+.learn-card-icon.icon-accounting { background: #dcfce7; color: #16a34a; }
+.learn-card-icon.icon-am   { background: #e0f2fe; color: #0284c7; }
+.learn-card-icon.icon-roadmaps { background: var(--accent-soft); color: var(--accent); }
+.learn-card-icon.icon-ge   { background: #ecfdf5; color: #059669; }
+.learn-card-icon.icon-st   { background: #fce7f3; color: #db2777; }
+.learn-card-icon.icon-er   { background: #fef9c3; color: #ca8a04; }
+.learn-card-icon.icon-re   { background: #f0fdf4; color: #15803d; }
+.learn-card-icon.icon-vc   { background: var(--surface-2); color: var(--text); }
+.learn-card-icon.icon-rx   { background: #fef2f2; color: #dc2626; }
 
-[data-theme="dark"] .learn-card-icon.icon-ib   { background: #1e3a5f; color: #60a5fa; }
-[data-theme="dark"] .learn-card-icon.icon-pe   { background: #14332a; color: #4ade80; }
-[data-theme="dark"] .learn-card-icon.icon-consulting { background: #2e1065; color: #a78bfa; }
-[data-theme="dark"] .learn-card-icon.icon-accounting { background: #451a03; color: #fbbf24; }
-[data-theme="dark"] .learn-card-icon.icon-am   { background: #164e63; color: #22d3ee; }
-[data-theme="dark"] .learn-card-icon.icon-roadmaps { background: #4a1520; color: #f87171; }
-[data-theme="dark"] .learn-card-icon.icon-ge   { background: #14332a; color: #34d399; }
-[data-theme="dark"] .learn-card-icon.icon-st   { background: #450a0a; color: #f87171; }
-[data-theme="dark"] .learn-card-icon.icon-er   { background: #1e3a5f; color: #93c5fd; }
-[data-theme="dark"] .learn-card-icon.icon-re   { background: #422006; color: #facc15; }
-[data-theme="dark"] .learn-card-icon.icon-vc   { background: #2e1065; color: #c4b5fd; }
-[data-theme="dark"] .learn-card-icon.icon-rx   { background: #4c0519; color: #fb7185; }
+[data-theme="dark"] .learn-card-icon.icon-ib   { background: #1e293b; }
+[data-theme="dark"] .learn-card-icon.icon-pe   { background: var(--surface-2); }
+[data-theme="dark"] .learn-card-icon.icon-consulting { background: #271e0a; }
+[data-theme="dark"] .learn-card-icon.icon-accounting { background: #0a1f0a; }
+[data-theme="dark"] .learn-card-icon.icon-am   { background: #0c1929; }
+[data-theme="dark"] .learn-card-icon.icon-roadmaps { background: var(--accent-soft); }
+[data-theme="dark"] .learn-card-icon.icon-ge   { background: #0a1f17; }
+[data-theme="dark"] .learn-card-icon.icon-st   { background: #2a0f1e; }
+[data-theme="dark"] .learn-card-icon.icon-er   { background: #251f0a; }
+[data-theme="dark"] .learn-card-icon.icon-re   { background: #0a1f0a; }
+[data-theme="dark"] .learn-card-icon.icon-vc   { background: var(--surface-2); }
+[data-theme="dark"] .learn-card-icon.icon-rx   { background: #2a0f0f; }
 
 .learn-card-title {
   font-family: 'Sora', sans-serif;
@@ -261,8 +265,8 @@ html[data-theme="dark"] .learn-app {
 
 /* ── Coaching CTA card ── */
 .learn-card.coaching-card {
-  background: #2563eb;
-  border-color: #2563eb;
+  background: var(--accent);
+  border-color: var(--accent);
   color: #ffffff;
 }
 .learn-card.coaching-card:hover {
@@ -277,7 +281,7 @@ html[data-theme="dark"] .learn-app {
   align-items: center;
   gap: 6px;
   background: #ffffff;
-  color: #2563eb;
+  color: var(--accent);
   padding: 10px 20px;
   border-radius: 10px;
   font-size: 13px;
@@ -306,7 +310,7 @@ html[data-theme="dark"] .learn-app {
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: #2563eb;
+  color: var(--accent);
   margin-bottom: 12px;
 }
 .learn-feature-title {
@@ -367,8 +371,8 @@ html[data-theme="dark"] .learn-app {
 /* ── Quiz Banner ── */
 .learn-quiz-banner {
   margin: 20px 40px 0;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px 32px;
   display: flex;
@@ -383,28 +387,28 @@ html[data-theme="dark"] .learn-app {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: #e0e7ff;
-  color: #2563eb;
+  background: var(--accent-soft);
+  color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 [data-theme="dark"] .learn-quiz-icon {
-  background: #1e3a5f;
-  color: #60a5fa;
+  background: var(--accent-soft);
+  color: var(--accent);
 }
-.learn-quiz-icon.icon-roadmaps { background: #fce4ec; color: #c62828; }
-[data-theme="dark"] .learn-quiz-icon.icon-roadmaps { background: #4a1520; color: #f87171; }
+.learn-quiz-icon.icon-roadmaps { background: var(--accent-soft); color: var(--accent); }
+[data-theme="dark"] .learn-quiz-icon.icon-roadmaps { background: var(--accent-soft); color: var(--accent); }
 .learn-quiz-icon svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 2; }
 .learn-quiz-content { flex: 1; }
-.learn-quiz-title { font-size: 22px; font-weight: 700; color: #0f172a; margin-bottom: 4px; letter-spacing: -0.3px; }
+.learn-quiz-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 4px; letter-spacing: -0.3px; }
 [data-theme="dark"] .learn-quiz-title { color: var(--text); }
-.learn-quiz-desc { font-size: 14px; color: #64748b; }
+.learn-quiz-desc { font-size: 14px; color: var(--text-3); }
 [data-theme="dark"] .learn-quiz-desc { color: var(--text-3); }
 .learn-quiz-btn {
-  background: #0f172a;
-  color: #ffffff;
+  background: var(--text);
+  color: var(--surface);
   padding: 12px 24px;
   border-radius: 8px;
   font-size: 14px;
@@ -419,7 +423,6 @@ html[data-theme="dark"] .learn-app {
   text-decoration: none;
 }
 .learn-quiz-btn:hover { opacity: 0.9; }
-[data-theme="dark"] .learn-quiz-btn { background: #ffffff; color: #0f172a; }
 
 /* ── Section Header ── */
 .learn-section-header {
