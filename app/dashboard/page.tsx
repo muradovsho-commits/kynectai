@@ -351,6 +351,9 @@ export default function DashboardPage() {
   // Diagnostic Review contributes to Avg Score only (NOT drills/heatmap). Read
   // from its own history store so it never touches flash_perf again.
   const [diagAgg, setDiagAgg] = useState<{ items: number; scoreSum: number }>({ items: 0, scoreSum: 0 });
+  // Diagnostic per-track, per-category scores so the Skill Heatmap can blend
+  // diagnostic accuracy in alongside drills/flashcards and mock interviews.
+  const [diagByTrackCat, setDiagByTrackCat] = useState<Record<string, Record<string, { total: number; correct: number }>>>({});
   const loadLocalProgress = useCallback(() => {
     const next: Record<string, FlashTrack> = {};
     for (const t of TRACK_ORDER) {
@@ -398,18 +401,34 @@ export default function DashboardPage() {
       const hist = raw ? JSON.parse(raw) : [];
       if (Array.isArray(hist)) {
         let items = 0; let scoreSum = 0;
+        const byTrackCat: Record<string, Record<string, { total: number; correct: number }>> = {};
         for (const r of hist) {
           const answered = Number(r?.totalAnswered) || 0;
           const correct = Number(r?.totalCorrect) || 0;
           items += answered;
           scoreSum += correct * 100; // each correct answer = 100%
+          // Per-track, per-category breakdown for the Skill Heatmap.
+          const tk = r?.track;
+          const cs = r?.catScores;
+          if (tk && cs && typeof cs === 'object') {
+            const tgt = byTrackCat[tk] || (byTrackCat[tk] = {});
+            for (const [cat, v] of Object.entries(cs)) {
+              const tot = Number((v as any)?.total) || 0;
+              const cor = Number((v as any)?.correct) || 0;
+              const acc = tgt[cat] || (tgt[cat] = { total: 0, correct: 0 });
+              acc.total += tot; acc.correct += cor;
+            }
+          }
         }
         setDiagAgg({ items, scoreSum });
+        setDiagByTrackCat(byTrackCat);
       } else {
         setDiagAgg({ items: 0, scoreSum: 0 });
+        setDiagByTrackCat({});
       }
     } catch {
       setDiagAgg({ items: 0, scoreSum: 0 });
+      setDiagByTrackCat({});
     }
   }, []);
   useEffect(() => {
@@ -543,26 +562,33 @@ export default function DashboardPage() {
   const topicRows = useMemo(() => {
     if (!selectedTrackKey) return [];
     const flashByCat = flashPerf[selectedTrackKey]?.byCat || {};
-    // Union of topics seen in flashcards/drills (flash_perf) and mock interviews.
+    const diagByCat = diagByTrackCat[selectedTrackKey] || {};
+    // Union of topics seen in flashcards/drills (flash_perf), mock interviews,
+    // and diagnostic. Each topic's accuracy is the blended average across all
+    // three sources, weighted by attempts.
     const cats = new Set<string>([
       ...Object.keys(flashByCat),
       ...mockTopicStats.map(m => m.category),
+      ...Object.keys(diagByCat),
     ]);
     return Array.from(cats)
       .map(topic => {
         const f = flashByCat[topic] || { seen: 0, pass: 0 };
         const m = mockTopicStats.find(x => x.category === topic);
+        const d = diagByCat[topic] || { total: 0, correct: 0 };
         const flashSeen = f.seen || 0;
-        const flashScoreSum = (f.pass || 0) * 100; // each flash pass = 100%
+        const flashScoreSum = (f.pass || 0) * 100; // each flash/drill pass = 100%
         const mockCount = m?.count || 0;
         const mockScoreSum = m?.scoreSum || 0;     // already 0-100 per attempt
-        const seen = flashSeen + mockCount;
-        const accuracy = seen > 0 ? Math.round((flashScoreSum + mockScoreSum) / seen) : 0;
+        const diagSeen = d.total || 0;
+        const diagScoreSum = (d.correct || 0) * 100; // each correct diag answer = 100%
+        const seen = flashSeen + mockCount + diagSeen;
+        const accuracy = seen > 0 ? Math.round((flashScoreSum + mockScoreSum + diagScoreSum) / seen) : 0;
         return { topic, seen, accuracy };
       })
       .filter(r => r.seen > 0)
       .sort((a, b) => a.accuracy - b.accuracy);
-  }, [flashPerf, selectedTrackKey, mockTopicStats]);
+  }, [flashPerf, selectedTrackKey, mockTopicStats, diagByTrackCat]);
 
   const hasAnyTopicData = topicRows.length > 0;
 

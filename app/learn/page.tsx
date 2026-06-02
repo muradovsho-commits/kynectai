@@ -156,7 +156,8 @@ export default function LearnPage() {
             </div>
             <div className="learn-hero-stats">
               <div>
-                <div className="learn-hero-stat-val">7</div>
+                {/* Career roadmap tracks defined in recruiting-manual (ib, pe, consulting, ge, am, accounting, st, er, re, vc, rx). */}
+                <div className="learn-hero-stat-val">11</div>
                 <div className="learn-hero-stat-label">Active Paths</div>
               </div>
               <div>
