@@ -255,6 +255,19 @@ function FlashcardsContent() {
     setBookmarks(next);
     saveBookmarks(next);
   }, [activeTrack, bookmarks, bookmarkSet]);
+  // Hand the current question off to the AI coach with it pre-loaded and the
+  // matching track selected. Coach reads this on mount and clears it.
+  const askCoach = useCallback((c: Flashcard) => {
+    const trackName = TRACKS.find(t => t.id === activeTrack)?.title || 'Investment Banking';
+    try {
+      sessionStorage.setItem('offerbell_coach_prefill', JSON.stringify({
+        track: trackName,
+        text: `I'm practicing ${trackName} interview flashcards and want help with this question:\n\n"${c.q}"\n\nWalk me through how to think about it and what a strong answer looks like.`,
+        ts: Date.now(),
+      }));
+    } catch {}
+    router.push('/coach');
+  }, [activeTrack, router]);
   const trackBookmarkCount = useMemo(() => {
     const m: Record<string, number> = {};
     for (const b of bookmarks) m[b.track] = (m[b.track] || 0) + 1;
@@ -611,6 +624,10 @@ function FlashcardsContent() {
                       {card.difficulty && <span className={`flash-tag flash-tag-diff-${card.difficulty.toLowerCase()}`}>{card.difficulty}</span>}
                       <button className={`flash-bookmark-btn${isBookmarked(card.q) ? ' active' : ''}`} onClick={() => toggleBookmark(card)} type="button" title={isBookmarked(card.q) ? 'Remove bookmark' : 'Bookmark this question'}>
                         {isBookmarked(card.q) ? BM_ICON_FILLED : BM_ICON}
+                      </button>
+                      <button className="flash-ask-ai-btn" onClick={() => askCoach(card)} type="button" title="Ask the AI coach for help with this question">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        Ask AI
                       </button>
                     </div>
                     <div className="flash-question">{card.q}</div>

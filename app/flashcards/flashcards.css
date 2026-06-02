@@ -606,6 +606,9 @@ html[data-theme="dark"] .flash-app {
 .flash-bookmark-btn:hover { color: var(--text); transform: scale(1.15); }
 .flash-bookmark-btn.active { color: #f59e0b; }
 .flash-bookmark-btn.active:hover { color: #d97706; }
+.flash-ask-ai-btn { display: inline-flex; align-items: center; gap: 5px; background: none; border: 1px solid var(--border); color: var(--text-3); cursor: pointer; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; font-family: 'Sora', sans-serif; transition: color 0.15s, border-color 0.15s, background 0.15s; flex-shrink: 0; margin-left: 8px; line-height: 1; }
+.flash-ask-ai-btn:hover { color: #7c3aed; border-color: #7c3aed; background: rgba(124, 58, 237, 0.07); }
+.flash-ask-ai-btn svg { flex-shrink: 0; }
 .flash-bookmarks-toggle { display: inline-flex; align-items: center; gap: 4px; padding: 6px 10px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-3); font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Sora', sans-serif; transition: all 0.15s; }
 .flash-bookmarks-toggle:hover:not(:disabled) { border-color: #f59e0b; color: #f59e0b; }
 .flash-bookmarks-toggle:disabled { opacity: 0.35; cursor: default; }

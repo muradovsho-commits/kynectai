@@ -1116,6 +1116,26 @@ export default function CoachPage() {
     scrollBottom();
   };
 
+  // If the user came from a flashcard's "Ask AI" button, the question was
+  // stashed in sessionStorage. Load it into the input, select the matching
+  // track, and focus so they can send (or edit) immediately. Runs once.
+  const prefillDoneRef = useRef(false);
+  useEffect(() => {
+    if (prefillDoneRef.current) return;
+    let pf: any = null;
+    try { const raw = sessionStorage.getItem('offerbell_coach_prefill'); if (raw) pf = JSON.parse(raw); } catch {}
+    if (!pf || !pf.text) return;
+    prefillDoneRef.current = true;
+    try { sessionStorage.removeItem('offerbell_coach_prefill'); } catch {}
+    if (pf.track && TRACKS.includes(pf.track)) setActiveTrack(pf.track);
+    setInputVal(pf.text);
+    setTimeout(() => {
+      const el = textareaRef.current;
+      if (el) { el.focus(); el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 140) + 'px'; }
+    }, 50);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleKey = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(inputVal); }
   };
