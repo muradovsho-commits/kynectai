@@ -977,21 +977,7 @@ export default function MockInterviewPage() {
         </div>
 
         <div className="mi-modes">
-          <button type="button" className="mi-mode mi-mode-primary" onClick={openSetup}>
-            <div className="mi-mode-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-6 4 6 4V8z"/></svg>
-            </div>
-            <div className="mi-mode-body">
-              <div className="mi-mode-title">
-                Start a full interview
-                {!isPro && <span className="mi-pro-badge mi-pro-badge--on-dark">Pro</span>}
-              </div>
-              <div className="mi-mode-sub">A simulated 10-question interview. Pick the type, then run through it like the real thing.</div>
-            </div>
-            <div className="mi-mode-arrow">→</div>
-          </button>
-
-          <button type="button" className="mi-mode" onClick={() => {
+          <button type="button" className="mi-mode mi-mode-primary" onClick={() => {
             const t = TRACKS.find(t => t.id === sidebarTrackId) || TRACKS[0];
             setActiveTrack(t);
             setExpandedCats(new Set());
@@ -1003,7 +989,21 @@ export default function MockInterviewPage() {
             </div>
             <div className="mi-mode-body">
               <div className="mi-mode-title">Practice a single question</div>
-              <div className="mi-mode-sub">Pick any question from the flashcard bank. Record once. Get focused feedback.</div>
+              <div className="mi-mode-sub">Pick any question from the flashcard bank. Record once. Get focused feedback. Free to use.</div>
+            </div>
+            <div className="mi-mode-arrow">→</div>
+          </button>
+
+          <button type="button" className="mi-mode" onClick={openSetup}>
+            <div className="mi-mode-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-6 4 6 4V8z"/></svg>
+            </div>
+            <div className="mi-mode-body">
+              <div className="mi-mode-title">
+                Start a full interview
+                {!isPro && <span className="mi-pro-badge">Pro</span>}
+              </div>
+              <div className="mi-mode-sub">A simulated 10-question interview. Pick the type, then run through it like the real thing.</div>
             </div>
             <div className="mi-mode-arrow">→</div>
           </button>
