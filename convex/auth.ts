@@ -326,8 +326,21 @@ export const deleteAccount = mutation({
 // Set Stripe IDs and subscription state when a checkout completes or the sub
 // is first created/linked. Looks up the user by userId (passed via Stripe
 // metadata) so we can attribute Stripe events back to a Convex user.
+// Guard: these mutations change billing/plan state. They are public mutations
+// (the Stripe webhook calls them via ConvexHttpClient, which can't call
+// internal functions), so without this check any browser could call them and
+// grant itself Elite. STRIPE_SYNC_SECRET is set in the Convex deployment env
+// and the Vercel env; the webhook passes it, browsers don't know it.
+function assertSyncSecret(secret: string) {
+  const expected = process.env.STRIPE_SYNC_SECRET;
+  if (!expected || secret !== expected) {
+    throw new Error("Unauthorized");
+  }
+}
+
 export const setStripeSubscription = mutation({
   args: {
+    syncSecret: v.string(),
     userId: v.string(),
     stripeCustomerId: v.string(),
     stripeSubscriptionId: v.string(),
@@ -336,6 +349,7 @@ export const setStripeSubscription = mutation({
     plan: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    assertSyncSecret(args.syncSecret);
     const users = await ctx.db.query("users").collect();
     const user = users.find((u) => u._id.toString() === args.userId);
     if (!user) {
@@ -365,6 +379,7 @@ export const setStripeSubscription = mutation({
 // user by stripeSubscriptionId since the webhook gives us that, not userId.
 export const applyStripeSubscriptionUpdate = mutation({
   args: {
+    syncSecret: v.string(),
     stripeSubscriptionId: v.string(),
     subscriptionStatus: v.string(),
     subscriptionCurrentPeriodEnd: v.optional(v.number()),
@@ -372,6 +387,7 @@ export const applyStripeSubscriptionUpdate = mutation({
     clearPendingChange: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
+    assertSyncSecret(args.syncSecret);
     const user = await ctx.db
       .query("users")
       .withIndex("by_stripeSubscriptionId", (q) =>
@@ -418,9 +434,11 @@ export const applyStripeSubscriptionUpdate = mutation({
 // gets a clean slate.
 export const applyStripeSubscriptionCanceled = mutation({
   args: {
+    syncSecret: v.string(),
     stripeSubscriptionId: v.string(),
   },
   handler: async (ctx, args) => {
+    assertSyncSecret(args.syncSecret);
     const user = await ctx.db
       .query("users")
       .withIndex("by_stripeSubscriptionId", (q) =>

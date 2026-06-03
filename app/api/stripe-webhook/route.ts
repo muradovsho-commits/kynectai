@@ -93,6 +93,7 @@ export async function POST(request: NextRequest) {
   }
 
   const convex = new ConvexHttpClient(convexUrl);
+  const syncSecret = process.env.STRIPE_SYNC_SECRET || "";
 
   try {
     switch (event.type) {
@@ -124,6 +125,7 @@ export async function POST(request: NextRequest) {
         const periodEndMs = periodEndMsFromSub(sub);
 
         await convex.mutation((api as any).auth.setStripeSubscription, {
+          syncSecret,
           userId,
           stripeCustomerId: customerId,
           stripeSubscriptionId: subscriptionId,
@@ -151,6 +153,7 @@ export async function POST(request: NextRequest) {
         // the user's intent - the change has not yet taken effect.
         // The .deleted handler clears it explicitly when a cancel finalizes.
         await convex.mutation((api as any).auth.applyStripeSubscriptionUpdate, {
+          syncSecret,
           stripeSubscriptionId: sub.id,
           subscriptionStatus: sub.status,
           subscriptionCurrentPeriodEnd: periodEndMs,
@@ -169,6 +172,7 @@ export async function POST(request: NextRequest) {
       case 'customer.subscription.deleted': {
         const sub = event.data.object as Stripe.Subscription;
         await convex.mutation((api as any).auth.applyStripeSubscriptionCanceled, {
+          syncSecret,
           stripeSubscriptionId: sub.id,
         });
         console.log('[stripe-webhook] Cancellation finalized', sub.id);
@@ -188,6 +192,7 @@ export async function POST(request: NextRequest) {
           : (invoice as any).subscription?.id;
         if (subId) {
           await convex.mutation((api as any).auth.applyStripeSubscriptionUpdate, {
+          syncSecret,
             stripeSubscriptionId: subId,
             subscriptionStatus: 'past_due',
           });
