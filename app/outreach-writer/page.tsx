@@ -173,7 +173,7 @@ export default function OutreachWriterPage() {
     (async () => {
       try {
         const client = new ConvexHttpClient(url);
-        const userRow: any = await client.query((api as any).users.getUser, { userId });
+        const userRow: any = await client.query((api as any).users.getUser, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
         if (cancelled) return;
         if (userRow?.found) {
           if (userRow.plan === 'free' || userRow.plan === 'pro' || userRow.plan === 'elite') {

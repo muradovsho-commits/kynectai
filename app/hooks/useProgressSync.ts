@@ -367,14 +367,14 @@ export function useProgressSync() {
         void flashPerfPromise;
         void diagHistoryPromise;
 
-        const cloudData = await client.query(api.progress.loadProgress, { userId });
+        const cloudData = await client.query(api.progress.loadProgress, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
 
         if (!cloudData) {
           // No cloud data - seed from local only if local has meaningful data.
           const local = gatherLocalData();
           const localStr = JSON.stringify(local);
           if (Object.keys(local).length > 2) {
-            await saveProgress({ userId, data: localStr });
+            await saveProgress({ userId, data: localStr, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
             lastPushedHashRef.current = hashString(localStr);
           }
           return;
@@ -394,7 +394,7 @@ export function useProgressSync() {
         // from what's already in cloud. Saves a round trip in the common
         // case where local is empty and cloud is the source of truth.
         if (mergedHash !== cloudHash) {
-          await saveProgress({ userId, data: mergedStr });
+          await saveProgress({ userId, data: mergedStr, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
         }
         lastPushedHashRef.current = mergedHash;
       } catch (e) {
@@ -439,7 +439,7 @@ export function useProgressSync() {
 
     isPushingRef.current = true;
     try {
-      await saveProgress({ userId: uid, data: localStr });
+      await saveProgress({ userId: uid, data: localStr, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
       lastPushedHashRef.current = localHash;
     } catch (e) {
       console.error('[useProgressSync] push failed:', e);

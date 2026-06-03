@@ -64,8 +64,8 @@ function SigninContent() {
           const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
           if (convexUrl) {
             const httpClient = new ConvexHttpClient(convexUrl);
-            const cloudResult = await httpClient.query(api.progress.loadProgress, { userId: id });
-            try { dbProfile = await httpClient.query((api as any).users.getUser, { userId: id }); } catch {}
+            const cloudResult = await httpClient.query(api.progress.loadProgress, { userId: id, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
+            try { dbProfile = await httpClient.query((api as any).users.getUser, { userId: id, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) }); } catch {}
             if (cloudResult && cloudResult.data) {
               const cloud: Record<string, string> = JSON.parse(cloudResult.data);
               for (const [key, val] of Object.entries(cloud)) {

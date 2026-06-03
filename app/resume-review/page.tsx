@@ -107,7 +107,7 @@ export default function ResumeReviewPage() {
         // /checkout/success. Writing here would downgrade a paying user
         // across the whole app. Only this page's chip updates - other
         // pages keep their own state.
-        const userRow: any = await client.query((api as any).users.getUser, { userId });
+        const userRow: any = await client.query((api as any).users.getUser, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
         if (!cancelled && userRow?.found && (userRow.plan === 'free' || userRow.plan === 'pro' || userRow.plan === 'elite')) {
           setUserPlan(userRow.plan);
         }

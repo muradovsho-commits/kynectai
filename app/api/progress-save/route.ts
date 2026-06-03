@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     if (!userId || !data) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
-    await convex.mutation(api.progress.saveProgress, { userId, data });
+    await convex.mutation(api.progress.saveProgress, { userId, data, serverSecret: process.env.AUTH_SESSION_SECRET });
     return NextResponse.json({ success: true });
   } catch (err: any) {
     console.error("Progress save error:", err);

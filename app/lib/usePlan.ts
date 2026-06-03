@@ -55,7 +55,7 @@ export function useUserPlanStatus(): { plan: PlanTier; isVerified: boolean } {
     (async () => {
       try {
         const client = new ConvexHttpClient(url);
-        const userRow: any = await client.query((api as any).users.getUser, { userId });
+        const userRow: any = await client.query((api as any).users.getUser, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
         if (cancelled) return;
         const truth = userRow?.plan;
         const planValue: PlanTier = (truth === 'elite' || truth === 'pro') ? truth : 'free';

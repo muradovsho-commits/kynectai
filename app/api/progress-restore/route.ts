@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const result = await convex.query(api.progress.loadProgress, { userId });
+    const result = await convex.query(api.progress.loadProgress, { userId, serverSecret: process.env.AUTH_SESSION_SECRET });
     if (!result) {
       return NextResponse.json({ data: null });
     }

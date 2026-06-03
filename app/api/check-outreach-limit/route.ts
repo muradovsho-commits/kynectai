@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     }
     const convex = new ConvexHttpClient(convexUrl);
 
-    const u: any = await convex.query((api as any).users.getUser, { userId });
+    const u: any = await convex.query((api as any).users.getUser, { userId, serverSecret: process.env.AUTH_SESSION_SECRET });
     const plan: "free" | "pro" | "elite" =
       u?.found && (u.plan === "elite" || u.plan === "pro") ? u.plan : "free";
 

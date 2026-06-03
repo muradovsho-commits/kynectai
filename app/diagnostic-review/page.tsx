@@ -308,7 +308,7 @@ export default function DiagnosticReviewPage() {
     }
     if (userId && saveProgressMut) {
       try {
-        await saveProgressMut({ userId, data: JSON.stringify({ [STORAGE_KEY]: JSON.stringify(remaining) }) });
+        await saveProgressMut({ userId, data: JSON.stringify({ [STORAGE_KEY]: JSON.stringify(remaining) }), sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
       } catch {}
     }
     setResetTarget(null);

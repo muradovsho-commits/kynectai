@@ -123,7 +123,7 @@ const handleDowngrade = async () => {
       if (convexUrl) {
         const { ConvexHttpClient } = await import('convex/browser');
         const client = new ConvexHttpClient(convexUrl);
-        const user = await client.query((api as any).users.getUser, { userId });
+        const user = await client.query((api as any).users.getUser, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
         subscriptionId = user?.stripeSubscriptionId || undefined;
       }
       if (!subscriptionId) {
@@ -215,7 +215,7 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
         if (convexUrl) {
           const { ConvexHttpClient } = await import('convex/browser');
           const client = new ConvexHttpClient(convexUrl);
-          const user = await client.query((api as any).users.getUser, { userId });
+          const user = await client.query((api as any).users.getUser, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
           subscriptionId = user?.stripeSubscriptionId || undefined;
         }
         if (!subscriptionId) {

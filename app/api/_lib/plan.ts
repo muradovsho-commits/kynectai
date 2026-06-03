@@ -40,7 +40,7 @@ function getConvex() {
 // Returns the plan tier, defaulting to 'free' if user not found or no plan set.
 export async function getPlanFromConvex(userId: string): Promise<"free" | "pro" | "elite"> {
   const convex = getConvex();
-  const u: any = await convex.query((api as any).users.getUser, { userId });
+  const u: any = await convex.query((api as any).users.getUser, { userId, serverSecret: process.env.AUTH_SESSION_SECRET });
   if (!u || !u.found) return "free";
   const plan = u.plan;
   if (plan === "elite" || plan === "pro") return plan;
@@ -56,7 +56,7 @@ export async function checkPlanLimit(
   corsHeaders: Record<string, string>
 ): Promise<PlanCheckResult> {
   const convex = getConvex();
-  const userRow: any = await convex.query((api as any).users.getUser, { userId });
+  const userRow: any = await convex.query((api as any).users.getUser, { userId, serverSecret: process.env.AUTH_SESSION_SECRET });
   const plan: "free" | "pro" | "elite" =
     userRow?.found && (userRow.plan === "elite" || userRow.plan === "pro") ? userRow.plan : "free";
 

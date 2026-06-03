@@ -220,7 +220,7 @@ export default function MyAccountPage() {
     (async () => {
       try {
         const client = new ConvexHttpClient(url);
-        const u = await client.query((api as any).users.getUser, { userId });
+        const u = await client.query((api as any).users.getUser, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
         if (cancelled) return;
         setDbUser(u);
         if (!u || !u.found) { setProfileLoaded(true); return; }
@@ -327,7 +327,7 @@ export default function MyAccountPage() {
       if (convexUrl) {
         const { ConvexHttpClient } = await import('convex/browser');
         const client = new ConvexHttpClient(convexUrl);
-        const u = await client.query((api as any).users.getUser, { userId: uid });
+        const u = await client.query((api as any).users.getUser, { userId: uid, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
         subscriptionId = u?.stripeSubscriptionId || undefined;
       }
       if (!uid || !subscriptionId) {
@@ -421,7 +421,7 @@ export default function MyAccountPage() {
       const data: Record<string, string> = {};
       for (const key of SYNC_KEYS) { const val = localStorage.getItem(key); if (val !== null) data[key] = val; }
       if (Object.keys(data).length > 0) {
-        const payload = { userId: uid, data: JSON.stringify(data) };
+        const payload = { userId: uid, data: JSON.stringify(data), sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) };
         try { if (saveProgressMut) await saveProgressMut(payload); }
         catch {
           try {
