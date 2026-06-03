@@ -44,6 +44,7 @@ function SigninContent() {
         // ── Write the new session ──
         let finalPlan = result?.plan || 'free';
         window.localStorage.setItem("offerbell_user_id", id);
+        if (result?.sessionToken) window.localStorage.setItem("offerbell_session", result.sessionToken);
         window.localStorage.setItem("offerbell_messages_sent", String(result?.outreachCount || 0));
         document.cookie = `offerbell_user_id=${encodeURIComponent(id)}; path=/; max-age=${60 * 60 * 24 * 30}`;
         if (result?.planActivatedAt) {

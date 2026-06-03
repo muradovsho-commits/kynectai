@@ -1,6 +1,94 @@
 import { mutation } from "./_generated/server";
 import { v, ConvexError } from "convex/values";
 
+// ─────────────────────────────────────────────────────────────────────────────
+// SESSION TOKENS
+// Stateless, signed tokens so backend functions can verify *which* user is
+// calling instead of trusting a userId the browser sends. The browser only
+// stores/forwards the opaque token string; it never sees AUTH_SESSION_SECRET
+// and cannot mint a token for another user.
+//
+// Token format:  b64url(userId).b64url(expMs).hexHmacSHA256("userId.expMs")
+// signed with AUTH_SESSION_SECRET (set in the Convex deployment env).
+//
+// Rollout is controlled by that env var, which acts as a kill switch:
+//   - secret NOT set -> requireUser() fail-opens (returns args.userId). The app
+//     behaves exactly as before. Safe to deploy this code with no secret set.
+//   - secret set      -> requireUser() requires a valid token matching userId.
+//     Remove the secret to instantly revert to the old behavior (no redeploy).
+// ─────────────────────────────────────────────────────────────────────────────
+const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 30; // 30 days
+
+function b64url(s: string): string {
+  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function unb64url(s: string): string {
+  const pad = s.length % 4 === 0 ? "" : "=".repeat(4 - (s.length % 4));
+  return atob(s.replace(/-/g, "+").replace(/_/g, "/") + pad);
+}
+async function hmacHex(message: string, secret: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(message));
+  const bytes = new Uint8Array(sig);
+  let hex = "";
+  for (let i = 0; i < bytes.length; i++) hex += bytes[i].toString(16).padStart(2, "0");
+  return hex;
+}
+
+// Mint a token for a freshly authenticated user. Returns "" when no secret is
+// configured (the client just stores an empty string and nothing enforces yet).
+export async function makeSessionToken(userId: string): Promise<string> {
+  const secret = process.env.AUTH_SESSION_SECRET;
+  if (!secret) return "";
+  const exp = (Date.now() + SESSION_TTL_MS).toString();
+  const sig = await hmacHex(`${userId}.${exp}`, secret);
+  return `${b64url(userId)}.${b64url(exp)}.${sig}`;
+}
+
+async function verifySessionToken(token: string | undefined): Promise<string | null> {
+  const secret = process.env.AUTH_SESSION_SECRET;
+  if (!secret || !token) return null;
+  const parts = token.split(".");
+  if (parts.length !== 3) return null;
+  let userId: string, exp: string;
+  try {
+    userId = unb64url(parts[0]);
+    exp = unb64url(parts[1]);
+  } catch {
+    return null;
+  }
+  const expMs = Number(exp);
+  if (!Number.isFinite(expMs) || Date.now() > expMs) return null;
+  const expected = await hmacHex(`${userId}.${exp}`, secret);
+  if (expected.length !== parts[2].length) return null;
+  let diff = 0;
+  for (let i = 0; i < expected.length; i++) {
+    diff |= expected.charCodeAt(i) ^ parts[2].charCodeAt(i);
+  }
+  return diff === 0 ? userId : null;
+}
+
+// Enforcement helper for protected functions. Pass the incoming args (which
+// include userId and an optional sessionToken). Returns the trusted userId, or
+// throws if the secret is set and the token is missing/invalid/mismatched.
+// Fail-open while AUTH_SESSION_SECRET is unset so a missing env var can never
+// lock users out.
+export async function requireUser(args: { userId: string; sessionToken?: string }): Promise<string> {
+  const secret = process.env.AUTH_SESSION_SECRET;
+  if (!secret) return args.userId;
+  const verified = await verifySessionToken(args.sessionToken);
+  if (!verified || verified !== args.userId) {
+    throw new ConvexError("Not authenticated. Please sign in again.");
+  }
+  return verified;
+}
+
 // Simple hash function for passwords (not bcrypt, but sufficient for MVP)
 // In production, use a proper auth provider like Clerk or Auth0
 function simpleHash(str: string): string {
@@ -179,7 +267,7 @@ export const signIn = mutation({
       throw new ConvexError("Please verify your email address to sign in.");
     }
 
-    return { userId: user._id.toString(), name: user.name, email: user.email, outreachCount: user.outreachCount || 0, plan: user.plan || 'free', planActivatedAt: user.planActivatedAt || null, promoCode: user.promoCode || null, onboardingComplete: user.onboardingComplete || false };
+    return { userId: user._id.toString(), sessionToken: await makeSessionToken(user._id.toString()), name: user.name, email: user.email, outreachCount: user.outreachCount || 0, plan: user.plan || 'free', planActivatedAt: user.planActivatedAt || null, promoCode: user.promoCode || null, onboardingComplete: user.onboardingComplete || false };
   },
 });
 
