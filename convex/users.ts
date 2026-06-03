@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { requireUser } from "./auth";
 
 const DEMO_USER_ID = "demo-user";
 
@@ -116,8 +117,9 @@ export const updateProfilePic = mutation({
 // subscription fields so the cancel/switch UI can work without a separate
 // query.
 export const getUser = query({
-  args: { userId: v.string() },
+  args: { userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()) },
   handler: async (ctx, args) => {
+    await requireUser(args);
     const user = await findUserByStringId(ctx, args.userId);
     if (!user) {
       return {

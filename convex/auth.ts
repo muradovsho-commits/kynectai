@@ -79,9 +79,12 @@ async function verifySessionToken(token: string | undefined): Promise<string | n
 // throws if the secret is set and the token is missing/invalid/mismatched.
 // Fail-open while AUTH_SESSION_SECRET is unset so a missing env var can never
 // lock users out.
-export async function requireUser(args: { userId: string; sessionToken?: string }): Promise<string> {
+export async function requireUser(args: { userId: string; sessionToken?: string; serverSecret?: string }): Promise<string> {
   const secret = process.env.AUTH_SESSION_SECRET;
   if (!secret) return args.userId;
+  // Trusted server-to-Convex calls (our own Next.js API routes) prove they are
+  // the backend by passing the shared secret, which browsers never have.
+  if (args.serverSecret && args.serverSecret === secret) return args.userId;
   const verified = await verifySessionToken(args.sessionToken);
   if (!verified || verified !== args.userId) {
     throw new ConvexError("Not authenticated. Please sign in again.");

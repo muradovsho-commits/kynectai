@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { getUserEmail } from "./_helpers";
+import { requireUser } from "./auth";
 
 // Truncates an array stored as a JSON string to max N elements.
 // Returns the (possibly truncated) JSON string. Safe on bad JSON.
@@ -26,9 +27,12 @@ function capArrayJSON(raw: unknown, max: number): unknown {
 export const saveProgress = mutation({
   args: {
     userId: v.string(),
+    sessionToken: v.optional(v.string()),
+    serverSecret: v.optional(v.string()),
     data: v.string(), // JSON string of all localStorage keys
   },
   handler: async (ctx, args) => {
+    await requireUser(args);
     // Look up plan from the users table. We try both shapes of userId since
     // some callers pass a Convex _id and others pass a custom string id.
     // Default to 'free' if not found - safer default (caps stay enforced).
@@ -99,8 +103,11 @@ export const saveProgress = mutation({
 export const loadProgress = query({
   args: {
     userId: v.string(),
+    sessionToken: v.optional(v.string()),
+    serverSecret: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requireUser(args);
     const record = await ctx.db
       .query("userProgress")
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
