@@ -229,6 +229,13 @@ export default function MyAccountPage() {
         if (u.firstName) setFirstName(u.firstName);
         if (u.lastName) setLastName(u.lastName);
         if (u.email) setEmail(u.email);
+        // Free-plan outreach is a lifetime count on the user row (outreachCount,
+        // surfaced as messagesUsed). Refresh from the server so the usage panel
+        // is correct even on a fresh device where localStorage is empty.
+        if (typeof u.messagesUsed === 'number') {
+          setMessagesUsed(u.messagesUsed);
+          try { localStorage.setItem('offerbell_messages_sent', String(u.messagesUsed)); } catch {}
+        }
         if (u.university) setSchool(u.university);
         if (u.graduationYear) {
           const classOf = u.graduationYear.startsWith('Class of')
@@ -445,7 +452,10 @@ export default function MyAccountPage() {
     const plan = (userPlan === 'elite' ? 'elite' : userPlan === 'pro' ? 'pro' : 'free') as 'free' | 'pro' | 'elite';
     const coachUsed = weeklyUsage?.coach ?? 0;
     const reviewUsed = weeklyUsage?.resumeReview ?? (plan === 'free' ? resumeLifetime : resumeUsed);
-    const writerUsed = weeklyUsage?.outreachWriter ?? messagesUsed;
+    // Free outreach is a LIFETIME count (messagesUsed/outreachCount); paid is
+    // weekly (weeklyUsage.outreachWriter). The weekly value is 0 for free, so a
+    // plain ?? would wrongly show 0 instead of the lifetime count.
+    const writerUsed = plan === 'free' ? messagesUsed : (weeklyUsage?.outreachWriter ?? 0);
     const mockUsed = weeklyUsage?.mockInterview ?? 0;
     return [
       { key: 'coach',          label: 'AI Coach',         icon: 'chat',     used: coachUsed,  limit: PLAN_LIMITS.coach[plan],          isLifetime: false },
@@ -576,7 +586,7 @@ export default function MyAccountPage() {
           }}>
             <div style={{ flex: 1, minWidth: 220 }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
-                Payment failed — please update your payment method
+                Payment failed. Please update your payment method
               </div>
               <div style={{ fontSize: 12, color: 'var(--text-3)' }}>
                 Your last charge was declined. Stripe will retry automatically, but if it keeps failing your subscription will be cancelled.
