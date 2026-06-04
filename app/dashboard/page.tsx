@@ -2,7 +2,7 @@
 
 import Sidebar from "../components/Sidebar";
 import TutorialOverlay from "../components/TutorialOverlay";
-import { useEffect, useLayoutEffect, useState, useMemo, useCallback, useRef } from "react";
+import { useEffect, useLayoutEffect, useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ConvexHttpClient } from "convex/browser";
@@ -40,31 +40,28 @@ type DashboardWidgetKey =
   | 'focus'
   | 'outreach';
 
-type WidgetSize = 's' | 'm' | 'l';
-type DashboardConfig = {
-  order: DashboardWidgetKey[];
-  sizes: Record<DashboardWidgetKey, WidgetSize>;
-  hidden: Record<DashboardWidgetKey, boolean>;
-};
+type DashboardConfig = { widgets: Record<DashboardWidgetKey, boolean> };
 
-const ALL_WIDGET_KEYS: DashboardWidgetKey[] = ['weeklySummary','weeklyActivity','skillHeatmap','calendar','focus','outreach'];
-
-const WIDGET_DEFS: { key: DashboardWidgetKey; label: string; desc: string }[] = [
-  { key: 'weeklySummary',  label: 'Weekly Summary', desc: 'Drills, mock interviews, coach chats, avg score' },
-  { key: 'weeklyActivity', label: 'Weekly Activity', desc: 'Hours per day bar chart, Monday through Sunday' },
-  { key: 'skillHeatmap',   label: 'Skill Heatmap', desc: 'Per-topic accuracy across your active track' },
-  { key: 'calendar',       label: 'Calendar & Streak', desc: 'Monthly activity grid with current streak' },
-  { key: 'focus',          label: 'What to Focus On', desc: 'Personalized recommendations based on your data' },
-  { key: 'outreach',       label: 'Outreach Pipeline', desc: 'Contact pipeline summary by status' },
+const WIDGET_DEFS: { key: DashboardWidgetKey; label: string; desc: string; col: 'left' | 'right' }[] = [
+  { key: 'weeklySummary',  label: 'Weekly Summary', desc: 'Drills, mock interviews, coach chats, avg score', col: 'left' },
+  { key: 'weeklyActivity', label: 'Weekly Activity', desc: 'Hours per day bar chart, Monday through Sunday', col: 'left' },
+  { key: 'skillHeatmap',   label: 'Skill Heatmap', desc: 'Per-topic accuracy across your active track', col: 'left' },
+  { key: 'calendar',       label: 'Calendar & Streak', desc: 'Monthly activity grid with current streak', col: 'right' },
+  { key: 'focus',          label: 'What to Focus On', desc: 'Personalized recommendations based on your data', col: 'right' },
+  { key: 'outreach',       label: 'Outreach Pipeline', desc: 'Contact pipeline summary by status', col: 'right' },
 ];
 
-// Default layout mirrors the prior two-column look: wide summary + heatmap on the
-// left, compact calendar + focus on the right. Weekly Activity and Outreach are
-// off by default and live in the Add Widgets tray.
+// Divy spec: simple default: Weekly Summary, Skill Heatmap, Calendar, Focus.
+// Weekly Activity and Outreach are opt-in via Customize.
 const DEFAULT_DASHBOARD_CONFIG: DashboardConfig = {
-  order: ['weeklySummary','calendar','skillHeatmap','focus','weeklyActivity','outreach'],
-  sizes: { weeklySummary:'l', weeklyActivity:'m', skillHeatmap:'l', calendar:'s', focus:'s', outreach:'s' },
-  hidden: { weeklySummary:false, weeklyActivity:true, skillHeatmap:false, calendar:false, focus:false, outreach:true },
+  widgets: {
+    weeklySummary: true,
+    weeklyActivity: false,
+    skillHeatmap: true,
+    calendar: true,
+    focus: true,
+    outreach: false,
+  },
 };
 
 const DASHBOARD_CONFIG_KEY = 'offerbell_dashboard_config';
@@ -74,26 +71,14 @@ function loadDashboardConfig(): DashboardConfig {
     const raw = localStorage.getItem(DASHBOARD_CONFIG_KEY);
     if (!raw) return DEFAULT_DASHBOARD_CONFIG;
     const parsed = JSON.parse(raw);
-    const sizes = { ...DEFAULT_DASHBOARD_CONFIG.sizes };
-    const hidden = { ...DEFAULT_DASHBOARD_CONFIG.hidden };
-    // Migrate legacy shape { widgets: { key: boolean } } -> hidden map
-    if (parsed?.widgets && !parsed.order) {
-      for (const k of ALL_WIDGET_KEYS) {
-        if (typeof parsed.widgets[k] === 'boolean') hidden[k] = !parsed.widgets[k];
+    // Defensive merge: ensure every widget key exists (in case new ones were added)
+    const widgets = { ...DEFAULT_DASHBOARD_CONFIG.widgets };
+    if (parsed?.widgets && typeof parsed.widgets === 'object') {
+      for (const k of Object.keys(widgets) as DashboardWidgetKey[]) {
+        if (typeof parsed.widgets[k] === 'boolean') widgets[k] = parsed.widgets[k];
       }
-      return { order: [...DEFAULT_DASHBOARD_CONFIG.order], sizes, hidden };
     }
-    if (parsed?.sizes) for (const k of ALL_WIDGET_KEYS) {
-      if (parsed.sizes[k] === 's' || parsed.sizes[k] === 'm' || parsed.sizes[k] === 'l') sizes[k] = parsed.sizes[k];
-    }
-    if (parsed?.hidden) for (const k of ALL_WIDGET_KEYS) {
-      if (typeof parsed.hidden[k] === 'boolean') hidden[k] = parsed.hidden[k];
-    }
-    let order: DashboardWidgetKey[] = Array.isArray(parsed?.order)
-      ? parsed.order.filter((k: any) => ALL_WIDGET_KEYS.includes(k))
-      : [...DEFAULT_DASHBOARD_CONFIG.order];
-    for (const k of ALL_WIDGET_KEYS) if (!order.includes(k)) order.push(k);
-    return { order, sizes, hidden };
+    return { widgets };
   } catch { return DEFAULT_DASHBOARD_CONFIG; }
 }
 function saveDashboardConfig(cfg: DashboardConfig) {
@@ -165,9 +150,7 @@ export default function DashboardPage() {
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
   const [dashConfig, setDashConfig] = useState<DashboardConfig>(DEFAULT_DASHBOARD_CONFIG);
-  const [editing, setEditing] = useState(false);
-  const [sizePop, setSizePop] = useState<DashboardWidgetKey | null>(null);
-  const dragKeyRef = useRef<DashboardWidgetKey | null>(null);
+  const [showCustomize, setShowCustomize] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
     const complete = localStorage.getItem('offerbell_tutorial_complete');
@@ -202,32 +185,14 @@ export default function DashboardPage() {
     return () => window.removeEventListener('storage', onStorage);
   }, []);
 
-  function persistDash(next: DashboardConfig) {
+  function toggleWidget(key: DashboardWidgetKey) {
+    const next: DashboardConfig = { widgets: { ...dashConfig.widgets, [key]: !dashConfig.widgets[key] } };
     setDashConfig(next);
     saveDashboardConfig(next);
   }
-  function setWidgetSize(key: DashboardWidgetKey, size: WidgetSize) {
-    persistDash({ ...dashConfig, sizes: { ...dashConfig.sizes, [key]: size } });
-    setSizePop(null);
-  }
-  function removeWidget(key: DashboardWidgetKey) {
-    persistDash({ ...dashConfig, hidden: { ...dashConfig.hidden, [key]: true } });
-    setSizePop(null);
-  }
-  function addWidget(key: DashboardWidgetKey) {
-    const order = dashConfig.order.includes(key) ? dashConfig.order : [...dashConfig.order, key];
-    persistDash({ ...dashConfig, order, hidden: { ...dashConfig.hidden, [key]: false } });
-  }
-  function reorderWidgets(dragKey: DashboardWidgetKey, overKey: DashboardWidgetKey) {
-    if (dragKey === overKey) return;
-    const order = dashConfig.order.filter(k => k !== dragKey);
-    const idx = order.indexOf(overKey);
-    if (idx < 0) return;
-    order.splice(idx, 0, dragKey);
-    persistDash({ ...dashConfig, order });
-  }
   function resetDashConfig() {
-    persistDash(DEFAULT_DASHBOARD_CONFIG);
+    setDashConfig(DEFAULT_DASHBOARD_CONFIG);
+    saveDashboardConfig(DEFAULT_DASHBOARD_CONFIG);
   }
 
   // Upgrade toast from query param
@@ -803,246 +768,237 @@ export default function DashboardPage() {
                 <h1 className="dash-page-title">Your <em>Dashboard</em></h1>
                 <div className="dash-page-sub">Everything you&apos;ve practiced, sent, and learned - in one view</div>
               </div>
-              <button type="button" className={`dash-customize-btn${editing ? ' is-editing' : ''}`} onClick={() => { setEditing(e => !e); setSizePop(null); }}>
-                {editing ? (
-                  'Done'
-                ) : (
-                  <>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                    Customize
-                  </>
-                )}
+              <button type="button" className="dash-customize-btn" onClick={() => setShowCustomize(true)}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                Customize
               </button>
             </div>
 
-            <div className={`dash-wgrid${editing ? ' is-editing' : ''}`}>
-              {dashConfig.order.filter(k => !dashConfig.hidden[k]).map(key => {
-                const size = dashConfig.sizes[key] || 'm';
-                return (
-                  <div
-                    key={key}
-                    className="dash-tile"
-                    data-size={size}
-                    draggable={editing}
-                    onDragStart={() => { dragKeyRef.current = key; }}
-                    onDragOver={(e) => { if (editing && dragKeyRef.current) { e.preventDefault(); if (dragKeyRef.current !== key) reorderWidgets(dragKeyRef.current, key); } }}
-                    onDragEnd={() => { dragKeyRef.current = null; }}
-                  >
-                    {editing && (
-                      <div className="dash-tile-ctrls">
-                        <button type="button" className="dash-tile-rm" onClick={() => removeWidget(key)} aria-label="Remove widget">&minus;</button>
-                        <button type="button" className="dash-tile-rz" onClick={(e) => { e.stopPropagation(); setSizePop(p => p === key ? null : key); }}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
-                          Resize
-                        </button>
-                        {sizePop === key && (
-                          <div className="dash-size-pop" onClick={(e) => e.stopPropagation()}>
-                            {(['s','m','l'] as WidgetSize[]).map(sz => (
-                              <button key={sz} type="button" className={`dash-size-opt${size === sz ? ' sel' : ''}`} onClick={() => setWidgetSize(key, sz)}>
-                                <span className={`dash-size-ic ${sz}`} />
-                                <span>{sz === 's' ? 'Small' : sz === 'm' ? 'Medium' : 'Large'}</span>
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {key === 'weeklySummary' && (
-                      <div className="dash-card">
-                        <h2 className="dash-card-title">Weekly Summary</h2>
-                        <div className="dash-stats-grid">
-                          <div>
-                            <div className="dash-stat-lbl">Total Drills</div>
-                            <div className="dash-stat-num">{totalDrills}</div>
-                            <div className="dash-stat-sub">{totalDrills === 0 ? 'No drills yet' : `${totalDrills} sessions total`}</div>
-                          </div>
-                          <div>
-                            <div className="dash-stat-lbl">Mock Interviews</div>
-                            <div className="dash-stat-num">{mockStats?.count ?? 0}</div>
-                            <div className="dash-stat-sub">Avg score {mockStats?.avgGrade ?? 0}%</div>
-                          </div>
-                          <div>
-                            <div className="dash-stat-lbl">Coach Chats</div>
-                            <div className="dash-stat-num">{coachStats?.thisWeek ?? 0}</div>
-                            <div className="dash-stat-sub">This week</div>
-                          </div>
-                          <div>
-                            <div className="dash-stat-lbl">Avg Score</div>
-                            <div className="dash-stat-num">{avgScore}%</div>
-                            <div className="dash-stat-sub">{avgScoreData.items === 0 ? 'No scored activity yet' : `Based on ${avgScoreData.items} graded ${avgScoreData.items === 1 ? 'item' : 'items'}`}</div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {key === 'weeklyActivity' && (
-                      <div className="dash-card">
-                        <h2 className="dash-card-title">Weekly Activity</h2>
-                        <div className="dash-activity-sub">Hours per day</div>
-                        <div className="dash-bars">
-                          {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((day, i) => {
-                            const v = weeklyActivity[i];
-                            const heightPct = maxWeekly > 0 ? (v / maxWeekly) * 100 : 0;
-                            const display = v === 0 ? '0' : v < 0.1 ? v.toFixed(2) : v.toFixed(1);
-                            return (
-                              <div key={day} className="dash-bar-col">
-                                <div className="dash-bar-wrap">
-                                  <div className="dash-bar" style={{ height: `${heightPct}%` }} />
-                                </div>
-                                <div className="dash-bar-day">{day}</div>
-                                <div className="dash-bar-val">{display}</div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {key === 'skillHeatmap' && (
-                      <div className="dash-card">
-                        <h2 className="dash-card-title">
-                          Skill Heatmap
-                          {selectedTrackKey && (
-                            <span className="dash-card-title-tag">{TRACK_LABELS[selectedTrackKey]}</span>
-                          )}
-                        </h2>
-                        {!profile.vertical ? (
-                          <div className="dash-empty">Pick an industry in the sidebar to see your topic-level accuracy.</div>
-                        ) : !selectedTrackKey ? (
-                          <div className="dash-empty">Flashcards for {profile.vertical} aren&apos;t available yet. Try Coach or Mock Interview for this track.</div>
-                        ) : !hasAnyTopicData ? (
-                          <div className="dash-empty">
-                            Complete a few {TRACK_LABELS[selectedTrackKey]} flashcards or mock questions to see your topic-level accuracy.
-                          </div>
-                        ) : (
-                          <div className="dash-heatmap">
-                            {topicRows.map(row => (
-                              <Link
-                                key={row.topic}
-                                className="dash-heatmap-row"
-                                href={`/flashcards?track=${selectedTrackKey}`}
-                              >
-                                <div className="dash-heatmap-label">{row.topic}</div>
-                                <div className="dash-heatmap-bar-wrap">
-                                  <div
-                                    className="dash-heatmap-bar"
-                                    style={{
-                                      width: `${row.accuracy}%`,
-                                      background: row.accuracy >= 75 ? '#16a34a' : row.accuracy >= 50 ? '#f59e0b' : '#ef4444',
-                                    }}
-                                  />
-                                </div>
-                                <div className="dash-heatmap-val">{row.accuracy}%</div>
-                              </Link>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {key === 'calendar' && (
-                      <div className="dash-card dash-card-sm">
-                        <div className="dash-cal-head">
-                          <div className="dash-cal-title">{calendar.monthLabel}</div>
-                          <div className="dash-cal-meta">
-                            <span className="dash-cal-streak">{currentStreak} day streak</span>
-                          </div>
-                        </div>
-                        <div className="dash-cal-grid">
-                          {['MO','TU','WE','TH','FR','SA','SU'].map(d => (
-                            <div key={d} className="dash-cal-dow">{d}</div>
-                          ))}
-                          {calendar.cells.map((c, i) => {
-                            if (!c) return <div key={`empty-${i}`} className="dash-cal-day empty" />;
-                            return (
-                              <div
-                                key={c.date}
-                                className={`dash-cal-day${c.active ? ' active' : ''}${c.today ? ' today' : ''}`}
-                                title={c.date}
-                              >
-                                {c.day}
-                              </div>
-                            );
-                          })}
-                        </div>
-                        <Link className="dash-cal-link" href="/dashboard">View activity history</Link>
-                      </div>
-                    )}
-
-                    {key === 'focus' && (
-                      <div className="dash-card dash-card-sm">
-                        <h2 className="dash-card-title-sm">What to Focus On</h2>
-                        {focusItems.length === 0 ? (
-                          <div className="dash-empty" style={{ padding: '20px 0', fontSize: 13 }}>
-                            You&apos;re on top of things. Keep the streak going.
-                          </div>
-                        ) : (
-                          focusItems.map((f, i) => (
-                            <Link key={i} className="dash-focus-item" href={f.href}>
-                              <div className="dash-focus-icon">{focusIconFor(f.icon)}</div>
-                              <div className="dash-focus-body">
-                                <div className="dash-focus-head">
-                                  <span className="dash-focus-title">{f.title}</span>
-                                  <span className={`dash-focus-dot ${f.urgency}`} />
-                                </div>
-                                <div className="dash-focus-desc">{f.desc}</div>
-                              </div>
-                              <svg className="dash-focus-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
-                            </Link>
-                          ))
-                        )}
-                      </div>
-                    )}
-
-                    {key === 'outreach' && (
-                      <div className="dash-card dash-card-sm">
-                        <h2 className="dash-card-title-sm">Outreach</h2>
-                        <div className="dash-pipe-row dash-pipe-row-strong">
-                          <div className="dash-pipe-lbl">Total contacts</div>
-                          <div className="dash-pipe-val">{outreachContacts.length}</div>
-                        </div>
-                        {outreachStatuses.map(s => (
-                          <div key={s.key} className="dash-pipe-row">
-                            <div className="dash-pipe-lbl">{s.label}</div>
-                            <div className="dash-pipe-val">{outreachCounts[s.key] || 0}</div>
-                          </div>
-                        ))}
-                        <Link className="dash-solid-btn" href="/outreach-tracker">Open Outreach Tracker</Link>
-                      </div>
-                    )}
+            <div className="dash-grid">
+              {/* ─── LEFT COLUMN ─── */}
+              <div className="dash-col-left">
+                {/* Weekly Summary */}
+                {dashConfig.widgets.weeklySummary && (
+                <div className="dash-card">
+                  <h2 className="dash-card-title">Weekly Summary</h2>
+                  <div className="dash-stats-grid">
+                    <div>
+                      <div className="dash-stat-lbl">Total Drills</div>
+                      <div className="dash-stat-num">{totalDrills}</div>
+                      <div className="dash-stat-sub">{totalDrills === 0 ? 'No drills yet' : `${totalDrills} sessions total`}</div>
+                    </div>
+                    <div>
+                      <div className="dash-stat-lbl">Mock Interviews</div>
+                      <div className="dash-stat-num">{mockStats?.count ?? 0}</div>
+                      <div className="dash-stat-sub">Avg score {mockStats?.avgGrade ?? 0}%</div>
+                    </div>
+                    <div>
+                      <div className="dash-stat-lbl">Coach Chats</div>
+                      <div className="dash-stat-num">{coachStats?.thisWeek ?? 0}</div>
+                      <div className="dash-stat-sub">This week</div>
+                    </div>
+                    <div>
+                      <div className="dash-stat-lbl">Avg Score</div>
+                      <div className="dash-stat-num">{avgScore}%</div>
+                      <div className="dash-stat-sub">{avgScoreData.items === 0 ? 'No scored activity yet' : `Based on ${avgScoreData.items} graded ${avgScoreData.items === 1 ? 'item' : 'items'}`}</div>
+                    </div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+                )}
 
-            {editing && (
-              <div className="dash-tray">
-                <div className="dash-tray-lbl">Add Widgets</div>
-                <div className="dash-tray-items">
-                  {ALL_WIDGET_KEYS.filter(k => dashConfig.hidden[k]).length === 0 ? (
-                    <div className="dash-tray-empty">Every widget is on your dashboard.</div>
-                  ) : (
-                    ALL_WIDGET_KEYS.filter(k => dashConfig.hidden[k]).map(k => {
-                      const def = WIDGET_DEFS.find(w => w.key === k)!;
+                {/* Weekly Activity */}
+                {dashConfig.widgets.weeklyActivity && (
+                <div className="dash-card">
+                  <h2 className="dash-card-title">Weekly Activity</h2>
+                  <div className="dash-activity-sub">Hours per day</div>
+                  <div className="dash-bars">
+                    {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((day, i) => {
+                      const v = weeklyActivity[i];
+                      const heightPct = maxWeekly > 0 ? (v / maxWeekly) * 100 : 0;
+                      const display = v === 0 ? '0' : v < 0.1 ? v.toFixed(2) : v.toFixed(1);
                       return (
-                        <button key={k} type="button" className="dash-chip" onClick={() => addWidget(k)}>
-                          <span className="dash-chip-plus">+</span>
-                          <span className="dash-chip-text">
-                            <span className="dash-chip-label">{def.label}</span>
-                            <span className="dash-chip-desc">{def.desc}</span>
-                          </span>
-                        </button>
+                        <div key={day} className="dash-bar-col">
+                          <div className="dash-bar-wrap">
+                            <div className="dash-bar" style={{ height: `${heightPct}%` }} />
+                          </div>
+                          <div className="dash-bar-day">{day}</div>
+                          <div className="dash-bar-val">{display}</div>
+                        </div>
                       );
-                    })
+                    })}
+                  </div>
+                </div>
+                )}
+
+                {/* Skill Heatmap - per-topic accuracy within selected track */}
+                {dashConfig.widgets.skillHeatmap && (
+                <div className="dash-card">
+                  <h2 className="dash-card-title">
+                    Skill Heatmap
+                    {selectedTrackKey && (
+                      <span className="dash-card-title-tag">{TRACK_LABELS[selectedTrackKey]}</span>
+                    )}
+                  </h2>
+                  {!profile.vertical ? (
+                    <div className="dash-empty">Pick an industry in the sidebar to see your topic-level accuracy.</div>
+                  ) : !selectedTrackKey ? (
+                    <div className="dash-empty">Flashcards for {profile.vertical} aren&apos;t available yet. Try Coach or Mock Interview for this track.</div>
+                  ) : !hasAnyTopicData ? (
+                    <div className="dash-empty">
+                      Complete a few {TRACK_LABELS[selectedTrackKey]} flashcards or mock questions to see your topic-level accuracy.
+                    </div>
+                  ) : (
+                    <div className="dash-heatmap">
+                      {topicRows.map(row => (
+                        <Link
+                          key={row.topic}
+                          className="dash-heatmap-row"
+                          href={`/flashcards?track=${selectedTrackKey}`}
+                        >
+                          <div className="dash-heatmap-label">{row.topic}</div>
+                          <div className="dash-heatmap-bar-wrap">
+                            <div
+                              className="dash-heatmap-bar"
+                              style={{
+                                width: `${row.accuracy}%`,
+                                background: row.accuracy >= 75 ? '#16a34a' : row.accuracy >= 50 ? '#f59e0b' : '#ef4444',
+                              }}
+                            />
+                          </div>
+                          <div className="dash-heatmap-val">{row.accuracy}%</div>
+                        </Link>
+                      ))}
+                    </div>
                   )}
                 </div>
-                <button type="button" className="dash-tray-reset" onClick={resetDashConfig}>Reset to default layout</button>
+                )}
               </div>
-            )}
+
+              {/* ─── RIGHT COLUMN ─── */}
+              <div className="dash-col-right">
+                {/* Calendar (compact) */}
+                {dashConfig.widgets.calendar && (
+                <div className="dash-card dash-card-sm">
+                  <div className="dash-cal-head">
+                    <div className="dash-cal-title">{calendar.monthLabel}</div>
+                    <div className="dash-cal-meta">
+                      <span className="dash-cal-streak">{currentStreak} day streak</span>
+                    </div>
+                  </div>
+                  <div className="dash-cal-grid">
+                    {['MO','TU','WE','TH','FR','SA','SU'].map(d => (
+                      <div key={d} className="dash-cal-dow">{d}</div>
+                    ))}
+                    {calendar.cells.map((c, i) => {
+                      if (!c) return <div key={`empty-${i}`} className="dash-cal-day empty" />;
+                      return (
+                        <div
+                          key={c.date}
+                          className={`dash-cal-day${c.active ? ' active' : ''}${c.today ? ' today' : ''}`}
+                          title={c.date}
+                        >
+                          {c.day}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <Link className="dash-cal-link" href="/dashboard">View activity history</Link>
+                </div>
+                )}
+
+                {/* What to Focus On */}
+                {dashConfig.widgets.focus && (
+                <div className="dash-card dash-card-sm">
+                  <h2 className="dash-card-title-sm">What to Focus On</h2>
+                  {focusItems.length === 0 ? (
+                    <div className="dash-empty" style={{ padding: '20px 0', fontSize: 13 }}>
+                      You&apos;re on top of things. Keep the streak going.
+                    </div>
+                  ) : (
+                    focusItems.map((f, i) => (
+                      <Link key={i} className="dash-focus-item" href={f.href}>
+                        <div className="dash-focus-icon">{focusIconFor(f.icon)}</div>
+                        <div className="dash-focus-body">
+                          <div className="dash-focus-head">
+                            <span className="dash-focus-title">{f.title}</span>
+                            <span className={`dash-focus-dot ${f.urgency}`} />
+                          </div>
+                          <div className="dash-focus-desc">{f.desc}</div>
+                        </div>
+                        <svg className="dash-focus-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
+                      </Link>
+                    ))
+                  )}
+                </div>
+                )}
+
+                {/* Outreach */}
+                {dashConfig.widgets.outreach && (
+                <div className="dash-card dash-card-sm">
+                  <h2 className="dash-card-title-sm">Outreach</h2>
+                  <div className="dash-pipe-row dash-pipe-row-strong">
+                    <div className="dash-pipe-lbl">Total contacts</div>
+                    <div className="dash-pipe-val">{outreachContacts.length}</div>
+                  </div>
+                  {outreachStatuses.map(s => (
+                    <div key={s.key} className="dash-pipe-row">
+                      <div className="dash-pipe-lbl">{s.label}</div>
+                      <div className="dash-pipe-val">{outreachCounts[s.key] || 0}</div>
+                    </div>
+                  ))}
+                  <Link className="dash-solid-btn" href="/outreach-tracker">Open Outreach Tracker</Link>
+                </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      {showCustomize && (
+        <div className="dash-customize-overlay" onClick={() => setShowCustomize(false)}>
+          <div className="dash-customize-modal" onClick={e => e.stopPropagation()}>
+            <div className="dash-customize-head">
+              <div>
+                <div className="dash-customize-title">Customize <em>Dashboard</em></div>
+                <div className="dash-customize-sub">Toggle widgets to show or hide. Changes save automatically.</div>
+              </div>
+              <button type="button" className="dash-customize-x" onClick={() => setShowCustomize(false)} aria-label="Close">×</button>
+            </div>
+            <div className="dash-customize-body">
+              <div className="dash-customize-section-lbl">Available Widgets</div>
+              <div className="dash-customize-list">
+                {WIDGET_DEFS.map(w => {
+                  const on = dashConfig.widgets[w.key];
+                  return (
+                    <button
+                      key={w.key}
+                      type="button"
+                      className={`dash-customize-row${on ? ' is-on' : ''}`}
+                      onClick={() => toggleWidget(w.key)}
+                    >
+                      <div className={`dash-customize-check${on ? ' is-on' : ''}`}>
+                        {on && (
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--surface)" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                        )}
+                      </div>
+                      <div className="dash-customize-text">
+                        <div className="dash-customize-name">{w.label}</div>
+                        <div className="dash-customize-desc">{w.desc}</div>
+                      </div>
+                      <div className="dash-customize-col-tag">{w.col === 'left' ? 'Main' : 'Side'}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="dash-customize-foot">
+              <button type="button" className="dash-customize-reset" onClick={resetDashConfig}>Reset to default</button>
+              <button type="button" className="dash-customize-done" onClick={() => setShowCustomize(false)}>Done</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {upgradeToast && (
         <div className="dash-upgrade-toast">
