@@ -204,6 +204,19 @@ export default defineSchema({
     .index("by_user", ["userId"])
     .index("by_user_convo", ["userId", "convoId"]),
 
+  // Resume follow-up chat threads. One row per (userId, reviewId). Written only
+  // when a message is sent (discrete action), never through the userProgress
+  // blob, so it stays off the bandwidth-sensitive sync path.
+  resumeChats: defineTable({
+    userId: v.string(),
+    userEmail: v.optional(v.string()),
+    reviewId: v.string(),
+    messages: v.string(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_review", ["userId", "reviewId"]),
+
   // Per-track flashcard performance. One row per (userId, track) instead of
   // sending all 10 tracks of stats through the userProgress blob on every
   // flashcard rating. Stats stay nested as JSON because they're always loaded

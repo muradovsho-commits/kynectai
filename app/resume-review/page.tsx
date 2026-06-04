@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ConvexHttpClient } from 'convex/browser';
+import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
@@ -75,12 +76,46 @@ function buildReviewSummary(r: ReviewData): string {
   return lines.join('\n');
 }
 
-function ResumeChat({ resumeText, track, review, userPlan }: { resumeText: string; track: string; review: ReviewData; userPlan: string }) {
+function ResumeChat({ resumeText, track, review, userPlan, reviewId }: { resumeText: string; track: string; review: ReviewData; userPlan: string; reviewId: string | null }) {
   const [msgs, setMsgs] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [err, setErr] = useState('');
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const upsertChatMut = useMutation((api as any).resumeChats.upsertChat);
+
+  // Load this review's saved thread when the review changes. localStorage only,
+  // keyed per review id. No Convex, no sync, no bandwidth.
+  useEffect(() => {
+    setErr('');
+    if (!reviewId) { setMsgs([]); return; }
+    try {
+      const raw = localStorage.getItem('offerbell_resume_chat_' + reviewId);
+      setMsgs(raw ? JSON.parse(raw) : []);
+    } catch { setMsgs([]); }
+  }, [reviewId]);
+
+  // Persist explicitly on each change (not via an effect) so a review switch
+  // can never overwrite the wrong thread with stale state.
+  const persist = (arr: ChatMsg[]) => {
+    if (!reviewId) return;
+    const json = JSON.stringify(arr);
+    // Local cache for instant load / offline.
+    try { localStorage.setItem('offerbell_resume_chat_' + reviewId, json); } catch {}
+    // Source of truth: dedicated Convex table. Written only on send (discrete
+    // action), one small row per review. Never touches the userProgress blob.
+    try {
+      const uid = localStorage.getItem('offerbell_user_id');
+      if (uid) {
+        upsertChatMut({
+          userId: uid,
+          reviewId,
+          messages: json,
+          sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined),
+        }).catch(() => {});
+      }
+    } catch {}
+  };
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -93,7 +128,9 @@ function ResumeChat({ resumeText, track, review, userPlan }: { resumeText: strin
     if (!question || sending) return;
     setErr('');
     const history = msgs.slice();
-    setMsgs(m => [...m, { role: 'user', content: question }]);
+    const afterUser: ChatMsg[] = [...msgs, { role: 'user', content: question }];
+    setMsgs(afterUser);
+    persist(afterUser);
     setInput('');
     setSending(true);
     try {
@@ -110,7 +147,9 @@ function ResumeChat({ resumeText, track, review, userPlan }: { resumeText: strin
       });
       const data = await res.json();
       if (data.answer) {
-        setMsgs(m => [...m, { role: 'model', content: data.answer }]);
+        const afterModel: ChatMsg[] = [...afterUser, { role: 'model', content: data.answer }];
+        setMsgs(afterModel);
+        persist(afterModel);
       } else if (data.error) {
         const friendly = data.message
           || (data.error === 'limit_reached'
@@ -194,6 +233,8 @@ export default function ResumeReviewPage() {
   const [review, setReview] = useState<ReviewData | null>(null);
   const [reviewHistory, setReviewHistory] = useState<SavedReview[]>([]);
   const [viewingPast, setViewingPast] = useState<SavedReview | null>(null);
+  const [currentReviewId, setCurrentReviewId] = useState<string | null>(null);
+  const deleteChatMut = useMutation((api as any).resumeChats.deleteChat);
   const fileRef = useRef<HTMLInputElement>(null);
   const [userPlan, setUserPlan] = useState('free');
   const [hydrated, setHydrated] = useState(false);
@@ -241,6 +282,16 @@ export default function ResumeReviewPage() {
           setUsageCount(usage.resumeReview);
           try { localStorage.setItem('offerbell_resume_usage', JSON.stringify({ week: getWeekStart(), count: usage.resumeReview })); } catch {}
         }
+        // Hydrate resume chat threads from the dedicated Convex table into the
+        // per-review localStorage cache (one-shot query, not a subscription).
+        try {
+          const chats: any = await client.query((api as any).resumeChats.listChats, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
+          if (!cancelled && Array.isArray(chats)) {
+            for (const c of chats) {
+              try { if (c && c.reviewId) localStorage.setItem('offerbell_resume_chat_' + c.reviewId, c.messages); } catch {}
+            }
+          }
+        } catch {}
       } catch { /* swallow - localStorage fallback already populated */ }
       finally { if (!cancelled) setHydrated(true); }
     })();
@@ -360,8 +411,9 @@ export default function ResumeReviewPage() {
   const usageChipClass = atLimit ? 'rr-usage-chip limit' : (remainingReviews <= 2 ? 'rr-usage-chip warn' : 'rr-usage-chip');
 
   function saveReviewToHistory(rev: ReviewData) {
+    const id = Date.now().toString();
     const saved: SavedReview = {
-      id: Date.now().toString(),
+      id,
       date: new Date().toISOString(),
       track,
       fileName: fileName || 'Untitled',
@@ -372,18 +424,25 @@ export default function ResumeReviewPage() {
     const updated = [saved, ...reviewHistory].slice(0, MAX_SAVED_REVIEWS);
     setReviewHistory(updated);
     localStorage.setItem(REVIEW_HISTORY_KEY, JSON.stringify(updated));
+    setCurrentReviewId(id);
   }
 
   function loadPastReview(saved: SavedReview) {
     setViewingPast(saved);
     setReview(saved.review);
     setFileName(saved.fileName);
+    setCurrentReviewId(saved.id);
   }
 
   function deletePastReview(id: string) {
     const updated = reviewHistory.filter(r => r.id !== id);
     setReviewHistory(updated);
     localStorage.setItem(REVIEW_HISTORY_KEY, JSON.stringify(updated));
+    try { localStorage.removeItem('offerbell_resume_chat_' + id); } catch {}
+    try {
+      const uid = localStorage.getItem('offerbell_user_id');
+      if (uid) deleteChatMut({ userId: uid, reviewId: id, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) }).catch(() => {});
+    } catch {}
   }
 
   const submitReview = async () => {
@@ -617,7 +676,7 @@ export default function ResumeReviewPage() {
               <div className="rr-results">
                 <button
                   className="rr-back"
-                  onClick={() => { setReview(null); setViewingPast(null); setFileName(''); setResumeText(''); }}
+                  onClick={() => { setReview(null); setViewingPast(null); setFileName(''); setResumeText(''); setCurrentReviewId(null); }}
                   type="button"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -722,7 +781,7 @@ export default function ResumeReviewPage() {
                     )}
 
                     {/* Follow-up chat */}
-                    <ResumeChat resumeText={resumeText} track={track} review={review} userPlan={userPlan} />
+                    <ResumeChat resumeText={resumeText} track={track} review={review} userPlan={userPlan} reviewId={currentReviewId} />
                   </>
                 )}
               </div>
