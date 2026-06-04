@@ -96,7 +96,7 @@ RECRUITING TIMELINE REASONING (this section applies ONLY when the user actually 
       const geminiBody = {
         contents: geminiContents,
         systemInstruction: { parts: [{ text: systemInstruction }] },
-        generationConfig: { temperature: 0.8, topP: 0.95, maxOutputTokens: 1024 },
+        generationConfig: { temperature: 0.8, topP: 0.95, maxOutputTokens: 4096 },
       };
 
       try {
