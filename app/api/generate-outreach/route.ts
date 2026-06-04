@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthUserId, unauthorizedResponse, checkRateLimit, getClientIP, getCorsHeaders } from "../_lib/auth";
-import { checkPlanLimit, incrementUsageInConvex } from "../_lib/plan";
+import { checkPlanLimit, incrementUsageInConvex, incrementOutreachLifetime } from "../_lib/plan";
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -96,10 +96,13 @@ export async function POST(req: NextRequest) {
     const first = message.content[0];
     const text = first && first.type === "text" ? first.text : "";
 
-    // Increment weekly counter for pro/elite. For free plan, the lifetime
-    // outreachCount is incremented separately when the message is saved via
-    // users.saveOutreachMessage, so we don't double-count here.
-    if (planCheck.plan !== "free") {
+    // Increment usage server-side for EVERY plan so the website and the
+    // browser extension both meter through this one endpoint. Free uses the
+    // lifetime counter; pro/elite use the weekly counter. The client must not
+    // increment again.
+    if (planCheck.plan === "free") {
+      await incrementOutreachLifetime(userId);
+    } else {
       await incrementUsageInConvex(userId, "outreachWriter");
     }
 

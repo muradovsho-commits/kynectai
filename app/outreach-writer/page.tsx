@@ -4,7 +4,6 @@ import Sidebar from "../components/Sidebar";
 import { useState, useEffect } from 'react';
 import { ConvexHttpClient } from 'convex/browser';
 import '../contact-finder/contact-finder.css';
-import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import './outreach-writer.css';
 
@@ -47,7 +46,6 @@ function getMondayWeekStart(): string {
 }
 
 export default function OutreachWriterPage() {
-  const incrementOutreachCount = useMutation(api.users.incrementOutreachCount);
 
   // ── State ──
   const [userPlan, setUserPlan] = useState('free');
@@ -335,26 +333,19 @@ Rules:
         setOutput(rawText.trim());
       }
 
-      // Bump local counters
+      // Update display counters from the server's authoritative count. The
+      // server (generate-outreach) already incremented usage for every plan,
+      // so the client must NOT increment again or it double-counts.
       try {
-        const storedUid = window.localStorage.getItem('offerbell_user_id');
-        if (storedUid) {
-          const newQ = await incrementOutreachCount({ userId: storedUid as any });
-          localStorage.setItem('offerbell_messages_sent', String(newQ));
-          setMessagesSent(newQ);
-        } else {
-          const prev = parseInt(localStorage.getItem('offerbell_messages_sent') || '0', 10);
-          localStorage.setItem('offerbell_messages_sent', String(prev + 1));
-          setMessagesSent(prev + 1);
-        }
-        if (isPaid) {
-          const week = getMondayWeekStart();
-          const r = localStorage.getItem('offerbell_outreach_weekly');
-          let wk = r ? JSON.parse(r) : { week, count: 0 };
-          if (wk.week !== week) wk = { week, count: 0 };
-          wk.count++;
-          localStorage.setItem('offerbell_outreach_weekly', JSON.stringify(wk));
-          setWeeklyUsed(wk.count);
+        if (typeof data.used === 'number') {
+          if (isPaid) {
+            setWeeklyUsed(data.used);
+            const week = getMondayWeekStart();
+            localStorage.setItem('offerbell_outreach_weekly', JSON.stringify({ week, count: data.used }));
+          } else {
+            setMessagesSent(data.used);
+            localStorage.setItem('offerbell_messages_sent', String(data.used));
+          }
         }
         const currentPlan = localStorage.getItem('offerbell_plan') || 'free';
         document.cookie = `offerbell_plan=${currentPlan}; path=/; max-age=2592000; SameSite=Lax`;

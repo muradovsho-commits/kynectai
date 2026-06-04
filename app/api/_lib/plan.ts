@@ -124,6 +124,19 @@ export async function incrementUsageInConvex(userId: string, feature: PlanFeatur
   }
 }
 
+// Free-plan outreach is a LIFETIME counter on the user row (users.outreachCount,
+// surfaced as messagesUsed). This must run on the SERVER for every generation so
+// that the website AND the browser extension both count through one path. Do not
+// also increment this on the client, or generations get double-counted.
+export async function incrementOutreachLifetime(userId: string): Promise<void> {
+  try {
+    const convex = getConvex();
+    await convex.mutation((api as any).users.incrementOutreachCount, { userId });
+  } catch (err) {
+    console.error(`incrementOutreachCount failed for ${userId}:`, err);
+  }
+}
+
 function featureDisplayName(feature: PlanFeature): string {
   switch (feature) {
     case "coach": return "Coach";
