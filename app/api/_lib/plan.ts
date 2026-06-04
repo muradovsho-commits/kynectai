@@ -17,7 +17,7 @@ export type PlanFeature = "coach" | "resumeReview" | "resumeChat" | "outreachWri
 const LIMITS: Record<PlanFeature, { free: number; pro: number; elite: number }> = {
   coach:          { free: 1,  pro: 40,  elite: 80  },
   resumeReview:   { free: 1,  pro: 10,  elite: 30  },
-  resumeChat:     { free: 5,  pro: 30,  elite: 100 },
+  resumeChat:     { free: 3,  pro: 20,  elite: 40  },
   outreachWriter: { free: 5,  pro: 20,  elite: 30  }, // free = lifetime, paid = weekly
   mockInterview:  { free: 3,  pro: 999, elite: 999 },
 };

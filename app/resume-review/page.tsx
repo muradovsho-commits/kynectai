@@ -76,7 +76,7 @@ function buildReviewSummary(r: ReviewData): string {
   return lines.join('\n');
 }
 
-function ResumeChat({ resumeText, track, review, userPlan, reviewId }: { resumeText: string; track: string; review: ReviewData; userPlan: string; reviewId: string | null }) {
+function ResumeChat({ resumeText, track, review, userPlan, reviewId, chatUsage, onConsume }: { resumeText: string; track: string; review: ReviewData; userPlan: string; reviewId: string | null; chatUsage: number; onConsume: () => void }) {
   const [msgs, setMsgs] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
@@ -121,7 +121,7 @@ function ResumeChat({ resumeText, track, review, userPlan, reviewId }: { resumeT
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [msgs, sending]);
 
-  const planLimit = userPlan === 'elite' ? 100 : userPlan === 'pro' ? 30 : 5;
+  const planLimit = userPlan === 'elite' ? 40 : userPlan === 'pro' ? 20 : 3;
 
   const send = async (q: string) => {
     const question = q.trim();
@@ -150,6 +150,7 @@ function ResumeChat({ resumeText, track, review, userPlan, reviewId }: { resumeT
         const afterModel: ChatMsg[] = [...afterUser, { role: 'model', content: data.answer }];
         setMsgs(afterModel);
         persist(afterModel);
+        onConsume();
       } else if (data.error) {
         const friendly = data.message
           || (data.error === 'limit_reached'
@@ -177,7 +178,10 @@ function ResumeChat({ resumeText, track, review, userPlan, reviewId }: { resumeT
   return (
     <div className="rr-chat">
       <div className="rr-chat-head">
-        <div className="rr-chat-title">Ask <em style={{ fontStyle: 'italic' }}>follow-ups</em></div>
+        <div className="rr-chat-head-row">
+          <div className="rr-chat-title">Ask <em style={{ fontStyle: 'italic' }}>follow-ups</em></div>
+          <div className="rr-chat-count">{Math.max(0, planLimit - chatUsage)} of {planLimit} left this week</div>
+        </div>
         <div className="rr-chat-sub">Dig into the feedback, ask for rewrites, or pressure-test a bullet. Grounded in your resume.</div>
       </div>
 
@@ -235,6 +239,7 @@ export default function ResumeReviewPage() {
   const [viewingPast, setViewingPast] = useState<SavedReview | null>(null);
   const [currentReviewId, setCurrentReviewId] = useState<string | null>(null);
   const deleteChatMut = useMutation((api as any).resumeChats.deleteChat);
+  const [chatUsage, setChatUsage] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
   const [userPlan, setUserPlan] = useState('free');
   const [hydrated, setHydrated] = useState(false);
@@ -282,6 +287,7 @@ export default function ResumeReviewPage() {
           setUsageCount(usage.resumeReview);
           try { localStorage.setItem('offerbell_resume_usage', JSON.stringify({ week: getWeekStart(), count: usage.resumeReview })); } catch {}
         }
+        if (!cancelled && usage && typeof usage.resumeChat === 'number') setChatUsage(usage.resumeChat);
         // Hydrate resume chat threads from the dedicated Convex table into the
         // per-review localStorage cache (one-shot query, not a subscription).
         try {
@@ -781,7 +787,7 @@ export default function ResumeReviewPage() {
                     )}
 
                     {/* Follow-up chat */}
-                    <ResumeChat resumeText={resumeText} track={track} review={review} userPlan={userPlan} reviewId={currentReviewId} />
+                    <ResumeChat resumeText={resumeText} track={track} review={review} userPlan={userPlan} reviewId={currentReviewId} chatUsage={chatUsage} onConsume={() => setChatUsage(c => c + 1)} />
                   </>
                 )}
               </div>

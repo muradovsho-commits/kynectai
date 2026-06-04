@@ -19,7 +19,7 @@ export const PLAN_LIMITS = {
   outreachWriter: { free: 5, pro: 20, elite: 30 },       // messages per week (free = total lifetime)
   outreachWriterIsLifetime: { free: true, pro: false, elite: false },
   resumeReview: { free: 1, pro: 10, elite: 30 },         // per week
-  resumeChat: { free: 5, pro: 30, elite: 100 },          // follow-up chat msgs per week
+  resumeChat: { free: 3, pro: 20, elite: 40 },           // follow-up chat msgs per week
   coach: { free: 1, pro: 40, elite: 80 },                // per week (free), tokens per window (pro/elite)
   mockInterview: { free: 3, pro: 999, elite: 999 },      // per week
 } as const;
