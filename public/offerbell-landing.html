@@ -868,7 +868,7 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="this.closest('.faq-item').classList.toggle('open')">How is OfferBell different from just using LinkedIn?<span class="qi">+</span></button>
-        <div class="faq-a">LinkedIn shows you who's out there - OfferBell tells you how to reach them, what to say, and whether it's working. You get AI-written outreach, a pipeline to track every conversation, AI resume review, and interview flashcards across 11 careers. It's the full recruiting stack, not just a directory.</div>
+        <div class="faq-a">LinkedIn shows you who's out there - OfferBell tells you how to reach them, what to say, and whether it's working. You get AI-written outreach, a pipeline to track every conversation, AI resume review, and interview flashcards across 10 careers. It's the full recruiting stack, not just a directory.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="this.closest('.faq-item').classList.toggle('open')">Can I use OfferBell if I go to a non-target school?<span class="qi">+</span></button>
@@ -970,14 +970,14 @@ document.addEventListener('click',function(e){
 <script>
 (function(){
 const TRACKS=[
- {code:'IB',name:'Investment Banking',desc:'DCF, LBO, M&A, valuation, and accounting questions reported from top bulge brackets and elite boutiques.',cards:1356,mods:9,drills:6},
+ {code:'IB',name:'Investment Banking',desc:'DCF, LBO, M&A, valuation, and accounting questions reported from top bulge brackets and elite boutiques.',cards:1356,mods:9,drills:4},
  {code:'PE',name:'Private Equity',desc:'Fund mechanics, deal sourcing, portfolio operations, and returns analysis from mega-funds to middle market.',cards:700,mods:8,drills:6},
- {code:'CN',name:'Consulting',desc:'Case frameworks, market sizing, profitability, and fit questions for MBB and beyond.',cards:600,mods:10,drills:6},
- {code:'AC',name:'Accounting & Audit',desc:'Financial statements, audit procedures, tax, and the technical questions Big 4 firms ask.',cards:600,mods:10,drills:3},
- {code:'AM',name:'Asset Management',desc:'Portfolio theory, stock pitches, risk management, and the buy-side mindset.',cards:600,mods:10,drills:3},
+ {code:'CN',name:'Consulting',desc:'Case frameworks, market sizing, profitability, and fit questions for MBB and beyond.',cards:600,mods:10,drills:5},
+ {code:'AC',name:'Accounting & Audit',desc:'Financial statements, audit procedures, tax, and the technical questions Big 4 firms ask.',cards:509,mods:10,drills:3},
+ {code:'AM',name:'Asset Management',desc:'Portfolio theory, stock pitches, risk management, and the buy-side mindset.',cards:366,mods:10,drills:3},
  {code:'ST',name:'Sales & Trading',desc:'Trading mechanics, derivatives, macro, and market-making concepts under pressure.',cards:546,mods:10,drills:6},
- {code:'ER',name:'Equity Research',desc:'Equity valuation, sector analysis, modeling, and building a defensible stock thesis.',cards:228,mods:10,drills:4},
- {code:'RE',name:'Real Estate',desc:'Cap rates, NOI, waterfall structures, and property-level analysis across REPE and REITs.',cards:229,mods:10,drills:4},
+ {code:'ER',name:'Equity Research',desc:'Equity valuation, sector analysis, modeling, and building a defensible stock thesis.',cards:378,mods:10,drills:4},
+ {code:'RE',name:'Real Estate',desc:'Cap rates, NOI, waterfall structures, and property-level analysis across REPE and REITs.',cards:405,mods:10,drills:4},
  {code:'RX',name:'Restructuring',desc:'Bankruptcy, distressed debt, fulcrum security, and turnaround strategy.',cards:600,mods:10,drills:3},
  {code:'VC',name:'Venture Capital',desc:'Startup valuation, term sheets, due diligence, and early-stage venture mechanics.',cards:233,mods:10,drills:5},
 ];
@@ -1017,7 +1017,7 @@ addEventListener('scroll',tick,{passive:true});addEventListener('resize',tick); 
 })();
 (function(){
 const T=[
- {n:"Marcus T.",s:"Ohio State '26",sub:"RBC · IB Summer Analyst",q:"I go to a state school with basically no finance pipeline. The outreach writer helped me send around 40 cold emails, I got 6 replies, and one turned into a summer analyst offer.",h:"#2563eb"},
+ {n:"Marcus T.",s:"Ohio State '26",sub:"RBC · IB Summer Analyst",q:"The outreach writer helped me send around 40 cold emails. I got 6 replies, and one of them turned into a summer analyst offer.",h:"#2563eb"},
  {n:"Jasmine R.",s:"Rutgers '26",sub:"Investment Banking",q:"Two months ago I didn't know what enterprise value was. The flashcards and concept drills got me from completely lost to comfortable on technicals.",h:"#0ea5e9"},
  {n:"Tyler W.",s:"Arizona State '25",sub:"Resume Review",q:"My career center looked at my resume for ten minutes and called it fine. OfferBell caught issues I didn't know to look for and rewrote my bullets with real impact metrics.",h:"#14b8a6"},
  {n:"Sofia L.",s:"UGA '26",sub:"Mock Interviews",q:"The mock interview tool is uncomfortable in a useful way. I recorded myself about 20 times before my superday, and by the real interview my answers were sharp.",h:"#6366f1"},
@@ -1025,11 +1025,11 @@ const T=[
  {n:"Ananya S.",s:"UMich '26",sub:"AI Coach",q:"I practiced my walk-me-through-your-resume answer with the AI coach maybe 15 times. By the day of the interview it was muscle memory.",h:"#ec4899"},
  {n:"Chris D.",s:"Florida '25",sub:"Outreach Tracker",q:"I tracked everyone in a messy Google Sheet I kept forgetting to update. The tracker shows me who's gone cold, so I follow up with people I'd have otherwise lost.",h:"#f59e0b"},
  {n:"Priya K.",s:"UIUC '26",sub:"Networking",q:"I went from getting ignored on every email to having real conversations with VPs at bulge brackets. The writer makes messages sound professional without being formulaic.",h:"#ef4444"},
- {n:"DeShawn M.",s:"Howard '26",sub:"Networking",q:"No banks come on campus at my school. No alumni network, nothing. OfferBell was the only reason I knew how to even start networking.",h:"#10b981"},
+ {n:"DeShawn M.",s:"Howard '26",sub:"Networking",q:"I had no idea how to start networking. OfferBell walked me through who to reach out to and what to actually say, step by step.",h:"#10b981"},
  {n:"Rachel H.",s:"Wisconsin '25",sub:"Diagnostic Review",q:"The diagnostic humbled me immediately. I thought I knew accounting cold and scored a 40. Two weeks drilling the weak categories, retook it, got an 88.",h:"#3b82f6"},
- {n:"Kevin N.",s:"UC Davis '26",sub:"Investment Banking",q:"A friend at a target showed me he was using this. If target-school kids felt they needed it, I definitely did. Most useful thing I paid for during recruiting.",h:"#a855f7"},
+ {n:"Kevin N.",s:"UC Davis '26",sub:"Investment Banking",q:"I'd been piecing prep together from YouTube and forum threads for weeks. This was the first thing that laid out what to study and in what order. Most useful thing I paid for during recruiting.",h:"#a855f7"},
  {n:"Emily Z.",s:"SMU '25",sub:"Outreach Writer",q:"Sent 12 emails through the writer on a Sunday night. Woke up Monday with 4 replies. Before this I was lucky to get one reply out of ten.",h:"#0891b2"},
- {n:"Jordan A.",s:"Minnesota '26",sub:"Referral Map",q:"The referral map surfaced connections I had no idea existed. I found out a classmate's sister works at a top fund and got a warm intro the next week.",h:"#d946ef"},
+ {n:"Jordan A.",s:"Minnesota '26",sub:"Referral Map",q:"The referral map finally got my network organized. I could see everyone I'd talked to and how they connect in one place, so I stopped letting warm contacts go cold.",h:"#d946ef"},
  {n:"Ryan T.",s:"Virginia Tech '26",sub:"Consulting",q:"I'm an engineer pivoting into consulting. The case frameworks and consulting flashcards got me interview-ready in about three weeks.",h:"#f97316"},
  {n:"Mia C.",s:"Maryland '25",sub:"Outreach Writer",q:"I added the contact details, picked an angle, and it generated a cold email that read better than anything I'd have written myself. Reply by the next morning.",h:"#059669"},
 ];
