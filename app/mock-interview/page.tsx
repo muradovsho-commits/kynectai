@@ -271,12 +271,12 @@ export default function MockInterviewPage() {
     (async () => {
       try {
         const client = new ConvexHttpClient(url);
-        const cloud = await client.query(api.mockResponses.listResponses, { userId: uid }) as ResponseEntry[];
+        const cloud = await client.query(api.mockResponses.listResponses, { userId: uid, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) }) as ResponseEntry[];
         if (cancelled) return;
         const localList = loadResponses();
         if ((!cloud || cloud.length === 0) && localList.length > 0) {
           try {
-            await importResponsesMut({
+            await importResponsesMut({ sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined),
               userId: uid,
               entries: localList.map(r => ({
                 entryId: r.id, questionId: r.questionId,
@@ -297,7 +297,7 @@ export default function MockInterviewPage() {
         saveResponses(merged);
         if (onlyLocal.length > 0) {
           try {
-            await importResponsesMut({
+            await importResponsesMut({ sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined),
               userId: uid,
               entries: onlyLocal.map(r => ({
                 entryId: r.id, questionId: r.questionId,
@@ -367,7 +367,7 @@ export default function MockInterviewPage() {
       const hit = items.find(i => i.entryId === r.id);
       return hit ? { ...r, category: hit.category } : r;
     }));
-    backfillCategoriesMut({ userId: uid, items }).catch(() => {});
+    backfillCategoriesMut({ userId: uid, items, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) }).catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allResponses]);
 
@@ -611,7 +611,7 @@ export default function MockInterviewPage() {
 
     const currentUid = localStorage.getItem('offerbell_user_id');
     if (currentUid) {
-      upsertResponseMut({
+      upsertResponseMut({ sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined),
         userId: currentUid, entryId, questionId, trackId: activeTrack.id,
         transcript, grade, overallFeedback, strengths, weaknesses,
         wordsPerMin: wpm, durationSec: actualDuration, timestamp: entry.timestamp,
@@ -678,7 +678,7 @@ export default function MockInterviewPage() {
 
     const currentUid = localStorage.getItem('offerbell_user_id');
     if (currentUid) {
-      upsertResponseMut({
+      upsertResponseMut({ sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined),
         userId: currentUid, entryId, questionId, trackId,
         transcript, grade, overallFeedback, strengths, weaknesses,
         wordsPerMin: wpm, durationSec: actualDuration, timestamp: resp.timestamp,
@@ -735,7 +735,7 @@ export default function MockInterviewPage() {
     saveResponses(updated);
     const uid = localStorage.getItem('offerbell_user_id');
     const newHidden = !allResponses.find(r => r.id === id)?.hidden;
-    if (uid) setResponseHiddenMut({ userId: uid, entryId: id, hidden: newHidden }).catch(() => {});
+    if (uid) setResponseHiddenMut({ userId: uid, entryId: id, hidden: newHidden, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) }).catch(() => {});
   }
 
   // ══════════════════════════════════════════════════════════════

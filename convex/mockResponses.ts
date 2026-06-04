@@ -1,12 +1,14 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { getUserEmail } from "./_helpers";
+import { requireUser } from "./auth";
 
 // List all mock interview responses for a user. Returned in insertion order
 // (newest first); pages can re-sort as needed.
 export const listResponses = query({
-  args: { userId: v.string() },
-  handler: async (ctx, { userId }) => {
+  args: { userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()) },
+  handler: async (ctx, { sessionToken, serverSecret, userId }) => {
+    await requireUser({ userId, sessionToken, serverSecret });
     const rows = await ctx.db
       .query("mockResponses")
       .withIndex("by_user", q => q.eq("userId", userId))
@@ -34,7 +36,7 @@ export const listResponses = query({
 // the same entryId replaces the existing row.
 export const upsertResponse = mutation({
   args: {
-    userId: v.string(),
+    userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()),
     entryId: v.string(),
     questionId: v.string(),
     trackId: v.string(),
@@ -50,6 +52,8 @@ export const upsertResponse = mutation({
     category: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requireUser(args);
+    const { sessionToken: _st, serverSecret: _ss, ...clean } = args;
     const existing = await ctx.db
       .query("mockResponses")
       .withIndex("by_user_entry", q => q.eq("userId", args.userId).eq("entryId", args.entryId))
@@ -72,15 +76,16 @@ export const upsertResponse = mutation({
         userEmail,
       });
     } else {
-      await ctx.db.insert("mockResponses", { ...args, userEmail });
+      await ctx.db.insert("mockResponses", { ...clean, userEmail });
     }
   },
 });
 
 // Toggle the hidden flag on a single response.
 export const setResponseHidden = mutation({
-  args: { userId: v.string(), entryId: v.string(), hidden: v.boolean() },
-  handler: async (ctx, { userId, entryId, hidden }) => {
+  args: { userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()), entryId: v.string(), hidden: v.boolean() },
+  handler: async (ctx, { sessionToken, serverSecret, userId, entryId, hidden }) => {
+    await requireUser({ userId, sessionToken, serverSecret });
     const existing = await ctx.db
       .query("mockResponses")
       .withIndex("by_user_entry", q => q.eq("userId", userId).eq("entryId", entryId))
@@ -94,8 +99,9 @@ export const setResponseHidden = mutation({
 // Delete a single response (used by future admin cleanup; the user-facing
 // UI now hides instead of deletes, but we keep the mutation available).
 export const deleteResponse = mutation({
-  args: { userId: v.string(), entryId: v.string() },
-  handler: async (ctx, { userId, entryId }) => {
+  args: { userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()), entryId: v.string() },
+  handler: async (ctx, { sessionToken, serverSecret, userId, entryId }) => {
+    await requireUser({ userId, sessionToken, serverSecret });
     const existing = await ctx.db
       .query("mockResponses")
       .withIndex("by_user_entry", q => q.eq("userId", userId).eq("entryId", entryId))
@@ -111,7 +117,7 @@ export const deleteResponse = mutation({
 // Skips any entryId that already exists, so this is safe to call repeatedly.
 export const importResponses = mutation({
   args: {
-    userId: v.string(),
+    userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()),
     entries: v.array(v.object({
       entryId: v.string(),
       questionId: v.string(),
@@ -128,7 +134,8 @@ export const importResponses = mutation({
       category: v.optional(v.string()),
     })),
   },
-  handler: async (ctx, { userId, entries }) => {
+  handler: async (ctx, { sessionToken, serverSecret, userId, entries }) => {
+    await requireUser({ userId, sessionToken, serverSecret });
     const userEmail = await getUserEmail(ctx, userId);
     for (const e of entries) {
       const existing = await ctx.db
@@ -151,8 +158,9 @@ export const importResponses = mutation({
 // dashboard can display "Avg score X%". Same conventions as the existing
 // scoring elsewhere: Great=100, Good=70, Bad=30.
 export const getMockStats = query({
-  args: { userId: v.string() },
-  handler: async (ctx, { userId }) => {
+  args: { userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()) },
+  handler: async (ctx, { sessionToken, serverSecret, userId }) => {
+    await requireUser({ userId, sessionToken, serverSecret });
     const rows = await ctx.db
       .query("mockResponses")
       .withIndex("by_user", q => q.eq("userId", userId))
@@ -177,8 +185,9 @@ export const getMockStats = query({
 // (Great=100, Good=70, Bad=30). Lightweight: returns only per-category counts
 // and score sums, no transcripts. Counts all attempts (hidden = collapsed UI).
 export const getMockTopicStats = query({
-  args: { userId: v.string(), trackId: v.string() },
-  handler: async (ctx, { userId, trackId }) => {
+  args: { userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()), trackId: v.string() },
+  handler: async (ctx, { sessionToken, serverSecret, userId, trackId }) => {
+    await requireUser({ userId, sessionToken, serverSecret });
     const rows = await ctx.db
       .query("mockResponses")
       .withIndex("by_user", q => q.eq("userId", userId))
@@ -210,10 +219,11 @@ export const getMockTopicStats = query({
 // call repeatedly and never overwrites real data.
 export const backfillCategories = mutation({
   args: {
-    userId: v.string(),
+    userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()),
     items: v.array(v.object({ entryId: v.string(), category: v.string() })),
   },
-  handler: async (ctx, { userId, items }) => {
+  handler: async (ctx, { sessionToken, serverSecret, userId, items }) => {
+    await requireUser({ userId, sessionToken, serverSecret });
     for (const it of items) {
       const existing = await ctx.db
         .query("mockResponses")

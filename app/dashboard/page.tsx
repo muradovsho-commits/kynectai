@@ -311,8 +311,8 @@ export default function DashboardPage() {
       try {
         const client = new ConvexHttpClient(url);
         const [m, c] = await Promise.all([
-          client.query((api as any).mockResponses.getMockStats, { userId }),
-          client.query((api as any).coachConvos.getCoachStats, { userId }),
+          client.query((api as any).mockResponses.getMockStats, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) }),
+          client.query((api as any).coachConvos.getCoachStats, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) }),
         ]);
         if (!cancelled) {
           setMockStats(m);
@@ -335,7 +335,7 @@ export default function DashboardPage() {
     (async () => {
       try {
         const client = new ConvexHttpClient(url);
-        const t = await client.query((api as any).mockResponses.getMockTopicStats, { userId, trackId: selectedTrackKey });
+        const t = await client.query((api as any).mockResponses.getMockTopicStats, { userId, trackId: selectedTrackKey, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
         if (!cancelled) setMockTopicStats(Array.isArray(t) ? t : []);
       } catch {}
     })();

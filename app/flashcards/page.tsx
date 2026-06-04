@@ -235,7 +235,7 @@ function FlashcardsContent() {
     if (activeTrack) {
       const uid = (typeof window !== 'undefined') ? localStorage.getItem('offerbell_user_id') : null;
       if (uid) {
-        void upsertPerfMut({ userId: uid, track: activeTrack, data: serialized }).catch(() => {});
+        void upsertPerfMut({ userId: uid, track: activeTrack, data: serialized, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) }).catch(() => {});
       }
     }
   }, [perfKey, activeTrack, upsertPerfMut]);

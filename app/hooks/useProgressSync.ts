@@ -286,7 +286,7 @@ export function useProgressSync() {
         //    Done in parallel with the blob fetch below.
         //    If a fetch fails or returns empty, localStorage is left as-is
         //    (existing local data survives).
-        const flashPerfPromise = client.query(api.flashPerf.listPerf, { userId })
+        const flashPerfPromise = client.query(api.flashPerf.listPerf, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) })
           .then((rows: Record<string, { data: string; updatedAt: number }>) => {
             if (!rows) return;
             for (const [track, row] of Object.entries(rows)) {
@@ -308,7 +308,7 @@ export function useProgressSync() {
                 void (async () => {
                   try {
                     const c = new ConvexHttpClient(url);
-                    await c.mutation(api.flashPerf.importPerf, { userId, entries });
+                    await c.mutation(api.flashPerf.importPerf, { userId, entries, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
                   } catch {}
                 })();
               }
@@ -316,7 +316,7 @@ export function useProgressSync() {
           })
           .catch(() => {});
 
-        const diagHistoryPromise = client.query(api.diagHistory.listHistory, { userId })
+        const diagHistoryPromise = client.query(api.diagHistory.listHistory, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) })
           .then((rows: Array<{ id: string; track: string; date: string; score: number; totalCorrect: number; totalAnswered: number; catScores: string; timestamp: number }>) => {
             if (!rows) return;
             if (rows.length > 0) {
@@ -352,7 +352,7 @@ export function useProgressSync() {
                     void (async () => {
                       try {
                         const c = new ConvexHttpClient(url);
-                        await c.mutation(api.diagHistory.importHistory, { userId, entries });
+                        await c.mutation(api.diagHistory.importHistory, { userId, entries, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
                       } catch {}
                     })();
                   }

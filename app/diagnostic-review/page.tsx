@@ -286,7 +286,7 @@ export default function DiagnosticReviewPage() {
     const updated = [result, ...history].slice(0, 50);
     setHistory(updated); saveHistory(updated);
     if (userId && appendDiagResultMut) {
-      void appendDiagResultMut({
+      void appendDiagResultMut({ sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined),
         userId, entryId: result.id, track: result.track,
         date: result.date, score: result.score,
         totalCorrect: result.totalCorrect, totalAnswered: result.totalAnswered,
@@ -304,7 +304,7 @@ export default function DiagnosticReviewPage() {
     saveHistory(remaining);
     setHistory(remaining);
     if (userId && clearTrackDiagMut) {
-      try { await clearTrackDiagMut({ userId, track: resetTarget }); } catch {}
+      try { await clearTrackDiagMut({ userId, track: resetTarget, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) }); } catch {}
     }
     if (userId && saveProgressMut) {
       try {

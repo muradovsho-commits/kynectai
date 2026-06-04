@@ -1,12 +1,14 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { getUserEmail } from "./_helpers";
+import { requireUser } from "./auth";
 
 // List all diagnostic history entries for a user, newest first.
 // Cap at 50 to match the client-side cap.
 export const listHistory = query({
-  args: { userId: v.string() },
-  handler: async (ctx, { userId }) => {
+  args: { userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()) },
+  handler: async (ctx, { sessionToken, serverSecret, userId }) => {
+    await requireUser({ userId, sessionToken, serverSecret });
     const rows = await ctx.db
       .query("diagHistory")
       .withIndex("by_user", q => q.eq("userId", userId))
@@ -31,7 +33,7 @@ export const listHistory = query({
 // Append a new diagnostic result. Idempotent by entryId.
 export const appendResult = mutation({
   args: {
-    userId: v.string(),
+    userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()),
     entryId: v.string(),
     track: v.string(),
     date: v.string(),
@@ -42,6 +44,8 @@ export const appendResult = mutation({
     timestamp: v.number(),
   },
   handler: async (ctx, args) => {
+    await requireUser(args);
+    const { sessionToken: _st, serverSecret: _ss, ...clean } = args;
     const existing = await ctx.db
       .query("diagHistory")
       .withIndex("by_user_entry", q => q.eq("userId", args.userId).eq("entryId", args.entryId))
@@ -59,7 +63,7 @@ export const appendResult = mutation({
         userEmail,
       });
     } else {
-      await ctx.db.insert("diagHistory", { ...args, userEmail });
+      await ctx.db.insert("diagHistory", { ...clean, userEmail });
     }
   },
 });
@@ -68,7 +72,7 @@ export const appendResult = mutation({
 // localStorage. Skips entries already present (matched by entryId).
 export const importHistory = mutation({
   args: {
-    userId: v.string(),
+    userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()),
     entries: v.array(v.object({
       entryId: v.string(),
       track: v.string(),
@@ -80,7 +84,8 @@ export const importHistory = mutation({
       timestamp: v.number(),
     })),
   },
-  handler: async (ctx, { userId, entries }) => {
+  handler: async (ctx, { sessionToken, serverSecret, userId, entries }) => {
+    await requireUser({ userId, sessionToken, serverSecret });
     const userEmail = await getUserEmail(ctx, userId);
     for (const e of entries) {
       const existing = await ctx.db
@@ -95,8 +100,9 @@ export const importHistory = mutation({
 
 // Clear all diagnostic history for a user. Used by the "reset all" flow.
 export const clearAll = mutation({
-  args: { userId: v.string() },
-  handler: async (ctx, { userId }) => {
+  args: { userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()) },
+  handler: async (ctx, { sessionToken, serverSecret, userId }) => {
+    await requireUser({ userId, sessionToken, serverSecret });
     const rows = await ctx.db
       .query("diagHistory")
       .withIndex("by_user", q => q.eq("userId", userId))
@@ -107,8 +113,9 @@ export const clearAll = mutation({
 
 // Clear all diagnostic history entries for a specific track.
 export const clearTrack = mutation({
-  args: { userId: v.string(), track: v.string() },
-  handler: async (ctx, { userId, track }) => {
+  args: { userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()), track: v.string() },
+  handler: async (ctx, { sessionToken, serverSecret, userId, track }) => {
+    await requireUser({ userId, sessionToken, serverSecret });
     const rows = await ctx.db
       .query("diagHistory")
       .withIndex("by_user_track", q => q.eq("userId", userId).eq("track", track))

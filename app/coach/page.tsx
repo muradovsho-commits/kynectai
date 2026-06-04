@@ -838,7 +838,7 @@ export default function CoachPage() {
       (async () => {
         try {
           const client = new ConvexHttpClient(convexUrl);
-          const cloud = await client.query(api.coachConvos.listConvos, { userId: uid }) as Array<{ id: string; track: string; feature: string | null; preview: string; messages: string; createdAt: number; updatedAt: number }>;
+          const cloud = await client.query(api.coachConvos.listConvos, { userId: uid, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) }) as Array<{ id: string; track: string; feature: string | null; preview: string; messages: string; createdAt: number; updatedAt: number }>;
 
           // Cloud has data: hydrate from there. Parse messages back from JSON string.
           if (cloud && cloud.length > 0) {
@@ -860,7 +860,7 @@ export default function CoachPage() {
             // Push any local-only to cloud
             if (onlyLocal.length > 0) {
               try {
-                await importConvosMut({
+                await importConvosMut({ sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined),
                   userId: uid,
                   convos: onlyLocal.map(c => ({
                     convoId: c.id,
@@ -877,7 +877,7 @@ export default function CoachPage() {
           } else if (localList.length > 0) {
             // Cloud empty, local has data: migrate up
             try {
-              await importConvosMut({
+              await importConvosMut({ sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined),
                 userId: uid,
                 convos: localList.map(c => ({
                   convoId: c.id,
@@ -931,7 +931,7 @@ export default function CoachPage() {
         // Push this single convo to Convex (per-row, not the entire blob).
         const uid = localStorage.getItem('offerbell_user_id');
         if (uid) {
-          upsertConvoMut({
+          upsertConvoMut({ sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined),
             userId: uid,
             convoId: updated.id,
             track: updated.track,
@@ -980,7 +980,7 @@ export default function CoachPage() {
     });
     const uid = localStorage.getItem('offerbell_user_id');
     if (uid) {
-      deleteConvoMut({ userId: uid, convoId: id }).catch(() => {});
+      deleteConvoMut({ userId: uid, convoId: id, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) }).catch(() => {});
     }
     if (id === activeConvoId) {
       setMessages([]);

@@ -1,12 +1,14 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { getUserEmail } from "./_helpers";
+import { requireUser } from "./auth";
 
 // List all coach conversations for a user. Capped at 50 newest by the
 // client, but query returns everything; client sorts/caps.
 export const listConvos = query({
-  args: { userId: v.string() },
-  handler: async (ctx, { userId }) => {
+  args: { userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()) },
+  handler: async (ctx, { sessionToken, serverSecret, userId }) => {
+    await requireUser({ userId, sessionToken, serverSecret });
     const rows = await ctx.db
       .query("coachConvos")
       .withIndex("by_user", q => q.eq("userId", userId))
@@ -26,7 +28,7 @@ export const listConvos = query({
 // Insert or update a single conversation by convoId. Idempotent.
 export const upsertConvo = mutation({
   args: {
-    userId: v.string(),
+    userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()),
     convoId: v.string(),
     track: v.string(),
     feature: v.optional(v.string()),
@@ -36,6 +38,8 @@ export const upsertConvo = mutation({
     updatedAt: v.number(),
   },
   handler: async (ctx, args) => {
+    await requireUser(args);
+    const { sessionToken: _st, serverSecret: _ss, ...clean } = args;
     const existing = await ctx.db
       .query("coachConvos")
       .withIndex("by_user_convo", q => q.eq("userId", args.userId).eq("convoId", args.convoId))
@@ -51,15 +55,16 @@ export const upsertConvo = mutation({
         userEmail,
       });
     } else {
-      await ctx.db.insert("coachConvos", { ...args, userEmail });
+      await ctx.db.insert("coachConvos", { ...clean, userEmail });
     }
   },
 });
 
 // Delete a single conversation.
 export const deleteConvo = mutation({
-  args: { userId: v.string(), convoId: v.string() },
-  handler: async (ctx, { userId, convoId }) => {
+  args: { userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()), convoId: v.string() },
+  handler: async (ctx, { sessionToken, serverSecret, userId, convoId }) => {
+    await requireUser({ userId, sessionToken, serverSecret });
     const existing = await ctx.db
       .query("coachConvos")
       .withIndex("by_user_convo", q => q.eq("userId", userId).eq("convoId", convoId))
@@ -74,7 +79,7 @@ export const deleteConvo = mutation({
 // Skips any convoId that already exists; safe to call repeatedly.
 export const importConvos = mutation({
   args: {
-    userId: v.string(),
+    userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()),
     convos: v.array(v.object({
       convoId: v.string(),
       track: v.string(),
@@ -85,7 +90,8 @@ export const importConvos = mutation({
       updatedAt: v.number(),
     })),
   },
-  handler: async (ctx, { userId, convos }) => {
+  handler: async (ctx, { sessionToken, serverSecret, userId, convos }) => {
+    await requireUser({ userId, sessionToken, serverSecret });
     const userEmail = await getUserEmail(ctx, userId);
     for (const c of convos) {
       const existing = await ctx.db
@@ -103,8 +109,9 @@ export const importConvos = mutation({
 // No messages JSON, no duration data (we don't track coach session length).
 // Per-page bandwidth: ~0.2KB.
 export const getCoachStats = query({
-  args: { userId: v.string() },
-  handler: async (ctx, { userId }) => {
+  args: { userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()) },
+  handler: async (ctx, { sessionToken, serverSecret, userId }) => {
+    await requireUser({ userId, sessionToken, serverSecret });
     const rows = await ctx.db
       .query("coachConvos")
       .withIndex("by_user", q => q.eq("userId", userId))
