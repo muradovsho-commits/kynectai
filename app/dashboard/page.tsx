@@ -347,9 +347,11 @@ export default function DashboardPage() {
   // ─── Flashcard performance per track (from localStorage, no Convex hit)
   // Each offerbell_flash_perf_{track} stores { seen, pass, partial, fail, byCat }
   // where byCat is Record<categoryName, { seen, pass }>
-  type FlashTrack = { seen: number; pass: number; partial: number; fail: number; byCat: Record<string, { seen: number; pass: number }> };
-  const [flashPerf, setFlashPerf] = useState<Record<string, FlashTrack>>({});
-  const [drillCount, setDrillCount] = useState(0);
+  // Concept-drill performance sourced from the drill history log (drill-only).
+  // The dashboard does NOT read flash_perf, so flashcard activity never affects
+  // Total Drills, Avg Score, or the Skill Heatmap.
+  const [drillByTrackCat, setDrillByTrackCat] = useState<Record<string, Record<string, { seen: number; correct: number }>>>({});
+  const [drillAgg, setDrillAgg] = useState<{ items: number; scoreSum: number }>({ items: 0, scoreSum: 0 });
   // Diagnostic Review contributes to Avg Score only (NOT drills/heatmap). Read
   // from its own history store so it never touches flash_perf again.
   const [diagAgg, setDiagAgg] = useState<{ items: number; scoreSum: number }>({ items: 0, scoreSum: 0 });
@@ -357,44 +359,34 @@ export default function DashboardPage() {
   // diagnostic accuracy in alongside drills/flashcards and mock interviews.
   const [diagByTrackCat, setDiagByTrackCat] = useState<Record<string, Record<string, { total: number; correct: number }>>>({});
   const loadLocalProgress = useCallback(() => {
-    const next: Record<string, FlashTrack> = {};
-    for (const t of TRACK_ORDER) {
-      try {
-        const raw = localStorage.getItem(`offerbell_flash_perf_${t}`);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          next[t] = {
-            seen: parsed.seen || 0,
-            pass: parsed.pass || 0,
-            partial: parsed.partial || 0,
-            fail: parsed.fail || 0,
-            byCat: (parsed.byCat && typeof parsed.byCat === 'object') ? parsed.byCat : {},
-          };
-        } else {
-          next[t] = { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
-        }
-      } catch {
-        next[t] = { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
-      }
-    }
-    setFlashPerf(next);
-
-    // Concept drill progress: best-effort count of completed drills.
-    // Reads offerbell_drill_progress if it exists.
+    // Concept-drill performance from the per-question drill history log
+    // (offerbell_drill_history) - drill answers only, never flashcards. Powers
+    // Total Drills, the drill portion of Avg Score, and the Skill Heatmap.
     try {
-      const raw = localStorage.getItem('offerbell_drill_progress');
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        // Could be a number, array, or object. Count keys/length.
-        if (Array.isArray(parsed)) setDrillCount(parsed.length);
-        else if (typeof parsed === 'object' && parsed) setDrillCount(Object.keys(parsed).length);
-        else if (typeof parsed === 'number') setDrillCount(parsed);
-        else setDrillCount(0);
+      const raw = localStorage.getItem('offerbell_drill_history');
+      const hist = raw ? JSON.parse(raw) : [];
+      if (Array.isArray(hist)) {
+        let items = 0; let scoreSum = 0;
+        const byTrackCat: Record<string, Record<string, { seen: number; correct: number }>> = {};
+        for (const h of hist) {
+          const tk = h?.trackKey; const cat = h?.topic; const ok = !!h?.correct;
+          items += 1;
+          if (ok) scoreSum += 100;
+          if (tk && cat) {
+            const tgt = byTrackCat[tk] || (byTrackCat[tk] = {});
+            const acc = tgt[cat] || (tgt[cat] = { seen: 0, correct: 0 });
+            acc.seen += 1; if (ok) acc.correct += 1;
+          }
+        }
+        setDrillAgg({ items, scoreSum });
+        setDrillByTrackCat(byTrackCat);
       } else {
-        setDrillCount(0);
+        setDrillAgg({ items: 0, scoreSum: 0 });
+        setDrillByTrackCat({});
       }
     } catch {
-      setDrillCount(0);
+      setDrillAgg({ items: 0, scoreSum: 0 });
+      setDrillByTrackCat({});
     }
 
     // Diagnostic Review history -> avg-score contribution.
@@ -490,30 +482,23 @@ export default function DashboardPage() {
   }, []);
 
   // ─── Computed: weekly summary stats
-  const totalDrills = useMemo(() => {
-    const flashTotal = Object.values(flashPerf).reduce((s, p) => s + p.seen, 0);
-    return flashTotal + drillCount;
-  }, [flashPerf, drillCount]);
+  const totalDrills = useMemo(() => drillAgg.items, [drillAgg]);
 
   // Avg score across EVERYTHING that produces a score: flashcards + concept
   // drills (both in flash_perf) and mock interviews (single + full, from
   // mockResponses). Count-weighted so a mode with more attempts counts more,
   // rather than naively averaging two percentages of unequal sample size.
+  // Avg score across everything that produces a grade: concept drills (from
+  // drill history), mock interviews, and diagnostic. Flashcards are NOT graded
+  // here. Count-weighted so a mode with more attempts counts more.
   const avgScoreData = useMemo(() => {
-    let flashSeen = 0;
-    let flashWeighted = 0;
-    for (const p of Object.values(flashPerf)) {
-      flashSeen += p.seen;
-      flashWeighted += p.pass + p.partial * 0.5;
-    }
-    const flashScoreSum = flashWeighted * 100; // in percentage-points
     const mockCount = (mockStats && mockStats.count) || 0;
     const mockScoreSum = mockCount * ((mockStats && mockStats.avgGrade) || 0);
-    const items = flashSeen + mockCount + diagAgg.items;
-    const scoreSum = flashScoreSum + mockScoreSum + diagAgg.scoreSum;
+    const items = drillAgg.items + mockCount + diagAgg.items;
+    const scoreSum = drillAgg.scoreSum + mockScoreSum + diagAgg.scoreSum;
     const score = items > 0 ? Math.round(scoreSum / items) : 0;
     return { score, items };
-  }, [flashPerf, mockStats, diagAgg]);
+  }, [drillAgg, mockStats, diagAgg]);
   const avgScore = avgScoreData.score;
 
   // ─── Active time per day (set by useActiveTime hook running app-wide)
@@ -576,34 +561,34 @@ export default function DashboardPage() {
   // topics appear first.
   const topicRows = useMemo(() => {
     if (!selectedTrackKey) return [];
-    const flashByCat = flashPerf[selectedTrackKey]?.byCat || {};
+    const drillByCat = drillByTrackCat[selectedTrackKey] || {};
     const diagByCat = diagByTrackCat[selectedTrackKey] || {};
-    // Union of topics seen in flashcards/drills (flash_perf), mock interviews,
+    // Union of topics seen in concept drills (drill history), mock interviews,
     // and diagnostic. Each topic's accuracy is the blended average across all
-    // three sources, weighted by attempts.
+    // three sources, weighted by attempts. Flashcards are excluded.
     const cats = new Set<string>([
-      ...Object.keys(flashByCat),
+      ...Object.keys(drillByCat),
       ...mockTopicStats.map(m => m.category),
       ...Object.keys(diagByCat),
     ]);
     return Array.from(cats)
       .map(topic => {
-        const f = flashByCat[topic] || { seen: 0, pass: 0 };
+        const dr = drillByCat[topic] || { seen: 0, correct: 0 };
         const m = mockTopicStats.find(x => x.category === topic);
         const d = diagByCat[topic] || { total: 0, correct: 0 };
-        const flashSeen = f.seen || 0;
-        const flashScoreSum = (f.pass || 0) * 100; // each flash/drill pass = 100%
+        const drillSeen = dr.seen || 0;
+        const drillScoreSum = (dr.correct || 0) * 100; // each drill pass = 100%
         const mockCount = m?.count || 0;
         const mockScoreSum = m?.scoreSum || 0;     // already 0-100 per attempt
         const diagSeen = d.total || 0;
         const diagScoreSum = (d.correct || 0) * 100; // each correct diag answer = 100%
-        const seen = flashSeen + mockCount + diagSeen;
-        const accuracy = seen > 0 ? Math.round((flashScoreSum + mockScoreSum + diagScoreSum) / seen) : 0;
+        const seen = drillSeen + mockCount + diagSeen;
+        const accuracy = seen > 0 ? Math.round((drillScoreSum + mockScoreSum + diagScoreSum) / seen) : 0;
         return { topic, seen, accuracy };
       })
       .filter(r => r.seen > 0)
       .sort((a, b) => a.accuracy - b.accuracy);
-  }, [flashPerf, selectedTrackKey, mockTopicStats, diagByTrackCat]);
+  }, [drillByTrackCat, selectedTrackKey, mockTopicStats, diagByTrackCat]);
 
   const hasAnyTopicData = topicRows.length > 0;
 
