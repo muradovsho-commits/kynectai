@@ -501,7 +501,7 @@ function formatText(text: string): string {
   return text
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/^\s*[-*•]\s+(.+)$/gm, '<li>$1</li>')
     .replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`)
     .split(/\n\n+/)
     .map((p) => (p.startsWith('<ul>') || p.startsWith('<h3>') ? p : `<p>${p.replace(/\n/g, '<br>')}</p>`))
@@ -1372,7 +1372,6 @@ export default function CoachPage() {
                       {m.role === 'assistant' ? (
                         <>
                           <div className="coach-msg-label coach-label">
-                            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L9.5 8.5 3 11l6.5 2.5L12 20l2.5-6.5L21 11l-6.5-2.5z"/></svg>
                             Coach
                           </div>
                           <div className="coach-bubble coach-bubble-ai" dangerouslySetInnerHTML={{ __html: formatText(m.content) }} />
@@ -1411,7 +1410,6 @@ export default function CoachPage() {
                   {isLoading && (
                     <div className="coach-msg-row">
                       <div className="coach-msg-label coach-label">
-                        <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L9.5 8.5 3 11l6.5 2.5L12 20l2.5-6.5L21 11l-6.5-2.5z"/></svg>
                         Coach
                       </div>
                       <div className="coach-bubble coach-bubble-ai">
