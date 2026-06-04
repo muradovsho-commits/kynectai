@@ -247,6 +247,7 @@ export default defineSchema({
     weekStart: v.string(),
     coach: v.optional(v.number()),
     resumeReview: v.optional(v.number()),
+    resumeChat: v.optional(v.number()),
     outreachWriter: v.optional(v.number()),
     mockInterview: v.optional(v.number()),
     updatedAt: v.number(),

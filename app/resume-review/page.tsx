@@ -59,6 +59,130 @@ type SavedReview = {
 const REVIEW_HISTORY_KEY = 'offerbell_resume_reviews';
 const MAX_SAVED_REVIEWS = 10;
 
+type ChatMsg = { role: 'user' | 'model'; content: string };
+
+function buildReviewSummary(r: ReviewData): string {
+  const lines: string[] = [];
+  lines.push(`Overall score: ${r.overallScore}/10. ${r.headline}`);
+  if (r.sections) {
+    for (const [k, sec] of Object.entries(r.sections)) {
+      lines.push(`${k}: ${sec.score}/10 - ${sec.feedback}`);
+    }
+  }
+  if (r.topStrengths?.length) lines.push(`Top strengths: ${r.topStrengths.join('; ')}`);
+  if (r.criticalFixes?.length) lines.push(`Critical fixes: ${r.criticalFixes.join('; ')}`);
+  if (r.interviewReadiness) lines.push(`Interview readiness: ${r.interviewReadiness}`);
+  return lines.join('\n');
+}
+
+function ResumeChat({ resumeText, track, review, userPlan }: { resumeText: string; track: string; review: ReviewData; userPlan: string }) {
+  const [msgs, setMsgs] = useState<ChatMsg[]>([]);
+  const [input, setInput] = useState('');
+  const [sending, setSending] = useState(false);
+  const [err, setErr] = useState('');
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [msgs, sending]);
+
+  const planLimit = userPlan === 'elite' ? 100 : userPlan === 'pro' ? 30 : 5;
+
+  const send = async (q: string) => {
+    const question = q.trim();
+    if (!question || sending) return;
+    setErr('');
+    const history = msgs.slice();
+    setMsgs(m => [...m, { role: 'user', content: question }]);
+    setInput('');
+    setSending(true);
+    try {
+      const res = await fetch('/api/resume-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          resumeText: (resumeText || '').slice(0, 8000),
+          targetTrack: track,
+          reviewSummary: buildReviewSummary(review),
+          history,
+          question,
+        }),
+      });
+      const data = await res.json();
+      if (data.answer) {
+        setMsgs(m => [...m, { role: 'model', content: data.answer }]);
+      } else if (data.error) {
+        const friendly = data.message
+          || (data.error === 'limit_reached'
+              ? `You have reached your ${userPlan} limit of ${planLimit} follow-up questions${userPlan === 'free' ? ' this week. Upgrade to Pro for 30 per week.' : ' this week. Resets Monday.'}`
+              : data.error === 'All models failed'
+                ? 'The assistant is having trouble right now. Try again in a moment.'
+                : data.error);
+        setErr(friendly);
+      } else {
+        setErr('Unexpected response. Please try again.');
+      }
+    } catch {
+      setErr('Failed to connect. Please try again.');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const starters = [
+    'How do I strengthen my weakest section?',
+    'Rewrite my top bullet to be more impactful.',
+    'What would an interviewer push back on here?',
+  ];
+
+  return (
+    <div className="rr-chat">
+      <div className="rr-chat-head">
+        <div className="rr-chat-title">Ask <em style={{ fontStyle: 'italic' }}>follow-ups</em></div>
+        <div className="rr-chat-sub">Dig into the feedback, ask for rewrites, or pressure-test a bullet. Grounded in your resume.</div>
+      </div>
+
+      <div className="rr-chat-body" ref={scrollRef}>
+        {msgs.length === 0 && !sending ? (
+          <div className="rr-chat-empty">
+            {starters.map((s, i) => (
+              <button key={i} className="rr-chat-starter" type="button" onClick={() => send(s)}>{s}</button>
+            ))}
+          </div>
+        ) : (
+          msgs.map((m, i) => (
+            <div key={i} className={`rr-chat-msg ${m.role === 'user' ? 'user' : 'model'}`}>
+              <div className="rr-chat-bubble">{m.content}</div>
+            </div>
+          ))
+        )}
+        {sending && (
+          <div className="rr-chat-msg model">
+            <div className="rr-chat-bubble rr-chat-typing"><span></span><span></span><span></span></div>
+          </div>
+        )}
+      </div>
+
+      {err && <div className="rr-chat-err">{err}</div>}
+
+      <div className="rr-chat-input-row">
+        <textarea
+          className="rr-chat-input"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(input); } }}
+          placeholder="Ask a follow-up about your resume..."
+          rows={1}
+          disabled={sending}
+        />
+        <button className="rr-chat-send" type="button" onClick={() => send(input)} disabled={sending || !input.trim()} title="Send">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function ResumeReviewPage() {
   const router = useRouter();
   const [track, setTrack] = useState('Investment Banking');
@@ -596,6 +720,9 @@ export default function ResumeReviewPage() {
                         <div className="rr-ir-text">{review.interviewReadiness}</div>
                       </div>
                     )}
+
+                    {/* Follow-up chat */}
+                    <ResumeChat resumeText={resumeText} track={track} review={review} userPlan={userPlan} />
                   </>
                 )}
               </div>

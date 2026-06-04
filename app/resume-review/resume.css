@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   RESUME REVIEW — redesigned. Three-layer wrapper pattern with scoped vars,
+   RESUME REVIEW: redesigned. Three-layer wrapper pattern with scoped vars,
    two-column workspace (upload on left, past reviews on right), inline
    loading, premium dropzone, refined results view.
 ═══════════════════════════════════════════════════════════════════════════ */
@@ -658,3 +658,150 @@ html[data-theme="dark"] .rr-app {
   .rr-os-num { font-size: 32px; }
   .rr-card-head { flex-wrap: wrap; gap: 12px; }
 }
+
+/* ─── Resume follow-up chat ─── */
+.rr-chat {
+  margin-top: 28px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.rr-chat-head {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.rr-chat-title {
+  font-family: 'Instrument Serif', 'Times New Roman', serif;
+  font-size: 24px;
+  color: var(--text);
+  line-height: 1.1;
+}
+.rr-chat-sub {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.rr-chat-body {
+  max-height: 460px;
+  overflow-y: auto;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.rr-chat-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+.rr-chat-starter {
+  text-align: left;
+  font-size: 13px;
+  color: var(--text-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color .15s, color .15s;
+}
+.rr-chat-starter:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.rr-chat-msg {
+  display: flex;
+  max-width: 100%;
+}
+.rr-chat-msg.user { justify-content: flex-end; }
+.rr-chat-msg.model { justify-content: flex-start; }
+.rr-chat-bubble {
+  max-width: 82%;
+  padding: 11px 14px;
+  border-radius: 13px;
+  font-size: 14px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.rr-chat-msg.user .rr-chat-bubble {
+  background: var(--accent);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.rr-chat-msg.model .rr-chat-bubble {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+.rr-chat-typing {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.rr-chat-typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-3);
+  animation: rrTyping 1.2s infinite ease-in-out;
+}
+.rr-chat-typing span:nth-child(2) { animation-delay: .15s; }
+.rr-chat-typing span:nth-child(3) { animation-delay: .3s; }
+@keyframes rrTyping {
+  0%, 60%, 100% { opacity: .3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+.rr-chat-err {
+  margin: 0 20px;
+  padding: 10px 13px;
+  font-size: 13px;
+  color: var(--bad);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.rr-chat-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  padding: 14px 20px 18px;
+  border-top: 1px solid var(--border);
+}
+.rr-chat-input {
+  flex: 1;
+  resize: none;
+  max-height: 140px;
+  min-height: 44px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  outline: none;
+  transition: border-color .15s;
+}
+.rr-chat-input:focus { border-color: var(--accent); }
+.rr-chat-input:disabled { opacity: .6; }
+.rr-chat-send {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.rr-chat-send:disabled { opacity: .4; cursor: default; }
