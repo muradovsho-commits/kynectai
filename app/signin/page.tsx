@@ -119,6 +119,7 @@ function SigninContent() {
           tutorialComplete: onboardingDone || cloudProfile?.tutorialComplete || false,
         };
         window.localStorage.setItem("offerbell_onboarding_profile", JSON.stringify(profile));
+        window.localStorage.setItem("offerbell_user_email", email || "");
         if (onboardingDone || profile.tutorialComplete) {
           window.localStorage.setItem("offerbell_tutorial_complete", "true");
         }
@@ -131,6 +132,7 @@ function SigninContent() {
               chrome.runtime.sendMessage(extId, {
                 action: 'updateCount',
                 userId: id,
+                userEmail: email || '',
                 messagesSent: result?.outreachCount || 0,
                 plan: finalPlan
               }, () => {});

@@ -124,7 +124,8 @@ export default function OutreachWriterPage() {
             action: 'updateCount',
             messagesSent: c,
             plan: localStorage.getItem('offerbell_plan') || 'free',
-            userId: localStorage.getItem('offerbell_user_id') || ''
+            userId: localStorage.getItem('offerbell_user_id') || '',
+            userEmail: localStorage.getItem('offerbell_user_email') || ''
           }, () => {});
         }
       } catch {}

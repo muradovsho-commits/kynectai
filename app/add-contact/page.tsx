@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import { PLAN_LIMITS } from '../lib/plan';
 
 function AddContactInner() {
   const params = useSearchParams();
-  const [status, setStatus] = useState<'saving' | 'saved' | 'duplicate' | 'error'>('saving');
+  const [status, setStatus] = useState<'saving' | 'saved' | 'duplicate' | 'error' | 'limit'>('saving');
   const [contactName, setContactName] = useState('');
 
   useEffect(() => {
@@ -43,6 +44,13 @@ function AddContactInner() {
 
       if (isDuplicate) {
         setStatus('duplicate');
+        return;
+      }
+
+      // Free plan: enforce the same contact cap the tracker uses
+      const plan = (localStorage.getItem('offerbell_plan') || 'free').toLowerCase();
+      if (plan !== 'pro' && plan !== 'elite' && contacts.length >= PLAN_LIMITS.outreachContacts.free) {
+        setStatus('limit');
         return;
       }
 
@@ -101,11 +109,11 @@ function AddContactInner() {
         {status === 'saved' && (
           <>
             <div style={{
-              width: 56, height: 56, borderRadius: '50%', background: '#ecfdf5',
+              width: 56, height: 56, borderRadius: '50%', background: '#eff6ff',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 16px',
             }}>
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             </div>
@@ -120,7 +128,7 @@ function AddContactInner() {
               style={{
                 display: 'inline-block',
                 padding: '10px 24px',
-                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                background: '#2563eb',
                 color: '#fff',
                 borderRadius: 10,
                 fontSize: 13,
@@ -161,7 +169,7 @@ function AddContactInner() {
               style={{
                 display: 'inline-block',
                 padding: '10px 24px',
-                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                background: '#2563eb',
                 color: '#fff',
                 borderRadius: 10,
                 fontSize: 13,
@@ -171,6 +179,46 @@ function AddContactInner() {
             >
               Open Outreach Tracker
             </a>
+          </>
+        )}
+
+        {status === 'limit' && (
+          <>
+            <div style={{
+              width: 56, height: 56, borderRadius: '50%', background: '#fef3c7',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              margin: '0 auto 16px',
+            }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: '#1e293b', marginBottom: 6 }}>
+              Contact limit reached
+            </div>
+            <div style={{ fontSize: 13, color: '#64748b', marginBottom: 24 }}>
+              The free plan holds up to {PLAN_LIMITS.outreachContacts.free} contacts. Upgrade to add unlimited contacts to your Outreach Tracker.
+            </div>
+            <a
+              href="/checkout"
+              style={{
+                display: 'inline-block',
+                padding: '10px 24px',
+                background: '#2563eb',
+                color: '#fff',
+                borderRadius: 10,
+                fontSize: 13,
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              Upgrade
+            </a>
+            <div style={{ marginTop: 12, fontSize: 12, color: '#94a3b8' }}>
+              You can close this tab.
+            </div>
           </>
         )}
 
