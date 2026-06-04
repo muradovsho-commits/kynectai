@@ -71,7 +71,6 @@ export default function OutreachWriterPage() {
   // Message config
   const [angle, setAngle] = useState('alumni');
   const [ctx, setCtx] = useState('');
-  const [tone, setTone] = useState('Professional');
 
   // Generation
   const [output, setOutput] = useState('');
@@ -293,7 +292,6 @@ export default function OutreachWriterPage() {
 Student Info: name=${yourName}, school=${yourSchool}, year=${yourYear}, target role=${yourTarget}.
 Contact Info: name=${contactName}, firm=${contactFirm}, role=${contactRole}, school=${contactSchool}.
 Networking Angle: ${angleLabel}. Context: ${ctx || 'None provided'}.
-Tone: ${tone}.
 
 Rules:
 1. Do not use overly formal or robotic words like "delve", "robust", "thrilled", or "tapestry".
@@ -470,7 +468,7 @@ Rules:
                       </div>
                     </div>
 
-                    {/* Section 3: Context + tone */}
+                    {/* Section 3: Context */}
                     <div className="ow-section">
                       <div className="ow-section-head">
                         <div>
@@ -486,17 +484,6 @@ Rules:
                         rows={2}
                         style={{ marginBottom: 16 }}
                       />
-                      <div className="ow-label" style={{ marginBottom: 8 }}>Tone</div>
-                      <div className="ow-tones">
-                        {['Professional', 'Conversational', 'Direct & brief'].map(t => (
-                          <button
-                            key={t}
-                            type="button"
-                            className={`ow-tone${tone === t ? ' sel' : ''}`}
-                            onClick={() => setTone(t)}
-                          >{t}</button>
-                        ))}
-                      </div>
                     </div>
 
                     {/* Error inline */}
