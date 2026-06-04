@@ -294,7 +294,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
     || activePage === 'recruiting-manual';
 
   const planLabel = userPlan === 'elite' ? 'Elite plan' : userPlan === 'pro' ? 'Pro plan' : 'Free plan';
-  const planColor = userPlan === 'elite' ? '#3b82f6' : userPlan === 'pro' ? '#22c55e' : '#9ca3af';
+  const planColor = userPlan === 'elite' ? '#3b82f6' : userPlan === 'pro' ? '#eab308' : '#9ca3af';
 
   return (
     <>
@@ -804,10 +804,10 @@ export default function Sidebar({ activePage }: SidebarProps) {
           transition: background 0.12s;
         }
         .ob-profile-trigger:hover { background: rgba(255,255,255,0.08); }
-        /* Plan-colored outline: green for Pro, blue for Elite */
+        /* Plan-colored outline: yellow for Pro, blue for Elite */
         .ob-profile-trigger[data-plan="pro"] {
-          border: 1.5px solid #22c55e;
-          box-shadow: 0 0 0 1px rgba(34,197,94,0.15);
+          border: 1.5px solid #eab308;
+          box-shadow: 0 0 0 1px rgba(234,179,8,0.15);
         }
         .ob-profile-trigger[data-plan="elite"] {
           border: 1.5px solid #3b82f6;
@@ -823,9 +823,9 @@ export default function Sidebar({ activePage }: SidebarProps) {
           line-height: 1;
         }
         .ob-plan-chip--pro {
-          background: rgba(34,197,94,0.18);
-          color: #4ade80;
-          border: 0.5px solid rgba(34,197,94,0.35);
+          background: rgba(234,179,8,0.18);
+          color: #fde047;
+          border: 0.5px solid rgba(234,179,8,0.35);
         }
         .ob-plan-chip--elite {
           background: rgba(59,130,246,0.20);

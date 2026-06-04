@@ -419,7 +419,7 @@ export default function MyAccountPage() {
   const planBadgeStyle = userPlan === 'elite'
     ? { background: 'rgba(37, 99, 235, 0.12)', color: '#3b82f6', border: '1px solid rgba(59, 130, 246, 0.3)' }
     : userPlan === 'pro'
-      ? { background: 'rgba(22, 163, 74, 0.12)', color: '#22c55e', border: '1px solid rgba(34, 197, 94, 0.3)' }
+      ? { background: 'rgba(234, 179, 8, 0.12)', color: '#eab308', border: '1px solid rgba(234, 179, 8, 0.3)' }
       : { background: 'var(--surface-2)', color: 'var(--text-2)', border: '1px solid var(--border)' };
 
   const handleSignOut = async () => {
