@@ -2,7 +2,7 @@
 
 import Sidebar from "../components/Sidebar";
 import TutorialOverlay from "../components/TutorialOverlay";
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useLayoutEffect, useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ConvexHttpClient } from "convex/browser";
@@ -51,7 +51,7 @@ const WIDGET_DEFS: { key: DashboardWidgetKey; label: string; desc: string; col: 
   { key: 'outreach',       label: 'Outreach Pipeline', desc: 'Contact pipeline summary by status', col: 'right' },
 ];
 
-// Divy spec: simple default — Weekly Summary, Skill Heatmap, Calendar, Focus.
+// Divy spec: simple default: Weekly Summary, Skill Heatmap, Calendar, Focus.
 // Weekly Activity and Outreach are opt-in via Customize.
 const DEFAULT_DASHBOARD_CONFIG: DashboardConfig = {
   widgets: {
@@ -317,6 +317,8 @@ export default function DashboardPage() {
         if (!cancelled) {
           setMockStats(m);
           setCoachStats(c);
+          try { localStorage.setItem('offerbell_dash_mock_stats', JSON.stringify(m)); } catch {}
+          try { localStorage.setItem('offerbell_dash_coach_stats', JSON.stringify(c)); } catch {}
         }
       } catch {}
     })();
@@ -445,6 +447,19 @@ export default function DashboardPage() {
     };
   }, [loadLocalProgress]);
 
+  // Warm-start every Weekly Summary number from cache BEFORE the browser paints,
+  // so navigating to the dashboard never flashes 0 then the real value. Pure
+  // localStorage reads (device-local display cache); not in the sync blob.
+  useLayoutEffect(() => {
+    loadLocalProgress();
+    try {
+      const m = localStorage.getItem('offerbell_dash_mock_stats');
+      if (m) setMockStats(JSON.parse(m));
+      const c = localStorage.getItem('offerbell_dash_coach_stats');
+      if (c) setCoachStats(JSON.parse(c));
+    } catch {}
+  }, [loadLocalProgress]);
+
   // ─── Outreach tracker data (from localStorage)
   const [outreachContacts, setOutreachContacts] = useState<Array<{ status: string }>>([]);
   const [outreachStatuses, setOutreachStatuses] = useState(DEFAULT_OUTREACH_STATUSES);
@@ -555,7 +570,7 @@ export default function DashboardPage() {
 
   const maxWeekly = Math.max(0.01, ...weeklyActivity);
 
-  // ─── Computed: skill heatmap — per-topic accuracy WITHIN the selected track
+  // ─── Computed: skill heatmap: per-topic accuracy WITHIN the selected track
   // (not per-track across the platform). Reads byCat for the user's selected
   // vertical's flash_perf track. Sorted by accuracy ascending so weakest
   // topics appear first.
@@ -611,7 +626,7 @@ export default function DashboardPage() {
     }
     // Flashcards: recommend the user's selected track specifically.
     if (selectedTrackKey) {
-      // User has data — find their weakest topic IN this track if any are <70%.
+      // User has data, find their weakest topic IN this track if any are <70%.
       if (hasAnyTopicData) {
         const weakest = topicRows[0]; // already sorted ascending by accuracy
         if (weakest && weakest.accuracy < 70) {

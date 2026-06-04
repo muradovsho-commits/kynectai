@@ -795,13 +795,13 @@ export default function Sidebar({ activePage }: SidebarProps) {
           gap: 8px;
           padding: 8px;
           background: rgba(255,255,255,0.03);
-          border: 0.5px solid rgba(255,255,255,0.05);
+          border: 1.5px solid transparent;
           border-radius: 8px;
           color: #f4f5f8;
           cursor: pointer;
           width: 100%;
           text-align: left;
-          transition: background 0.12s, border-color 0.15s, box-shadow 0.15s;
+          transition: background 0.12s;
         }
         .ob-profile-trigger:hover { background: rgba(255,255,255,0.08); }
         /* Plan-colored outline: green for Pro, blue for Elite */
