@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalLayout title="Privacy Policy" lastUpdated="May 31, 2026">
+    <LegalLayout title="Privacy Policy" lastUpdated="June 4, 2026">
 
       <p>
         OfferBell (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;OfferBell&rdquo;) provides a recruiting training platform for college students pursuing finance and consulting careers. This Privacy Policy explains what information we collect when you use OfferBell, how we use it, who we share it with, and the rights you have over it.
@@ -55,20 +55,22 @@ export default function PrivacyPage() {
 
       <p>AI outputs are generated content, not professional advice. We make no guarantees about their accuracy or suitability for a particular career outcome. You are responsible for reviewing anything OfferBell suggests before using it.</p>
 
-      <h2>4. Who We Share Information With</h2>
+      <h2>4. Who We Share Information With (Subprocessors)</h2>
 
-      <p>We share information only with the service providers we need to operate OfferBell:</p>
+      <p>We share information only with the third-party service providers we rely on to operate OfferBell. Each processes data only as needed to provide its service to us, under its own terms and privacy commitments:</p>
 
       <ul>
-        <li><strong>Stripe</strong> — payment processing</li>
-        <li><strong>Convex</strong> — database hosting</li>
-        <li><strong>Vercel</strong> — application hosting and CDN</li>
-        <li><strong>Google (Gemini)</strong> and <strong>Anthropic (Claude)</strong> — AI model inference</li>
-        <li><strong>Email delivery providers</strong> — transactional emails</li>
+        <li><strong>Stripe</strong> — payment processing and subscription billing</li>
+        <li><strong>Convex</strong> — database and backend hosting (stores your account and content data)</li>
+        <li><strong>Vercel</strong> — application hosting and content delivery</li>
+        <li><strong>Google (Gemini)</strong> and <strong>Anthropic (Claude)</strong> — AI model inference for the outreach, resume review, coach, and mock interview features</li>
+        <li><strong>Resend</strong> — delivery of transactional emails (verification, password reset, receipts, plan changes)</li>
+        <li><strong>Apollo</strong> — contact search and enrichment used by the outreach and contact finder feature</li>
+        <li><strong>Sentry</strong> — error monitoring and diagnostics. When an error occurs, Sentry may receive technical data including your IP address, browser and device details, the page and action involved, and your account identifier, so we can diagnose and fix the problem</li>
         <li><strong>Google / Microsoft</strong> — only if you connect Gmail or Outlook (OAuth scope is limited to what&rsquo;s needed for outreach sync)</li>
       </ul>
 
-      <p>We may also disclose information when required by law (subpoena, court order, valid government request), to enforce our Terms, to prevent fraud or abuse, or in connection with a business transfer (e.g., acquisition). We will notify users if we&rsquo;re part of a business transfer, unless legally prohibited.</p>
+      <p>This list may change as our infrastructure evolves; we will keep this section current. We may also disclose information when required by law (subpoena, court order, valid government request), to enforce our Terms, to prevent fraud or abuse, or in connection with a business transfer (e.g., acquisition). We will notify users if we&rsquo;re part of a business transfer, unless legally prohibited.</p>
 
       <h2>5. Data Retention</h2>
 
@@ -88,7 +90,7 @@ export default function PrivacyPage() {
         <li><strong>Objection:</strong> object to specific uses of your data (e.g., product analytics)</li>
       </ul>
 
-      <p>To exercise any of these rights, email <a href="mailto:support@offerbell.org">support@offerbell.org</a> from the address on your account. We respond within 30 days.</p>
+      <p>To exercise any of these rights, email <a href="mailto:officialofferbell@gmail.com">officialofferbell@gmail.com</a> from the address on your account. We respond within 30 days.</p>
 
       <p>If you&rsquo;re a California resident, you have additional rights under the CCPA, including the right to know what categories of personal information we collect and the right to opt out of any &ldquo;sale&rdquo; of personal information. We do not sell personal information.</p>
 
@@ -102,7 +104,7 @@ export default function PrivacyPage() {
 
       <h2>8. Children</h2>
 
-      <p>OfferBell is intended for users 13 and older. We do not knowingly collect information from children under 13. If you believe a child under 13 has provided information to us, contact us at <a href="mailto:support@offerbell.org">support@offerbell.org</a> and we will delete it.</p>
+      <p>OfferBell is intended for users 13 and older. We do not knowingly collect information from children under 13. If you believe a child under 13 has provided information to us, contact us at <a href="mailto:officialofferbell@gmail.com">officialofferbell@gmail.com</a> and we will delete it.</p>
 
       <h2>9. International Users</h2>
 
@@ -117,7 +119,7 @@ export default function PrivacyPage() {
       <p>Questions about this Privacy Policy or your data:</p>
 
       <p>
-        Email: <a href="mailto:support@offerbell.org">support@offerbell.org</a><br/>
+        Email: <a href="mailto:officialofferbell@gmail.com">officialofferbell@gmail.com</a><br/>
         Web: <a href="https://offerbell.org">offerbell.org</a>
       </p>
 
