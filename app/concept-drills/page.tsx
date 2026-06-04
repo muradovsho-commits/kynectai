@@ -260,22 +260,29 @@ function ConceptDrillsInner() {
   }, [history, selectedTrackKey]);
 
   // ─── Derived stats ───────────────────────────────────────────────────────
+  // Sourced from this track's drill history (the same log the Question History
+  // tab shows) so the two never disagree. The shared flash_perf counter is NOT
+  // used here because Flashcards writes to it too, which would inflate the
+  // drill count with flashcard reps.
   const stats = useMemo(() => {
-    if (!flashPerf) return { seen: 0, pass: 0, accuracy: 0 };
-    const accuracy = flashPerf.seen > 0 ? Math.round((flashPerf.pass / flashPerf.seen) * 100) : 0;
-    return { seen: flashPerf.seen, pass: flashPerf.pass, accuracy };
-  }, [flashPerf]);
+    const seen = trackHistory.length;
+    const pass = trackHistory.filter(h => h.correct).length;
+    const accuracy = seen > 0 ? Math.round((pass / seen) * 100) : 0;
+    return { seen, pass, accuracy };
+  }, [trackHistory]);
 
-  // Per-topic rows for the current track.
+  // Per-topic rows for the current track, also from drill history.
   const topicRows = useMemo(() => {
     if (!selectedTrackKey || !trackDef) return [];
     return trackDef.topics.map(topic => {
-      const data = flashPerf?.byCat?.[topic] || { seen: 0, pass: 0 };
-      const accuracy = data.seen > 0 ? Math.round((data.pass / data.seen) * 100) : 0;
+      const items = trackHistory.filter(h => h.topic === topic);
+      const seen = items.length;
+      const pass = items.filter(h => h.correct).length;
+      const accuracy = seen > 0 ? Math.round((pass / seen) * 100) : 0;
       const available = trackDef.questions.filter(q => q.topic === topic).length;
-      return { topic, seen: data.seen, pass: data.pass, accuracy, available };
+      return { topic, seen, pass, accuracy, available };
     });
-  }, [selectedTrackKey, trackDef, flashPerf]);
+  }, [selectedTrackKey, trackDef, trackHistory]);
 
   // ─── History filters ─────────────────────────────────────────────────────
   const [historyFilters, setHistoryFilters] = useState<{ topic: string; difficulty: string; search: string }>({
