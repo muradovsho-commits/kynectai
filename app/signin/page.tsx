@@ -179,7 +179,7 @@ function SigninContent() {
           <div>
             <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
               {[
-                { n: '5,000+', l: 'Questions' },
+                { n: '6,000+', l: 'Questions' },
                 { n: '10', l: 'Career Tracks' },
                 { n: '200+', l: 'Campuses' },
               ].map((s, i) => (
