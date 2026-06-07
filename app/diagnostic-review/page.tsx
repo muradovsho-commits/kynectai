@@ -28,7 +28,8 @@ const TRACKS: Record<string, TrackDef> = {};
 for (const [key, t] of Object.entries(DRILL_TRACKS)) {
   const diag = DIAG_TRACKS[key];
   if (diag) {
-    TRACKS[key] = { title: diag.title, categories: diag.categories, questions: diag.questions, target: TRACK_TARGET[key] ?? DEFAULT_TARGET };
+    const categories = Array.from(new Set([...t.topics, ...diag.categories]));
+    TRACKS[key] = { title: t.title, categories, questions: [...t.questions, ...diag.questions], target: TRACK_TARGET[key] ?? DEFAULT_TARGET };
   } else {
     TRACKS[key] = { title: t.title, categories: t.topics, questions: t.questions, target: TRACK_TARGET[key] ?? DEFAULT_TARGET };
   }
