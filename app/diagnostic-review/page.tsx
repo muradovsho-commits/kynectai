@@ -7,6 +7,7 @@ import Sidebar from '../components/Sidebar';
 import { useUserPlan } from '../lib/usePlan';
 import './diagnostic.css';
 import { TRACKS as DRILL_TRACKS, DrillQ } from '../concept-drills/drill-data';
+import { DIAG_TRACKS } from './diagnostic-data';
 
 type MCQ = { q: string; category: string; options: string[]; correct: number; explanation: string };
 type TrackDef = { title: string; categories: string[]; questions: DrillQ[]; target: number };
@@ -25,7 +26,12 @@ type DiagResult = {
 
 const TRACKS: Record<string, TrackDef> = {};
 for (const [key, t] of Object.entries(DRILL_TRACKS)) {
-  TRACKS[key] = { title: t.title, categories: t.topics, questions: t.questions, target: TRACK_TARGET[key] ?? DEFAULT_TARGET };
+  const diag = DIAG_TRACKS[key];
+  if (diag) {
+    TRACKS[key] = { title: diag.title, categories: diag.categories, questions: diag.questions, target: TRACK_TARGET[key] ?? DEFAULT_TARGET };
+  } else {
+    TRACKS[key] = { title: t.title, categories: t.topics, questions: t.questions, target: TRACK_TARGET[key] ?? DEFAULT_TARGET };
+  }
 }
 
 // Map sidebar industry name -> diagnostic track key. The sidebar uses full
