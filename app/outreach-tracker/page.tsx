@@ -143,6 +143,8 @@ export default function OutreachTrackerPage() {
   // Also update the module-level STATUSES for backward compat
   Object.keys(STATUSES).forEach(k => delete STATUSES[k]);
   Object.assign(STATUSES, statusMap);
+  // Resolve a customized status label by key, falling back to a default.
+  const sl = (key: string, fallback: string) => config.statuses.find(s => s.key === key)?.label || fallback;
 
   const visibleColumns = config.columns.filter(c => c.visible);
 
@@ -408,9 +410,9 @@ export default function OutreachTrackerPage() {
           <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
             {[
               { label: 'Total', val: total, sub: 'contacts tracked' },
-              { label: 'Sent', val: sent, sub: 'emails out' },
+              { label: sl('sent', 'Sent'), val: sent, sub: 'emails out' },
               { label: 'Following Up', val: fu, sub: 'awaiting reply' },
-              { label: 'Spoken With', val: spoken, sub: 'calls completed', highlight: true },
+              { label: sl('spoken', 'Spoken With'), val: spoken, sub: 'calls completed', highlight: true },
               { label: 'Completion Rate', val: rate, sub: 'of all sent' },
             ].map(s => (
               <div key={s.label} style={{ background: s.highlight ? '#0c0c0c' : 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12, padding: '14px 18px', flex: 1, minWidth: 100 }}>
@@ -427,9 +429,9 @@ export default function OutreachTrackerPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
             <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 1 }}>Filter:</span>
             {[
-              { key: 'all', label: 'All' }, { key: 'drafted', label: 'Drafted' }, { key: 'sent', label: 'Sent' },
-              { key: 'followup', label: 'Following Up' }, { key: 'needsfu', label: 'Needs Follow Up' }, { key: 'spoken', label: 'Spoken With' },
-              { key: 'stay', label: 'Stay in Touch' }, { key: 'noresp', label: 'No Response' },
+              { key: 'all', label: 'All' }, { key: 'drafted', label: sl('drafted', 'Drafted') }, { key: 'sent', label: sl('sent', 'Sent') },
+              { key: 'followup', label: 'Following Up' }, { key: 'needsfu', label: 'Needs Follow Up' }, { key: 'spoken', label: sl('spoken', 'Spoken With') },
+              { key: 'stay', label: sl('stay', 'Stay in Touch') }, { key: 'noresp', label: sl('noresp', 'No Response') },
             ].map(f => (
               <button key={f.key} onClick={() => setActiveFilter(f.key)} style={{ padding: '5px 12px', borderRadius: 100, border: '1.5px solid', borderColor: activeFilter === f.key ? 'var(--text)' : 'var(--border-2)', background: activeFilter === f.key ? 'var(--text)' : 'var(--surface)', color: activeFilter === f.key ? 'var(--surface)' : 'var(--text-2)', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Sora, sans-serif', transition: 'all .15s' }}>
                 {f.label}
