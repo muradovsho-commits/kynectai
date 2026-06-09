@@ -67,22 +67,12 @@ function SignupContent() {
           <div>
             <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, letterSpacing: "-.5px", marginBottom: 64 }}><a href="/" style={{ color: "#fff", textDecoration: "none" }}>OfferBell<em style={{ fontStyle: "italic" }}>.</em></a></div>
             <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 42, lineHeight: 1.1, letterSpacing: "-1.2px", color: '#fff', marginBottom: 16 }}>Start your recruiting <em style={{ fontStyle: "italic" }}>journey.</em></div>
-            <div style={{ fontSize: 14, color: "rgba(255,255,255,.55)", lineHeight: 1.7, maxWidth: 340, marginBottom: 36 }}>Join thousands of finance students using OfferBell to land offers at top firms.</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-              {["AI-powered outreach that gets replies", "Track every networking conversation", "Interview prep for IB, PE, consulting & more", "Resume review, mock interviews, and coaching"].map((t, i) => (
-                <div key={i} style={{ display: "flex", gap: 10, alignItems: "center", fontSize: 13, color: "rgba(255,255,255,.6)" }}>
-                  <div style={{ width: 20, height: 20, borderRadius: 5, background: 'rgba(22,163,74,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <svg width="12" height="12" fill="none" stroke="#22c55e" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                  </div>
-                  {t}
-                </div>
-              ))}
-            </div>
+            <div style={{ fontSize: 14, color: "rgba(255,255,255,.55)", lineHeight: 1.7, maxWidth: 340 }}>Join thousands of finance students using OfferBell to land offers at top firms.</div>
           </div>
           <div>
-            <div style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '16px 18px', marginBottom: 20 }}>
-              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', fontStyle: 'italic', lineHeight: 1.6, marginBottom: 8 }}>"OfferBell helped me go from confused to confident."</div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>- Wharton '25</div>
+            <div style={{ marginBottom: 20, paddingLeft: 18, borderLeft: '2px solid rgba(255,255,255,0.18)' }}>
+              <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 25, fontStyle: 'italic', lineHeight: 1.35, letterSpacing: '-0.3px', color: 'rgba(255,255,255,0.92)', marginBottom: 12 }}>The impediment to action advances action. What stands in the way becomes the way.</div>
+              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 1.5, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>Marcus Aurelius</div>
             </div>
             <div style={{ fontSize: 12, color: "rgba(255,255,255,.25)" }}>officialofferbell@gmail.com</div>
           </div>
