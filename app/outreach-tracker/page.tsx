@@ -1,6 +1,7 @@
 'use client';
 
 import Sidebar from "../components/Sidebar";
+import ExtensionInstallPrompt from "../components/ExtensionInstallPrompt";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { PLAN_LIMITS } from '../lib/plan';
@@ -405,6 +406,9 @@ export default function OutreachTrackerPage() {
             const c = contacts.find(ct => ct.id === id);
             if (c) openDrawer(c);
           }} />
+
+          {/* Extension install prompt (self-hides if already installed) */}
+          <ExtensionInstallPrompt variant="tracker" />
 
           {/* Stats */}
           <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>

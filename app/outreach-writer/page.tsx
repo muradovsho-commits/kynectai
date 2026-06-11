@@ -1,6 +1,7 @@
 'use client';
 
 import Sidebar from "../components/Sidebar";
+import ExtensionInstallPrompt from "../components/ExtensionInstallPrompt";
 import { useState, useEffect } from 'react';
 import { ConvexHttpClient } from 'convex/browser';
 import '../contact-finder/contact-finder.css';
@@ -587,6 +588,7 @@ Rules:
                         <span className="ow-foot-badge">{selectedAngle?.rate} avg reply rate</span>
                       </div>
                     </div>
+                    <ExtensionInstallPrompt variant="writer" />
                     <div className="ow-new-row">
                       <button type="button" className="ow-back-btn" onClick={() => { setOutput(''); setSubject(''); setError(''); }}>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
