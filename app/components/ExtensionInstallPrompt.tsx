@@ -46,16 +46,25 @@ export default function ExtensionInstallPrompt({
     try {
       const c: any = typeof chrome !== 'undefined' ? chrome : undefined;
       if (c && c.runtime && c.runtime.sendMessage) {
+        // Only hide if the extension gives a DEFINITIVE installed response,
+        // i.e. responds with a truthy object and no lastError. Anything else
+        // (no response, undefined, lastError, hang) is treated as absent so
+        // the prompt shows. This is the safe default: better to occasionally
+        // show it to an installed user than to never show it to anyone.
         c.runtime.sendMessage(
           EXTENSION_ID,
           { action: 'ping' },
           (response: any) => {
             const err = c.runtime.lastError;
-            if (err || !response) markAbsent();
-            else markPresent();
+            if (!err && response && (response.installed === true || response.ok === true)) {
+              markPresent();
+            } else {
+              markAbsent();
+            }
           }
         );
-        setTimeout(markAbsent, 1200);
+        // Hard fallback: if the callback never fires, show after 1s.
+        setTimeout(markAbsent, 1000);
       } else {
         markAbsent();
       }
