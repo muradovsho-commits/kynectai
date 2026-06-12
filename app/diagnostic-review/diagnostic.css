@@ -60,7 +60,7 @@ html[data-theme="dark"] .diag-app {
   overflow: hidden;
   min-height: 100vh;
 }
-.diag-page-inner { padding: 32px 40px 48px; }
+.diag-page-inner { padding: 32px 40px 48px; max-width: 940px; margin: 0 auto; }
 .diag-app svg { max-width: 100%; max-height: 100%; }
 
 /* ── Top row ── */
@@ -171,13 +171,32 @@ html[data-theme="dark"] .diag-app {
 
 /* ── Readiness card (big primary card on hub) ── */
 .diag-readiness {
-  background: var(--surface);
+  position: relative;
+  background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface) 70%);
   border: 1.5px solid var(--border);
-  border-radius: 14px;
-  padding: 28px 32px;
+  border-radius: 16px;
+  padding: 30px 34px;
   margin-bottom: 16px;
-  display: flex; align-items: center; gap: 28px;
+  display: flex; align-items: center; gap: 30px;
+  overflow: hidden;
 }
+.diag-readiness::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--text);
+  opacity: 0.85;
+}
+.diag-readiness-meta {
+  display: flex; gap: 0;
+  flex-shrink: 0;
+  margin-left: auto;
+  border-left: 1.5px solid var(--border);
+  padding-left: 4px;
+}
+.diag-readiness-meta-item { text-align: center; padding: 0 18px; }
+.diag-readiness-meta-item + .diag-readiness-meta-item { border-left: 1px solid var(--border); }
 .diag-ring {
   position: relative;
   width: 120px; height: 120px;
@@ -205,12 +224,6 @@ html[data-theme="dark"] .diag-app {
   margin-bottom: 4px;
 }
 .diag-readiness-desc { font-size: 13px; color: var(--text-2); line-height: 1.55; }
-.diag-readiness-meta {
-  display: flex; gap: 28px;
-  flex-shrink: 0;
-  padding-left: 4px;
-}
-.diag-readiness-meta-item { text-align: center; }
 .diag-readiness-meta-label {
   font-size: 9.5px;
   font-weight: 700;
@@ -232,13 +245,15 @@ html[data-theme="dark"] .diag-app {
 .diag-card {
   background: var(--surface);
   border: 1.5px solid var(--border);
-  border-radius: 14px;
-  padding: 22px 26px;
+  border-radius: 16px;
+  padding: 8px 26px 18px;
   margin-bottom: 16px;
 }
 .diag-card-head {
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 18px;
+  padding: 14px 0 12px;
+  border-bottom: 1.5px solid var(--border);
 }
 .diag-card-title {
   font-size: 10px;
@@ -250,13 +265,15 @@ html[data-theme="dark"] .diag-app {
 .diag-card-meta { font-size: 10.5px; color: var(--text-3); }
 
 /* Category breakdown rows */
-.diag-cats { display: flex; flex-direction: column; gap: 14px; }
+.diag-cats { display: flex; flex-direction: column; gap: 0; }
 .diag-cat-row {
   display: grid;
-  grid-template-columns: 32px 1fr 130px 56px;
+  grid-template-columns: 32px 1fr 160px 56px;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
+  padding: 13px 0;
 }
+.diag-cat-row + .diag-cat-row { border-top: 1px solid var(--border); }
 .diag-cat-num {
   font-family: 'Instrument Serif', serif;
   font-style: italic;
@@ -271,14 +288,14 @@ html[data-theme="dark"] .diag-app {
 }
 .diag-cat-sub { font-size: 11px; color: var(--text-3); }
 .diag-cat-bar-wrap {
-  height: 5px;
+  height: 7px;
   background: var(--surface-2);
-  border-radius: 3px;
+  border-radius: 4px;
   overflow: hidden;
 }
 .diag-cat-bar {
   height: 100%;
-  border-radius: 3px;
+  border-radius: 4px;
   transition: width 0.6s ease;
 }
 .diag-cat-pct {
@@ -290,17 +307,19 @@ html[data-theme="dark"] .diag-app {
 .diag-cat-pct-sm { font-size: 11px; color: var(--text-3); }
 
 /* History timeline rows */
-.diag-history { display: flex; flex-direction: column; gap: 10px; }
+.diag-history { display: flex; flex-direction: column; gap: 0; }
 .diag-hist-row {
   display: grid;
   grid-template-columns: 130px 1fr 80px 60px;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   font-size: 12px;
+  padding: 11px 0;
 }
+.diag-hist-row + .diag-hist-row { border-top: 1px solid var(--border); }
 .diag-hist-date { color: var(--text-3); }
-.diag-hist-bar-wrap { height: 4px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
-.diag-hist-bar { height: 100%; border-radius: 2px; }
+.diag-hist-bar-wrap { height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+.diag-hist-bar { height: 100%; border-radius: 3px; }
 .diag-hist-count { color: var(--text-3); text-align: right; }
 .diag-hist-pct {
   font-family: 'Instrument Serif', serif;
