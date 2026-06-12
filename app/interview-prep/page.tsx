@@ -147,8 +147,8 @@ export default function InterviewPrepPage() {
           <div className="ib-landing">
             {/* Hero */}
             <div className="ib-hero">
-              <h1>The Complete Finance &amp;<br/>Investment Banking Technical Guide</h1>
-              <p className="ib-hero-sub">A comprehensive reference covering financial modeling, accounting, valuation, M&amp;A, and leveraged buyouts - everything needed for technical interviews and on the job.</p>
+              <h1>The Complete Investment Banking<br/>Interview Guide</h1>
+              <p className="ib-hero-sub">Everything you need to prep for IB interviews: financial modeling, accounting, valuation, M&amp;A, and leveraged buyouts, with practice questions and behavioral prep.</p>
             </div>
 
             {/* Container */}

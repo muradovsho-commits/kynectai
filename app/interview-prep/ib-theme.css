@@ -208,3 +208,49 @@
   .ib-theme .ib-hero h1 { font-size: 25px; }
   .ib-theme .ib-landing .ib-container { padding-top: 22px; }
 }
+
+/* ── Module cards + header: clean light cards with an accent bar ──
+   Replaces the dark blocks + blurry radial glow with site-style cards. */
+.ib-theme .ib-module-card {
+  background: var(--g-card-bg);
+  color: var(--g-text);
+  border: 1.5px solid var(--g-border);
+  border-radius: 12px;
+}
+.ib-theme .ib-module-card:hover {
+  border-color: var(--g-accent);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
+.ib-theme .ib-module-card::before {
+  background: var(--g-accent);
+  top: 0; bottom: 0; left: 0; right: auto;
+  width: 4px; height: auto;
+  border-radius: 0;
+}
+.ib-theme .ib-module-card-num { color: var(--g-accent); opacity: 1; font-weight: 700; }
+.ib-theme .ib-module-card-title { color: var(--g-heading); }
+.ib-theme .ib-module-card-sub { color: var(--g-text-2); opacity: 1; }
+.ib-theme .ib-module-card-meta { color: var(--g-text-2); opacity: 0.6; }
+
+.ib-theme .ib-module-header-card {
+  background: var(--g-card-bg);
+  color: var(--g-text);
+  border: 1.5px solid var(--g-border);
+  border-radius: 12px;
+}
+.ib-theme .ib-module-header-card::before {
+  background: var(--g-accent);
+  top: 0; bottom: 0; left: 0; right: auto;
+  width: 4px; height: auto;
+  border-radius: 0;
+}
+.ib-theme .ib-mh-num { color: var(--g-accent); opacity: 1; font-weight: 700; }
+.ib-theme .ib-module-header-card h2 { color: var(--g-heading); }
+.ib-theme .ib-module-header-card p { color: var(--g-text-2); opacity: 1; }
+
+/* Summary header keeps a green accent instead of blue */
+.ib-theme .ib-mh-summary {
+  background: var(--g-card-bg);
+}
+.ib-theme .ib-mh-summary::before { background: var(--g-green); }
+.ib-theme .ib-mh-summary .ib-mh-num { color: var(--g-green); }
