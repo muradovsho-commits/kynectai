@@ -136,3 +136,71 @@
 .ib-theme .ib-quiz-card-a { font-family: 'Source Serif 4', Georgia, serif; color: var(--g-text-2); border-top: 1px solid var(--g-border); }
 .ib-theme .ib-quiz-footer { font-family: 'Source Serif 4', Georgia, serif; color: var(--g-text-2); }
 .ib-theme .ib-quiz-new-set { font-family: 'Playfair Display', serif; background: var(--g-nav-bg); }
+
+/* ═══════════════════════════════════════════════════════════
+   IB DISPLAY REFINEMENT (UI only, scoped to .ib-theme)
+   Tames the oversized hero into an editorial masthead and
+   tightens the landing column. No content or logic affected.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Masthead: shorter band, content constrained to the reading column */
+.ib-theme .ib-hero {
+  padding: 44px 32px 40px;
+  border-bottom: 3px solid var(--g-accent);
+}
+.ib-theme .ib-hero h1 {
+  font-size: 33px;
+  line-height: 1.12;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 14px;
+}
+.ib-theme .ib-hero-sub {
+  font-size: 15px;
+  max-width: 600px;
+  opacity: 0.82;
+}
+
+/* Pull the landing column up under the masthead and tighten rhythm */
+.ib-theme .ib-landing .ib-container {
+  padding-top: 28px;
+}
+.ib-theme .ib-toc {
+  margin-top: 0;
+  margin-bottom: 24px;
+  padding: 26px 30px;
+  border-radius: 12px;
+}
+.ib-theme .ib-toc h4 {
+  font-size: 15px;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1.5px solid var(--g-border);
+}
+.ib-theme .ib-toc ol { padding-left: 22px; }
+.ib-theme .ib-toc li {
+  margin-bottom: 9px;
+  padding-left: 4px;
+  line-height: 1.4;
+}
+.ib-theme .ib-toc-link {
+  transition: color 0.15s;
+  line-height: 1.45;
+}
+.ib-theme .ib-how-to-use {
+  border-radius: 10px;
+  margin-top: 4px;
+}
+
+/* Section cards: rounder corners to match the refreshed landing */
+.ib-theme .ib-section-toc {
+  border-radius: 12px;
+}
+
+/* Mobile: keep the masthead compact */
+@media (max-width: 900px) {
+  .ib-theme .ib-hero { padding: 34px 20px 30px; }
+  .ib-theme .ib-hero h1 { font-size: 25px; }
+  .ib-theme .ib-landing .ib-container { padding-top: 22px; }
+}
