@@ -199,3 +199,23 @@
   .st-theme.ib-guide-main .ib-hero h1 { font-size: 25px; }
   .st-theme.ib-guide-main .ib-landing .ib-container { padding-top: 22px; }
 }
+
+/* ═══ ST-specific fixes: kill the blue gradient-text title and lighten
+   the subtitle + nav tabs that ST colored with --g-text-2 (invisible on
+   the dark chrome). Doubled class + !important to beat ST's terminal rules. ═══ */
+.st-theme.ib-guide-main .ib-hero h1,
+[data-theme="light"] .st-theme.ib-guide-main .ib-hero h1,
+[data-theme="dark"] .st-theme.ib-guide-main .ib-hero h1 {
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  -webkit-text-fill-color: #ffffff !important;
+  color: #ffffff !important;
+}
+.st-theme.ib-guide-main .ib-hero-sub { color: rgba(255,255,255,0.82) !important; }
+.st-theme.ib-guide-main .ib-nav-tab { color: var(--g-nav-text) !important; }
+.st-theme.ib-guide-main .ib-nav-tab:hover,
+.st-theme.ib-guide-main .ib-nav-tab.active {
+  color: #ffffff !important;
+  background: rgba(255,255,255,0.08) !important;
+}
