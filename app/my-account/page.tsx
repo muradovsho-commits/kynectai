@@ -792,7 +792,8 @@ export default function MyAccountPage() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Email</label>
-              <input style={inp} type="email" value={email} onChange={e => { setEmail(e.target.value); autoSave(); }} placeholder="your@email.com" />
+              <input style={{ ...inp, background: 'var(--surface-2)', color: 'var(--text-3)', cursor: 'not-allowed' }} type="email" value={email} readOnly disabled aria-readonly="true" title="Email is set at signup and cannot be changed here" placeholder="your@email.com" />
+              <div style={{ fontSize: 11, color: 'var(--text-3)' }}>Set at signup and verified. Contact support to change it.</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 0.5 }}>School</label>
