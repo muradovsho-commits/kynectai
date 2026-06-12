@@ -20,6 +20,10 @@ import { PE_INTERVIEW_QUESTIONS_SECTIONS } from './pe-interview-questions-data';
 
 type Section = { title: string; content: string };
 
+// Strip leading section numbers like "9.1 " or "9.4-9.5 " at render time.
+// Requires the N.M decimal form so it can never clip a real title.
+const cleanSectionTitle = (t: string) => t.replace(/^\d+\.\d+(-\d+(\.\d+)?)?\s+/, '');
+
 const MODULES: { id: string; title: string; navTitle: string; sub: string; moduleNum: string; sections: Section[] }[] = [
   { id: 'industry', title: 'The Private Equity Industry', navTitle: 'PE Industry', sub: 'What PE firms do, how they differ from other investors, the major strategies, and day-to-day realities.', moduleNum: 'Module 1', sections: PE_INDUSTRY_SECTIONS },
   { id: 'fund', title: 'Fund Structure, Economics & Fundraising', navTitle: 'Fund Structure', sub: 'How PE funds are organized, how money flows between GPs and LPs, and the economics of PE.', moduleNum: 'Module 2', sections: PE_FUND_SECTIONS },
@@ -119,7 +123,7 @@ export default function PEInterviewPrepPage() {
           <div className="ib-landing">
             {/* Hero */}
             <div className="ib-hero">
-              <h1>The Complete Private Equity<br/>Technical Guide</h1>
+              <h1>The Complete Private Equity<br/>Interview Guide</h1>
               <p className="ib-hero-sub">A comprehensive reference covering PE fund economics, LBO modeling, deal process, value creation, and interview preparation - everything needed to break into private equity.</p>
             </div>
 
@@ -178,7 +182,7 @@ export default function PEInterviewPrepPage() {
                 <h4>In This Module</h4>
                 <ol>
                   {mod.sections.map((s, i) => (
-                    <li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{s.title}</button></li>
+                    <li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{cleanSectionTitle(s.title)}</button></li>
                   ))}
                 </ol>
               </div>
@@ -191,7 +195,7 @@ export default function PEInterviewPrepPage() {
                 ref={el => { sectionRefs.current[`${activeModule}-${i}`] = el; }}
                 className="ib-section"
               >
-                <h3>{s.title}</h3>
+                <h3>{cleanSectionTitle(s.title)}</h3>
                 <div className="ib-section-body" dangerouslySetInnerHTML={{ __html: s.content }} />
               </div>
             ))}

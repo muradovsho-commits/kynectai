@@ -22,6 +22,10 @@ import { AM_INTERVIEW_SECTIONS } from './am-interview-data';
 
 type Section = { title: string; content: string };
 
+// Strip leading section numbers like "9.1 " or "9.4-9.5 " at render time.
+// Requires the N.M decimal form so it can never clip a real title.
+const cleanSectionTitle = (t: string) => t.replace(/^\d+\.\d+(-\d+(\.\d+)?)?\s+/, '');
+
 const MODULES: { id: string; title: string; navTitle: string; sub: string; moduleNum: string; sections: Section[] }[] = [
   { id: 'industry', title: 'The Asset Management Industry', navTitle: 'Industry', sub: 'What asset managers do, how they make money, the major players, and roles in the industry.', moduleNum: 'Module 1', sections: AM_INDUSTRY_SECTIONS },
   { id: 'research', title: 'Equity Research & Fundamental Analysis', navTitle: 'Research', sub: 'The research process, primary research, and sector-specific analysis frameworks.', moduleNum: 'Module 2', sections: AM_RESEARCH_SECTIONS },
@@ -115,7 +119,7 @@ export default function AMInterviewPrepPage() {
         {activeModule === '' ? (
           <div className="ib-landing">
             <div className="ib-hero">
-              <h1>The Complete Asset Management &amp;<br/>Investment Research Guide</h1>
+              <h1>The Complete Asset Management<br/>Interview Guide</h1>
               <p className="ib-hero-sub">From equity research and valuation to portfolio theory, risk management, and the stock pitch - everything you need to break into asset management and buy-side roles.</p>
             </div>
 
@@ -163,7 +167,7 @@ export default function AMInterviewPrepPage() {
                 <h4>In This Module</h4>
                 <ol>
                   {mod.sections.map((s, i) => (
-                    <li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{s.title}</button></li>
+                    <li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{cleanSectionTitle(s.title)}</button></li>
                   ))}
                 </ol>
               </div>
@@ -171,7 +175,7 @@ export default function AMInterviewPrepPage() {
 
             {mod.sections.map((s, i) => (
               <div key={`${activeModule}-${i}`} ref={el => { sectionRefs.current[`${activeModule}-${i}`] = el; }} className="ib-section">
-                <h3>{s.title}</h3>
+                <h3>{cleanSectionTitle(s.title)}</h3>
                 <div className="ib-section-body" dangerouslySetInnerHTML={{ __html: s.content }} />
               </div>
             ))}

@@ -22,6 +22,10 @@ import { RX_INTERVIEW_SECTIONS } from './rx-interview-data';
 
 type Section = { title: string; content: string };
 
+// Strip leading section numbers like "9.1 " or "9.4-9.5 " at render time.
+// Requires the N.M decimal form so it can never clip a real title.
+const cleanSectionTitle = (t: string) => t.replace(/^\d+\.\d+(-\d+(\.\d+)?)?\s+/, '');
+
 const MODULES: { id: string; title: string; navTitle: string; sub: string; moduleNum: string; sections: Section[] }[] = [
   { id: 'overview', title: 'The Restructuring Industry', navTitle: 'Industry', sub: 'What restructuring is, who the key players are, and what the day-to-day work looks like.', moduleNum: 'Module 1', sections: RX_OVERVIEW_SECTIONS },
   { id: 'distress', title: 'Causes of Distress & the Capital Structure', navTitle: 'Distress', sub: 'Common causes of financial distress, signs to watch for, and the capital structure hierarchy.', moduleNum: 'Module 2', sections: RX_DISTRESS_SECTIONS },
@@ -113,7 +117,7 @@ export default function RXInterviewPrepPage() {
         {activeModule === '' ? (
           <div className="ib-landing">
             <div className="ib-hero">
-              <h1>The Complete Restructuring<br/>Technical Guide</h1>
+              <h1>The Complete Restructuring<br/>Interview Guide</h1>
               <p className="ib-hero-sub">From Chapter 11 mechanics and waterfall analysis to liability management exercises and distressed valuation - the most intellectually demanding area of finance.</p>
             </div>
 
@@ -159,7 +163,7 @@ export default function RXInterviewPrepPage() {
                 <h4>In This Module</h4>
                 <ol>
                   {mod.sections.map((s, i) => (
-                    <li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{s.title}</button></li>
+                    <li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{cleanSectionTitle(s.title)}</button></li>
                   ))}
                 </ol>
               </div>
@@ -167,7 +171,7 @@ export default function RXInterviewPrepPage() {
 
             {mod.sections.map((s, i) => (
               <div key={`${activeModule}-${i}`} ref={el => { sectionRefs.current[`${activeModule}-${i}`] = el; }} className="ib-section">
-                <h3>{s.title}</h3>
+                <h3>{cleanSectionTitle(s.title)}</h3>
                 <div className="ib-section-body" dangerouslySetInnerHTML={{ __html: s.content }} />
               </div>
             ))}

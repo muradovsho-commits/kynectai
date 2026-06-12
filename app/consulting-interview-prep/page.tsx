@@ -22,6 +22,10 @@ import { CONS_PRACTICE_SECTIONS } from './cons-practice-data';
 
 type Section = { title: string; content: string };
 
+// Strip leading section numbers like "9.1 " or "9.4-9.5 " at render time.
+// Requires the N.M decimal form so it can never clip a real title.
+const cleanSectionTitle = (t: string) => t.replace(/^\d+\.\d+(-\d+(\.\d+)?)?\s+/, '');
+
 const MODULES: { id: string; title: string; navTitle: string; sub: string; moduleNum: string; sections: Section[] }[] = [
   { id: 'industry', title: 'The Consulting Industry', navTitle: 'Industry', sub: 'What management consultants do, the major firms, career paths, and day-to-day life.', moduleNum: 'Module 1', sections: CONS_INDUSTRY_SECTIONS },
   { id: 'frameworks', title: 'Structured Problem Solving', navTitle: 'Frameworks', sub: 'Hypothesis-driven thinking, MECE, issue trees, the Pyramid Principle, and 80/20 analysis.', moduleNum: 'Module 2', sections: CONS_FRAMEWORKS_SECTIONS },
@@ -119,7 +123,7 @@ export default function ConsultingInterviewPrepPage() {
         {activeModule === '' ? (
           <div className="ib-landing">
             <div className="ib-hero">
-              <h1>The Complete Management<br/>Consulting Guide</h1>
+              <h1>The Complete Consulting<br/>Interview Guide</h1>
               <p className="ib-hero-sub">From structured problem solving and case interview mastery to behavioral fit - everything you need to land an offer at MBB and top strategy firms.</p>
             </div>
 
@@ -169,7 +173,7 @@ export default function ConsultingInterviewPrepPage() {
                 <h4>In This Module</h4>
                 <ol>
                   {mod.sections.map((s, i) => (
-                    <li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{s.title}</button></li>
+                    <li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{cleanSectionTitle(s.title)}</button></li>
                   ))}
                 </ol>
               </div>
@@ -181,7 +185,7 @@ export default function ConsultingInterviewPrepPage() {
                 ref={el => { sectionRefs.current[`${activeModule}-${i}`] = el; }}
                 className="ib-section"
               >
-                <h3>{s.title}</h3>
+                <h3>{cleanSectionTitle(s.title)}</h3>
                 <div className="ib-section-body" dangerouslySetInnerHTML={{ __html: s.content }} />
               </div>
             ))}

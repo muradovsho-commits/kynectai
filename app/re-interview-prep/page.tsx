@@ -22,6 +22,10 @@ import { RE_INTERVIEW_SECTIONS } from './re-interview-data';
 
 type Section = { title: string; content: string };
 
+// Strip leading section numbers like "9.1 " or "9.4-9.5 " at render time.
+// Requires the N.M decimal form so it can never clip a real title.
+const cleanSectionTitle = (t: string) => t.replace(/^\d+\.\d+(-\d+(\.\d+)?)?\s+/, '');
+
 const MODULES: { id: string; title: string; navTitle: string; sub: string; moduleNum: string; sections: Section[] }[] = [
   { id: 'industry', title: 'The Real Estate Finance Landscape', navTitle: 'Landscape', sub: 'Why real estate is different from other asset classes and the major career paths.', moduleNum: 'Module 1', sections: RE_INDUSTRY_SECTIONS },
   { id: 'property', title: 'Property Types & Market Fundamentals', navTitle: 'Property Types', sub: 'The five core property types, specialty sectors, and market cycles.', moduleNum: 'Module 2', sections: RE_PROPERTY_SECTIONS },
@@ -84,7 +88,7 @@ export default function REInterviewPrepPage() {
         {activeModule === '' ? (
           <div className="ib-landing">
             <div className="ib-hero">
-              <h1>The Complete Real Estate<br/>Finance Guide</h1>
+              <h1>The Complete Real Estate<br/>Interview Guide</h1>
               <p className="ib-hero-sub">From NOI and cap rates to REPE strategies, waterfall structures, and property-level analysis - everything you need to break into real estate finance.</p>
             </div>
             <div className="ib-container">
@@ -111,11 +115,11 @@ export default function REInterviewPrepPage() {
           <div className="ib-container">
             <div className="ib-module-header-card"><div className="ib-mh-num">{mod.moduleNum}</div><h2>{mod.title}</h2><p>{mod.sub}</p></div>
             {mod.sections.length > 2 && (<div className="ib-section-toc"><h4>In This Module</h4><ol>
-              {mod.sections.map((s, i) => (<li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{s.title}</button></li>))}
+              {mod.sections.map((s, i) => (<li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{cleanSectionTitle(s.title)}</button></li>))}
             </ol></div>)}
             {mod.sections.map((s, i) => (
               <div key={`${activeModule}-${i}`} ref={el => { sectionRefs.current[`${activeModule}-${i}`] = el; }} className="ib-section">
-                <h3>{s.title}</h3>
+                <h3>{cleanSectionTitle(s.title)}</h3>
                 <div className="ib-section-body" dangerouslySetInnerHTML={{ __html: s.content }} />
               </div>
             ))}

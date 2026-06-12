@@ -21,6 +21,11 @@ import { IB_FLASHCARDS } from '../flashcards/ib-flashcard-data';
 
 type Section = { title: string; content: string };
 
+// Strip leading section numbers like "9.1 " or "9.4-9.5 " from titles at
+// render time. Requires the N.M decimal form so it can never clip a real
+// title. Content data is left untouched.
+const cleanSectionTitle = (t: string) => t.replace(/^\d+\.\d+(-\d+(\.\d+)?)?\s+/, '');
+
 const MODULES: { id: string; title: string; navTitle: string; sub: string; moduleNum: string; sections: Section[] }[] = [
   { id: 'core', title: 'Financial Modeling Foundations', navTitle: 'Core Concepts', sub: 'The bedrock principles of finance that power every model, valuation, and investment decision.', moduleNum: 'Module 1', sections: CORE_SECTIONS },
   { id: 'accounting', title: 'Accounting & the Three Financial Statements', navTitle: 'Accounting', sub: 'How financial statements work, why profit differs from cash, and how to extract the numbers that matter.', moduleNum: 'Module 2', sections: ACCOUNTING_SECTIONS },
@@ -238,7 +243,7 @@ export default function InterviewPrepPage() {
                 <h4>In This Module</h4>
                 <ol>
                   {mod.sections.map((s, i) => (
-                    <li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{s.title}</button></li>
+                    <li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{cleanSectionTitle(s.title)}</button></li>
                   ))}
                 </ol>
               </div>
@@ -251,7 +256,7 @@ export default function InterviewPrepPage() {
                 ref={el => { sectionRefs.current[`${activeModule}-${i}`] = el; }}
                 className="ib-section"
               >
-                <h3>{s.title}</h3>
+                <h3>{cleanSectionTitle(s.title)}</h3>
                 <div className="ib-section-body" dangerouslySetInnerHTML={{ __html: s.content }} />
               </div>
             ))}

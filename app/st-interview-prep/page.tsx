@@ -22,6 +22,10 @@ import { ST_INTERVIEW_SECTIONS } from './st-interview-data';
 
 type Section = { title: string; content: string };
 
+// Strip leading section numbers like "9.1 " or "9.4-9.5 " at render time.
+// Requires the N.M decimal form so it can never clip a real title.
+const cleanSectionTitle = (t: string) => t.replace(/^\d+\.\d+(-\d+(\.\d+)?)?\s+/, '');
+
 const MODULES: { id: string; title: string; navTitle: string; sub: string; moduleNum: string; sections: Section[] }[] = [
   { id: 'industry', title: 'The S&T Industry & Business Model', navTitle: 'Industry', sub: 'What S&T is, the three roles on the floor, how desks make money, and S&T vs. IB.', moduleNum: 'Module 1', sections: ST_INDUSTRY_SECTIONS },
   { id: 'market_structure', title: 'Market Structure & How Trading Works', navTitle: 'Markets', sub: 'Exchange-traded vs. OTC, order types, liquidity, clearing and settlement.', moduleNum: 'Module 2', sections: ST_MARKET_STRUCTURE_SECTIONS },
@@ -97,7 +101,7 @@ export default function STInterviewPrepPage() {
         {activeModule === '' ? (
           <div className="ib-landing">
             <div className="ib-hero">
-              <h1>The Complete Sales &amp; Trading<br/>Technical Guide</h1>
+              <h1>The Complete Sales &amp; Trading<br/>Interview Guide</h1>
               <p className="ib-hero-sub">Market structure, derivatives, risk management, mental math, and trading strategies - everything you need to land a seat on the trading floor.</p>
             </div>
 
@@ -143,7 +147,7 @@ export default function STInterviewPrepPage() {
                 <h4>In This Module</h4>
                 <ol>
                   {mod.sections.map((s, i) => (
-                    <li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{s.title}</button></li>
+                    <li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{cleanSectionTitle(s.title)}</button></li>
                   ))}
                 </ol>
               </div>
@@ -151,7 +155,7 @@ export default function STInterviewPrepPage() {
 
             {mod.sections.map((s, i) => (
               <div key={`${activeModule}-${i}`} ref={el => { sectionRefs.current[`${activeModule}-${i}`] = el; }} className="ib-section">
-                <h3>{s.title}</h3>
+                <h3>{cleanSectionTitle(s.title)}</h3>
                 <div className="ib-section-body" dangerouslySetInnerHTML={{ __html: s.content }} />
               </div>
             ))}

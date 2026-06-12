@@ -22,6 +22,10 @@ import { GE_INTERVIEW_SECTIONS } from './ge-interview-data';
 
 type Section = { title: string; content: string };
 
+// Strip leading section numbers like "9.1 " or "9.4-9.5 " at render time.
+// Requires the N.M decimal form so it can never clip a real title.
+const cleanSectionTitle = (t: string) => t.replace(/^\d+\.\d+(-\d+(\.\d+)?)?\s+/, '');
+
 const MODULES: { id: string; title: string; navTitle: string; sub: string; moduleNum: string; sections: Section[] }[] = [
   { id: 'industry', title: 'The Growth Equity Landscape', navTitle: 'Landscape', sub: 'What growth equity is, how it differs from VC and buyout, the major firms, and the career path.', moduleNum: 'Module 1', sections: GE_INDUSTRY_SECTIONS },
   { id: 'criteria', title: 'Investment Criteria & What Makes a Great GE Company', navTitle: 'Criteria', sub: 'The core criteria growth equity firms use to evaluate potential investments.', moduleNum: 'Module 2', sections: GE_CRITERIA_SECTIONS },
@@ -97,7 +101,7 @@ export default function GEInterviewPrepPage() {
         {activeModule === '' ? (
           <div className="ib-landing">
             <div className="ib-hero">
-              <h1>The Complete Growth Equity<br/>Technical Guide</h1>
+              <h1>The Complete Growth Equity<br/>Interview Guide</h1>
               <p className="ib-hero-sub">From SaaS metrics and unit economics to deal structuring, GE modeling, and investment pitches - everything you need to break into growth equity.</p>
             </div>
 
@@ -143,7 +147,7 @@ export default function GEInterviewPrepPage() {
                 <h4>In This Module</h4>
                 <ol>
                   {mod.sections.map((s, i) => (
-                    <li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{s.title}</button></li>
+                    <li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{cleanSectionTitle(s.title)}</button></li>
                   ))}
                 </ol>
               </div>
@@ -151,7 +155,7 @@ export default function GEInterviewPrepPage() {
 
             {mod.sections.map((s, i) => (
               <div key={`${activeModule}-${i}`} ref={el => { sectionRefs.current[`${activeModule}-${i}`] = el; }} className="ib-section">
-                <h3>{s.title}</h3>
+                <h3>{cleanSectionTitle(s.title)}</h3>
                 <div className="ib-section-body" dangerouslySetInnerHTML={{ __html: s.content }} />
               </div>
             ))}
