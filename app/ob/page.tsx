@@ -462,6 +462,11 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
             </button>
             <button type="button" onClick={goCompare} className="obpw-btn-ghost">Compare plans</button>
           </div>
+
+          <div className="obpw-platform">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="13" rx="1.5" /><path d="M8 21h8M12 17v4" /></svg>
+            macOS only for now &middot; Windows coming soon
+          </div>
         </div>
 
         <div className="obpw-stage-art"><OBShowcase /></div>
@@ -528,6 +533,10 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
         .obpw-say-text{ font-size:13.5px; color:#e3ecff; font-style:italic; animation:obpwFade .5s ease; }
         .obpw-body{ font-size:13.5px; color:#93a4c6; line-height:1.6; margin:0 0 26px; max-width:440px; }
         .obpw-cta{ display:flex; align-items:center; gap:11px; flex-wrap:wrap; }
+        .obpw-platform{
+          display:inline-flex; align-items:center; gap:7px; margin-top:16px;
+          font-size:12px; color:#8195b8; font-weight:500;
+        }
         .obpw-btn-primary{
           display:inline-flex; align-items:center; gap:8px; cursor:pointer;
           background:#2563eb; color:#fff; border:none; padding:12px 22px; border-radius:11px;
