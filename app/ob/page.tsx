@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css'; // global color vars + frame theming
@@ -87,71 +87,149 @@ const OB_ORB = (
   </svg>
 );
 
-// The OB orb, animated — a small "product shot" of the app that sells the
-// voice-assistant idea. Pure CSS/SVG, no assets. Lives in a dark device panel
-// so it looks premium on both light and dark site themes.
+// The OB node-sphere, animated — a recreation of the real OB HUD (a rotating
+// wireframe constellation sphere). Canvas-rendered, no assets. Lives in a dark
+// device panel so it sells the "proprietary voice tech" look on any site theme.
 function OBShowcase() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const reduce = typeof window !== 'undefined'
+      && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Fibonacci sphere of points.
+    const N = 74;
+    const pts: number[][] = [];
+    for (let i = 0; i < N; i++) {
+      const y = 1 - (i / (N - 1)) * 2;
+      const r = Math.sqrt(Math.max(0, 1 - y * y));
+      const phi = i * Math.PI * (3 - Math.sqrt(5));
+      pts.push([Math.cos(phi) * r, y, Math.sin(phi) * r]);
+    }
+    // Edges between near neighbors (the constellation lines).
+    const edges: number[][] = [];
+    for (let i = 0; i < N; i++) {
+      for (let j = i + 1; j < N; j++) {
+        const dx = pts[i][0] - pts[j][0], dy = pts[i][1] - pts[j][1], dz = pts[i][2] - pts[j][2];
+        if (Math.sqrt(dx * dx + dy * dy + dz * dz) < 0.52) edges.push([i, j]);
+      }
+    }
+
+    let raf = 0;
+    let t = 0;
+    const tilt = 0.42, cosX = Math.cos(tilt), sinX = Math.sin(tilt);
+
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      canvas.width = Math.max(1, Math.floor(w * dpr));
+      canvas.height = Math.max(1, Math.floor(h * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const draw = () => {
+      t += reduce ? 0 : 0.0030;
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+      const cx = w / 2, cy = h / 2, R = Math.min(w, h) * 0.36;
+      const cosY = Math.cos(t), sinY = Math.sin(t);
+
+      const proj = pts.map((p) => {
+        const x = p[0] * cosY - p[2] * sinY;
+        const z = p[0] * sinY + p[2] * cosY;
+        const y = p[1];
+        const y2 = y * cosX - z * sinX;
+        const z2 = y * sinX + z * cosX;
+        const depth = (z2 + 1.4) / 2.8; // ~0 (back) .. ~1 (front)
+        return { x: cx + x * R, y: cy + y2 * R, depth };
+      });
+
+      // lines
+      ctx.lineWidth = 0.6;
+      for (const [i, j] of edges) {
+        const a = proj[i], b = proj[j];
+        const al = Math.max(0, ((a.depth + b.depth) / 2)) * 0.42;
+        ctx.strokeStyle = 'rgba(125,155,215,' + al.toFixed(3) + ')';
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+
+      // nodes
+      for (let i = 0; i < proj.length; i++) {
+        const p = proj[i];
+        const tw = 0.62 + 0.38 * Math.sin(t * 2.1 + i * 1.27);
+        const sz = 0.8 + p.depth * 1.9;
+        const al = Math.min(1, (0.22 + p.depth * 0.7) * tw);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, sz, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(214,226,255,' + al.toFixed(3) + ')';
+        ctx.shadowColor = 'rgba(120,160,255,0.85)';
+        ctx.shadowBlur = p.depth * 7;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      raf = requestAnimationFrame(draw);
+    };
+    draw();
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
+  const dockIcon = (path: React.ReactNode) => (
+    <span style={{ display: 'inline-flex', color: '#7da2e6' }}>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{path}</svg>
+    </span>
+  );
+
   return (
     <div className="obshow">
       <style dangerouslySetInnerHTML={{ __html: `
         .obshow{
-          position:relative; border-radius:22px; overflow:hidden;
-          background:radial-gradient(120% 90% at 50% 18%, #0a1326 0%, #060a16 45%, #04060c 100%);
-          border:1px solid rgba(59,130,246,0.22);
-          box-shadow:0 24px 60px -28px rgba(37,99,235,0.55), inset 0 1px 0 rgba(255,255,255,0.04);
-          min-height:360px; display:flex; flex-direction:column; align-items:center; justify-content:center;
-          padding:28px 20px;
+          position:relative; border-radius:22px; overflow:hidden; min-height:380px;
+          background:radial-gradient(120% 100% at 50% 35%, #0a1124 0%, #060a16 50%, #03050b 100%);
+          border:1px solid rgba(59,130,246,0.20);
+          box-shadow:0 24px 60px -30px rgba(37,99,235,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
         }
         .obshow::before{
-          content:""; position:absolute; inset:0;
-          background-image:radial-gradient(rgba(99,140,230,0.10) 1px, transparent 1px);
-          background-size:22px 22px; opacity:0.6; pointer-events:none;
+          content:""; position:absolute; inset:0; pointer-events:none;
+          background-image:linear-gradient(rgba(90,130,220,0.05) 1px, transparent 1px),
+                           linear-gradient(90deg, rgba(90,130,220,0.05) 1px, transparent 1px);
+          background-size:26px 26px;
         }
-        .obshow-stage{ position:relative; width:150px; height:150px; display:flex; align-items:center; justify-content:center; }
-        .obshow-ring{
-          position:absolute; width:118px; height:118px; border-radius:50%;
-          border:1px solid rgba(80,140,255,0.5); animation:obPulse 3.4s ease-out infinite;
-        }
-        .obshow-ring.r2{ animation-delay:1.13s; } .obshow-ring.r3{ animation-delay:2.26s; }
-        .obshow-orb{
-          position:relative; width:112px; height:112px; border-radius:50%;
-          background:radial-gradient(circle at 36% 30%, #bfdbff 0%, #5b9bff 26%, #2563eb 54%, #1740b8 78%, #102a78 100%);
-          box-shadow:0 0 56px rgba(37,99,235,0.75), 0 0 120px rgba(37,99,235,0.35), inset 0 -10px 26px rgba(8,20,60,0.6), inset 0 8px 18px rgba(255,255,255,0.28);
-          display:flex; align-items:center; justify-content:center; gap:5px;
-          animation:obBreathe 4.2s ease-in-out infinite;
-        }
-        .obshow-orb i{
-          display:block; width:4px; border-radius:3px; height:10px;
-          background:rgba(255,255,255,0.92); box-shadow:0 0 8px rgba(255,255,255,0.6);
-          animation:obBar 1.05s ease-in-out infinite;
-        }
-        .obshow-orb i:nth-child(1){ animation-delay:0s; } .obshow-orb i:nth-child(2){ animation-delay:.12s; }
-        .obshow-orb i:nth-child(3){ animation-delay:.24s; } .obshow-orb i:nth-child(4){ animation-delay:.36s; }
-        .obshow-orb i:nth-child(5){ animation-delay:.48s; }
-        .obshow-status{
-          margin-top:30px; display:inline-flex; align-items:center; gap:8px;
-          padding:7px 15px; border-radius:999px; background:rgba(255,255,255,0.05);
-          border:1px solid rgba(255,255,255,0.10); color:#dbe6ff; font-size:12.5px; font-weight:600;
-          font-family:'Sora',sans-serif;
-        }
-        .obshow-status .d{ width:7px; height:7px; border-radius:50%; background:#4ade80; box-shadow:0 0 8px #4ade80; animation:obDot 1.6s ease-in-out infinite; }
-        .obshow-cap{ margin-top:12px; font-size:11px; letter-spacing:.04em; color:rgba(190,205,235,0.5); font-family:'Sora',sans-serif; }
-        @keyframes obBreathe{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.05); } }
-        @keyframes obPulse{ 0%{ transform:scale(0.78); opacity:.6; } 100%{ transform:scale(2.3); opacity:0; } }
-        @keyframes obBar{ 0%,100%{ height:9px; } 50%{ height:26px; } }
-        @keyframes obDot{ 0%,100%{ opacity:1; } 50%{ opacity:.25; } }
-        @media (prefers-reduced-motion: reduce){
-          .obshow-orb,.obshow-ring,.obshow-orb i,.obshow-status .d{ animation:none !important; }
-        }
+        .obshow-canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+        .obshow-head{ position:absolute; top:16px; left:18px; z-index:2; }
+        .obshow-ob{ font-family:'Instrument Serif',serif; font-size:22px; color:#e8eeff; line-height:1; }
+        .obshow-sub{ font-family:'Sora',sans-serif; font-size:8.5px; letter-spacing:0.18em; color:rgba(150,170,215,0.6); margin-top:4px; }
+        .obshow-by{ position:absolute; left:0; right:0; bottom:78px; text-align:center; z-index:2;
+          font-family:'Sora',sans-serif; font-size:11px; color:rgba(150,170,215,0.45); }
+        .obshow-dock{ position:absolute; left:50%; transform:translateX(-50%); bottom:20px; z-index:2;
+          display:flex; align-items:center; gap:16px; padding:9px 16px; border-radius:13px;
+          background:rgba(10,16,32,0.7); border:1px solid rgba(90,130,220,0.22); backdrop-filter:blur(4px); }
       ` }} />
-      <div className="obshow-stage">
-        <span className="obshow-ring r1" />
-        <span className="obshow-ring r2" />
-        <span className="obshow-ring r3" />
-        <span className="obshow-orb"><i /><i /><i /><i /><i /></span>
+      <canvas ref={canvasRef} className="obshow-canvas" />
+      <div className="obshow-head">
+        <div className="obshow-ob">OB</div>
+        <div className="obshow-sub">AN OFFERBELL PRODUCT</div>
       </div>
-      <div className="obshow-status"><span className="d" /> Listening&hellip;</div>
-      <div className="obshow-cap">OB &middot; a production of OfferBell</div>
+      <div className="obshow-by">Brought to you by OfferBell</div>
+      <div className="obshow-dock">
+        {dockIcon(<><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></>)}
+        {dockIcon(<><path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h7M15 18h5" /><circle cx="16" cy="6" r="2" /><circle cx="8" cy="12" r="2" /><circle cx="13" cy="18" r="2" /></>)}
+        {dockIcon(<><path d="M12 4v8" /><path d="M7 7a8 8 0 1 0 10 0" /></>)}
+      </div>
     </div>
   );
 }
