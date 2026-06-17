@@ -584,3 +584,122 @@ export const clearPendingPlanChange = mutation({
     return { success: true };
   },
 });
+
+// ════════════════════════════════════════════════════════════════════
+// OB DESKTOP APP LICENSING (Elite-only)
+// ════════════════════════════════════════════════════════════════════
+// OB (the macOS voice app) is an Elite-only product. It authenticates the
+// user's OfferBell credentials here and receives a short-lived signed license
+// it can cache and re-check on launch without re-prompting for a password.
+// Entitlement = stored plan === "elite" (same source of truth the web app and
+// API routes gate on; Stripe webhooks keep plan current on cancel/downgrade).
+
+const OB_LICENSE_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 days
+
+async function mintObLicense(userId: string, plan: string): Promise<{ token: string; exp: number }> {
+  const secret = process.env.AUTH_SESSION_SECRET || "";
+  const exp = Date.now() + OB_LICENSE_TTL_MS;
+  const payload = `${userId}.${plan}.${exp}`;
+  const sig = secret ? await hmacHex(payload, secret) : "nosecret";
+  return { token: `${b64url(userId)}.${b64url(plan)}.${b64url(String(exp))}.${sig}`, exp };
+}
+
+async function readObLicense(token: string): Promise<{ userId: string; plan: string } | null> {
+  const secret = process.env.AUTH_SESSION_SECRET || "";
+  const parts = token.split(".");
+  if (parts.length !== 4) return null;
+  let userId: string, plan: string, exp: string;
+  try {
+    userId = unb64url(parts[0]);
+    plan = unb64url(parts[1]);
+    exp = unb64url(parts[2]);
+  } catch {
+    return null;
+  }
+  const expMs = Number(exp);
+  if (!Number.isFinite(expMs) || Date.now() > expMs) return null;
+  const expected = secret ? await hmacHex(`${userId}.${plan}.${exp}`, secret) : "nosecret";
+  if (expected.length !== parts[3].length) return null;
+  let diff = 0;
+  for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ parts[3].charCodeAt(i);
+  return diff === 0 ? { userId, plan } : null;
+}
+
+// Verify OfferBell credentials and issue an OB license. Always resolves (no
+// throw) so the desktop client gets a clean { ok, reason, message } object.
+export const verifyLicense = mutation({
+  args: { email: v.string(), password: v.string() },
+  handler: async (ctx, args) => {
+    const email = args.email.toLowerCase().trim();
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .first();
+    if (!user) {
+      return { ok: false, reason: "no_account", message: "No OfferBell account found with this email." };
+    }
+    const { ok, needsUpgrade } = await verifyPassword(args.password, user.passwordHash);
+    if (!ok) {
+      return { ok: false, reason: "bad_password", message: "Incorrect password." };
+    }
+    if (needsUpgrade) {
+      await ctx.db.patch(user._id, { passwordHash: await hashPassword(args.password) });
+    }
+    if (user.emailVerified === false) {
+      return { ok: false, reason: "unverified", message: "Please verify your email on OfferBell first." };
+    }
+    const plan = user.plan ?? "free";
+    if (plan !== "elite") {
+      return {
+        ok: false,
+        reason: "not_elite",
+        plan,
+        message: "OB is an Elite-only feature. Upgrade to Elite on OfferBell to use it.",
+      };
+    }
+    const { token, exp } = await mintObLicense(user._id.toString(), plan);
+    return {
+      ok: true,
+      plan,
+      isElite: true,
+      name: user.name ?? "",
+      email: user.email ?? "",
+      subscriptionStatus: user.subscriptionStatus ?? "",
+      token,
+      exp,
+    };
+  },
+});
+
+// Silent re-check from a cached token (no password). Re-reads the CURRENT plan
+// so a cancellation/downgrade is caught on the next refresh, and re-issues a
+// fresh token when still Elite.
+export const recheckLicense = mutation({
+  args: { token: v.string() },
+  handler: async (ctx, args) => {
+    const lic = await readObLicense(args.token);
+    if (!lic) {
+      return { ok: false, reason: "expired", message: "Session expired. Please sign in again." };
+    }
+    const id = ctx.db.normalizeId("users", lic.userId);
+    const user = id ? await ctx.db.get(id) : null;
+    if (!user) {
+      return { ok: false, reason: "no_account", message: "Account not found." };
+    }
+    const plan = user.plan ?? "free";
+    if (plan !== "elite") {
+      return { ok: false, reason: "not_elite", plan, message: "Your Elite access is no longer active." };
+    }
+    const { token, exp } = await mintObLicense(user._id.toString(), plan);
+    return {
+      ok: true,
+      plan,
+      isElite: true,
+      name: user.name ?? "",
+      email: user.email ?? "",
+      subscriptionStatus: user.subscriptionStatus ?? "",
+      token,
+      exp,
+    };
+  },
+});
