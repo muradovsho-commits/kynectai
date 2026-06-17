@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
 
     const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
     await convex.mutation((api as any).auth.setPendingPlanChange, {
+      syncSecret: process.env.STRIPE_SYNC_SECRET || "",
       userId,
       targetPlan: 'free',
       effectiveAt: periodEndMs,

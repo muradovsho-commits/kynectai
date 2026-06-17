@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     // Clear the pending change from our DB. The next webhook will reflect
     // the now-clean state, but clearing immediately keeps the UI snappy.
     const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
-    await convex.mutation((api as any).auth.clearPendingPlanChange, { userId });
+    await convex.mutation((api as any).auth.clearPendingPlanChange, { syncSecret: process.env.STRIPE_SYNC_SECRET || "", userId });
 
     return NextResponse.json({ success: true });
   } catch (e: any) {

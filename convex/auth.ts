@@ -373,28 +373,10 @@ export const resetPassword = mutation({
   },
 });
 
-export const deleteAccount = mutation({
-  args: { userId: v.string() },
-  handler: async (ctx, args) => {
-    // Find the user
-    const users = await ctx.db.query("users").collect();
-    const user = users.find((u) => u._id.toString() === args.userId);
-    if (!user) throw new ConvexError("User not found");
-
-    // Delete all outreach messages for this user
-    const messages = await ctx.db
-      .query("outreachMessages")
-      .withIndex("by_user", (q) => q.eq("userId", user._id))
-      .collect();
-    for (const msg of messages) {
-      await ctx.db.delete(msg._id);
-    }
-
-    // Delete the user
-    await ctx.db.delete(user._id);
-    return { success: true };
-  },
-});
+// deleteAccount was removed: it was an unguarded public mutation (no auth, just
+// a userId) that could delete ANY account via the public API, and nothing in
+// the app called it. Deleted outright so the capability no longer exists. If
+// account deletion is ever needed, reintroduce it gated by requireUser.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SECURITY NOTE: upgradePlan, downgradePlan, and repairPlan mutations used to
@@ -554,11 +536,13 @@ export const applyStripeSubscriptionCanceled = mutation({
 // "Scheduled to downgrade to X on [date]" until then.
 export const setPendingPlanChange = mutation({
   args: {
+    syncSecret: v.string(),
     userId: v.string(),
     targetPlan: v.string(),
     effectiveAt: v.number(),
   },
   handler: async (ctx, args) => {
+    assertSyncSecret(args.syncSecret);
     const users = await ctx.db.query("users").collect();
     const user = users.find((u) => u._id.toString() === args.userId);
     if (!user) return { success: false };
@@ -575,8 +559,9 @@ export const setPendingPlanChange = mutation({
 // Clear a pending plan change (user changed their mind, e.g. clicked "Keep
 // my plan" before the scheduled change took effect).
 export const clearPendingPlanChange = mutation({
-  args: { userId: v.string() },
+  args: { syncSecret: v.string(), userId: v.string() },
   handler: async (ctx, args) => {
+    assertSyncSecret(args.syncSecret);
     const users = await ctx.db.query("users").collect();
     const user = users.find((u) => u._id.toString() === args.userId);
     if (!user) return { success: false };
