@@ -138,7 +138,7 @@ function OBShowcase() {
       t += reduce ? 0 : 0.0030;
       const w = canvas.clientWidth, h = canvas.clientHeight;
       ctx.clearRect(0, 0, w, h);
-      const cx = w / 2, cy = h / 2, R = Math.min(w, h) * 0.36;
+      const cx = w / 2, cy = h * 0.43, R = Math.min(w, h) * 0.30;
       const cosY = Math.cos(t), sinY = Math.sin(t);
 
       const proj = pts.map((p) => {
@@ -213,7 +213,7 @@ function OBShowcase() {
         .obshow-head{ position:absolute; top:16px; left:18px; z-index:2; }
         .obshow-ob{ font-family:'Instrument Serif',serif; font-size:22px; color:#e8eeff; line-height:1; }
         .obshow-sub{ font-family:'Sora',sans-serif; font-size:8.5px; letter-spacing:0.18em; color:rgba(150,170,215,0.6); margin-top:4px; }
-        .obshow-by{ position:absolute; left:0; right:0; bottom:78px; text-align:center; z-index:2;
+        .obshow-by{ position:absolute; left:0; right:0; bottom:62px; text-align:center; z-index:2;
           font-family:'Sora',sans-serif; font-size:11px; color:rgba(150,170,215,0.45); }
         .obshow-dock{ position:absolute; left:50%; transform:translateX(-50%); bottom:20px; z-index:2;
           display:flex; align-items:center; gap:16px; padding:9px 16px; border-radius:13px;
@@ -436,16 +436,12 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
       {/* ── Cinematic dark hero ───────────────────────────────────────── */}
       <div className="obpw-stage">
         <div className="obpw-stage-copy">
-          <div className="obpw-eyebrow">
-            <span className="obpw-dot" /> Elite only &middot; desktop app
-          </div>
-
           <h1 className="obpw-h1">
             The recruiting coach you <em>talk to</em>.
           </h1>
 
           <p className="obpw-lead">
-            The AI assistant from <em>Iron Man</em> &mdash; rebuilt for breaking into finance.
+            The AI assistant from <em>Iron Man</em>, rebuilt for breaking into finance.
           </p>
 
           <div className="obpw-say">
@@ -471,33 +467,29 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
         <div className="obpw-stage-art"><OBShowcase /></div>
       </div>
 
-      {/* ── "just say it" command chips ───────────────────────────────── */}
-      <div className="obpw-section">
-        <div className="obpw-kicker">Just say it out loud</div>
-        <div className="obpw-chips">
-          {['"Run me a PE mock for Blackstone."', '"Tear down Stripe."', '"Who is this person before my call?"', '"Draft my outreach to her."', '"Brief me before the open."'].map((c) => (
-            <span key={c} className="obpw-chip">{c}</span>
+      {/* ── what OB does (compact, complete) ─────────────────────────── */}
+      <div className="obpw-caps-wrap">
+        <div className="obpw-kicker">Everything OB does, by voice</div>
+        <div className="obpw-caps">
+          {[
+            ['Live mock interviews', 'Pick a desk and a firm, then get grilled out loud with real follow-ups and a grade. All ten tracks.'],
+            ['Company teardowns', 'Name a company. OB pulls the filings and walks you through the business, the numbers, and the story.'],
+            ['Coffee-chat prep', 'Hand it a LinkedIn URL and walk in knowing who they are and exactly what to ask.'],
+            ['Outreach writer', 'It drafts the cold email or DM in your own voice, ready to send.'],
+            ['Morning market brief', 'A spoken read on the market and your watchlist before the open.'],
+            ['Remembers your search', 'Tell it your targets once and it carries the context into every session.'],
+          ].map(([t, d]) => (
+            <div key={t} className="obpw-cap">
+              <span className="obpw-cap-orb">{OB_ORB}</span>
+              <div className="obpw-cap-txt"><b>{t}</b><span>{d}</span></div>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* ── feature grid ──────────────────────────────────────────────── */}
-      <div className="obpw-feat">
-        {FEATURES.map((f) => (
-          <div key={f.title} className="obpw-card">
-            <div className="obpw-card-orb">{OB_ORB}</div>
-            <div className="obpw-card-title">{f.title}</div>
-            <div className="obpw-card-body">{f.body}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* ── closing CTA band ──────────────────────────────────────────── */}
-      <div className="obpw-band">
-        <div>
-          <div className="obpw-band-title">Included with Elite.</div>
-          <div className="obpw-band-sub">The only voice coach in finance recruiting. Upgrade once, talk to it every day.</div>
-        </div>
+      {/* ── light closing CTA ─────────────────────────────────────────── */}
+      <div className="obpw-close">
+        <span className="obpw-close-text">Included with Elite. The only voice coach in finance recruiting.</span>
         <button type="button" onClick={goElite} className="obpw-btn-primary">
           Upgrade to Elite
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
@@ -520,12 +512,6 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
         }
         .obpw-stage-copy{ position:relative; flex:1; min-width:0; z-index:1; }
         .obpw-stage-art{ position:relative; width:330px; flex-shrink:0; z-index:1; }
-        .obpw-eyebrow{
-          display:inline-flex; align-items:center; gap:7px; padding:5px 12px; border-radius:999px;
-          background:rgba(37,99,235,0.15); border:1px solid rgba(59,130,246,0.34); color:#7fb0ff;
-          font-size:10px; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; margin-bottom:20px;
-        }
-        .obpw-dot{ width:5px; height:5px; border-radius:50%; background:#4ade80; box-shadow:0 0 8px #4ade80; }
         .obpw-h1{
           font-family:'Instrument Serif',serif; font-weight:400; color:#f1f5ff;
           font-size:52px; line-height:1.0; letter-spacing:-1px; margin:0 0 14px;
@@ -553,35 +539,30 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
           border:1.5px solid rgba(120,150,220,0.3); padding:12px 20px; border-radius:11px;
           font-size:13px; font-weight:600; font-family:'Sora',sans-serif;
         }
-        .obpw-section{ margin:48px 0 8px; }
+        .obpw-caps-wrap{ margin-top:52px; }
         .obpw-kicker{
           font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
-          color:var(--text-3); margin-bottom:16px; text-align:center;
+          color:var(--text-3); margin-bottom:22px; text-align:center;
         }
-        .obpw-chips{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
-        .obpw-chip{
-          font-size:13px; color:var(--text-2); font-style:italic;
-          background:var(--surface); border:1px solid var(--border); border-radius:999px; padding:8px 15px;
-        }
-        .obpw-feat{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:34px; }
-        .obpw-card{ border:1px solid var(--border); background:var(--surface); border-radius:16px; padding:20px; }
-        .obpw-card-orb{ width:30px; height:30px; color:#2563eb; margin-bottom:11px; }
-        .obpw-card-title{ font-size:15px; font-weight:700; color:var(--text); margin-bottom:6px; }
-        .obpw-card-body{ font-size:13px; color:var(--text-2); line-height:1.55; }
-        .obpw-band{
+        .obpw-caps{ display:grid; grid-template-columns:repeat(2,1fr); gap:22px 32px; }
+        .obpw-cap{ display:flex; gap:13px; align-items:flex-start; }
+        .obpw-cap-orb{ width:22px; height:22px; color:#2563eb; flex-shrink:0; margin-top:1px; }
+        .obpw-cap-txt{ display:flex; flex-direction:column; gap:3px; min-width:0; }
+        .obpw-cap-txt b{ font-size:14px; font-weight:700; color:var(--text); }
+        .obpw-cap-txt span{ font-size:12.5px; color:var(--text-2); line-height:1.5; }
+        .obpw-close{
           display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
-          margin-top:34px; padding:24px 28px; border-radius:18px;
-          background:linear-gradient(100deg, #0a1326, #0d1b3a); border:1px solid rgba(59,130,246,0.28);
+          margin-top:48px; padding:20px 24px; border-radius:16px;
+          background:var(--surface); border:1px solid var(--border);
         }
-        .obpw-band-title{ font-family:'Instrument Serif',serif; font-size:26px; color:#f1f5ff; line-height:1; margin-bottom:6px; }
-        .obpw-band-sub{ font-size:13px; color:#9fb1d4; max-width:440px; line-height:1.5; }
+        .obpw-close-text{ font-size:14px; color:var(--text); font-weight:600; max-width:460px; line-height:1.5; }
         @keyframes obpwFade{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
         @media (max-width: 820px){
           .obpw-stage{ flex-direction:column-reverse; gap:26px; padding:30px 22px; }
           .obpw-stage-art{ width:100%; max-width:400px; }
           .obpw-h1{ font-size:42px; }
-          .obpw-feat{ grid-template-columns:1fr; }
-          .obpw-band{ flex-direction:column; align-items:flex-start; }
+          .obpw-caps{ grid-template-columns:1fr; }
+          .obpw-close{ flex-direction:column; align-items:flex-start; }
         }
       ` }} />
     </div>
