@@ -413,90 +413,177 @@ function ObElite() {
 // ═══════════════════════════════════════════════════════════════════════════
 function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
   const isPro = currentPlan === 'pro';
+
+  const SAYINGS = [
+    'OB, run me an IB technical.',
+    'Tear down Nvidia for me.',
+    'Prep my coffee chat with Alex.',
+    'What moved the market today?',
+    'Quiz me on LBO math.',
+    'Grill me like a Superday.',
+  ];
+  const [sayIdx, setSayIdx] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setSayIdx((i) => (i + 1) % SAYINGS.length), 2600);
+    return () => clearInterval(id);
+  }, []);
+
+  const goElite = () => { window.location.href = '/checkout?plan=elite'; };
+  const goCompare = () => { window.location.href = '/checkout'; };
+
   return (
-    <div style={{ maxWidth: 820, margin: '0 auto', padding: '40px 0 90px', fontFamily: "'Sora', sans-serif" }}>
-      <div className="ob-hero">
-        <div className="ob-hero-copy">
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 11px', marginBottom: 18,
-            background: 'rgba(37, 99, 235, 0.12)', color: '#3b82f6',
-            border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: 999,
-            fontSize: 10, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase',
-          }}>
-            <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor' }} />
-            Elite only
+    <div style={{ maxWidth: 920, margin: '0 auto', padding: '34px 0 100px', fontFamily: "'Sora', sans-serif" }}>
+      {/* ── Cinematic dark hero ───────────────────────────────────────── */}
+      <div className="obpw-stage">
+        <div className="obpw-stage-copy">
+          <div className="obpw-eyebrow">
+            <span className="obpw-dot" /> Elite only &middot; desktop app
           </div>
 
-          <h1 style={{
-            fontFamily: "'Instrument Serif', serif", fontSize: 50, lineHeight: 1.02, letterSpacing: '-1px',
-            color: 'var(--text)', margin: '0 0 16px', fontWeight: 400,
-          }}>
-            <em style={{ fontStyle: 'italic' }}>OB</em> is the coach you talk to.
+          <h1 className="obpw-h1">
+            The recruiting coach you <em>talk to</em>.
           </h1>
 
-          <p style={{ fontSize: 16, color: 'var(--text)', lineHeight: 1.5, margin: '0 0 14px', fontWeight: 600 }}>
-            Think the AI assistant from <em style={{ fontStyle: 'italic' }}>Iron Man</em>, except it actually knows your IB technicals, LBO math, and what a Superday feels like.
+          <p className="obpw-lead">
+            The AI assistant from <em>Iron Man</em> &mdash; rebuilt for breaking into finance.
           </p>
 
-          <p style={{ fontSize: 14.5, color: 'var(--text-2)', lineHeight: 1.6, margin: '0 0 26px' }}>
+          <div className="obpw-say">
+            <svg className="obpw-mic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg>
+            <span key={sayIdx} className="obpw-say-text">{SAYINGS[sayIdx]}</span>
+          </div>
+
+          <p className="obpw-body">
             {isPro
-              ? "You're on Pro. OB sits one tier up, a desktop voice assistant you talk to out loud. It runs live mock interviews, tears down companies from their filings, preps your coffee chats, and briefs you on the market before it opens. Nothing else in recruiting works like this."
-              : 'Talk to OB out loud on your desktop. It runs live mock interviews, tears down any company from its filings, preps your coffee chats, and briefs you on the market before it opens, no typing, all by voice. Nothing else in recruiting does this.'}
+              ? "You're on Pro. OB lives one tier up: a desktop voice assistant you actually talk to. No typing, no tabs, just say what you need and it runs."
+              : 'OB is a desktop voice assistant built on all of OfferBell. Say what you need out loud and it runs, mock interviews, company teardowns, coffee-chat prep, market briefs. Nothing else in recruiting works like this.'}
           </p>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-            <button
-              type="button"
-              onClick={() => { window.location.href = '/checkout?plan=elite'; }}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                background: 'var(--text)', color: 'var(--surface)',
-                border: 'none', padding: '12px 22px', borderRadius: 10,
-                fontSize: 13.5, fontWeight: 700, cursor: 'pointer', fontFamily: "'Sora', sans-serif",
-              }}
-            >
+          <div className="obpw-cta">
+            <button type="button" onClick={goElite} className="obpw-btn-primary">
               Upgrade to Elite
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </button>
-            <button
-              type="button"
-              onClick={() => { window.location.href = '/checkout'; }}
-              style={{
-                background: 'transparent', color: 'var(--text-2)',
-                border: '1.5px solid var(--border-2)', padding: '12px 20px', borderRadius: 10,
-                fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Sora', sans-serif",
-              }}
-            >
-              Compare plans
-            </button>
+            <button type="button" onClick={goCompare} className="obpw-btn-ghost">Compare plans</button>
           </div>
         </div>
 
-        <div className="ob-hero-art"><OBShowcase /></div>
+        <div className="obpw-stage-art"><OBShowcase /></div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14, marginTop: 52 }} className="ob-feat-grid">
+      {/* ── "just say it" command chips ───────────────────────────────── */}
+      <div className="obpw-section">
+        <div className="obpw-kicker">Just say it out loud</div>
+        <div className="obpw-chips">
+          {['"Run me a PE mock for Blackstone."', '"Tear down Stripe."', '"Who is this person before my call?"', '"Draft my outreach to her."', '"Brief me before the open."'].map((c) => (
+            <span key={c} className="obpw-chip">{c}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* ── feature grid ──────────────────────────────────────────────── */}
+      <div className="obpw-feat">
         {FEATURES.map((f) => (
-          <div key={f.title} style={{
-            border: '1px solid var(--border)', background: 'var(--surface)', borderRadius: 14, padding: '18px 18px',
-          }}>
-            <div style={{ width: 30, height: 30, color: '#3b82f6', marginBottom: 10 }}>{OB_ORB}</div>
-            <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>{f.title}</div>
-            <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.55 }}>{f.body}</div>
+          <div key={f.title} className="obpw-card">
+            <div className="obpw-card-orb">{OB_ORB}</div>
+            <div className="obpw-card-title">{f.title}</div>
+            <div className="obpw-card-body">{f.body}</div>
           </div>
         ))}
       </div>
 
-      <style>{`
-        .ob-hero{ display:flex; gap:34px; align-items:center; }
-        .ob-hero-copy{ flex:1; min-width:0; }
-        .ob-hero-art{ width:312px; flex-shrink:0; }
-        @media (max-width: 820px){
-          .ob-hero{ flex-direction:column-reverse; gap:26px; }
-          .ob-hero-art{ width:100%; max-width:420px; }
-          .ob-feat-grid{ grid-template-columns:1fr !important; }
+      {/* ── closing CTA band ──────────────────────────────────────────── */}
+      <div className="obpw-band">
+        <div>
+          <div className="obpw-band-title">Included with Elite.</div>
+          <div className="obpw-band-sub">The only voice coach in finance recruiting. Upgrade once, talk to it every day.</div>
+        </div>
+        <button type="button" onClick={goElite} className="obpw-btn-primary">
+          Upgrade to Elite
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+        </button>
+      </div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        .obpw-stage{
+          position:relative; display:flex; gap:30px; align-items:center;
+          background:radial-gradient(120% 130% at 12% 10%, #0c1426 0%, #070b16 48%, #04060c 100%);
+          border:1px solid rgba(59,130,246,0.22); border-radius:26px; padding:38px 36px;
+          box-shadow:0 40px 90px -50px rgba(37,99,235,0.6);
+          overflow:hidden;
         }
-      `}</style>
+        .obpw-stage::before{
+          content:""; position:absolute; inset:0; pointer-events:none;
+          background-image:linear-gradient(rgba(90,130,220,0.045) 1px, transparent 1px),
+                           linear-gradient(90deg, rgba(90,130,220,0.045) 1px, transparent 1px);
+          background-size:30px 30px;
+        }
+        .obpw-stage-copy{ position:relative; flex:1; min-width:0; z-index:1; }
+        .obpw-stage-art{ position:relative; width:330px; flex-shrink:0; z-index:1; }
+        .obpw-eyebrow{
+          display:inline-flex; align-items:center; gap:7px; padding:5px 12px; border-radius:999px;
+          background:rgba(37,99,235,0.15); border:1px solid rgba(59,130,246,0.34); color:#7fb0ff;
+          font-size:10px; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; margin-bottom:20px;
+        }
+        .obpw-dot{ width:5px; height:5px; border-radius:50%; background:#4ade80; box-shadow:0 0 8px #4ade80; }
+        .obpw-h1{
+          font-family:'Instrument Serif',serif; font-weight:400; color:#f1f5ff;
+          font-size:52px; line-height:1.0; letter-spacing:-1px; margin:0 0 14px;
+        }
+        .obpw-h1 em{ font-style:italic; color:#8fc0ff; }
+        .obpw-lead{ font-size:16px; font-weight:600; color:#cdd9f2; line-height:1.45; margin:0 0 20px; }
+        .obpw-lead em{ font-style:italic; color:#8fc0ff; }
+        .obpw-say{
+          display:inline-flex; align-items:center; gap:9px; min-height:22px;
+          padding:9px 15px; border-radius:11px; margin-bottom:22px;
+          background:rgba(255,255,255,0.045); border:1px solid rgba(120,150,220,0.2); color:#9fb6e0;
+        }
+        .obpw-mic{ color:#5b9bff; flex-shrink:0; }
+        .obpw-say-text{ font-size:13.5px; color:#e3ecff; font-style:italic; animation:obpwFade .5s ease; }
+        .obpw-body{ font-size:13.5px; color:#93a4c6; line-height:1.6; margin:0 0 26px; max-width:440px; }
+        .obpw-cta{ display:flex; align-items:center; gap:11px; flex-wrap:wrap; }
+        .obpw-btn-primary{
+          display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+          background:#2563eb; color:#fff; border:none; padding:12px 22px; border-radius:11px;
+          font-size:13.5px; font-weight:700; font-family:'Sora',sans-serif;
+          box-shadow:0 10px 28px -10px rgba(37,99,235,0.9);
+        }
+        .obpw-btn-ghost{
+          cursor:pointer; background:transparent; color:#b7c4de;
+          border:1.5px solid rgba(120,150,220,0.3); padding:12px 20px; border-radius:11px;
+          font-size:13px; font-weight:600; font-family:'Sora',sans-serif;
+        }
+        .obpw-section{ margin:48px 0 8px; }
+        .obpw-kicker{
+          font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
+          color:var(--text-3); margin-bottom:16px; text-align:center;
+        }
+        .obpw-chips{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+        .obpw-chip{
+          font-size:13px; color:var(--text-2); font-style:italic;
+          background:var(--surface); border:1px solid var(--border); border-radius:999px; padding:8px 15px;
+        }
+        .obpw-feat{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:34px; }
+        .obpw-card{ border:1px solid var(--border); background:var(--surface); border-radius:16px; padding:20px; }
+        .obpw-card-orb{ width:30px; height:30px; color:#2563eb; margin-bottom:11px; }
+        .obpw-card-title{ font-size:15px; font-weight:700; color:var(--text); margin-bottom:6px; }
+        .obpw-card-body{ font-size:13px; color:var(--text-2); line-height:1.55; }
+        .obpw-band{
+          display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
+          margin-top:34px; padding:24px 28px; border-radius:18px;
+          background:linear-gradient(100deg, #0a1326, #0d1b3a); border:1px solid rgba(59,130,246,0.28);
+        }
+        .obpw-band-title{ font-family:'Instrument Serif',serif; font-size:26px; color:#f1f5ff; line-height:1; margin-bottom:6px; }
+        .obpw-band-sub{ font-size:13px; color:#9fb1d4; max-width:440px; line-height:1.5; }
+        @keyframes obpwFade{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
+        @media (max-width: 820px){
+          .obpw-stage{ flex-direction:column-reverse; gap:26px; padding:30px 22px; }
+          .obpw-stage-art{ width:100%; max-width:400px; }
+          .obpw-h1{ font-size:42px; }
+          .obpw-feat{ grid-template-columns:1fr; }
+          .obpw-band{ flex-direction:column; align-items:flex-start; }
+        }
+      ` }} />
     </div>
   );
 }
