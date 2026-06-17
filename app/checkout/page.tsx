@@ -29,6 +29,7 @@ const FEATURES: Feature[] = [
   { label: 'AI Coach', free: LIMIT('1/week'), pro: LIMIT('Usage-based'), elite: LIMIT('Higher limits') },
   { label: 'Mock Interview', free: LIMIT('3/week'), pro: CHECK, elite: CHECK },
   { label: 'The Desk (workday simulator)', free: DASH, pro: DASH, elite: CHECK },
+  { label: 'OB (voice coach desktop app)', free: DASH, pro: DASH, elite: CHECK },
   { label: 'Priority Support', free: DASH, pro: DASH, elite: CHECK },
   { label: 'Early Feature Access', free: DASH, pro: DASH, elite: CHECK },
 ];
@@ -453,6 +454,7 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
               <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Everything in Pro, plus</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
                 {[
+                  'OB, the voice coach desktop app (macOS)',
                   'The Desk (10 careers, 30 workday scenarios)',
                   'AI Coach (higher limits)',
                   'Mock Interview (higher limits)',

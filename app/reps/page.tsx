@@ -254,17 +254,6 @@ function ElitePaywall({ currentPlan }: { currentPlan: string | null }) {
     <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 0 90px', fontFamily: "'Sora', sans-serif" }}>
 
       {/* ─── Hero ─── */}
-      <div style={{
-        display: 'inline-flex', alignItems: 'center', gap: 6,
-        padding: '4px 11px', marginBottom: 20,
-        background: 'rgba(37, 99, 235, 0.12)', color: '#3b82f6',
-        border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: 999,
-        fontSize: 10, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase',
-      }}>
-        <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor' }} />
-        Elite plan
-      </div>
-
       <h1 style={{
         fontFamily: "'Instrument Serif', serif",
         fontSize: 54, lineHeight: 1.0, letterSpacing: '-1px',
