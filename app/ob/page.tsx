@@ -88,9 +88,10 @@ const OB_ORB = (
 );
 
 // The OB node-sphere, animated — a recreation of the real OB HUD (a rotating
-// wireframe constellation sphere). Canvas-rendered, no assets. Lives in a dark
-// device panel so it sells the "proprietary voice tech" look on any site theme.
-function OBShowcase() {
+// wireframe constellation sphere). Reusable: `glow` floats it on a soft halo
+// (no box), or drop it inside OBShowcase's device panel.
+function OBSphere({ height = 380, glow = false, rFactor = 0.30, cyFactor = 0.43, children }:
+  { height?: number; glow?: boolean; rFactor?: number; cyFactor?: number; children?: React.ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -102,7 +103,6 @@ function OBShowcase() {
     const reduce = typeof window !== 'undefined'
       && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Fibonacci sphere of points.
     const N = 74;
     const pts: number[][] = [];
     for (let i = 0; i < N; i++) {
@@ -111,7 +111,6 @@ function OBShowcase() {
       const phi = i * Math.PI * (3 - Math.sqrt(5));
       pts.push([Math.cos(phi) * r, y, Math.sin(phi) * r]);
     }
-    // Edges between near neighbors (the constellation lines).
     const edges: number[][] = [];
     for (let i = 0; i < N; i++) {
       for (let j = i + 1; j < N; j++) {
@@ -138,7 +137,7 @@ function OBShowcase() {
       t += reduce ? 0 : 0.0030;
       const w = canvas.clientWidth, h = canvas.clientHeight;
       ctx.clearRect(0, 0, w, h);
-      const cx = w / 2, cy = h * 0.43, R = Math.min(w, h) * 0.30;
+      const cx = w / 2, cy = h * cyFactor, R = Math.min(w, h) * rFactor;
       const cosY = Math.cos(t), sinY = Math.sin(t);
 
       const proj = pts.map((p) => {
@@ -147,11 +146,10 @@ function OBShowcase() {
         const y = p[1];
         const y2 = y * cosX - z * sinX;
         const z2 = y * sinX + z * cosX;
-        const depth = (z2 + 1.4) / 2.8; // ~0 (back) .. ~1 (front)
+        const depth = (z2 + 1.4) / 2.8;
         return { x: cx + x * R, y: cy + y2 * R, depth };
       });
 
-      // lines
       ctx.lineWidth = 0.6;
       for (const [i, j] of edges) {
         const a = proj[i], b = proj[j];
@@ -163,7 +161,6 @@ function OBShowcase() {
         ctx.stroke();
       }
 
-      // nodes
       for (let i = 0; i < proj.length; i++) {
         const p = proj[i];
         const tw = 0.62 + 0.38 * Math.sin(t * 2.1 + i * 1.27);
@@ -186,8 +183,28 @@ function OBShowcase() {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
     };
-  }, []);
+  }, [rFactor, cyFactor]);
 
+  return (
+    <div className="obsphere" style={{ height }}>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .obsphere{ position:relative; width:100%; }
+        .obsphere-canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+        .obsphere-glow{ position:absolute; inset:0; pointer-events:none;
+          background:
+            radial-gradient(circle at 50% 46%, #070b18 0%, #070b18 25%, rgba(7,11,24,0.5) 45%, transparent 66%),
+            radial-gradient(circle at 50% 46%, rgba(45,108,235,0.42) 0%, rgba(45,108,235,0.12) 38%, transparent 62%);
+        }
+      ` }} />
+      {glow && <div className="obsphere-glow" />}
+      <canvas ref={canvasRef} className="obsphere-canvas" />
+      {children}
+    </div>
+  );
+}
+
+// The boxed "device panel" version (used in the Elite get-started hero).
+function OBShowcase() {
   const dockIcon = (path: React.ReactNode) => (
     <span style={{ display: 'inline-flex', color: '#7da2e6' }}>
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{path}</svg>
@@ -209,7 +226,6 @@ function OBShowcase() {
                            linear-gradient(90deg, rgba(90,130,220,0.05) 1px, transparent 1px);
           background-size:26px 26px;
         }
-        .obshow-canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
         .obshow-head{ position:absolute; top:16px; left:18px; z-index:2; }
         .obshow-ob{ font-family:'Instrument Serif',serif; font-size:22px; color:#e8eeff; line-height:1; }
         .obshow-sub{ font-family:'Sora',sans-serif; font-size:8.5px; letter-spacing:0.18em; color:rgba(150,170,215,0.6); margin-top:4px; }
@@ -219,11 +235,11 @@ function OBShowcase() {
           display:flex; align-items:center; gap:16px; padding:9px 16px; border-radius:13px;
           background:rgba(10,16,32,0.7); border:1px solid rgba(90,130,220,0.22); backdrop-filter:blur(4px); }
       ` }} />
-      <canvas ref={canvasRef} className="obshow-canvas" />
       <div className="obshow-head">
         <div className="obshow-ob">OB</div>
         <div className="obshow-sub">AN OFFERBELL PRODUCT</div>
       </div>
+      <OBSphere height={380} glow={false} />
       <div className="obshow-by">Brought to you by OfferBell</div>
       <div className="obshow-dock">
         {dockIcon(<><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></>)}
@@ -432,44 +448,37 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
   const goCompare = () => { window.location.href = '/checkout'; };
 
   return (
-    <div style={{ maxWidth: 920, margin: '0 auto', padding: '34px 0 100px', fontFamily: "'Sora', sans-serif" }}>
-      {/* ── Cinematic dark hero ───────────────────────────────────────── */}
-      <div className="obpw-stage">
-        <div className="obpw-stage-copy">
-          <h1 className="obpw-h1">
-            The recruiting coach you <em>talk to</em>.
-          </h1>
-
-          <p className="obpw-lead">
-            The AI assistant from <em>Iron Man</em>, rebuilt for breaking into finance.
-          </p>
-
-          <div className="obpw-say">
-            <svg className="obpw-mic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg>
-            <span key={sayIdx} className="obpw-say-text">{SAYINGS[sayIdx]}</span>
+    <div style={{ maxWidth: 760, margin: '0 auto', padding: '20px 0 100px', fontFamily: "'Sora', sans-serif", textAlign: 'center' }}>
+      {/* ── Floating OB + a live voice bubble beside it ───────────────── */}
+      <div className="obpw-float">
+        <OBSphere height={400} glow rFactor={0.34} cyFactor={0.46}>
+          <div className="obpw-voice">
+            <svg className="obpw-mic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg>
+            <span key={sayIdx} className="obpw-voice-text">{SAYINGS[sayIdx]}</span>
           </div>
+        </OBSphere>
+      </div>
 
-          <p className="obpw-body">
-            {isPro
-              ? "You're on Pro. OB lives one tier up: a desktop voice assistant you actually talk to. No typing, no tabs, just say what you need and it runs."
-              : 'OB is a desktop voice assistant built on all of OfferBell. Say what you need out loud and it runs, mock interviews, company teardowns, coffee-chat prep, market briefs. Nothing else in recruiting works like this.'}
-          </p>
+      {/* ── the pitch, below the orb ──────────────────────────────────── */}
+      <h1 className="obpw-h1">The recruiting coach you <em>talk to</em>.</h1>
+      <p className="obpw-lead">The AI assistant from <em>Iron Man</em>, rebuilt for breaking into finance.</p>
+      <p className="obpw-body">
+        {isPro
+          ? "You're on Pro. OB lives one tier up: a desktop voice assistant you actually talk to. No typing, no tabs, just say what you need and it runs."
+          : 'OB is a desktop voice assistant built on all of OfferBell. Say what you need out loud and it runs, mock interviews, company teardowns, coffee-chat prep, market briefs. Nothing else in recruiting works like this.'}
+      </p>
 
-          <div className="obpw-cta">
-            <button type="button" onClick={goElite} className="obpw-btn-primary">
-              Upgrade to Elite
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-            </button>
-            <button type="button" onClick={goCompare} className="obpw-btn-ghost">Compare plans</button>
-          </div>
+      <div className="obpw-cta">
+        <button type="button" onClick={goElite} className="obpw-btn-primary">
+          Upgrade to Elite
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+        </button>
+        <button type="button" onClick={goCompare} className="obpw-btn-ghost">Compare plans</button>
+      </div>
 
-          <div className="obpw-platform">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="13" rx="1.5" /><path d="M8 21h8M12 17v4" /></svg>
-            macOS only for now &middot; Windows coming soon
-          </div>
-        </div>
-
-        <div className="obpw-stage-art"><OBShowcase /></div>
+      <div className="obpw-platform">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="13" rx="1.5" /><path d="M8 21h8M12 17v4" /></svg>
+        macOS only for now &middot; Windows coming soon
       </div>
 
       {/* ── what OB does (compact, complete) ─────────────────────────── */}
@@ -502,40 +511,28 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .obpw-stage{
-          position:relative; display:flex; gap:30px; align-items:center;
-          background:radial-gradient(120% 130% at 12% 10%, #0c1426 0%, #070b16 48%, #04060c 100%);
-          border:1px solid rgba(59,130,246,0.22); border-radius:26px; padding:38px 36px;
-          box-shadow:0 40px 90px -50px rgba(37,99,235,0.6);
-          overflow:hidden;
-        }
-        .obpw-stage::before{
-          content:""; position:absolute; inset:0; pointer-events:none;
-          background-image:linear-gradient(rgba(90,130,220,0.045) 1px, transparent 1px),
-                           linear-gradient(90deg, rgba(90,130,220,0.045) 1px, transparent 1px);
-          background-size:30px 30px;
-        }
-        .obpw-stage-copy{ position:relative; flex:1; min-width:0; z-index:1; }
-        .obpw-stage-art{ position:relative; width:330px; flex-shrink:0; z-index:1; }
-        .obpw-h1{
-          font-family:'Instrument Serif',serif; font-weight:400; color:#f1f5ff;
-          font-size:52px; line-height:1.0; letter-spacing:-1px; margin:0 0 14px;
-        }
-        .obpw-h1 em{ font-style:italic; color:#8fc0ff; }
-        .obpw-lead{ font-size:16px; font-weight:600; color:#cdd9f2; line-height:1.45; margin:0 0 20px; }
-        .obpw-lead em{ font-style:italic; color:#8fc0ff; }
-        .obpw-say{
-          display:inline-flex; align-items:center; gap:9px; min-height:22px;
-          padding:9px 15px; border-radius:11px; margin-bottom:22px;
-          background:rgba(255,255,255,0.045); border:1px solid rgba(120,150,220,0.2); color:#9fb6e0;
+        .obpw-float{ position:relative; max-width:520px; margin:0 auto 6px; }
+        .obpw-voice{
+          position:absolute; left:50%; bottom:54px; transform:translateX(-50%);
+          display:inline-flex; align-items:center; gap:9px; white-space:nowrap;
+          padding:9px 16px; border-radius:999px; z-index:2;
+          background:rgba(10,16,32,0.72); border:1px solid rgba(120,150,220,0.3);
+          backdrop-filter:blur(5px); box-shadow:0 8px 26px -12px rgba(0,0,0,0.7);
         }
         .obpw-mic{ color:#5b9bff; flex-shrink:0; }
-        .obpw-say-text{ font-size:13.5px; color:#e3ecff; font-style:italic; animation:obpwFade .5s ease; }
-        .obpw-body{ font-size:13.5px; color:#93a4c6; line-height:1.6; margin:0 0 26px; max-width:440px; }
-        .obpw-cta{ display:flex; align-items:center; gap:11px; flex-wrap:wrap; }
+        .obpw-voice-text{ font-size:13px; color:#e7eeff; font-style:italic; animation:obpwFade .5s ease; }
+        .obpw-h1{
+          font-family:'Instrument Serif',serif; font-weight:400; color:var(--text);
+          font-size:52px; line-height:1.02; letter-spacing:-1px; margin:6px auto 14px; max-width:600px;
+        }
+        .obpw-h1 em{ font-style:italic; color:#2563eb; }
+        .obpw-lead{ font-size:16.5px; font-weight:600; color:var(--text); line-height:1.45; margin:0 auto 16px; max-width:560px; }
+        .obpw-lead em{ font-style:italic; color:#2563eb; }
+        .obpw-body{ font-size:14px; color:var(--text-2); line-height:1.6; margin:0 auto 26px; max-width:540px; }
+        .obpw-cta{ display:flex; align-items:center; justify-content:center; gap:11px; flex-wrap:wrap; }
         .obpw-platform{
           display:inline-flex; align-items:center; gap:7px; margin-top:16px;
-          font-size:12px; color:#8195b8; font-weight:500;
+          font-size:12px; color:var(--text-3); font-weight:500;
         }
         .obpw-btn-primary{
           display:inline-flex; align-items:center; gap:8px; cursor:pointer;
@@ -544,11 +541,11 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
           box-shadow:0 10px 28px -10px rgba(37,99,235,0.9);
         }
         .obpw-btn-ghost{
-          cursor:pointer; background:transparent; color:#b7c4de;
-          border:1.5px solid rgba(120,150,220,0.3); padding:12px 20px; border-radius:11px;
+          cursor:pointer; background:transparent; color:var(--text-2);
+          border:1.5px solid var(--border-2); padding:12px 20px; border-radius:11px;
           font-size:13px; font-weight:600; font-family:'Sora',sans-serif;
         }
-        .obpw-caps-wrap{ margin-top:52px; }
+        .obpw-caps-wrap{ margin-top:30px; text-align:left; }
         .obpw-kicker{
           font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
           color:var(--text-3); margin-bottom:22px; text-align:center;
@@ -561,15 +558,13 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
         .obpw-cap-txt span{ font-size:12.5px; color:var(--text-2); line-height:1.5; }
         .obpw-close{
           display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
-          margin-top:48px; padding:20px 24px; border-radius:16px;
+          margin-top:40px; padding:20px 24px; border-radius:16px; text-align:left;
           background:var(--surface); border:1px solid var(--border);
         }
         .obpw-close-text{ font-size:14px; color:var(--text); font-weight:600; max-width:460px; line-height:1.5; }
-        @keyframes obpwFade{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
-        @media (max-width: 820px){
-          .obpw-stage{ flex-direction:column-reverse; gap:26px; padding:30px 22px; }
-          .obpw-stage-art{ width:100%; max-width:400px; }
-          .obpw-h1{ font-size:42px; }
+        @keyframes obpwFade{ from{ opacity:0; transform:translate(-50%,4px); } to{ opacity:1; transform:translate(-50%,0); } }
+        @media (max-width: 720px){
+          .obpw-h1{ font-size:40px; }
           .obpw-caps{ grid-template-columns:1fr; }
           .obpw-close{ flex-direction:column; align-items:flex-start; }
         }
