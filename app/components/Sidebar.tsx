@@ -351,6 +351,16 @@ export default function Sidebar({ activePage }: SidebarProps) {
             </div>
           </div>
 
+          {/* OB - the Elite voice coach desktop app */}
+          <div className="ob-side-group">
+            <div className="ob-side-item-list">
+              <Link className={cls('ob')} href="/ob">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="2.5"/><path d="M7.5 12a4.5 4.5 0 0 1 9 0"/><path d="M4 12a8 8 0 0 1 16 0"/></svg>
+                <span>OB</span>
+              </Link>
+            </div>
+          </div>
+
           <div className="ob-side-group">
             <span className="ob-side-group-label">Learn</span>
             <div className="ob-side-item-list">
