@@ -90,8 +90,8 @@ const OB_ORB = (
 // The OB node-sphere, animated — a recreation of the real OB HUD (a rotating
 // wireframe constellation sphere). Reusable: `glow` floats it on a soft halo
 // (no box), or drop it inside OBShowcase's device panel.
-function OBSphere({ height = 380, glow = false, rFactor = 0.30, cyFactor = 0.43, children }:
-  { height?: number; glow?: boolean; rFactor?: number; cyFactor?: number; children?: React.ReactNode }) {
+function OBSphere({ height = 380, glow = false, darkBg = false, rFactor = 0.30, cyFactor = 0.43, children }:
+  { height?: number; glow?: boolean; darkBg?: boolean; rFactor?: number; cyFactor?: number; children?: React.ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -140,6 +140,15 @@ function OBSphere({ height = 380, glow = false, rFactor = 0.30, cyFactor = 0.43,
       const cx = w / 2, cy = h * cyFactor, R = Math.min(w, h) * rFactor;
       const cosY = Math.cos(t), sinY = Math.sin(t);
 
+      // Backdrop-aware palette: light nodes on a dark backdrop, blue wireframe
+      // on a light page. darkBg forces the dark-backdrop look (the elite panel).
+      const darkMode = darkBg || (typeof document !== 'undefined'
+        && document.documentElement.getAttribute('data-theme') === 'dark');
+      const lineRGB = darkMode ? '125,155,215' : '37,99,235';
+      const lineMul = darkMode ? 0.42 : 0.6;
+      const nodeRGB = darkMode ? '214,226,255' : '37,99,235';
+      const nodeShadow = darkMode ? 'rgba(120,160,255,0.85)' : 'rgba(37,99,235,0.4)';
+
       const proj = pts.map((p) => {
         const x = p[0] * cosY - p[2] * sinY;
         const z = p[0] * sinY + p[2] * cosY;
@@ -153,8 +162,8 @@ function OBSphere({ height = 380, glow = false, rFactor = 0.30, cyFactor = 0.43,
       ctx.lineWidth = 0.6;
       for (const [i, j] of edges) {
         const a = proj[i], b = proj[j];
-        const al = Math.max(0, ((a.depth + b.depth) / 2)) * 0.42;
-        ctx.strokeStyle = 'rgba(125,155,215,' + al.toFixed(3) + ')';
+        const al = Math.max(0, ((a.depth + b.depth) / 2)) * lineMul;
+        ctx.strokeStyle = 'rgba(' + lineRGB + ',' + al.toFixed(3) + ')';
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
@@ -168,8 +177,8 @@ function OBSphere({ height = 380, glow = false, rFactor = 0.30, cyFactor = 0.43,
         const al = Math.min(1, (0.22 + p.depth * 0.7) * tw);
         ctx.beginPath();
         ctx.arc(p.x, p.y, sz, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(214,226,255,' + al.toFixed(3) + ')';
-        ctx.shadowColor = 'rgba(120,160,255,0.85)';
+        ctx.fillStyle = 'rgba(' + nodeRGB + ',' + al.toFixed(3) + ')';
+        ctx.shadowColor = nodeShadow;
         ctx.shadowBlur = p.depth * 7;
         ctx.fill();
         ctx.shadowBlur = 0;
@@ -183,7 +192,7 @@ function OBSphere({ height = 380, glow = false, rFactor = 0.30, cyFactor = 0.43,
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
     };
-  }, [rFactor, cyFactor]);
+  }, [rFactor, cyFactor, darkBg]);
 
   return (
     <div className="obsphere" style={{ height }}>
@@ -191,6 +200,9 @@ function OBSphere({ height = 380, glow = false, rFactor = 0.30, cyFactor = 0.43,
         .obsphere{ position:relative; width:100%; }
         .obsphere-canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
         .obsphere-glow{ position:absolute; inset:0; pointer-events:none;
+          background:radial-gradient(circle at 50% 46%, rgba(37,99,235,0.10) 0%, rgba(37,99,235,0.035) 42%, transparent 66%);
+        }
+        [data-theme="dark"] .obsphere-glow{
           background:
             radial-gradient(circle at 50% 46%, #070b18 0%, #070b18 25%, rgba(7,11,24,0.5) 45%, transparent 66%),
             radial-gradient(circle at 50% 46%, rgba(45,108,235,0.42) 0%, rgba(45,108,235,0.12) 38%, transparent 62%);
@@ -239,7 +251,7 @@ function OBShowcase() {
         <div className="obshow-ob">OB</div>
         <div className="obshow-sub">AN OFFERBELL PRODUCT</div>
       </div>
-      <OBSphere height={380} glow={false} />
+      <OBSphere height={380} glow={false} darkBg />
       <div className="obshow-by">Brought to you by OfferBell</div>
       <div className="obshow-dock">
         {dockIcon(<><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></>)}
@@ -551,18 +563,18 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
           color:var(--text-3); margin-bottom:22px; text-align:center;
         }
         .obpw-caps{ display:grid; grid-template-columns:repeat(2,1fr); gap:22px 32px; }
-        .obpw-cap{ display:flex; gap:13px; align-items:flex-start; }
+        .obpw-cap{ display:flex; gap:13px; align-items:flex-start; padding:17px 18px; border:1px solid var(--border); background:var(--surface); border-radius:14px; }
         .obpw-cap-orb{ width:22px; height:22px; color:#2563eb; flex-shrink:0; margin-top:1px; }
         .obpw-cap-txt{ display:flex; flex-direction:column; gap:3px; min-width:0; }
         .obpw-cap-txt b{ font-size:14px; font-weight:700; color:var(--text); }
         .obpw-cap-txt span{ font-size:12.5px; color:var(--text-2); line-height:1.5; }
         .obpw-close{
           display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
-          margin-top:40px; padding:20px 24px; border-radius:16px; text-align:left;
+          margin-top:40px; padding:22px 26px; border-radius:16px; text-align:left;
           background:var(--surface); border:1px solid var(--border);
         }
         .obpw-close-text{ font-size:14px; color:var(--text); font-weight:600; max-width:460px; line-height:1.5; }
-        @keyframes obpwFade{ from{ opacity:0; transform:translate(-50%,4px); } to{ opacity:1; transform:translate(-50%,0); } }
+        @keyframes obpwFade{ from{ opacity:0; transform:translateY(3px); } to{ opacity:1; transform:translateY(0); } }
         @media (max-width: 720px){
           .obpw-h1{ font-size:40px; }
           .obpw-caps{ grid-template-columns:1fr; }
