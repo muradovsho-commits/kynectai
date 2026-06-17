@@ -341,19 +341,13 @@ export default function Sidebar({ activePage }: SidebarProps) {
         </div>
 
         <nav className="ob-side-nav">
-          {/* Dashboard alone at top - no group label */}
+          {/* Dashboard + OB at top - no group label */}
           <div className="ob-side-group">
             <div className="ob-side-item-list">
               <Link className={cls('dashboard')} href="/dashboard">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
                 <span>Dashboard</span>
               </Link>
-            </div>
-          </div>
-
-          {/* OB - the Elite voice coach desktop app */}
-          <div className="ob-side-group">
-            <div className="ob-side-item-list">
               <Link className={cls('ob')} href="/ob">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="2.5"/><path d="M7.5 12a4.5 4.5 0 0 1 9 0"/><path d="M4 12a8 8 0 0 1 16 0"/></svg>
                 <span>OB</span>
@@ -618,7 +612,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
         }
         .ob-side-nav::-webkit-scrollbar { display: none; }
 
-        .ob-side-group { margin-bottom: 14px; }
+        .ob-side-group { margin-bottom: 11px; }
         .ob-side-group:last-child { margin-bottom: 0; }
 
         .ob-side-group-label {
@@ -643,7 +637,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
           text-decoration: none;
           font-size: 12px; font-weight: 400;
           letter-spacing: 0.02em;
-          min-height: 36px;
+          min-height: 34px;
           cursor: pointer;
           white-space: nowrap;
           transition: background 0.15s;
