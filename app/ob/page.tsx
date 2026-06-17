@@ -18,10 +18,10 @@ import '../reps/desk.css';                      // .desk-app / .desk-canvas / .d
 
 type PlanStatus = 'loading' | 'elite' | 'gated';
 
-// When the packaged macOS build is hosted, set this to its URL (e.g.
-// 'https://offerbell.org/downloads/OB-mac.dmg'). While empty, the Elite view
-// shows a "rolling out" state instead of a broken download link.
-const OB_DOWNLOAD_URL = '';
+// The standalone OB download (a zip that unpacks to ~/ob). Host OB.zip in the
+// site's /public folder so it serves from here. If you ever move it, change this.
+const OB_DOWNLOAD_URL = '/OB.zip';
+const OB_SUPPORT_EMAIL = 'support@offerbell.org';
 
 export default function ObPage() {
   const router = useRouter();
@@ -92,24 +92,39 @@ const OB_ORB = (
 // ═══════════════════════════════════════════════════════════════════════════
 function ObElite() {
   const [os, setOs] = useState<'mac' | 'win'>('mac');
+  const [copied, setCopied] = useState(false);
 
-  const macSteps: { t: string; d: React.ReactNode }[] = [
-    {
-      t: 'Download OB for macOS',
-      d: OB_DOWNLOAD_URL
-        ? (<a href={OB_DOWNLOAD_URL} style={{ color: '#3b82f6', fontWeight: 600, textDecoration: 'none' }}>Download the OB app &rarr;</a>)
-        : 'The macOS app is rolling out to Elite members, you\u2019ll get a download email shortly.',
-    },
-    { t: 'Open it and move OB to Applications', d: 'Double-click the downloaded file and drag OB into your Applications folder.' },
-    { t: 'Launch OB', d: 'The first time, macOS may say it\u2019s from an unidentified developer, right-click the app and choose Open to get past it.' },
-    { t: 'Sign in with your OfferBell account', d: 'Use this same email and password. OB unlocks automatically because you\u2019re Elite.' },
-  ];
+  // One paste: unzip to ~/ob, clear the download quarantine flag, launch.
+  // The launcher builds its own environment and installs everything on first run.
+  const INSTALL_CMD = 'cd ~/Downloads && unzip -o OB.zip -d ~ && xattr -dr com.apple.quarantine ~/ob 2>/dev/null; cd ~/ob && chmod +x launch_ob.command && ./launch_ob.command';
+
+  const copyCmd = () => {
+    navigator.clipboard.writeText(INSTALL_CMD).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    }).catch(() => {});
+  };
 
   const pill = (active: boolean): React.CSSProperties => ({
     padding: '7px 16px', borderRadius: 999, cursor: 'pointer', fontSize: 13, fontWeight: 600,
     fontFamily: "'Sora', sans-serif", border: '1px solid ' + (active ? 'transparent' : 'var(--border-2)'),
     background: active ? 'var(--text)' : 'transparent', color: active ? 'var(--surface)' : 'var(--text-2)',
   });
+
+  const stepRow = (n: number, title: string, body: React.ReactNode) => (
+    <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+      <div style={{
+        width: 26, height: 26, borderRadius: '50%', flexShrink: 0, marginTop: 1,
+        background: 'rgba(37, 99, 235, 0.12)', color: '#3b82f6', border: '1px solid rgba(59, 130, 246, 0.3)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 12.5, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace",
+      }}>{n}</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>{title}</div>
+        <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.55 }}>{body}</div>
+      </div>
+    </div>
+  );
 
   return (
     <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 0 90px', fontFamily: "'Sora', sans-serif" }}>
@@ -138,7 +153,7 @@ function ObElite() {
       {/* Install instructions */}
       <div style={{ border: '1px solid var(--border)', background: 'var(--surface)', borderRadius: 16, padding: '24px 24px 26px', marginBottom: 44 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 20 }}>
-          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>Get OB on your computer</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>Get OB on your Mac</div>
           <div style={{ display: 'flex', gap: 6 }}>
             <button type="button" onClick={() => setOs('mac')} style={pill(os === 'mac')}>macOS</button>
             <button type="button" onClick={() => setOs('win')} style={pill(os === 'win')}>Windows</button>
@@ -146,23 +161,56 @@ function ObElite() {
         </div>
 
         {os === 'mac' ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {macSteps.map((s, i) => (
-              <div key={i} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-                <div style={{
-                  width: 26, height: 26, borderRadius: '50%', flexShrink: 0, marginTop: 1,
-                  background: 'rgba(37, 99, 235, 0.12)', color: '#3b82f6',
-                  border: '1px solid rgba(59, 130, 246, 0.3)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 12.5, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace",
-                }}>{i + 1}</div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>{s.t}</div>
-                  <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.55 }}>{s.d}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            {stepRow(1, 'Download OB', (
+              <div>
+                <a href={OB_DOWNLOAD_URL} download style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 6,
+                  background: 'var(--text)', color: 'var(--surface)', textDecoration: 'none',
+                  padding: '9px 18px', borderRadius: 9, fontSize: 13, fontWeight: 700, fontFamily: "'Sora', sans-serif",
+                }}>
+                  Download OB.zip
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12l7 7 7-7" /></svg>
+                </a>
+                <div style={{ marginTop: 7, fontSize: 12.5, color: 'var(--text-3)' }}>It'll land in your Downloads folder.</div>
+              </div>
+            ))}
+
+            {stepRow(2, 'Open Terminal and paste this', (
+              <div>
+                <div style={{ marginBottom: 8 }}>
+                  Press <strong>Cmd + Space</strong>, type <strong>Terminal</strong>, hit Enter. Then paste the line below and press Enter:
+                </div>
+                <div style={{ position: 'relative', background: '#0b1220', border: '1px solid var(--border)', borderRadius: 10, padding: '14px 16px' }}>
+                  <code style={{
+                    display: 'block', fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 11.5,
+                    color: '#cbd5e1', lineHeight: 1.6, whiteSpace: 'pre-wrap', wordBreak: 'break-all', paddingRight: 70,
+                  }}>{INSTALL_CMD}</code>
+                  <button type="button" onClick={copyCmd} style={{
+                    position: 'absolute', top: 10, right: 10, cursor: 'pointer',
+                    background: copied ? '#16a34a' : 'rgba(255,255,255,0.08)', color: '#fff',
+                    border: '1px solid rgba(255,255,255,0.16)', borderRadius: 7, padding: '5px 11px',
+                    fontSize: 11.5, fontWeight: 700, fontFamily: "'Sora', sans-serif",
+                  }}>{copied ? 'Copied' : 'Copy'}</button>
                 </div>
               </div>
             ))}
-            <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4 }}>Requires macOS on Apple silicon.</div>
+
+            {stepRow(3, 'Let it set up, then it opens', (
+              <span>The first run takes a couple of minutes while it installs itself, you only wait once. When the setup screen appears, paste your free <a href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer" style={{ color: '#3b82f6', fontWeight: 600, textDecoration: 'none' }}>Gemini API key</a> (it's the only key OB needs).</span>
+            ))}
+
+            {stepRow(4, 'Sign in with your OfferBell account', (
+              <span>Use this same email and password. OB unlocks automatically because you're Elite.</span>
+            ))}
+
+            <div style={{
+              marginTop: 4, padding: '12px 14px', background: 'var(--surface-2)',
+              border: '1px solid var(--border)', borderRadius: 10, fontSize: 12.5, color: 'var(--text-2)', lineHeight: 1.55,
+            }}>
+              Don't have Python? OB will tell you and link the installer, install it once, then paste the command again.
+              {' '}Stuck anywhere? Email <a href={'mailto:' + OB_SUPPORT_EMAIL} style={{ color: '#3b82f6', fontWeight: 600, textDecoration: 'none' }}>{OB_SUPPORT_EMAIL}</a> and we'll get you running.
+            </div>
           </div>
         ) : (
           <div style={{
@@ -173,7 +221,8 @@ function ObElite() {
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>OB for Windows is on the way</div>
               <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.55 }}>
-                We'll email Elite members the moment the Windows build is ready. For now, OB runs on macOS (Apple silicon).
+                OB runs on macOS today. The Windows build is in progress, in the meantime, reach us at{' '}
+                <a href={'mailto:' + OB_SUPPORT_EMAIL} style={{ color: '#3b82f6', fontWeight: 600, textDecoration: 'none' }}>{OB_SUPPORT_EMAIL}</a>.
               </div>
             </div>
           </div>
