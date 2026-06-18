@@ -262,6 +262,7 @@ function ObElite() {
   const [os, setOs] = useState<'mac' | 'win'>('mac');
   const [copied, setCopied] = useState(false);
   const [copiedWin, setCopiedWin] = useState(false);
+  const [copiedOpen, setCopiedOpen] = useState(false);
 
   // One paste: unzip to ~/ob, clear the download quarantine flag, launch.
   // The launcher builds its own environment and installs everything on first run.
@@ -281,6 +282,14 @@ function ObElite() {
     navigator.clipboard.writeText(INSTALL_CMD_WIN).then(() => {
       setCopiedWin(true);
       setTimeout(() => setCopiedWin(false), 1800);
+    }).catch(() => {});
+  };
+
+  const copyOpenCmd = () => {
+    const cmd = os === 'mac' ? 'cd ~/ob && ./launch_ob.command' : 'cd ~\\ob; .\\launch_ob.bat';
+    navigator.clipboard.writeText(cmd).then(() => {
+      setCopiedOpen(true);
+      setTimeout(() => setCopiedOpen(false), 1800);
     }).catch(() => {});
   };
 
@@ -460,8 +469,14 @@ function ObElite() {
           <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6, marginBottom: 10 }}>
             The simplest way to launch OB every time: open {os === 'mac' ? 'Terminal' : 'PowerShell'} and run this line.
           </div>
-          <div style={{ background: '#0b1220', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px', marginBottom: 10 }}>
-            <code style={{ display: 'block', fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 11.5, color: '#cbd5e1', lineHeight: 1.6, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{os === 'mac' ? 'cd ~/ob && ./launch_ob.command' : 'cd ~\\ob; .\\launch_ob.bat'}</code>
+          <div style={{ position: 'relative', background: '#0b1220', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px', marginBottom: 10 }}>
+            <code style={{ display: 'block', fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 11.5, color: '#cbd5e1', lineHeight: 1.6, whiteSpace: 'pre-wrap', wordBreak: 'break-all', paddingRight: 70 }}>{os === 'mac' ? 'cd ~/ob && ./launch_ob.command' : 'cd ~\\ob; .\\launch_ob.bat'}</code>
+            <button type="button" onClick={copyOpenCmd} style={{
+              position: 'absolute', top: 9, right: 9, cursor: 'pointer',
+              background: copiedOpen ? '#16a34a' : 'rgba(255,255,255,0.08)', color: '#fff',
+              border: '1px solid rgba(255,255,255,0.16)', borderRadius: 7, padding: '5px 11px',
+              fontSize: 11.5, fontWeight: 700, fontFamily: "'Sora', sans-serif",
+            }}>{copiedOpen ? 'Copied' : 'Copy'}</button>
           </div>
           <div style={{ fontSize: 12.5, color: 'var(--text-3)', lineHeight: 1.55 }}>
             Want a one-click icon instead? {os === 'mac' ? (
