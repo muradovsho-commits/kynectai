@@ -72,13 +72,6 @@ export default function ObPage() {
 // ═══════════════════════════════════════════════════════════════════════════
 // Shared feature list
 // ═══════════════════════════════════════════════════════════════════════════
-const FEATURES: { title: string; body: string }[] = [
-  { title: 'Live voice mock interviews', body: 'Pick a track and firm, then get grilled out loud by a tough interviewer that asks follow-ups and grades you. All ten tracks.' },
-  { title: 'Company teardowns', body: 'Say a company and OB pulls its filings and walks you through the business, the numbers, and the story.' },
-  { title: 'Coffee chats & outreach', body: 'Hand OB a LinkedIn URL. It preps you for the call and drafts a personalized message in your voice.' },
-  { title: 'Morning market brief', body: 'A quick spoken read on the market and your watchlist so you walk into the day with a view.' },
-];
-
 const OB_ORB = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
     <circle cx="12" cy="12" r="2.5" />
@@ -458,17 +451,46 @@ function ObElite() {
         )}
       </div>
 
-      {/* feature grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14 }} className="ob-feat-grid">
-        {FEATURES.map((f) => (
-          <div key={f.title} style={{
-            border: '1px solid var(--border)', background: 'var(--surface)', borderRadius: 14, padding: '18px 18px',
-          }}>
-            <div style={{ width: 30, height: 30, color: '#3b82f6', marginBottom: 10 }}>{OB_ORB}</div>
-            <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>{f.title}</div>
-            <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.55 }}>{f.body}</div>
+      {/* How to use OB */}
+      <div style={{ border: '1px solid var(--border)', background: 'var(--surface)', borderRadius: 16, padding: '24px 24px 26px', marginBottom: 44 }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', marginBottom: 18 }}>Using OB</div>
+
+        <div style={{ marginBottom: 22 }}>
+          <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>Keep OB one click away</div>
+          <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6 }}>
+            {os === 'mac' ? (
+              <>You open OB from the <strong>ob</strong> folder by double-clicking <strong>launch_ob.command</strong>. To make it one click anytime, right-click <strong>launch_ob.command</strong>, choose <strong>Make Alias</strong>, and drag that alias onto your Desktop or the right side of your Dock.</>
+            ) : (
+              <>You open OB from the <strong>ob</strong> folder by double-clicking <strong>launch_ob.bat</strong>. To make it one click anytime, right-click <strong>launch_ob.bat</strong> &rarr; <strong>Show more options</strong> &rarr; <strong>Send to</strong> &rarr; <strong>Desktop (create shortcut)</strong>. You can drag that desktop shortcut onto your taskbar to pin it.</>
+            )}
           </div>
-        ))}
+          <div style={{ marginTop: 8, fontSize: 12.5, color: 'var(--text-3)', lineHeight: 1.55 }}>
+            After the first setup it opens in a few seconds, no waiting and no re-entering your key.
+          </div>
+        </div>
+
+        <div>
+          <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>Just talk to it</div>
+          <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6, marginBottom: 12 }}>
+            No typing, no menus. Say what you want and OB runs it, then talks you through it. In a mock, answer out loud the way you would in a real interview. Tap the mic in OB to mute when you need quiet.
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {[
+              'Run me an IB technical.',
+              'Tear down Nvidia.',
+              'Prep my coffee chat \u2014 here\u2019s the LinkedIn.',
+              'Draft outreach to a VP at Evercore.',
+              'What moved the market today?',
+              'Grill me like a Superday.',
+            ].map((s) => (
+              <span key={s} style={{
+                display: 'inline-block', padding: '7px 13px', borderRadius: 999,
+                border: '1px solid var(--border-2)', background: 'var(--surface-2)',
+                fontSize: 12.5, color: 'var(--text-2)', fontStyle: 'italic',
+              }}>&ldquo;{s}&rdquo;</span>
+            ))}
+          </div>
+        </div>
       </div>
 
       <style>{`
