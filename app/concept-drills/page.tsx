@@ -349,26 +349,11 @@ function ConceptDrillsInner() {
     if (ok) setCorrectCount(c => c + 1);
     else setWrongCount(w => w + 1);
 
-    // Update offerbell_flash_perf_{trackKey} - same shape the dashboard reads.
-    // Do NOT change this structure: seen / pass / partial / fail / byCat.
-    try {
-      const key = `offerbell_flash_perf_${selectedTrackKey}`;
-      const raw = localStorage.getItem(key);
-      const p = raw ? JSON.parse(raw) : { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
-      // Defensive: stale localStorage from older app versions might be
-      // missing byCat. Without this guard the byCat write below throws,
-      // gets swallowed by the outer try/catch, and stats silently fail to
-      // update while history still writes.
-      if (!p.byCat || typeof p.byCat !== 'object') p.byCat = {};
-      p.seen = (p.seen || 0) + 1;
-      if (ok) p.pass = (p.pass || 0) + 1;
-      else p.fail = (p.fail || 0) + 1;
-      const cat = q.topic;
-      if (!p.byCat[cat]) p.byCat[cat] = { seen: 0, pass: 0 };
-      p.byCat[cat].seen++;
-      if (ok) p.byCat[cat].pass++;
-      localStorage.setItem(key, JSON.stringify(p));
-    } catch {}
+    // NOTE: drills intentionally do NOT write to offerbell_flash_perf_{track}.
+    // That counter is read only by the Flashcards tab; writing drill answers to
+    // it inflated the Flashcards "cards seen" count. Drill performance is fully
+    // captured in offerbell_drill_history below, which the drills tab and the
+    // dashboard (Total Drills / Avg Score / Skill Heatmap) read from.
 
     // Append to drill history (capped at HISTORY_CAP, newest first).
     appendHistory({
@@ -395,20 +380,8 @@ function ConceptDrillsInner() {
     setShowExp(true);
     setWrongCount(w => w + 1);
 
-    // Skips count as seen but not pass (matches the spirit of the original).
-    // Skipping = you didn't know the answer = should reduce your accuracy.
-    try {
-      const key = `offerbell_flash_perf_${selectedTrackKey}`;
-      const raw = localStorage.getItem(key);
-      const p = raw ? JSON.parse(raw) : { seen: 0, pass: 0, partial: 0, fail: 0, byCat: {} };
-      if (!p.byCat || typeof p.byCat !== 'object') p.byCat = {};
-      p.seen = (p.seen || 0) + 1;
-      p.fail = (p.fail || 0) + 1;
-      const cat = q.topic;
-      if (!p.byCat[cat]) p.byCat[cat] = { seen: 0, pass: 0 };
-      p.byCat[cat].seen++;
-      localStorage.setItem(key, JSON.stringify(p));
-    } catch {}
+    // (See note in answer(): drills do not write to flash_perf. The skip is
+    // recorded in offerbell_drill_history below.)
 
     appendHistory({
       id: uid(),
