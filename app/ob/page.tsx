@@ -7,7 +7,7 @@ import '../contact-finder/contact-finder.css'; // global color vars + frame them
 import '../reps/desk.css';                      // .desk-app / .desk-canvas / .desk-page frame
 
 // ─────────────────────────────────────────────────────────────────────────────
-// OB — the Elite voice coach (macOS desktop app).
+// OB - the Elite voice coach (macOS desktop app).
 //
 // OB is a separate desktop application; this page is its home on the website:
 // for Elite users it's the get-started / download page, for everyone else it's
@@ -80,7 +80,7 @@ const OB_ORB = (
   </svg>
 );
 
-// The OB node-sphere, animated — a recreation of the real OB HUD (a rotating
+// The OB node-sphere, animated - a recreation of the real OB HUD (a rotating
 // wireframe constellation sphere). Reusable: `glow` floats it on a soft halo
 // (no box), or drop it inside OBShowcase's device panel.
 function OBSphere({ height = 380, glow = false, darkBg = false, rFactor = 0.30, cyFactor = 0.43, children }:
@@ -256,7 +256,7 @@ function OBShowcase() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// ObElite — get-started / download for Elite members
+// ObElite - get-started / download for Elite members
 // ═══════════════════════════════════════════════════════════════════════════
 function ObElite() {
   const [os, setOs] = useState<'mac' | 'win'>('mac');
@@ -456,29 +456,35 @@ function ObElite() {
         <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', marginBottom: 18 }}>Using OB</div>
 
         <div style={{ marginBottom: 22 }}>
-          <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>Keep OB one click away</div>
-          <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6 }}>
-            {os === 'mac' ? (
-              <>You open OB from the <strong>ob</strong> folder by double-clicking <strong>launch_ob.command</strong>. To make it one click anytime, right-click <strong>launch_ob.command</strong>, choose <strong>Make Alias</strong>, and drag that alias onto your Desktop or the right side of your Dock.</>
-            ) : (
-              <>You open OB from the <strong>ob</strong> folder by double-clicking <strong>launch_ob.bat</strong>. To make it one click anytime, right-click <strong>launch_ob.bat</strong> &rarr; <strong>Show more options</strong> &rarr; <strong>Send to</strong> &rarr; <strong>Desktop (create shortcut)</strong>. You can drag that desktop shortcut onto your taskbar to pin it.</>
-            )}
+          <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>Opening OB</div>
+          <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6, marginBottom: 10 }}>
+            The simplest way to launch OB every time: open {os === 'mac' ? 'Terminal' : 'PowerShell'} and run this line.
           </div>
-          <div style={{ marginTop: 8, fontSize: 12.5, color: 'var(--text-3)', lineHeight: 1.55 }}>
-            After the first setup it opens in a few seconds, no waiting and no re-entering your key.
+          <div style={{ background: '#0b1220', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px', marginBottom: 10 }}>
+            <code style={{ display: 'block', fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 11.5, color: '#cbd5e1', lineHeight: 1.6, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{os === 'mac' ? 'cd ~/ob && ./launch_ob.command' : 'cd ~\\ob; .\\launch_ob.bat'}</code>
+          </div>
+          <div style={{ fontSize: 12.5, color: 'var(--text-3)', lineHeight: 1.55 }}>
+            Want a one-click icon instead? {os === 'mac' ? (
+              <>Right-click <strong>launch_ob.command</strong> in the ob folder, choose <strong>Make Alias</strong>, and drag the alias onto your Dock or Desktop.</>
+            ) : (
+              <>Right-click <strong>launch_ob.bat</strong> in the ob folder, choose <strong>Send to</strong>, then <strong>Desktop (create shortcut)</strong>, and pin that shortcut to your taskbar.</>
+            )} After the first setup, OB opens in a few seconds with your key already saved.
           </div>
         </div>
 
         <div>
-          <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>Just talk to it</div>
-          <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6, marginBottom: 12 }}>
-            No typing, no menus. Say what you want and OB runs it, then talks you through it. In a mock, answer out loud the way you would in a real interview. Tap the mic in OB to mute when you need quiet.
+          <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>Three ways to drive it</div>
+          <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.65, marginBottom: 12 }}>
+            <div style={{ marginBottom: 7 }}><strong style={{ color: 'var(--text)' }}>Talk to it.</strong> No typing, no menus. Say what you want and OB runs it, then talks you through it. In a mock, answer out loud the way you would in a real interview.</div>
+            <div style={{ marginBottom: 7 }}><strong style={{ color: 'var(--text)' }}>Or just type.</strong> Somewhere you can&rsquo;t talk, or prefer to read? Type to OB in the chat box instead. Same commands, same features, no voice needed.</div>
+            <div style={{ marginBottom: 7 }}><strong style={{ color: 'var(--text)' }}>Open tabs by hand.</strong> Hover over the orb to bring up all the tabs, so you can open any feature yourself without saying a word.</div>
+            <div><strong style={{ color: 'var(--text)' }}>Mute anytime.</strong> Tap the mic in OB when you need quiet.</div>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {[
               'Run me an IB technical.',
               'Tear down Nvidia.',
-              'Prep my coffee chat \u2014 here\u2019s the LinkedIn.',
+              'Prep my coffee chat, here\u2019s the LinkedIn.',
               'Draft outreach to a VP at Evercore.',
               'What moved the market today?',
               'Grill me like a Superday.',
@@ -508,7 +514,7 @@ function ObElite() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// ObPaywall — Elite upsell for free / pro
+// ObPaywall - Elite upsell for free / pro
 // ═══════════════════════════════════════════════════════════════════════════
 function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
   const isPro = currentPlan === 'pro';
