@@ -268,15 +268,26 @@ function OBShowcase() {
 function ObElite() {
   const [os, setOs] = useState<'mac' | 'win'>('mac');
   const [copied, setCopied] = useState(false);
+  const [copiedWin, setCopiedWin] = useState(false);
 
   // One paste: unzip to ~/ob, clear the download quarantine flag, launch.
   // The launcher builds its own environment and installs everything on first run.
   const INSTALL_CMD = 'cd ~/Downloads && unzip -o OB.zip -d ~ && xattr -dr com.apple.quarantine ~/ob 2>/dev/null; cd ~/ob && chmod +x launch_ob.command && ./launch_ob.command';
 
+  // Windows: extract OB.zip into the home folder and run the launcher.
+  const INSTALL_CMD_WIN = 'cd ~\\Downloads; Expand-Archive -Path OB.zip -DestinationPath ~ -Force; cd ~\\ob; .\\launch_ob.bat';
+
   const copyCmd = () => {
     navigator.clipboard.writeText(INSTALL_CMD).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
+    }).catch(() => {});
+  };
+
+  const copyCmdWin = () => {
+    navigator.clipboard.writeText(INSTALL_CMD_WIN).then(() => {
+      setCopiedWin(true);
+      setTimeout(() => setCopiedWin(false), 1800);
     }).catch(() => {});
   };
 
@@ -333,7 +344,7 @@ function ObElite() {
       {/* Install instructions */}
       <div style={{ border: '1px solid var(--border)', background: 'var(--surface)', borderRadius: 16, padding: '24px 24px 26px', marginBottom: 44 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 20 }}>
-          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>Get OB on your Mac</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>Get OB on your {os === 'mac' ? 'Mac' : 'PC'}</div>
           <div style={{ display: 'flex', gap: 6 }}>
             <button type="button" onClick={() => setOs('mac')} style={pill(os === 'mac')}>macOS</button>
             <button type="button" onClick={() => setOs('win')} style={pill(os === 'win')}>Windows</button>
@@ -393,17 +404,55 @@ function ObElite() {
             </div>
           </div>
         ) : (
-          <div style={{
-            display: 'flex', gap: 12, alignItems: 'flex-start',
-            background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 12, padding: '16px 18px',
-          }}>
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#3b82f6', marginTop: 6, flexShrink: 0 }} />
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>OB for Windows is on the way</div>
-              <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.55 }}>
-                OB runs on macOS today. The Windows build is in progress, in the meantime, reach us at{' '}
-                <a href={'mailto:' + OB_SUPPORT_EMAIL} style={{ color: '#3b82f6', fontWeight: 600, textDecoration: 'none' }}>{OB_SUPPORT_EMAIL}</a>.
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            {stepRow(1, 'Download OB', (
+              <div>
+                <a href={OB_DOWNLOAD_URL} download style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 6,
+                  background: 'var(--text)', color: 'var(--surface)', textDecoration: 'none',
+                  padding: '9px 18px', borderRadius: 9, fontSize: 13, fontWeight: 700, fontFamily: "'Sora', sans-serif",
+                }}>
+                  Download OB.zip
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12l7 7 7-7" /></svg>
+                </a>
+                <div style={{ marginTop: 7, fontSize: 12.5, color: 'var(--text-3)' }}>It'll land in your Downloads folder.</div>
               </div>
+            ))}
+
+            {stepRow(2, 'Open PowerShell and paste this', (
+              <div>
+                <div style={{ marginBottom: 8 }}>
+                  Press <strong>Windows + R</strong>, type <strong>powershell</strong>, hit Enter. Then paste the line below and press Enter:
+                </div>
+                <div style={{ position: 'relative', background: '#0b1220', border: '1px solid var(--border)', borderRadius: 10, padding: '14px 16px' }}>
+                  <code style={{
+                    display: 'block', fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 11.5,
+                    color: '#cbd5e1', lineHeight: 1.6, whiteSpace: 'pre-wrap', wordBreak: 'break-all', paddingRight: 70,
+                  }}>{INSTALL_CMD_WIN}</code>
+                  <button type="button" onClick={copyCmdWin} style={{
+                    position: 'absolute', top: 10, right: 10, cursor: 'pointer',
+                    background: copiedWin ? '#16a34a' : 'rgba(255,255,255,0.08)', color: '#fff',
+                    border: '1px solid rgba(255,255,255,0.16)', borderRadius: 7, padding: '5px 11px',
+                    fontSize: 11.5, fontWeight: 700, fontFamily: "'Sora', sans-serif",
+                  }}>{copiedWin ? 'Copied' : 'Copy'}</button>
+                </div>
+              </div>
+            ))}
+
+            {stepRow(3, 'Let it set up, then it opens', (
+              <span>The first run takes a couple of minutes while it installs itself, you only wait once. If Windows shows a <strong>"Windows protected your PC"</strong> box, click <strong>More info</strong> then <strong>Run anyway</strong>. When the setup screen appears, paste your free <a href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer" style={{ color: '#3b82f6', fontWeight: 600, textDecoration: 'none' }}>Gemini API key</a> (it's the only key OB needs).</span>
+            ))}
+
+            {stepRow(4, 'Sign in with your OfferBell account', (
+              <span>Use this same email and password. OB unlocks automatically because you're Elite.</span>
+            ))}
+
+            <div style={{
+              marginTop: 4, padding: '12px 14px', background: 'var(--surface-2)',
+              border: '1px solid var(--border)', borderRadius: 10, fontSize: 12.5, color: 'var(--text-2)', lineHeight: 1.55,
+            }}>
+              Don't have Python? OB will tell you and link the installer, install it once (check <strong>"Add python.exe to PATH"</strong> during setup), then run the command again.
+              {' '}Stuck anywhere? Email <a href={'mailto:' + OB_SUPPORT_EMAIL} style={{ color: '#3b82f6', fontWeight: 600, textDecoration: 'none' }}>{OB_SUPPORT_EMAIL}</a> and we'll get you running.
             </div>
           </div>
         )}
@@ -490,7 +539,7 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
 
       <div className="obpw-platform">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="13" rx="1.5" /><path d="M8 21h8M12 17v4" /></svg>
-        macOS only for now &middot; Windows coming soon
+        macOS &amp; Windows desktop app
       </div>
 
       {/* ── what OB does (compact, complete) ─────────────────────────── */}
