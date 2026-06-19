@@ -11,6 +11,9 @@ import '../interview-prep/re-theme.css';
 
 import { RE_INDUSTRY_SECTIONS } from './re-industry-data';
 import { RE_PROPERTY_SECTIONS } from './re-property-data';
+import { RE_NOI_SECTIONS } from './re-noi-data';
+import { RE_WATERFALL_SECTIONS } from './re-waterfall-data';
+import { RE_REIB_SECTIONS } from './re-reib-data';
 import { RE_VALUATION_SECTIONS } from './re-valuation-data';
 import { RE_LEASES_SECTIONS } from './re-leases-data';
 import { RE_MODELING_SECTIONS } from './re-modeling-data';
@@ -27,16 +30,19 @@ type Section = { title: string; content: string };
 const cleanSectionTitle = (t: string) => t.replace(/^\d+\.\d+(-\d+(\.\d+)?)?\s+/, '');
 
 const MODULES: { id: string; title: string; navTitle: string; sub: string; moduleNum: string; sections: Section[] }[] = [
-  { id: 'industry', title: 'The Real Estate Finance Landscape', navTitle: 'Landscape', sub: 'Why real estate is different from other asset classes and the major career paths.', moduleNum: 'Module 1', sections: RE_INDUSTRY_SECTIONS },
-  { id: 'property', title: 'Property Types & Market Fundamentals', navTitle: 'Property Types', sub: 'The five core property types, specialty sectors, and market cycles.', moduleNum: 'Module 2', sections: RE_PROPERTY_SECTIONS },
-  { id: 'valuation', title: 'Real Estate Valuation', navTitle: 'Valuation', sub: 'Net operating income, the three approaches to value, and key valuation metrics.', moduleNum: 'Module 3', sections: RE_VALUATION_SECTIONS },
-  { id: 'leases', title: 'Lease Analysis & Tenant Economics', navTitle: 'Leases', sub: 'Lease structures, critical lease terms, and rent roll analysis.', moduleNum: 'Module 4', sections: RE_LEASES_SECTIONS },
-  { id: 'modeling', title: 'Real Estate Financial Modeling', navTitle: 'Modeling', sub: 'The real estate pro forma and waterfall distribution structures.', moduleNum: 'Module 5', sections: RE_MODELING_SECTIONS },
-  { id: 'repe', title: 'Real Estate Private Equity (REPE)', navTitle: 'REPE', sub: 'REPE strategies and the value creation playbook.', moduleNum: 'Module 6', sections: RE_REPE_SECTIONS },
-  { id: 'reits', title: 'REITs & Public Real Estate', navTitle: 'REITs', sub: 'What REITs are and REIT-specific valuation metrics.', moduleNum: 'Module 7', sections: RE_REITS_SECTIONS },
-  { id: 'debt', title: 'Real Estate Debt & Capital Markets', navTitle: 'RE Debt', sub: 'Types of real estate debt and key debt metrics.', moduleNum: 'Module 8', sections: RE_DEBT_SECTIONS },
-  { id: 'development', title: 'Development & Construction', navTitle: 'Development', sub: 'The development process and key development metrics.', moduleNum: 'Module 9', sections: RE_DEVELOPMENT_SECTIONS },
-  { id: 'interview', title: 'Interview Preparation', navTitle: 'Interview Qs', sub: 'RE interview format, technical questions, and common mistakes.', moduleNum: 'Module 10', sections: RE_INTERVIEW_SECTIONS },
+  { id: 'industry', title: 'The Real Estate Finance Landscape', navTitle: 'Landscape', sub: 'Why real estate is its own asset class, the capital stack, and how the career paths differ.', moduleNum: 'Module 1', sections: RE_INDUSTRY_SECTIONS },
+  { id: 'property', title: 'Property Types & Market Fundamentals', navTitle: 'Property Types', sub: 'The major and specialty property types, supply and demand, and the real estate cycle.', moduleNum: 'Module 2', sections: RE_PROPERTY_SECTIONS },
+  { id: 'noi', title: 'NOI & Cash Flow Fundamentals', navTitle: 'NOI & Cash Flow', sub: 'Building NOI top-down, operating expenses, the capital items below NOI, and the value of NOI growth.', moduleNum: 'Module 3', sections: RE_NOI_SECTIONS },
+  { id: 'valuation', title: 'Valuation & Cap Rates', navTitle: 'Valuation', sub: 'The cap rate properly understood, what drives it, going-in vs exit, and the three approaches to value.', moduleNum: 'Module 4', sections: RE_VALUATION_SECTIONS },
+  { id: 'leases', title: 'Lease Analysis & Tenant Economics', navTitle: 'Leases', sub: 'Gross vs net leases, critical lease terms, rent roll and rollover analysis, and tenant credit.', moduleNum: 'Module 5', sections: RE_LEASES_SECTIONS },
+  { id: 'debt', title: 'Real Estate Debt & Capital Markets', navTitle: 'RE Debt', sub: 'Why leverage is central, the key debt metrics, types of debt, and structural terms.', moduleNum: 'Module 6', sections: RE_DEBT_SECTIONS },
+  { id: 'modeling', title: 'Real Estate Financial Modeling', navTitle: 'Modeling', sub: 'The pro forma, the return metrics, yield on cost and the development spread, and sensitivity.', moduleNum: 'Module 7', sections: RE_MODELING_SECTIONS },
+  { id: 'waterfall', title: 'The Equity Waterfall & Promote', navTitle: 'Waterfall', sub: 'The GP/LP split, the four tiers, a worked waterfall, and hurdles and catch-ups.', moduleNum: 'Module 8', sections: RE_WATERFALL_SECTIONS },
+  { id: 'repe', title: 'Real Estate Private Equity (REPE)', navTitle: 'REPE', sub: 'The four strategies, the value creation playbook, the deal process, and fund structures.', moduleNum: 'Module 9', sections: RE_REPE_SECTIONS },
+  { id: 'development', title: 'Development & Construction', navTitle: 'Development', sub: 'The development process, the development pro forma, construction financing, and key risks.', moduleNum: 'Module 10', sections: RE_DEVELOPMENT_SECTIONS },
+  { id: 'reits', title: 'REITs & Public Real Estate', navTitle: 'REITs', sub: 'What a REIT is, FFO and AFFO, valuing a REIT via NAV and FFO multiples, and the rates lens.', moduleNum: 'Module 11', sections: RE_REITS_SECTIONS },
+  { id: 'reib', title: 'Real Estate Investment Banking (REIB)', navTitle: 'REIB', sub: 'Entity-level valuation, FFO accretion, REIT M&A, and capital raising.', moduleNum: 'Module 12', sections: RE_REIB_SECTIONS },
+  { id: 'interview', title: 'Interview Preparation', navTitle: 'Interview Qs', sub: 'The format across tracks, a full worked acquisition case, a question bank, common mistakes, and a glossary.', moduleNum: 'Module 13', sections: RE_INTERVIEW_SECTIONS },
 ];
 
 export default function REInterviewPrepPage() {

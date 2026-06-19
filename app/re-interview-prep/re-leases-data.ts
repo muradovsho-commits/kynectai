@@ -1,32 +1,63 @@
 export const RE_LEASES_SECTIONS = [
   {
-    title: 'Lease Structures',
-    content: `<p><strong>Gross Lease (Full Service):</strong> The landlord pays all operating expenses (taxes, insurance, maintenance, utilities). The tenant pays a single all-in rent. Common in office. The landlord bears the operating expense risk but charges higher rent to compensate.</p>
+    title: 'Gross vs Net Leases',
+    content: `<p>The lease is the contract that turns a building into an income stream, so lease structure determines who bears which costs, how stable the cash flow is, and how much the landlord must spend. The first axis is how operating expenses are split between landlord and tenant, which runs along a spectrum from gross to net.</p>
 
-<p><strong>Net Lease:</strong> The tenant pays base rent plus some or all operating expenses. Variations include: <strong>Single Net (N):</strong> Tenant pays property taxes. <strong>Double Net (NN):</strong> Tenant pays property taxes + insurance. <strong>Triple Net (NNN):</strong> Tenant pays property taxes + insurance + maintenance. NNN leases are common in industrial and single-tenant retail. They're the most "bond-like" because the landlord's NOI is essentially the base rent with minimal operating expense volatility.</p>
+<table class="comparison-table">
+<tr><th>Lease type</th><th>Who pays operating expenses</th><th>Landlord exposure</th><th>Common in</th></tr>
+<tr><td>Gross (full service)</td><td>Landlord pays all opex out of the rent</td><td>High: landlord bears expense inflation</td><td>Office, multifamily</td></tr>
+<tr><td>Modified gross</td><td>Split; tenant pays some (often utilities), landlord pays the rest</td><td>Moderate</td><td>Office</td></tr>
+<tr><td>Single net (N)</td><td>Tenant pays property taxes</td><td>Reduced</td><td>Commercial</td></tr>
+<tr><td>Double net (NN)</td><td>Tenant pays taxes and insurance</td><td>Low</td><td>Retail, industrial</td></tr>
+<tr><td>Triple net (NNN)</td><td>Tenant pays taxes, insurance, and maintenance</td><td>Minimal: landlord just collects rent</td><td>Retail, industrial, single-tenant</td></tr>
+</table>
 
-<p><strong>Modified Gross:</strong> A hybrid. The tenant pays base rent plus some operating expenses, but certain items (like structural maintenance or building-wide utilities) remain the landlord's responsibility. The specific split is negotiated and varies by lease.</p>`,
+<div class="key-concept"><strong>Why this matters for value:</strong> under a triple-net lease the tenant bears the operating costs and their inflation, so the landlord's NOI is stable and predictable and requires little active management; these income streams are bond-like and trade at lower cap rates (higher prices). Under a gross lease the landlord absorbs operating costs and their inflation, so rising expenses eat into NOI unless rent escalations keep pace, making the income less predictable. When you compare two properties, the lease structure tells you who is exposed to expense growth, and therefore how risky and how valuable the income stream is. A NNN lease to a strong credit tenant is close to a corporate bond; a gross lease in an inflationary period is a margin squeeze waiting to happen.</div>
+
+<div class="pro-tip">"Walk me through the difference between a gross and a triple-net lease" is a staple. The crisp answer: in a gross lease the landlord pays operating expenses out of the rent and bears expense inflation; in a triple-net lease the tenant pays taxes, insurance, and maintenance on top of rent, so the landlord's income is stable and bond-like, which is why net-leased assets trade at lower cap rates.</div>`,
   },
   {
     title: 'Critical Lease Terms',
-    content: `<p><strong>Base Rent and Escalations:</strong> The starting rent and how it increases over time. Escalations can be: fixed (3% per year), CPI-linked (tied to inflation), or based on a market reset at defined intervals. The escalation structure significantly affects the property's NOI trajectory and therefore its value.</p>
+    content: `<p>Beyond the gross-to-net split, a handful of lease terms drive the economics and the risk, and reading a lease (or a rent roll summarizing many leases) means hunting for these.</p>
 
-<p><strong>Tenant Improvement Allowance (TI):</strong> The amount the landlord pays to build out or customize the space for the tenant. TIs can be substantial ($50-$100+ per SF for office) and represent a significant upfront investment that the landlord recoups through the lease term. Higher TIs mean higher upfront cost but may attract better tenants or higher rents.</p>
+<ul>
+<li><strong>Base rent and escalations.</strong> The starting rent and how it grows: fixed annual bumps (say 3 percent), CPI-linked increases, or step-ups. Escalations are the landlord's protection against inflation and a key driver of NOI growth, especially under long leases.</li>
+<li><strong>Term and options.</strong> The lease length plus any renewal options (which favor the tenant, who can stay at a pre-set rent) or termination options (which create risk for the landlord). Options shift bargaining power and cash-flow certainty.</li>
+<li><strong>Free rent (concessions).</strong> Months of waived rent used to entice tenants, common in soft markets. Free rent makes face rent overstate the true economics, which is why effective rent matters (below).</li>
+<li><strong>Tenant improvement allowance (TI).</strong> Landlord dollars to build out the space, often large in office and retail, a major cash cost concentrated at signing.</li>
+<li><strong>Leasing commissions (LCs).</strong> Broker fees to sign or renew, another upfront cash cost.</li>
+<li><strong>Percentage rent.</strong> In retail, additional rent equal to a percentage of the tenant's sales above a breakpoint, giving the landlord upside tied to tenant performance.</li>
+<li><strong>Expense recoveries (CAM).</strong> In net and modified leases, the tenant's reimbursement of common area maintenance and other operating costs.</li>
+</ul>
 
-<p><strong>Leasing Commissions (LC):</strong> Fees paid to brokers for securing the lease. Typically 4-6% of total lease value for new leases and 2-3% for renewals.</p>
-
-<p><strong>Free Rent (Concessions):</strong> Periods where the tenant doesn't pay rent (typically 1-6 months at the start of the lease). Free rent reduces the effective rent below the stated face rent. Always calculate the <strong>effective rent</strong> (total rent payments over the lease term divided by the total months) when comparing leases.</p>
-
-<p><strong>Options:</strong> Renewal options (the tenant's right to extend the lease at a predetermined or market rate), expansion options (right to lease additional space), and termination options (right to break the lease early, usually with a penalty). Options that favor the tenant reduce the landlord's certainty and can reduce the property's value.</p>`,
+<div class="key-concept"><strong>Face rent vs effective rent.</strong> The headline (face) rent overstates what the landlord actually nets once you account for free rent, TIs, and LCs. <strong>Net effective rent</strong> spreads those concessions and costs over the lease term to show the true economic rent. A lease at a high face rent with six months free and a large TI package can have a much lower effective rent than a lower-face-rent lease with no concessions. Sophisticated analysis always looks at effective rent, because that is what actually reaches NOI and cash flow.</div>`,
   },
   {
-    title: 'Rent Roll Analysis',
-    content: `<p>The <strong>rent roll</strong> is a schedule of every tenant in a property: their unit/suite, square footage, lease start and end dates, current rent, escalation schedule, and any special terms. The rent roll is the most important document for understanding a property's current income and future cash flow trajectory. When analyzing a rent roll, focus on:</p>
+    title: 'Rent Roll and Rollover Analysis',
+    content: `<p>For a multi-tenant property, the <strong>rent roll</strong> is the master schedule of every lease: tenant, space, rent, escalations, term, and expiration. Analyzing it is core analyst work, and the most important thing it reveals is the rollover (expiration) profile.</p>
 
-<p><strong>Lease expiration schedule:</strong> What percentage of the building's income expires in each year? A property with 40% of leases expiring in the next 12 months faces significant re-leasing risk (especially if the market is weak). A property with a long weighted average lease term (WALT) of 7+ years has more stable, predictable cash flows.</p>
+<div class="key-concept"><strong>Lease rollover is risk, and a lease expiration schedule is the first thing to study.</strong> When leases expire, the landlord faces the chance of vacancy, the cost of re-leasing (TIs and LCs), and the risk of re-leasing at lower rates in a weak market, or the opportunity to mark up below-market rents in a strong one. A property where many leases roll in the same year carries concentrated risk: a single bad leasing market at the wrong moment can hit NOI hard. A staggered, laddered expiration profile is far safer, spreading rollover risk across years. This is why office, with long leases but lumpy, expensive rollover, is more capital-intensive and riskier than its lease length alone suggests.</div>
 
-<p><strong>Mark-to-market opportunity:</strong> Are existing rents above or below current market rates? If in-place rents are 15% below market ("below market" or "loss to lease"), there's upside as leases roll to market rates. If in-place rents are above market, there's risk of income decline at renewal.</p>
+<p>Two summary metrics capture the rollover picture:</p>
 
-<p><strong>Tenant credit quality:</strong> Is the tenant creditworthy? A lease with Amazon is far more valuable than a lease with a local startup, even at the same rent. For single-tenant properties, the tenant's credit is essentially the property's credit.</p>`,
+<table class="comparison-table">
+<tr><th>Metric</th><th>What it measures</th><th>Why it matters</th></tr>
+<tr><td>WALT / WAULT</td><td>Weighted average lease term remaining</td><td>Longer = more income certainty; a key value driver for net-lease and office</td></tr>
+<tr><td>Rollover schedule</td><td>% of leases/income expiring each year</td><td>Concentrated rollover = concentrated risk; laddered = safer</td></tr>
+</table>
+
+<p><strong>Mark-to-market</strong> is the related opportunity: if in-place rents sit below current market rents, the landlord can raise them to market as leases roll, a built-in source of NOI growth that underpins many value-add theses. The reverse (in-place rents above a softening market) is downside risk, because rolling leases will reset lower.</p>
+
+<div class="pro-tip">When handed a rent roll in a case, the moves that signal competence: check the expiration ladder for concentration, compare in-place rents to market to spot mark-to-market upside or downside, assess tenant credit quality and concentration, and note the WALT. Those four reads tell you most of what you need about the income's durability and upside.</div>`,
+  },
+  {
+    title: 'Tenant Credit and Concentration',
+    content: `<p>An income stream is only as good as the tenants paying it, so tenant credit quality and concentration are central to how risky, and how valuable, a property's cash flow is.</p>
+
+<p><strong>Credit quality</strong> refers to the financial strength of the tenants. A single-tenant building leased long-term to an investment-grade corporation produces income nearly as safe as that company's bonds, which is why <strong>credit tenant</strong> net-lease assets trade at low cap rates. A property full of small, unrated local tenants carries more default risk and trades at a higher cap rate. The lease is a promise to pay, and the promise is worth what the promisor's credit is worth.</p>
+
+<div class="key-concept"><strong>Tenant concentration</strong> is the flip side: how much of the income depends on a single tenant or a few. A property where one tenant is 60 percent of the rent carries concentration risk, because that one tenant leaving or defaulting devastates NOI. Diversified income across many tenants is more resilient, though it usually comes with higher management intensity and re-leasing activity. When analyzing a deal, you weigh the stability of concentrated credit-tenant income against the resilience of diversified income, and the cap rate should reflect that tradeoff.</div>
+
+<div class="mistake-box"><strong>Watch for:</strong> a headline NOI that looks strong but rests on a single tenant whose lease expires soon, or whose credit is weak. The income exists today but may not survive the next rollover. Always pair the NOI with who is paying it, how long they are committed, and how strong they are. A high cap rate on a single-tenant asset is often the market pricing exactly this risk.</div>`,
   },
 ];

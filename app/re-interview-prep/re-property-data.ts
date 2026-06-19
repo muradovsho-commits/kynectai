@@ -1,32 +1,53 @@
 export const RE_PROPERTY_SECTIONS = [
   {
-    title: 'The Five Core Property Types',
-    content: `<h4>Multifamily (Apartments)</h4>
+    title: 'The Major Property Types',
+    content: `<p>Property type is the first thing you establish about any deal, because the type drives the lease structure, the tenant base, the cash-flow stability, the capital intensity, and the demand drivers. An interviewer will expect you to speak fluently about what makes each type tick. The traditional core types are multifamily, office, retail, industrial, and hospitality, with a growing set of specialty sectors.</p>
 
-<p>Residential rental properties with 5+ units. Multifamily is considered the most defensive property type because housing is a basic need-people always need a place to live regardless of economic conditions. Leases are short (typically 12 months), which creates higher turnover but allows landlords to reprice rents to market frequently. Key metrics: occupancy rate, effective rent per unit, renewal rate, concessions (free rent or other incentives), and operating expense ratio. Demand drivers: population growth, household formation, homeownership rates (when homeownership falls, apartment demand rises), and employment growth.</p>
+<table class="comparison-table">
+<tr><th>Type</th><th>Lease length</th><th>Cash-flow character</th><th>Primary demand driver</th></tr>
+<tr><td>Multifamily (apartments)</td><td>Short, about 1 year</td><td>Stable, granular, many small tenants; resets to market fast</td><td>Population, household formation, job growth, for-sale housing costs</td></tr>
+<tr><td>Office</td><td>Long, 5 to 10+ years</td><td>Stable while leased, but lumpy rollover and heavy re-leasing costs</td><td>Office-using employment, but structurally pressured by remote work</td></tr>
+<tr><td>Retail</td><td>Long, 5 to 10+ years; often net leases</td><td>Stable for credit tenants; percentage rent adds upside</td><td>Consumer spending, location/foot traffic, e-commerce pressure</td></tr>
+<tr><td>Industrial (warehouse/logistics)</td><td>Medium to long, often net</td><td>Stable, low capital needs; the e-commerce winner</td><td>Goods consumption, supply chains, e-commerce, location near population</td></tr>
+<tr><td>Hospitality (hotels)</td><td>Effectively nightly</td><td>Most volatile; reprices every night, operationally intensive</td><td>Travel, tourism, business demand; highly cyclical</td></tr>
+</table>
 
-<h4>Office</h4>
+<div class="key-concept"><strong>The single most important axis is lease length, because it sets cash-flow stability.</strong> Hotels reprice every night, so revenue moves immediately with demand, making them the most volatile and operationally intensive (they are really operating businesses with a real estate wrapper). Multifamily resets annually, so it tracks the market with a short lag and offers inflation protection. Office and retail lock in long leases, which means stable income while occupied but painful, lumpy rollover and large re-leasing costs (tenant improvements and leasing commissions) when leases expire. Industrial combines long-ish leases with very low capital needs, which is a big part of why it became the favored sector.</div>
 
-<p>Commercial buildings leased to businesses. Office leases are long (5-15 years), providing stable cash flows, but the sector has faced structural headwinds from remote and hybrid work since 2020. Office is classified by quality: <strong>Class A</strong> (newest, best location, highest rents, most amenities), <strong>Class B</strong> (functional but older, lower rents), and <strong>Class C</strong> (oldest, least desirable, often candidates for conversion or demolition). Key metrics: occupancy, asking rent vs. effective rent, tenant improvement (TI) allowances, leasing commissions, and weighted average lease term (WALT). Demand drivers: employment growth (especially white-collar), corporate expansion/contraction, and work-from-office policies.</p>
-
-<h4>Industrial / Logistics</h4>
-
-<p>Warehouses, distribution centers, and manufacturing facilities. Industrial has been the strongest-performing property type over the past decade, driven by the explosive growth of e-commerce (which requires 3x more warehouse space than traditional retail per dollar of sales). Leases are medium-to-long (3-10 years) and tenants often bear most operating costs (triple-net or NNN leases). Key metrics: clear height (taller = more storage), loading docks, proximity to transportation hubs, and rent per square foot. Demand drivers: e-commerce growth, supply chain reconfiguration (onshoring), and last-mile delivery requirements.</p>
-
-<h4>Retail</h4>
-
-<p>Shopping centers, malls, strip centers, and standalone stores. Retail has faced secular pressure from e-commerce but remains relevant for experiential, service-oriented, and grocery-anchored properties. Retail leases often include <strong>percentage rent</strong> clauses: the tenant pays a base rent plus a percentage of gross sales above a breakpoint. Key metrics: sales per square foot (productivity), occupancy cost ratio (rent / sales), anchor tenant credit, and foot traffic. Demand drivers: consumer spending, population density, and the ongoing bifurcation between experiential retail (which thrives) and commodity retail (which doesn't).</p>
-
-<h4>Hospitality (Hotels)</h4>
-
-<p>Hotels and resorts. Hospitality is the most operationally intensive and cyclically sensitive property type. There are no long-term leases; rooms are rented nightly, making revenue highly variable. Hotels are valued and analyzed differently from other property types-more like operating businesses than passive income streams. Key metrics: RevPAR (revenue per available room = occupancy × ADR), ADR (average daily rate), occupancy rate, and GOP (gross operating profit) margin. Demand drivers: business travel, tourism, event calendars, and airline capacity.</p>`,
+<div class="pro-tip">If asked "which property type would you invest in today and why," there is no right answer, but a good one names the demand driver and the risk: for example, industrial for structural e-commerce demand and low capex, with the caveat that cap rates compressed so far that much of the thesis is priced in; or multifamily for its inflation-tracking annual resets and the persistent housing shortage, with the caveat of supply in certain Sun Belt markets. Always pair the thesis with the risk.</div>`,
   },
   {
-    title: 'Other / Specialty Property Types',
-    content: `<p><strong>Self-storage:</strong> Highly fragmented, recession-resistant, low CapEx. Valued on revenue per square foot and occupancy. <strong>Data centers:</strong> Growing rapidly due to cloud computing and AI. Valued on power capacity (megawatts), connectivity, and contractual revenue. <strong>Life sciences:</strong> Laboratory and office space for biotech/pharma companies. Specialized buildout, long leases, strong tenant credit. <strong>Student housing:</strong> Bed-by-bed leases near universities. Demand tied to enrollment. <strong>Senior housing:</strong> Assisted living and memory care. Operationally intensive, demographic tailwinds from aging population.</p>`,
+    title: 'Specialty and Niche Sectors',
+    content: `<p>Beyond the five core types, a set of specialty sectors has grown important enough that interviewers increasingly raise them, and the public REIT market has large players in each. They reward you for knowing the demand story and why each has attracted institutional capital.</p>
+
+<table class="comparison-table">
+<tr><th>Sector</th><th>What it is</th><th>Why it attracts capital</th></tr>
+<tr><td>Data centers</td><td>Facilities housing servers and network infrastructure</td><td>Cloud computing and AI demand; high barriers (power, connectivity)</td></tr>
+<tr><td>Self-storage</td><td>Rentable storage units</td><td>Low operating cost, sticky tenants, recession-resilient, fragmented</td></tr>
+<tr><td>Senior housing</td><td>Independent living, assisted living, memory care</td><td>Aging demographics; operationally intensive, needs-based demand</td></tr>
+<tr><td>Life sciences / lab</td><td>Specialized lab and R&amp;D space</td><td>Biotech funding, hard-to-replicate buildouts, sticky tenants</td></tr>
+<tr><td>Student housing</td><td>Housing near universities</td><td>Stable enrollment-driven demand, recession resistance</td></tr>
+<tr><td>Medical office</td><td>Outpatient clinical space</td><td>Aging population, healthcare growth, sticky tenants, recession resistance</td></tr>
+<tr><td>Single-family rental</td><td>Scattered or built-to-rent houses</td><td>Housing shortage, suburban demand, institutionalizing asset class</td></tr>
+</table>
+
+<div class="key-concept">The thread across most specialty sectors is some combination of a powerful secular demand driver (aging demographics, the cloud and AI, the housing shortage, the shift to outpatient care) and high barriers to entry or operational complexity that keep returns defensible. Data centers ride compute demand and are gated by power and connectivity. Senior housing and medical office ride aging demographics. Self-storage wins on low operating cost and sticky tenants. When you discuss a specialty sector, lead with the secular driver and the barrier to entry, because that is the institutional thesis.</div>`,
   },
   {
-    title: 'Market Cycles',
-    content: `<p>Real estate markets follow a cyclical pattern with four phases: <strong>Recovery</strong> (occupancy rising from trough, no new construction, rents starting to increase), <strong>Expansion</strong> (occupancy above long-run average, new construction begins, rents growing rapidly), <strong>Hypersupply</strong> (too much new construction, vacancy rising, rent growth slowing or turning negative), and <strong>Recession</strong> (high vacancy, negative rent growth, no new starts, distressed sales). Understanding where each market and property type sits in this cycle is critical for timing investment and development decisions.</p>`,
+    title: 'Market Fundamentals: Supply and Demand',
+    content: `<p>A property does not exist in isolation; its rent and occupancy are set by the supply and demand of its local submarket. Strong real estate analysis is, at bottom, a supply-and-demand argument about a specific market.</p>
+
+<p><strong>Demand</strong> is driven by the economic engine specific to the property type: jobs and population for multifamily and office, consumer spending and traffic for retail, goods movement for industrial, travel for hotels. <strong>Supply</strong> is the existing stock plus the construction pipeline, constrained by land availability, zoning and entitlement difficulty, and construction cost and time. The interplay sets occupancy and rent growth: demand growing faster than new supply pushes occupancy up and rents higher; a flood of new supply into soft demand pushes them down.</p>
+
+<div class="key-concept"><strong>Supply constraint is often the most durable source of value.</strong> Markets where it is hard to build (limited land, restrictive zoning, long entitlement timelines, like coastal gateway cities) protect existing owners from new competition, supporting rents and values over time. Markets where it is easy to build (open land, permissive zoning, like many Sun Belt metros) can see rent growth competed away quickly when developers respond to demand with a wave of new product. This is why the same demand story produces very different outcomes in a supply-constrained versus a supply-elastic market, and why "barriers to new supply" is a phrase you want in your vocabulary.</div>
+
+<h4>The Real Estate Cycle</h4>
+<p>Real estate moves in cycles, usually framed in four phases, and placing a market in the cycle is a common analytical and interview exercise.</p>
+
+<div class="framework-box"><div class="fw-label">THE FOUR-PHASE CYCLE</div><strong>Recovery:</strong> occupancy rising from a trough, little new construction, rents beginning to firm.<br/><strong>Expansion:</strong> strong demand, rising rents and occupancy, new construction ramps up to chase the returns.<br/><strong>Oversupply (hypersupply):</strong> the construction started in expansion delivers into cooling demand; occupancy and rent growth peak and roll over.<br/><strong>Recession:</strong> supply exceeds demand, occupancy and rents fall, construction halts, values decline, setting up the next recovery.</div>
+
+<p>The cruel timing problem of the cycle: development takes years, so the supply that floods the market in oversupply was started in expansion, when fundamentals looked strongest. The best risk-adjusted buying is often in recession and early recovery, when fundamentals look worst but pricing is cheap and new supply has stopped.</p>
+
+<div class="pro-tip">A frequent interview question is "where are we in the cycle?" The answer should reason from supply and demand, not a gut call: cite the construction pipeline relative to demand, the direction of occupancy and rent growth, and the level of cap rates relative to interest rates. Show you place the cycle by evidence, not vibes.</div>`,
   },
 ];
