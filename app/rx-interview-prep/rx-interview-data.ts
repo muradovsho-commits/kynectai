@@ -10,7 +10,7 @@ export const RX_INTERVIEW_SECTIONS = [
 <p>Set up the structure out loud before computing. For a waterfall, state the steps (EV to distributable value, then distribute down the stack, building each claim with pre- and post-petition interest) before plugging numbers. For bond math, state the price-yield relationship before estimating. Reason directionally and approximate cleanly. If you do not know something, reason from first principles rather than guessing a term, because RX interviewers respect a candidate who thinks correctly through an unfamiliar situation far more than one who name-drops a concept they cannot apply.</p>
 
 <h4>Behavioral and Fit</h4>
-<p>RX groups are small and intense, with long hours and high-stakes, often adversarial work. Be personable, genuinely interested, and deferential without being a pushover. Show you can be in the room for sixteen hours and remain pleasant and sharp. Have thoughtful questions ready that show you understand the work.</p>`,
+<p>RX groups are small and intense, with long hours and high-stakes, often adversarial work. Be personable, genuinely interested, and deferential without being a pushover. Show you can be in the room for sixteen hours and remain pleasant and sharp. Have thoughtful questions ready that show you understand the work, asking about a recent case or a particular kind of transaction signals you have done the contextual homework.</p>`,
   },
   {
     title: 'Running a Case Study',
@@ -18,16 +18,39 @@ export const RX_INTERVIEW_SECTIONS = [
 
 <div class="key-concept">Treat the case as a two-way conversation, not a monologue. The interviewer expects you to ask clarifying questions and flag assumptions as you go. Ask for the pieces you need: the enterprise value or how to derive it, the trading prices of each tranche, the relevant dates (last coupon paid, expected filing, expected exit) if returns are involved, and whether to incorporate cash adjustments. Asking the right questions at the right moments is itself part of what is being assessed.</div>
 
-<p>A clean structure for a typical which-tranche-to-buy case:</p>
-<ul>
-<li><strong>Establish the capital structure</strong> (build the cap table from what you are given).</li>
-<li><strong>Get or estimate the enterprise value</strong>, and form a view on when the company is likely to file using the liquidity picture.</li>
-<li><strong>Run the waterfall</strong> to determine each tranche's recovery, identifying where value breaks and which tranche is the fulcrum.</li>
-<li><strong>Layer in trading prices and the timeline</strong> to compute MOIC and a rough annualized return for each candidate tranche.</li>
-<li><strong>Recommend, with reasoning:</strong> the best investment is usually the tranche with the widest spread between proceeds and entry price, which is frequently not the safest tranche but a cheaper, higher-coupon one, or the fulcrum if you believe in the equity upside.</li>
-</ul>
+<div class="framework-box"><div class="fw-label">CASE STRUCTURE</div>1. <strong>Establish the capital structure</strong> (build the cap table from what you are given).<br/>2. <strong>Get or estimate enterprise value</strong>, and form a view on when the company is likely to file using the liquidity picture.<br/>3. <strong>Run the waterfall</strong> to determine each tranche's recovery, identifying where value breaks and which tranche is the fulcrum.<br/>4. <strong>Layer in trading prices and the timeline</strong> to compute MOIC and a rough annualized return for each candidate tranche.<br/>5. <strong>Recommend, with reasoning:</strong> the best investment is usually the tranche with the widest spread between proceeds and entry price, which is frequently not the safest tranche but a cheaper, higher-coupon one, or the fulcrum if you believe in the equity upside.</div>
 
 <p>Throughout, narrate your reasoning and your assumptions. The interviewer cares more about how you think than whether your arithmetic is perfect.</p>`,
+  },
+  {
+    title: 'A Full Worked Case Study',
+    content: `<div class="example-box">
+<div class="example-label">The Prompt</div>
+<p>A company has EBITDA of 100. Its capital structure: First-lien term loan 250 (trades at 96, 7% coupon, over-collateralized). Senior unsecured notes 300 (trade at 55, 9% coupon). Subordinated notes 150 (trade at 20, 11% coupon). The company will likely file in about six months and emerge a year after that. Comparable companies trade around 5.5x to 6.5x EBITDA. Which piece of the capital structure would you buy?</p>
+</div>
+
+<div class="example-box">
+<div class="example-label">Step 1: Cap table and leverage</div>
+<p>Cumulative debt: 250 first lien (2.5x), 550 through senior unsecured (5.5x), 700 through sub notes (7.0x). Total leverage 7.0x against a sector that trades 5.5x to 6.5x. So the company is over-levered and value almost certainly breaks somewhere in the unsecured debt.</p>
+</div>
+
+<div class="example-box">
+<div class="example-label">Step 2: Enterprise value range</div>
+<p>At 5.5x to 6.5x on 100 EBITDA, EV is 550 to 650. I will run the waterfall at a midpoint of 600 and note the sensitivity.</p>
+</div>
+
+<div class="example-box">
+<div class="example-label">Step 3: Waterfall at EV = 600 (ignoring accrued interest for simplicity)</div>
+<p>First lien 250: fully covered, recovers 100%. Remaining 350.<br/>Senior unsecured 300: fully covered, recovers 100%. Remaining 50.<br/>Subordinated 150: only 50 left, recovers 50 / 150 = about 33%. <strong>Fulcrum: the subordinated notes.</strong></p>
+<p>Sensitivity: at EV = 550, remaining after the first lien is 300, which exactly covers the senior unsecured notes, leaving zero for the subs (the senior unsecured becomes the fulcrum, recovering ~100% but barely, and the subs go to roughly zero). At EV = 650, the subs recover 100 / 150 = about 67%. So the subs swing from near zero to about 67% across the valuation range. That is the key risk.</p>
+</div>
+
+<div class="example-box">
+<div class="example-label">Step 4: Returns at current prices (roughly 1.5-year hold)</div>
+<p><strong>First lien at 96:</strong> recovers ~100 plus coupon, MOIC barely above 1x, low-single-digit to high-single-digit annual return. Safe, boring.<br/><strong>Senior unsecured at 55:</strong> recovers ~100 across most of the EV range, plus a 9% coupon. Proceeds well above 100 against a cost of 55, MOIC near 1.9x, roughly 60% annualized. Cheap entry, full-ish recovery, fat coupon.<br/><strong>Subordinated at 20:</strong> recovers ~33% at midpoint (proceeds ~33 against cost 20, MOIC ~1.65x) but could be near zero if EV comes in low, or higher with reorg-equity upside if EV is high. High variance.</p>
+</div>
+
+<div class="takeaway-box"><strong>Recommendation:</strong> The senior unsecured notes at 55. They recover in full across most of the valuation range, so the downside is protected, yet they trade at a deep discount with a high coupon, giving an excellent risk-adjusted return. The subordinated notes offer more upside but only if the high end of the valuation is right; at the low end they are nearly worthless. Unless I had strong conviction that EV is at the top of the range, the senior unsecured notes are the cleanest trade: cheap entry, durable recovery, high carry. The first lien is safe but the return does not compensate for tying up capital. I would size the senior notes as the core position and pass on the subs unless my valuation work supported the high end.</div>`,
   },
   {
     title: 'Contextual Questions',
@@ -46,13 +69,13 @@ export const RX_INTERVIEW_SECTIONS = [
 <div class="interview-q">
 <div class="q-label">Q3</div>
 <div class="question">Why is RX concentrated at independent advisory firms?</div>
-<div class="answer">Conflicts of interest. A bank that arranged or underwrote a company's debt through its leveraged finance or DCM groups faces an obvious conflict advising on restructuring that same debt, and may be conflicted out of advising creditors against a company it lends to. RX advisory therefore concentrates at independents whose restructuring practices are core to their identity and who lack the lending conflicts.</div>
+<div class="answer">Conflicts of interest. A bank that arranged or underwrote a company's debt through its leveraged finance or DCM groups faces an obvious conflict advising on restructuring that same debt, and may be conflicted out of advising creditors against a company it lends to, plus it has its own balance-sheet exposure. RX advisory therefore concentrates at independents whose restructuring practices are core to their identity and who lack the lending conflicts.</div>
 </div>
 
 <div class="interview-q">
 <div class="q-label">Q4</div>
 <div class="question">Debtor-side versus creditor-side, and which would you prefer?</div>
-<div class="answer">Debtor work means advising the company to right-size its structure; it is broader and more prestigious because you quarterback the situation. Creditor work means advising a group of lenders or bondholders to maximize recovery; it is faster, more numerous, and gives a sharper view of how investors think about claims. There is no single right preference, but you should be able to articulate that tradeoff cleanly.</div>
+<div class="answer">Debtor work means advising the company to right-size its structure; it is broader and more prestigious because you quarterback the situation. Creditor work means advising a group of lenders or bondholders to maximize recovery; it is faster, more numerous, and gives a sharper view of how investors think about claims. There is no single right preference, but you should be able to articulate that tradeoff cleanly and tie it to your own goals.</div>
 </div>`,
   },
   {
@@ -72,7 +95,7 @@ export const RX_INTERVIEW_SECTIONS = [
 <div class="interview-q">
 <div class="q-label">Q7</div>
 <div class="question">In a distressed situation, which financial statement matters most?</div>
-<div class="answer">The cash flow statement. Distress is about liquidity, whether the company has enough cash to meet its obligations. A company can be accounting-profitable and still run out of cash if receivables balloon, capital expenditure consumes cash flow, or working capital deteriorates. Cash is what determines survival.</div>
+<div class="answer">The cash flow statement. Distress is about liquidity, whether the company has enough cash to meet its obligations. A company can be accounting-profitable and still run out of cash if receivables balloon, capital expenditure consumes cash flow, or working capital deteriorates. Cash is what determines survival, which is why the thirteen-week cash flow forecast is so central.</div>
 </div>
 
 <div class="interview-q">
@@ -124,7 +147,7 @@ export const RX_INTERVIEW_SECTIONS = [
     content: `<div class="interview-q">
 <div class="q-label">Q15</div>
 <div class="question">What is an uptier transaction?</div>
-<div class="answer">A majority of existing lenders agrees with the company to create new super-priority debt that ranks ahead of the existing debt and rolls their own holdings up into it, using their majority vote to subordinate the non-participating minority. The minority, who were first in line, end up behind a new senior tranche, without consenting, because the loose documents let a majority change the priority terms.</div>
+<div class="answer">A majority of existing lenders agrees with the company to create new super-priority debt that ranks ahead of the existing debt and rolls their own holdings up into it, using their majority vote to subordinate the non-participating minority. The minority, who were first in line, end up behind a new senior tranche, without consenting, because the loose documents let a majority change the priority terms. Its legality turns on the specific words in the agreement.</div>
 </div>
 
 <div class="interview-q">
@@ -136,7 +159,7 @@ export const RX_INTERVIEW_SECTIONS = [
 <div class="interview-q">
 <div class="q-label">Q17</div>
 <div class="question">Explain a double-dip.</div>
-<div class="answer">A creditor structures its claim so it has two independent claims against the same valuable entity: a direct claim through a guarantee, and an indirect claim through an intercompany loan made by the issuing subsidiary that gets pledged back to the creditor. On a filing it presents two claims for the same money, roughly doubling its recovery against a constrained value pool relative to equally ranked creditors, capped at being paid in full. Walk through a ParentCo and FinanceCo example to show it.</div>
+<div class="answer">A creditor structures its claim so it has two independent claims against the same valuable entity: a direct claim through a guarantee, and an indirect claim through an intercompany loan made by the issuing subsidiary that gets pledged back to the creditor. On a filing it presents two claims for the same money, roughly doubling its recovery against a constrained value pool relative to equally ranked creditors, capped at being paid in full. I would walk through a ParentCo and FinanceCo example to show it.</div>
 </div>
 
 <div class="interview-q">
@@ -180,13 +203,19 @@ export const RX_INTERVIEW_SECTIONS = [
 <div class="interview-q">
 <div class="q-label">Q24</div>
 <div class="question">Which piece of the capital structure would you buy in a distressed situation?</div>
-<div class="answer">Run the waterfall to get recoveries, then compare returns rather than recoveries. Lay out each candidate tranche's cash in (price times face) and cash out (recovery plus accrued interest), compute MOIC, and approximate the annualized return. The best investment is usually the widest spread between proceeds and entry price, which is often not the safest tranche but a cheaper, higher-coupon one, or the fulcrum if you believe the reorganized equity will outperform the plan valuation.</div>
+<div class="answer">Run the waterfall to get recoveries, then compare returns rather than recoveries. Lay out each candidate tranche's cash in (price times face) and cash out (recovery plus accrued interest), compute MOIC, and approximate the annualized return as (MOIC minus one) divided by years. The best investment is usually the widest spread between proceeds and entry price, which is often not the safest tranche but a cheaper, higher-coupon one, or the fulcrum if you believe the reorganized equity will outperform the plan valuation.</div>
 </div>
 
 <div class="interview-q">
 <div class="q-label">Q25</div>
+<div class="question">Roughly estimate the IRR if you buy at 50 and get 90 back in two years.</div>
+<div class="answer">MOIC is 90 / 50 = 1.8x. The shortcut annualized return is (1.8 minus 1) / 2 = about 40%. I would flag that the true compounded IRR is a bit lower, closer to the mid-30s, because the shortcut uses simple interest, but directionally it is a strong return in the high-30s to 40% range.</div>
+</div>
+
+<div class="interview-q">
+<div class="q-label">Q26</div>
 <div class="question">What does a summer analyst actually do in restructuring?</div>
-<div class="answer">Build and maintain screens of distressed companies, write company profiles, build liquidity roll-forwards to project when a company runs out of cash, lay out capital structures and run recovery waterfalls, and build pieces of pitch decks including pro forma capital structures. None of it requires being an expert; it requires accuracy and understanding what each output is meant to show.</div>
+<div class="answer">Build and maintain screens of distressed companies, write company profiles, build liquidity roll-forwards to project when a company runs out of cash, lay out capital structures and run recovery waterfalls, build pieces of pitch decks including pro forma capital structures, and read credit documents for the provisions that matter. None of it requires being an expert; it requires accuracy and understanding what each output is meant to show.</div>
 </div>`,
   },
   {
@@ -195,32 +224,41 @@ export const RX_INTERVIEW_SECTIONS = [
 <p><strong>Amend-and-extend (A&amp;E):</strong> Amending a credit agreement to push out maturities and reset covenants, usually for a higher rate or fees. Buys time, does not cut debt.</p>
 <p><strong>Automatic stay:</strong> The halt on all collection, litigation, and foreclosure the moment a company files.</p>
 <p><strong>Basket:</strong> Permitted capacity in a credit agreement to do an otherwise-restricted action up to a limit.</p>
-<p><strong>Coercive exchange:</strong> A debt exchange designed to pressure creditors into participating, typically by stripping protections from the old debt so holdouts are left worse off.</p>
+<p><strong>Best-interests test:</strong> Each creditor must get at least as much under the plan as in a hypothetical Chapter 7 liquidation.</p>
+<p><strong>Coercive exchange:</strong> A debt exchange that pressures creditors into participating, typically using exit consents to strip protections from the old debt so holdouts are left worse off.</p>
 <p><strong>Covenant-lite:</strong> A loan with incurrence covenants only, no maintenance covenants.</p>
 <p><strong>Cramdown:</strong> Court confirmation of a plan over the objection of a dissenting class, permitted if statutory fairness tests are met.</p>
+<p><strong>Credit bid:</strong> A secured creditor bidding its debt rather than cash in an asset sale, up to its claim amount.</p>
 <p><strong>Deficiency claim:</strong> The unsecured shortfall when a secured claim exceeds its collateral value; treated as a general unsecured claim.</p>
 <p><strong>DIP financing:</strong> New financing raised during bankruptcy, often with court-granted priority over existing creditors.</p>
 <p><strong>Distributable value:</strong> Enterprise value adjusted for cash items, the value actually available to distribute.</p>
 <p><strong>Double-dip:</strong> A structure giving a creditor two independent claims against the same value (a direct guarantee claim and an indirect intercompany claim), roughly doubling recovery up to payment in full.</p>
 <p><strong>Drop-down:</strong> Moving assets to an unrestricted subsidiary outside existing lenders' collateral, then raising new debt against them, subordinating the original lenders structurally.</p>
+<p><strong>Exit consent:</strong> A vote by tendering holders to strip covenants from the old debt as they leave, used to coerce participation.</p>
 <p><strong>Freefall:</strong> A bankruptcy filed with no deal in place.</p>
+<p><strong>Fresh-start accounting:</strong> Restating assets and liabilities at fair value on emergence, resetting the accounting basis.</p>
 <p><strong>Fulcrum security:</strong> The tranche where enterprise value runs out; partially recovers and typically converts to the new equity of the reorganized company.</p>
 <p><strong>Going-concern value:</strong> The value of the business as a continuing operation.</p>
+<p><strong>Impairment:</strong> A class is impaired if the plan alters its legal rights; only impaired classes vote.</p>
 <p><strong>Incurrence covenant:</strong> Tested only when the company takes a specific action.</p>
-<p><strong>Liability management transaction (LME):</strong> An aggressive out-of-court maneuver exploiting loose documents to reorder priority, raise senior money, or move assets, usually advantaging one creditor group at another's expense.</p>
+<p><strong>Loan-to-own:</strong> Buying the fulcrum cheap to end up owning the reorganized company.</p>
+<p><strong>Liability management exercise (LME):</strong> An aggressive out-of-court maneuver exploiting loose documents to reorder priority, raise senior money, or move assets, usually advantaging one creditor group at another's expense.</p>
 <p><strong>Liquidation value:</strong> The value of selling assets piecemeal; sets the legal floor for recoveries.</p>
 <p><strong>Maintenance covenant:</strong> Tested every period regardless of company action; trips automatically on deterioration.</p>
 <p><strong>MOIC:</strong> Multiple of invested capital, total proceeds divided by amount invested.</p>
+<p><strong>NOLs:</strong> Net operating losses, a tax asset that can shelter future income; use is limited after an ownership change.</p>
 <p><strong>Post-petition interest:</strong> Interest accruing during bankruptcy, payable only to over-collateralized secured creditors.</p>
 <p><strong>Pre-petition interest:</strong> Accrued, unpaid interest from the last coupon date to the filing date.</p>
 <p><strong>Pre-pack:</strong> A bankruptcy with the plan negotiated and votes obtained before filing.</p>
 <p><strong>Pre-arranged:</strong> A bankruptcy filed with agreement in principle on terms but votes solicited in court.</p>
 <p><strong>Restricted vs unrestricted subsidiary:</strong> Whether a subsidiary is inside (restricted) or outside (unrestricted) the covenant perimeter and collateral package.</p>
 <p><strong>RSA:</strong> Restructuring support agreement, committing the company and consenting creditors to support a particular restructuring.</p>
+<p><strong>Stalking-horse bidder:</strong> An initial bidder whose offer sets a floor and terms for a 363 auction.</p>
 <p><strong>Structural subordination:</strong> Junior position arising from where debt sits in the corporate tree, independent of any contractual ranking.</p>
 <p><strong>363 sale:</strong> A court-approved sale of assets during bankruptcy, free and clear of liens, which attach to the proceeds.</p>
 <p><strong>Uptier:</strong> A majority of lenders creating new super-priority debt and rolling into it, subordinating the non-participating minority.</p>
 <p><strong>Waterfall:</strong> The distribution of value down the capital structure in priority order to determine recoveries.</p>
-<p><strong>YTM:</strong> Yield to maturity, the single discount rate setting the present value of a bond's cash flows equal to its price.</p>`,
+<p><strong>Yield to maturity (YTM):</strong> The single discount rate setting the present value of a bond's cash flows equal to its price.</p>
+<p><strong>Yield to worst (YTW):</strong> The lowest yield across all possible redemption dates for a callable bond.</p>`,
   },
 ];

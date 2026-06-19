@@ -16,6 +16,8 @@ import { RX_CHAPTER11_SECTIONS } from './rx-chapter11-data';
 import { RX_WATERFALL_SECTIONS } from './rx-waterfall-data';
 import { RX_CREDIT_SECTIONS } from './rx-credit-data';
 import { RX_CASE_STUDY_SECTIONS } from './rx-case-study-data';
+import { RX_VALUATION_SECTIONS } from './rx-valuation-data';
+import { RX_RETURNS_SECTIONS } from './rx-returns-data';
 import { RX_STRUCTURAL_SECTIONS } from './rx-structural-data';
 import { RX_LME_SECTIONS } from './rx-lme-data';
 import { RX_INTERVIEW_SECTIONS } from './rx-interview-data';
@@ -28,15 +30,17 @@ const cleanSectionTitle = (t: string) => t.replace(/^\d+\.\d+(-\d+(\.\d+)?)?\s+/
 
 const MODULES: { id: string; title: string; navTitle: string; sub: string; moduleNum: string; sections: Section[] }[] = [
   { id: 'overview', title: 'The Restructuring Industry', navTitle: 'Industry', sub: 'What restructuring is, who the key players are, and what the day-to-day work looks like.', moduleNum: 'Module 1', sections: RX_OVERVIEW_SECTIONS },
-  { id: 'distress', title: 'Causes of Distress & the Capital Structure', navTitle: 'Distress', sub: 'Common causes of financial distress, signs to watch for, and the capital structure hierarchy.', moduleNum: 'Module 2', sections: RX_DISTRESS_SECTIONS },
+  { id: 'distress', title: 'Causes of Distress & the Capital Structure', navTitle: 'Distress', sub: 'Common causes of financial distress, signs to watch for, the capital structure hierarchy, and the credit documents that govern it.', moduleNum: 'Module 2', sections: RX_DISTRESS_SECTIONS },
   { id: 'out_of_court', title: 'Out-of-Court Restructuring Solutions', navTitle: 'Out-of-Court', sub: 'Why out-of-court is preferred and the tools available for consensual restructuring.', moduleNum: 'Module 3', sections: RX_OUT_OF_COURT_SECTIONS },
-  { id: 'chapter11', title: 'Chapter 11 Bankruptcy', navTitle: 'Chapter 11', sub: 'Chapter 11 vs. Chapter 7, types of filings, and key bankruptcy concepts.', moduleNum: 'Module 4', sections: RX_CHAPTER11_SECTIONS },
-  { id: 'waterfall', title: 'Waterfall Analysis & Recovery Values', navTitle: 'Waterfalls', sub: 'How waterfalls work, where tranches trade, and equity value in distress.', moduleNum: 'Module 5', sections: RX_WATERFALL_SECTIONS },
-  { id: 'credit', title: 'Bond Math & Yield Analysis', navTitle: 'Bond Math', sub: 'Yield to maturity, current yield, yield to worst, and distressed yield calculations.', moduleNum: 'Module 6', sections: RX_CREDIT_SECTIONS },
-  { id: 'case_study', title: 'Reading a Cap Table Like an RX Banker', navTitle: 'Cap Table', sub: 'What to do first, what to look for, and how to frame a restructuring recommendation.', moduleNum: 'Module 7', sections: RX_CASE_STUDY_SECTIONS },
-  { id: 'structural', title: 'Structural Subordination & HoldCo/OpCo', navTitle: 'Structural Sub', sub: 'What structural subordination is, upstream and downstream guarantees.', moduleNum: 'Module 8', sections: RX_STRUCTURAL_SECTIONS },
-  { id: 'lme', title: 'Liability Management Exercises (LMEs)', navTitle: 'LMEs', sub: 'What LMEs are, exchange offers, uptier transactions, and drop-down transactions.', moduleNum: 'Module 9', sections: RX_LME_SECTIONS },
-  { id: 'interview', title: 'Interview Questions & Case Studies', navTitle: 'Interview Qs', sub: 'Contextual questions, technical questions, and the case study format.', moduleNum: 'Module 10', sections: RX_INTERVIEW_SECTIONS },
+  { id: 'chapter11', title: 'Chapter 11 Bankruptcy', navTitle: 'Chapter 11', sub: 'Chapter 11 vs. Chapter 7, the case timeline, types of filings, and key bankruptcy concepts.', moduleNum: 'Module 4', sections: RX_CHAPTER11_SECTIONS },
+  { id: 'waterfall', title: 'Waterfall Analysis & Recovery Values', navTitle: 'Waterfalls', sub: 'How waterfalls work, multiple worked examples, where tranches trade, and equity value in distress.', moduleNum: 'Module 5', sections: RX_WATERFALL_SECTIONS },
+  { id: 'credit', title: 'Bond Math & Yield Analysis', navTitle: 'Bond Math', sub: 'Yield to maturity, current yield, yield to worst, accrued interest, and distressed pricing.', moduleNum: 'Module 6', sections: RX_CREDIT_SECTIONS },
+  { id: 'case_study', title: 'Cap Tables & Liquidity Analysis', navTitle: 'Cap Tables', sub: 'Building cap tables, the 13-week liquidity model, reading a structure like an RX banker, and the work product.', moduleNum: 'Module 7', sections: RX_CASE_STUDY_SECTIONS },
+  { id: 'valuation', title: 'Valuation in Distress', navTitle: 'Valuation', sub: 'Why valuation decides recoveries, going-concern vs liquidation, EBITDA quality, and the multiple.', moduleNum: 'Module 8', sections: RX_VALUATION_SECTIONS },
+  { id: 'returns', title: 'Returns & Distressed Investing', navTitle: 'Returns', sub: 'From recoveries to returns, MOIC and the IRR shortcut, choosing the tranche, and loan-to-own.', moduleNum: 'Module 9', sections: RX_RETURNS_SECTIONS },
+  { id: 'structural', title: 'Structural Subordination & HoldCo/OpCo', navTitle: 'Structural Sub', sub: 'What structural subordination is, the HoldCo/OpCo mechanism, and upstream and downstream guarantees.', moduleNum: 'Module 10', sections: RX_STRUCTURAL_SECTIONS },
+  { id: 'lme', title: 'Liability Management Exercises (LMEs)', navTitle: 'LMEs', sub: 'Uptier transactions, drop-down transactions, and the double-dip in depth.', moduleNum: 'Module 11', sections: RX_LME_SECTIONS },
+  { id: 'interview', title: 'Interview Questions & Case Study', navTitle: 'Interview Qs', sub: 'Approach, a full worked case study, a 26-question bank with model answers, and a glossary.', moduleNum: 'Module 12', sections: RX_INTERVIEW_SECTIONS },
 ];
 
 export default function RXInterviewPrepPage() {
