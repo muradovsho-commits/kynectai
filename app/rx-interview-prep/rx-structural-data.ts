@@ -1,24 +1,37 @@
 export const RX_STRUCTURAL_SECTIONS = [
   {
-    title: 'What Is Structural Subordination?',
-    content: `<p>Structural subordination occurs when debt at a parent holding company (HoldCo) is effectively junior to debt at an operating subsidiary (OpCo)-even if both are called "unsecured notes"-because the OpCo debt has a direct claim on the operating assets while the HoldCo debt has only an indirect claim through its equity ownership of the OpCo.</p>
+    title: 'Contractual vs Structural Subordination',
+    content: `<p>Structural subordination is one of the most important and most misunderstood priority concepts, and it is distinct from contractual subordination. Get the difference crisp.</p>
 
-<div class="example-box">
-<div class="example-label">Structural Subordination Example</div>
-<p><strong>OpCo</strong> has $400M in assets and $300M in unsecured notes. <strong>HoldCo</strong> owns the equity of OpCo and has $150M in unsecured notes and no other assets.</p>
-<p>If the company files: OpCo's unsecured notes are paid from OpCo's assets: $300M / $400M → Recovery: 100%. The remaining $100M flows up to HoldCo as the value of its equity in OpCo.</p>
-<p>HoldCo's unsecured notes: $100M available from OpCo equity / $150M in claims → Recovery: 66.7%.</p>
-<p>The HoldCo notes are <strong>structurally subordinate</strong> to the OpCo notes, even though both are "unsecured." The HoldCo notes are more remote from where the assets reside.</p>
-</div>`,
+<table class="comparison-table">
+<tr><th></th><th>Contractual subordination</th><th>Structural subordination</th></tr>
+<tr><td>Source</td><td>An agreement (intercreditor or indenture) to rank behind another creditor of the same entity</td><td>Where the debt sits in the corporate tree, independent of any agreement</td></tr>
+<tr><td>Example</td><td>Subordinated notes ranking behind senior unsecured notes of the same issuer</td><td>A holdco creditor ranking behind the operating subsidiary's creditors</td></tr>
+<tr><td>Cure</td><td>Renegotiate the contract</td><td>A guarantee from the entity where the assets sit</td></tr>
+</table>
+
+<p>Contractual subordination is an explicit agreement to rank lower. Structural subordination has nothing to do with any such agreement. It arises purely from where in the corporate structure the debt sits relative to where the assets and operations sit.</p>`,
   },
   {
-    title: 'Upstream and Downstream Guarantees',
-    content: `<p>To mitigate structural subordination, companies issue <strong>guarantees</strong>:</p>
+    title: 'The HoldCo/OpCo Mechanism',
+    content: `<p>Picture a parent (HoldCo) that owns an operating subsidiary (OpCo). The real assets and the cash-generating business live at OpCo. Suppose there are two creditors owed the same amount: a lender to OpCo and a lender to HoldCo.</p>
 
-<p>An <strong>upstream guarantee</strong> is when OpCo guarantees HoldCo's debt. This gives HoldCo's creditors a direct claim at the OpCo level (typically an unsecured claim), moving them from being structurally subordinate to being pari passu with OpCo's unsecured creditors. Upstream guarantees are critical for HoldCo debt issuance-without one, few lenders would accept the structural subordination risk.</p>
+<p>On a wind-down, OpCo's assets are used first to satisfy OpCo's own creditors. Only after OpCo's creditors are fully paid does any residual value at OpCo flow up to its equity holder, which is HoldCo. The HoldCo lender can only be paid out of whatever value reaches HoldCo, which is the leftover equity value of OpCo plus any assets HoldCo holds directly.</p>
 
-<p>A <strong>downstream guarantee</strong> is when HoldCo guarantees OpCo's debt. In a simple two-entity structure, this is less meaningful because HoldCo typically has no assets beyond OpCo's equity. But in more complex structures with multiple OpCos, cross-guarantees between entities can significantly affect recovery values.</p>
+<div class="key-concept">So even if the HoldCo lender's debt is labeled senior and is not contractually subordinated to anything, it sits structurally behind every creditor of OpCo, because it is one full layer removed from where the value actually is. The location of debt issuance, not the seniority label, determines the real position.</div>`,
+  },
+  {
+    title: 'Guarantees: Upstream and Downstream',
+    content: `<p>This is why guarantees matter enormously. A guarantee gives a creditor a direct claim against an entity it would otherwise reach only indirectly.</p>
 
-<p>When analyzing any restructuring, always diagram the organizational structure, note where debt and assets are located, and identify which guarantees are in place. The interplay between structural priority and contractual priority is where many of the most complex (and interesting) restructuring dynamics arise.</p>`,
+<p>If HoldCo's debt is guaranteed by OpCo (especially on a secured basis), the HoldCo creditor gets a direct claim against OpCo and is no longer structurally subordinated to OpCo's creditors. An <strong>upstream guarantee</strong> (a subsidiary guaranteeing the parent's debt) is what cures the structural subordination of a holdco lender, because it pulls the holdco creditor down to where the assets are. A <strong>downstream guarantee</strong> (a parent guaranteeing a subsidiary's debt) supports debt issued lower in the structure.</p>
+
+<div class="warning-box">Without the guarantee, the holdco creditor is structurally junior no matter what the debt is called. When you read a capital structure, you cannot just rank tranches by their seniority labels. You have to ask where each piece of debt is issued and what it is guaranteed by.</div>`,
+  },
+  {
+    title: 'Why It Matters for Analysis',
+    content: `<p>A nominally senior holdco note can recover less than a junior-looking opco claim, purely because of structural subordination. This is also why drop-down transactions are so damaging: moving assets from a guarantor entity to a non-guarantor or unrestricted entity can structurally subordinate the original lenders to new debt raised at that entity, even without touching anyone's contractual priority.</p>
+
+<div class="key-concept">Structural subordination, contractual subordination, and lien priority are three different axes. A sophisticated read of a capital structure accounts for all three at once: where the debt sits (structural), what it agreed to (contractual), and what collateral backs it (lien priority).</div>`,
   },
 ];

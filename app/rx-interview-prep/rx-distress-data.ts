@@ -1,56 +1,74 @@
 export const RX_DISTRESS_SECTIONS = [
   {
-    title: 'Common Causes of Distress',
-    content: `<p>At its core, financial distress boils down to one or both of two things: <strong>too much debt</strong> and/or <strong>insufficient liquidity</strong>. But the underlying causes are varied:</p>
+    title: 'How Distress Originates',
+    content: `<p>Distress almost always traces back to one root cause: a capital structure the business can no longer support. A company generates a certain amount of cash. It owes a certain amount of debt, with interest due on a schedule and principal due at maturity. When the cash the business throws off can no longer comfortably cover the obligations the capital structure imposes, the company is on the path to restructuring.</p>
 
-<p><strong>Overleveraging:</strong> The company took on more debt than its cash flows can support. This is particularly common with PE-backed companies where aggressive leverage was used to fund the acquisition. When operating performance dips even modestly, interest and principal payments become unsustainable.</p>
+<div class="key-concept"><strong>Two distinct failure modes, often confused:</strong><br/><strong>Insolvency</strong> (balance-sheet) means liabilities exceed the value of assets. The company is worth less than what it owes. A valuation problem.<br/><strong>Illiquidity</strong> means the company cannot meet obligations as they come due, regardless of long-run solvency. A fundamentally fine business that simply cannot make a near-term interest payment or refinance a maturity. A timing problem.</div>
 
-<p><strong>Secular industry decline:</strong> The company's business model becomes obsolete. Brick-and-mortar retail facing e-commerce disruption, print media losing to digital, legacy energy companies facing the transition to renewables. No amount of financial engineering can fix a business that customers no longer want.</p>
+<p>The two often travel together but not always, and the distinction drives the solution. A purely liquidity-driven problem at an otherwise healthy company might be solved with a quick financing or a maturity extension. A genuine over-leverage problem (too much debt against too little enterprise value) requires actually reducing the debt, which means somebody takes a loss.</p>
 
-<p><strong>Macroeconomic downturn:</strong> A recession compresses revenue across the economy, particularly for cyclical industries (airlines, hospitality, discretionary consumer goods). Companies with moderate leverage in good times suddenly find themselves critically overleveraged when EBITDA drops 30-40%.</p>
+<h4>Common Triggers</h4>
+<ul>
+<li><strong>A maturity wall.</strong> A large tranche comes due and the company cannot refinance on acceptable terms, often because rates rose or performance deteriorated. The company can be current on interest and still hit a wall when principal comes due.</li>
+<li><strong>A liquidity shortfall.</strong> The company burns cash faster than expected and the revolver plus cash on hand cannot bridge the gap.</li>
+<li><strong>A covenant breach.</strong> Tripping a financial covenant gives lenders the right to accelerate or demand a renegotiation, forcing a restructuring even before a payment is missed.</li>
+<li><strong>A secular decline.</strong> The business model is structurally impaired, so leverage that was once reasonable becomes unsupportable as EBITDA shrinks.</li>
+<li><strong>A one-time shock or liability.</strong> Mass tort litigation, an environmental liability, a contract loss, or a sudden regulatory change.</li>
+</ul>
 
-<p><strong>Failed acquisition or capital project:</strong> A company makes a large strategic bet-an acquisition or major capital investment-that fails to deliver the expected returns, leaving the company with massive debt and underperforming assets.</p>
-
-<p><strong>Litigation and regulatory risk:</strong> A single massive legal judgment, product liability claim, or regulatory change can create liabilities that overwhelm the balance sheet. Environmental remediation costs, opioid litigation settlements, and class-action lawsuits are common examples.</p>
-
-<p><strong>Fraud:</strong> Accounting fraud or management misconduct can destroy company value virtually overnight while liabilities remain unchanged.</p>`,
+<p>The connective tissue: leverage amplifies. A company with little debt can absorb a bad year. A company built on layers of debt has no slack, and a modest deterioration cascades into a financing crisis.</p>`,
   },
   {
-    title: 'Signs of Distress',
-    content: `<div class="key-concept">
-<strong>How RX bankers identify distressed companies:</strong> Limited liquidity (low cash, restricted revolver capacity). High leverage ratios (Debt/EBITDA above 6-7x, especially at the secured level). Declining EBITDA or negative free cash flow. Upcoming "maturity walls" (large debt maturities that likely can't be refinanced). Secondary trading prices well below par (bonds trading at 60-80 signals stress; below 50 signals severe distress). Credit downgrades into CCC territory or below. Covenant breaches or waivers. Distressed hedge funds accumulating positions in the capital structure.
-</div>`,
+    title: 'How Companies Push Off the Day of Reckoning',
+    content: `<p>Most companies that ultimately restructure spend a long time trying not to. The situation you get staffed on is often a company that has already exhausted several delay tactics.</p>
+
+<p>They draw down the revolver to build a cash cushion. They cut capital expenditure and working capital. They sell non-core assets to raise cash and pay down debt. They refinance into more expensive debt to push out maturities, buying time at the cost of a heavier interest burden. They negotiate covenant relief. Increasingly they use aggressive liability management transactions (covered in the LMEs module) to create runway without a formal restructuring.</p>
+
+<div class="key-concept">The pattern matters because it tells you where in the lifecycle a company sits. A company that has already drawn its revolver, sold its crown-jewel assets, and done a coercive exchange is far closer to filing than one that simply tripped a covenant for the first time. When you read a situation, look for how much dry powder the company has already spent.</div>`,
   },
   {
-    title: 'The Capital Structure Hierarchy',
-    content: `<p>Understanding the priority of claims is the single most fundamental concept in restructuring. When a company can't pay all its obligations, the question becomes: who gets paid first, and how much does everyone else recover?</p>
+    title: 'Reading a Capital Structure',
+    content: `<p>You cannot do restructuring without reading a capital structure cold. The capital structure is the ordered list of who has lent the company money and who owns it, ranked by priority of claim. When the company is restructured or liquidated, value flows down this stack in order. The top gets paid first and most fully. The bottom often gets wiped out.</p>
 
 <table class="comparison-table">
-<tr><th>Priority</th><th>Instrument</th><th>Key Characteristics</th></tr>
-<tr><td>1 (Highest)</td><td>DIP Financing (in Ch. 11 only)</td><td>Super-priority claim; funded during bankruptcy to keep the company operating</td></tr>
-<tr><td>2</td><td>Secured Debt (Revolvers, Term Loans)</td><td>Backed by specific collateral; first claim on those assets; lowest interest rates</td></tr>
-<tr><td>3</td><td>Unsecured Senior Debt (Senior Notes)</td><td>General claim against the company, not backed by specific assets; higher yields</td></tr>
-<tr><td>4</td><td>Subordinated Debt (Sub Notes)</td><td>Contractually junior to senior unsecured; higher yields; often impaired first</td></tr>
-<tr><td>5</td><td>Mezzanine / PIK Notes</td><td>Very junior; may have equity-like features (warrants, convertibility)</td></tr>
-<tr><td>6 (Lowest)</td><td>Equity (Common Stock)</td><td>Residual claim; gets whatever's left; typically wiped out in severe distress</td></tr>
+<tr><th>Tranche</th><th>Key features</th><th>Typical recovery posture</th></tr>
+<tr><td>Revolver</td><td>Senior secured line of credit, usually banks, often a borrowing base</td><td>Near full; watch if drawn (liquidity stress signal)</td></tr>
+<tr><td>First-lien term loan</td><td>Secured, senior, usually floating rate, often covenant-lite</td><td>High; first claim on collateral</td></tr>
+<tr><td>Second-lien term loan</td><td>Junior claim on the same collateral</td><td>Recovers only after first lien is satisfied</td></tr>
+<tr><td>Secured notes</td><td>Bonds backed by collateral, ranked by lien priority, usually fixed coupon</td><td>Driven by lien priority, not the secured label</td></tr>
+<tr><td>Senior unsecured notes</td><td>General claim after secured debt</td><td>Often where value breaks; frequently the fulcrum</td></tr>
+<tr><td>Subordinated notes</td><td>Contractually junior to senior unsecured; higher coupon</td><td>Frequently impaired or wiped out</td></tr>
+<tr><td>Mezzanine</td><td>Debt/equity hybrid, warrants, PIK; small</td><td>Among the first impaired</td></tr>
+<tr><td>Preferred / common equity</td><td>Residual claim, last in line</td><td>Usually wiped out entirely</td></tr>
 </table>
 
-<p>The <strong>Absolute Priority Rule (APR)</strong> dictates that in bankruptcy, each class must be paid in full before the next class receives anything. In practice, junior classes sometimes receive a small recovery (a "tip") even when senior classes aren't fully covered-this happens through negotiation, often to secure junior classes' votes on a plan of reorganization.</p>
+<div class="warning-box"><strong>Never assume secured means safe.</strong> Lien priority, not the secured label, determines recovery. A second-lien secured note can recover less than a senior unsecured claim in some structures.</div>
 
-<h4>Secured vs. Unsecured</h4>
+<p>When you build the structure, list each tranche in priority order with its face amount, then add up cumulative claims as you descend. The point at which cumulative claims exceed enterprise value is where value breaks. Everything above expects a full recovery. The tranche straddling that line is the <strong>fulcrum security</strong>. Everything below it is impaired or worthless.</p>`,
+  },
+  {
+    title: 'Covenants and Credit Documents',
+    content: `<p>If the capital structure tells you who is owed what, the credit documents tell you what the company is allowed to do. Modern restructuring is, to an enormous degree, a fight over what the documents permit.</p>
 
-<p>Secured debt is backed by specific collateral (assets pledged to the lender). If the company defaults, secured creditors can seize and liquidate the collateral. Unsecured debt has only a general claim against the company-no specific assets backing it. If a secured creditor's claim exceeds the value of its collateral, the excess becomes an unsecured claim (called a "deficiency claim").</p>
+<h4>Affirmative vs Negative Covenants</h4>
+<p>Affirmative covenants require the company to do things (deliver financials, maintain insurance, pay taxes) and are mostly boilerplate. Negative covenants restrict what the company can do, and these are where the action is. They govern the ability to incur more debt, grant liens, sell or transfer assets, make investments, and pay dividends. The looser the negative covenants, the more freedom a distressed company (or an aggressive creditor group) has to move assets, raise priming debt, and reorder priority in ways the original lenders never intended.</p>
 
-<h4>Key Debt Instruments</h4>
+<h4>Incurrence vs Maintenance (frequently tested)</h4>
+<table class="comparison-table">
+<tr><th></th><th>Maintenance covenant</th><th>Incurrence covenant</th></tr>
+<tr><td>When tested</td><td>Every period, regardless of action</td><td>Only when the company takes a specific action</td></tr>
+<tr><td>Example</td><td>Max leverage ratio each quarter</td><td>A test that fires only on incurring debt or a payment</td></tr>
+<tr><td>Effect</td><td>Trips automatically if performance deteriorates; early warning for lenders</td><td>Company can decline badly without ever breaching</td></tr>
+</table>
 
-<p><strong>Revolving Credit Facility (Revolver):</strong> Functions like a corporate credit card-the company can draw it down and repay it as needed, up to the commitment amount. Typically secured by liquid assets (accounts receivable, inventory). The borrowing base (the value of eligible collateral) determines how much can actually be drawn. Revolvers are the most senior instrument in the capital structure.</p>
+<p>Over the past decade, lender protections weakened broadly and <strong>covenant-lite</strong> loans (incurrence covenants only, no maintenance) became the norm for institutional term loans. The practical consequence: companies run much closer to the edge for much longer before lenders get a contractual say. By the time a cov-lite borrower trips anything, the situation is often already severe.</p>
 
-<p><strong>Term Loans (TLA, TLB, TLC):</strong> Fixed-amount loans with defined repayment schedules. Term Loan A (TLA) typically amortizes (mandatory principal payments each quarter). Term Loan B (TLB) has minimal amortization (1% per year) with a bullet maturity. TLBs are the workhorse of leveraged finance. Term loans carry floating interest rates (typically SOFR + a spread).</p>
+<h4>Baskets and Capacity</h4>
+<p>Credit agreements grant permission to do otherwise-restricted things up to limits called baskets: debt baskets, lien baskets, restricted-payment baskets, investment baskets. Some are fixed dollar amounts, some grow with EBITDA, some build over time. Calculating remaining capacity is real analyst work and beyond interview scope. The concept matters: baskets are the levers a company pulls to create runway or execute an aggressive transaction, and reading them correctly lets you predict (or block) what the company is about to do.</p>
 
-<p><strong>Senior Secured Notes:</strong> Bonds backed by collateral, typically ranking pari passu (equal) with term loans if they share the same collateral. Fixed-rate coupon. Governed by an indenture (a legal contract) rather than a credit agreement.</p>
+<h4>Restricted vs Unrestricted Subsidiaries</h4>
+<div class="key-concept">A company is a parent atop a web of subsidiaries. The credit agreement defines which subsidiaries are <strong>restricted</strong> (bound by the covenants, their assets part of the credit support for existing lenders) and which are <strong>unrestricted</strong> (outside the covenant perimeter). If the documents allow the company to transfer valuable assets to an unrestricted subsidiary, it can then raise new debt secured by those assets, outside the existing lenders' collateral, subordinating the original lenders without their consent. This is the mechanical basis of the drop-down maneuver, and litigation over whether a given transfer was permitted has defined some of the most important recent cases.</div>
 
-<p><strong>Senior Unsecured Notes:</strong> Bonds without collateral backing. Higher coupon than secured debt to compensate for the additional risk. Often the first impaired class in a restructuring.</p>
-
-<p><strong>Subordinated Notes:</strong> Contractually junior to senior unsecured notes. Highest coupons. Often deeply impaired or wiped out in restructuring.</p>`,
+<p>A related point: debt is issued out of a specific legal entity, and a claim against one entity is not automatically a claim against another. Whether each subsidiary guarantees the debt, and whether that guarantee is secured, determines whether a creditor reaches the value or is structurally subordinated to it (covered in the Structural Sub module).</p>`,
   },
 ];

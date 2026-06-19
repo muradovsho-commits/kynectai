@@ -1,28 +1,38 @@
 export const RX_OUT_OF_COURT_SECTIONS = [
   {
     title: 'Why Out-of-Court Is Preferred',
-    content: `<p>Filing for Chapter 11 is expensive ($10-100M+ in professional fees), disruptive (customers and suppliers may flee), time-consuming (months to years), and damaging to the brand. Out-of-court restructurings avoid all of these drawbacks. The RX banker's first objective is always to see if a viable solution exists without involving the court.</p>`,
+    content: `<p>Out-of-court restructuring means the company and its creditors negotiate a fix without filing for bankruptcy. The appeal is obvious: bankruptcy is enormously expensive (professional fees alone can run into the tens or hundreds of millions on a large case), slow, public, and damaging to relationships with customers, suppliers, and employees. If the problem can be solved with consent, everyone usually prefers to avoid court.</p>
+
+<div class="key-concept"><strong>The catch is the holdout problem.</strong> Out of court, you generally cannot force a creditor to accept worse terms. You need voluntary agreement, and any creditor can refuse and demand to be paid in full while everyone else takes a haircut. The more creditors there are and the more dispersed they are, the harder consensus becomes. This tension runs through every out-of-court tool: how do you get enough creditors to agree, and what do you do about the ones who will not.</div>
+
+<p>The organizing question across the whole toolkit: how much do you need to change the capital structure, and how much consent can you get to change it. Out-of-court solutions are cheaper, faster, and quieter, but require voluntary agreement and cannot bind holdouts.</p>`,
   },
   {
-    title: 'Out-of-Court Tools',
-    content: `<h4>Amend and Extend</h4>
+    title: 'Amend-and-Extend (A&E)',
+    content: `<p>The simplest tool. The company negotiates with its lenders to amend the credit agreement, most commonly to extend maturities (so the company is not forced to refinance into a hostile market) and to loosen or reset covenants. Usually the lenders get something in return: a higher interest rate, fees, additional collateral, or tighter terms elsewhere.</p>
 
-<p>The simplest solution: negotiate with existing lenders to push out maturity dates, often in exchange for a modest fee (1-2% consent fee) and/or a partial paydown. This buys the company time to improve its operating performance or wait for more favorable refinancing conditions. Lenders may agree because receiving par (eventually) beats the alternative of a default where they might recover only 50-70 cents.</p>
+<div class="warning-box">An A&amp;E does not reduce the debt. It buys time. It is the right tool when the problem is a near-term maturity or covenant issue at a fundamentally viable company that just needs runway. It is not a fix for genuine over-leverage, because the debt load is unchanged.</div>`,
+  },
+  {
+    title: 'Debt Exchanges and Coercive Exchanges',
+    content: `<p>In an <strong>exchange</strong>, the company offers creditors new securities in place of their existing ones. The new securities might have a lower face value (reducing the debt owed), a later maturity, a different coupon, or a different priority. Exchanges are voluntary, so they live or die on participation. To boost participation the company can sweeten the offer, but there is a limit to how much it can give away.</p>
 
-<h4>Exchange Offers</h4>
+<h4>Coercive Exchanges</h4>
+<p>This is where out-of-court gets sharp-elbowed. Because participation is voluntary, companies design exchanges to pressure creditors into participating and punish holdouts. The classic mechanism: participating creditors agree to strip the covenants and protections out of the old debt (often only a simple majority is needed to change non-payment terms). Creditors who refuse are left holding the old debt with its protections gutted, in a worse position than before. The threat is join us and get the new, better-protected debt, or stay behind and hold a stripped, structurally inferior instrument.</p>
 
-<p>The company offers existing debt holders the opportunity to exchange their current debt for new securities with different terms. Common exchanges include: old unsecured notes for new secured notes with a lower face value (creditors take a haircut on principal but gain priority), or debt for equity (creditors surrender their debt claims and receive ownership in the company, dramatically reducing leverage). Exchange offers typically require consent from a majority (usually 50-66.7%) of holders within a class.</p>
+<div class="key-concept"><strong>Sacred rights vs amendable terms.</strong> Most non-money terms (covenants, definitions) can be amended with a simple or supermajority of holders, while sacred rights (the money terms: principal, interest, maturity) require the consent of each affected holder. Coercive exchanges exploit exactly this gap: they change what a majority can change to disadvantage the minority who will not consent to changing their own money terms.</div>`,
+  },
+  {
+    title: 'Why Creditors Agree to Any of This',
+    content: `<p>A reasonable interviewer will ask: why would a creditor ever agree to take a haircut out of court when they could refuse? Several reasons.</p>
 
-<h4>Refinancing</h4>
+<ul>
+<li>They may believe the alternative (a freefall bankruptcy) leaves them worse off after fees and value destruction.</li>
+<li>They may be offered enough of a sweetener (higher rate, better priority, fees) to make participation attractive relative to the risk of holding out.</li>
+<li>They may fear being the holdout left behind in a coercive exchange.</li>
+<li>In a liability management deal, the participating majority is not taking a haircut at all. It is improving its own position at the expense of the excluded minority, so it has every incentive to agree.</li>
+</ul>
 
-<p>If the company can access the capital markets, it may issue new debt to repay existing maturities. This works only when lenders are willing to extend new credit-unlikely if the company is deeply distressed. However, for companies that are merely stressed (not yet in distress), refinancing upcoming maturities can prevent a crisis. The new debt will typically carry a higher coupon to reflect the company's deteriorated credit profile.</p>
-
-<h4>Asset Sales</h4>
-
-<p>Selling non-core assets to generate cash for debt reduction. This can be effective if the company has valuable divisions or properties that are not central to its core operations. The risk: selling assets at a distressed price means the company may not receive fair value, and stripping out the most valuable assets can leave the remaining business weaker.</p>
-
-<h4>Equity Infusions</h4>
-
-<p>If the company has a PE sponsor, the sponsor may inject fresh equity to stabilize the business. This is uncommon unless the sponsor believes the company has genuine turnaround potential, because it means throwing good money after bad. Sponsor equity infusions often come with stringent conditions (enhanced governance rights, management changes).</p>`,
+<p>The asymmetry of who wins and who loses is precisely what makes modern liability management transactions so contentious. Those transactions (uptiers, drop-downs, double-dips) are the most consequential development in restructuring over the last several years, and they get their own module.</p>`,
   },
 ];

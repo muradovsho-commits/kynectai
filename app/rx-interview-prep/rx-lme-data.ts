@@ -1,32 +1,45 @@
 export const RX_LME_SECTIONS = [
   {
-    title: 'What Are LMEs?',
-    content: `<p>Liability Management Exercises (LMEs) are a class of out-of-court transactions that use creative interpretations of existing credit document provisions to restructure a company's debt without filing for bankruptcy. Over the past several years, LMEs have become the dominant trend in restructuring, pushing the boundaries of what's permissible under credit agreements and generating significant litigation.</p>
+    title: 'What LMEs Are',
+    content: `<p>Over the last several years, the most consequential development in restructuring has been the rise of aggressive liability management transactions, sometimes called creditor-on-creditor violence. These are out-of-court maneuvers that exploit loose credit documents to reorder priority, raise new senior money, or move assets, usually advantaging one creditor group at the direct expense of another.</p>
 
-<h4>Drop-Downs</h4>
+<div class="key-concept">They have become so central that an interviewer at a top group will absolutely expect you to understand the major archetypes. Three matter most: <strong>uptiers</strong> (priming), <strong>drop-downs</strong> (asset transfers), and <strong>double-dips</strong>. All exploit the same underlying reality: documents drafted in better times left gaps, and a majority creditor group working with the company can use those gaps to climb over the minority.</div>`,
+  },
+  {
+    title: 'Uptier Transactions (Priming)',
+    content: `<p>In an uptier, a majority group of existing lenders agrees with the company to issue new super-priority debt that ranks ahead of the existing debt, and to exchange their own existing holdings up into that new senior tranche. Because amending the priority and lien provisions typically requires only a majority vote, the majority lenders can use their votes to subordinate the non-participating minority, who are left holding debt that has been primed (pushed down in priority) without their consent.</p>
 
-<p>A drop-down involves transferring valuable assets from the entity where existing debt resides to a new, unrestricted subsidiary. The company then raises new secured debt at this subsidiary, effectively priming (jumping ahead of) the existing creditors who no longer have a claim on the transferred assets. Notable examples include well-known retail and healthcare companies that used this technique to raise new capital while existing unsecured creditors saw their recovery prospects diminish.</p>
+<div class="example-box">
+<div class="example-label">Mechanics</div>
+<p>The company and a majority of the term lenders agree to a new financing that sits senior to the existing term loan. The participating majority rolls their old loans into the new senior debt at attractive terms. The minority who were not invited (or refused) keep their old loans, which now rank behind the new super-priority debt the majority just created. The minority went from first in line to behind a brand-new tranche, purely because the majority had the votes to permit it under the loose documents.</p>
+</div>
 
-<p>Drop-downs work because credit agreements often permit the transfer of assets to unrestricted subsidiaries up to certain baskets (defined dollar amounts or percentages). By exploiting these baskets aggressively, companies can move significant value out of reach of existing creditors.</p>
+<p>This archetype became infamous through a series of heavily litigated cases, and courts have split on whether specific implementations were permitted by the documents, which is exactly why the precise drafting matters so much.</p>`,
+  },
+  {
+    title: 'Drop-Down Transactions (Asset Transfers)',
+    content: `<p>A drop-down exploits the restricted-versus-unrestricted subsidiary distinction. The company transfers valuable assets (often the crown jewels, like key brands or intellectual property) out of the restricted group and into an unrestricted subsidiary that sits outside the existing lenders' collateral perimeter. The unrestricted subsidiary then raises new debt secured by those assets.</p>
 
-<h4>Non-Pro-Rata Uptiers</h4>
+<div class="example-box">
+<div class="example-label">The structural insight</div>
+<p>The company did not change anyone's priority by vote. It moved the assets to a place the existing lenders' liens do not reach, then borrowed against them fresh. The new lenders have a first claim on the dropped-down assets. The original lenders still have their liens, but on a diminished pool of collateral, so they have been effectively subordinated with respect to the company's most valuable property, again without consent, because the investment and asset-sale baskets permitted the transfer.</p>
+</div>
 
-<p>An uptier involves a company offering a subset of existing creditors the opportunity to exchange their current debt for new, senior-priority debt-jumping ahead of non-participating creditors in the priority waterfall. The controversy: the non-participating creditors see their effective priority diminished without their consent. This is possible when credit agreements allow the pro-rata sharing provisions (which normally ensure equal treatment of all creditors within a class) to be amended by a simple majority vote.</p>
+<p>This archetype is named in restructuring circles after the early high-profile case that popularized it, and like uptiers it has spawned extensive litigation about whether the baskets really allowed it.</p>`,
+  },
+  {
+    title: 'Double-Dip Transactions',
+    content: `<p>The double-dip is the most intricate of the common archetypes. A creditor structures its claim so that, on a filing, it has two independent allowed claims against the same valuable entity, roughly doubling its recovery relative to similarly ranked creditors, capped at payment in full.</p>
 
-<p>A group of participating creditors holding a majority can vote to amend the credit agreement to allow the transaction, effectively subordinating the minority non-participating creditors. This has generated intense litigation and debate about creditor rights.</p>
+<div class="example-box">
+<div class="example-label">A Clean Worked Example</div>
+<p>ParentCo holds essentially all the operating assets and has issued the company's only existing debt: a 200 first-lien term loan. For tax or regulatory reasons the company creates FinanceCo, which does no real business. FinanceCo issues 200 of new secured notes, and the creditors demand a first-lien guarantee from ParentCo, so the notes sit alongside the term loan. <strong>That is the first dip: a direct secured claim against ParentCo via the guarantee.</strong></p>
+<p>FinanceCo has no use for the 200, so it lends it up to ParentCo through a secured intercompany loan that also ranks alongside the term loan. In exchange, FinanceCo receives a 200 intercompany note receivable, and pledges that receivable to its noteholders. <strong>That is the second dip: an indirect claim, because FinanceCo can enforce its 200 receivable against ParentCo, and any recovery flows to its noteholders.</strong></p>
+<p>On a filing, the noteholders present two separate 200 claims against ParentCo (400 of claims) while having advanced only 200 of money. Against a constrained pool of value, those two claims capture a far larger slice than the term lenders' single 200 claim. Total dollar recovery is still capped at payment in full on the 200 they actually lent.</p>
+</div>
 
-<h4>Double-Dips</h4>
+<p>The structure works because the two claims are legally distinct: one arises from a guarantee, the other from an intercompany loan a separate legal entity can independently enforce. It is contentious because the term lenders, who thought they ranked equally, find the noteholders eating a double portion of the limited value.</p>
 
-<p>A newer evolution: the company issues new debt through a subsidiary, with the proceeds upstreamed to the parent via an intercompany loan. The new creditors end up with two independent claims: one from a guarantee provided by the parent and one from the intercompany loan receivable. Upon filing, these two claims can result in a recovery approximately double that of pari passu debt-though total recovery is capped at payment in full.</p>
-
-<p>Double-dips have gained traction because they're perceived as somewhat less aggressive than drop-downs or uptiers (they don't directly impair existing creditors' legal claims, just dilute recoveries through the creation of additional claims). However, their long-term viability depends on whether courts ultimately validate the dual-claim structure.</p>
-
-<h4>Cooperation Agreements</h4>
-
-<p>In response to the proliferation of LMEs, creditors have increasingly entered into <strong>cooperation agreements</strong>-contractual commitments among creditors to act together and not participate in any LME that would disadvantage non-signatories. By banding together, creditors can prevent the company from assembling the majority needed to amend credit agreements and execute an uptier or similar transaction.</p>
-
-<div class="warning-box">
-<strong>For interviews:</strong> Knowing the rough mechanics of drop-downs, uptiers, and double-dips is impressive but not expected. These topics might come up if you mention them (e.g., in response to "what trends are you following in restructuring?"), but you won't be asked to explain them cold. Focus your preparation time on waterfalls, bond math, cap tables, and bankruptcy fundamentals-those are the bread-and-butter questions.
-</div>`,
+<div class="warning-box"><strong>In an interview, do not recite a perfect definition.</strong> Walk through the ParentCo and FinanceCo example, name the two dips (a direct guarantee claim and an indirect intercompany claim), state that this doubles the claim size against the same value, and note the recovery is capped at payment in full. Newer variants (multi-dip, pari-plus) try to extend the concept beyond the simple cap, but the basic mechanic is what you need.</div>`,
   },
 ];
