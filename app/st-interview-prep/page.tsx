@@ -127,9 +127,11 @@ export default function STInterviewPrepPage() {
 
               <div className="ib-how-to-use">
                 <h4>How to Use This Guide</h4>
-                <p><strong>Foundations:</strong> Modules 1-2 cover what S&T is and how markets work. Essential context before diving into products.</p>
-                <p><strong>Products:</strong> Modules 3-6 cover every major asset class - equities, fixed income, derivatives, FX, and commodities.</p>
-                <p><strong>Interview prep:</strong> Modules 7-10 cover risk, strategies, mental math (critical for S&T), and the interview itself.</p>
+                <p><strong>Foundations:</strong> Modules 1-2 cover what S&T is and how markets actually work. Essential context before the products.</p>
+                <p><strong>Products:</strong> Modules 3-7 cover every major asset class - equities, fixed income, options, futures and swaps, and FX and commodities.</p>
+                <p><strong>Trading skills:</strong> Modules 8-11 build the skills S&T tests live - mental math, probability and expected value, brainteasers, and forming and pitching a market view.</p>
+                <p><strong>Risk and strategy:</strong> Modules 12-13 cover risk management and P&L, plus market-making and trading strategies.</p>
+                <p><strong>Interview ready:</strong> Modules 14-15 cover behavioral and fit, then the interview itself with questions, answers, and a glossary.</p>
               </div>
 
               <div className="ib-module-cards">
