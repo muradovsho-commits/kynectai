@@ -571,10 +571,13 @@ html[data-theme="dark"] .flash-app {
 .flash-grid-card-wrap { perspective: 900px; height: 300px; cursor: pointer; }
 .flash-grid-card { position: relative; width: 100%; height: 100%; transition: transform 0.5s ease; transform-style: preserve-3d; }
 .flash-grid-card.flipped { transform: rotateY(180deg); }
-.flash-grid-front, .flash-grid-back { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 12px; border: 1.5px solid var(--border); background: var(--surface); padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
+.flash-grid-front, .flash-grid-back { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 12px; border: 1.5px solid var(--border); background: var(--surface); padding: 20px; display: flex; flex-direction: column; overflow: hidden; }
 .flash-grid-back { transform: rotateY(180deg); }
-.flash-grid-q { font-size: 14px; font-weight: 600; line-height: 1.55; color: var(--text); flex: 1; }
-.flash-grid-a { font-size: 13px; line-height: 1.6; color: var(--text); flex: 1; overflow-y: auto; }
+.flash-grid-q { font-size: 14px; font-weight: 600; line-height: 1.55; color: var(--text); flex: 1; min-height: 0; overflow-y: auto; }
+.flash-grid-a { font-size: 13px; line-height: 1.6; color: var(--text); flex: 1; min-height: 0; overflow-y: auto; }
+.flash-grid-q, .flash-grid-a { scrollbar-width: thin; }
+.flash-grid-q::-webkit-scrollbar, .flash-grid-a::-webkit-scrollbar { width: 6px; }
+.flash-grid-q::-webkit-scrollbar-thumb, .flash-grid-a::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .flash-grid-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); }
 .flash-grid-firm { font-size: 10px; color: var(--text-3); font-weight: 500; max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .flash-grid-hint { font-size: 10px; font-weight: 600; color: var(--text-3); letter-spacing: 0.3px; margin-top: auto; padding-top: 10px; text-align: right; }
