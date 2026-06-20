@@ -1,48 +1,61 @@
 export const ST_INDUSTRY_SECTIONS = [
   {
-    title: 'What Is Sales &amp; Trading?',
-    content: `<p>Sales &amp; Trading (S&amp;T) is the division of an investment bank that <strong>facilitates the buying and selling of financial instruments</strong> for institutional clients-mutual funds, hedge funds, pension funds, insurance companies, sovereign wealth funds, and corporations. Unlike investment banking (which advises on transactions), S&amp;T executes transactions in the markets, manages the bank's own risk, and generates revenue from the bid-ask spread, commissions, and proprietary positioning.</p>
+    title: 'What Sales & Trading Actually Is',
+    content: `<p>Sales and trading is the part of an investment bank that buys and sells financial products in the market, all day, every day. If investment banking advises companies on big one-off deals (raising money, buying another company), sales and trading is the opposite rhythm: thousands of transactions a day in stocks, bonds, currencies, commodities, and derivatives, on behalf of clients and for the bank itself. It is the markets business, and it lives and breathes with the markets.</p>
 
-<p>The business operates at the intersection of speed, risk, and market knowledge. When a pension fund needs to sell $500 million of US Treasuries, or a hedge fund wants to establish a $200 million short position in European banks, they call the S&amp;T desk. The desk provides a price, executes the trade, and manages the resulting risk.</p>`,
+<p>The simplest way to picture it: large investors (pension funds, hedge funds, asset managers, corporations, insurers) constantly need to buy and sell securities, and they need someone on the other side who can give them a price and take the trade. The S&T floor of a bank is that someone. The bank sits in the middle of the flow of the world's capital, providing prices and liquidity, and earning money for doing so.</p>
+
+<div class="key-concept">The whole business rests on one idea: <strong>liquidity</strong>, the ability to buy or sell quickly without moving the price much. Investors value liquidity enormously, and S&T desks get paid to provide it. When a client wants to sell 50 million of bonds right now, the desk buys them, takes on the risk of holding them, and earns the spread for stepping in. That service, being a reliable price-maker and risk-taker, is what S&T sells. Everything else (the products, the math, the technology) is in service of doing that well.</div>
+
+<p>The floor is a large open room full of desks, each specializing in a product or market: a government bonds desk, an equity derivatives desk, an FX desk, a credit desk, and so on. People sit shoulder to shoulder with multiple screens, and the energy is fast and verbal. It is a genuinely different culture from the rest of finance: less polished slides and late-night models, more quick decisions, live markets, and being right or wrong in real time.</p>`,
   },
   {
-    title: 'The Three Roles on the Floor',
-    content: `<h4>Sales</h4>
+    title: 'The Three Roles: Sales, Trading, Structuring',
+    content: `<p>The floor has three core seats, and you should know exactly what each does, because interviewers will ask which one you want and why. They work together but think very differently.</p>
 
-<p>Salespeople are the relationship bridge between the bank and its institutional clients. Their job is to understand what each client needs (liquidity, trade ideas, research, hedging solutions), relay market intelligence and trade ideas from the desk, and generate trading revenue by driving client flow. A rates salesperson might call a pension fund every morning with a view on where the 10-year Treasury yield is heading and suggest a trade to position for it.</p>
+<table class="comparison-table">
+<tr><th>Role</th><th>What they do</th><th>Core skill</th></tr>
+<tr><td>Salesperson</td><td>Covers clients: pitches ideas, takes orders, explains the bank's views, and is the relationship between the client and the desk</td><td>Relationships, communication, market storytelling</td></tr>
+<tr><td>Trader</td><td>Makes prices and manages risk: quotes bids and offers, takes the other side of client trades, and manages the resulting position (the book)</td><td>Quick decisions, risk judgment, mental math, composure</td></tr>
+<tr><td>Structurer</td><td>Designs customized products (often derivatives) to solve a specific client need, and prices the complex ones</td><td>Quantitative modeling, product creativity</td></tr>
+</table>
 
-<p>Great salespeople are trusted advisors. They don't just pitch whatever the desk wants to sell; they understand the client's portfolio, mandates, and constraints well enough to provide genuinely useful ideas. The best ones develop relationships so strong that clients call <em>them</em> first when they need to trade.</p>
+<div class="framework-box"><div class="fw-label">HOW A TRADE FLOWS</div>A client wants to buy. The <strong>salesperson</strong> takes the call, understands what the client wants, and relays it to the desk. The <strong>trader</strong> quotes a price and, if the client agrees, executes, then manages the risk of the position the bank just took on. If the client needs something bespoke (say, a tailored option to hedge a specific exposure), the <strong>structurer</strong> designs and prices it. Sales owns the client; trading owns the price and the risk; structuring owns the product.</div>
 
-<h4>Trading</h4>
+<div class="key-concept">The personality split is real and worth understanding for "sales or trading?" questions. <strong>Sales</strong> suits people who are outgoing, articulate, and energized by relationships and by translating complex markets into clear ideas for clients. <strong>Trading</strong> suits people who are decisive, comfortable with risk and being wrong, quick with numbers, and able to stay calm when money is moving against them. Neither is "better." The honest version of your answer connects your actual temperament to the seat, not a generic "I like markets."</div>
 
-<p>Traders are the risk-takers. They make markets (quoting bid and ask prices to clients), manage the inventory that results from client trades, and position the book to profit from their views on market direction. A corporate bond trader might buy $50M of bonds from a client at 98.5, then try to sell them to another client at 99.0, capturing the 0.5-point spread.</p>
-
-<p>The critical skill is <strong>risk management in real time</strong>. Traders must constantly assess: How much risk am I carrying? What's the downside if the market moves against me? Should I hedge this position or hold it? Can I find a natural buyer before this position moves? The best traders combine quantitative rigor with gut instinct developed over thousands of trades.</p>
-
-<h4>Structuring / Strats</h4>
-
-<p>Structurers (on the more client-facing side) or strats/quants (on the more analytical side) design bespoke products for clients and develop the models and tools that traders use. If a corporate treasurer needs to hedge a complex currency exposure over 5 years with specific knock-in barriers, a structurer designs the product. If the desk needs a model to price exotic options or evaluate a basket of credit derivatives, a strat builds it.</p>`,
+<div class="takeaway-box">When asked "sales or trading," do not hedge. Pick one, give a genuine reason rooted in how you operate (do you light up talking to people and selling an idea, or do you want to own a position and live with the risk?), and show you understand what the day-to-day of that seat is really like.</div>`,
   },
   {
-    title: 'How S&amp;T Makes Money',
-    content: `<p><strong>Bid-ask spread:</strong> The bank buys at the bid price and sells at the ask (offer) price. The spread is revenue. In liquid markets (US Treasuries, large-cap equities), spreads are razor-thin (fractions of a cent). In illiquid markets (distressed debt, emerging market corporates, structured products), spreads can be 1-5+ points.</p>
+    title: 'How Desks Make Money',
+    content: `<p>There are three distinct ways an S&T desk earns money, and confusing them is a common rookie mistake. Knowing the difference signals you understand the business.</p>
 
-<p><strong>Commissions:</strong> For agency trades (where the bank executes on behalf of the client without taking principal risk), the bank earns a commission. This is common in cash equities.</p>
+<div class="framework-box"><div class="fw-label">THE THREE PROFIT SOURCES</div><strong>1. The bid-ask spread (market-making):</strong> the desk quotes a price to buy (the bid) slightly below the price to sell (the ask), and earns the difference by transacting with clients on both sides over time. This is the bread-and-butter, lower-risk income of a flow desk.<br/><strong>2. Commissions:</strong> on agency trades (especially in equities), the desk executes a client's order in the market and charges a fee, without taking the risk onto its own books.<br/><strong>3. Position taking (risk/prop):</strong> the desk holds a position because it has a view, and profits if the market moves its way. Higher risk, and post-crisis regulation (the Volcker Rule) sharply limited pure proprietary trading at banks.</div>
 
-<p><strong>Trading gains:</strong> When a trader takes a position (either from client flow or a directional view) and the market moves favorably, the position generates a profit. This is the riskiest revenue source but can be the most lucrative.</p>
+<div class="key-concept">The most important distinction is <strong>market-making versus proprietary trading</strong>, and it confuses many candidates. A <strong>market maker</strong> earns the spread by providing liquidity: it does not primarily want a directional bet, it wants to buy at the bid, sell at the ask, and pocket the difference while staying roughly neutral. A <strong>proprietary (prop) trader</strong> deliberately takes a directional position to profit from a market view. Modern bank desks are overwhelmingly market-makers serving client flow ("franchise" or "flow" trading), not prop desks, because regulation curtailed banks betting their own capital. When you describe what a trader does, lead with making markets and managing client flow, not "betting on the market."</div>
 
-<p><strong>Financing revenue:</strong> Prime brokerage earns revenue from lending securities to hedge funds (for short-selling), extending margin loans, and providing clearing and settlement services.</p>`,
+<div class="example-box">
+<div class="example-label">The spread in action</div>
+<p>A trader quotes a stock at 49.98 bid, 50.02 offer. A client sells to the desk at 49.98; minutes later another client buys from the desk at 50.02. The desk earned 0.04 per share for providing liquidity to both, never needing the price to move. Multiply by huge volume and that is a real, repeatable business. The risk is when the desk buys at 49.98 and the price falls to 49.80 before it can sell; managing that inventory risk is the trader's job.</p>
+</div>`,
   },
   {
-    title: 'S&amp;T vs. Investment Banking',
-    content: `<table class="comparison-table">
-<tr><th>Dimension</th><th>Sales &amp; Trading</th><th>Investment Banking (M&amp;A/ECM/DCM)</th></tr>
-<tr><td>Time Horizon</td><td>Seconds to weeks (sometimes months)</td><td>Months to years per deal</td></tr>
-<tr><td>Revenue Model</td><td>Daily P&amp;L from trading, spreads, commissions</td><td>Fees upon deal completion</td></tr>
-<tr><td>Key Skill</td><td>Real-time risk management, market intuition, quick decision-making</td><td>Analytical modeling, client relationships, deal execution</td></tr>
-<tr><td>Work Style</td><td>Market hours (6:30 AM-5:30 PM typically), intense during open</td><td>Long hours (9 AM-midnight+), project-driven</td></tr>
-<tr><td>P&amp;L Visibility</td><td>Immediate-you see your P&amp;L every day</td><td>Periodic-tied to deal closings</td></tr>
-<tr><td>Personality Fit</td><td>Quick thinkers, comfortable with ambiguity and real-time pressure</td><td>Detail-oriented, structured, long attention span</td></tr>
-</table>`,
+    title: 'S&T vs Investment Banking, and the Career',
+    content: `<p>Because many candidates weigh S&T against investment banking (IB), interviewers like to hear that you chose S&T deliberately. The contrast is stark and clarifying.</p>
+
+<table class="comparison-table">
+<tr><th>Dimension</th><th>Sales &amp; Trading</th><th>Investment Banking</th></tr>
+<tr><td>Rhythm</td><td>Fast, real-time, thousands of trades; markets-driven</td><td>Slow-burn deals over weeks/months</td></tr>
+<tr><td>Output</td><td>Prices, liquidity, risk management, ideas</td><td>Advice, models, pitchbooks, executed deals</td></tr>
+<tr><td>Hours</td><td>Tied to market hours; intense but more contained</td><td>Notoriously long and unpredictable</td></tr>
+<tr><td>Feedback</td><td>Immediate: your P&amp;L is visible daily</td><td>Delayed: deals close months later</td></tr>
+<tr><td>Skills</td><td>Quick thinking, math, markets, composure, communication</td><td>Modeling, attention to detail, stamina, client polish</td></tr>
+</table>
+
+<div class="key-concept">The cleanest "why S&T over IB" answer centers on the <strong>real-time, markets-driven nature of the work and the immediate feedback loop</strong>. In S&T you are connected to the live pulse of the world's markets, you make decisions in seconds, and you know by the end of the day whether you were right. That appeals to people who want to think on their feet, who find markets endlessly interesting, and who want their performance measured quickly and objectively. Contrast that honestly with IB's long deal cycles and modeling focus, and tie it to your own temperament.</div>
+
+<p>On the career arc: you typically start as an <strong>analyst</strong> supporting a desk (tracking positions, running analysis, learning the products and the flow), then take on more responsibility quoting prices or covering smaller clients, and progress toward running your own book (as a trader) or your own client relationships (in sales). Compensation is heavily performance-linked, especially in trading, where your bonus tracks the money you make. The path rewards people who genuinely love markets, because you will be immersed in them for the rest of your career.</p>
+
+<div class="takeaway-box">Have a crisp, personal "why S&T" ready. The strongest versions name the real-time decision-making, the love of markets, and the objective feedback, then connect those to a specific seat (sales or trading) and to how you actually think. Avoid clichés like "I like fast-paced environments"; everyone says that. Be specific about what draws you to making prices or covering clients.</div>`,
   },
 ];

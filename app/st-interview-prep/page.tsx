@@ -19,6 +19,11 @@ import { ST_RISK_SECTIONS } from './st-risk-data';
 import { ST_STRATEGIES_SECTIONS } from './st-strategies-data';
 import { ST_MENTAL_MATH_SECTIONS } from './st-mental-math-data';
 import { ST_INTERVIEW_SECTIONS } from './st-interview-data';
+import { ST_FUTURES_SWAPS_SECTIONS } from './st-futures-swaps-data';
+import { ST_PROBABILITY_SECTIONS } from './st-probability-data';
+import { ST_BRAINTEASERS_SECTIONS } from './st-brainteasers-data';
+import { ST_MARKETS_SECTIONS } from './st-markets-data';
+import { ST_BEHAVIORAL_SECTIONS } from './st-behavioral-data';
 
 type Section = { title: string; content: string };
 
@@ -27,16 +32,21 @@ type Section = { title: string; content: string };
 const cleanSectionTitle = (t: string) => t.replace(/^\d+\.\d+(-\d+(\.\d+)?)?\s+/, '');
 
 const MODULES: { id: string; title: string; navTitle: string; sub: string; moduleNum: string; sections: Section[] }[] = [
-  { id: 'industry', title: 'The S&T Industry & Business Model', navTitle: 'Industry', sub: 'What S&T is, the three roles on the floor, how desks make money, and S&T vs. IB.', moduleNum: 'Module 1', sections: ST_INDUSTRY_SECTIONS },
-  { id: 'market_structure', title: 'Market Structure & How Trading Works', navTitle: 'Markets', sub: 'Exchange-traded vs. OTC, order types, liquidity, clearing and settlement.', moduleNum: 'Module 2', sections: ST_MARKET_STRUCTURE_SECTIONS },
-  { id: 'equities', title: 'Equities', navTitle: 'Equities', sub: 'Cash equities, equity derivatives, and prime brokerage.', moduleNum: 'Module 3', sections: ST_EQUITIES_SECTIONS },
-  { id: 'fixed_income', title: 'Fixed Income & Rates', navTitle: 'Fixed Income', sub: 'Government bonds, corporate credit, and structured products.', moduleNum: 'Module 4', sections: ST_FIXED_INCOME_SECTIONS },
-  { id: 'derivatives', title: 'Derivatives - Options, Futures & Swaps', navTitle: 'Derivatives', sub: 'Options fundamentals, the Greeks, futures, interest rate swaps, and CDS.', moduleNum: 'Module 5', sections: ST_DERIVATIVES_SECTIONS },
-  { id: 'macro', title: 'FX & Commodities', navTitle: 'FX / Commodities', sub: 'Foreign exchange markets and commodity trading.', moduleNum: 'Module 6', sections: ST_MACRO_SECTIONS },
-  { id: 'risk', title: 'Risk Management & P&L Attribution', navTitle: 'Risk / P&L', sub: 'Risk measures, VaR, Greeks-based risk, and P&L attribution.', moduleNum: 'Module 7', sections: ST_RISK_SECTIONS },
-  { id: 'strategies', title: 'Trading Strategies & Market-Making', navTitle: 'Strategies', sub: 'Market-making, relative value, flow trading, and macro/directional strategies.', moduleNum: 'Module 8', sections: ST_STRATEGIES_SECTIONS },
-  { id: 'mental_math', title: 'Mental Math & Brainteasers', navTitle: 'Mental Math', sub: 'Mental math essentials, practice drills, probability and expected value.', moduleNum: 'Module 9', sections: ST_MENTAL_MATH_SECTIONS },
-  { id: 'interview', title: 'Interview Preparation', navTitle: 'Interview Qs', sub: 'The S&T interview format, market knowledge requirements, and common mistakes.', moduleNum: 'Module 10', sections: ST_INTERVIEW_SECTIONS },
+  { id: 'industry', title: 'The S&T Industry & Business Model', navTitle: 'Industry', sub: 'What S&T is, the three roles on the floor, how desks make money, and S&T vs IB.', moduleNum: 'Module 1', sections: ST_INDUSTRY_SECTIONS },
+  { id: 'market_structure', title: 'Market Structure & How Trading Works', navTitle: 'Markets', sub: 'Exchange vs OTC, the order book and bid-ask spread, order types, liquidity, and clearing.', moduleNum: 'Module 2', sections: ST_MARKET_STRUCTURE_SECTIONS },
+  { id: 'equities', title: 'Equities', navTitle: 'Equities', sub: 'Cash equities, ETFs, short selling and securities lending, equity derivatives, and prime brokerage.', moduleNum: 'Module 3', sections: ST_EQUITIES_SECTIONS },
+  { id: 'fixed_income', title: 'Fixed Income & Rates', navTitle: 'Fixed Income', sub: 'The price-yield relationship, duration and convexity, the yield curve, credit, and repo.', moduleNum: 'Module 4', sections: ST_FIXED_INCOME_SECTIONS },
+  { id: 'options', title: 'Options & the Greeks', navTitle: 'Options', sub: 'Calls and puts, moneyness, the Greeks, volatility, put-call parity, and option strategies.', moduleNum: 'Module 5', sections: ST_DERIVATIVES_SECTIONS },
+  { id: 'futures_swaps', title: 'Futures, Swaps & Credit Derivatives', navTitle: 'Futures / Swaps', sub: 'Forwards and futures, contango and backwardation, interest rate swaps, and CDS.', moduleNum: 'Module 6', sections: ST_FUTURES_SWAPS_SECTIONS },
+  { id: 'fx_commodities', title: 'FX & Commodities', navTitle: 'FX / Commodities', sub: 'Currency pairs, what drives them, the carry trade, and commodity markets.', moduleNum: 'Module 7', sections: ST_MACRO_SECTIONS },
+  { id: 'mental_math', title: 'Mental Math', navTitle: 'Mental Math', sub: 'Why it is tested, the core techniques, and worked drills to build speed and accuracy.', moduleNum: 'Module 8', sections: ST_MENTAL_MATH_SECTIONS },
+  { id: 'probability', title: 'Probability & Expected Value', navTitle: 'Probability / EV', sub: 'Expected value, probability essentials, and edge, variance, and bet sizing.', moduleNum: 'Module 9', sections: ST_PROBABILITY_SECTIONS },
+  { id: 'brainteasers', title: 'Brainteasers & Estimation', navTitle: 'Brainteasers', sub: 'What they really test, a universal approach, market-sizing, and worked examples by type.', moduleNum: 'Module 10', sections: ST_BRAINTEASERS_SECTIONS },
+  { id: 'markets', title: 'Markets & Forming a View', navTitle: 'Market Views', sub: 'Following markets, how to pitch a trade idea, and talking markets without sounding scripted.', moduleNum: 'Module 11', sections: ST_MARKETS_SECTIONS },
+  { id: 'risk', title: 'Risk Management & P&L Attribution', navTitle: 'Risk / P&L', sub: 'The kinds of risk, VaR and the Greeks, and managing the book and attributing P&L.', moduleNum: 'Module 12', sections: ST_RISK_SECTIONS },
+  { id: 'strategies', title: 'Trading Strategies & Market-Making', navTitle: 'Strategies', sub: 'Market-making up close, relative value and arbitrage, and flow, directional, and systematic strategies.', moduleNum: 'Module 13', sections: ST_STRATEGIES_SECTIONS },
+  { id: 'behavioral', title: 'Behavioral, Fit & Why S&T', navTitle: 'Behavioral', sub: 'Why S&T and sales vs trading, the temperament desks screen for, and composure and curiosity.', moduleNum: 'Module 14', sections: ST_BEHAVIORAL_SECTIONS },
+  { id: 'interview', title: 'Interview Preparation', navTitle: 'Interview Qs', sub: 'The interview format, technical and math/brainteaser questions with answers, mistakes, and a glossary.', moduleNum: 'Module 15', sections: ST_INTERVIEW_SECTIONS },
 ];
 
 export default function STInterviewPrepPage() {

@@ -1,86 +1,138 @@
 export const ST_INTERVIEW_SECTIONS = [
   {
-    title: 'The S&amp;T Interview Format',
-    content: `<p>S&amp;T interviews are fundamentally different from banking interviews. There's less emphasis on polished answers and more emphasis on <strong>how you think on your feet</strong>. Expect a mix of: market questions (What's the S&P at? Where is the 10-year? What happened in markets today?), product knowledge (Explain how an interest rate swap works. What's put-call parity?), brainteasers and mental math, trading scenarios (I give you a trade idea-would you put it on? What's the risk?), and behavioral/fit (Why S&amp;T? Why this desk? What do you read?). Interviews are typically 20-30 minutes each, and you may have 4-8 in a single day.</p>`,
+    title: 'The S&T Interview Format',
+    content: `<p>S&T interviews differ from other finance interviews in a few characteristic ways, and knowing the shape lets you prepare the right things rather than over-indexing on modeling that will not appear.</p>
+
+<div class="framework-box"><div class="fw-label">WHAT TO EXPECT ACROSS ROUNDS</div><strong>Mental math:</strong> rapid-fire or timed arithmetic, sometimes under deliberate pressure. Almost universal.<br/><strong>Brainteasers and probability/EV:</strong> logic puzzles, estimation, and expected-value games testing how you think.<br/><strong>Markets and "have a view":</strong> what's moving markets, a stock or trade you like, where you think something is headed and why.<br/><strong>Product and technical knowledge:</strong> how options work, the Greeks, why bond prices and yields move inversely, what a swap is, how market-making makes money.<br/><strong>Behavioral and fit:</strong> why S&T, sales or trading, a time you were wrong, how you handle pressure.<br/><strong>Composure under pressure:</strong> woven throughout, often tested deliberately.</div>
+
+<div class="key-concept">The defining feature of S&T interviews is that they test <strong>live thinking and temperament far more than prepared knowledge</strong>. Other finance interviews reward memorized technicals and polished stories; S&T rewards those too, but it overwhelmingly cares how you reason in real time, handle pressure, do quick math, and engage with markets. This is why you cannot cram your way through: mental math takes weeks of drilling, market views take consistent following, and composure shows or does not. The flip side is encouraging, the most-tested skills (mental math, the EV/brainteaser approach, market engagement) are all genuinely learnable with focused, consistent practice, so a candidate who prepares the right way can dramatically improve.</div>
+
+<div class="takeaway-box">Prepare for the actual format: drill mental math out loud and timed; practice brainteasers and EV problems by method; follow markets daily and develop a couple of defensible views; know the core products and the Greeks cold; and prepare behavioral stories that show composure and comfort with being wrong. Do not over-prepare modeling, it is not the S&T test.</div>`,
   },
   {
-    title: 'Market Knowledge: What You Must Know',
-    content: `<p>Before every interview, you must know the current levels of: S&P 500, Dow, Nasdaq, 2-year and 10-year Treasury yields (and the spread between them), Fed Funds rate, EUR/USD, USD/JPY, crude oil (WTI and Brent), gold, VIX, and any major market-moving news from the past week. You should also have a view on where markets are heading and be able to defend it.</p>
-
-<div class="interview-q">
+    title: 'Technical Questions With Model Answers',
+    content: `<div class="interview-q">
 <div class="q-label">Q1</div>
-<div class="question">Where is the 10-year Treasury right now, and where do you think it's going?</div>
-<div class="answer">You must know the current yield to the nearest 10 basis points. Then give a directional view with reasoning: "The 10-year is at approximately X%. I think it moves [higher/lower] over the next 3-6 months because [specific macro reasoning: e.g., 'inflation is proving stickier than expected and I think the Fed holds rates higher for longer' or 'growth is decelerating and the market will start pricing in rate cuts']. The key risk to my view is [specific counterargument: e.g., 'if a geopolitical event causes a flight to safety, rates could fall sharply regardless of inflation']." The specific view matters less than having one and defending it logically.</div>
+<div class="question">Why do bond prices and yields move in opposite directions?</div>
+<div class="answer">A bond's coupon is fixed at issuance. If market rates rise, newer bonds pay more, so an existing lower-coupon bond becomes less attractive and its price must fall until its effective yield matches the higher market rate. If rates fall, the existing bond is relatively attractive and its price rises until its yield drops to market. The coupon cannot change, so the price moves inversely to yields to keep the bond competitive.</div>
 </div>
 
 <div class="interview-q">
 <div class="q-label">Q2</div>
-<div class="question">Pitch me a trade.</div>
-<div class="answer">This is the S&T equivalent of the stock pitch. Structure: (1) The macro or micro thesis (e.g., "I believe the yield curve will steepen because the Fed will start cutting short rates while long rates stay elevated due to fiscal deficits and term premium"). (2) The instrument (e.g., "I'd express this by going long 2-year Treasury futures and short 10-year Treasury futures, duration-weighted"). (3) The risk/reward (e.g., "The 2s10s spread is at -30 bps, well below historical norms. I think it moves to +50 bps over 6 months. The risk is that a recession causes the entire curve to rally, but in that scenario the steepener still benefits because the front end rallies more than the long end"). (4) The key risk and how you'd manage it (e.g., "I'd set a stop-loss at -50 bps, risking 20 bps to make 80 bps, a 4:1 reward-to-risk ratio").</div>
+<div class="question">What is delta, and how would you hedge an option with it?</div>
+<div class="answer">Delta is how much an option's price changes for a 1 unit move in the underlying, ranging 0 to 1 for calls. It also tells you the option's equivalent position in the underlying. To hedge, you take an offsetting position in the underlying equal to the delta: an option with 0.5 delta behaves like half a share, so you trade half a share the other way to neutralize the directional risk. That's delta hedging. The complication is gamma, delta changes as the underlying moves, so you must re-hedge continuously.</div>
 </div>
 
 <div class="interview-q">
 <div class="q-label">Q3</div>
-<div class="question">Explain what happens to a bond's price when interest rates rise. Why?</div>
-<div class="answer">Bond prices fall when rates rise. The reasoning is mathematical: a bond's price is the present value of its future cash flows (coupons + principal), discounted at the prevailing yield. When the discount rate increases, the present value of those fixed future cash flows decreases. Intuitively: if new bonds are being issued with higher coupons, existing bonds with lower coupons become less attractive, so their price must fall to offer a competitive yield. The magnitude of the price decline depends on the bond's duration-longer-duration bonds are more sensitive because their cash flows are further in the future and thus more affected by the higher discount rate.</div>
+<div class="question">How does a market maker make money?</div>
+<div class="answer">By quoting both a bid and an ask and earning the spread on two-way client flow, while staying roughly market-neutral. The maker buys at the bid, sells at the ask, and pockets the difference over many trades, without needing the price to move. The risks are inventory risk (holding a position before it can be offset) and adverse selection (trading with better-informed counterparties), which is why spreads widen in uncertain or fast markets. It's a volume-and-spread business, not a directional bet.</div>
 </div>
 
 <div class="interview-q">
 <div class="q-label">Q4</div>
-<div class="question">A stock is trading at $100. A call option with a $105 strike and 3 months to expiry is trading at $4. A put with the same strike and expiry is trading at $2. Is there an arbitrage? Assume the risk-free rate is negligible.</div>
-<div class="answer">Apply put-call parity: C − P = S − PV(K). With negligible rates, PV(K) ≈ K = $105. So: C − P should equal S − K = $100 − $105 = −$5. Actual: C − P = $4 − $2 = $2. Since $2 ≠ −$5, there's an apparent mispricing. The call is too expensive relative to the put (or the put is too cheap). To arbitrage: sell the call, buy the put, buy the stock. At expiration, the combined payoff is equivalent to holding $105 in cash. The cost of the position is: +$2 (net options premium received) − $100 (buying stock) = −$98. You receive $105 at expiration. Profit: $105 − $98 = $7 risk-free. (In practice, transaction costs and the non-negligible interest rate would reduce this.)</div>
+<div class="question">What's the difference between a forward/future and an option?</div>
+<div class="answer">A forward or future is an obligation, both parties must transact at the agreed price on the future date. An option is a right without an obligation, the holder can choose not to exercise. So an option buyer has limited downside (the premium) and asymmetric upside, while a futures position has symmetric, two-way exposure. A future is also exchange-traded, standardized, and marked-to-market daily, whereas a forward is a customizable OTC contract.</div>
 </div>
 
 <div class="interview-q">
 <div class="q-label">Q5</div>
-<div class="question">What's the difference between sales and trading? Which interests you more and why?</div>
-<div class="answer">Sales is relationship-focused: understanding client needs, generating trade ideas, and driving flow to the desk. It requires strong communication skills, market knowledge, and the ability to build trust. Trading is risk-focused: making markets, managing inventory, and expressing views through positions. It requires quick quantitative thinking, emotional discipline, and comfort with real-time decision-making under uncertainty. Then give your preference with honest reasoning-neither is "better," they're different skill sets. If you're drawn to human interaction and creative problem-solving for clients, lean sales. If you're drawn to markets, risk, and the intensity of real-time P&L, lean trading. Be specific about why.</div>
+<div class="question">What does duration measure?</div>
+<div class="answer">Duration measures a bond's price sensitivity to interest rate changes, approximately the percentage price change for a 1 percent change in yield. A duration of 7 means the price falls about 7 percent if rates rise 1 percent. It rises with maturity and falls with higher coupons, and it's how rates traders measure and hedge interest rate risk. Convexity is the refinement that corrects for the curvature in the price-yield relationship, and it works in the bondholder's favor.</div>
 </div>
 
 <div class="interview-q">
 <div class="q-label">Q6</div>
-<div class="question">How does a CDS work? If a company's CDS spread widens from 200 to 400 bps, what does that tell you?</div>
-<div class="answer">A CDS is essentially insurance against a company defaulting on its debt. The buyer pays a periodic premium (the CDS spread, quoted in basis points annually on the notional) to the seller. If the reference entity defaults, the seller compensates the buyer for the loss (par minus recovery value). If the CDS spread widens from 200 to 400 bps, it means the market's perception of default risk has roughly doubled. The annual cost of insuring $10M of the company's debt has gone from $200K to $400K. This could be driven by deteriorating fundamentals (lower earnings, higher leverage), sector-wide stress (energy companies during an oil price crash), or broader market risk aversion. The protection buyer (who bought at 200 bps) is now sitting on a significant profit because they locked in cheap protection that's now worth much more.</div>
-</div>
-
-<div class="interview-q">
+<div class="question">What is a credit default swap?</div>
+<div class="answer">It's insurance against a borrower defaulting. The protection buyer pays a regular premium; if the underlying borrower defaults, the seller pays out to cover the loss. It lets you hedge the credit risk of a bond you own, or take a view on a borrower's creditworthiness without owning its bonds. The premium is a direct market read on default risk, it rises as the borrower looks shakier.</div>
+</div>`,
+  },
+  {
+    title: 'Math, Probability, and Brainteaser Questions',
+    content: `<div class="interview-q">
 <div class="q-label">Q7</div>
-<div class="question">If the Fed raises rates by 25 bps tomorrow, what happens to: (a) the 2-year Treasury yield, (b) the 10-year Treasury yield, (c) the S&P 500, (d) the US dollar?</div>
-<div class="answer">(a) The 2-year yield rises-it's the most sensitive to Fed policy. The move might be less than 25 bps if the hike was fully priced in; it could overshoot if the accompanying statement is more hawkish than expected. (b) The 10-year yield likely rises but by less than the 2-year, causing the curve to flatten (or invert further). Long rates are driven more by growth and inflation expectations than by today's Fed decision. (c) The S&P likely falls modestly on a rate hike (higher rates increase discount rates, reduce present value of future earnings, and increase corporate borrowing costs). But if the hike was fully expected, the market reaction depends more on the forward guidance than the hike itself. (d) The US dollar likely strengthens-higher rates attract foreign capital seeking the higher yield, increasing demand for dollars. However, if the hike was expected, the move may already be priced in ("buy the rumor, sell the fact").</div>
+<div class="question">Quick: what's 17 x 24?</div>
+<div class="answer">408. Method out loud: 17 x 24 = 17 x 25 minus 17 = 425 minus 17 = 408. Or (17 x 20) + (17 x 4) = 340 + 68 = 408. Always narrate the method, not just the number.</div>
 </div>
 
 <div class="interview-q">
 <div class="q-label">Q8</div>
-<div class="question">You're a market maker in a corporate bond. A client wants to sell you $20M face value. The bond was last traded at 95. How do you decide what price to bid?</div>
-<div class="answer">Consider several factors: (1) Where is the bond's fair value right now? Has the broader credit market moved since the last trade? Have comparable bonds tightened or widened? Has any new information emerged about the issuer? (2) How liquid is this bond? If it trades frequently with tight spreads, I can bid aggressively (closer to 95) because I'm confident I can turn around and sell it quickly. If it's illiquid and I might be stuck with it for days or weeks, I need a wider spread to compensate for the risk. (3) Why is the client selling? If it's a forced seller (e.g., fund liquidation), there may be more selling pressure coming, so I want to bid lower to protect myself. If it's a routine portfolio adjustment, less concern. (4) How much risk does my book currently have? If I'm already long $50M of similar credits, adding another $20M concentrates my risk, so I bid lower. I might bid 94.5, keeping a 0.5 point cushion, and try to sell at 95 or better within the next day or two. If the bond is very illiquid, I might bid 93.5-94.0.</div>
+<div class="question">I flip a fair coin: heads you win 2, tails you lose 1. Do you play, and what would you pay?</div>
+<div class="answer">EV = (2 x 0.5) + (-1 x 0.5) = 1 minus 0.5 = +0.5. Positive EV, so yes, I'd play, and repeatedly. I'd pay up to 0.50 to play, that's the breakeven; below it I have positive expected profit.</div>
+</div>
+
+<div class="interview-q">
+<div class="q-label">Q9</div>
+<div class="question">Roll two dice. What's the probability of at least one six?</div>
+<div class="answer">Use the complement. Chance of no six on one die is 5/6; on both is 5/6 x 5/6 = 25/36. So at least one six is 1 minus 25/36 = 11/36, about 31 percent. For any "at least one" question, flipping to 1 minus the chance of none is the clean approach.</div>
+</div>
+
+<div class="interview-q">
+<div class="q-label">Q10</div>
+<div class="question">How many gas stations are in the US?</div>
+<div class="answer">Build it from blocks, stating assumptions. Population about 330 million; roughly 1 car per 2 people, so ~165 million cars. Suppose one station serves on the order of 1,000-1,500 cars. That gives very roughly 110,000-165,000 stations. I'd state my assumptions clearly and aim for the right order of magnitude; the actual figure is around 150,000, but the structure and reasonable assumptions are what matter.</div>
+</div>
+
+<div class="interview-q">
+<div class="q-label">Q11</div>
+<div class="question">Eight balls, one heavier. Find it in two weighings on a balance scale.</div>
+<div class="answer">Split into 3, 3, 2. Weigh the two 3s against each other. If they balance, the heavy one is in the leftover 2, weigh those two to find it. If one 3 is heavier, take those 3 and weigh 1 versus 1; if they balance it's the third ball, otherwise it's the heavier pan. Two weighings. The insight is that each weighing has three outcomes, so it sorts into thirds.</div>
+</div>
+
+<div class="interview-q">
+<div class="q-label">Q12</div>
+<div class="question">A die is rolled and you're paid the number shown. What would you pay to play?</div>
+<div class="answer">EV is the average of 1 through 6, which is 3.5. So I'd pay up to 3.50. If you let me re-roll once if I don't like the first roll, the EV rises (I'd re-roll anything below 3.5), so the fair price goes up, I can recompute that if you'd like.</div>
 </div>`,
   },
   {
-    title: 'Common S&amp;T Interview Mistakes',
-    content: `<div class="mistake-box">
-<strong>Not knowing what's happening in markets.</strong> If you walk into an S&T interview and can't tell the interviewer where the S&P closed yesterday, where the 10-year is, or what the big macro story of the week is, the interview is effectively over. Check markets every morning for at least 2 weeks before your interview. Read the FT, Bloomberg, or WSJ markets section daily.
-</div>
+    title: 'Common Mistakes',
+    content: `<div class="warning-box"><strong>Going silent on a brainteaser or math question.</strong> The interviewer is grading your reasoning, which they cannot see if you think in silence. Always work out loud, even when unsure. Narrated reasoning is the deliverable.</div>
 
-<div class="mistake-box">
-<strong>Hedging every answer.</strong> S&T interviewers want you to take a position. "It depends" is not a good answer to "Where do you think the dollar is going?" Have a view, state it clearly, and defend it. If the interviewer pushes back, engage-don't cave. They're testing your conviction and ability to think under pressure, not whether you're right.
-</div>
+<div class="warning-box"><strong>Cracking under pressure or abandoning a correct answer when challenged.</strong> Interviewers push back deliberately, sometimes on right answers, to test composure. Calmly re-examine and defend sound reasoning; do not panic-reverse just because you were questioned.</div>
 
-<div class="mistake-box">
-<strong>Not understanding products.</strong> You don't need to be an expert in every product, but you should understand the basics of bonds (price/yield relationship, duration), options (calls, puts, the Greeks, put-call parity), and the major macro relationships (rates up → bonds down → dollar up). If you're interviewing for a specific desk, know that product cold.
-</div>
+<div class="warning-box"><strong>Not actually following markets.</strong> "What's moving markets?" or "a stock you like" instantly exposes candidates who don't engage with markets. This cannot be crammed; start following daily well in advance and develop real, defensible views.</div>
 
-<div class="mistake-box">
-<strong>Freezing on mental math.</strong> Practice is the only cure. Spend 15 minutes daily doing rapid multiplication, division, percentage calculations, and probability problems. Use apps like "Mental Math Tricks" or create flashcards. In the interview, talk through your process out loud even if you're slow-silence is worse than a slightly wrong answer arrived at transparently.
-</div>
+<div class="warning-box"><strong>Pitching a trade idea with no risk or catalyst.</strong> "I like this stock, it'll go up" signals you don't think like a trader. Always include the thesis, the catalyst, how you'd express it, and especially the risk and what would prove you wrong.</div>
 
-<div class="mistake-box">
-<strong>Not having a trade idea.</strong> You will almost certainly be asked "Pitch me a trade" or "What would you buy or sell today?" Prepare 2-3 trade ideas across different asset classes. Each should have a clear thesis, a specific instrument, a defined risk, and a sense of the reward-to-risk ratio. Vague ideas ("I'd buy stocks because I think the economy is strong") are worthless. Specific ideas ("I'd buy 3-month call options on the XLE ETF at the $90 strike because I think Middle East tensions will push crude above $85 and energy stocks are lagging the move in the underlying commodity") show real market engagement.
-</div>
+<div class="warning-box"><strong>Confusing market-making with proprietary betting.</strong> Modern bank desks overwhelmingly make markets and serve client flow; they are not prop desks betting the firm's capital (regulation curtailed that). Describe trading as making prices and managing risk and flow, not "betting on the market."</div>
 
-<div class="takeaway-box">
-<strong>The S&amp;T Mindset:</strong> Sales &amp; Trading rewards a specific kind of intelligence: the ability to synthesize incomplete information quickly, make a decision with conviction, and adjust when you're wrong-all under real-time pressure. The best traders aren't the ones who are right most often; they're the ones who lose small when they're wrong and make big when they're right. The best salespeople aren't the ones with the most clients; they're the ones whose clients trust them enough to trade the most. Both sides require intellectual curiosity about markets, comfort with quantitative reasoning, and the emotional discipline to remain calm when money is on the line. Start building these habits now: read markets daily, form views and test them, practice your mental math, and always be ready to answer the question that defines this business: <em>"So, what would you do?"</em>
-</div>
+<div class="warning-box"><strong>Quoting only the answer to math, not the method.</strong> Even when you get it right, narrate how you broke it down. Speed without visible method looks like luck; method shows a transferable skill.</div>
 
-</div>`,
+<div class="warning-box"><strong>Giving a generic "why S&T."</strong> "I like fast-paced environments" is what everyone says. Be specific: real-time decisions, genuine markets fascination with evidence, comfort with risk, and a justified sales-or-trading choice rooted in your temperament.</div>
+
+<div class="warning-box"><strong>Bluffing about something you don't know.</strong> On the floor, intellectual honesty is everything. If you don't know a market or a concept, say so and reason from principles; pretending is far more damaging than admitting a gap.</div>`,
+  },
+  {
+    title: 'Glossary',
+    content: `<p><strong>Adverse selection:</strong> The risk that the counterparty trading with a market maker is better informed, accumulating bad inventory just before prices move.</p>
+<p><strong>Ask (offer):</strong> The lowest price a seller will accept; the price you pay to buy immediately.</p>
+<p><strong>Backwardation:</strong> A futures curve sloping down (later delivery cheaper), often signaling tight current supply.</p>
+<p><strong>Bid:</strong> The highest price a buyer will pay; the price you receive selling immediately.</p>
+<p><strong>Bid-ask spread:</strong> The gap between bid and ask; the price of liquidity and the market maker's edge.</p>
+<p><strong>Carry trade:</strong> Borrowing a low-yield currency to invest in a high-yield one, earning the rate difference; prone to sharp reversals.</p>
+<p><strong>CDS (credit default swap):</strong> Insurance against a borrower defaulting; premium reflects default risk.</p>
+<p><strong>Contango:</strong> A futures curve sloping up (later delivery pricier), reflecting storage and financing costs.</p>
+<p><strong>Convexity:</strong> The curvature in the bond price-yield relationship; refines duration and favors the holder.</p>
+<p><strong>Delta:</strong> An option's price sensitivity to the underlying; also the hedge ratio and rough probability of finishing in-the-money.</p>
+<p><strong>Duration:</strong> A bond's price sensitivity to rates; roughly the percent price change per 1 percent yield change.</p>
+<p><strong>Expected value (EV):</strong> The probability-weighted average outcome; the core decision lens for traders.</p>
+<p><strong>Gamma:</strong> How fast delta changes as the underlying moves; high gamma forces constant re-hedging.</p>
+<p><strong>Implied volatility:</strong> The market's expected volatility backed out of an option's price; how options are really quoted.</p>
+<p><strong>Liquidity:</strong> How easily you can trade size without moving the price; what S&T desks provide.</p>
+<p><strong>Market maker:</strong> A desk that quotes both sides and earns the spread on flow while staying roughly neutral.</p>
+<p><strong>Market order / limit order:</strong> Execute now at the best price (taker) / execute only at a set price or better (often a provider).</p>
+<p><strong>OTC (over-the-counter):</strong> Trading directly between two parties, dealer to client, customizable; vs exchange-traded.</p>
+<p><strong>Pairs trade:</strong> Long one security, short a related one, betting on their relative move; largely market-neutral.</p>
+<p><strong>Premium:</strong> The price paid for an option; splits into intrinsic value and time value.</p>
+<p><strong>Put-call parity:</strong> The no-arbitrage link between calls, puts, the underlying, and the strike.</p>
+<p><strong>Repo:</strong> Short-term borrowing collateralized by securities; the financing market under the bond world.</p>
+<p><strong>Roll yield:</strong> The gain or drag from rolling futures forward, set by the curve shape (contango vs backwardation).</p>
+<p><strong>Short selling:</strong> Borrowing and selling a security to profit from a price fall; downside is theoretically unlimited.</p>
+<p><strong>Swap:</strong> An exchange of cash flows (e.g. fixed for floating interest) on a notional; the largest derivatives market.</p>
+<p><strong>Theta:</strong> An option's time decay; sellers earn it, buyers pay it.</p>
+<p><strong>VaR (value at risk):</strong> The estimated maximum loss over a period at a confidence level; a risk summary that ignores the tail.</p>
+<p><strong>Vega:</strong> An option's sensitivity to volatility; why options trading is largely volatility trading.</p>
+<p><strong>Yield curve:</strong> Yield plotted against maturity; its shape (normal, flat, inverted) encodes market expectations.</p>`,
   },
 ];
