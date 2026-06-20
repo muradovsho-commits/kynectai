@@ -137,9 +137,9 @@ export default function RXInterviewPrepPage() {
 
               <div className="ib-how-to-use">
                 <h4>How to Use This Guide</h4>
-                <p><strong>Foundations:</strong> Start with Modules 1-4 to understand distress, capital structures, out-of-court solutions, and Chapter 11 mechanics.</p>
-                <p><strong>Technical depth:</strong> Modules 5-9 cover waterfall analysis, bond math, cap table reading, structural subordination, and LMEs - the core technical toolkit.</p>
-                <p><strong>Interview ready:</strong> Module 10 covers the exact questions and case study formats you'll encounter in restructuring interviews.</p>
+                <p><strong>Foundations:</strong> Start with Modules 1-4 to understand the industry, causes of distress and the capital structure, out-of-court solutions, and Chapter 11 mechanics.</p>
+                <p><strong>Technical depth:</strong> Modules 5-11 cover waterfall and recovery analysis, bond math, cap tables and liquidity, distressed valuation, returns and distressed investing, structural subordination, and LMEs - the core technical toolkit.</p>
+                <p><strong>Interview ready:</strong> Module 12 covers the exact questions and the worked case study format you'll encounter in restructuring interviews.</p>
               </div>
 
               <div className="ib-module-cards">

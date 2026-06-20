@@ -103,9 +103,9 @@ export default function REInterviewPrepPage() {
               </ol></div>
               <div className="ib-how-to-use">
                 <h4>How to Use This Guide</h4>
-                <p><strong>Foundations:</strong> Modules 1-4 cover the RE landscape, property types, valuation, and lease analysis - the core knowledge base.</p>
-                <p><strong>Advanced:</strong> Modules 5-9 cover modeling, REPE, REITs, debt markets, and development - the specialized technical skills.</p>
-                <p><strong>Interview ready:</strong> Module 10 covers the exact technical questions and common mistakes in RE interviews.</p>
+                <p><strong>Foundations:</strong> Modules 1-6 cover the RE landscape, property types, NOI and cash flow, valuation and cap rates, leases, and debt - the core knowledge base every track is built on.</p>
+                <p><strong>Advanced:</strong> Modules 7-12 cover modeling, the equity waterfall, REPE, development, REITs, and REIB - the specialized technical and track-specific skills.</p>
+                <p><strong>Interview ready:</strong> Module 13 covers the format across tracks, a full worked acquisition case, the question bank, and common mistakes.</p>
               </div>
               <div className="ib-module-cards">
                 {MODULES.map(m => (<button key={m.id} className="ib-module-card" onClick={() => setActiveModule(m.id)}>
