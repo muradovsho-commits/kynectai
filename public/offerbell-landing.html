@@ -576,7 +576,6 @@ nav#nav.scrolled .n-burger{color:var(--text)}
 <!-- NAV -->
 <nav id="nav">
   <div class="n-left">
-    <a href="#ob">OB</a>
     <a href="#tracks">Tracks</a>
     <a href="#features-detail">Features</a>
     <a href="#proof">Testimonials</a>
@@ -591,7 +590,6 @@ nav#nav.scrolled .n-burger{color:var(--text)}
   <button class="n-burger" aria-label="Open menu"><span></span><span></span><span></span></button>
 </nav>
 <div class="n-menu" id="nMenu">
-  <a href="#ob">OB</a>
   <a href="#tracks">Tracks</a>
   <a href="#features-detail">Features</a>
   <a href="#proof">Testimonials</a>
@@ -726,83 +724,57 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
 <!-- ═══ OB FLAGSHIP SPOTLIGHT ═══ -->
 <section class="obx reveal" id="ob">
   <style>
-    .obx{position:relative;overflow:hidden;padding:120px 28px;color:#e8eeff;
-      background:radial-gradient(120% 100% at 50% 28%, #0a1124 0%, #070c1a 52%, #03050b 100%);}
-    .obx::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0.9;
-      background-image:linear-gradient(rgba(90,130,220,0.045) 1px, transparent 1px),
-                       linear-gradient(90deg, rgba(90,130,220,0.045) 1px, transparent 1px);
-      background-size:28px 28px;
-      -webkit-mask-image:radial-gradient(120% 90% at 50% 30%, #000 30%, transparent 78%);
-      mask-image:radial-gradient(120% 90% at 50% 30%, #000 30%, transparent 78%);}
-    .obx-inner{position:relative;z-index:1;max-width:1120px;margin:0 auto;
-      display:grid;grid-template-columns:1.05fr 0.95fr;gap:56px;align-items:center;}
-    .obx-eyebrow{display:inline-block;font-size:11px;font-weight:700;letter-spacing:2.6px;
-      text-transform:uppercase;color:#7f9fe0;margin-bottom:24px;}
-    .obx-word{font-family:'Instrument Serif',serif;font-size:64px;line-height:0.9;
-      color:#eaf0ff;letter-spacing:0.5px;}
-    .obx-word-sub{font-size:9px;font-weight:600;letter-spacing:0.22em;
-      color:rgba(150,170,215,0.6);margin-top:8px;margin-bottom:22px;}
-    .obx h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(32px,3.6vw,46px);
-      line-height:1.08;letter-spacing:-0.5px;margin:0 0 18px;color:#f3f6ff;}
-    .obx h2 em{font-style:italic;color:#86a7ec;}
-    .obx-lead{font-size:15.5px;line-height:1.7;color:rgba(206,216,240,0.82);max-width:520px;margin:0 0 26px;}
-    .obx-lead em{font-style:italic;color:#cfe0ff;}
-    .obx-caps{list-style:none;padding:0;margin:2px 0 36px;display:grid;gap:14px;}
-    .obx-caps li{position:relative;padding-left:24px;font-size:15px;font-weight:500;color:#d2ddf6;line-height:1.35;}
-    .obx-caps li::before{content:"";position:absolute;left:2px;top:0.46em;width:6px;height:6px;border-radius:50%;
-      background:#9cc0ff;box-shadow:0 0 9px 1px rgba(120,160,255,0.85);animation:obxnode 3.2s ease-in-out infinite;}
-    .obx-caps li:nth-child(2)::before{animation-delay:0.5s;}
-    .obx-caps li:nth-child(3)::before{animation-delay:1s;}
-    .obx-caps li:nth-child(4)::before{animation-delay:1.5s;}
-    @keyframes obxnode{0%,100%{opacity:0.55;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
-    .obx-cta{display:inline-flex;align-items:center;gap:9px;font-family:'DM Sans',sans-serif;
-      font-size:14px;font-weight:700;text-decoration:none;color:#06101f;background:#dfe9ff;
-      padding:13px 26px;border-radius:11px;transition:transform 0.18s, box-shadow 0.18s;
-      box-shadow:0 10px 30px -12px rgba(120,160,255,0.7);}
-    .obx-cta:hover{transform:translateY(-2px);box-shadow:0 16px 40px -14px rgba(120,160,255,0.85);}
+    .obx{position:relative;padding:104px 28px 112px;background:var(--cream);text-align:center;
+      border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+    .obx-inner{position:relative;z-index:1;max-width:720px;margin:0 auto;}
+    .obx-orb{position:relative;width:100%;max-width:380px;height:340px;margin:0 auto 8px;}
+    .obx-orb canvas{position:absolute;inset:0;width:100%;height:100%;display:block;animation:obxfloat 7s ease-in-out infinite;}
+    .obx-orb::before{content:"";position:absolute;inset:0;pointer-events:none;
+      background:radial-gradient(circle at 50% 50%, rgba(15,15,15,0.05) 0%, transparent 62%);}
+    @keyframes obxfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .obx-eyebrow{font-size:11px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--text-3);margin-bottom:18px;}
+    .obx h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(34px,4.6vw,54px);
+      line-height:1.04;letter-spacing:-1px;margin:0 0 18px;color:var(--text);}
+    .obx h2 em{font-style:italic;color:var(--brown);}
+    .obx-lead{font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;margin:0 auto 42px;}
+    .obx-lead em{font-style:italic;}
+    .obx-caps{display:grid;grid-template-columns:1fr 1fr;gap:22px 38px;text-align:left;max-width:650px;margin:0 auto 44px;}
+    .obx-cap{display:flex;gap:13px;align-items:flex-start;}
+    .obx-cap-orb{flex-shrink:0;width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+      background:var(--white);border:1px solid var(--border);color:var(--black);margin-top:1px;}
+    .obx-cap-orb svg{width:16px;height:16px;}
+    .obx-cap-txt{display:flex;flex-direction:column;gap:3px;}
+    .obx-cap-txt b{font-size:14px;font-weight:700;color:var(--text);}
+    .obx-cap-txt span{font-size:13px;line-height:1.55;color:var(--text-2);}
+    .obx-cta{display:inline-flex;align-items:center;gap:9px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
+      text-decoration:none;color:var(--white);background:var(--black);border:1.5px solid var(--black);
+      padding:13px 28px;border-radius:10px;transition:opacity 0.15s,transform 0.18s;}
+    .obx-cta:hover{opacity:0.88;transform:translateY(-2px);}
     .obx-cta .ar{transition:transform 0.18s;}
     .obx-cta:hover .ar{transform:translateX(4px);}
-    .obx-note{font-size:12px;color:rgba(150,170,215,0.6);margin-top:16px;}
-    .obx-viz{position:relative;}
-    .obx-orb{position:relative;width:100%;height:420px;}
-    .obx-orb canvas{position:absolute;inset:0;width:100%;height:100%;display:block;
-      animation:obxfloat 7s ease-in-out infinite;}
-    .obx-orb::before{content:"";position:absolute;inset:0;pointer-events:none;
-      background:radial-gradient(circle at 50% 50%, rgba(60,120,250,0.34) 0%, rgba(45,108,235,0.1) 38%, transparent 64%);
-      animation:obxpulse 5.5s ease-in-out infinite;}
-    @keyframes obxfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-    @keyframes obxpulse{0%,100%{opacity:0.75;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
-    @media(max-width:860px){
-      .obx{padding:88px 22px;}
-      .obx-inner{grid-template-columns:1fr;gap:18px;text-align:center;}
-      .obx-lead{margin-left:auto;margin-right:auto;}
-      .obx-caps{width:max-content;max-width:100%;margin-left:auto;margin-right:auto;text-align:left;}
-      .obx-word{font-size:54px;}
-      .obx-orb{height:320px;order:-1;}
+    .obx-note{font-size:12px;color:var(--text-3);margin-top:16px;}
+    @media(max-width:760px){
+      .obx{padding:72px 22px 82px;}
+      .obx-caps{grid-template-columns:1fr;gap:18px;max-width:400px;}
+      .obx-orb{height:290px;max-width:300px;}
     }
-    @media(prefers-reduced-motion:reduce){
-      .obx-orb canvas,.obx-orb::before,.obx-caps li::before{animation:none;}
-    }
+    @media(prefers-reduced-motion:reduce){.obx-orb canvas{animation:none;}}
   </style>
   <div class="obx-inner">
-    <div class="obx-copy">
-      <div class="obx-eyebrow">Flagship &middot; Included with Elite</div>
-      <div class="obx-word">OB</div>
-      <div class="obx-word-sub">AN OFFERBELL PRODUCT</div>
-      <h2>The recruiting coach you <em>talk to</em>.</h2>
-      <p class="obx-lead">The AI assistant from <em>Iron Man</em>, rebuilt for breaking into finance. Run a mock interview, tear down a company, prep a coffee chat, or pull a market brief, just by talking to it.</p>
-      <ul class="obx-caps">
-        <li>Voice mock interviews</li>
-        <li>Live company teardowns</li>
-        <li>Coffee chat prep</li>
-        <li>Instant market briefs</li>
-      </ul>
-      <a href="/ob" class="obx-cta">Meet OB <span class="ar">&rarr;</span></a>
-      <div class="obx-note">The only voice coach in finance recruiting.</div>
+    <div class="obx-orb"><canvas id="obxSphere"></canvas></div>
+    <div class="obx-eyebrow">Flagship &middot; Included with Elite</div>
+    <h2>The recruiting coach you <em>talk to</em>.</h2>
+    <p class="obx-lead">OB is the AI assistant from <em>Iron Man</em>, rebuilt for breaking into finance. Say what you need out loud and it runs, mock interviews, company teardowns, coffee chat prep, market briefs. Nothing else in recruiting works like this.</p>
+    <div class="obx-caps">
+      <div class="obx-cap"><span class="obx-cap-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/><path d="M7.5 12a4.5 4.5 0 0 1 9 0"/><path d="M4 12a8 8 0 0 1 16 0"/></svg></span><div class="obx-cap-txt"><b>Live mock interviews</b><span>Pick a desk and a firm, then get grilled out loud with real follow-ups and a grade.</span></div></div>
+      <div class="obx-cap"><span class="obx-cap-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/><path d="M7.5 12a4.5 4.5 0 0 1 9 0"/><path d="M4 12a8 8 0 0 1 16 0"/></svg></span><div class="obx-cap-txt"><b>Company teardowns</b><span>Name a company and OB walks you through the business, the numbers, and the story.</span></div></div>
+      <div class="obx-cap"><span class="obx-cap-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/><path d="M7.5 12a4.5 4.5 0 0 1 9 0"/><path d="M4 12a8 8 0 0 1 16 0"/></svg></span><div class="obx-cap-txt"><b>Coffee chat prep</b><span>Hand it a LinkedIn profile and walk in knowing who they are and what to ask.</span></div></div>
+      <div class="obx-cap"><span class="obx-cap-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/><path d="M7.5 12a4.5 4.5 0 0 1 9 0"/><path d="M4 12a8 8 0 0 1 16 0"/></svg></span><div class="obx-cap-txt"><b>Outreach writer</b><span>It drafts the cold email or DM in your own voice, ready to send.</span></div></div>
+      <div class="obx-cap"><span class="obx-cap-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/><path d="M7.5 12a4.5 4.5 0 0 1 9 0"/><path d="M4 12a8 8 0 0 1 16 0"/></svg></span><div class="obx-cap-txt"><b>Morning market brief</b><span>A spoken read on the market and your watchlist before the open.</span></div></div>
+      <div class="obx-cap"><span class="obx-cap-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/><path d="M7.5 12a4.5 4.5 0 0 1 9 0"/><path d="M4 12a8 8 0 0 1 16 0"/></svg></span><div class="obx-cap-txt"><b>Remembers your search</b><span>Tell it your targets once and it carries the context into every session.</span></div></div>
     </div>
-    <div class="obx-viz">
-      <div class="obx-orb"><canvas id="obxSphere"></canvas></div>
-    </div>
+    <a href="/ob" class="obx-cta">Meet OB <span class="ar">&rarr;</span></a>
+    <div class="obx-note">The only voice coach in finance recruiting.</div>
   </div>
 </section>
 <script>
@@ -815,10 +787,10 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
   var edges=[];
   for(i=0;i<N;i++){for(j=i+1;j<N;j++){var dx=pts[i][0]-pts[j][0],dy=pts[i][1]-pts[j][1],dz=pts[i][2]-pts[j][2];if(Math.sqrt(dx*dx+dy*dy+dz*dz)<0.52)edges.push([i,j]);}}
   var t=0, tilt=0.42, cosX=Math.cos(tilt), sinX=Math.sin(tilt), raf=0;
-  var rF=0.34, cyF=0.5;
+  var rF=0.36, cyF=0.5;
   function resize(){var dpr=Math.min(window.devicePixelRatio||1,2);var w=canvas.clientWidth,h=canvas.clientHeight;canvas.width=Math.max(1,Math.floor(w*dpr));canvas.height=Math.max(1,Math.floor(h*dpr));ctx.setTransform(dpr,0,0,dpr,0,0);}
   resize(); window.addEventListener('resize',resize);
-  var lineRGB='125,155,215', lineMul=0.5, nodeRGB='214,226,255', nodeShadow='rgba(120,160,255,0.85)';
+  var lineRGB='60,60,60', lineMul=0.42, nodeRGB='15,15,15', nodeShadow='rgba(15,15,15,0.18)';
   function draw(){
     t+=reduce?0:0.0030;
     var w=canvas.clientWidth,h=canvas.clientHeight;
@@ -830,12 +802,13 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
     var e;
     for(e=0;e<edges.length;e++){var A=proj[edges[e][0]],B=proj[edges[e][1]];var al=Math.max(0,((A.depth+B.depth)/2))*lineMul;ctx.strokeStyle='rgba('+lineRGB+','+al.toFixed(3)+')';ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();}
     var k;
-    for(k=0;k<proj.length;k++){var p=proj[k];var tw=0.62+0.38*Math.sin(t*2.1+k*1.27);var sz=0.8+p.depth*1.9;var al2=Math.min(1,(0.22+p.depth*0.7)*tw);ctx.beginPath();ctx.arc(p.x,p.y,sz,0,Math.PI*2);ctx.fillStyle='rgba('+nodeRGB+','+al2.toFixed(3)+')';ctx.shadowColor=nodeShadow;ctx.shadowBlur=p.depth*7;ctx.fill();ctx.shadowBlur=0;}
+    for(k=0;k<proj.length;k++){var p=proj[k];var tw=0.62+0.38*Math.sin(t*2.1+k*1.27);var sz=0.8+p.depth*1.9;var al2=Math.min(1,(0.3+p.depth*0.62)*tw);ctx.beginPath();ctx.arc(p.x,p.y,sz,0,Math.PI*2);ctx.fillStyle='rgba('+nodeRGB+','+al2.toFixed(3)+')';ctx.shadowColor=nodeShadow;ctx.shadowBlur=p.depth*4;ctx.fill();ctx.shadowBlur=0;}
     raf=requestAnimationFrame(draw);
   }
   draw();
 })();
 </script>
+
 
 <!-- ═══ TRACKS ═══ -->
 <section class="tracks" id="tracks">
