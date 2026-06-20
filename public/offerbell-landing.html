@@ -738,14 +738,6 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
     .obx h2 em{font-style:italic;color:var(--brown);}
     .obx-lead{font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;margin:0 auto 32px;}
     .obx-lead em{font-style:italic;}
-    .obx-caps{display:grid;grid-template-columns:1fr 1fr;gap:18px 38px;text-align:left;max-width:650px;margin:0 auto 34px;}
-    .obx-cap{display:flex;gap:13px;align-items:flex-start;}
-    .obx-cap-orb{flex-shrink:0;width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;
-      background:var(--white);border:1px solid var(--border);color:var(--black);margin-top:1px;}
-    .obx-cap-orb svg{width:16px;height:16px;}
-    .obx-cap-txt{display:flex;flex-direction:column;gap:3px;}
-    .obx-cap-txt b{font-size:14px;font-weight:700;color:var(--text);}
-    .obx-cap-txt span{font-size:13px;line-height:1.55;color:var(--text-2);}
     .obx-cta{display:inline-flex;align-items:center;gap:9px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
       text-decoration:none;color:var(--white);background:var(--black);border:1.5px solid var(--black);
       padding:13px 28px;border-radius:10px;transition:opacity 0.15s,transform 0.18s;}
@@ -755,26 +747,17 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
     .obx-note{font-size:12px;color:var(--text-3);margin-top:16px;}
     @media(max-width:760px){
       .obx{padding:58px 22px 64px;}
-      .obx-caps{grid-template-columns:1fr;gap:18px;max-width:400px;}
       .obx-orb{height:240px;max-width:280px;}
     }
     @media(prefers-reduced-motion:reduce){.obx-orb canvas{animation:none;}}
   </style>
   <div class="obx-inner">
     <div class="obx-orb"><canvas id="obxSphere"></canvas></div>
-    <div class="obx-eyebrow">Flagship</div>
-    <h2>The recruiting coach you <em>talk to</em>.</h2>
-    <p class="obx-lead">OB is the AI assistant from <em>Iron Man</em>, rebuilt for breaking into finance. Say what you need out loud and it runs, mock interviews, company teardowns, coffee chat prep, market briefs. Nothing else in recruiting works like this.</p>
-    <div class="obx-caps">
-      <div class="obx-cap"><span class="obx-cap-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/><path d="M7.5 12a4.5 4.5 0 0 1 9 0"/><path d="M4 12a8 8 0 0 1 16 0"/></svg></span><div class="obx-cap-txt"><b>Live mock interviews</b><span>Pick a desk and a firm, then get grilled out loud with real follow-ups and a grade.</span></div></div>
-      <div class="obx-cap"><span class="obx-cap-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/><path d="M7.5 12a4.5 4.5 0 0 1 9 0"/><path d="M4 12a8 8 0 0 1 16 0"/></svg></span><div class="obx-cap-txt"><b>Company teardowns</b><span>Name a company and OB walks you through the business, the numbers, and the story.</span></div></div>
-      <div class="obx-cap"><span class="obx-cap-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/><path d="M7.5 12a4.5 4.5 0 0 1 9 0"/><path d="M4 12a8 8 0 0 1 16 0"/></svg></span><div class="obx-cap-txt"><b>Coffee chat prep</b><span>Hand it a LinkedIn profile and walk in knowing who they are and what to ask.</span></div></div>
-      <div class="obx-cap"><span class="obx-cap-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/><path d="M7.5 12a4.5 4.5 0 0 1 9 0"/><path d="M4 12a8 8 0 0 1 16 0"/></svg></span><div class="obx-cap-txt"><b>Outreach writer</b><span>It drafts the cold email or DM in your own voice, ready to send.</span></div></div>
-      <div class="obx-cap"><span class="obx-cap-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/><path d="M7.5 12a4.5 4.5 0 0 1 9 0"/><path d="M4 12a8 8 0 0 1 16 0"/></svg></span><div class="obx-cap-txt"><b>Morning market brief</b><span>A spoken read on the market and your watchlist before the open.</span></div></div>
-      <div class="obx-cap"><span class="obx-cap-orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/><path d="M7.5 12a4.5 4.5 0 0 1 9 0"/><path d="M4 12a8 8 0 0 1 16 0"/></svg></span><div class="obx-cap-txt"><b>Remembers your search</b><span>Tell it your targets once and it carries the context into every session.</span></div></div>
-    </div>
-    <a href="/ob" class="obx-cta">Meet OB <span class="ar">&rarr;</span></a>
-    <div class="obx-note">The only voice coach in finance recruiting.</div>
+    <div class="obx-eyebrow">Our flagship</div>
+    <h2>Welcome to <em>OB's</em> home.</h2>
+    <p class="obx-lead">OB is a desktop assistant you actually talk to, the AI from <em>Iron Man</em>, rebuilt for breaking into finance. Run a mock interview, tear down a company, or prep for a coffee chat, just by saying it out loud. And OB keeps getting smarter with every update.</p>
+    <a href="/ob" class="obx-cta">Step inside <span class="ar">&rarr;</span></a>
+    <div class="obx-note">OB is the flagship, not the whole story. Keep scrolling to see everything else OfferBell does.</div>
   </div>
 </section>
 <script>
