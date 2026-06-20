@@ -736,9 +736,8 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
       mask-image:radial-gradient(120% 90% at 50% 30%, #000 30%, transparent 78%);}
     .obx-inner{position:relative;z-index:1;max-width:1120px;margin:0 auto;
       display:grid;grid-template-columns:1.05fr 0.95fr;gap:56px;align-items:center;}
-    .obx-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:2.6px;
-      text-transform:uppercase;color:#8fb0ee;border:1px solid rgba(120,150,220,0.3);
-      border-radius:999px;padding:6px 13px;margin-bottom:26px;background:rgba(40,70,140,0.12);}
+    .obx-eyebrow{display:inline-block;font-size:11px;font-weight:700;letter-spacing:2.6px;
+      text-transform:uppercase;color:#7f9fe0;margin-bottom:24px;}
     .obx-word{font-family:'Instrument Serif',serif;font-size:64px;line-height:0.9;
       color:#eaf0ff;letter-spacing:0.5px;}
     .obx-word-sub{font-size:9px;font-weight:600;letter-spacing:0.22em;
@@ -748,11 +747,14 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
     .obx h2 em{font-style:italic;color:#86a7ec;}
     .obx-lead{font-size:15.5px;line-height:1.7;color:rgba(206,216,240,0.82);max-width:520px;margin:0 0 26px;}
     .obx-lead em{font-style:italic;color:#cfe0ff;}
-    .obx-feats{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:32px;}
-    .obx-feat{font-size:12.5px;font-weight:500;color:#cdd9f5;padding:8px 14px;border-radius:9px;
-      border:1px solid rgba(120,150,220,0.22);background:rgba(30,50,100,0.18);
-      transition:border-color 0.2s, background 0.2s, transform 0.2s;}
-    .obx-feat:hover{border-color:rgba(140,170,240,0.5);background:rgba(45,75,150,0.28);transform:translateY(-2px);}
+    .obx-caps{list-style:none;padding:0;margin:2px 0 36px;display:grid;gap:14px;}
+    .obx-caps li{position:relative;padding-left:24px;font-size:15px;font-weight:500;color:#d2ddf6;line-height:1.35;}
+    .obx-caps li::before{content:"";position:absolute;left:2px;top:0.46em;width:6px;height:6px;border-radius:50%;
+      background:#9cc0ff;box-shadow:0 0 9px 1px rgba(120,160,255,0.85);animation:obxnode 3.2s ease-in-out infinite;}
+    .obx-caps li:nth-child(2)::before{animation-delay:0.5s;}
+    .obx-caps li:nth-child(3)::before{animation-delay:1s;}
+    .obx-caps li:nth-child(4)::before{animation-delay:1.5s;}
+    @keyframes obxnode{0%,100%{opacity:0.55;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
     .obx-cta{display:inline-flex;align-items:center;gap:9px;font-family:'DM Sans',sans-serif;
       font-size:14px;font-weight:700;text-decoration:none;color:#06101f;background:#dfe9ff;
       padding:13px 26px;border-radius:11px;transition:transform 0.18s, box-shadow 0.18s;
@@ -774,27 +776,27 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
       .obx{padding:88px 22px;}
       .obx-inner{grid-template-columns:1fr;gap:18px;text-align:center;}
       .obx-lead{margin-left:auto;margin-right:auto;}
-      .obx-feats{justify-content:center;}
+      .obx-caps{width:max-content;max-width:100%;margin-left:auto;margin-right:auto;text-align:left;}
       .obx-word{font-size:54px;}
       .obx-orb{height:320px;order:-1;}
     }
     @media(prefers-reduced-motion:reduce){
-      .obx-orb canvas,.obx-orb::before{animation:none;}
+      .obx-orb canvas,.obx-orb::before,.obx-caps li::before{animation:none;}
     }
   </style>
   <div class="obx-inner">
     <div class="obx-copy">
-      <div class="obx-badge">Flagship &middot; Included with Elite</div>
+      <div class="obx-eyebrow">Flagship &middot; Included with Elite</div>
       <div class="obx-word">OB</div>
       <div class="obx-word-sub">AN OFFERBELL PRODUCT</div>
       <h2>The recruiting coach you <em>talk to</em>.</h2>
       <p class="obx-lead">The AI assistant from <em>Iron Man</em>, rebuilt for breaking into finance. Run a mock interview, tear down a company, prep a coffee chat, or pull a market brief, just by talking to it.</p>
-      <div class="obx-feats">
-        <span class="obx-feat">Voice mock interviews</span>
-        <span class="obx-feat">Live company teardowns</span>
-        <span class="obx-feat">Coffee chat prep</span>
-        <span class="obx-feat">Instant market briefs</span>
-      </div>
+      <ul class="obx-caps">
+        <li>Voice mock interviews</li>
+        <li>Live company teardowns</li>
+        <li>Coffee chat prep</li>
+        <li>Instant market briefs</li>
+      </ul>
       <a href="/ob" class="obx-cta">Meet OB <span class="ar">&rarr;</span></a>
       <div class="obx-note">The only voice coach in finance recruiting.</div>
     </div>
