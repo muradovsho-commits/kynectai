@@ -21,7 +21,7 @@ const GUIDES = [
     id: 'pe',
     title: 'Private Equity',
     desc: 'The definitive LBO track. Understand fund structures, deal sourcing, and the rigorous case study rounds characteristic of mega-funds and mid-markets.',
-    modules: 8,
+    modules: 13,
     readTime: '25 min',
     href: '/pe-interview-prep',
     iconClass: 'icon-pe',

@@ -200,3 +200,14 @@
   .pe-theme .ib-hero h1 { font-size: 25px; }
   .pe-theme .ib-landing .ib-container { padding-top: 22px; }
 }
+
+/* PE now has 13 modules. The shared guide-base rule (flex: 1 1 0; min-width: 0)
+   forces all tabs into one equal-fraction row, which squishes the labels until
+   they overlap once there are this many. Scoped to .pe-theme only: let tabs take
+   their natural width and wrap onto centered rows so nothing collides.
+   flex: 1 0 auto means grow to fill a row but never shrink below the label width. */
+.pe-theme .ib-module-nav-inner { flex-wrap: wrap; justify-content: center; }
+.pe-theme .ib-nav-tab { flex: 1 0 auto; padding: 12px 16px; }
+@media (max-width: 700px) {
+  .pe-theme .ib-nav-tab { padding: 10px 12px; }
+}

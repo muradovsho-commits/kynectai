@@ -17,6 +17,11 @@ import { PE_OPERATIONS_SECTIONS } from './pe-operations-data';
 import { PE_EXITS_SECTIONS } from './pe-exits-data';
 import { PE_ADVANCED_TOPICS_SECTIONS } from './pe-advanced-topics-data';
 import { PE_INTERVIEW_QUESTIONS_SECTIONS } from './pe-interview-questions-data';
+import { PE_VALUATION_SECTIONS } from './pe-valuation-data';
+import { PE_LBO_SECTIONS } from './pe-lbo-data';
+import { PE_PAPER_LBO_SECTIONS } from './pe-paper-lbo-data';
+import { PE_RETURNS_SECTIONS } from './pe-returns-data';
+import { PE_PITCH_SECTIONS } from './pe-pitch-data';
 
 type Section = { title: string; content: string };
 
@@ -25,14 +30,19 @@ type Section = { title: string; content: string };
 const cleanSectionTitle = (t: string) => t.replace(/^\d+\.\d+(-\d+(\.\d+)?)?\s+/, '');
 
 const MODULES: { id: string; title: string; navTitle: string; sub: string; moduleNum: string; sections: Section[] }[] = [
-  { id: 'industry', title: 'The Private Equity Industry', navTitle: 'PE Industry', sub: 'What PE firms do, how they differ from other investors, the major strategies, and day-to-day realities.', moduleNum: 'Module 1', sections: PE_INDUSTRY_SECTIONS },
-  { id: 'fund', title: 'Fund Structure, Economics & Fundraising', navTitle: 'Fund Structure', sub: 'How PE funds are organized, how money flows between GPs and LPs, and the economics of PE.', moduleNum: 'Module 2', sections: PE_FUND_SECTIONS },
-  { id: 'deal_process', title: 'Deal Sourcing, Screening & Due Diligence', navTitle: 'Deal Process', sub: 'How PE firms find, evaluate, and close investments - from initial lead to final signing.', moduleNum: 'Module 3', sections: PE_DEAL_PROCESS_SECTIONS },
-  { id: 'lbo_modeling', title: 'LBO Modeling - From Paper LBO to Full Model', navTitle: 'LBO Modeling', sub: 'The technical core of PE: how to build, interpret, and present leveraged buyout analyses at every level.', moduleNum: 'Module 4', sections: PE_LBO_MODELING_SECTIONS },
-  { id: 'operations', title: 'Portfolio Company Operations & Value Creation', navTitle: 'Operations', sub: 'How PE firms actually improve the companies they own - the operational playbook that drives returns.', moduleNum: 'Module 5', sections: PE_OPERATIONS_SECTIONS },
-  { id: 'exits', title: 'Exits, Returns & Performance Measurement', navTitle: 'Exits & Returns', sub: 'How PE firms realize their investments, measure performance, and demonstrate value to their LPs.', moduleNum: 'Module 6', sections: PE_EXITS_SECTIONS },
-  { id: 'advanced', title: 'Advanced Topics & Special Situations', navTitle: 'Advanced', sub: 'Continuation funds, NAV lending, co-investment, ESG, sector considerations, and distressed investing.', moduleNum: 'Module 7', sections: PE_ADVANCED_TOPICS_SECTIONS },
-  { id: 'interview_qs', title: 'PE Interview Questions & Case Studies', navTitle: 'Interview Qs', sub: 'The questions you\'ll face, the frameworks to answer them, and the case study formats to expect.', moduleNum: 'Module 8', sections: PE_INTERVIEW_QUESTIONS_SECTIONS },
+  { id: 'industry', title: 'The Private Equity Industry', navTitle: 'PE Industry', sub: 'What PE firms do, how they differ from other investors, the major strategies, and the day-to-day.', moduleNum: 'Module 1', sections: PE_INDUSTRY_SECTIONS },
+  { id: 'fund', title: 'Fund Structure, Economics & Fundraising', navTitle: 'Fund Structure', sub: 'GPs and LPs, the fund lifecycle, fees and carry, the hurdle, and the distribution waterfall.', moduleNum: 'Module 2', sections: PE_FUND_SECTIONS },
+  { id: 'accounting_valuation', title: 'Accounting & Valuation Essentials', navTitle: 'Accounting & Val', sub: 'The three statements and how they link, enterprise vs equity value, multiples, and the three valuation methods.', moduleNum: 'Module 3', sections: PE_VALUATION_SECTIONS },
+  { id: 'lbo_concept', title: 'The LBO Concept & Why It Works', navTitle: 'LBO Concept', sub: 'What an LBO is, why leverage amplifies returns, the three return drivers, and the capital structure.', moduleNum: 'Module 4', sections: PE_LBO_SECTIONS },
+  { id: 'paper_lbo', title: 'The Paper LBO', navTitle: 'Paper LBO', sub: 'The most-tested PE exercise: the step-by-step method, a full worked example, and MOIC-to-IRR shortcuts.', moduleNum: 'Module 5', sections: PE_PAPER_LBO_SECTIONS },
+  { id: 'full_lbo', title: 'The Full LBO Model', navTitle: 'Full LBO Model', sub: 'Sources and uses, the operating model and debt schedule, and calculating the return at exit.', moduleNum: 'Module 6', sections: PE_LBO_MODELING_SECTIONS },
+  { id: 'returns', title: 'Returns & the Value Creation Bridge', navTitle: 'Returns', sub: 'IRR vs MOIC, the value creation bridge, and what good deal-level and fund-level returns look like.', moduleNum: 'Module 7', sections: PE_RETURNS_SECTIONS },
+  { id: 'deal_process', title: 'Deal Sourcing, Screening & Due Diligence', navTitle: 'Deal Process', sub: 'How PE firms find, screen, and diligence investments, from sourcing to the investment committee.', moduleNum: 'Module 8', sections: PE_DEAL_PROCESS_SECTIONS },
+  { id: 'operations', title: 'Portfolio Operations & Value Creation', navTitle: 'Operations', sub: 'The value creation levers, the 100-day plan, active ownership, and buy-and-build.', moduleNum: 'Module 9', sections: PE_OPERATIONS_SECTIONS },
+  { id: 'exits', title: 'Exits & Performance Measurement', navTitle: 'Exits', sub: 'Exit routes (sale, secondary, IPO, recap) and how fund performance is measured (TVPI, DPI, RVPI).', moduleNum: 'Module 10', sections: PE_EXITS_SECTIONS },
+  { id: 'advanced', title: 'Advanced Topics & Special Situations', navTitle: 'Advanced', sub: 'Continuation funds, NAV lending, co-investment, secondaries, sector specialization, and ESG.', moduleNum: 'Module 11', sections: PE_ADVANCED_TOPICS_SECTIONS },
+  { id: 'thesis', title: 'The Investment Thesis & Deal Discussion', navTitle: 'Investment Thesis', sub: 'How to pitch a buyout target, build an investment thesis, and discuss deals and markets like an investor.', moduleNum: 'Module 12', sections: PE_PITCH_SECTIONS },
+  { id: 'interview_qs', title: 'PE Interview Prep: Questions, Cases & Behavioral', navTitle: 'Interview Qs', sub: 'The interview format, fit and technical Q&A, the LBO case study, common mistakes, and a glossary.', moduleNum: 'Module 13', sections: PE_INTERVIEW_QUESTIONS_SECTIONS },
 ];
 
 export default function PEInterviewPrepPage() {
@@ -146,9 +156,10 @@ export default function PEInterviewPrepPage() {
               {/* How to Use */}
               <div className="ib-how-to-use">
                 <h4>How to Use This Guide</h4>
-                <p><strong>Foundations First:</strong> Whether you are in college or lateral recruiting from IB, start with The PE Industry and Fund Structure. You need to understand <em>why</em> PE exists before you touch Excel.</p>
-                <p><strong>Deep Immersion (Modeling):</strong> Spend 3-4 days learning the LBO Modeling module. This forms the crux of paper LBO mental math and timed modeling tests.</p>
-                <p><strong>Interview Prep:</strong> The final module covers the exact questions, case formats, and common mistakes to avoid. Work through it after mastering the technical content.</p>
+                <p><strong>Foundations:</strong> Modules 1-3 cover what PE is, how funds and their economics work, and the accounting and valuation you need. Start here before any modeling.</p>
+                <p><strong>The LBO core:</strong> Modules 4-7 are the technical heart of PE - the LBO concept, the paper LBO (the most-tested exercise), the full model, and how returns and the value creation bridge work. Spend the most time here.</p>
+                <p><strong>The deal lifecycle:</strong> Modules 8-10 follow a deal from sourcing and diligence through operations and value creation to the exit and fund performance.</p>
+                <p><strong>Advanced and interview ready:</strong> Modules 11-13 cover advanced topics, how to build and pitch an investment thesis, and the interview itself - format, questions, the case study, mistakes, and a glossary.</p>
               </div>
 
               {/* Module Cards */}

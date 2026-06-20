@@ -1,80 +1,37 @@
 export const PE_OPERATIONS_SECTIONS = [
   {
-    title: 'The 100-Day Plan',
-    content: `<p>The first 100 days after closing are critical. PE firms typically develop a detailed plan before the deal closes and begin executing immediately. The 100-day plan typically includes: establishing the new governance structure (board composition, reporting cadence, KPI dashboards), assessing and upgrading the management team (filling gaps identified during diligence), implementing quick-win cost reductions (renegotiating supplier contracts, eliminating obvious waste), upgrading financial reporting and controls, and launching the first wave of strategic initiatives.</p>
+    title: 'How PE Creates Value After the Buy',
+    content: `<p>Buying a company is only the start. The real work, and increasingly the real source of returns, is improving the business during the hold. Modern PE is far more operationally hands-on than the leverage-driven caricature of decades past.</p>
 
-<p>The 100-day plan serves a dual purpose: it captures low-hanging fruit that generates early momentum, and it establishes the PE firm's credibility and authority with the management team. The tone set in the first 100 days often determines the trajectory of the entire investment.</p>`,
+<div class="key-concept">Because relying on leverage and multiple expansion alone is no longer enough in a competitive market, today's PE returns increasingly come from <strong>operational value creation</strong>: genuinely making the company bigger, better, and more efficient. This connects directly to the return drivers, operational improvement is how a firm grows EBITDA, the most sustainable driver. The firm acts as an active owner, working with (or replacing) management to execute a value creation plan. The levers fall into a few categories: growing revenue, expanding margins, improving cash flow, and making smart add-on acquisitions. A firm's edge is increasingly its ability to actually execute these improvements, not just to financially engineer a deal.</div>
+
+<div class="framework-box"><div class="fw-label">THE VALUE CREATION LEVERS</div><strong>Revenue growth:</strong> new products, new markets, better pricing, stronger sales and marketing.<br/><strong>Margin / cost improvement:</strong> operational efficiency, procurement, eliminating waste, professionalizing the cost base.<br/><strong>Cash flow / working capital:</strong> tightening inventory and receivables to free up cash for debt paydown.<br/><strong>Add-on acquisitions ("buy and build"):</strong> acquiring smaller companies to bolt onto the platform, growing scale and often at a lower multiple than the platform.<br/><strong>Management and strategy:</strong> upgrading leadership, sharpening strategy, improving incentives and reporting.</div>
+
+<div class="takeaway-box">Value creation is how PE grows EBITDA, the best return driver, by pulling levers across revenue growth, margin and cost improvement, cash flow and working capital, add-on acquisitions, and management and strategy. Modern PE wins less through financial engineering and more through actually executing these operational improvements as an active owner.</div>`,
   },
   {
-    title: 'Revenue Growth Levers',
-    content: `<p>PE firms pursue revenue growth through several channels, depending on the business:</p>
+    title: 'The 100-Day Plan and Active Ownership',
+    content: `<p>PE firms move fast after closing, because the hold period is finite and the clock on returns is ticking. The first stretch of ownership sets the tone.</p>
 
-<p><strong>Pricing Optimization:</strong> Many privately held companies, especially founder-led ones, undercharge for their products or services. A systematic pricing study often reveals that prices can be raised 3-10% without significant customer attrition. Implementing tiered pricing, value-based pricing, or reducing discounting discipline can have an outsized impact on margins because pricing drops directly to the bottom line-there's no associated cost increase.</p>
+<div class="key-concept">The <strong>100-day plan</strong> is the firm's blueprint for the first months of ownership: a prioritized set of actions to stabilize the business, establish control and reporting, and launch the highest-impact value creation initiatives. The logic is urgency, because returns are time-sensitive (IRR rewards speed), the firm cannot afford a slow start, so it front-loads the critical moves: installing rigorous financial reporting and KPIs, aligning management incentives with the value creation plan, and kicking off the biggest revenue and cost initiatives. The 100-day plan turns the abstract investment thesis into a concrete, sequenced operating agenda, and it reflects the broader truth that PE ownership is active and intentional, not passive.</div>
 
-<p><strong>Sales Force Effectiveness:</strong> Investing in CRM systems, implementing structured sales processes, adding sales headcount in underpenetrated territories, creating inside sales teams, or redesigning incentive compensation to drive specific behaviors (cross-selling, upselling, new logo acquisition).</p>
+<div class="key-concept"><strong>Active ownership</strong> means the PE firm is deeply involved in steering the company, but typically through governance and strategy rather than running daily operations itself. The firm controls the board, sets strategic direction, holds management accountable to the plan, allocates capital, and brings resources (operating partners, industry experts, its network) to bear. Crucially, it aligns management through equity incentives, giving leaders a meaningful ownership stake so they are motivated to drive the same value creation the firm wants. This alignment, management with real skin in the game, working toward a clear plan, under an engaged board, is a defining feature of how PE drives performance that public companies often struggle to match.</div>
 
-<p><strong>Customer Retention:</strong> Reducing churn is often cheaper and more impactful than acquiring new customers. Initiatives include: improving customer onboarding, creating dedicated account management teams, building switching costs (integrating deeply into customers' workflows), and implementing early-warning systems to detect at-risk accounts.</p>
-
-<p><strong>Product / Service Expansion:</strong> Launching adjacent products, entering new customer segments, or expanding into new geographies. PE firms often accelerate product development timelines that founder-led companies had been pursuing incrementally.</p>
-
-<p><strong>Digital Transformation:</strong> Building e-commerce capabilities, implementing digital marketing, using data analytics to drive customer insights, or digitizing manual processes that create friction in the customer experience.</p>`,
+<div class="pro-tip">If asked how PE firms add value, go beyond "cut costs." Describe active ownership: a 100-day plan to launch the highest-impact initiatives quickly, rigorous reporting and KPIs, board-level strategic direction, and aligning management through equity so leaders are personally invested in the outcome. That portrays the modern, operationally engaged PE model accurately.</div>`,
   },
   {
-    title: 'Margin Improvement Levers',
-    content: `<p><strong>Procurement and Sourcing:</strong> Renegotiating contracts with major suppliers, consolidating the vendor base, implementing competitive bidding for key categories, or joining group purchasing organizations. PE firms often bring procurement expertise from other portfolio companies in the same sector.</p>
+    title: 'Buy-and-Build and the GP-Management Relationship',
+    content: `<p>Two further dimensions round out value creation: a powerful growth strategy and the human relationship at the center of it all.</p>
 
-<p><strong>Organizational Efficiency:</strong> Flattening management layers, eliminating redundant positions, right-sizing support functions (HR, finance, IT) relative to best-in-class benchmarks, and offshoring or outsourcing non-core activities.</p>
-
-<p><strong>Manufacturing / Operations:</strong> Implementing lean manufacturing principles, optimizing production scheduling, reducing waste and scrap rates, investing in automation, and consolidating facilities.</p>
-
-<p><strong>SG&amp;A Rationalization:</strong> Reducing discretionary spending (travel, consulting, subscriptions), renegotiating real estate leases, and consolidating technology platforms.</p>`,
-  },
-  {
-    title: 'Working Capital Optimization',
-    content: `<p>Freeing up cash trapped in working capital directly increases Free Cash Flow, which accelerates Debt paydown and improves returns. Key initiatives:</p>
-
-<p><strong>Accounts Receivable:</strong> Tightening credit terms, improving collection processes, offering early-payment discounts, and implementing more rigorous credit screening. Target: reduce Days Sales Outstanding (DSO).</p>
-
-<p><strong>Accounts Payable:</strong> Extending payment terms with suppliers (from 30 to 45 or 60 days), centralizing payables processing, and taking advantage of dynamic discounting programs. Target: increase Days Payable Outstanding (DPO).</p>
-
-<p><strong>Inventory:</strong> Implementing demand forecasting, reducing SKU complexity, establishing vendor-managed inventory programs, and optimizing safety stock levels. Target: reduce Days Inventory Outstanding (DIO).</p>
-
-<div class="formula-box">
-Cash Conversion Cycle = DSO + DIO − DPO<br>
-<small>Lower is better. Each day of improvement frees up Cash equal to approximately (Revenue / 365).</small>
-</div>`,
-  },
-  {
-    title: 'The Buy-and-Build Strategy',
-    content: `<p>One of the most powerful value creation tools in PE is the <strong>buy-and-build</strong> (or "roll-up") strategy. The PE firm acquires a "platform" company and then executes a series of smaller "add-on" acquisitions to create a larger, more valuable combined entity.</p>
-
-<p>This strategy creates value through several mechanisms:</p>
-
-<p><strong>Multiple Arbitrage:</strong> Smaller companies typically trade at lower multiples than larger ones. If the platform was acquired at 8x EBITDA and add-ons are acquired at 5-6x EBITDA, the blended acquisition cost is lower, but the combined entity may be sold at the platform's multiple (or higher). This mechanical uplift in implied value is one of the most reliable return generators in PE.</p>
-
-<p><strong>Operational Synergies:</strong> Combining companies in the same industry enables real cost savings: consolidating back offices, eliminating redundant management, negotiating better supplier terms with greater scale, and sharing best practices across locations.</p>
-
-<p><strong>Revenue Synergies:</strong> Cross-selling products across the combined customer base, entering new geographies, and offering a broader product portfolio that increases competitiveness for larger contracts.</p>
-
-<p><strong>Professionalizing Smaller Businesses:</strong> Many add-on targets are owner-operated businesses with limited systems, processes, and financial controls. Integrating them into a professional platform dramatically improves their operations.</p>
+<div class="key-concept"><strong>Buy-and-build (the platform strategy)</strong> is one of the most important value creation playbooks in modern PE. The firm acquires a solid "platform" company, then makes a series of smaller "add-on" or "bolt-on" acquisitions to grow it. This works for several reasons: add-ons are usually bought at lower multiples than the platform (smaller companies command lower valuations), so simply combining them creates value through <strong>multiple arbitrage</strong>, the blended entity is worth a higher multiple than the pieces; scale brings cost synergies and competitive strength; and the larger, more diversified business often commands a premium multiple at exit. Buy-and-build lets a firm deploy more capital and grow EBITDA quickly through acquisition, and it is a favorite strategy because it combines operational growth, multiple arbitrage, and scale into one repeatable engine.</div>
 
 <div class="example-box">
-<div class="example-label">Buy-and-Build Example</div>
-<p>A PE firm acquires a regional HVAC services company (the "platform") with $20M EBITDA at 8.0x ($160M EV). Over four years, it acquires six local HVAC businesses with a combined $12M EBITDA at an average of 5.0x ($60M total). After integrating and realizing $4M in synergies, the combined company has $36M EBITDA.</p>
-<p>If the combined platform sells at 9.0x (justified by its larger scale and geographic footprint), Exit EV = $36M × 9.0x = $324M.</p>
-<p>Total capital deployed: $160M platform + $60M add-ons = $220M in enterprise value. Even before considering Debt paydown or additional growth, the platform strategy has generated $104M of value ($324M − $220M) from synergies and multiple expansion alone.</p>
-</div>`,
-  },
-  {
-    title: 'Governance and Monitoring',
-    content: `<p>PE firms exercise oversight through a structured governance framework:</p>
+<div class="example-label">Multiple arbitrage in buy-and-build</div>
+<p>A firm buys a platform company at 10x EBITDA. It then acquires several smaller competitors at 6x EBITDA each and integrates them. The acquired earnings, bought at 6x, are now part of a larger business that the market values at 10x (or more). Buying at 6x and having it valued at 10x instantly creates value on every add-on, before any operational improvement. Layer in cost synergies and a larger company commanding an even higher exit multiple, and the strategy compounds.</p>
+</div>
 
-<p><strong>Board of Directors:</strong> The PE firm typically controls the board (the majority of seats) and appoints the chairman. Board meetings occur monthly or quarterly and cover financial performance, strategic initiatives, M&A pipeline, and risk management.</p>
+<div class="key-concept">Underneath all of this is the <strong>GP-management relationship</strong>, which can make or break a deal. The PE firm depends on the management team to execute the plan day to day, so getting management right, keeping strong leaders, replacing weak ones, and aligning everyone through equity ownership and clear targets, is one of the most consequential things a firm does. The best outcomes come when management and the PE firm are true partners pulling toward the same goal, with leaders motivated by a real equity stake. Tension or misalignment with management is a common reason deals underperform. Recognizing that PE is ultimately a people business, that returns depend on the management team executing, adds a mature dimension to your understanding.</div>
 
-<p><strong>KPI Dashboards:</strong> PE firms establish a set of Key Performance Indicators that management reports on regularly-often weekly or monthly. These go beyond financial metrics to include operational measures: customer acquisition cost, churn rate, employee turnover, order backlog, on-time delivery, and others specific to the industry.</p>
-
-<p><strong>Operating Partners:</strong> Many PE firms employ experienced operators (former CEOs, CFOs, or functional experts) who work directly with portfolio companies on specific initiatives. Operating partners bring deep industry expertise and hands-on execution capability that financial professionals typically lack.</p>
-
-<p><strong>Management Incentives:</strong> The equity incentive plan (the Management Option Pool or "MOP") is designed to align management's financial interests with the PE firm's. By tying a significant portion of management's compensation to the equity value at exit, the PE firm ensures management is motivated to grow the business and maximize the exit price.</p>`,
+<div class="takeaway-box">Buy-and-build grows a platform through add-on acquisitions, creating value via multiple arbitrage (buying small at low multiples, valued within a larger high-multiple business), synergies, and scale. And remember the human core: PE relies on management to execute, so selecting, aligning (through equity), and partnering well with leadership is one of the most decisive factors in whether a deal succeeds.</div>`,
   },
 ];

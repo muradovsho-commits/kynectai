@@ -1,67 +1,34 @@
 export const PE_FUND_SECTIONS = [
   {
-    title: 'The Limited Partnership Structure',
-    content: `<p>Almost all PE funds are structured as <strong>limited partnerships</strong>. There are two types of partners:</p>
+    title: 'GPs, LPs, and the Fund as a Vehicle',
+    content: `<p>A private equity fund is a pool of money with a clear division of labor: the people who run it and the people who provide most of the capital. Understanding this split is the foundation for everything about PE economics.</p>
 
-<p><strong>General Partners (GPs)</strong> are the PE firm itself-the professionals who source deals, manage portfolio companies, and make investment decisions. GPs have unlimited liability for the fund's obligations and control all investment decisions.</p>
+<div class="key-concept">The <strong>General Partner (GP)</strong> is the PE firm itself, the team that raises the fund, finds and makes the investments, manages the portfolio companies, and decides when to exit. The <strong>Limited Partners (LPs)</strong> are the outside investors who supply the vast majority of the capital: pension funds, endowments, sovereign wealth funds, insurance companies, and wealthy individuals. The LPs are "limited" because they are passive, they commit money and share in the returns, but they do not run the investments and their liability is limited to what they invest. The GP runs everything and also invests some of its own money (the "GP commitment") so its interests align with the LPs. This GP-LP structure is the skeleton of the entire industry: the GP supplies the skill and a little capital, the LPs supply most of the capital, and they share the gains by a formula.</div>
 
-<p><strong>Limited Partners (LPs)</strong> are the outside investors who provide the vast majority of the fund's capital (typically 97-99%). LPs include pension funds (public and corporate), sovereign wealth funds, university endowments, insurance companies, foundations, family offices, and high-net-worth individuals. LPs have limited liability (they can lose only their committed capital) and no day-to-day involvement in investment decisions.</p>
+<div class="framework-box"><div class="fw-label">THE FUND LIFECYCLE</div><strong>Fundraising:</strong> the GP raises commitments from LPs, typically targeting a fixed fund size, over months.<br/><strong>Investment period (roughly years 1-5):</strong> the GP sources and makes investments, "calling" capital from LPs as deals close.<br/><strong>Harvest / holding period (roughly years 4-10):</strong> the GP improves the portfolio companies and exits them, returning capital and profits to LPs.<br/>A typical fund has a roughly 10-year life. GPs raise a new fund every few years, so a firm runs several overlapping funds at once.</div>
 
-<p>A typical fund has a <strong>10-year life</strong>, divided into two phases. The <strong>investment period</strong> (Years 1-5) is when the GP deploys capital by making new acquisitions. The <strong>harvest period</strong> (Years 6-10) is when the GP focuses on improving and exiting portfolio companies, returning capital to LPs. Extensions of 1-2 years are common if the GP needs more time to exit remaining investments.</p>
-
-<h4>Capital Calls and Distributions</h4>
-
-<p>LPs don't hand over their entire capital commitment on Day 1. Instead, the GP issues <strong>capital calls</strong> (also called "drawdowns") when it needs money to fund an acquisition or pay fees. If an LP has committed $50M to a $1B fund, they might receive capital calls of $5-15M at a time as deals are executed over the investment period.</p>
-
-<p><strong>Distributions</strong> flow in the opposite direction: as portfolio companies are sold, the GP distributes proceeds to LPs. The timing of distributions is unpredictable-it depends on when exits occur-which creates the "J-curve" effect: in early years, cumulative cash flows are negative (capital is being called faster than it's returned), and returns only turn positive as the portfolio matures and exits begin.</p>`,
+<div class="key-concept"><strong>Committed capital is not handed over upfront.</strong> LPs commit a total amount, but the GP "calls" (draws down) that capital only as it is needed to fund specific deals, through <strong>capital calls</strong>. This is why a fund's early years can show negative returns even when things are going fine: fees and early costs are drawn before any company has been sold. That dip-then-rise pattern is the famous <strong>J-curve</strong>, returns look negative early (fees paid, nothing sold yet) and turn positive later as investments mature and exit. Knowing the J-curve and why it happens is a classic fund-structure interview point.</div>`,
   },
   {
-    title: 'GP Economics: Management Fees and Carried Interest',
-    content: `<p>PE firms earn money through two primary mechanisms, often described as the <strong>"2 and 20"</strong> model (though the exact terms vary):</p>
+    title: 'The Economics: Fees, Carry, and the Hurdle',
+    content: `<p>How GPs get paid is one of the most tested topics in PE interviews, because it reveals whether you understand what actually drives the business and aligns incentives. The shorthand is "2 and 20," but you need the real mechanics.</p>
 
-<h4>Management Fee</h4>
+<div class="key-concept">PE firms earn money two ways. The <strong>management fee</strong> (classically around 2 percent of committed or invested capital per year) covers salaries and operating costs, it keeps the lights on regardless of performance. The <strong>carried interest</strong> ("carry," classically 20 percent of the fund's profits) is the GP's share of the gains, and it is where the real wealth is made. The crucial distinction: the management fee is steady and not very performance-sensitive, while carry is the performance upside that only pays off if the fund actually makes money for its LPs. Carry is what aligns the GP with the LPs, the GP only gets rich if the LPs do well, and it is why PE is a high-stakes, performance-driven business rather than a steady fee business.</div>
 
-<p>The GP charges an annual fee, typically <strong>1.5-2.0% of committed capital</strong> during the investment period and 1.5-2.0% of <strong>invested capital</strong> (i.e., capital actually deployed in deals) during the harvest period. This fee covers the firm's operating expenses: salaries, office rent, travel, data subscriptions, and other overhead.</p>
+<div class="framework-box"><div class="fw-label">THE KEY TERMS</div><strong>Management fee:</strong> ~2% per year of committed/invested capital, covers operations.<br/><strong>Carried interest (carry):</strong> ~20% of profits to the GP, the performance share.<br/><strong>Hurdle rate (preferred return):</strong> a minimum return (often ~8%) that LPs must receive <em>before</em> the GP earns any carry. Below the hurdle, no carry.<br/><strong>GP commitment:</strong> the GP invests its own money in the fund (often 1-5%) so it has real skin in the game.<br/><strong>Clawback:</strong> a provision letting LPs recover carry if the GP was overpaid earlier relative to the fund's final performance.</div>
 
-<p>For a $2 billion fund at a 2% fee, the GP collects $40 million per year during the investment period-regardless of performance. Over a 10-year fund life, total management fees might be $300-400 million, which is a significant cost borne by LPs.</p>
-
-<h4>Carried Interest ("Carry")</h4>
-
-<p>Carry is the GP's share of the fund's profits, typically <strong>20% of gains above a preferred return (hurdle rate)</strong>. The preferred return is usually 8% annually, meaning the GP earns carry only after LPs have received their capital back plus an 8% annualized return.</p>
-
-<div class="example-box">
-<div class="example-label">Carry Calculation Example</div>
-<p>A $1B fund returns $2.5B to LPs (a $1.5B profit, or 2.5x MOIC).</p>
-<p>The hurdle rate is 8% annualized over a 5-year average holding period, which means LPs need to receive approximately $1.47B (their $1B back plus ~$470M in preferred returns) before the GP earns any carry.</p>
-<p>Remaining profit: $2.5B − $1.47B = $1.03B</p>
-<p>GP carry: 20% × $1.03B = <strong>$206M</strong> (with catch-up provisions, the actual calculation is more nuanced-see below)</p>
-<p>LP share: 80% × $1.03B = $824M, plus their initial $1B and preferred return</p>
-</div>
-
-<h4>The Distribution Waterfall</h4>
-
-<p>The precise order in which fund profits are distributed is called the <strong>waterfall</strong>. A typical waterfall has four tiers:</p>
-
-<p><strong>Tier 1 - Return of Capital:</strong> LPs receive back 100% of their contributed capital before any profits are distributed.</p>
-
-<p><strong>Tier 2 - Preferred Return:</strong> LPs receive their preferred return (typically 8% annually) on their contributed capital. This ensures LPs earn a minimum return before the GP profits.</p>
-
-<p><strong>Tier 3 - GP Catch-Up:</strong> The GP receives 100% of distributions (or sometimes 80/20) until the GP has received 20% of total profits to date. This "catches up" the GP's share so that by the end of the catch-up, the split is 80/20 on total cumulative profits.</p>
-
-<p><strong>Tier 4 - Carried Interest Split:</strong> Remaining profits are split 80% to LPs and 20% to the GP.</p>
-
-<p>The waterfall can be calculated on a <strong>deal-by-deal</strong> basis (the GP earns carry on each profitable deal independently, sometimes with a loss offset mechanism called a <strong>clawback</strong>) or on a <strong>whole-fund</strong> basis (carry is calculated only on the fund's aggregate returns, after all investments have been realized). European-style waterfalls tend to be whole-fund; American-style tends to be deal-by-deal.</p>
-
-<h4>GP Commitment</h4>
-
-<p>GPs are typically required to invest <strong>1-5% of the fund's capital</strong> alongside LPs, funded from partners' personal capital. This "skin in the game" aligns GP interests with LP interests-the GP team personally benefits from strong returns and suffers from poor ones.</p>`,
+<div class="key-concept">The <strong>hurdle rate</strong> is the concept that most separates a prepared candidate. It is a minimum return the LPs must earn before the GP collects any carry, often around 8 percent. The logic: LPs should not pay the GP a performance bonus for returns they could have gotten passively, so the GP only shares in profits <em>above</em> that threshold. This protects LPs and sharpens the GP's incentive to clear a real bar, not just any positive return. Combined with the clawback (which recovers carry if early winners were paid out but the fund later underperforms), the hurdle is part of how the structure keeps the GP honest and aligned over the fund's full life.</div>`,
   },
   {
-    title: 'Fundraising',
-    content: `<p>PE firms raise new funds every 3-5 years. The fundraising process involves preparing a <strong>Private Placement Memorandum (PPM)</strong>, conducting a roadshow to meet prospective LPs, and negotiating the <strong>Limited Partnership Agreement (LPA)</strong>-the legal document governing the fund's terms.</p>
+    title: 'The Distribution Waterfall and Fundraising',
+    content: `<p>When a fund makes money, the order in which that money is split between LPs and the GP is called the distribution waterfall. It ties the fee, carry, and hurdle together into a sequence, and walking through it cleanly is impressive in an interview.</p>
 
-<p>Key negotiating points include: management fee rates and basis, carry percentage and hurdle rate, waterfall structure, key person provisions (what happens if senior partners leave), investment restrictions (concentration limits, sector limits, geography limits), and co-investment rights (the ability for LPs to invest directly in deals alongside the fund, usually with no fees or carry).</p>
+<div class="framework-box"><div class="fw-label">THE DISTRIBUTION WATERFALL (typical order)</div><strong>1. Return of capital:</strong> LPs first get back the capital they invested.<br/><strong>2. Preferred return (hurdle):</strong> LPs then receive their minimum return (e.g. 8%) on that capital.<br/><strong>3. GP catch-up:</strong> the GP then receives a chunk to "catch up" toward its share of total profits.<br/><strong>4. Carried interest split:</strong> remaining profits are split, typically 80% to LPs and 20% to the GP (the carry).</div>
 
-<p>First-time funds ("Fund I") are the hardest to raise because the GP has no track record. Most institutional LPs require at least a Fund II or Fund III before committing capital. Fund size typically grows 50-100% with each successive fund if performance has been strong.</p>`,
+<div class="key-concept">The waterfall exists to enforce the principle that <strong>LPs get made whole and earn their minimum return before the GP shares in the upside.</strong> Money flows "down the steps": capital back to LPs, then the preferred return to LPs, then the GP catches up, then the 80/20 split on the rest. This sequencing is why the hurdle and carry are not just numbers but an ordered priority, the GP is genuinely last in line for the profit share, which is exactly the alignment LPs are paying for. Being able to recite the waterfall in order (return of capital, preferred return, catch-up, carry split) demonstrates real command of PE economics.</div>
+
+<div class="key-concept"><strong>Fundraising</strong> is the GP's lifeblood, because no fund means no fees, no deals, and no carry. GPs raise a new fund every few years by convincing LPs (pensions, endowments, sovereign wealth funds, fund-of-funds) to commit capital, and the pitch rests on <strong>track record</strong>: the returns of prior funds, the quality and stability of the team, and a differentiated strategy. A strong track record makes the next fund easier and larger to raise; a weak one can end a firm. This is why GPs are so focused on realized returns and on demonstrating value to LPs, the ability to raise the next, bigger fund depends on it. Understanding that fundraising is continuous and track-record-driven explains a lot of GP behavior.</div>
+
+<div class="takeaway-box">Tie fund structure together: GPs run the fund and earn a steady management fee plus performance-based carry; LPs supply most of the capital and, via the hurdle and waterfall, get their capital and a preferred return back before the GP shares in profits. The whole structure is built to align the GP with the LPs, and the GP's ability to raise the next fund depends entirely on delivering a strong, realized track record.</div>`,
   },
 ];

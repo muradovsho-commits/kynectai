@@ -1,54 +1,32 @@
 export const PE_ADVANCED_TOPICS_SECTIONS = [
   {
-    title: 'Continuation Vehicles',
-    content: `<p>A <strong>continuation vehicle (CV)</strong>, also known as a "GP-led secondary," is a relatively new structure in which the PE firm transfers one or more portfolio companies from an existing fund into a new vehicle. LPs in the existing fund can choose to cash out (selling their interest to secondary buyers) or roll their investment into the new vehicle.</p>
+    title: 'Liquidity Tools: Continuation Funds, Recaps, and NAV Lending',
+    content: `<p>As PE has matured, firms have developed sophisticated tools to manage liquidity, the timing of returning cash to LPs. These come up in interviews as signs you follow the industry beyond the basics.</p>
 
-<p>Why use a CV? The PE firm may believe a portfolio company has significant remaining upside but the fund's life is expiring. Rather than selling at a suboptimal time, the GP creates a new vehicle to continue managing the asset. This gives the GP more time to maximize value, provides liquidity to LPs who want it, and allows the GP to "reset" the carry calculation on the new vehicle.</p>
+<div class="key-concept">A <strong>continuation fund</strong> is a vehicle a GP uses to hold onto a strong portfolio company longer than the original fund's life allows. Instead of selling a prized asset because the fund is ending, the GP moves it into a new continuation vehicle, often buying out the original LPs (giving them liquidity) while new investors come in and the GP keeps running the asset. These have boomed because they let GPs retain their best companies and give LPs a choice between cashing out and staying in. They also raise questions about conflicts of interest (the GP is effectively on both sides), which is part of why they are a current industry talking point. A <strong>dividend recapitalization</strong> (from the exits module) similarly returns cash early by adding debt to pay the firm a dividend, realizing some return without a sale.</div>
 
-<p>CVs have become increasingly common (over $50 billion in annual volume in recent years) but raise governance concerns. The GP is both buyer and seller, creating potential conflicts of interest. Independent valuation, LP consent, and arms-length process controls are important safeguards.</p>`,
+<div class="key-concept"><strong>NAV lending</strong> is a newer and somewhat controversial tool: a fund borrows money against the net asset value (NAV) of its whole portfolio, rather than against a single company. Firms use it to return cash to LPs sooner, fund add-on acquisitions, or support struggling portfolio companies, without selling assets. The appeal is flexibility and the ability to manage liquidity and boost near-term IRR; the criticism is that it adds leverage at the fund level (on top of the leverage already in each deal) and can flatter returns by returning capital with borrowed money. Knowing what NAV lending is, and the debate around it, signals you are current on how the industry is evolving.</div>
+
+<div class="takeaway-box">Modern PE uses several liquidity tools: continuation funds (keeping a strong asset past a fund's life while giving original LPs an exit), dividend recaps (returning cash early via new debt), and NAV lending (borrowing against the whole portfolio's value). Each manages the timing of returns, and each carries debate, conflicts in continuation funds, added fund-level leverage in NAV loans, which is exactly the nuance interviewers like to hear.</div>`,
   },
   {
-    title: 'NAV Lending and Subscription Lines',
-    content: `<p><strong>Subscription lines of credit</strong> are short-term credit facilities backed by LP commitments. GPs use them to bridge the gap between making an investment and issuing a capital call, which smooths the LP's cash flow experience and allows the GP to move quickly on deals. However, subscription lines artificially boost IRR by delaying capital calls (money is invested for a shorter period), which has drawn criticism from LPs who argue that subscription-line-adjusted IRR overstates true performance.</p>
+    title: 'Co-Investment, Secondaries, and Fund Strategies',
+    content: `<p>A few more structural features of the PE ecosystem are worth knowing, because they shape how capital flows and how firms operate.</p>
 
-<p><strong>NAV lending</strong> involves borrowing against the aggregate value of the fund's portfolio (Net Asset Value). This is a more recent innovation, used to fund add-on acquisitions, pay dividends to LPs, or provide working capital to portfolio companies without calling additional capital from LPs. NAV loans sit at the fund level (not the portfolio company level), adding a layer of leverage on top of the Debt already within each portfolio company.</p>`,
+<div class="key-concept"><strong>Co-investment</strong> is when LPs invest directly alongside the fund in a specific deal, on top of their fund commitment, usually with little or no fee and carry. GPs offer co-investment to favored LPs to access extra capital for large deals and to strengthen relationships; LPs love it because it lets them put more money to work in deals they like at a lower cost. The <strong>secondaries</strong> market is where existing fund interests change hands: an LP that wants liquidity before a fund matures can sell its stake to a secondary buyer. Secondaries have grown into a major market of their own, providing liquidity in an otherwise illiquid asset class and letting buyers acquire seasoned portfolios (often at a discount, and past the J-curve). Both co-investment and secondaries reflect the maturing plumbing of the PE world.</div>
+
+<div class="key-concept">It also helps to place <strong>buyout against adjacent strategies</strong>. <strong>Growth equity</strong> invests in proven, fast-growing companies, usually for minority stakes and with little leverage, so returns come from growth rather than financial engineering, it sits between venture and buyout. <strong>Distressed / special situations</strong> investing targets troubled companies or their debt, aiming to profit from a turnaround, a restructuring, or buying assets cheaply in a crisis; it requires different skills (legal, restructuring, credit) than a standard buyout. Understanding how buyout differs from growth equity (control and leverage versus minority growth bets) and from distressed (healthy companies versus troubled ones) lets you speak precisely about where a firm or role sits in the landscape.</div>
+
+<div class="takeaway-box">Round out your map with co-investment (LPs investing directly alongside a fund in specific deals, low-fee), secondaries (a market for buying and selling existing fund stakes, providing liquidity), and the adjacent strategies, growth equity (minority, low-leverage, growth-driven) and distressed (troubled companies and debt, turnaround-driven). Knowing how buyout differs from each shows command of the full PE ecosystem.</div>`,
   },
   {
-    title: 'Co-Investment',
-    content: `<p><strong>Co-investment</strong> occurs when LPs invest directly in a specific deal alongside the main fund, typically on a no-fee, no-carry basis. Co-investment has grown significantly because it benefits both parties: LPs get exposure to specific deals at lower cost, and GPs can pursue larger deals than their fund size would otherwise allow.</p>
+    title: 'Sector Specialization and ESG',
+    content: `<p>Two themes shape how modern firms position themselves and how they are increasingly judged: focus and responsibility.</p>
 
-<p>From the LP's perspective, co-investment is attractive because it effectively lowers the blended fee burden across their PE allocation. From the GP's perspective, offering co-investment rights is a fundraising tool that makes the fund more attractive to large institutional LPs.</p>
+<div class="key-concept"><strong>Sector specialization</strong> is a growing trend: many firms now focus on specific industries (software, healthcare, industrials, consumer) rather than investing generally. The logic is edge, deep sector expertise helps a firm source better, diligence faster, judge quality more accurately, and add more operational value, because the team understands the industry's dynamics intimately. Specialist firms can often pay up for the right asset and still win because they create more value post-acquisition. This matters for interviews because firms increasingly want candidates with genuine interest in their sector, and showing you understand why specialization is an advantage, and ideally having a sector view of your own, is a strong signal.</div>
 
-<p>Key considerations: co-investment introduces adverse selection risk (GPs may offer co-investment on their less attractive deals and reserve the best deals for the main fund), requires LPs to have internal diligence capabilities (to evaluate individual deals quickly), and creates concentration risk (one large co-investment loss can significantly impact the LP's overall PE returns).</p>`,
-  },
-  {
-    title: 'ESG in Private Equity',
-    content: `<p>Environmental, Social, and Governance (ESG) considerations have become a significant factor in PE investing. Most large PE firms now have dedicated ESG teams and integrate ESG into their due diligence and value creation processes.</p>
+<div class="key-concept"><strong>ESG (environmental, social, and governance)</strong> considerations have become a real part of PE, driven by LP demands, regulation, and the recognition that these factors affect risk and value. Firms increasingly assess ESG risks in diligence and pursue ESG improvements during the hold, partly because LPs require it, and partly because better governance, sustainability, and risk management can genuinely enhance a company's value and its attractiveness to future buyers. The treatment of ESG varies by region and firm, and it is sometimes debated, but being aware that it is now a standard part of how serious firms operate, both as a risk lens and a value lever, reflects current industry understanding.</div>
 
-<p>From a value creation perspective, ESG initiatives can reduce costs (energy efficiency, waste reduction), mitigate risks (regulatory compliance, reputational risk), and enhance revenue (customers increasingly prefer sustainable products and services). Many LPs-particularly European pension funds and sovereign wealth funds-now require GPs to report on ESG metrics and demonstrate ESG integration as a condition of investment.</p>`,
-  },
-  {
-    title: 'Sector-Specific Considerations',
-    content: `<h4>Healthcare</h4>
-
-<p>Healthcare PE investing involves unique considerations: reimbursement risk (changes to Medicare/Medicaid payment rates), regulatory complexity (HIPAA, state licensing requirements, certificate of need laws), physician employment laws (the "corporate practice of medicine" doctrine in some states), and the ethical sensitivity of applying leveraged buyout economics to healthcare delivery. Despite these challenges, healthcare has been one of the most active PE sectors because of its recession resistance, aging population tailwinds, and fragmented market structure (ideal for buy-and-build).</p>
-
-<h4>Technology / Software</h4>
-
-<p>Software has become the largest PE subsector by deal value. Recurring revenue models (SaaS) provide the predictable cash flows that PE firms need to service Debt. Key metrics: Annual Recurring Revenue (ARR), Net Revenue Retention (NRR), CAC payback period, and LTV/CAC ratio. PE firms specializing in software (like Thoma Bravo and Vista Equity) have developed deep operational playbooks for improving SaaS businesses: optimizing pricing, reducing churn, cross-selling modules, and driving operating leverage.</p>
-
-<h4>Industrials</h4>
-
-<p>Industrial companies are classic PE targets: stable cash flows, tangible assets, and significant operational improvement potential. Value creation often focuses on manufacturing efficiency (lean operations, automation), supply chain optimization, and buy-and-build strategies to consolidate fragmented industries. Cyclicality is the main risk-industrial companies are highly sensitive to economic downturns, which can impair Debt service capacity.</p>
-
-<h4>Financial Services</h4>
-
-<p>PE investing in financial services (insurance, specialty finance, asset management) involves unique challenges: heavy regulatory oversight, capital adequacy requirements, and complex balance sheets. Valuation often uses Price / Book Value or Price / Earnings rather than EV / EBITDA. Insurance is a particularly active PE subsector because of the "float" (premiums collected upfront and paid out later), which can be invested for the PE firm's benefit.</p>`,
-  },
-  {
-    title: 'Distressed and Turnaround Investing',
-    content: `<p>Distressed PE differs fundamentally from traditional buyout PE. Instead of acquiring healthy companies and optimizing them, distressed investors acquire companies in financial trouble-often through purchasing Debt at a discount and converting it to Equity through a bankruptcy process (known as a "loan-to-own" strategy).</p>
-
-<p>Key skills in distressed PE: understanding bankruptcy law (Chapter 11 in the U.S.), valuing distressed Debt, negotiating with creditor committees, and executing operational turnarounds under severe time and resource constraints. Returns can be exceptional (distressed Debt purchased at 30-50 cents on the dollar and converted to Equity can produce 3-5x returns) but the failure rate is also much higher than in traditional buyouts.</p>`,
+<div class="takeaway-box">Two modern themes: sector specialization (focusing on specific industries to source, diligence, and add value better, an increasingly common edge) and ESG (now a standard diligence lens and value lever, driven by LP demand, regulation, and the real link between good governance and value). Showing awareness of both, and ideally a sector interest of your own, signals you follow where PE is heading, not just where it has been.</div>`,
   },
 ];

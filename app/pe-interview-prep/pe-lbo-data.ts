@@ -1,74 +1,37 @@
 export const PE_LBO_SECTIONS = [
   {
-    title: `5.1 Sources & Uses (The Opening Bell)`,
-    content: `<p>Every LBO starts with a transaction. The "Sources & Uses" table answers: How much cash do we need, and whose bank account is it coming from?</p>
-<h4>The Uses (Where the money goes)</h4>
-<ol>
-<li><strong>Purchase Equity:</strong> The cost to buy out existing shareholders (Equity Value + Control Premium).</li>
-<li><strong>Refinance Existing Debt:</strong> Deals are "Cash-Free, Debt-Free" - you pay off old debt.</li>
-<li><strong>Transaction Fees:</strong> IB, legal, and accounting fees (usually 1-2% of deal size).</li>
-<li><strong>Financing Fees:</strong> Fees paid to banks to secure the new debt.</li>
-</ol>
-<h4>The Sources (Where the money comes from)</h4>
-<ol>
-<li><strong>Senior Secured Debt (Term Loans):</strong> Cheapest debt, secured by assets (usually 2.5x-4.0x EBITDA).</li>
-<li><strong>Subordinated/Mezzanine Debt:</strong> More expensive, unsecured, often includes PIK toggle.</li>
-<li><strong>Management Rollover:</strong> Existing CEO rolls equity into the new deal.</li>
-<li><strong>Sponsor Equity:</strong> The PE firm's cash check. This is the "plug" (Total Uses - All Other Sources).</li>
-</ol>
-<p><strong>The Golden Rule:</strong> Total Sources MUST exactly equal Total Uses.</p>`
+    title: 'What an LBO Is and Why Leverage Works',
+    content: `<p>The leveraged buyout is the central technique of private equity, and understanding it deeply, not just mechanically, is the most important thing you can do for a PE interview. Start with the concept before any math.</p>
+
+<div class="key-concept">A <strong>leveraged buyout</strong> is the acquisition of a company using a significant amount of borrowed money (debt) alongside a smaller amount of the firm's own money (equity), where the company's own cash flows and assets support that debt. The "leverage" is the debt. The magic, and the risk, is that debt <strong>amplifies the equity return</strong>. Because the firm puts in less of its own equity (the rest is borrowed), any gain in the company's value is spread over a smaller equity base, multiplying the percentage return to the equity. The same leverage magnifies losses if things go badly. This is why PE targets stable, cash-generative companies: predictable cash flow can safely carry debt, making leverage a powerful amplifier rather than a fatal risk.</div>
+
+<div class="example-box">
+<div class="example-label">Why leverage amplifies returns</div>
+<p>Buy a company for 100. <strong>Case A (all equity):</strong> you put in 100, sell later for 150, you made 50 on 100, a 50 percent gain. <strong>Case B (leveraged):</strong> you put in 40 of equity and borrow 60. You sell for 150, repay the 60 of debt, and keep 90. You made 50 on just 40 of equity, a 125 percent gain. Same company, same sale price, but leverage turned a 50 percent return into 125 percent by shrinking the equity you risked. (If instead the company fell to 80, the all-equity investor loses 20 percent while the leveraged investor, after repaying 60, has only 20 left on 40 invested, a 50 percent loss. Leverage cuts both ways.)</p>
+</div>
+
+<div class="pro-tip">When asked "why use leverage in an LBO?" the complete answer is: it amplifies the equity return by reducing how much of your own capital is at risk, and the debt gets paid down over the hold using the company's cash flow, transferring value to the equity holders. Then add the caveat that it also amplifies downside, which is why PE targets stable, cash-generative businesses that can safely carry it.</p></div>`,
   },
   {
-    title: `5.2 The Debt Tranches & Capital Structure`,
-    content: `<p>You must understand the hierarchy of debt (The Capital Stack):</p>
-<ol>
-<li><strong>Revolving Credit Facility (Revolver):</strong> A corporate credit card. Most senior. Drawn only when FCF is negative. Paid off first when cash is available.</li>
-<li><strong>Term Loan A (TLA):</strong> From corporate banks. Amortizes evenly over 5-7 years. Banks want their money back quickly.</li>
-<li><strong>Term Loan B (TLB):</strong> From institutional investors (CLOs, hedge funds). Minimal amortization (1%/year) with a massive "bullet" payment at maturity.</li>
-<li><strong>Mezzanine / High Yield Bonds:</strong> Deeply subordinated. Highest rates (10-15%).</li>
-</ol>
-<h4>PIK Interest (Payment-in-Kind)</h4>
-<p><strong>Interview Goldmine:</strong> Instead of paying $10 in cash interest, the $10 is added to the principal balance.</p>
-<p><strong>Why?</strong> Preserves cash flow in the early, highly-levered years.</p>
-<p><strong>The Cost:</strong> It compounds aggressively. The PE firm owes a massive lump sum at exit.</p>`
+    title: 'The Sources of LBO Return',
+    content: `<p>An LBO makes money in three distinct ways, and being able to name and explain all three, then say which matters most, is a hallmark of a strong candidate. Everything in PE value creation maps to these levers.</p>
+
+<div class="framework-box"><div class="fw-label">THE THREE RETURN DRIVERS</div><strong>1. EBITDA growth:</strong> making the company earn more, by growing revenue, expanding margins, or both. The healthiest, most sustainable driver.<br/><strong>2. Debt paydown (deleveraging):</strong> using the company's cash flow to pay down the acquisition debt over the hold, which shifts value from lenders to equity holders even if the company's total value is flat.<br/><strong>3. Multiple expansion:</strong> selling the company at a higher EV/EBITDA multiple than you paid, whether through improving the business, timing the market, or repositioning it.</div>
+
+<div class="key-concept">These three drivers combine to produce the equity return, and the distinction between them matters. <strong>EBITDA growth</strong> is the gold standard, it means you genuinely made the business bigger and better, and it is the most defensible source of return. <strong>Debt paydown</strong> is reliable and somewhat mechanical: as long as the company generates cash and uses it to retire debt, the equity grows even if the enterprise value is unchanged, because the equity slice of the pie expands as the debt slice shrinks. <strong>Multiple expansion</strong> is the least controllable, you may sell at a higher multiple, but that often depends on market conditions and is not something you fully control, so relying on it is riskier. The strongest PE theses lead with operational EBITDA growth, treat debt paydown as a steady contributor, and do not bank on multiple expansion.</div>
+
+<div class="key-concept">An ideal <strong>LBO candidate</strong> follows directly from these drivers and from the need to carry debt. The classic profile: <strong>stable, predictable cash flows</strong> (to service debt safely), a <strong>mature business in a defensible market position</strong> (low risk of disruption), <strong>opportunities to improve</strong> (margin expansion, growth, operational fixes, so there is EBITDA upside), a <strong>reasonable entry price</strong>, low existing debt, and a clear path to exit. Companies that are too volatile, too capital-intensive, or already optimized make poor LBO targets. When an interviewer asks "what makes a good LBO target?", reciting this profile and tying each trait back to the return drivers and debt capacity shows real understanding.</div>
+
+<div class="takeaway-box">Memorize the three return drivers, EBITDA growth, debt paydown, and multiple expansion, and the hierarchy among them: lead with operational EBITDA growth (most sustainable), count on debt paydown (reliable), and never rely on multiple expansion (least controllable). The ideal LBO target is a stable, cash-generative, improvable business at a fair price, every trait of which traces back to carrying debt safely and driving those three returns.</div>`,
   },
   {
-    title: `5.3 The Cash Flow Waterfall`,
-    content: `<p>This is the engine of the LBO model. You project the IS down to FCF, then cascade cash through the capital structure.</p>
-<h4>The Logic Flow:</h4>
-<ol>
-<li>Start with Unlevered FCF (EBITDA - CapEx - Change in NWC).</li>
-<li>Subtract Mandatory Interest on all debt tranches.</li>
-<li>Subtract Mandatory Principal Amortization (e.g., 10% of TLA).</li>
-<li>= <strong>Cash Flow Available for Debt Repayment (CFADS)</strong>.</li>
-<li>If CFADS is positive, initiate the <strong>"Cash Sweep"</strong> - aggressively pay down the most senior debt first (Revolver → TLA → TLB). Cannot prepay Mezzanine early without severe penalties.</li>
-</ol>`
-  },
-  {
-    title: `5.4 Exit & Returns (IRR & MOIC)`,
-    content: `<p>Fast forward to Year 5.</p>
-<ol>
-<li><strong>Exit Enterprise Value:</strong> Year 5 EBITDA x assumed Exit Multiple (usually assume Exit = Entry to be conservative).</li>
-<li><strong>Exit Equity Value:</strong> Exit EV - Remaining Net Debt at Year 5.</li>
-<li><strong>MOIC:</strong> Exit Equity Value / Initial Sponsor Equity Check.</li>
-<li><strong>IRR Rules of Thumb (5-year hold):</strong>
-<ul>
-<li>2.0x MOIC ≈ 15% IRR</li>
-<li>2.5x MOIC ≈ 20% IRR</li>
-<li>3.0x MOIC ≈ 25% IRR</li>
-</ul></li>
-</ol>`
-  },
-  {
-    title: `5.5 "Walk Me Through a Standard LBO Model"`,
-    content: `<p><strong>The Perfect Answer:</strong></p>
-<ol>
-<li>"First, I make assumptions for Purchase Price, Debt-to-Equity ratio, and interest rates on debt tranches.</li>
-<li>Second, I construct a Sources & Uses table with Sponsor Equity as the plug, ensuring Sources = Uses.</li>
-<li>Third, I adjust the balance sheet to reflect the new capital structure and write off old equity and debt.</li>
-<li>Fourth, I build the operating model, projecting Revenue down to Unlevered Free Cash Flow.</li>
-<li>Fifth, I build a Debt Schedule to calculate interest and amortization, and sweep optional debt paydown by seniority.</li>
-<li>Finally, I calculate Exit Enterprise Value based on a Year 5 EBITDA multiple, subtract remaining net debt for Exit Equity Value, and calculate IRR and MOIC."</li>
-</ol>`
+    title: 'The Capital Structure of an LBO',
+    content: `<p>The "debt" in a buyout is not one thing, it is a stack of different loans with different risk, cost, and priority. Understanding the capital structure matters because it determines how much leverage a deal can carry and how the returns and risks are split.</p>
+
+<div class="framework-box"><div class="fw-label">THE DEBT STACK (top = safest, cheapest, paid first)</div><strong>Senior secured debt (e.g. a term loan / revolver):</strong> the lowest-risk layer, secured by the company's assets, lowest interest rate, first in line to be repaid.<br/><strong>Subordinated / high-yield debt:</strong> ranks below senior, higher interest rate to compensate for more risk, repaid after senior.<br/><strong>Mezzanine debt:</strong> the riskiest debt layer, often with equity-like features (such as warrants), highest cost, sits just above equity.<br/><strong>Equity:</strong> the PE firm's own capital, last in line, takes the first losses but captures the upside.</div>
+
+<div class="key-concept">The capital structure is a <strong>priority ladder</strong>: in good times everyone gets paid and the equity captures the amplified upside; in bad times losses hit the bottom of the stack first (equity, then mezzanine, then subordinated), while senior secured lenders are protected by being first in line and backed by collateral. This is why senior debt is cheapest (least risk) and each layer down is more expensive (more risk). The amount of total debt a deal can carry is usually expressed as a <strong>leverage multiple</strong>, total debt divided by EBITDA, so "5x leverage" means debt equals five times EBITDA. How much leverage is prudent depends on how stable the company's cash flows are: steadier cash flow safely supports more debt. Knowing the debt tranches in order, and that leverage is quoted as a multiple of EBITDA, is core LBO fluency.</div>
+
+<div class="takeaway-box">An LBO's financing is a stack: senior secured debt (cheapest, safest, first paid), then subordinated and high-yield, then mezzanine (riskiest debt, sometimes with equity kickers), then the PE firm's equity (last in line, first to lose, captures the upside). Total leverage is measured as debt / EBITDA, and a company's cash-flow stability determines how many turns of leverage it can safely carry.</div>`,
   },
 ];

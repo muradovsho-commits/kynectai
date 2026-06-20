@@ -1,103 +1,55 @@
 export const PE_INDUSTRY_SECTIONS = [
   {
     title: 'What Private Equity Actually Is',
-    content: `<p>Private equity is a form of investment where specialized firms raise pools of capital from institutional investors, use that capital to acquire controlling stakes in companies (usually private ones, but sometimes taking public companies private), improve those companies over a multi-year holding period, and then sell them for a profit. The core bet is straightforward: buy a business, make it better, and sell it for more than you paid.</p>
+    content: `<p>Private equity is the business of buying companies, improving them, and selling them for a profit a few years later, using a mix of investors' money and borrowed money to do it. A PE firm raises a large pool of capital from outside investors, uses that pool to acquire controlling stakes in private companies (or to take public companies private), works to make those companies more valuable, and then exits by selling them, returning the proceeds to its investors plus a share of the gains for itself.</p>
 
-<p>What distinguishes PE from other forms of investing is the combination of three elements: <strong>control</strong> (PE firms own majority or significant minority stakes and actively manage their portfolio companies), <strong>leverage</strong> (acquisitions are partially funded with Debt, which amplifies returns), and <strong>a defined time horizon</strong> (investments are held for a specific period, typically 3-7 years, after which the PE firm exits).</p>
+<p>The defining features are <strong>control</strong> and <strong>time horizon</strong>. Unlike a public-market investor who owns a small slice of a company and hopes it does well, a PE firm typically buys the whole company (or a controlling majority), so it can actually direct strategy, management, and operations. And unlike a trader who might hold for days, a PE firm holds for roughly three to seven years, long enough to genuinely transform a business. This combination, owning enough to control and holding long enough to improve, is what separates PE from almost every other kind of investing.</p>
 
-<p>Unlike a mutual fund manager who buys 2% of a public company and can only influence management through shareholder votes, a PE firm that owns 80% of a company can replace the CEO, overhaul the strategy, restructure the cost base, and fundamentally transform the business. This active ownership model is the theoretical justification for PE returns: the firm earns returns not just from market appreciation, but from actually <em>creating</em> value through hands-on management.</p>
+<div class="key-concept">The core PE model is simple to state and hard to execute: <strong>buy a good business at a reasonable price, make it meaningfully better and bigger, use debt to amplify the equity return, and sell it for more than you paid.</strong> Returns come from three places: growing the company's earnings, paying down the debt used to buy it (which shifts value from lenders to owners over time), and selling at a higher valuation multiple than you bought. A PE firm is, at heart, a machine for doing this repeatedly and at scale, and everything in the interview, the LBO math, the operational playbook, the deal process, traces back to this one model.</div>
 
-<h4>PE vs. Other Investment Strategies</h4>
-
-<table class="comparison-table">
-<tr>
-  <th>Feature</th>
-  <th>Private Equity (Buyout)</th>
-  <th>Hedge Funds</th>
-  <th>Venture Capital</th>
-  <th>Public Equities</th>
-</tr>
-<tr>
-  <td>Ownership Stake</td>
-  <td>Controlling (majority)</td>
-  <td>Minority (typically &lt;5%)</td>
-  <td>Significant minority (15-40%)</td>
-  <td>Small minority (&lt;1%)</td>
-</tr>
-<tr>
-  <td>Investment Horizon</td>
-  <td>3-7 years</td>
-  <td>Days to years (varies)</td>
-  <td>5-10+ years</td>
-  <td>Varies widely</td>
-</tr>
-<tr>
-  <td>Use of Leverage</td>
-  <td>Extensive (50-70% Debt)</td>
-  <td>Varies by strategy</td>
-  <td>Minimal</td>
-  <td>Minimal to none</td>
-</tr>
-<tr>
-  <td>Operational Involvement</td>
-  <td>Very high (board seats, strategy)</td>
-  <td>Low to moderate</td>
-  <td>Moderate (mentoring, governance)</td>
-  <td>Minimal (voting only)</td>
-</tr>
-<tr>
-  <td>Target Company Stage</td>
-  <td>Mature, cash-flow positive</td>
-  <td>Any stage (public markets)</td>
-  <td>Early-stage, pre-profit</td>
-  <td>Any public company</td>
-</tr>
-<tr>
-  <td>Liquidity</td>
-  <td>Very illiquid (10-year fund)</td>
-  <td>Moderate (quarterly/annual)</td>
-  <td>Very illiquid (10-year fund)</td>
-  <td>Highly liquid (daily)</td>
-</tr>
-<tr>
-  <td>Target Returns</td>
-  <td>20-25%+ net IRR</td>
-  <td>8-15%+ net</td>
-  <td>25-35%+ net IRR</td>
-  <td>8-12% long-term average</td>
-</tr>
-</table>
-
-<h4>The Major PE Strategies</h4>
-
-<p><strong>Large-Cap / Mega-Cap Buyouts:</strong> Firms like KKR, Blackstone, Apollo, and Carlyle acquire companies with Enterprise Values above $5 billion. These deals involve complex capital structures, significant syndicated Debt, and often consortium deals where multiple PE firms co-invest. Target companies are typically industry leaders with well-established operations.</p>
-
-<p><strong>Upper Middle-Market:</strong> Enterprise Values of $1-5 billion. Firms include Thoma Bravo, Hellman &amp; Friedman, and Leonard Green. Deals are large enough to be complex but small enough for a single firm to lead.</p>
-
-<p><strong>Middle-Market:</strong> Enterprise Values of $100M-$1B. This is the most active segment of PE, with hundreds of firms competing. Targets are often founder-owned businesses, corporate carve-outs, or family-held companies going through a generational transition. Firms include Summit Partners, GTCR, and Audax Group.</p>
-
-<p><strong>Lower Middle-Market / Small-Cap:</strong> Enterprise Values below $100M. Often involves owner-operated businesses being professionalized for the first time. These deals frequently involve the "buy-and-build" strategy-acquiring a platform company and bolting on smaller add-on acquisitions.</p>
-
-<p><strong>Growth Equity:</strong> A hybrid between VC and buyout. The PE firm invests in profitable, fast-growing companies to accelerate expansion-typically through minority stakes with protective rights. Less leverage than traditional buyouts. Firms include General Atlantic, TA Associates, and Summit Partners.</p>
-
-<p><strong>Distressed / Turnaround:</strong> Investing in financially troubled companies, often by acquiring Debt at a discount and converting it to Equity through a restructuring process. Requires specialized expertise in bankruptcy law and operational turnarounds. Firms include Cerberus, Sun Capital, and Oaktree (the latter more on the credit side).</p>
-
-<h4>Day-to-Day at a PE Firm</h4>
-
-<p>The work at a PE firm is divided roughly into three streams. <strong>Deal work</strong> involves sourcing potential acquisitions, conducting due diligence, building financial models, negotiating deal terms, and managing the closing process. <strong>Portfolio management</strong> involves working with existing portfolio companies on strategic initiatives, monitoring financial performance, sitting on boards, and planning exits. <strong>Fundraising</strong> involves raising new funds from institutional investors (LPs), which happens every 3-5 years.</p>
-
-<p>At the junior level (Associates and Senior Associates), you'll spend the vast majority of your time on deal work: building LBO models, drafting investment committee memos, coordinating with advisors (lawyers, accountants, consultants), and conducting industry research. As you become more senior (Vice President, Principal/Director, Partner), the work shifts toward deal sourcing, negotiation, portfolio oversight, and LP relationships.</p>`,
+<div class="pro-tip">When asked "what is private equity?" do not just say "investing in private companies." Say it is buying control of companies, improving them over a multi-year hold using operational changes and leverage, and selling them for a return to investors. Naming control, the hold period, leverage, and the exit shows you understand the actual model, not just the label.</div>`,
   },
   {
-    title: 'The PE Value Creation Framework',
-    content: `<p>PE returns come from three sources, often visualized as a "value bridge" between entry and exit:</p>
+    title: 'How PE Differs From Other Investors',
+    content: `<p>PE sits in a specific spot in the investing universe, and interviewers often probe whether you understand the neighbors. The cleanest way to hold it is by where in a company's life the money goes and how much control comes with it.</p>
 
-<div class="key-concept">
-<strong>1. Financial Engineering (Leverage):</strong> Using Debt to fund the acquisition amplifies equity returns. As the company repays Debt with its own cash flow, the Equity value grows even if the total enterprise value stays constant. This is the most mechanically reliable return source.<br><br>
-<strong>2. Operational Improvement:</strong> Growing revenue, cutting costs, improving margins, optimizing working capital, and deploying capital more efficiently. This directly increases EBITDA and Free Cash Flow. It requires genuine management skill and industry expertise.<br><br>
-<strong>3. Multiple Expansion:</strong> Selling at a higher valuation multiple than the purchase multiple. This can result from improvements to the business (faster growth, better margins, reduced risk) or simply from favorable market conditions at exit. It's the least controllable factor.
-</div>
+<table class="comparison-table">
+<tr><th>Investor type</th><th>Stage / target</th><th>Stake &amp; control</th></tr>
+<tr><td>Venture capital (VC)</td><td>Early-stage startups, often pre-profit</td><td>Minority stakes; bet on growth and a few big winners</td></tr>
+<tr><td>Growth equity</td><td>Proven, fast-growing companies needing capital to scale</td><td>Usually minority; less leverage, growth-driven returns</td></tr>
+<tr><td>Buyout PE</td><td>Mature, cash-generative companies</td><td>Control (majority); heavy use of leverage</td></tr>
+<tr><td>Hedge funds</td><td>Mostly public, liquid securities</td><td>Typically minority, short horizons, varied strategies</td></tr>
+<tr><td>Public equity (mutual funds)</td><td>Public companies</td><td>Minority, passive, highly liquid</td></tr>
+</table>
 
-<p>The relative contribution of these three sources has shifted over time. In the 1980s and 1990s, financial engineering (leveraging up companies and benefiting from falling interest rates) drove the majority of returns. Today, with purchase multiples higher and leverage levels more constrained by lender discipline, operational improvement has become the primary differentiator between top-quartile and mediocre PE firms.</p>`,
+<div class="key-concept">The two dimensions that locate any investor are <strong>company maturity</strong> and <strong>degree of control</strong>. VC funds young, risky, high-growth companies with minority stakes and accepts that most fail while a few pay for everything. Buyout PE does almost the opposite: it funds mature, stable, cash-generating companies, takes full control, and uses debt because those reliable cash flows can support borrowing. Growth equity sits between them, backing companies that are proven but still scaling, usually without much leverage. Understanding that buyout PE specifically needs <em>mature, cash-flow-stable</em> businesses (because the cash flow services the debt) is the insight that ties the whole industry together and explains why PE targets look the way they do.</div>
+
+<div class="takeaway-box">If asked "PE versus VC," the sharpest contrast is maturity, control, and leverage: VC takes minority stakes in young, unprofitable, high-growth companies and wins on a few outliers; buyout PE takes control of mature, profitable, cash-generative companies and uses leverage, winning through operational improvement and disciplined value creation rather than moonshots.</div>`,
+  },
+  {
+    title: 'PE Strategies and the Firm Landscape',
+    content: `<p>Within private equity there are several distinct strategies, and firms specialize. Knowing the map signals you have done more than read a single overview.</p>
+
+<div class="framework-box"><div class="fw-label">THE MAIN PE STRATEGIES</div><strong>Leveraged buyouts (LBOs):</strong> the classic, acquiring mature companies using significant debt. The core of most PE.<br/><strong>Growth equity:</strong> minority investments in fast-growing, often profitable companies, with little or no leverage.<br/><strong>Distressed / special situations:</strong> investing in troubled companies or their debt, profiting from a turnaround or restructuring.<br/><strong>Venture capital:</strong> early-stage, high-risk, high-reward (often treated as its own world).<br/><strong>Secondaries:</strong> buying existing stakes in PE funds from other investors who want liquidity.</div>
+
+<div class="key-concept">Firms also differ enormously by <strong>size</strong>, which shapes the whole job. <strong>Megafunds</strong> (the largest firms) do huge deals, often take big public companies private, and run highly structured, specialized processes. <strong>Middle-market</strong> firms buy mid-sized companies, where there is often more room for hands-on operational improvement and proprietary (less competitive) sourcing. <strong>Lower-middle-market</strong> firms go smaller still, frequently buying founder-owned businesses. The size you target matters for interviews because the work differs: megafunds emphasize financial sophistication and process, while smaller funds emphasize operational involvement and deal sourcing. Having a view on what size firm fits you, and why, is a strong signal of genuine interest.</div>
+
+<div class="pro-tip">When discussing a specific firm, know its strategy and size segment, and ideally a recent deal or two. Saying "I'm drawn to the middle market because there's more operational value to create and sourcing is more relationship-driven" is far stronger than a generic "I want to do PE," and it lets the conversation go somewhere real.</div>`,
+  },
+  {
+    title: 'The Firm Structure, the Day-to-Day, and the Career',
+    content: `<p>Finally, know how a PE firm is organized and what the work actually looks like, because interviewers want people who understand and want the real job, not a glamorized version.</p>
+
+<table class="comparison-table">
+<tr><th>Level</th><th>Rough role</th></tr>
+<tr><td>Analyst / Associate</td><td>The technical engine: builds LBO models, does due diligence, writes investment memos</td></tr>
+<tr><td>Vice President (VP)</td><td>Manages deal execution and the deal team day to day</td></tr>
+<tr><td>Principal / Director</td><td>Leads deals, sources opportunities, sits closer to investment decisions</td></tr>
+<tr><td>Partner / Managing Director</td><td>Owns relationships and capital, makes final investment calls, raises funds</td></tr>
+</table>
+
+<div class="key-concept">The associate role, the one most candidates are interviewing for, is fundamentally about <strong>evaluating deals</strong>: building and stress-testing LBO models, digging through due diligence, and synthesizing it all into a recommendation for the investment committee. It is analytical and detail-heavy, with intense bursts around live deals. The work splits between deal execution (when a deal is active), portfolio monitoring (tracking companies the fund owns), and sourcing and screening (finding and filtering new opportunities). It is less about volume than investment banking and more about depth: you go deep on fewer situations and actually form a view on whether to put money to work. That shift, from executing transactions to making investment judgments, is what draws many people from banking to PE, and naming it is a strong "why PE" theme.</div>
+
+<div class="takeaway-box">Understand the real day-to-day: building and pressure-testing models, conducting diligence, writing memos, and forming investment judgments, with portfolio monitoring and sourcing alongside live deals. The appeal over banking is depth and ownership of a view rather than transaction volume. Interviewers want candidates who want <em>this</em> work, so ground your interest in the actual associate experience, not the prestige.</div>`,
   },
 ];

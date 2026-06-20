@@ -1,92 +1,30 @@
 export const PE_DEAL_PROCESS_SECTIONS = [
   {
-    title: 'Deal Sourcing',
-    content: `<p>PE firms find acquisition targets through three main channels:</p>
+    title: 'Sourcing: Finding Deals',
+    content: `<p>Before a PE firm can model or close anything, it has to find opportunities. Sourcing, the process of generating deal leads, is where it all starts, and it shapes the kind of returns a firm can earn.</p>
 
-<p><strong>Intermediated / Auction Processes:</strong> Investment banks and M&A advisors run sell-side processes on behalf of company owners. They contact potential buyers, distribute a "teaser" (anonymous summary) and Confidential Information Memorandum (CIM), and manage the bidding process. This is the most common source of deals, especially in the middle market and above. The downside: competitive auctions drive up prices and compress returns.</p>
+<div class="key-concept">Deals come from two broad channels, and the distinction matters. <strong>Intermediated (auction) deals</strong> are run by investment bankers who shop a company to many buyers in a competitive process, this is efficient and common, but competition tends to drive up the price, compressing returns. <strong>Proprietary (off-market) deals</strong> are sourced directly by the PE firm through its own relationships, networks, and outreach, often before the company is widely for sale. Proprietary deals are prized because less competition means a better entry price and therefore higher potential returns. A firm's ability to source proprietary deals, especially in the middle market, where owner-founders may sell to a trusted relationship rather than run an auction, is a genuine competitive advantage. This is why sourcing and relationships matter so much, and why "how would you source deals?" is a real interview question, particularly at smaller firms.</div>
 
-<p><strong>Proprietary / Direct Sourcing:</strong> The PE firm contacts company owners directly, without an intermediary. This can be through cold outreach, industry conferences, operating partner networks, or relationships built over years. Proprietary deals are the holy grail because they involve less competition and often better pricing. However, they require significant relationship-building effort and a strong industry reputation.</p>
-
-<p><strong>Referral Networks:</strong> Deals can come through accountants, lawyers, consultants, lenders, other PE firms (who may pass on deals that don't fit their strategy), and portfolio company executives. Building and maintaining these networks is a core competency for senior PE professionals.</p>`,
+<div class="pro-tip">If asked about sourcing, show you understand the auction-versus-proprietary tradeoff: auctions are efficient but competitive (higher prices, lower returns), while proprietary deals won through relationships and direct outreach offer better entry prices. Mentioning that you would build relationships with industry executives, bankers, and owners to find off-market opportunities signals you understand where PE alpha actually comes from.</div>`,
   },
   {
-    title: 'Initial Screening',
-    content: `<p>PE firms see hundreds of deals per year but invest in only a handful. The initial screening process filters opportunities rapidly based on key criteria:</p>
+    title: 'Screening and the Investment Thesis',
+    content: `<p>A firm sees far more opportunities than it can pursue, so screening, quickly filtering leads down to the few worth deep work, is essential. The output of screening is an initial investment thesis.</p>
 
-<p><strong>Does it fit our strategy?</strong> Right industry, right size, right geography? If the firm specializes in healthcare services and the deal is a semiconductor manufacturer, it's an immediate pass.</p>
+<div class="key-concept"><strong>Screening</strong> is the disciplined filtering of opportunities against the firm's criteria: the right size, the right sector, stable cash flows that can support leverage, a defensible market position, a sensible valuation, and a plausible path to improve the business and exit. Most opportunities fail one of these tests and are passed on quickly, the skill is saying no fast so the team's deep effort goes only to the genuinely promising few. For the ones that pass, the firm forms a preliminary <strong>investment thesis</strong>: a clear hypothesis for why this is a good investment, how the firm will create value (the operational and financial plan), what the risks are, and how it will exit. The thesis is the spine of everything that follows; due diligence is essentially the process of testing whether the thesis holds up.</div>
 
-<p><strong>Is the business quality sufficient?</strong> Stable revenue, defensible market position, strong management, recurring or contracted revenue streams, limited customer concentration.</p>
-
-<p><strong>Can we underwrite attractive returns?</strong> A quick mental model (or paper LBO): Given the asking price, reasonable leverage, and conservative growth assumptions, can we achieve a 20%+ IRR and 2.0x+ MOIC? If the math doesn't work on the back of an envelope, it won't work in a detailed model.</p>
-
-<p><strong>Is there a credible value creation plan?</strong> What specific levers can we pull to improve this business? If the answer is "we'll just ride market growth," that's not a PE-worthy thesis.</p>
-
-<p><strong>What are the key risks, and are they manageable?</strong> Customer concentration, regulatory risk, technology disruption, cyclicality, management dependency. Every deal has risks; the question is whether they can be mitigated or priced appropriately.</p>`,
+<div class="takeaway-box">Screening is about saying no efficiently: filter against size, sector, cash-flow stability, market position, valuation, and exitability, so deep work is reserved for the best few. Each survivor gets a preliminary investment thesis, why this is a good deal, how value gets created, the risks, and the exit, which becomes the hypothesis that due diligence then stress-tests.</div>`,
   },
   {
     title: 'Due Diligence',
-    content: `<p>Once a deal passes initial screening, the PE firm conducts extensive due diligence-a systematic investigation of every material aspect of the business. Due diligence is the single most important risk management tool in PE. The goal is not just to verify the seller's claims, but to develop an independent, bottom-up view of the business's value and risks.</p>
+    content: `<p>Due diligence is the deep investigation a PE firm conducts before committing capital, the rigorous testing of the investment thesis from every angle. It is where a deal is truly understood and where many deals die.</p>
 
-<h4>Financial Due Diligence</h4>
+<div class="framework-box"><div class="fw-label">THE DILIGENCE WORKSTREAMS</div><strong>Commercial / market:</strong> is the market attractive, is the company's position defensible, are the growth assumptions realistic?<br/><strong>Financial:</strong> are the financials accurate and is the EBITDA real (quality of earnings), with no one-time items dressing up the numbers?<br/><strong>Operational:</strong> can the business actually be improved as the thesis assumes, and how?<br/><strong>Legal / regulatory:</strong> are there liabilities, contracts, or compliance issues lurking?<br/><strong>Management:</strong> is the leadership team capable and aligned, or does it need to change?</div>
 
-<p>Usually conducted by a Big Four accounting firm. The analysis includes:</p>
+<div class="key-concept">The single most important diligence concept for interviews is <strong>quality of earnings (QoE)</strong>: verifying that the company's reported EBITDA is real, sustainable, and not inflated by one-time gains, aggressive accounting, or unsustainable cost-cutting. Because the entire purchase price is a multiple of EBITDA, if the EBITDA is overstated, the firm overpays, so confirming the true, normalized earnings power is critical. Diligence also tests every key assumption in the thesis: the market's growth, the company's competitive moat, the achievability of the planned improvements, and any hidden risks. A firm that does diligence well avoids the costly mistakes, the deal that looked great until the numbers turned out to be propped up, or the market turned out to be shrinking. Diligence is where the firm earns the right to be confident in its model.</div>
 
-<p><strong>Quality of Earnings (QoE):</strong> The most critical deliverable. The QoE analysis adjusts the company's reported EBITDA to arrive at a "normalized" or "adjusted" EBITDA that reflects the true, recurring, cash earning power of the business. Common adjustments include: removing one-time items (legal settlements, restructuring costs), normalizing owner compensation (privately held companies often pay their owners above-market salaries), adjusting for non-recurring revenue or expenses, identifying aggressive accounting treatments, and adjusting for run-rate effects of recent changes (new contracts, price increases, cost savings).</p>
+<div class="key-concept">Diligence culminates in the <strong>investment committee (IC) memo and decision</strong>. The deal team synthesizes everything, the thesis, the diligence findings, the model and returns, the risks and mitigants, into a memo for the firm's investment committee (its senior partners), who decide whether to proceed. The IC is the firm's internal gatekeeper, and the associate's analysis is what informs that decision. Understanding that the whole process funnels toward a reasoned recommendation to the IC, and that your job as an associate is to build the rigorous case the IC relies on, frames the deal process correctly.</div>
 
-<p><strong>Working Capital Analysis:</strong> Determine the "normal" level of net working capital required to run the business. This is critical for setting the working capital peg in the purchase agreement-the target level at which the buyer receives a dollar-for-dollar adjustment if actual working capital at closing differs from the peg.</p>
-
-<p><strong>CapEx Analysis:</strong> Separate maintenance CapEx (required to sustain current operations) from growth CapEx (discretionary spending to expand). The distinction matters because maintenance CapEx is a real cost that reduces Free Cash Flow available for Debt service.</p>
-
-<p><strong>Debt and Debt-like Items:</strong> Identify all obligations that should be treated as "Debt-like" for purposes of calculating the Enterprise Value. This goes beyond traditional bank Debt to include: unfunded pension obligations, deferred compensation, earn-out liabilities from prior acquisitions, capital lease obligations, deferred revenue that won't convert to cash, environmental liabilities, litigation reserves, and unpaid taxes.</p>
-
-<h4>Commercial Due Diligence</h4>
-
-<p>Often conducted by a strategy consulting firm (Bain, McKinsey, L.E.K., etc.). This analysis assesses the external market environment and the company's competitive position:</p>
-
-<p><strong>Market sizing and growth:</strong> How big is the addressable market? Is it growing, stable, or shrinking? What are the secular trends (favorable tailwinds or structural headwinds)?</p>
-
-<p><strong>Competitive landscape:</strong> Who are the key competitors? What is the company's market share? How defensible is its position? Are there barriers to entry (regulatory licenses, network effects, switching costs, brand loyalty)?</p>
-
-<p><strong>Customer analysis:</strong> How concentrated is the customer base? What do customer contracts look like (length, renewal rates, price escalators)? Why do customers buy from this company? What's the churn or loss rate?</p>
-
-<p><strong>Revenue durability:</strong> How much revenue is recurring vs. one-time? What percentage is contracted vs. at-risk? How sensitive is volume to economic cycles?</p>
-
-<h4>Legal Due Diligence</h4>
-
-<p>Conducted by the PE firm's law firm. Covers: corporate structure and governance, material contracts (reviewing key customer, supplier, and employee agreements), pending or threatened litigation, intellectual property ownership and protection, regulatory compliance, environmental liabilities, and tax structuring.</p>
-
-<h4>Operational Due Diligence</h4>
-
-<p>Conducted by the PE firm's operating team or specialized consultants. Covers: management team assessment (strengths, gaps, bench depth), IT systems and infrastructure, operational efficiency (benchmarking against best-in-class), supply chain resilience, human capital (compensation benchmarking, key person dependencies, labor relations), and facility condition.</p>
-
-<h4>Management Assessment</h4>
-
-<p>Perhaps the most important and most difficult piece of due diligence. PE firms spend significant time evaluating the CEO, CFO, and other senior leaders. Will the current management team execute the value creation plan? Are there gaps that need to be filled? Is the CEO coachable, or will they resist changes? Management meetings, reference checks, and psychometric assessments are all common tools.</p>
-
-<div class="pro-tip">
-Many PE professionals say the management team is the single most important factor in any investment decision. A strong team can execute a mediocre strategy; a weak team can squander a brilliant one. If you're unsure about the management team, that's usually a reason to pass-not a problem to solve post-close.
-</div>`,
-  },
-  {
-    title: 'The Investment Committee Process',
-    content: `<p>Before committing to an acquisition, the deal team must present to the firm's <strong>Investment Committee (IC)</strong>-typically composed of the firm's senior partners. The IC memo is a comprehensive document covering: the investment thesis (why this deal), business overview, industry analysis, financial analysis (including the LBO model), value creation plan, risk factors and mitigants, deal terms, and the recommended decision.</p>
-
-<p>Most firms have multiple IC "gates." An initial IC meeting approves submitting an Indication of Interest (IOI) or Letter of Intent (LOI). A final IC meeting approves signing the definitive purchase agreement. Between these gates, the deal team conducts progressively deeper due diligence.</p>`,
-  },
-  {
-    title: 'Deal Structuring and Negotiation',
-    content: `<p>Key terms negotiated in the purchase agreement include:</p>
-
-<p><strong>Purchase Price and Adjustments:</strong> The headline price (usually an Enterprise Value) plus mechanisms for adjustments at closing. Common adjustments include a net working capital adjustment (dollar-for-dollar adjustment if closing NWC differs from the agreed-upon peg), a net Debt adjustment (subtracting actual Debt and Debt-like items), and a cash adjustment (adding actual Cash).</p>
-
-<p><strong>Representations and Warranties:</strong> Statements by the seller about the condition of the business (accuracy of financial statements, ownership of assets, absence of undisclosed liabilities). These survive closing and provide the buyer with recourse if they turn out to be false.</p>
-
-<p><strong>Indemnification:</strong> The seller's obligation to compensate the buyer for losses arising from breaches of reps and warranties or other specified risks. Often subject to a "basket" (minimum threshold before claims can be made) and a "cap" (maximum total indemnification, usually 10-20% of the purchase price).</p>
-
-<p><strong>Escrow / Holdback:</strong> A portion of the purchase price (typically 5-15%) held in escrow for 12-24 months to fund potential indemnification claims.</p>
-
-<p><strong>Earn-Out:</strong> A portion of the purchase price contingent on the company achieving specified performance targets post-closing. Common when buyer and seller disagree on the company's future performance. Earn-outs are a source of frequent disputes and should be structured carefully.</p>
-
-<p><strong>Management Rollover:</strong> The percentage of the management team's proceeds that must be reinvested in the new PE-owned company. Typically 25-50% of the CEO's and CFO's net proceeds. This ensures alignment but requires careful tax structuring.</p>`,
+<div class="takeaway-box">Due diligence stress-tests the thesis across commercial, financial, operational, legal, and management workstreams, with quality of earnings (confirming EBITDA is real and sustainable) the most critical because the price is a multiple of it. It all funnels into the IC memo, where the deal team makes a reasoned recommendation to the senior partners who make the final call.</div>`,
   },
 ];

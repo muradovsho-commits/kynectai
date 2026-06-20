@@ -1,124 +1,135 @@
 export const PE_INTERVIEW_QUESTIONS_SECTIONS = [
   {
-    title: 'Fit / Behavioral Questions',
-    content: `<div class="interview-q">
-<div class="q-label">Question 1</div>
-<div class="question">Why private equity? Why not stay in investment banking / consulting?</div>
-<div class="answer">Effective answers emphasize three themes: (1) Long-term ownership vs. advisory-in PE, you see the outcome of your work over years, not just the transaction. (2) Operational involvement-PE allows you to influence strategy, management, and performance, not just model the numbers. (3) Investment judgment-PE develops your ability to make investment decisions with real capital at stake, rather than advising others on their decisions. Avoid clichés like "I want to be on the buy side" without explaining what that means to you personally. The best answers are specific and authentic.</div>
-</div>
+    title: 'The PE Interview Format',
+    content: `<p>PE interviews are demanding and multi-faceted, testing technical skill, investment judgment, and fit in roughly equal measure. Knowing the shape lets you prepare deliberately rather than hoping.</p>
 
-<div class="interview-q">
-<div class="q-label">Question 2</div>
-<div class="question">Walk me through a deal you've worked on.</div>
-<div class="answer">Structure: (1) Brief overview of the company and industry. (2) Your role and the transaction context (sell-side, buy-side, financing). (3) Key financial metrics (revenue, EBITDA, margins, growth). (4) What made it interesting or challenging. (5) The outcome. Be prepared for deep follow-ups: "What was the purchase multiple?", "How was it financed?", "What were the key risks?", "What did you learn?" If you're coming from banking, know the deal backwards and forwards. If you haven't worked on a deal, use a class project or investment pitch.</div>
-</div>`,
+<div class="framework-box"><div class="fw-label">WHAT TO EXPECT</div><strong>Technical:</strong> LBO mechanics, the paper LBO, accounting and valuation, returns math (IRR vs MOIC). The core filter.<br/><strong>The LBO modeling test:</strong> at many firms, a timed exercise to build an LBO model (from a short paper LBO to a multi-hour full model).<br/><strong>The case study / investment recommendation:</strong> analyze a company (sometimes a CIM) and recommend whether to invest, with a thesis and returns.<br/><strong>Deal and markets discussion:</strong> pitch a company, discuss a recent deal or your own deals, speak to the environment.<br/><strong>Fit and behavioral:</strong> why PE, why this firm, your story, and standard behavioral questions.</div>
+
+<div class="key-concept">The defining feature of PE recruiting is that it demands <strong>both technical mastery and investment judgment</strong>. Many candidates (especially strong bankers) have the technical skills, the LBO, the accounting, the modeling, so those become the price of entry, the filter you must pass. What differentiates candidates is investment judgment: can you look at a company and form a reasoned, ownership-minded view on whether it is a good buyout? That is why the case study and deal discussion matter so much, and why pure modeling skill is necessary but not sufficient. Prepare the technicals until they are automatic, then invest heavily in developing and articulating investment judgment, because that is what actually wins offers.</div>
+
+<div class="takeaway-box">Prepare across all fronts: drill the technicals (LBO, paper LBO, accounting, returns) until automatic, since they are the filter; practice the case study and deal pitch to show investment judgment, which is the differentiator; and prepare crisp fit answers (why PE, why this firm). Treat modeling as necessary but not sufficient, the offer is won on judgment and fit on top of solid technicals.</div>`,
   },
   {
-    title: 'Technical Questions: LBO &amp; Returns',
+    title: 'Fit and Behavioral Questions',
     content: `<div class="interview-q">
-<div class="q-label">Question 3</div>
-<div class="question">Walk me through a leveraged buyout.</div>
-<div class="answer">A PE firm identifies a company with stable cash flows. It acquires the company using a mix of Equity (30-50%, from the PE fund) and Debt (50-70%, from banks and institutional lenders). The Debt is secured against the company's assets and cash flows. Over a 3-7 year holding period, the PE firm works to increase the company's EBITDA (through revenue growth, cost cuts, and operational improvements) while using the company's Free Cash Flow to repay Debt. At the end of the holding period, the PE firm exits by selling the company (to a strategic buyer, another PE firm, or via IPO). Returns are measured by MOIC and IRR, and they come from three sources: Debt paydown, EBITDA growth, and multiple expansion.</div>
+<div class="q-label">Q1</div>
+<div class="question">Why private equity?</div>
+<div class="answer">Strong answers center on wanting to be an investor and an owner, not just an advisor or executor. Themes: you want to take a long-term view and actually improve businesses rather than just transact; you are drawn to forming and owning an investment judgment; you like the blend of analytical rigor and operational impact. If lateraling from banking, contrast the executor role with wanting to decide what is worth investing in and live with the outcome. Avoid prestige or money; ground it in the actual work of being an owner-investor.</div>
 </div>
 
 <div class="interview-q">
-<div class="q-label">Question 4</div>
-<div class="question">What are the three sources of returns in an LBO?</div>
-<div class="answer">(1) <strong>Debt paydown:</strong> As the company's FCF repays Debt, value shifts from Debt holders to Equity holders. The most reliable source. (2) <strong>EBITDA growth:</strong> Revenue growth, margin expansion, and cost optimization increase the company's earnings, making it worth more at exit. Requires genuine operational skill. (3) <strong>Multiple expansion:</strong> Selling at a higher multiple than the purchase price, either because the company is improved (larger, faster-growing, more profitable) or because market conditions are more favorable. The least controllable factor. The best deals combine all three; the worst deals rely entirely on multiple expansion.</div>
+<div class="q-label">Q2</div>
+<div class="question">Why our firm?</div>
+<div class="answer">This requires real homework: speak to the firm's strategy (size segment, sectors), a recent deal or two you find interesting, its approach to value creation, and its culture, then connect those to your own interests and strengths. "I'm drawn to your focus on middle-market software because operational value creation matters there and I want to develop that skill" beats anything generic. Specificity proves genuine interest; vagueness signals you are interviewing everywhere.</div>
 </div>
 
 <div class="interview-q">
-<div class="q-label">Question 5</div>
-<div class="question">A company has $50M EBITDA. You buy it at 8.0x with 5.0x leverage. EBITDA grows to $65M in 5 years. You exit at 8.0x. No Debt is repaid. What's the approximate MOIC?</div>
-<div class="answer">Purchase EV: $50M × 8.0x = $400M. Debt: $50M × 5.0x = $250M. Equity: $150M. Exit EV: $65M × 8.0x = $520M. Remaining Debt: $250M (no paydown). Exit Equity: $520M − $250M = $270M. MOIC: $270M / $150M = 1.80x. The return came entirely from EBITDA growth. Without Debt paydown, the return is moderate. If Debt had been paid down to $150M, Exit Equity would be $370M and MOIC would be 2.47x-showing how Debt paydown amplifies returns.</div>
+<div class="q-label">Q3</div>
+<div class="question">Walk me through your resume / tell me about yourself.</div>
+<div class="answer">Tell a coherent story that leads logically to PE: how your experiences built relevant skills (analytical rigor, deal exposure, an investor mindset) and sparked your interest in becoming an owner-investor. Keep it tight and forward-looking, ending on why PE and why now. The goal is a narrative that makes PE feel like the natural next step, not a list of jobs.</div>
 </div>
 
 <div class="interview-q">
-<div class="q-label">Question 6</div>
+<div class="q-label">Q4</div>
+<div class="question">Tell me about a time you faced a setback or made a mistake.</div>
+<div class="answer">Choose a real example, take genuine ownership, explain what you learned, and show how you applied it. PE wants people with sound judgment and resilience who can be honest about failure and grow from it. Avoid humble-brags and avoid blaming others; the authenticity and the lesson are what matter.</div>
+</div>
+
+<div class="pro-tip">Fit answers in PE should consistently project an owner-investor mindset and genuine, specific interest in the firm. The recurring theme that wins: you want to make investment decisions and improve businesses over the long term, not just execute transactions. Tie every fit answer back to that.</div>`,
+  },
+  {
+    title: 'Technical Questions With Model Answers',
+    content: `<div class="interview-q">
+<div class="q-label">Q5</div>
+<div class="question">Why does using leverage increase returns in an LBO?</div>
+<div class="answer">Leverage reduces the amount of the firm's own equity at risk, so any gain in the company's value is spread over a smaller equity base, multiplying the percentage return. On top of that, the company's cash flow pays down the debt over the hold, shifting value from lenders to equity holders even if enterprise value is flat. The caveat: leverage amplifies losses too, which is why PE targets stable, cash-generative businesses that can safely carry the debt.</div>
+</div>
+
+<div class="interview-q">
+<div class="q-label">Q6</div>
 <div class="question">What makes a good LBO candidate?</div>
-<div class="answer">Stable, predictable cash flows (for Debt service). Low cyclicality. Strong market position with competitive moats. Low existing leverage. Low maintenance CapEx requirements. Opportunities for operational improvement. A clear, actionable value creation plan. Multiple viable exit routes. A management team capable of executing the plan. And a purchase price that allows for attractive returns even under conservative assumptions.</div>
+<div class="answer">Stable, predictable cash flows to service debt; a mature, defensible market position; opportunities to improve (margin, growth, operations) so there is EBITDA upside; a reasonable entry valuation; low existing debt; and a clear path to exit. Each trait ties back to either carrying debt safely or driving the three return drivers. Companies that are too volatile, too capital-intensive, or already fully optimized make poor targets.</div>
 </div>
 
 <div class="interview-q">
-<div class="q-label">Question 7</div>
-<div class="question">How does more leverage affect the IRR of an LBO?</div>
-<div class="answer">More leverage amplifies returns in both directions. In a successful deal, more leverage means less Equity invested, so the same dollar gain represents a higher percentage return (higher IRR). But more leverage also means higher Interest Expense (reducing FCF for Debt paydown), less margin for error (if EBITDA declines, the company may not be able to service its Debt), and potentially higher interest rates (lenders charge more at higher leverage). Past a certain point, the risk increase outweighs the return enhancement. Typical leverage capacity is 4-6x EBITDA for most buyouts.</div>
+<div class="q-label">Q7</div>
+<div class="question">What are the three ways an LBO generates returns, and which is best?</div>
+<div class="answer">EBITDA growth (making the business earn more), debt paydown / deleveraging (using cash flow to retire debt, which grows the equity slice), and multiple expansion (exiting at a higher multiple than entry). EBITDA growth is the best, most sustainable driver because it reflects a genuinely improved business; debt paydown is reliable; multiple expansion is least controllable and should not be relied on. The strongest theses lead with operational EBITDA growth.</div>
 </div>
 
 <div class="interview-q">
-<div class="q-label">Question 8</div>
-<div class="question">Why does a dividend recapitalization improve IRR but not MOIC?</div>
-<div class="answer">A dividend recap returns cash to the PE firm sooner by having the company borrow additional Debt and paying a dividend. This improves IRR because IRR is time-weighted-receiving cash earlier increases the annualized return. But MOIC can actually decrease because the additional Debt reduces Exit Equity (the company has more Debt to repay at exit). The total dollar profit may be similar or even lower, but because it was received earlier, the annualized return (IRR) is higher. This illustrates why PE firms track both IRR and MOIC-each captures a different dimension of performance.</div>
+<div class="q-label">Q8</div>
+<div class="question">What is the difference between IRR and MOIC?</div>
+<div class="answer">MOIC is how many times you multiplied your money (exit equity / invested equity), with no reference to time. IRR is the annualized return, so it is time-sensitive: tripling your money in 3 years is a much higher IRR than tripling it in 7, despite the same MOIC. MOIC captures magnitude, IRR captures speed. Both matter, and note that IRR can be flattered by returning capital early (timing), while MOIC cannot, so LPs watch both.</div>
+</div>
+
+<div class="interview-q">
+<div class="q-label">Q9</div>
+<div class="question">If depreciation increases by 10, walk me through the three statements.</div>
+<div class="answer">Income statement: pre-tax income falls 10; at a 25 percent tax rate, net income falls 7.5. Cash flow: start from net income down 7.5, add back the 10 of non-cash depreciation, so cash actually rises 2.5 (the tax savings). Balance sheet: cash up 2.5, net PP&amp;E down 10 (accumulated depreciation), so assets fall 7.5; retained earnings fall 7.5 (lower net income), so both sides fall 7.5 and the balance sheet balances.</div>
+</div>
+
+<div class="interview-q">
+<div class="q-label">Q10</div>
+<div class="question">Enterprise value vs equity value?</div>
+<div class="answer">Enterprise value is the value of the whole operating business regardless of financing; equity value is just the shareholders' stake. The bridge: Enterprise Value = Equity Value + Net Debt (debt minus cash). When you buy a company you pay the equity holders and assume the debt (net of cash), so the true cost of the business is enterprise value. LBOs are analyzed in enterprise-value terms because the deal changes the capital structure.</div>
 </div>`,
   },
   {
-    title: 'Technical Questions: Accounting &amp; Valuation',
-    content: `<div class="interview-q">
-<div class="q-label">Question 9</div>
-<div class="question">What is a Quality of Earnings report, and why does it matter in PE?</div>
-<div class="answer">A QoE report, prepared by an accounting firm, adjusts the target company's reported EBITDA to reflect its true, recurring, cash earning power. Common adjustments include: removing one-time items (legal settlements, severance, COVID-related costs), normalizing owner compensation (private company owners often overpay themselves), adjusting for non-recurring revenue, identifying aggressive accounting treatments, and calculating run-rate effects of recent changes. The adjusted EBITDA is what the buyer uses to set the purchase price (via the multiple) and to underwrite the Debt (via leverage ratios). If the QoE reveals that "real" EBITDA is $40M instead of the $50M reported, the purchase price and entire deal structure change dramatically.</div>
-</div>
+    title: 'The LBO Case Study',
+    content: `<p>The case study is where technical skill and investment judgment combine, and it is often the deciding round. You are given a company to analyze and asked to recommend whether to invest. Here is how to approach it.</p>
 
-<div class="interview-q">
-<div class="q-label">Question 10</div>
-<div class="question">Walk me through the Sources &amp; Uses schedule for an LBO.</div>
-<div class="answer"><strong>Uses</strong> (where the money goes): Equity Purchase Price (offer price × shares), Refinancing of Existing Debt (the target's current Debt is typically refinanced), Advisory Fees (investment bank fees for both buyer and seller), Financing Fees (commitment fees, arrangement fees on new Debt), Legal and Diligence Fees, and sometimes Cash to the Balance Sheet. <strong>Sources</strong> (where the money comes from): each Debt tranche (Revolver, Term Loan A, Term Loan B, Senior Notes, Mezzanine/Sub Debt), the Sponsor Equity contribution, and Management Rollover Equity. Total Sources must equal Total Uses.</div>
-</div>
+<div class="framework-box"><div class="fw-label">CASE STUDY APPROACH</div><strong>1. Understand the business:</strong> what it does, how it makes money, its market position and stability.<br/><strong>2. Assess LBO suitability:</strong> are the cash flows stable enough to carry debt, is there room to improve?<br/><strong>3. Build / sketch the returns:</strong> entry multiple and leverage, EBITDA growth, debt paydown, exit, and the resulting IRR and MOIC.<br/><strong>4. Identify value creation:</strong> the specific operational and strategic levers you would pull.<br/><strong>5. Weigh the risks:</strong> what could break the thesis, and how you would mitigate.<br/><strong>6. Make a clear recommendation:</strong> invest or pass, with conviction and reasons.</div>
 
-<div class="interview-q">
-<div class="q-label">Question 11</div>
-<div class="question">What's the difference between Gross IRR and Net IRR?</div>
-<div class="answer">Gross IRR is calculated on the fund's investment returns before deducting management fees and carried interest. It reflects the returns generated by the investment portfolio itself. Net IRR is the return LPs actually receive after fees and carry are subtracted. Net IRR is always lower than Gross IRR-typically by 400-700 basis points for a standard "2 and 20" fund. Net IRR is the more meaningful figure for LPs because it represents their actual economic return. GPs typically cite Gross IRR to showcase investment performance, while LPs focus on Net IRR to evaluate their actual return experience.</div>
-</div>`,
+<div class="key-concept">The most common case-study failure is producing analysis without a <strong>decision</strong>. The interviewer wants a clear, well-reasoned recommendation, invest or pass, not a hedge. They are testing investment judgment, which means committing to a view and defending it with the thesis, the returns, and a clear-eyed treatment of the risks. A good recommendation is structured: here is the business and why it is (or is not) a good LBO, here is roughly how the returns would work, here is my value creation plan, here are the key risks, and therefore I would (or would not) invest. Even if your numbers are approximate, a confident, logically structured recommendation that weighs both sides and lands on a decision is what wins. Practice doing this end to end, ideally on real companies or sample CIMs, until the structure is second nature.</div>
+
+<div class="takeaway-box">Treat the case study as an investment recommendation, not just analysis: understand the business, assess LBO suitability, sketch the returns, define the value creation plan, weigh the risks, and then commit to a clear invest-or-pass decision with conviction. The decision and your reasoning matter more than perfect numbers, because investment judgment is exactly what is being tested.</div>`,
   },
   {
-    title: 'Technical Questions: Deal Process &amp; Operations',
-    content: `<div class="interview-q">
-<div class="q-label">Question 12</div>
-<div class="question">How would you evaluate whether to pursue a buy-and-build strategy?</div>
-<div class="answer">The buy-and-build thesis requires several conditions: (1) A fragmented industry with many small operators and no dominant player. (2) A quality platform company with professional management, scalable systems, and a track record of integrating acquisitions. (3) Availability of actionable add-on targets at reasonable multiples (ideally 4-6x EBITDA vs. 7-10x for the platform). (4) Genuine synergy potential-cost savings from consolidation, revenue benefits from broader geographic or product coverage. (5) Multiple expansion potential-larger, more diversified platforms should command higher multiples. And (6) Management bandwidth to execute multiple integrations simultaneously without disrupting the core business.</div>
-</div>
+    title: 'Common Mistakes',
+    content: `<div class="warning-box"><strong>Treating a PE pitch like a stock pitch.</strong> PE buys and controls companies for years. Your pitch must address why it is a good <em>buyout</em>, cash flow to carry debt, a value creation plan, a path to exit, not just "the stock will go up."</div>
 
-<div class="interview-q">
-<div class="q-label">Question 13</div>
-<div class="question">Name three risks you'd look for during due diligence on a software company.</div>
-<div class="answer">(1) <strong>Customer concentration:</strong> If 30%+ of revenue comes from one client, losing that client would devastate the business and impair Debt service. (2) <strong>Churn / retention risk:</strong> If annual churn exceeds 15-20%, the company must acquire a significant number of new customers just to maintain revenue, which is expensive and uncertain. Investigate the reasons for churn and whether they're structural or fixable. (3) <strong>Technical debt:</strong> Legacy code, outdated infrastructure, or a monolithic architecture that requires a major re-platforming investment to remain competitive. This represents a hidden CapEx obligation that may not be reflected in the financial projections.</div>
-</div>
+<div class="warning-box"><strong>Relying on multiple expansion for returns.</strong> Leading a thesis with "we'll sell at a higher multiple" signals weak judgment, since multiple expansion is the least controllable driver. Lead with EBITDA growth and treat debt paydown as reliable; do not bank on the multiple.</div>
 
-<div class="interview-q">
-<div class="q-label">Question 14</div>
-<div class="question">How would you create value in a business services company?</div>
-<div class="answer">Key levers: (1) Pricing optimization-many services businesses undercharge; implementing disciplined pricing can improve margins by 200-500 bps. (2) Labor productivity-optimizing scheduling, reducing overtime, investing in technology to automate manual processes. (3) Cross-selling-expanding the service offering to existing customers. (4) Geographic expansion-opening new locations or expanding into adjacent markets, potentially through add-on acquisitions. (5) Customer retention programs-reducing churn through improved service quality, dedicated account management, and longer-term contracts. (6) Back-office professionalization-implementing ERP systems, financial controls, and management reporting that founder-led businesses often lack.</div>
-</div>`,
+<div class="warning-box"><strong>Freezing or going silent on the paper LBO.</strong> The interviewer grades your structure and composure. Narrate every step out loud, write down the key numbers, and keep moving. A calm walk-through near the right answer beats a silent scramble.</div>
+
+<div class="warning-box"><strong>Not making a decision in the case study.</strong> Analysis without a clear invest-or-pass recommendation fails the core test of investment judgment. Commit to a view and defend it with the thesis, returns, and risks.</div>
+
+<div class="warning-box"><strong>Confusing gross and net returns, or IRR and MOIC.</strong> Be precise: gross is before fees and carry, net is what LPs keep; MOIC is the money multiple, IRR is the annualized (time-sensitive) rate. Sloppiness here undercuts your technical credibility.</div>
+
+<div class="warning-box"><strong>Generic "why this firm."</strong> Not knowing the firm's strategy, sectors, or recent deals signals you are interviewing everywhere. Do real homework and connect the firm's specifics to your own interests.</div>
+
+<div class="warning-box"><strong>Botching accounting linkages.</strong> The three-statement linkages (net income to cash flow and equity, ending cash to the balance sheet) are bread-and-butter. Drill the "walk me through" and the depreciation question until they are automatic.</div>
+
+<div class="warning-box"><strong>Describing PE value creation as only cost-cutting.</strong> Modern PE is operationally active, revenue growth, add-ons, management alignment, a 100-day plan, not just slashing costs. Portray the engaged, value-building owner model accurately.</div>`,
   },
   {
-    title: 'Case Study Format',
-    content: `<p>PE interviews often include a case study, which may take one of several forms:</p>
-
-<p><strong>Paper LBO (30-60 minutes):</strong> Given a set of financial assumptions, build a simplified LBO model on paper or in a blank Excel sheet. Calculate purchase price, capital structure, FCF projections, Debt paydown, exit value, and returns. Demonstrate fluency with the mechanics and the ability to do quick mental math.</p>
-
-<p><strong>LBO Modeling Test (2-4 hours):</strong> Build a full LBO model in Excel from a provided CIM or set of financial data. This tests your Excel skills, modeling speed, accuracy, and ability to structure a complex model logically. Practice building LBO models under timed conditions.</p>
-
-<p><strong>Investment Memo / Recommendation (take-home or on-site):</strong> Review a CIM or case packet and prepare a written or verbal recommendation: should the firm invest in this company? Cover the investment thesis, key risks and mitigants, valuation (including an LBO analysis), value creation plan, and exit strategy. The best answers demonstrate independent judgment, not just mechanical analysis.</p>
-
-<p><strong>Deal Discussion:</strong> Present a company you've researched as a potential PE investment. Explain why it's attractive, how you'd structure the deal, what the value creation plan would be, and what returns you'd expect. This tests your ability to think like an investor, not just an analyst.</p>
-
-<div class="takeaway-box">
-<strong>The Interviewer's Perspective:</strong> PE interviews test three things above all else. First, can you do the work? (LBO modeling, financial analysis, due diligence.) Second, do you think like an investor? (Can you identify attractive deals, spot risks, and articulate a value creation thesis?) Third, will you fit the team? (PE firms are small, and you'll work closely with a handful of people for years.) The technical skills get you through the door; the investment judgment and interpersonal fit determine the offer.
-</div>`,
-  },
-  {
-    title: 'Common Mistakes in PE Interviews',
-    content: `<p><strong>Memorizing formulas without understanding them.</strong> Interviewers will probe your understanding with follow-up questions. If you can explain <em>why</em> leverage amplifies returns (not just that it does), you'll stand out.</p>
-
-<p><strong>Ignoring risks.</strong> Every investment has risks. Candidates who only present the bull case without acknowledging and mitigating risks appear naive. The best candidates say, "Here's why I like this deal, here are the three things that could go wrong, and here's how I'd address each one."</p>
-
-<p><strong>Confusing IRR and MOIC.</strong> These measure different things. High IRR with low MOIC (a quick flip) isn't as impressive as high MOIC with reasonable IRR (a genuine value creation story). Understand what drives each metric and when each is more relevant.</p>
-
-<p><strong>Not knowing your deal(s).</strong> If you've worked on an M&A deal in banking, you must know every detail: the purchase price, the multiple, the financing structure, the strategic rationale, the key risks, and the outcome. Saying "I don't remember the multiple" is disqualifying.</p>
-
-<p><strong>Failing to demonstrate investment judgment.</strong> PE firms want investors, not just modelers. Anyone can build a model; the differentiator is knowing whether the model's inputs make sense, what drives the business, and whether the risk/return trade-off is attractive. Practice forming and defending investment opinions.</p>
-
-</div>`,
+    title: 'Glossary',
+    content: `<p><strong>Add-on (bolt-on):</strong> A smaller acquisition made to grow an existing platform company in a buy-and-build strategy.</p>
+<p><strong>Capital call:</strong> A GP's request that LPs transfer committed capital as it is needed for deals.</p>
+<p><strong>Carried interest (carry):</strong> The GP's share of fund profits, classically 20 percent, the main source of PE wealth.</p>
+<p><strong>Continuation fund:</strong> A vehicle that holds a portfolio company beyond the original fund's life, giving original LPs an exit option.</p>
+<p><strong>Co-investment:</strong> LPs investing directly alongside a fund in a specific deal, usually at low or no fee and carry.</p>
+<p><strong>DPI (distributions to paid-in):</strong> Cash actually returned to LPs divided by capital paid in; the realized multiple.</p>
+<p><strong>Dividend recapitalization:</strong> Adding debt to a portfolio company to pay the PE firm a dividend, returning cash without a full sale.</p>
+<p><strong>Due diligence:</strong> The deep pre-investment investigation testing the thesis across commercial, financial, operational, legal, and management areas.</p>
+<p><strong>EBITDA:</strong> Earnings before interest, taxes, depreciation, and amortization; the proxy for operating cash generation that LBO multiples are based on.</p>
+<p><strong>Enterprise value (EV):</strong> The value of the whole business; EV = Equity Value + Net Debt.</p>
+<p><strong>GP (general partner):</strong> The PE firm that runs the fund, makes investments, and earns fees and carry.</p>
+<p><strong>Hurdle rate (preferred return):</strong> The minimum return LPs must receive before the GP earns carry, often ~8 percent.</p>
+<p><strong>IRR (internal rate of return):</strong> The annualized, time-sensitive return on an investment.</p>
+<p><strong>J-curve:</strong> The pattern of early negative then later positive fund returns, as fees are paid before exits occur.</p>
+<p><strong>LBO (leveraged buyout):</strong> Acquiring a company using significant debt alongside equity, with the company's cash flows servicing the debt.</p>
+<p><strong>Leverage multiple:</strong> Total debt divided by EBITDA; how many "turns" of debt a deal carries.</p>
+<p><strong>LP (limited partner):</strong> A passive outside investor that supplies most of a fund's capital.</p>
+<p><strong>MOIC:</strong> Multiple of invested capital; exit equity divided by invested equity, the money multiple.</p>
+<p><strong>NAV lending:</strong> Borrowing against a fund's whole portfolio value to manage liquidity, a debated newer tool.</p>
+<p><strong>Quality of earnings (QoE):</strong> Diligence verifying that reported EBITDA is real and sustainable, not inflated.</p>
+<p><strong>Secondary buyout:</strong> Selling a portfolio company to another PE firm (sponsor-to-sponsor).</p>
+<p><strong>Secondaries:</strong> The market for buying and selling existing LP stakes in PE funds.</p>
+<p><strong>Sources and uses:</strong> The table showing how a deal is funded (sources: debt and equity) and what it pays for (uses).</p>
+<p><strong>TVPI (total value to paid-in):</strong> Total value (distributed plus remaining) divided by paid-in; TVPI = DPI + RVPI.</p>
+<p><strong>Value creation bridge:</strong> The decomposition of equity gain into EBITDA growth, multiple change, and debt paydown.</p>
+<p><strong>Waterfall:</strong> The order in which fund proceeds are split: return of capital, preferred return, GP catch-up, then carry.</p>`,
   },
 ];
