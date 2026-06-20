@@ -576,6 +576,7 @@ nav#nav.scrolled .n-burger{color:var(--text)}
 <!-- NAV -->
 <nav id="nav">
   <div class="n-left">
+    <a href="#ob">OB</a>
     <a href="#tracks">Tracks</a>
     <a href="#features-detail">Features</a>
     <a href="#proof">Testimonials</a>
@@ -590,6 +591,7 @@ nav#nav.scrolled .n-burger{color:var(--text)}
   <button class="n-burger" aria-label="Open menu"><span></span><span></span><span></span></button>
 </nav>
 <div class="n-menu" id="nMenu">
+  <a href="#ob">OB</a>
   <a href="#tracks">Tracks</a>
   <a href="#features-detail">Features</a>
   <a href="#proof">Testimonials</a>
@@ -720,6 +722,118 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
     </div>
   </div>
 </section>
+
+<!-- ═══ OB FLAGSHIP SPOTLIGHT ═══ -->
+<section class="obx reveal" id="ob">
+  <style>
+    .obx{position:relative;overflow:hidden;padding:120px 28px;color:#e8eeff;
+      background:radial-gradient(120% 100% at 50% 28%, #0a1124 0%, #070c1a 52%, #03050b 100%);}
+    .obx::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0.9;
+      background-image:linear-gradient(rgba(90,130,220,0.045) 1px, transparent 1px),
+                       linear-gradient(90deg, rgba(90,130,220,0.045) 1px, transparent 1px);
+      background-size:28px 28px;
+      -webkit-mask-image:radial-gradient(120% 90% at 50% 30%, #000 30%, transparent 78%);
+      mask-image:radial-gradient(120% 90% at 50% 30%, #000 30%, transparent 78%);}
+    .obx-inner{position:relative;z-index:1;max-width:1120px;margin:0 auto;
+      display:grid;grid-template-columns:1.05fr 0.95fr;gap:56px;align-items:center;}
+    .obx-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:2.6px;
+      text-transform:uppercase;color:#8fb0ee;border:1px solid rgba(120,150,220,0.3);
+      border-radius:999px;padding:6px 13px;margin-bottom:26px;background:rgba(40,70,140,0.12);}
+    .obx-word{font-family:'Instrument Serif',serif;font-size:64px;line-height:0.9;
+      color:#eaf0ff;letter-spacing:0.5px;}
+    .obx-word-sub{font-size:9px;font-weight:600;letter-spacing:0.22em;
+      color:rgba(150,170,215,0.6);margin-top:8px;margin-bottom:22px;}
+    .obx h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(32px,3.6vw,46px);
+      line-height:1.08;letter-spacing:-0.5px;margin:0 0 18px;color:#f3f6ff;}
+    .obx h2 em{font-style:italic;color:#86a7ec;}
+    .obx-lead{font-size:15.5px;line-height:1.7;color:rgba(206,216,240,0.82);max-width:520px;margin:0 0 26px;}
+    .obx-lead em{font-style:italic;color:#cfe0ff;}
+    .obx-feats{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:32px;}
+    .obx-feat{font-size:12.5px;font-weight:500;color:#cdd9f5;padding:8px 14px;border-radius:9px;
+      border:1px solid rgba(120,150,220,0.22);background:rgba(30,50,100,0.18);
+      transition:border-color 0.2s, background 0.2s, transform 0.2s;}
+    .obx-feat:hover{border-color:rgba(140,170,240,0.5);background:rgba(45,75,150,0.28);transform:translateY(-2px);}
+    .obx-cta{display:inline-flex;align-items:center;gap:9px;font-family:'DM Sans',sans-serif;
+      font-size:14px;font-weight:700;text-decoration:none;color:#06101f;background:#dfe9ff;
+      padding:13px 26px;border-radius:11px;transition:transform 0.18s, box-shadow 0.18s;
+      box-shadow:0 10px 30px -12px rgba(120,160,255,0.7);}
+    .obx-cta:hover{transform:translateY(-2px);box-shadow:0 16px 40px -14px rgba(120,160,255,0.85);}
+    .obx-cta .ar{transition:transform 0.18s;}
+    .obx-cta:hover .ar{transform:translateX(4px);}
+    .obx-note{font-size:12px;color:rgba(150,170,215,0.6);margin-top:16px;}
+    .obx-viz{position:relative;}
+    .obx-orb{position:relative;width:100%;height:420px;}
+    .obx-orb canvas{position:absolute;inset:0;width:100%;height:100%;display:block;
+      animation:obxfloat 7s ease-in-out infinite;}
+    .obx-orb::before{content:"";position:absolute;inset:0;pointer-events:none;
+      background:radial-gradient(circle at 50% 50%, rgba(60,120,250,0.34) 0%, rgba(45,108,235,0.1) 38%, transparent 64%);
+      animation:obxpulse 5.5s ease-in-out infinite;}
+    @keyframes obxfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+    @keyframes obxpulse{0%,100%{opacity:0.75;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+    @media(max-width:860px){
+      .obx{padding:88px 22px;}
+      .obx-inner{grid-template-columns:1fr;gap:18px;text-align:center;}
+      .obx-lead{margin-left:auto;margin-right:auto;}
+      .obx-feats{justify-content:center;}
+      .obx-word{font-size:54px;}
+      .obx-orb{height:320px;order:-1;}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .obx-orb canvas,.obx-orb::before{animation:none;}
+    }
+  </style>
+  <div class="obx-inner">
+    <div class="obx-copy">
+      <div class="obx-badge">Flagship &middot; Included with Elite</div>
+      <div class="obx-word">OB</div>
+      <div class="obx-word-sub">AN OFFERBELL PRODUCT</div>
+      <h2>The recruiting coach you <em>talk to</em>.</h2>
+      <p class="obx-lead">The AI assistant from <em>Iron Man</em>, rebuilt for breaking into finance. Run a mock interview, tear down a company, prep a coffee chat, or pull a market brief, just by talking to it.</p>
+      <div class="obx-feats">
+        <span class="obx-feat">Voice mock interviews</span>
+        <span class="obx-feat">Live company teardowns</span>
+        <span class="obx-feat">Coffee chat prep</span>
+        <span class="obx-feat">Instant market briefs</span>
+      </div>
+      <a href="/ob" class="obx-cta">Meet OB <span class="ar">&rarr;</span></a>
+      <div class="obx-note">The only voice coach in finance recruiting.</div>
+    </div>
+    <div class="obx-viz">
+      <div class="obx-orb"><canvas id="obxSphere"></canvas></div>
+    </div>
+  </div>
+</section>
+<script>
+(function(){
+  var canvas=document.getElementById('obxSphere'); if(!canvas) return;
+  var ctx=canvas.getContext('2d'); if(!ctx) return;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var N=74, pts=[], i, j;
+  for(i=0;i<N;i++){var y=1-(i/(N-1))*2;var r=Math.sqrt(Math.max(0,1-y*y));var phi=i*Math.PI*(3-Math.sqrt(5));pts.push([Math.cos(phi)*r,y,Math.sin(phi)*r]);}
+  var edges=[];
+  for(i=0;i<N;i++){for(j=i+1;j<N;j++){var dx=pts[i][0]-pts[j][0],dy=pts[i][1]-pts[j][1],dz=pts[i][2]-pts[j][2];if(Math.sqrt(dx*dx+dy*dy+dz*dz)<0.52)edges.push([i,j]);}}
+  var t=0, tilt=0.42, cosX=Math.cos(tilt), sinX=Math.sin(tilt), raf=0;
+  var rF=0.34, cyF=0.5;
+  function resize(){var dpr=Math.min(window.devicePixelRatio||1,2);var w=canvas.clientWidth,h=canvas.clientHeight;canvas.width=Math.max(1,Math.floor(w*dpr));canvas.height=Math.max(1,Math.floor(h*dpr));ctx.setTransform(dpr,0,0,dpr,0,0);}
+  resize(); window.addEventListener('resize',resize);
+  var lineRGB='125,155,215', lineMul=0.5, nodeRGB='214,226,255', nodeShadow='rgba(120,160,255,0.85)';
+  function draw(){
+    t+=reduce?0:0.0030;
+    var w=canvas.clientWidth,h=canvas.clientHeight;
+    ctx.clearRect(0,0,w,h);
+    var cx=w/2, cy=h*cyF, R=Math.min(w,h)*rF;
+    var cosY=Math.cos(t), sinY=Math.sin(t);
+    var proj=pts.map(function(p){var x=p[0]*cosY-p[2]*sinY;var z=p[0]*sinY+p[2]*cosY;var yy=p[1];var y2=yy*cosX-z*sinX;var z2=yy*sinX+z*cosX;var depth=(z2+1.4)/2.8;return {x:cx+x*R,y:cy+y2*R,depth:depth};});
+    ctx.lineWidth=0.6;
+    var e;
+    for(e=0;e<edges.length;e++){var A=proj[edges[e][0]],B=proj[edges[e][1]];var al=Math.max(0,((A.depth+B.depth)/2))*lineMul;ctx.strokeStyle='rgba('+lineRGB+','+al.toFixed(3)+')';ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();}
+    var k;
+    for(k=0;k<proj.length;k++){var p=proj[k];var tw=0.62+0.38*Math.sin(t*2.1+k*1.27);var sz=0.8+p.depth*1.9;var al2=Math.min(1,(0.22+p.depth*0.7)*tw);ctx.beginPath();ctx.arc(p.x,p.y,sz,0,Math.PI*2);ctx.fillStyle='rgba('+nodeRGB+','+al2.toFixed(3)+')';ctx.shadowColor=nodeShadow;ctx.shadowBlur=p.depth*7;ctx.fill();ctx.shadowBlur=0;}
+    raf=requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
 
 <!-- ═══ TRACKS ═══ -->
 <section class="tracks" id="tracks">
@@ -972,14 +1086,14 @@ document.addEventListener('click',function(e){
 (function(){
 const TRACKS=[
  {code:'IB',name:'Investment Banking',desc:'DCF, LBO, M&A, valuation, and accounting questions reported from top bulge brackets and elite boutiques.',cards:1356,mods:9,drills:4},
- {code:'PE',name:'Private Equity',desc:'Fund mechanics, deal sourcing, portfolio operations, and returns analysis from mega-funds to middle market.',cards:700,mods:8,drills:6},
+ {code:'PE',name:'Private Equity',desc:'Fund mechanics, deal sourcing, portfolio operations, and returns analysis from mega-funds to middle market.',cards:700,mods:13,drills:6},
  {code:'CN',name:'Consulting',desc:'Case frameworks, market sizing, profitability, and fit questions for MBB and beyond.',cards:600,mods:10,drills:5},
  {code:'AC',name:'Accounting & Audit',desc:'Financial statements, audit procedures, tax, and the technical questions Big 4 firms ask.',cards:600,mods:10,drills:3},
  {code:'AM',name:'Asset Management',desc:'Portfolio theory, stock pitches, risk management, and the buy-side mindset.',cards:600,mods:10,drills:3},
- {code:'ST',name:'Sales & Trading',desc:'Trading mechanics, derivatives, macro, and market-making concepts under pressure.',cards:546,mods:10,drills:6},
+ {code:'ST',name:'Sales & Trading',desc:'Trading mechanics, derivatives, macro, and market-making concepts under pressure.',cards:546,mods:15,drills:6},
  {code:'ER',name:'Equity Research',desc:'Equity valuation, sector analysis, modeling, and building a defensible stock thesis.',cards:378,mods:10,drills:4},
- {code:'RE',name:'Real Estate',desc:'Cap rates, NOI, waterfall structures, and property-level analysis across REPE and REITs.',cards:555,mods:10,drills:4},
- {code:'RX',name:'Restructuring',desc:'Bankruptcy, distressed debt, fulcrum security, and turnaround strategy.',cards:600,mods:10,drills:3},
+ {code:'RE',name:'Real Estate',desc:'Cap rates, NOI, waterfall structures, and property-level analysis across REPE and REITs.',cards:555,mods:13,drills:4},
+ {code:'RX',name:'Restructuring',desc:'Bankruptcy, distressed debt, fulcrum security, and turnaround strategy.',cards:600,mods:12,drills:3},
  {code:'VC',name:'Venture Capital',desc:'Startup valuation, term sheets, due diligence, and early-stage venture mechanics.',cards:233,mods:10,drills:5},
 ];
 const list=document.getElementById('trList'),panel=document.getElementById('trContent');
