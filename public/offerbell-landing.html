@@ -554,21 +554,64 @@ nav#nav.scrolled .n-burger{color:var(--text)}
   .hero{min-height:auto!important;align-items:flex-start!important;flex-direction:column!important;padding:116px 0 56px!important}
   .hero-inner2{transform:none!important}
   .hero-trusted{position:static!important;left:auto!important;right:auto!important;bottom:auto!important;margin-top:34px}
-  .flow{padding:68px 20px 54px}
-  .fl-layer{width:100%;max-width:100%;height:auto;min-height:0;margin:0}
-  .fl-svg{display:none}
-  .fl-cap{position:static!important;transform:none!important;left:auto!important;right:auto!important;margin:0 0 10px!important}
-  .fl-start{margin:0 0 20px!important}
-  .node{position:static!important;transform:none!important;left:auto!important;top:auto!important;margin:24px 0 10px!important}
-  .stage{position:static!important;left:auto!important;top:auto!important;width:auto!important;max-width:100%!important;opacity:1!important;transform:none!important;text-align:left!important;margin:0 0 4px!important}
-  .stage.left,.stage.right{text-align:left!important}
-  .fl-end{margin:30px 0 0!important}
   .tr-stat{padding:0 14px}
   .tr-stat .n{font-size:33px}
   .hero-inner2{padding:0 26px}
   .hero-trusted{padding:0 26px}
   .ht-logos{gap:22px}
 }
+</style>
+<style>
+/* ===== MOBILE V2: adapt animations, do not strip them ===== */
+.te-marquee{display:none}
+@keyframes teScroll{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+@media(max-width:860px){
+  /* FLOW: animated vertical timeline */
+  .flow{padding:60px 20px 58px}
+  .fl-head{margin-bottom:30px}
+  .fl-layer{position:relative;width:100%;max-width:440px;height:auto!important;min-height:0;margin:0 auto;padding:4px 0}
+  .fl-layer::before{content:"";position:absolute;left:20px;top:18px;bottom:18px;width:2px;background:var(--border);z-index:0}
+  .fl-svg{display:none}
+  .fl-cap{position:static!important;transform:none!important;left:auto!important;right:auto!important;margin:0 0 4px 0!important;z-index:1}
+  .fl-start{margin:0 0 6px 0!important}
+  .fl-end{margin:16px 0 0 0!important}
+  .node{position:static!important;transform:none!important;left:auto!important;top:auto!important;
+    width:40px;height:40px;font-size:18px;margin:20px 0 10px 0!important;z-index:1;box-shadow:0 0 0 6px var(--cream)}
+  .node.on{transform:none!important;box-shadow:0 0 0 6px var(--cream),0 8px 22px -8px rgba(119,119,119,.5)}
+  .stage{position:static!important;left:auto!important;top:auto!important;width:auto!important;max-width:100%!important;
+    text-align:left!important;margin:0 0 2px 56px!important;opacity:0;transform:translateY(12px)}
+  .stage.left,.stage.right{text-align:left!important;transform:translateY(12px)!important}
+  .stage.on{opacity:1!important;transform:none!important}
+  .stage.left .stg-tools,.stage.right .stg-tools{justify-content:flex-start}
+
+  /* TRACKS: swipeable chip selector + panel below */
+  .tracks{padding:60px 16px}
+  .tr-head{margin-bottom:26px}
+  .tr-explorer{grid-template-columns:1fr;gap:14px}
+  .tr-list{flex-direction:row;overflow-x:auto;gap:8px;padding:7px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tr-list::-webkit-scrollbar{display:none}
+  .tr-row{flex:0 0 auto;scroll-snap-align:start;white-space:nowrap;padding:9px 14px;gap:8px}
+  .tr-row .rar{display:none}
+  .tr-row .rc{font-size:16px;width:auto;margin-right:1px}
+  .tr-row .rn{font-size:13.5px}
+  .tr-panel{padding:30px 22px}
+  .tr-panel h3{font-size:31px}
+  .tr-panel .pdesc{font-size:15px;margin-bottom:28px}
+  .tr-stat{padding:0 16px}
+  .tr-stat:first-child{padding-left:0}
+  .tr-stat .n{font-size:32px}
+  .tr-stat .l{font-size:10px}
+  .tr-incl-row{font-size:14px}
+
+  /* TESTIMONIALS: single vertical marquee of all cards */
+  .te-wall{display:none}
+  .te-marquee{display:block;position:relative;overflow:hidden;height:540px;padding:0 22px;
+    -webkit-mask-image:linear-gradient(180deg,transparent,#000 9%,#000 91%,transparent);
+    mask-image:linear-gradient(180deg,transparent,#000 9%,#000 91%,transparent)}
+  .te-mtrack{display:flex;flex-direction:column;gap:18px;max-width:430px;margin:0 auto;animation:teScroll 42s linear infinite}
+  .te-mtrack .tcard{flex:0 0 auto}
+}
+@media(prefers-reduced-motion:reduce){.te-mtrack{animation:none}}
 </style>
 </head>
 <body>
@@ -870,6 +913,7 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
       <div class="te-col" data-speed="0.95"></div>
     </div>
   </div>
+  <div class="te-marquee"><div class="te-mtrack" id="teMTrack"></div></div>
 </section>
 <section class="pricing reveal" id="pricing">
   <div class="pricing-center">
@@ -1076,10 +1120,16 @@ list.addEventListener('click',e=>{const r=e.target.closest('.tr-row');if(!r)retu
 render(0);
 })();
 (function(){
-const route=document.getElementById('route'),draw=document.getElementById('routeDraw'),plane=document.getElementById('plane'),layer=document.getElementById('layer');
+const layer=document.getElementById('layer');
+const nodes=[...document.querySelectorAll('.node')],stages=[...document.querySelectorAll('.stage')];
+if(window.matchMedia('(max-width:860px)').matches){
+  const io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('on');});},{threshold:0.35,rootMargin:'0px 0px -8% 0px'});
+  nodes.forEach(function(n){io.observe(n);});stages.forEach(function(st){io.observe(st);});
+  return;
+}
+const route=document.getElementById('route'),draw=document.getElementById('routeDraw'),plane=document.getElementById('plane');
 const L=route.getTotalLength();
 draw.style.strokeDasharray=L;
-const nodes=[...document.querySelectorAll('.node')],stages=[...document.querySelectorAll('.stage')];
 const fracs=[0.19,0.40,0.61,0.82];
 function place(p){
   draw.style.strokeDashoffset=L*(1-p);
@@ -1115,6 +1165,8 @@ const cols=[...document.querySelectorAll('.te-col')];
 function card(t){const init=t.n.split(' ').map(w=>w[0]).join('').slice(0,2);
  return `<div class="tcard"><div class="tc-head"><div class="tc-av" style="background:${t.h}">${init}</div><div><div class="tc-name">${t.n}</div><div class="tc-school">${t.s}</div></div></div><div class="tc-sub">${t.sub}</div><div class="tc-quote">"${t.q}"</div></div>`;}
 T.forEach((t,i)=>cols[i%3].innerHTML+=card(t));
+ const mtrack=document.getElementById("teMTrack");
+ if(mtrack){const all=T.map(card).join("");mtrack.innerHTML=all+all;}
 // parallax on scroll
 const wall=document.querySelector('.te-wall');
 function tick(){const r=wall.getBoundingClientRect(),vh=innerHeight;
