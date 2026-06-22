@@ -564,6 +564,7 @@ nav#nav.scrolled .n-burger{color:var(--text)}
 <style>
 /* ===== MOBILE V2: adapt animations, do not strip them ===== */
 .te-marquee{display:none}
+.tr-swipe{display:none}
 @keyframes teScroll{from{transform:translateY(0)}to{transform:translateY(-50%)}}
 @media(max-width:860px){
   /* FLOW: animated vertical timeline */
@@ -577,7 +578,7 @@ nav#nav.scrolled .n-burger{color:var(--text)}
   .fl-cap{position:static!important;transform:none!important;left:auto!important;right:auto!important;margin:0 0 4px 0!important;z-index:1}
   .fl-start{margin:0 0 6px 0!important}
   .fl-end{margin:16px 0 0 0!important}
-  .node{position:static!important;transform:none!important;left:auto!important;top:auto!important;
+  .node{position:relative!important;transform:none!important;left:auto!important;top:auto!important;
     width:40px;height:40px;font-size:18px;margin:20px 0 10px 0!important;z-index:2;box-shadow:0 0 0 6px var(--cream)}
   .node.on{transform:none!important;box-shadow:0 0 0 6px var(--cream),0 8px 22px -8px rgba(119,119,119,.5)}
   .stage{position:static!important;left:auto!important;top:auto!important;width:auto!important;max-width:100%!important;
@@ -592,10 +593,9 @@ nav#nav.scrolled .n-burger{color:var(--text)}
   .tr-explorer{grid-template-columns:1fr;gap:14px}
   .tr-list{flex-direction:row;overflow-x:auto;gap:8px;padding:7px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .tr-list::-webkit-scrollbar{display:none}
-  .tr-listwrap{position:relative}
-  .tr-listwrap::after{content:"";position:absolute;top:0;right:0;bottom:0;width:54px;border-radius:0 14px 14px 0;pointer-events:none;z-index:5;background:linear-gradient(90deg,transparent,var(--white) 72%)}
-  .tr-listwrap::before{content:"\203A";position:absolute;top:50%;right:14px;transform:translateY(-50%);color:var(--brown);font-size:24px;font-weight:700;line-height:1;z-index:6;pointer-events:none;animation:trNudge 1.4s ease-in-out infinite}
-  @keyframes trNudge{0%,100%{transform:translateY(-50%) translateX(0)}50%{transform:translateY(-50%) translateX(4px)}}
+  .tr-swipe{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:14px;font-size:12.5px;font-weight:600;letter-spacing:.3px;color:var(--brown)}
+  .tr-swipe span{display:inline-flex;font-size:18px;line-height:1;animation:trNudge 1.3s ease-in-out infinite}
+  @keyframes trNudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
   .tr-row{flex:0 0 auto;scroll-snap-align:start;white-space:nowrap;padding:9px 14px;gap:8px}
   .tr-row .rar{display:none}
   .tr-row .rc{display:none}
@@ -854,9 +854,10 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
       <div class="sl">Career Paths</div>
       <div class="st">Coverage for <em>every track.</em></div>
       <p class="ss">Ten finance and consulting verticals, each with its own question bank, prep guide, drills, and mock interviews. Pick one to see what's inside.</p>
+      <div class="tr-swipe">Swipe to explore all 10 tracks <span>&rsaquo;</span></div>
     </div>
     <div class="tr-explorer">
-      <div class="tr-listwrap"><div class="tr-list" id="trList"></div></div>
+      <div class="tr-list" id="trList"></div>
       <div class="tr-panel"><div class="tr-content" id="trContent"></div></div>
     </div>
   </div>
