@@ -571,12 +571,14 @@ nav#nav.scrolled .n-burger{color:var(--text)}
   .fl-head{margin-bottom:30px}
   .fl-layer{position:relative;width:100%;max-width:440px;height:auto!important;min-height:0;margin:0 auto;padding:4px 0}
   .fl-layer::before{content:"";position:absolute;left:20px;top:18px;bottom:18px;width:2px;background:var(--border);z-index:0}
+  .fl-mline{position:absolute;left:20px;top:18px;width:2px;height:0;background:var(--brown);z-index:1}
+  .fl-mplane{position:absolute;left:14px;top:18px;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:12px solid var(--brown);z-index:3;filter:drop-shadow(0 3px 4px rgba(0,0,0,.18))}
   .fl-svg{display:none}
   .fl-cap{position:static!important;transform:none!important;left:auto!important;right:auto!important;margin:0 0 4px 0!important;z-index:1}
   .fl-start{margin:0 0 6px 0!important}
   .fl-end{margin:16px 0 0 0!important}
   .node{position:static!important;transform:none!important;left:auto!important;top:auto!important;
-    width:40px;height:40px;font-size:18px;margin:20px 0 10px 0!important;z-index:1;box-shadow:0 0 0 6px var(--cream)}
+    width:40px;height:40px;font-size:18px;margin:20px 0 10px 0!important;z-index:2;box-shadow:0 0 0 6px var(--cream)}
   .node.on{transform:none!important;box-shadow:0 0 0 6px var(--cream),0 8px 22px -8px rgba(119,119,119,.5)}
   .stage{position:static!important;left:auto!important;top:auto!important;width:auto!important;max-width:100%!important;
     text-align:left!important;margin:0 0 2px 56px!important;opacity:0;transform:translateY(12px)}
@@ -592,7 +594,7 @@ nav#nav.scrolled .n-burger{color:var(--text)}
   .tr-list::-webkit-scrollbar{display:none}
   .tr-row{flex:0 0 auto;scroll-snap-align:start;white-space:nowrap;padding:9px 14px;gap:8px}
   .tr-row .rar{display:none}
-  .tr-row .rc{font-size:16px;width:auto;margin-right:1px}
+  .tr-row .rc{display:none}
   .tr-row .rn{font-size:13.5px}
   .tr-panel{padding:30px 22px}
   .tr-panel h3{font-size:31px}
@@ -1123,8 +1125,18 @@ render(0);
 const layer=document.getElementById('layer');
 const nodes=[...document.querySelectorAll('.node')],stages=[...document.querySelectorAll('.stage')];
 if(window.matchMedia('(max-width:860px)').matches){
-  const io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('on');});},{threshold:0.35,rootMargin:'0px 0px -8% 0px'});
-  nodes.forEach(function(n){io.observe(n);});stages.forEach(function(st){io.observe(st);});
+  var dl=document.createElement('div');dl.className='fl-mline';layer.appendChild(dl);
+  var mp=document.createElement('div');mp.className='fl-mplane';layer.appendChild(mp);
+  function placeM(){
+    var r=layer.getBoundingClientRect(),vh=window.innerHeight,H=layer.offsetHeight;
+    var p=(vh*0.55-r.top)/(r.height-vh*0.25);p=Math.max(0,Math.min(1,p));
+    var top=18,bot=H-18,y=top+p*(bot-top);
+    mp.style.top=y+'px';dl.style.height=Math.max(0,y-top)+'px';
+    for(var i=0;i<nodes.length;i++){var nc=nodes[i].offsetTop+nodes[i].offsetHeight*0.5;var on=y>=nc-2;nodes[i].classList.toggle('on',on);if(stages[i])stages[i].classList.toggle('on',on);}
+  }
+  var tk=false;
+  window.addEventListener('scroll',function(){if(!tk){requestAnimationFrame(function(){placeM();tk=false;});tk=true;}},{passive:true});
+  window.addEventListener('resize',placeM);placeM();
   return;
 }
 const route=document.getElementById('route'),draw=document.getElementById('routeDraw'),plane=document.getElementById('plane');
