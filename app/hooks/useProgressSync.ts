@@ -373,23 +373,41 @@ export function useProgressSync() {
 
         const trackerPromise = client.query(api.outreachTracker.getTracker, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) })
           .then((row: { data: string; updatedAt: number } | null) => {
-            if (row && row.data) {
-              try { localStorage.setItem('offerbell_tracker_v3', row.data); } catch {}
+            // Merge (union by contact id) rather than overwrite. localStorage is
+            // shared across tabs, so overwriting with a staler cloud copy would
+            // wipe a contact that was just added locally and not yet pushed.
+            // Union keeps every contact from both sides (matches the old blob
+            // behaviour) and never loses a local add.
+            try {
+              const localRaw = localStorage.getItem('offerbell_tracker_v3');
+              const cloudRaw = row && row.data ? row.data : null;
+              if (!cloudRaw && !localRaw) return;
+              let localArr: any[] = []; let cloudArr: any[] = [];
+              try { localArr = localRaw ? JSON.parse(localRaw) : []; } catch {}
+              try { cloudArr = cloudRaw ? JSON.parse(cloudRaw) : []; } catch {}
+              if (!Array.isArray(localArr)) localArr = [];
+              if (!Array.isArray(cloudArr)) cloudArr = [];
+              const seen = new Set<string>();
+              const merged: any[] = [];
+              for (const item of [...localArr, ...cloudArr]) {
+                const k = item && item.id;
+                if (k) { if (!seen.has(k)) { seen.add(k); merged.push(item); } }
+                else merged.push(item);
+              }
+              const mergedStr = JSON.stringify(merged);
+              try { localStorage.setItem('offerbell_tracker_v3', mergedStr); } catch {}
               try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
-            } else {
-              // One-time migration: cloud has nothing yet but local has a tracker.
-              try {
-                const local = localStorage.getItem('offerbell_tracker_v3');
-                if (local) {
-                  void (async () => {
-                    try {
-                      const c = new ConvexHttpClient(url);
-                      await c.mutation(api.outreachTracker.upsertTracker, { userId, data: local, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
-                    } catch {}
-                  })();
-                }
-              } catch {}
-            }
+              // Push the union up if it differs from what cloud had, so the
+              // server ends up holding every contact from both sides.
+              if (mergedStr !== (cloudRaw || '')) {
+                void (async () => {
+                  try {
+                    const c = new ConvexHttpClient(url);
+                    await c.mutation(api.outreachTracker.upsertTracker, { userId, data: mergedStr, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
+                  } catch {}
+                })();
+              }
+            } catch {}
           })
           .catch(() => {});
 
