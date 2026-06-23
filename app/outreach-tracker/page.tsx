@@ -3,6 +3,8 @@
 import Sidebar from "../components/Sidebar";
 import ExtensionInstallPrompt from "../components/ExtensionInstallPrompt";
 import { useState, useEffect, useRef } from 'react';
+import { useQuery, useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import Link from 'next/link';
 import { PLAN_LIMITS } from '../lib/plan';
 import { useUserPlan } from '../lib/usePlan';
@@ -188,7 +190,50 @@ export default function OutreachTrackerPage() {
     };
   }, []);
 
-  function persist(c: Contact[]) { localStorage.setItem('offerbell_tracker_v3', JSON.stringify(c)); }
+  // Direct cloud sync for the tracker, the standard "normal site" way: the
+  // page subscribes to the contacts row and re-renders whenever any device
+  // changes it, and pushes its own edits straight to the database. This does
+  // not depend on the localStorage relay, so it updates live within a second
+  // or two without a reload or tab close.
+  const _trackerUserId = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
+  const _trackerToken = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_session') || undefined) : undefined;
+  const cloudTracker = useQuery(
+    api.outreachTracker.getTracker,
+    _trackerUserId ? { userId: _trackerUserId, sessionToken: _trackerToken } : 'skip'
+  );
+  const upsertTrackerMut = useMutation(api.outreachTracker.upsertTracker);
+  const cloudPushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Receive: when the cloud row is newer than this device's last edit, adopt it.
+  useEffect(() => {
+    if (!cloudTracker || !cloudTracker.data) return;
+    const localTs = parseInt(localStorage.getItem('offerbell_tracker_v3_ts') || '0', 10) || 0;
+    if (cloudTracker.updatedAt > localTs && cloudTracker.data !== localStorage.getItem('offerbell_tracker_v3')) {
+      try {
+        const parsed = JSON.parse(cloudTracker.data);
+        if (Array.isArray(parsed)) {
+          setContacts(parsed.map((c: any) => ({ ...c, linkedin: c.linkedin || '', scheduledAt: c.scheduledAt || null })));
+          try { localStorage.setItem('offerbell_tracker_v3', cloudTracker.data); } catch {}
+          try { localStorage.setItem('offerbell_tracker_v3_ts', String(cloudTracker.updatedAt)); } catch {}
+        }
+      } catch {}
+    }
+  }, [cloudTracker]);
+
+  // Send: persist locally and push the change straight to the database.
+  function persist(c: Contact[]) {
+    const payload = JSON.stringify(c);
+    const ts = Date.now();
+    try { localStorage.setItem('offerbell_tracker_v3', payload); } catch {}
+    try { localStorage.setItem('offerbell_tracker_v3_ts', String(ts)); } catch {}
+    if (cloudPushTimer.current) clearTimeout(cloudPushTimer.current);
+    cloudPushTimer.current = setTimeout(() => {
+      const userId = localStorage.getItem('offerbell_user_id');
+      if (!userId) return;
+      const sessionToken = localStorage.getItem('offerbell_session') || undefined;
+      try { void upsertTrackerMut({ userId, data: payload, updatedAt: ts, sessionToken }).catch(() => {}); } catch {}
+    }, 800);
+  }
 
   function showToast(msg: string) {
     setToast(msg);
