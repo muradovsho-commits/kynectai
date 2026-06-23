@@ -157,11 +157,13 @@ export default function Sidebar({ activePage }: SidebarProps) {
     };
     window.addEventListener('storage', onStorage);
     window.addEventListener('offerbell-profile-changed', refresh);
+    window.addEventListener('offerbell-progress-hydrated', refresh);
     const onVisible = () => { if (document.visibilityState === 'visible') refresh(); };
     document.addEventListener('visibilitychange', onVisible);
     return () => {
       window.removeEventListener('storage', onStorage);
       window.removeEventListener('offerbell-profile-changed', refresh);
+      window.removeEventListener('offerbell-progress-hydrated', refresh);
       document.removeEventListener('visibilitychange', onVisible);
     };
   }, []);

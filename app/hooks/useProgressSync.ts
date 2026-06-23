@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useMutation } from 'convex/react';
+import { useMutation, useQuery } from 'convex/react';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../../convex/_generated/api';
 
@@ -258,6 +258,16 @@ export function useProgressSync() {
   const upsertPerf = useMutation(api.flashPerf.upsertPerf);
   const upsertTracker = useMutation(api.outreachTracker.upsertTracker);
 
+  // Live subscription to this user's tracker row. Convex pushes a new value
+  // whenever ANY device edits it, so the other device updates on its own
+  // (no reload). Tiny single row, pushed only on change, so bandwidth is
+  // negligible. We still apply last-write-wins so it never stomps an edit
+  // this device just made.
+  const liveTracker = useQuery(
+    api.outreachTracker.getTracker,
+    userId ? { userId, sessionToken: (typeof window !== 'undefined' ? localStorage.getItem('offerbell_session') || undefined : undefined) } : 'skip'
+  );
+
   const hasSyncedRef = useRef(false);
   const lastPushedHashRef = useRef<string | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -433,6 +443,10 @@ export function useProgressSync() {
         const merged = mergeBlobs(cloud, local);
 
         applyCloudData(merged);
+        // Notify the sidebar and any data pages that the blob (profile name,
+        // theme, etc.) just landed, so they re-read instead of lingering on the
+        // default "User"/empty state.
+        try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
 
         const mergedStr = JSON.stringify(merged);
         const cloudHash = hashString(cloudData.data);
@@ -449,6 +463,25 @@ export function useProgressSync() {
       }
     })();
   }, [userId, saveProgress]);
+
+  // Apply live tracker pushes from other devices. Adopt only when the cloud
+  // copy is newer than this device's last edit (last-write-wins), then notify
+  // pages so an open tracker updates itself without a reload.
+  useEffect(() => {
+    if (!liveTracker || typeof window === 'undefined') return;
+    try {
+      const cloudRaw = liveTracker.data || null;
+      const cloudTs = liveTracker.updatedAt || 0;
+      const localTs = parseInt(localStorage.getItem('offerbell_tracker_v3_ts') || '0', 10) || 0;
+      if (cloudRaw && cloudTs > localTs && cloudRaw !== localStorage.getItem('offerbell_tracker_v3')) {
+        trackerHydratingRef.current = true;
+        try { localStorage.setItem('offerbell_tracker_v3', cloudRaw); } catch {}
+        try { localStorage.setItem('offerbell_tracker_v3_ts', String(cloudTs)); } catch {}
+        trackerHydratingRef.current = false;
+        try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
+      }
+    } catch {}
+  }, [liveTracker]);
 
   // ── Push routine: schedule (debounced) and execute (dirty-checked) ───────
   function schedulePush() {
@@ -526,7 +559,7 @@ export function useProgressSync() {
   function scheduleTrackerPush() {
     dirtyTrackerRef.current = true;
     if (trackerTimerRef.current) clearTimeout(trackerTimerRef.current);
-    trackerTimerRef.current = setTimeout(() => { flushTracker(); }, 3000);
+    trackerTimerRef.current = setTimeout(() => { flushTracker(); }, 1500);
   }
 
   // ── Detect mutations: intercept setItem + listen for storage events ──────
