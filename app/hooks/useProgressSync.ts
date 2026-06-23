@@ -553,7 +553,8 @@ export function useProgressSync() {
     try {
       const data = localStorage.getItem('offerbell_tracker_v3');
       const ts = parseInt(localStorage.getItem('offerbell_tracker_v3_ts') || '0', 10) || Date.now();
-      if (data) void upsertTracker({ userId: uid, data, updatedAt: ts }).catch(() => {});
+      const sessionToken = localStorage.getItem('offerbell_session') || undefined;
+      if (data) void upsertTracker({ userId: uid, data, updatedAt: ts, sessionToken }).catch(() => {});
     } catch {}
   }
   function scheduleTrackerPush() {
