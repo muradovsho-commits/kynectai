@@ -697,6 +697,8 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
   // scenarioId so each scenario maintains its own progress.
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    reconciledRef.current = false;
+    localOrigUpdatedRef.current = 0;
     const storageKey = `offerbell_reps_session_${scenario.id}`;
     const stored = localStorage.getItem(storageKey);
 
@@ -705,6 +707,7 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
         const data = JSON.parse(stored);
         const fresh = Date.now() - (data.updatedAt || 0) < 90 * 24 * 60 * 60 * 1000;
         if (fresh && Array.isArray(data.messages) && data.messages.length > 0) {
+          localOrigUpdatedRef.current = data.updatedAt || 0;
           setMessages(data.messages);
           setCompletedArtifacts(new Set(Array.isArray(data.completedArtifacts) ? data.completedArtifacts : []));
           if (data.activeArtifactId && scenario.artifacts.some(a => a.id === data.activeArtifactId)) {
@@ -736,35 +739,41 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const { userId, sessionToken } = repsAuth();
-    if (!userId) return;
+    if (!userId) { reconciledRef.current = true; return; }
     const client = repsClient();
-    if (!client) return;
+    if (!client) { reconciledRef.current = true; return; }
     let cancelled = false;
     const storageKey = `offerbell_reps_session_${scenario.id}`;
     (async () => {
       try {
         const cloud = await client.query(api.repsSessions.getSession, { userId, sessionToken, scenarioId: scenario.id });
         if (cancelled) return;
-        const localRaw = localStorage.getItem(storageKey);
-        let localUpdated = 0;
-        if (localRaw) { try { localUpdated = JSON.parse(localRaw).updatedAt || 0; } catch {} }
-        if (cloud && cloud.updatedAt > localUpdated) {
+        // Compare against the ORIGINAL local timestamp captured at load, not a
+        // re-read of localStorage (which a fresh-init save may have already
+        // bumped). orig === 0 means no real local session, so cloud always wins.
+        const orig = localOrigUpdatedRef.current;
+        if (cloud && (orig === 0 || cloud.updatedAt > orig)) {
           let data: any = null;
           try { data = JSON.parse(cloud.data); } catch {}
           if (data && Array.isArray(data.messages) && data.messages.length > 0) {
             try { localStorage.setItem(storageKey, cloud.data); } catch {}
+            localOrigUpdatedRef.current = cloud.updatedAt;
             setMessages(data.messages);
             setCompletedArtifacts(new Set(Array.isArray(data.completedArtifacts) ? data.completedArtifacts : []));
             if (data.activeArtifactId && scenario.artifacts.some(a => a.id === data.activeArtifactId)) {
               setActiveArtifactId(data.activeArtifactId);
             }
           }
-        } else if (!cloud && localRaw) {
-          // Server has nothing yet but we have a local session: migrate it up.
-          try { await client.mutation(api.repsSessions.upsertSession, { userId, sessionToken, scenarioId: scenario.id, data: localRaw }); } catch {}
+        } else if (!cloud) {
+          // Server has nothing yet: push our current local session up so the
+          // scenario exists in the cloud for other devices.
+          const localRaw = localStorage.getItem(storageKey);
+          if (localRaw) { try { await client.mutation(api.repsSessions.upsertSession, { userId, sessionToken, scenarioId: scenario.id, data: localRaw }); } catch {} }
         }
       } catch {
         // Convex unreachable or query failed: local state already applied, The Desk unaffected.
+      } finally {
+        reconciledRef.current = true;
       }
     })();
     return () => { cancelled = true; };
@@ -772,6 +781,12 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
 
   // Debounce timer for pushing session changes to the cloud.
   const repsCloudTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Cross-device reconcile state. localOrigUpdatedRef = timestamp of the REAL
+  // local session found at load (0 if none / fresh opening). reconciledRef
+  // gates cloud pushes until reconcile has decided, so a fresh-init opening
+  // can never clobber a real cloud session.
+  const localOrigUpdatedRef = useRef(0);
+  const reconciledRef = useRef(false);
 
   // Save session state to localStorage on every change. Debouncing isn't
   // strictly necessary at this scale, and localStorage writes are sync, but
@@ -795,6 +810,9 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
     // Debounced cloud push (fire-and-forget; never blocks or breaks the local save).
     if (repsCloudTimer.current) clearTimeout(repsCloudTimer.current);
     repsCloudTimer.current = setTimeout(() => {
+      // Do not push until the cloud reconcile has decided, otherwise a
+      // fresh-init opening could overwrite a real cloud session.
+      if (!reconciledRef.current) return;
       const { userId, sessionToken } = repsAuth();
       if (!userId) return;
       const client = repsClient();
