@@ -250,6 +250,21 @@ export default defineSchema({
     .index("by_user_entry", ["userId", "entryId"])
     .index("by_user_track", ["userId", "track"]),
 
+  // The Desk (Reps career simulator) session state. One row per
+  // (userId, scenarioId). Previously stored only in localStorage, so a
+  // scenario in progress never followed the user to another device. Kept in
+  // its own table (not the userProgress blob) because a session holds the
+  // full chat transcript and would bloat the blob / its bandwidth.
+  repsSessions: defineTable({
+    userId: v.string(),
+    userEmail: v.optional(v.string()), // Denormalized for dashboard readability.
+    scenarioId: v.string(),
+    data: v.string(), // JSON: { messages, completedArtifacts, activeArtifactId, updatedAt }
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_scenario", ["userId", "scenarioId"]),
+
   // Server-side enforcement of weekly plan limits.
   // One row per user per ISO-week (Monday UTC). Reset is implicit: a new
   // week creates a new row, old rows are ignored. Counters track count of

@@ -6,9 +6,29 @@ import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css'; // global color vars + full-screen session theming
 import './desk.css'; // The Desk landing + scenario-list chrome
 import { REPS_TRACKS, REPS_SCENARIOS, type RepsTrackId, type Scenario, type Persona, type ArtifactSpec } from './reps-data';
+import { ConvexHttpClient } from 'convex/browser';
+import { api } from '../../convex/_generated/api';
+
+// Cloud session sync for The Desk. All calls are wrapped and fire-and-forget:
+// localStorage stays the primary store, so if Convex is unreachable The Desk
+// behaves exactly as before. This only ever ADDS cross-device persistence.
+function repsClient(): ConvexHttpClient | null {
+  try {
+    const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+    if (!url) return null;
+    return new ConvexHttpClient(url);
+  } catch { return null; }
+}
+function repsAuth(): { userId: string | null; sessionToken: string | undefined } {
+  if (typeof window === 'undefined') return { userId: null, sessionToken: undefined };
+  return {
+    userId: localStorage.getItem('offerbell_user_id'),
+    sessionToken: localStorage.getItem('offerbell_session') || undefined,
+  };
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
-// The Desk — career simulator.
+// The Desk - career simulator.
 //
 // Career is driven by the Industry selector in the sidebar (same source of
 // truth as Concept Drills and the interview-prep pages): the active vertical
@@ -590,7 +610,7 @@ function DeskHowTo({ onDismiss }: { onDismiss: () => void }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Scenario list — scenarios for the career selected in the sidebar
+// Scenario list - scenarios for the career selected in the sidebar
 // ═══════════════════════════════════════════════════════════════════════════
 function ScenarioList({ track, scenarios, onPick }: { track: typeof REPS_TRACKS[number]; scenarios: Scenario[]; onPick: (id: string) => void; }) {
   const [showHowTo, setShowHowTo] = useState(false);
@@ -709,6 +729,50 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
     setActiveArtifactId(scenario.artifacts[0]?.id ?? null);
   }, [scenario]);
 
+  // Cloud reconcile: after the local restore above, pull this scenario's
+  // session from the server and adopt it only if it is newer (edited on
+  // another device). Local-first means The Desk is unaffected if Convex is
+  // unreachable; this strictly adds cross-device sync.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const { userId, sessionToken } = repsAuth();
+    if (!userId) return;
+    const client = repsClient();
+    if (!client) return;
+    let cancelled = false;
+    const storageKey = `offerbell_reps_session_${scenario.id}`;
+    (async () => {
+      try {
+        const cloud = await client.query(api.repsSessions.getSession, { userId, sessionToken, scenarioId: scenario.id });
+        if (cancelled) return;
+        const localRaw = localStorage.getItem(storageKey);
+        let localUpdated = 0;
+        if (localRaw) { try { localUpdated = JSON.parse(localRaw).updatedAt || 0; } catch {} }
+        if (cloud && cloud.updatedAt > localUpdated) {
+          let data: any = null;
+          try { data = JSON.parse(cloud.data); } catch {}
+          if (data && Array.isArray(data.messages) && data.messages.length > 0) {
+            try { localStorage.setItem(storageKey, cloud.data); } catch {}
+            setMessages(data.messages);
+            setCompletedArtifacts(new Set(Array.isArray(data.completedArtifacts) ? data.completedArtifacts : []));
+            if (data.activeArtifactId && scenario.artifacts.some(a => a.id === data.activeArtifactId)) {
+              setActiveArtifactId(data.activeArtifactId);
+            }
+          }
+        } else if (!cloud && localRaw) {
+          // Server has nothing yet but we have a local session: migrate it up.
+          try { await client.mutation(api.repsSessions.upsertSession, { userId, sessionToken, scenarioId: scenario.id, data: localRaw }); } catch {}
+        }
+      } catch {
+        // Convex unreachable or query failed: local state already applied, The Desk unaffected.
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [scenario]);
+
+  // Debounce timer for pushing session changes to the cloud.
+  const repsCloudTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Save session state to localStorage on every change. Debouncing isn't
   // strictly necessary at this scale, and localStorage writes are sync, but
   // we skip empty-state writes to avoid clobbering a real session during the
@@ -717,16 +781,26 @@ function SessionView({ scenario, onExit }: { scenario: Scenario; onExit: () => v
     if (typeof window === 'undefined') return;
     if (messages.length === 0) return;
     const storageKey = `offerbell_reps_session_${scenario.id}`;
+    const payload = JSON.stringify({
+      messages,
+      completedArtifacts: Array.from(completedArtifacts),
+      activeArtifactId,
+      updatedAt: Date.now(),
+    });
     try {
-      localStorage.setItem(storageKey, JSON.stringify({
-        messages,
-        completedArtifacts: Array.from(completedArtifacts),
-        activeArtifactId,
-        updatedAt: Date.now(),
-      }));
+      localStorage.setItem(storageKey, payload);
     } catch {
       // Quota exceeded or storage unavailable. Silently drop.
     }
+    // Debounced cloud push (fire-and-forget; never blocks or breaks the local save).
+    if (repsCloudTimer.current) clearTimeout(repsCloudTimer.current);
+    repsCloudTimer.current = setTimeout(() => {
+      const { userId, sessionToken } = repsAuth();
+      if (!userId) return;
+      const client = repsClient();
+      if (!client) return;
+      try { void client.mutation(api.repsSessions.upsertSession, { userId, sessionToken, scenarioId: scenario.id, data: payload }).catch(() => {}); } catch {}
+    }, 4000);
   }, [messages, completedArtifacts, activeArtifactId, scenario.id]);
 
   useEffect(() => {
@@ -893,6 +967,14 @@ The student must complete deliverables sequentially in this scenario. If they as
       localStorage.removeItem(`offerbell_reps_session_${scenario.id}`);
     } catch {
       // ignore
+    }
+    // Also clear it in the cloud (fire-and-forget).
+    {
+      const { userId, sessionToken } = repsAuth();
+      if (userId) {
+        const client = repsClient();
+        if (client) { try { void client.mutation(api.repsSessions.deleteSession, { userId, sessionToken, scenarioId: scenario.id }).catch(() => {}); } catch {} }
+      }
     }
     const opening: ChatMsg[] = scenario.opening.map((o, i) => ({
       id: `open-${i}`,
