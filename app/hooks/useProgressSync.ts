@@ -115,6 +115,10 @@ const EXCLUDE_FROM_SYNC = new Set([
   'offerbell_flash_perf_re',
   'offerbell_flash_perf_vc',
   'offerbell_diag_history',
+  // Moved to dedicated Convex table (outreachTracker). Keeps the tracker out of
+  // the blob so it no longer round-trips on every save (bandwidth) and is not
+  // clobbered by other features writing the blob.
+  'offerbell_tracker_v3',
 ]);
 
 // Cross-tab coordination: tabs share a "last push" timestamp via localStorage
@@ -252,6 +256,7 @@ export function useProgressSync() {
   const userId = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
   const saveProgress = useMutation(api.progress.saveProgress);
   const upsertPerf = useMutation(api.flashPerf.upsertPerf);
+  const upsertTracker = useMutation(api.outreachTracker.upsertTracker);
 
   const hasSyncedRef = useRef(false);
   const lastPushedHashRef = useRef<string | null>(null);
@@ -264,6 +269,10 @@ export function useProgressSync() {
   // stats never reach the cloud and are lost on logout.
   const dirtyFlashTracksRef = useRef<Set<string>>(new Set());
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // offerbell_tracker_v3 (outreach contacts) is excluded from the blob and
+  // persisted to its own table here (debounced), same pattern as flash_perf.
+  const dirtyTrackerRef = useRef(false);
+  const trackerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ── Initial sync (one-time HTTP fetch, not a live subscription) ──────────
   useEffect(() => {
@@ -362,10 +371,33 @@ export function useProgressSync() {
           })
           .catch(() => {});
 
+        const trackerPromise = client.query(api.outreachTracker.getTracker, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) })
+          .then((row: { data: string; updatedAt: number } | null) => {
+            if (row && row.data) {
+              try { localStorage.setItem('offerbell_tracker_v3', row.data); } catch {}
+              try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
+            } else {
+              // One-time migration: cloud has nothing yet but local has a tracker.
+              try {
+                const local = localStorage.getItem('offerbell_tracker_v3');
+                if (local) {
+                  void (async () => {
+                    try {
+                      const c = new ConvexHttpClient(url);
+                      await c.mutation(api.outreachTracker.upsertTracker, { userId, data: local, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
+                    } catch {}
+                  })();
+                }
+              } catch {}
+            }
+          })
+          .catch(() => {});
+
         // Don't await the hydration promises - they're side-effect-only and
         // shouldn't block the blob sync below.
         void flashPerfPromise;
         void diagHistoryPromise;
+        void trackerPromise;
 
         const cloudData = await client.query(api.progress.loadProgress, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
 
@@ -466,6 +498,21 @@ export function useProgressSync() {
     flashTimerRef.current = setTimeout(() => { flushFlashPerf(); }, 3000);
   }
 
+  function flushTracker() {
+    const uid = userIdRef.current;
+    if (!uid || !dirtyTrackerRef.current) return;
+    dirtyTrackerRef.current = false;
+    try {
+      const data = localStorage.getItem('offerbell_tracker_v3');
+      if (data) void upsertTracker({ userId: uid, data }).catch(() => {});
+    } catch {}
+  }
+  function scheduleTrackerPush() {
+    dirtyTrackerRef.current = true;
+    if (trackerTimerRef.current) clearTimeout(trackerTimerRef.current);
+    trackerTimerRef.current = setTimeout(() => { flushTracker(); }, 3000);
+  }
+
   // ── Detect mutations: intercept setItem + listen for storage events ──────
   useEffect(() => {
     if (!userId) return;
@@ -475,6 +522,9 @@ export function useProgressSync() {
       if (key.startsWith('offerbell_flash_perf_')) {
         scheduleFlashPush(key.slice('offerbell_flash_perf_'.length));
       }
+      if (key === 'offerbell_tracker_v3') {
+        scheduleTrackerPush();
+      }
       if (SYNC_KEYS.includes(key) && !EXCLUDE_FROM_SYNC.has(key)) {
         schedulePush();
       }
@@ -482,6 +532,9 @@ export function useProgressSync() {
     const onStorage = (e: StorageEvent) => {
       if (e.key && e.key.startsWith('offerbell_flash_perf_')) {
         scheduleFlashPush(e.key.slice('offerbell_flash_perf_'.length));
+      }
+      if (e.key === 'offerbell_tracker_v3') {
+        scheduleTrackerPush();
       }
       if (e.key && SYNC_KEYS.includes(e.key) && !EXCLUDE_FROM_SYNC.has(e.key)) {
         schedulePush();
@@ -513,15 +566,22 @@ export function useProgressSync() {
         lastPushedHashRef.current = localHash;
       } catch {}
       flushFlashPerf();
+      flushTracker();
     };
     const onVis = () => {
-      if (document.visibilityState === 'hidden') { void pushIfDirty(); flushFlashPerf(); }
+      // On hide, use the reliable sendBeacon flush rather than an async mutation:
+      // mobile browsers freeze the page on app-switch/lock before an in-flight
+      // fetch can complete, so the async push silently drops the last edits.
+      // sendBeacon is delivered by the browser even as the page is torn down.
+      if (document.visibilityState === 'hidden') { flushBeacon(); }
       else recordActivityToday();
     };
     window.addEventListener('beforeunload', flushBeacon);
+    window.addEventListener('pagehide', flushBeacon);
     document.addEventListener('visibilitychange', onVis);
     return () => {
       window.removeEventListener('beforeunload', flushBeacon);
+      window.removeEventListener('pagehide', flushBeacon);
       document.removeEventListener('visibilitychange', onVis);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

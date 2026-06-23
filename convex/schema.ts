@@ -265,6 +265,16 @@ export default defineSchema({
     .index("by_user", ["userId"])
     .index("by_user_scenario", ["userId", "scenarioId"]),
 
+  // Outreach tracker (contacts). One row per user; holds the tracker_v3 JSON.
+  // Split out of the userProgress blob so tracker edits do not round-trip the
+  // whole blob (bandwidth) and are not clobbered by other features' writes.
+  outreachTracker: defineTable({
+    userId: v.string(),
+    userEmail: v.optional(v.string()),
+    data: v.string(), // JSON of offerbell_tracker_v3
+    updatedAt: v.number(),
+  }).index("by_user", ["userId"]),
+
   // Server-side enforcement of weekly plan limits.
   // One row per user per ISO-week (Monday UTC). Reset is implicit: a new
   // week creates a new row, old rows are ignored. Counters track count of
