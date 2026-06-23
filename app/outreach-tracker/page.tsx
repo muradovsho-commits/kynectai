@@ -164,6 +164,30 @@ export default function OutreachTrackerPage() {
     setConfig(loadConfig());
   }, []);
 
+  // Re-read contacts when cloud sync lands (offerbell-progress-hydrated) or
+  // another tab on this device edits the tracker (storage event), so an open
+  // page updates itself instead of needing a manual refresh.
+  useEffect(() => {
+    const reload = () => {
+      try {
+        const saved = localStorage.getItem('offerbell_tracker_v3');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            setContacts(parsed.map((c: any) => ({ ...c, linkedin: c.linkedin || '', scheduledAt: c.scheduledAt || null })));
+          }
+        }
+      } catch {}
+    };
+    const onStorage = (e: StorageEvent) => { if (e.key === 'offerbell_tracker_v3') reload(); };
+    window.addEventListener('offerbell-progress-hydrated', reload);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener('offerbell-progress-hydrated', reload);
+      window.removeEventListener('storage', onStorage);
+    };
+  }, []);
+
   function persist(c: Contact[]) { localStorage.setItem('offerbell_tracker_v3', JSON.stringify(c)); }
 
   function showToast(msg: string) {

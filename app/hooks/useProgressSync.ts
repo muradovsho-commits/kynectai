@@ -273,6 +273,10 @@ export function useProgressSync() {
   // persisted to its own table here (debounced), same pattern as flash_perf.
   const dirtyTrackerRef = useRef(false);
   const trackerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // True only while the hook itself is writing the tracker during hydration, so
+  // the setItem interceptor does not treat that write as a fresh user edit
+  // (which would bump the local edit-time and defeat last-write-wins).
+  const trackerHydratingRef = useRef(false);
 
   // ── Initial sync (one-time HTTP fetch, not a live subscription) ──────────
   useEffect(() => {
@@ -373,37 +377,30 @@ export function useProgressSync() {
 
         const trackerPromise = client.query(api.outreachTracker.getTracker, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) })
           .then((row: { data: string; updatedAt: number } | null) => {
-            // Merge (union by contact id) rather than overwrite. localStorage is
-            // shared across tabs, so overwriting with a staler cloud copy would
-            // wipe a contact that was just added locally and not yet pushed.
-            // Union keeps every contact from both sides (matches the old blob
-            // behaviour) and never loses a local add.
+            // Last-write-wins by edit time. Whichever side was edited most
+            // recently wins as a whole, so a delete on another device actually
+            // removes the contact here (union would resurrect it), while a
+            // contact just added on THIS device still wins because its local
+            // edit-time is newer than the cloud copy.
             try {
-              const localRaw = localStorage.getItem('offerbell_tracker_v3');
               const cloudRaw = row && row.data ? row.data : null;
-              if (!cloudRaw && !localRaw) return;
-              let localArr: any[] = []; let cloudArr: any[] = [];
-              try { localArr = localRaw ? JSON.parse(localRaw) : []; } catch {}
-              try { cloudArr = cloudRaw ? JSON.parse(cloudRaw) : []; } catch {}
-              if (!Array.isArray(localArr)) localArr = [];
-              if (!Array.isArray(cloudArr)) cloudArr = [];
-              const seen = new Set<string>();
-              const merged: any[] = [];
-              for (const item of [...localArr, ...cloudArr]) {
-                const k = item && item.id;
-                if (k) { if (!seen.has(k)) { seen.add(k); merged.push(item); } }
-                else merged.push(item);
-              }
-              const mergedStr = JSON.stringify(merged);
-              try { localStorage.setItem('offerbell_tracker_v3', mergedStr); } catch {}
-              try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
-              // Push the union up if it differs from what cloud had, so the
-              // server ends up holding every contact from both sides.
-              if (mergedStr !== (cloudRaw || '')) {
+              const cloudTs = row ? (row.updatedAt || 0) : 0;
+              const localRaw = localStorage.getItem('offerbell_tracker_v3');
+              const localTs = parseInt(localStorage.getItem('offerbell_tracker_v3_ts') || '0', 10) || 0;
+              if (cloudRaw && (!localRaw || cloudTs > localTs)) {
+                // Cloud is newer (or we have nothing local): adopt it whole.
+                trackerHydratingRef.current = true;
+                try { localStorage.setItem('offerbell_tracker_v3', cloudRaw); } catch {}
+                try { localStorage.setItem('offerbell_tracker_v3_ts', String(cloudTs)); } catch {}
+                trackerHydratingRef.current = false;
+                try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
+              } else if (localRaw && (!cloudRaw || localTs >= cloudTs) && localRaw !== cloudRaw) {
+                // Local is newer (or cloud empty / migration): push local up so
+                // the server holds the latest, stamped with our local edit-time.
                 void (async () => {
                   try {
                     const c = new ConvexHttpClient(url);
-                    await c.mutation(api.outreachTracker.upsertTracker, { userId, data: mergedStr, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
+                    await c.mutation(api.outreachTracker.upsertTracker, { userId, data: localRaw, updatedAt: localTs || Date.now(), sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
                   } catch {}
                 })();
               }
@@ -522,7 +519,8 @@ export function useProgressSync() {
     dirtyTrackerRef.current = false;
     try {
       const data = localStorage.getItem('offerbell_tracker_v3');
-      if (data) void upsertTracker({ userId: uid, data }).catch(() => {});
+      const ts = parseInt(localStorage.getItem('offerbell_tracker_v3_ts') || '0', 10) || Date.now();
+      if (data) void upsertTracker({ userId: uid, data, updatedAt: ts }).catch(() => {});
     } catch {}
   }
   function scheduleTrackerPush() {
@@ -541,7 +539,10 @@ export function useProgressSync() {
         scheduleFlashPush(key.slice('offerbell_flash_perf_'.length));
       }
       if (key === 'offerbell_tracker_v3') {
-        scheduleTrackerPush();
+        if (!trackerHydratingRef.current) {
+          try { origSetItem('offerbell_tracker_v3_ts', String(Date.now())); } catch {}
+          scheduleTrackerPush();
+        }
       }
       if (SYNC_KEYS.includes(key) && !EXCLUDE_FROM_SYNC.has(key)) {
         schedulePush();

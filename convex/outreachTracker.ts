@@ -26,14 +26,15 @@ export const upsertTracker = mutation({
   args: {
     userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()),
     data: v.string(),
+    updatedAt: v.optional(v.number()), // client edit time, so two devices compare on one clock
   },
-  handler: async (ctx, { sessionToken, serverSecret, userId, data }) => {
+  handler: async (ctx, { sessionToken, serverSecret, userId, data, updatedAt }) => {
     await requireUser({ userId, sessionToken, serverSecret });
     const existing = await ctx.db
       .query("outreachTracker")
       .withIndex("by_user", q => q.eq("userId", userId))
       .first();
-    const now = Date.now();
+    const now = updatedAt ?? Date.now();
     const userEmail = await getUserEmail(ctx, userId);
     if (existing) {
       await ctx.db.patch(existing._id, { data, updatedAt: now, userEmail });
