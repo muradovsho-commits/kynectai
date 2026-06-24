@@ -3,7 +3,7 @@
 import Sidebar from "../components/Sidebar";
 import ExtensionInstallPrompt from "../components/ExtensionInstallPrompt";
 import { useState, useEffect, useRef } from 'react';
-import { useQuery, useMutation } from 'convex/react';
+import { useMutation } from 'convex/react';
 import { ConvexHttpClient } from 'convex/browser';
 import '../contact-finder/contact-finder.css';
 import { api } from '../../convex/_generated/api';
@@ -86,17 +86,20 @@ export default function OutreachWriterPage() {
   // a receive effect that adopts a newer cloud copy or any cloud copy when this
   // device has no local copy (fresh login); a debounced push on save/delete.
   // No auto-write on load beyond migrating this device's own local copy up.
-  const [smIds, setSmIds] = useState<{ userId: string | null; token: string | undefined }>({ userId: null, token: undefined });
+  // Cloud sync, matched to the working tabs: no live subscription. Drafts load
+  // from local storage (the sync hook hydrates the row on login and fires
+  // offerbell-progress-hydrated, which we listen for to reload the list) and
+  // edits push via persistSaved. No reactive receive, no timestamp fight.
   useEffect(() => {
-    const read = () => setSmIds({ userId: localStorage.getItem('offerbell_user_id'), token: localStorage.getItem('offerbell_session') || undefined });
-    read();
-    window.addEventListener('offerbell-progress-hydrated', read);
-    return () => window.removeEventListener('offerbell-progress-hydrated', read);
+    const reload = () => {
+      try {
+        const r = localStorage.getItem('offerbell_saved_messages');
+        if (r) { const arr = JSON.parse(r); if (Array.isArray(arr)) setSavedMsgs(arr); }
+      } catch {}
+    };
+    window.addEventListener('offerbell-progress-hydrated', reload);
+    return () => window.removeEventListener('offerbell-progress-hydrated', reload);
   }, []);
-  const cloudSaved = useQuery(
-    api.savedMessages.getSavedMessages,
-    smIds.userId ? { userId: smIds.userId, sessionToken: smIds.token } : 'skip'
-  );
   const upsertSavedMut = useMutation(api.savedMessages.upsertSavedMessages);
   const savedPushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -112,22 +115,6 @@ export default function OutreachWriterPage() {
       try { void upsertSavedMut({ userId, data: payload, updatedAt: ts, sessionToken }).catch(() => {}); } catch {}
     }, 800);
   }
-
-  useEffect(() => {
-    if (!cloudSaved || !cloudSaved.data) return;
-    const localRaw = localStorage.getItem('offerbell_saved_messages');
-    const localTs = parseInt(localStorage.getItem('offerbell_saved_messages_ts') || '0', 10) || 0;
-    if (cloudSaved.data !== localRaw && (localRaw === null || cloudSaved.updatedAt > localTs)) {
-      try {
-        const arr = JSON.parse(cloudSaved.data);
-        if (Array.isArray(arr)) {
-          try { localStorage.setItem('offerbell_saved_messages', cloudSaved.data); } catch {}
-          try { localStorage.setItem('offerbell_saved_messages_ts', String(cloudSaved.updatedAt)); } catch {}
-          setSavedMsgs(arr);
-        }
-      } catch {}
-    }
-  }, [cloudSaved]);
 
   const [expandedDraft, setExpandedDraft] = useState<string | null>(null);
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useQuery, useMutation } from 'convex/react';
+import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../components/Sidebar';
@@ -439,24 +439,16 @@ export default function ReferralMapPage() {
     if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
   }, [router]);
 
-  // Direct cloud sync (same proven approach as the outreach tracker): the page
-  // subscribes to its row and pushes its own edits to the database with the
-  // session token. Refs distinguish genuine local edits (which push) from
-  // mount-load and cloud-applied changes (which must NOT push, or they would
-  // clobber a newer copy on another device).
-  const [refIds, setRefIds] = useState<{ userId: string | null; token: string | undefined }>({ userId: null, token: undefined });
+  // Cloud sync, matched to the working tabs: no live subscription. Contacts load
+  // from local storage (the sync hook hydrates the referral row on login and
+  // fires offerbell-progress-hydrated, which we listen for below to reload the
+  // list), and edits push to the database via the user-edit-gated effect. No
+  // reactive receive, no timestamp fight, no echo.
   useEffect(() => {
-    const read = () => setRefIds({ userId: localStorage.getItem('offerbell_user_id'), token: localStorage.getItem('offerbell_session') || undefined });
-    read();
-    // Re-read after login hydration so the subscription reliably establishes
-    // even if the page mounted before the session keys were repopulated.
-    window.addEventListener('offerbell-progress-hydrated', read);
-    return () => window.removeEventListener('offerbell-progress-hydrated', read);
+    const reload = () => setContacts(load());
+    window.addEventListener('offerbell-progress-hydrated', reload);
+    return () => window.removeEventListener('offerbell-progress-hydrated', reload);
   }, []);
-  const cloudReferral = useQuery(
-    api.referralNodes.getReferral,
-    refIds.userId ? { userId: refIds.userId, sessionToken: refIds.token } : 'skip'
-  );
   const upsertReferralMut = useMutation(api.referralNodes.upsertReferral);
   const userEditedRef = useRef(false);
   const refPushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -485,27 +477,6 @@ export default function ReferralMapPage() {
       try { void upsertReferralMut({ userId, data: payload, updatedAt: ts, sessionToken }).catch(() => {}); } catch {}
     }, 800);
   }, [contacts]);
-
-  // Receive: adopt the cloud copy when it is newer than this device's last edit.
-  useEffect(() => {
-    if (!cloudReferral || !cloudReferral.data) return;
-    const localRaw = localStorage.getItem(SK);
-    const localTs = parseInt(localStorage.getItem(SK + '_ts') || '0', 10) || 0;
-    // Adopt cloud when it is newer, OR when this device has no local copy at all
-    // (fresh login after logout wiped localStorage). "[]" is a real value (an
-    // intentional clear), not a missing key, so it stays protected by the ts.
-    if (cloudReferral.data !== localRaw && (localRaw === null || cloudReferral.updatedAt > localTs)) {
-      try {
-        const parsed = JSON.parse(cloudReferral.data);
-        if (Array.isArray(parsed)) {
-          try { localStorage.setItem(SK, cloudReferral.data); } catch {}
-          try { localStorage.setItem(SK + '_ts', String(cloudReferral.updatedAt)); } catch {}
-          // No userEditedRef here: this is a cloud-applied change, must never push back.
-          setContacts(parsed.map((c: any) => ({ ...c, state: c.state || undefined })));
-        }
-      } catch {}
-    }
-  }, [cloudReferral]);
 
   const getReferrals = (id: string): Contact[] => contacts.filter(c => c.referredBy === id);
   const getChainSize = (id: string, visited = new Set<string>()): number => {

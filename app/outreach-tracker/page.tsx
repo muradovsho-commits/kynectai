@@ -3,7 +3,7 @@
 import Sidebar from "../components/Sidebar";
 import ExtensionInstallPrompt from "../components/ExtensionInstallPrompt";
 import { useState, useEffect, useRef } from 'react';
-import { useQuery, useMutation } from 'convex/react';
+import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import Link from 'next/link';
 import { PLAN_LIMITS } from '../lib/plan';
@@ -190,44 +190,13 @@ export default function OutreachTrackerPage() {
     };
   }, []);
 
-  // Direct cloud sync for the tracker, the standard "normal site" way: the
-  // page subscribes to the contacts row and re-renders whenever any device
-  // changes it, and pushes its own edits straight to the database. This does
-  // not depend on the localStorage relay, so it updates live within a second
-  // or two without a reload or tab close.
-  const [trkIds, setTrkIds] = useState<{ userId: string | null; token: string | undefined }>({ userId: null, token: undefined });
-  useEffect(() => {
-    const read = () => setTrkIds({ userId: localStorage.getItem('offerbell_user_id'), token: localStorage.getItem('offerbell_session') || undefined });
-    read();
-    window.addEventListener('offerbell-progress-hydrated', read);
-    return () => window.removeEventListener('offerbell-progress-hydrated', read);
-  }, []);
-  const cloudTracker = useQuery(
-    api.outreachTracker.getTracker,
-    trkIds.userId ? { userId: trkIds.userId, sessionToken: trkIds.token } : 'skip'
-  );
+  // Cloud sync, matched to the working tabs: no live subscription. Contacts are
+  // loaded from local storage (the sync hook hydrates the row on login and the
+  // reload listener above re-reads it), and edits push straight to the database
+  // via persist(). No reactive receive, no timestamp fight, no echo.
   const upsertTrackerMut = useMutation(api.outreachTracker.upsertTracker);
   const cloudPushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Receive: when the cloud row is newer than this device's last edit, adopt it
-  // into the on-screen list. We do NOT write local storage here: the sync hook
-  // already mirrors the cloud row into local storage on login and live updates,
-  // and writing it here would trip the setItem interceptor into pushing the
-  // just-received copy straight back up (an echo that could clobber). The only
-  // writer to the cloud is persist(), fired by a real edit on this page.
-  useEffect(() => {
-    if (!cloudTracker || !cloudTracker.data) return;
-    const localRaw = localStorage.getItem('offerbell_tracker_v3');
-    const localTs = parseInt(localStorage.getItem('offerbell_tracker_v3_ts') || '0', 10) || 0;
-    if (cloudTracker.data !== localRaw && (localRaw === null || cloudTracker.updatedAt > localTs)) {
-      try {
-        const parsed = JSON.parse(cloudTracker.data);
-        if (Array.isArray(parsed)) {
-          setContacts(parsed.map((c: any) => ({ ...c, linkedin: c.linkedin || '', scheduledAt: c.scheduledAt || null })));
-        }
-      } catch {}
-    }
-  }, [cloudTracker]);
 
   // Send: persist locally and push the change straight to the database.
   function persist(c: Contact[]) {

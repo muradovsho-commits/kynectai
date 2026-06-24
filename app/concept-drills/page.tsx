@@ -1,7 +1,7 @@
 // Build: v6-career-aware-tabs
 'use client';
 import { useState, useEffect, useMemo, useCallback, useRef, Suspense } from 'react';
-import { useQuery, useMutation } from 'convex/react';
+import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import Sidebar from '../components/Sidebar';
 import { useUserPlan } from '../lib/usePlan';
@@ -237,19 +237,12 @@ function ConceptDrillsInner() {
   // with the session token. appendHistory is the only writer, so the push
   // lives there; the receive effect adopts a newer cloud copy (last-write-wins
   // by edit time) without echoing it back.
-  const [dhIds, setDhIds] = useState<{ userId: string | null; token: string | undefined }>({ userId: null, token: undefined });
-  useEffect(() => {
-    const read = () => setDhIds({ userId: localStorage.getItem('offerbell_user_id'), token: localStorage.getItem('offerbell_session') || undefined });
-    read();
-    // Re-read after login hydration so the subscription reliably establishes
-    // even if the page mounted before the session keys were repopulated.
-    window.addEventListener('offerbell-progress-hydrated', read);
-    return () => window.removeEventListener('offerbell-progress-hydrated', read);
-  }, []);
-  const cloudDrill = useQuery(
-    api.drillHistory.getDrillHistory,
-    dhIds.userId ? { userId: dhIds.userId, sessionToken: dhIds.token } : 'skip'
-  );
+  // Cloud sync, matched to the working tabs (coach, flashcards): the page does
+  // NOT subscribe to a live query. It loads from local storage on login (the
+  // sync hook hydrates the drillHistory row into local storage and fires
+  // offerbell-progress-hydrated, which loadHistory listens for) and pushes its
+  // own writes on a real answered question. No reactive receive, no timestamp
+  // fight, no echo.
   const upsertDrillMut = useMutation(api.drillHistory.upsertDrillHistory);
   const drillPushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -267,26 +260,6 @@ function ConceptDrillsInner() {
     loadHistory();
   }, [loadHistory]);
 
-  // Receive: adopt the cloud copy for display when it is newer than this
-  // device's last edit, or when this device has no local copy yet (fresh login).
-  // This NEVER pushes. The only writer to the cloud is appendHistory, fired by
-  // a real answered question. That is what keeps a stale or background state
-  // from ever overwriting the cloud.
-  useEffect(() => {
-    if (!cloudDrill || !cloudDrill.data) return;
-    const localRaw = localStorage.getItem('offerbell_drill_history');
-    const localTs = parseInt(localStorage.getItem('offerbell_drill_history_ts') || '0', 10) || 0;
-    if (cloudDrill.data !== localRaw && (localRaw === null || cloudDrill.updatedAt > localTs)) {
-      try {
-        const arr = JSON.parse(cloudDrill.data);
-        if (Array.isArray(arr)) {
-          try { localStorage.setItem('offerbell_drill_history', cloudDrill.data); } catch {}
-          try { localStorage.setItem('offerbell_drill_history_ts', String(cloudDrill.updatedAt)); } catch {}
-          setHistory(arr);
-        }
-      } catch {}
-    }
-  }, [cloudDrill]);
 
   // After login, the sync hook hydrates flash_perf into localStorage
   // asynchronously; re-read profile, history, and stats once it lands so the
