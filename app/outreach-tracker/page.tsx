@@ -209,7 +209,12 @@ export default function OutreachTrackerPage() {
   const upsertTrackerMut = useMutation(api.outreachTracker.upsertTracker);
   const cloudPushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Receive: when the cloud row is newer than this device's last edit, adopt it.
+  // Receive: when the cloud row is newer than this device's last edit, adopt it
+  // into the on-screen list. We do NOT write local storage here: the sync hook
+  // already mirrors the cloud row into local storage on login and live updates,
+  // and writing it here would trip the setItem interceptor into pushing the
+  // just-received copy straight back up (an echo that could clobber). The only
+  // writer to the cloud is persist(), fired by a real edit on this page.
   useEffect(() => {
     if (!cloudTracker || !cloudTracker.data) return;
     const localRaw = localStorage.getItem('offerbell_tracker_v3');
@@ -219,8 +224,6 @@ export default function OutreachTrackerPage() {
         const parsed = JSON.parse(cloudTracker.data);
         if (Array.isArray(parsed)) {
           setContacts(parsed.map((c: any) => ({ ...c, linkedin: c.linkedin || '', scheduledAt: c.scheduledAt || null })));
-          try { localStorage.setItem('offerbell_tracker_v3', cloudTracker.data); } catch {}
-          try { localStorage.setItem('offerbell_tracker_v3_ts', String(cloudTracker.updatedAt)); } catch {}
         }
       } catch {}
     }
