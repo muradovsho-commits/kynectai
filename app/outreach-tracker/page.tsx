@@ -195,11 +195,16 @@ export default function OutreachTrackerPage() {
   // changes it, and pushes its own edits straight to the database. This does
   // not depend on the localStorage relay, so it updates live within a second
   // or two without a reload or tab close.
-  const _trackerUserId = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
-  const _trackerToken = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_session') || undefined) : undefined;
+  const [trkIds, setTrkIds] = useState<{ userId: string | null; token: string | undefined }>({ userId: null, token: undefined });
+  useEffect(() => {
+    const read = () => setTrkIds({ userId: localStorage.getItem('offerbell_user_id'), token: localStorage.getItem('offerbell_session') || undefined });
+    read();
+    window.addEventListener('offerbell-progress-hydrated', read);
+    return () => window.removeEventListener('offerbell-progress-hydrated', read);
+  }, []);
   const cloudTracker = useQuery(
     api.outreachTracker.getTracker,
-    _trackerUserId ? { userId: _trackerUserId, sessionToken: _trackerToken } : 'skip'
+    trkIds.userId ? { userId: trkIds.userId, sessionToken: trkIds.token } : 'skip'
   );
   const upsertTrackerMut = useMutation(api.outreachTracker.upsertTracker);
   const cloudPushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -207,8 +212,9 @@ export default function OutreachTrackerPage() {
   // Receive: when the cloud row is newer than this device's last edit, adopt it.
   useEffect(() => {
     if (!cloudTracker || !cloudTracker.data) return;
+    const localRaw = localStorage.getItem('offerbell_tracker_v3');
     const localTs = parseInt(localStorage.getItem('offerbell_tracker_v3_ts') || '0', 10) || 0;
-    if (cloudTracker.updatedAt > localTs && cloudTracker.data !== localStorage.getItem('offerbell_tracker_v3')) {
+    if (cloudTracker.data !== localRaw && (localRaw === null || cloudTracker.updatedAt > localTs)) {
       try {
         const parsed = JSON.parse(cloudTracker.data);
         if (Array.isArray(parsed)) {

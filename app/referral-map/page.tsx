@@ -444,11 +444,18 @@ export default function ReferralMapPage() {
   // session token. Refs distinguish genuine local edits (which push) from
   // mount-load and cloud-applied changes (which must NOT push, or they would
   // clobber a newer copy on another device).
-  const _refUserId = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
-  const _refToken = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_session') || undefined) : undefined;
+  const [refIds, setRefIds] = useState<{ userId: string | null; token: string | undefined }>({ userId: null, token: undefined });
+  useEffect(() => {
+    const read = () => setRefIds({ userId: localStorage.getItem('offerbell_user_id'), token: localStorage.getItem('offerbell_session') || undefined });
+    read();
+    // Re-read after login hydration so the subscription reliably establishes
+    // even if the page mounted before the session keys were repopulated.
+    window.addEventListener('offerbell-progress-hydrated', read);
+    return () => window.removeEventListener('offerbell-progress-hydrated', read);
+  }, []);
   const cloudReferral = useQuery(
     api.referralNodes.getReferral,
-    _refUserId ? { userId: _refUserId, sessionToken: _refToken } : 'skip'
+    refIds.userId ? { userId: refIds.userId, sessionToken: refIds.token } : 'skip'
   );
   const upsertReferralMut = useMutation(api.referralNodes.upsertReferral);
   const refExternalRef = useRef(false);
@@ -475,8 +482,12 @@ export default function ReferralMapPage() {
   // Receive: adopt the cloud copy when it is newer than this device's last edit.
   useEffect(() => {
     if (!cloudReferral || !cloudReferral.data) return;
+    const localRaw = localStorage.getItem(SK);
     const localTs = parseInt(localStorage.getItem(SK + '_ts') || '0', 10) || 0;
-    if (cloudReferral.updatedAt > localTs && cloudReferral.data !== localStorage.getItem(SK)) {
+    // Adopt cloud when it is newer, OR when this device has no local copy at all
+    // (fresh login after logout wiped localStorage). "[]" is a real value (an
+    // intentional clear), not a missing key, so it stays protected by the ts.
+    if (cloudReferral.data !== localRaw && (localRaw === null || cloudReferral.updatedAt > localTs)) {
       try {
         const parsed = JSON.parse(cloudReferral.data);
         if (Array.isArray(parsed)) {

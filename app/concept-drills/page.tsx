@@ -237,11 +237,18 @@ function ConceptDrillsInner() {
   // with the session token. appendHistory is the only writer, so the push
   // lives there; the receive effect adopts a newer cloud copy (last-write-wins
   // by edit time) without echoing it back.
-  const _dhUserId = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
-  const _dhToken = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_session') || undefined) : undefined;
+  const [dhIds, setDhIds] = useState<{ userId: string | null; token: string | undefined }>({ userId: null, token: undefined });
+  useEffect(() => {
+    const read = () => setDhIds({ userId: localStorage.getItem('offerbell_user_id'), token: localStorage.getItem('offerbell_session') || undefined });
+    read();
+    // Re-read after login hydration so the subscription reliably establishes
+    // even if the page mounted before the session keys were repopulated.
+    window.addEventListener('offerbell-progress-hydrated', read);
+    return () => window.removeEventListener('offerbell-progress-hydrated', read);
+  }, []);
   const cloudDrill = useQuery(
     api.drillHistory.getDrillHistory,
-    _dhUserId ? { userId: _dhUserId, sessionToken: _dhToken } : 'skip'
+    dhIds.userId ? { userId: dhIds.userId, sessionToken: dhIds.token } : 'skip'
   );
   const upsertDrillMut = useMutation(api.drillHistory.upsertDrillHistory);
   const drillPushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -263,8 +270,12 @@ function ConceptDrillsInner() {
   // Receive: adopt the cloud copy when it is newer than this device's last edit.
   useEffect(() => {
     if (!cloudDrill || !cloudDrill.data) return;
+    const localRaw = localStorage.getItem('offerbell_drill_history');
     const localTs = parseInt(localStorage.getItem('offerbell_drill_history_ts') || '0', 10) || 0;
-    if (cloudDrill.updatedAt > localTs && cloudDrill.data !== localStorage.getItem('offerbell_drill_history')) {
+    // Adopt cloud when it is newer, OR when this device has no local copy at all
+    // (fresh login after logout wiped localStorage). "[]" is a real value (an
+    // intentional clear), not a missing key, so it stays protected by the ts.
+    if (cloudDrill.data !== localRaw && (localRaw === null || cloudDrill.updatedAt > localTs)) {
       try {
         const arr = JSON.parse(cloudDrill.data);
         if (Array.isArray(arr)) {
