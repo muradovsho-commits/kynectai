@@ -393,18 +393,14 @@ export function useProgressSync() {
 
         const trackerPromise = client.query(api.outreachTracker.getTracker, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) })
           .then((row: { data: string; updatedAt: number } | null) => {
-            // Last-write-wins by edit time. Whichever side was edited most
-            // recently wins as a whole, so a delete on another device actually
-            // removes the contact here (union would resurrect it), while a
-            // contact just added on THIS device still wins because its local
-            // edit-time is newer than the cloud copy.
+            // Take the cloud copy unconditionally on login, exactly like the
+            // working tabs (flash_perf): localStorage.setItem(key, cloud). No
+            // timestamp comparison, so a stale local copy can never win and flip
+            // the data back on the next login.
             try {
               const cloudRaw = row && row.data ? row.data : null;
               const cloudTs = row ? (row.updatedAt || 0) : 0;
-              const localRaw = localStorage.getItem('offerbell_tracker_v3');
-              const localTs = parseInt(localStorage.getItem('offerbell_tracker_v3_ts') || '0', 10) || 0;
-              if (cloudRaw && (!localRaw || cloudTs > localTs)) {
-                // Cloud is newer (or we have nothing local): adopt it whole.
+              if (cloudRaw) {
                 trackerHydratingRef.current = true;
                 try { localStorage.setItem('offerbell_tracker_v3', cloudRaw); } catch {}
                 try { localStorage.setItem('offerbell_tracker_v3_ts', String(cloudTs)); } catch {}
@@ -417,13 +413,11 @@ export function useProgressSync() {
 
         const referralPromise = client.query(api.referralNodes.getReferral, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) })
           .then((row: { data: string; updatedAt: number } | null) => {
-            // Last-write-wins by edit time, same as the tracker.
+            // Take cloud unconditionally on login (same as flash_perf).
             try {
               const cloudRaw = row && row.data ? row.data : null;
               const cloudTs = row ? (row.updatedAt || 0) : 0;
-              const localRaw = localStorage.getItem('offerbell_referral_nodes_v3');
-              const localTs = parseInt(localStorage.getItem('offerbell_referral_nodes_v3_ts') || '0', 10) || 0;
-              if (cloudRaw && (!localRaw || cloudTs > localTs)) {
+              if (cloudRaw) {
                 try { localStorage.setItem('offerbell_referral_nodes_v3', cloudRaw); } catch {}
                 try { localStorage.setItem('offerbell_referral_nodes_v3_ts', String(cloudTs)); } catch {}
                 try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
@@ -434,13 +428,11 @@ export function useProgressSync() {
 
         const drillPromise = client.query(api.drillHistory.getDrillHistory, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) })
           .then((row: { data: string; updatedAt: number } | null) => {
-            // Last-write-wins by edit time, same as the tracker.
+            // Take cloud unconditionally on login (same as flash_perf).
             try {
               const cloudRaw = row && row.data ? row.data : null;
               const cloudTs = row ? (row.updatedAt || 0) : 0;
-              const localRaw = localStorage.getItem('offerbell_drill_history');
-              const localTs = parseInt(localStorage.getItem('offerbell_drill_history_ts') || '0', 10) || 0;
-              if (cloudRaw && (!localRaw || cloudTs > localTs)) {
+              if (cloudRaw) {
                 try { localStorage.setItem('offerbell_drill_history', cloudRaw); } catch {}
                 try { localStorage.setItem('offerbell_drill_history_ts', String(cloudTs)); } catch {}
                 try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
@@ -451,15 +443,11 @@ export function useProgressSync() {
 
         const savedMsgPromise = client.query(api.savedMessages.getSavedMessages, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) })
           .then((row: { data: string; updatedAt: number } | null) => {
-            // Last-write-wins by edit time, same as the tracker. Migration only
-            // pushes THIS device's own local copy up when the cloud is empty;
-            // it never reads from the blob.
+            // Take cloud unconditionally on login (same as flash_perf).
             try {
               const cloudRaw = row && row.data ? row.data : null;
               const cloudTs = row ? (row.updatedAt || 0) : 0;
-              const localRaw = localStorage.getItem('offerbell_saved_messages');
-              const localTs = parseInt(localStorage.getItem('offerbell_saved_messages_ts') || '0', 10) || 0;
-              if (cloudRaw && (!localRaw || cloudTs > localTs)) {
+              if (cloudRaw) {
                 try { localStorage.setItem('offerbell_saved_messages', cloudRaw); } catch {}
                 try { localStorage.setItem('offerbell_saved_messages_ts', String(cloudTs)); } catch {}
                 try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
