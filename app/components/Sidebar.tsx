@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useUserPlan } from '../lib/usePlan';
 import { useMutation } from 'convex/react';
-import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../../convex/_generated/api';
 
 interface SidebarProps {
@@ -272,37 +271,10 @@ export default function Sidebar({ activePage }: SidebarProps) {
     reader.readAsDataURL(file);
   }
 
-  async function signOut() {
-    // Flush the split-feature keys to their Convex tables BEFORE wiping local
-    // storage. This guarantees the table reflects exactly what is on screen at
-    // logout, so the next login reads the current state instead of a stale row.
-    // It pushes whatever local holds now (including "[]" when the user has
-    // cleared a feature), so it can never resurrect old data. Capped at 2.5s so
-    // logout never hangs on a slow network.
-    try {
-      const userId = localStorage.getItem('offerbell_user_id');
-      const sessionToken = localStorage.getItem('offerbell_session') || undefined;
-      const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
-      if (userId && url) {
-        const c = new ConvexHttpClient(url);
-        const flush = async (key: string, mut: any) => {
-          const data = localStorage.getItem(key);
-          if (data === null) return;
-          try { await c.mutation(mut, { userId, data, updatedAt: Date.now(), sessionToken }); } catch {}
-        };
-        await Promise.race([
-          Promise.all([
-            flush('offerbell_tracker_v3', api.outreachTracker.upsertTracker),
-            flush('offerbell_referral_nodes_v3', api.referralNodes.upsertReferral),
-            flush('offerbell_drill_history', api.drillHistory.upsertDrillHistory),
-            flush('offerbell_saved_messages', api.savedMessages.upsertSavedMessages),
-          ]),
-          new Promise(resolve => setTimeout(resolve, 2500)),
-        ]);
-      }
-    } catch {}
+  function signOut() {
     // Clear all offerbell_* keys except theme, remove userId, expire the
-    // cookie, hard navigate to home.
+    // cookie, hard navigate to home. No data push here: the cloud tables are
+    // written only on real edits, so logout must never write.
     const keys: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);

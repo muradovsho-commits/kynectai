@@ -410,15 +410,6 @@ export function useProgressSync() {
                 try { localStorage.setItem('offerbell_tracker_v3_ts', String(cloudTs)); } catch {}
                 trackerHydratingRef.current = false;
                 try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
-              } else if (localRaw && (!cloudRaw || localTs >= cloudTs) && localRaw !== cloudRaw) {
-                // Local is newer (or cloud empty / migration): push local up so
-                // the server holds the latest, stamped with our local edit-time.
-                void (async () => {
-                  try {
-                    const c = new ConvexHttpClient(url);
-                    await c.mutation(api.outreachTracker.upsertTracker, { userId, data: localRaw, updatedAt: localTs || Date.now(), sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
-                  } catch {}
-                })();
               }
             } catch {}
           })
@@ -436,13 +427,6 @@ export function useProgressSync() {
                 try { localStorage.setItem('offerbell_referral_nodes_v3', cloudRaw); } catch {}
                 try { localStorage.setItem('offerbell_referral_nodes_v3_ts', String(cloudTs)); } catch {}
                 try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
-              } else if (localRaw && (!cloudRaw || localTs >= cloudTs) && localRaw !== cloudRaw) {
-                void (async () => {
-                  try {
-                    const c = new ConvexHttpClient(url);
-                    await c.mutation(api.referralNodes.upsertReferral, { userId, data: localRaw, updatedAt: localTs || Date.now(), sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
-                  } catch {}
-                })();
               }
             } catch {}
           })
@@ -460,13 +444,6 @@ export function useProgressSync() {
                 try { localStorage.setItem('offerbell_drill_history', cloudRaw); } catch {}
                 try { localStorage.setItem('offerbell_drill_history_ts', String(cloudTs)); } catch {}
                 try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
-              } else if (localRaw && (!cloudRaw || localTs >= cloudTs) && localRaw !== cloudRaw) {
-                void (async () => {
-                  try {
-                    const c = new ConvexHttpClient(url);
-                    await c.mutation(api.drillHistory.upsertDrillHistory, { userId, data: localRaw, updatedAt: localTs || Date.now(), sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
-                  } catch {}
-                })();
               }
             } catch {}
           })
@@ -486,13 +463,6 @@ export function useProgressSync() {
                 try { localStorage.setItem('offerbell_saved_messages', cloudRaw); } catch {}
                 try { localStorage.setItem('offerbell_saved_messages_ts', String(cloudTs)); } catch {}
                 try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
-              } else if (localRaw && (!cloudRaw || localTs >= cloudTs) && localRaw !== cloudRaw) {
-                void (async () => {
-                  try {
-                    const c = new ConvexHttpClient(url);
-                    await c.mutation(api.savedMessages.upsertSavedMessages, { userId, data: localRaw, updatedAt: localTs || Date.now(), sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
-                  } catch {}
-                })();
               }
             } catch {}
           })

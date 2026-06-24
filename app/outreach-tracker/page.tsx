@@ -156,11 +156,11 @@ export default function OutreachTrackerPage() {
     if (saved) {
       const parsed = JSON.parse(saved);
       setContacts(parsed.map((c: any) => ({ ...c, linkedin: c.linkedin || '', scheduledAt: c.scheduledAt || null })));
-    } else if (!localStorage.getItem('offerbell_tracker_seeded')) {
-      setContacts(SAMPLE_CONTACTS);
-      localStorage.setItem('offerbell_tracker_v3', JSON.stringify(SAMPLE_CONTACTS));
-      localStorage.setItem('offerbell_tracker_seeded', 'true');
     }
+    // No sample seeding: writing samples to localStorage used to get pushed up
+    // and overwrite the user's real cloud row on a fresh login. The cloud table
+    // is the source of truth; an empty tracker simply shows empty until the
+    // user adds a contact.
     const theme = localStorage.getItem('offerbell-theme');
     if (theme === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); setIsDark(true); }
     setConfig(loadConfig());
