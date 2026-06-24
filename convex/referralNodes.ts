@@ -33,6 +33,12 @@ export const upsertReferral = mutation({
     const now = updatedAt ?? Date.now();
     const userEmail = await getUserEmail(ctx, userId);
     if (existing) {
+      // Monotonic guard: reject any write older than what is already stored, so a
+      // stale device (e.g. one logging back in with an old local copy) can never
+      // overwrite a newer cloud copy. The cloud only moves forward in time. This
+      // is the server-side backstop that makes multi-device safe regardless of
+      // client timing.
+      if (typeof existing.updatedAt === "number" && now < existing.updatedAt) return;
       await ctx.db.patch(existing._id, { data, updatedAt: now, userEmail });
     } else {
       await ctx.db.insert("referralNodes", { userId, data, updatedAt: now, userEmail });

@@ -458,16 +458,23 @@ export default function ReferralMapPage() {
     refIds.userId ? { userId: refIds.userId, sessionToken: refIds.token } : 'skip'
   );
   const upsertReferralMut = useMutation(api.referralNodes.upsertReferral);
-  const refExternalRef = useRef(false);
-  const refReadyRef = useRef(false);
+  const userEditedRef = useRef(false);
   const refPushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Persist on every change; push to cloud only for genuine local edits.
+  // Persist localStorage on every change. Push to the cloud ONLY when the change
+  // came from a genuine user edit (a handler set userEditedRef just before
+  // setContacts). Mount-load and cloud-adopt never set the flag, so they can
+  // never push, which is what makes a stale or empty state unable to clobber a
+  // newer cloud copy on the two-device-logout case.
   useEffect(() => {
-    if (contacts.length === 0 && !refReadyRef.current) return;
+    if (contacts.length === 0 && !userEditedRef.current) {
+      // Nothing meaningful to persist yet on an empty mount, and definitely
+      // nothing to push. Leave the cloud untouched.
+      return;
+    }
     try { localStorage.setItem(SK, JSON.stringify(contacts)); } catch {}
-    if (refExternalRef.current) { refExternalRef.current = false; refReadyRef.current = true; return; }
-    if (!refReadyRef.current) { refReadyRef.current = true; return; }
+    if (!userEditedRef.current) return; // cloud-adopt or mount-load: persist only, never push
+    userEditedRef.current = false;
     const ts = Date.now();
     try { localStorage.setItem(SK + '_ts', String(ts)); } catch {}
     const payload = JSON.stringify(contacts);
@@ -493,7 +500,7 @@ export default function ReferralMapPage() {
         if (Array.isArray(parsed)) {
           try { localStorage.setItem(SK, cloudReferral.data); } catch {}
           try { localStorage.setItem(SK + '_ts', String(cloudReferral.updatedAt)); } catch {}
-          refExternalRef.current = true;
+          // No userEditedRef here: this is a cloud-applied change, must never push back.
           setContacts(parsed.map((c: any) => ({ ...c, state: c.state || undefined })));
         }
       } catch {}
@@ -542,11 +549,13 @@ export default function ReferralMapPage() {
       }
     }
     const contact: Contact = { id, name: form.name!.trim(), firm: form.firm || '', role: form.role || '', referredBy: form.referredBy || 'you', note: form.note || '', state: form.state || undefined, chainLabel: form.chainLabel || undefined, addedAt: form.addedAt || Date.now() };
+    userEditedRef.current = true;
     setContacts(prev => { const idx = prev.findIndex(c => c.id === id); if (idx >= 0) { const next = [...prev]; next[idx] = contact; return next; } return [...prev, contact]; });
     setModal(null); setForm({});
   };
   const deleteContact = () => {
     if (!form.id) return;
+    userEditedRef.current = true;
     setContacts(prev => prev.filter(c => c.id !== form.id).map(c => c.referredBy === form.id ? { ...c, referredBy: 'you' } : c));
     if (selectedChain === form.id) setSelectedChain(null);
     setModal(null); setForm({});
@@ -561,6 +570,7 @@ export default function ReferralMapPage() {
         alert(`Free plan allows ${PLAN_LIMITS.referralContacts.free} contacts. Only ${remaining} imported. Upgrade for unlimited.`);
       }
     }
+    userEditedRef.current = true;
     setContacts(prev => [...prev, ...toAdd]); setModal(null);
   };
 
@@ -777,11 +787,13 @@ export default function ReferralMapPage() {
                             value={selectedContact.chainLabel || `${selectedContact.name}'s Chain`}
                             onChange={e => {
                               const val = e.target.value;
+                              userEditedRef.current = true;
                               setContacts(prev => prev.map(c => c.id === selectedContact.id ? { ...c, chainLabel: val } : c));
                             }}
                             onBlur={e => {
                               const val = e.target.value.trim();
                               if (!val || val === `${selectedContact.name}'s Chain`) {
+                                userEditedRef.current = true;
                                 setContacts(prev => prev.map(c => c.id === selectedContact.id ? { ...c, chainLabel: undefined } : c));
                               }
                             }}
