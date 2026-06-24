@@ -1,8 +1,6 @@
 // Build: v6-career-aware-tabs
 'use client';
-import { useState, useEffect, useMemo, useCallback, useRef, Suspense } from 'react';
-import { useMutation } from 'convex/react';
-import { api } from '../../convex/_generated/api';
+import { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import Sidebar from '../components/Sidebar';
 import { useUserPlan } from '../lib/usePlan';
 import './drills.css';
@@ -228,23 +226,8 @@ function ConceptDrillsInner() {
 
   // ─── Drill history (for Question History tab) ────────────────────────────
   // Stored at offerbell_drill_history (excluded from blob sync via
-  // EXCLUDE_FROM_SYNC). Synced per-user via the drillHistory Convex table
-  // (live query + mutation below). Capped at HISTORY_CAP entries.
+  // EXCLUDE_FROM_SYNC). Per-device only. Capped at HISTORY_CAP entries.
   const [history, setHistory] = useState<DrillHistoryItem[]>([]);
-
-  // Direct cloud sync (same proven approach as the outreach tracker / referral
-  // map): subscribe to this user's drillHistory row and push our own writes
-  // with the session token. appendHistory is the only writer, so the push
-  // lives there; the receive effect adopts a newer cloud copy (last-write-wins
-  // by edit time) without echoing it back.
-  // Cloud sync, matched to the working tabs (coach, flashcards): the page does
-  // NOT subscribe to a live query. It loads from local storage on login (the
-  // sync hook hydrates the drillHistory row into local storage and fires
-  // offerbell-progress-hydrated, which loadHistory listens for) and pushes its
-  // own writes on a real answered question. No reactive receive, no timestamp
-  // fight, no echo.
-  const upsertDrillMut = useMutation(api.drillHistory.upsertDrillHistory);
-  const drillPushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const loadHistory = useCallback(() => {
     try {
@@ -259,7 +242,6 @@ function ConceptDrillsInner() {
   useEffect(() => {
     loadHistory();
   }, [loadHistory]);
-
 
   // After login, the sync hook hydrates flash_perf into localStorage
   // asynchronously; re-read profile, history, and stats once it lands so the
@@ -424,19 +406,8 @@ function ConceptDrillsInner() {
       const arr = Array.isArray(list) ? list : [];
       arr.unshift(item);
       const capped = arr.slice(0, HISTORY_CAP);
-      const payload = JSON.stringify(capped);
-      localStorage.setItem('offerbell_drill_history', payload);
+      localStorage.setItem('offerbell_drill_history', JSON.stringify(capped));
       setHistory(capped);
-      // Push to the cloud (debounced) so the Question History tab syncs across
-      // devices. Stamp the edit time so two devices compare on one clock.
-      const ts = Date.now();
-      try { localStorage.setItem('offerbell_drill_history_ts', String(ts)); } catch {}
-      if (drillPushTimer.current) clearTimeout(drillPushTimer.current);
-      drillPushTimer.current = setTimeout(() => {
-        const userId = localStorage.getItem('offerbell_user_id'); if (!userId) return;
-        const sessionToken = localStorage.getItem('offerbell_session') || undefined;
-        try { void upsertDrillMut({ userId, data: payload, updatedAt: ts, sessionToken }).catch(() => {}); } catch {}
-      }, 800);
     } catch {}
   }
 

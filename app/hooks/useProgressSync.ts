@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useMutation, useQuery } from 'convex/react';
+import { useMutation } from 'convex/react';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../../convex/_generated/api';
 
@@ -115,16 +115,6 @@ const EXCLUDE_FROM_SYNC = new Set([
   'offerbell_flash_perf_re',
   'offerbell_flash_perf_vc',
   'offerbell_diag_history',
-  // Moved to dedicated Convex table (outreachTracker). Keeps the tracker out of
-  // the blob so it no longer round-trips on every save (bandwidth) and is not
-  // clobbered by other features writing the blob.
-  'offerbell_tracker_v3',
-  // Moved to dedicated Convex table (referralNodes). Same reasons as the tracker.
-  'offerbell_referral_nodes_v3',
-  // Moved to dedicated Convex table (drillHistory). Same reasons as the tracker.
-  'offerbell_drill_history',
-  // Moved to dedicated Convex table (savedMessages). Same reasons as the tracker.
-  'offerbell_saved_messages',
 ]);
 
 // Cross-tab coordination: tabs share a "last push" timestamp via localStorage
@@ -262,17 +252,6 @@ export function useProgressSync() {
   const userId = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
   const saveProgress = useMutation(api.progress.saveProgress);
   const upsertPerf = useMutation(api.flashPerf.upsertPerf);
-  const upsertTracker = useMutation(api.outreachTracker.upsertTracker);
-
-  // Live subscription to this user's tracker row. Convex pushes a new value
-  // whenever ANY device edits it, so the other device updates on its own
-  // (no reload). Tiny single row, pushed only on change, so bandwidth is
-  // negligible. We still apply last-write-wins so it never stomps an edit
-  // this device just made.
-  const liveTracker = useQuery(
-    api.outreachTracker.getTracker,
-    userId ? { userId, sessionToken: (typeof window !== 'undefined' ? localStorage.getItem('offerbell_session') || undefined : undefined) } : 'skip'
-  );
 
   const hasSyncedRef = useRef(false);
   const lastPushedHashRef = useRef<string | null>(null);
@@ -285,14 +264,6 @@ export function useProgressSync() {
   // stats never reach the cloud and are lost on logout.
   const dirtyFlashTracksRef = useRef<Set<string>>(new Set());
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // offerbell_tracker_v3 (outreach contacts) is excluded from the blob and
-  // persisted to its own table here (debounced), same pattern as flash_perf.
-  const dirtyTrackerRef = useRef(false);
-  const trackerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // True only while the hook itself is writing the tracker during hydration, so
-  // the setItem interceptor does not treat that write as a fresh user edit
-  // (which would bump the local edit-time and defeat last-write-wins).
-  const trackerHydratingRef = useRef(false);
 
   // ── Initial sync (one-time HTTP fetch, not a live subscription) ──────────
   useEffect(() => {
@@ -391,79 +362,10 @@ export function useProgressSync() {
           })
           .catch(() => {});
 
-        const trackerPromise = client.query(api.outreachTracker.getTracker, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) })
-          .then((row: { data: string; updatedAt: number } | null) => {
-            // Take the cloud copy unconditionally on login, exactly like the
-            // working tabs (flash_perf): localStorage.setItem(key, cloud). No
-            // timestamp comparison, so a stale local copy can never win and flip
-            // the data back on the next login.
-            try {
-              const cloudRaw = row && row.data ? row.data : null;
-              const cloudTs = row ? (row.updatedAt || 0) : 0;
-              if (cloudRaw) {
-                trackerHydratingRef.current = true;
-                try { localStorage.setItem('offerbell_tracker_v3', cloudRaw); } catch {}
-                try { localStorage.setItem('offerbell_tracker_v3_ts', String(cloudTs)); } catch {}
-                trackerHydratingRef.current = false;
-                try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
-              }
-            } catch {}
-          })
-          .catch(() => {});
-
-        const referralPromise = client.query(api.referralNodes.getReferral, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) })
-          .then((row: { data: string; updatedAt: number } | null) => {
-            // Take cloud unconditionally on login (same as flash_perf).
-            try {
-              const cloudRaw = row && row.data ? row.data : null;
-              const cloudTs = row ? (row.updatedAt || 0) : 0;
-              if (cloudRaw) {
-                try { localStorage.setItem('offerbell_referral_nodes_v3', cloudRaw); } catch {}
-                try { localStorage.setItem('offerbell_referral_nodes_v3_ts', String(cloudTs)); } catch {}
-                try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
-              }
-            } catch {}
-          })
-          .catch(() => {});
-
-        const drillPromise = client.query(api.drillHistory.getDrillHistory, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) })
-          .then((row: { data: string; updatedAt: number } | null) => {
-            // Take cloud unconditionally on login (same as flash_perf).
-            try {
-              const cloudRaw = row && row.data ? row.data : null;
-              const cloudTs = row ? (row.updatedAt || 0) : 0;
-              if (cloudRaw) {
-                try { localStorage.setItem('offerbell_drill_history', cloudRaw); } catch {}
-                try { localStorage.setItem('offerbell_drill_history_ts', String(cloudTs)); } catch {}
-                try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
-              }
-            } catch {}
-          })
-          .catch(() => {});
-
-        const savedMsgPromise = client.query(api.savedMessages.getSavedMessages, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) })
-          .then((row: { data: string; updatedAt: number } | null) => {
-            // Take cloud unconditionally on login (same as flash_perf).
-            try {
-              const cloudRaw = row && row.data ? row.data : null;
-              const cloudTs = row ? (row.updatedAt || 0) : 0;
-              if (cloudRaw) {
-                try { localStorage.setItem('offerbell_saved_messages', cloudRaw); } catch {}
-                try { localStorage.setItem('offerbell_saved_messages_ts', String(cloudTs)); } catch {}
-                try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
-              }
-            } catch {}
-          })
-          .catch(() => {});
-
         // Don't await the hydration promises - they're side-effect-only and
         // shouldn't block the blob sync below.
         void flashPerfPromise;
         void diagHistoryPromise;
-        void trackerPromise;
-        void referralPromise;
-        void drillPromise;
-        void savedMsgPromise;
 
         const cloudData = await client.query(api.progress.loadProgress, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
 
@@ -484,10 +386,6 @@ export function useProgressSync() {
         const merged = mergeBlobs(cloud, local);
 
         applyCloudData(merged);
-        // Notify the sidebar and any data pages that the blob (profile name,
-        // theme, etc.) just landed, so they re-read instead of lingering on the
-        // default "User"/empty state.
-        try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
 
         const mergedStr = JSON.stringify(merged);
         const cloudHash = hashString(cloudData.data);
@@ -504,25 +402,6 @@ export function useProgressSync() {
       }
     })();
   }, [userId, saveProgress]);
-
-  // Apply live tracker pushes from other devices. Adopt only when the cloud
-  // copy is newer than this device's last edit (last-write-wins), then notify
-  // pages so an open tracker updates itself without a reload.
-  useEffect(() => {
-    if (!liveTracker || typeof window === 'undefined') return;
-    try {
-      const cloudRaw = liveTracker.data || null;
-      const cloudTs = liveTracker.updatedAt || 0;
-      const localTs = parseInt(localStorage.getItem('offerbell_tracker_v3_ts') || '0', 10) || 0;
-      if (cloudRaw && cloudTs > localTs && cloudRaw !== localStorage.getItem('offerbell_tracker_v3')) {
-        trackerHydratingRef.current = true;
-        try { localStorage.setItem('offerbell_tracker_v3', cloudRaw); } catch {}
-        try { localStorage.setItem('offerbell_tracker_v3_ts', String(cloudTs)); } catch {}
-        trackerHydratingRef.current = false;
-        try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
-      }
-    } catch {}
-  }, [liveTracker]);
 
   // ── Push routine: schedule (debounced) and execute (dirty-checked) ───────
   function schedulePush() {
@@ -587,23 +466,6 @@ export function useProgressSync() {
     flashTimerRef.current = setTimeout(() => { flushFlashPerf(); }, 3000);
   }
 
-  function flushTracker() {
-    const uid = userIdRef.current;
-    if (!uid || !dirtyTrackerRef.current) return;
-    dirtyTrackerRef.current = false;
-    try {
-      const data = localStorage.getItem('offerbell_tracker_v3');
-      const ts = parseInt(localStorage.getItem('offerbell_tracker_v3_ts') || '0', 10) || Date.now();
-      const sessionToken = localStorage.getItem('offerbell_session') || undefined;
-      if (data) void upsertTracker({ userId: uid, data, updatedAt: ts, sessionToken }).catch(() => {});
-    } catch {}
-  }
-  function scheduleTrackerPush() {
-    dirtyTrackerRef.current = true;
-    if (trackerTimerRef.current) clearTimeout(trackerTimerRef.current);
-    trackerTimerRef.current = setTimeout(() => { flushTracker(); }, 1500);
-  }
-
   // ── Detect mutations: intercept setItem + listen for storage events ──────
   useEffect(() => {
     if (!userId) return;
@@ -613,17 +475,6 @@ export function useProgressSync() {
       if (key.startsWith('offerbell_flash_perf_')) {
         scheduleFlashPush(key.slice('offerbell_flash_perf_'.length));
       }
-      if (key === 'offerbell_tracker_v3') {
-        if (!trackerHydratingRef.current) {
-          // Do NOT re-stamp the timestamp here. The writer (a genuine edit) is
-          // responsible for stamping offerbell_tracker_v3_ts with its real edit
-          // time. Re-stamping to Date.now() on every write gave stale copies a
-          // fresh timestamp, which let them slip past the server's monotonic
-          // guard and clobber newer cloud data. We push with whatever ts the
-          // writer set; the server rejects anything older than it has.
-          scheduleTrackerPush();
-        }
-      }
       if (SYNC_KEYS.includes(key) && !EXCLUDE_FROM_SYNC.has(key)) {
         schedulePush();
       }
@@ -631,9 +482,6 @@ export function useProgressSync() {
     const onStorage = (e: StorageEvent) => {
       if (e.key && e.key.startsWith('offerbell_flash_perf_')) {
         scheduleFlashPush(e.key.slice('offerbell_flash_perf_'.length));
-      }
-      if (e.key === 'offerbell_tracker_v3') {
-        scheduleTrackerPush();
       }
       if (e.key && SYNC_KEYS.includes(e.key) && !EXCLUDE_FROM_SYNC.has(e.key)) {
         schedulePush();
@@ -665,22 +513,15 @@ export function useProgressSync() {
         lastPushedHashRef.current = localHash;
       } catch {}
       flushFlashPerf();
-      flushTracker();
     };
     const onVis = () => {
-      // On hide, use the reliable sendBeacon flush rather than an async mutation:
-      // mobile browsers freeze the page on app-switch/lock before an in-flight
-      // fetch can complete, so the async push silently drops the last edits.
-      // sendBeacon is delivered by the browser even as the page is torn down.
-      if (document.visibilityState === 'hidden') { flushBeacon(); }
+      if (document.visibilityState === 'hidden') { void pushIfDirty(); flushFlashPerf(); }
       else recordActivityToday();
     };
     window.addEventListener('beforeunload', flushBeacon);
-    window.addEventListener('pagehide', flushBeacon);
     document.addEventListener('visibilitychange', onVis);
     return () => {
       window.removeEventListener('beforeunload', flushBeacon);
-      window.removeEventListener('pagehide', flushBeacon);
       document.removeEventListener('visibilitychange', onVis);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

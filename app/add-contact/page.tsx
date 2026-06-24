@@ -73,9 +73,6 @@ function AddContactInner() {
 
       contacts.push(newContact);
       localStorage.setItem('offerbell_tracker_v3', JSON.stringify(contacts));
-      // Stamp the real edit time so the cloud push (fired by the sync hook) is
-      // treated as current and accepted by the server's monotonic guard.
-      try { localStorage.setItem('offerbell_tracker_v3_ts', String(Date.now())); } catch {}
       setStatus('saved');
 
     } catch (err) {

@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useMutation } from 'convex/react';
-import { api } from '../../convex/_generated/api';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
@@ -439,44 +437,7 @@ export default function ReferralMapPage() {
     if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
   }, [router]);
 
-  // Cloud sync, matched to the working tabs: no live subscription. Contacts load
-  // from local storage (the sync hook hydrates the referral row on login and
-  // fires offerbell-progress-hydrated, which we listen for below to reload the
-  // list), and edits push to the database via the user-edit-gated effect. No
-  // reactive receive, no timestamp fight, no echo.
-  useEffect(() => {
-    const reload = () => setContacts(load());
-    window.addEventListener('offerbell-progress-hydrated', reload);
-    return () => window.removeEventListener('offerbell-progress-hydrated', reload);
-  }, []);
-  const upsertReferralMut = useMutation(api.referralNodes.upsertReferral);
-  const userEditedRef = useRef(false);
-  const refPushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Persist localStorage on every change. Push to the cloud ONLY when the change
-  // came from a genuine user edit (a handler set userEditedRef just before
-  // setContacts). Mount-load and cloud-adopt never set the flag, so they can
-  // never push, which is what makes a stale or empty state unable to clobber a
-  // newer cloud copy on the two-device-logout case.
-  useEffect(() => {
-    if (contacts.length === 0 && !userEditedRef.current) {
-      // Nothing meaningful to persist yet on an empty mount, and definitely
-      // nothing to push. Leave the cloud untouched.
-      return;
-    }
-    try { localStorage.setItem(SK, JSON.stringify(contacts)); } catch {}
-    if (!userEditedRef.current) return; // cloud-adopt or mount-load: persist only, never push
-    userEditedRef.current = false;
-    const ts = Date.now();
-    try { localStorage.setItem(SK + '_ts', String(ts)); } catch {}
-    const payload = JSON.stringify(contacts);
-    if (refPushTimer.current) clearTimeout(refPushTimer.current);
-    refPushTimer.current = setTimeout(() => {
-      const userId = localStorage.getItem('offerbell_user_id'); if (!userId) return;
-      const sessionToken = localStorage.getItem('offerbell_session') || undefined;
-      try { void upsertReferralMut({ userId, data: payload, updatedAt: ts, sessionToken }).catch(() => {}); } catch {}
-    }, 800);
-  }, [contacts]);
+  useEffect(() => { if (contacts.length > 0) save(contacts); }, [contacts]);
 
   const getReferrals = (id: string): Contact[] => contacts.filter(c => c.referredBy === id);
   const getChainSize = (id: string, visited = new Set<string>()): number => {
@@ -520,13 +481,11 @@ export default function ReferralMapPage() {
       }
     }
     const contact: Contact = { id, name: form.name!.trim(), firm: form.firm || '', role: form.role || '', referredBy: form.referredBy || 'you', note: form.note || '', state: form.state || undefined, chainLabel: form.chainLabel || undefined, addedAt: form.addedAt || Date.now() };
-    userEditedRef.current = true;
     setContacts(prev => { const idx = prev.findIndex(c => c.id === id); if (idx >= 0) { const next = [...prev]; next[idx] = contact; return next; } return [...prev, contact]; });
     setModal(null); setForm({});
   };
   const deleteContact = () => {
     if (!form.id) return;
-    userEditedRef.current = true;
     setContacts(prev => prev.filter(c => c.id !== form.id).map(c => c.referredBy === form.id ? { ...c, referredBy: 'you' } : c));
     if (selectedChain === form.id) setSelectedChain(null);
     setModal(null); setForm({});
@@ -541,7 +500,6 @@ export default function ReferralMapPage() {
         alert(`Free plan allows ${PLAN_LIMITS.referralContacts.free} contacts. Only ${remaining} imported. Upgrade for unlimited.`);
       }
     }
-    userEditedRef.current = true;
     setContacts(prev => [...prev, ...toAdd]); setModal(null);
   };
 
@@ -758,13 +716,11 @@ export default function ReferralMapPage() {
                             value={selectedContact.chainLabel || `${selectedContact.name}'s Chain`}
                             onChange={e => {
                               const val = e.target.value;
-                              userEditedRef.current = true;
                               setContacts(prev => prev.map(c => c.id === selectedContact.id ? { ...c, chainLabel: val } : c));
                             }}
                             onBlur={e => {
                               const val = e.target.value.trim();
                               if (!val || val === `${selectedContact.name}'s Chain`) {
-                                userEditedRef.current = true;
                                 setContacts(prev => prev.map(c => c.id === selectedContact.id ? { ...c, chainLabel: undefined } : c));
                               }
                             }}
