@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useQuery, useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
@@ -437,7 +439,55 @@ export default function ReferralMapPage() {
     if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
   }, [router]);
 
-  useEffect(() => { if (contacts.length > 0) save(contacts); }, [contacts]);
+  // Direct cloud sync (same proven approach as the outreach tracker): the page
+  // subscribes to its row and pushes its own edits to the database with the
+  // session token. Refs distinguish genuine local edits (which push) from
+  // mount-load and cloud-applied changes (which must NOT push, or they would
+  // clobber a newer copy on another device).
+  const _refUserId = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
+  const _refToken = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_session') || undefined) : undefined;
+  const cloudReferral = useQuery(
+    api.referralNodes.getReferral,
+    _refUserId ? { userId: _refUserId, sessionToken: _refToken } : 'skip'
+  );
+  const upsertReferralMut = useMutation(api.referralNodes.upsertReferral);
+  const refExternalRef = useRef(false);
+  const refReadyRef = useRef(false);
+  const refPushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Persist on every change; push to cloud only for genuine local edits.
+  useEffect(() => {
+    if (contacts.length === 0 && !refReadyRef.current) return;
+    try { localStorage.setItem(SK, JSON.stringify(contacts)); } catch {}
+    if (refExternalRef.current) { refExternalRef.current = false; refReadyRef.current = true; return; }
+    if (!refReadyRef.current) { refReadyRef.current = true; return; }
+    const ts = Date.now();
+    try { localStorage.setItem(SK + '_ts', String(ts)); } catch {}
+    const payload = JSON.stringify(contacts);
+    if (refPushTimer.current) clearTimeout(refPushTimer.current);
+    refPushTimer.current = setTimeout(() => {
+      const userId = localStorage.getItem('offerbell_user_id'); if (!userId) return;
+      const sessionToken = localStorage.getItem('offerbell_session') || undefined;
+      try { void upsertReferralMut({ userId, data: payload, updatedAt: ts, sessionToken }).catch(() => {}); } catch {}
+    }, 800);
+  }, [contacts]);
+
+  // Receive: adopt the cloud copy when it is newer than this device's last edit.
+  useEffect(() => {
+    if (!cloudReferral || !cloudReferral.data) return;
+    const localTs = parseInt(localStorage.getItem(SK + '_ts') || '0', 10) || 0;
+    if (cloudReferral.updatedAt > localTs && cloudReferral.data !== localStorage.getItem(SK)) {
+      try {
+        const parsed = JSON.parse(cloudReferral.data);
+        if (Array.isArray(parsed)) {
+          try { localStorage.setItem(SK, cloudReferral.data); } catch {}
+          try { localStorage.setItem(SK + '_ts', String(cloudReferral.updatedAt)); } catch {}
+          refExternalRef.current = true;
+          setContacts(parsed.map((c: any) => ({ ...c, state: c.state || undefined })));
+        }
+      } catch {}
+    }
+  }, [cloudReferral]);
 
   const getReferrals = (id: string): Contact[] => contacts.filter(c => c.referredBy === id);
   const getChainSize = (id: string, visited = new Set<string>()): number => {

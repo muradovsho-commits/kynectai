@@ -275,6 +275,16 @@ export default defineSchema({
     updatedAt: v.number(),
   }).index("by_user", ["userId"]),
 
+  // Referral map nodes. One row per user; holds the referral_nodes_v3 JSON.
+  // Split out of the userProgress blob for the same reasons as the tracker:
+  // keeps it off the blob (bandwidth) and lets it sync per-device cleanly.
+  referralNodes: defineTable({
+    userId: v.string(),
+    userEmail: v.optional(v.string()),
+    data: v.string(), // JSON of offerbell_referral_nodes_v3
+    updatedAt: v.number(),
+  }).index("by_user", ["userId"]),
+
   // Server-side enforcement of weekly plan limits.
   // One row per user per ISO-week (Monday UTC). Reset is implicit: a new
   // week creates a new row, old rows are ignored. Counters track count of
