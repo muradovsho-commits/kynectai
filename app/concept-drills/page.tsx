@@ -267,23 +267,43 @@ function ConceptDrillsInner() {
     loadHistory();
   }, [loadHistory]);
 
-  // Receive: adopt the cloud copy when it is newer than this device's last edit.
+  // Receive: drill history is an append-only log (you never un-answer a
+  // question), so two devices are MERGED, not made to fight over a winner.
+  // Union by item id, newest first, capped. This is lossless: a merge can only
+  // add items, never drop or revive a deletion (there are no deletions here).
+  // If the merge is a superset of the cloud copy, push it back so the other
+  // device converges to the same union. The push is safe against clobbering
+  // because a union is never older/smaller than the cloud, and the server's
+  // monotonic guard rejects anything stale anyway.
   useEffect(() => {
     if (!cloudDrill || !cloudDrill.data) return;
     const localRaw = localStorage.getItem('offerbell_drill_history');
-    const localTs = parseInt(localStorage.getItem('offerbell_drill_history_ts') || '0', 10) || 0;
-    // Adopt cloud when it is newer, OR when this device has no local copy at all
-    // (fresh login after logout wiped localStorage). "[]" is a real value (an
-    // intentional clear), not a missing key, so it stays protected by the ts.
-    if (cloudDrill.data !== localRaw && (localRaw === null || cloudDrill.updatedAt > localTs)) {
-      try {
-        const arr = JSON.parse(cloudDrill.data);
-        if (Array.isArray(arr)) {
-          try { localStorage.setItem('offerbell_drill_history', cloudDrill.data); } catch {}
-          try { localStorage.setItem('offerbell_drill_history_ts', String(cloudDrill.updatedAt)); } catch {}
-          setHistory(arr);
-        }
-      } catch {}
+    let localArr: DrillHistoryItem[] = [];
+    try { const p = JSON.parse(localRaw || '[]'); if (Array.isArray(p)) localArr = p; } catch {}
+    let cloudArr: DrillHistoryItem[] = [];
+    try { const p = JSON.parse(cloudDrill.data); if (Array.isArray(p)) cloudArr = p; } catch {}
+    const byId = new Map<string, DrillHistoryItem>();
+    for (const it of [...cloudArr, ...localArr]) {
+      if (it && it.id && !byId.has(it.id)) byId.set(it.id, it);
+    }
+    const merged = Array.from(byId.values())
+      .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0) || String(a.id).localeCompare(String(b.id)))
+      .slice(0, HISTORY_CAP);
+    const mergedStr = JSON.stringify(merged);
+    if (mergedStr !== localRaw) {
+      try { localStorage.setItem('offerbell_drill_history', mergedStr); } catch {}
+      setHistory(merged);
+    }
+    // Push only when the union actually adds something the cloud lacks, so two
+    // identical sets never churn back and forth.
+    if (mergedStr !== cloudDrill.data) {
+      const ts = Date.now();
+      try { localStorage.setItem('offerbell_drill_history_ts', String(ts)); } catch {}
+      const userId = localStorage.getItem('offerbell_user_id');
+      const sessionToken = localStorage.getItem('offerbell_session') || undefined;
+      if (userId) { try { void upsertDrillMut({ userId, data: mergedStr, updatedAt: ts, sessionToken }).catch(() => {}); } catch {} }
+    } else {
+      try { localStorage.setItem('offerbell_drill_history_ts', String(cloudDrill.updatedAt)); } catch {}
     }
   }, [cloudDrill]);
 
