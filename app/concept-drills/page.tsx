@@ -1,6 +1,8 @@
 // Build: v6-career-aware-tabs
 'use client';
-import { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef, Suspense } from 'react';
+import { useQuery, useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import Sidebar from '../components/Sidebar';
 import { useUserPlan } from '../lib/usePlan';
 import './drills.css';
@@ -226,8 +228,23 @@ function ConceptDrillsInner() {
 
   // ─── Drill history (for Question History tab) ────────────────────────────
   // Stored at offerbell_drill_history (excluded from blob sync via
-  // EXCLUDE_FROM_SYNC). Per-device only. Capped at HISTORY_CAP entries.
+  // EXCLUDE_FROM_SYNC). Synced per-user via the drillHistory Convex table
+  // (live query + mutation below). Capped at HISTORY_CAP entries.
   const [history, setHistory] = useState<DrillHistoryItem[]>([]);
+
+  // Direct cloud sync (same proven approach as the outreach tracker / referral
+  // map): subscribe to this user's drillHistory row and push our own writes
+  // with the session token. appendHistory is the only writer, so the push
+  // lives there; the receive effect adopts a newer cloud copy (last-write-wins
+  // by edit time) without echoing it back.
+  const _dhUserId = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
+  const _dhToken = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_session') || undefined) : undefined;
+  const cloudDrill = useQuery(
+    api.drillHistory.getDrillHistory,
+    _dhUserId ? { userId: _dhUserId, sessionToken: _dhToken } : 'skip'
+  );
+  const upsertDrillMut = useMutation(api.drillHistory.upsertDrillHistory);
+  const drillPushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const loadHistory = useCallback(() => {
     try {
@@ -242,6 +259,22 @@ function ConceptDrillsInner() {
   useEffect(() => {
     loadHistory();
   }, [loadHistory]);
+
+  // Receive: adopt the cloud copy when it is newer than this device's last edit.
+  useEffect(() => {
+    if (!cloudDrill || !cloudDrill.data) return;
+    const localTs = parseInt(localStorage.getItem('offerbell_drill_history_ts') || '0', 10) || 0;
+    if (cloudDrill.updatedAt > localTs && cloudDrill.data !== localStorage.getItem('offerbell_drill_history')) {
+      try {
+        const arr = JSON.parse(cloudDrill.data);
+        if (Array.isArray(arr)) {
+          try { localStorage.setItem('offerbell_drill_history', cloudDrill.data); } catch {}
+          try { localStorage.setItem('offerbell_drill_history_ts', String(cloudDrill.updatedAt)); } catch {}
+          setHistory(arr);
+        }
+      } catch {}
+    }
+  }, [cloudDrill]);
 
   // After login, the sync hook hydrates flash_perf into localStorage
   // asynchronously; re-read profile, history, and stats once it lands so the
@@ -406,8 +439,19 @@ function ConceptDrillsInner() {
       const arr = Array.isArray(list) ? list : [];
       arr.unshift(item);
       const capped = arr.slice(0, HISTORY_CAP);
-      localStorage.setItem('offerbell_drill_history', JSON.stringify(capped));
+      const payload = JSON.stringify(capped);
+      localStorage.setItem('offerbell_drill_history', payload);
       setHistory(capped);
+      // Push to the cloud (debounced) so the Question History tab syncs across
+      // devices. Stamp the edit time so two devices compare on one clock.
+      const ts = Date.now();
+      try { localStorage.setItem('offerbell_drill_history_ts', String(ts)); } catch {}
+      if (drillPushTimer.current) clearTimeout(drillPushTimer.current);
+      drillPushTimer.current = setTimeout(() => {
+        const userId = localStorage.getItem('offerbell_user_id'); if (!userId) return;
+        const sessionToken = localStorage.getItem('offerbell_session') || undefined;
+        try { void upsertDrillMut({ userId, data: payload, updatedAt: ts, sessionToken }).catch(() => {}); } catch {}
+      }, 800);
     } catch {}
   }
 

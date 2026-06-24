@@ -285,6 +285,16 @@ export default defineSchema({
     updatedAt: v.number(),
   }).index("by_user", ["userId"]),
 
+  // Concept-drill question history. One row per user; holds drill_history JSON
+  // (capped list of answered drill questions). Split out of the blob so it
+  // syncs per-device without being clobbered by other blob writers.
+  drillHistory: defineTable({
+    userId: v.string(),
+    userEmail: v.optional(v.string()),
+    data: v.string(), // JSON of offerbell_drill_history
+    updatedAt: v.number(),
+  }).index("by_user", ["userId"]),
+
   // Server-side enforcement of weekly plan limits.
   // One row per user per ISO-week (Monday UTC). Reset is implicit: a new
   // week creates a new row, old rows are ignored. Counters track count of
