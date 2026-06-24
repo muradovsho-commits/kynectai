@@ -174,6 +174,8 @@ export default function EmailSyncPanel({ onContactsUpdated }: { onContactsUpdate
       // Save updated contacts if any changed
       if (contactsChanged) {
         localStorage.setItem('offerbell_tracker_v3', JSON.stringify(contacts));
+        // Stamp the real edit time so the cloud push is accepted as current.
+        try { localStorage.setItem('offerbell_tracker_v3_ts', String(Date.now())); } catch {}
         if (onContactsUpdated) onContactsUpdated();
       }
 

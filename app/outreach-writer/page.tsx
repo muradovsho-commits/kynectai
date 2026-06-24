@@ -312,6 +312,8 @@ export default function OutreachWriterPage() {
     const t = localStorage.getItem('offerbell_tracker_v3');
     const existing = t ? JSON.parse(t) : [];
     localStorage.setItem('offerbell_tracker_v3', JSON.stringify([...existing, c]));
+    // Stamp the real edit time so the cloud push is accepted as current.
+    try { localStorage.setItem('offerbell_tracker_v3_ts', String(Date.now())); } catch {}
     showToast('Saved to Outreach Tracker');
   }
 

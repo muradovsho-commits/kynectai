@@ -627,7 +627,12 @@ export function useProgressSync() {
       }
       if (key === 'offerbell_tracker_v3') {
         if (!trackerHydratingRef.current) {
-          try { origSetItem('offerbell_tracker_v3_ts', String(Date.now())); } catch {}
+          // Do NOT re-stamp the timestamp here. The writer (a genuine edit) is
+          // responsible for stamping offerbell_tracker_v3_ts with its real edit
+          // time. Re-stamping to Date.now() on every write gave stale copies a
+          // fresh timestamp, which let them slip past the server's monotonic
+          // guard and clobber newer cloud data. We push with whatever ts the
+          // writer set; the server rejects anything older than it has.
           scheduleTrackerPush();
         }
       }
