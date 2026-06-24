@@ -123,6 +123,8 @@ const EXCLUDE_FROM_SYNC = new Set([
   'offerbell_referral_nodes_v3',
   // Moved to dedicated Convex table (drillHistory). Same reasons as the tracker.
   'offerbell_drill_history',
+  // Moved to dedicated Convex table (savedMessages). Same reasons as the tracker.
+  'offerbell_saved_messages',
 ]);
 
 // Cross-tab coordination: tabs share a "last push" timestamp via localStorage
@@ -470,6 +472,32 @@ export function useProgressSync() {
           })
           .catch(() => {});
 
+        const savedMsgPromise = client.query(api.savedMessages.getSavedMessages, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) })
+          .then((row: { data: string; updatedAt: number } | null) => {
+            // Last-write-wins by edit time, same as the tracker. Migration only
+            // pushes THIS device's own local copy up when the cloud is empty;
+            // it never reads from the blob.
+            try {
+              const cloudRaw = row && row.data ? row.data : null;
+              const cloudTs = row ? (row.updatedAt || 0) : 0;
+              const localRaw = localStorage.getItem('offerbell_saved_messages');
+              const localTs = parseInt(localStorage.getItem('offerbell_saved_messages_ts') || '0', 10) || 0;
+              if (cloudRaw && (!localRaw || cloudTs > localTs)) {
+                try { localStorage.setItem('offerbell_saved_messages', cloudRaw); } catch {}
+                try { localStorage.setItem('offerbell_saved_messages_ts', String(cloudTs)); } catch {}
+                try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
+              } else if (localRaw && (!cloudRaw || localTs >= cloudTs) && localRaw !== cloudRaw) {
+                void (async () => {
+                  try {
+                    const c = new ConvexHttpClient(url);
+                    await c.mutation(api.savedMessages.upsertSavedMessages, { userId, data: localRaw, updatedAt: localTs || Date.now(), sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
+                  } catch {}
+                })();
+              }
+            } catch {}
+          })
+          .catch(() => {});
+
         // Don't await the hydration promises - they're side-effect-only and
         // shouldn't block the blob sync below.
         void flashPerfPromise;
@@ -477,6 +505,7 @@ export function useProgressSync() {
         void trackerPromise;
         void referralPromise;
         void drillPromise;
+        void savedMsgPromise;
 
         const cloudData = await client.query(api.progress.loadProgress, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
 
