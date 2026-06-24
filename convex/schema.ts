@@ -295,6 +295,15 @@ export default defineSchema({
     updatedAt: v.number(),
   }).index("by_user", ["userId"]),
 
+  // Saved outreach drafts. One row per user; holds saved_messages JSON.
+  // Split out of the blob for the same reasons as the tracker.
+  savedMessages: defineTable({
+    userId: v.string(),
+    userEmail: v.optional(v.string()),
+    data: v.string(), // JSON of offerbell_saved_messages
+    updatedAt: v.number(),
+  }).index("by_user", ["userId"]),
+
   // Server-side enforcement of weekly plan limits.
   // One row per user per ISO-week (Monday UTC). Reset is implicit: a new
   // week creates a new row, old rows are ignored. Counters track count of

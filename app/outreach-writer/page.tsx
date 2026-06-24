@@ -2,7 +2,8 @@
 
 import Sidebar from "../components/Sidebar";
 import ExtensionInstallPrompt from "../components/ExtensionInstallPrompt";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useQuery, useMutation } from 'convex/react';
 import { ConvexHttpClient } from 'convex/browser';
 import '../contact-finder/contact-finder.css';
 import { api } from '../../convex/_generated/api';
@@ -79,6 +80,57 @@ export default function OutreachWriterPage() {
 
   // Drafts
   const [savedMsgs, setSavedMsgs] = useState<SavedMsg[]>([]);
+
+  // Direct cloud sync (same hardened approach as the tracker / referral map /
+  // drill history): reactive ids so the live query re-subscribes after login,
+  // a receive effect that adopts a newer cloud copy or any cloud copy when this
+  // device has none (fresh login), and a debounced push on save/delete.
+  const [smIds, setSmIds] = useState<{ userId: string | null; token: string | undefined }>({ userId: null, token: undefined });
+  useEffect(() => {
+    const read = () => setSmIds({ userId: localStorage.getItem('offerbell_user_id'), token: localStorage.getItem('offerbell_session') || undefined });
+    read();
+    window.addEventListener('offerbell-progress-hydrated', read);
+    return () => window.removeEventListener('offerbell-progress-hydrated', read);
+  }, []);
+  const cloudSaved = useQuery(
+    api.savedMessages.getSavedMessages,
+    smIds.userId ? { userId: smIds.userId, sessionToken: smIds.token } : 'skip'
+  );
+  const upsertSavedMut = useMutation(api.savedMessages.upsertSavedMessages);
+  const savedPushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function persistSaved(updated: SavedMsg[]) {
+    const payload = JSON.stringify(updated);
+    try { localStorage.setItem('offerbell_saved_messages', payload); } catch {}
+    const ts = Date.now();
+    try { localStorage.setItem('offerbell_saved_messages_ts', String(ts)); } catch {}
+    if (savedPushTimer.current) clearTimeout(savedPushTimer.current);
+    savedPushTimer.current = setTimeout(() => {
+      const userId = localStorage.getItem('offerbell_user_id'); if (!userId) return;
+      const sessionToken = localStorage.getItem('offerbell_session') || undefined;
+      try { void upsertSavedMut({ userId, data: payload, updatedAt: ts, sessionToken }).catch(() => {}); } catch {}
+    }, 800);
+  }
+
+  // Receive: adopt the cloud copy when newer, or when this device has no local
+  // copy at all (fresh login). "[]" is a real value, not a missing key, so an
+  // intentional clear is protected by the timestamp.
+  useEffect(() => {
+    if (!cloudSaved || !cloudSaved.data) return;
+    const localRaw = localStorage.getItem('offerbell_saved_messages');
+    const localTs = parseInt(localStorage.getItem('offerbell_saved_messages_ts') || '0', 10) || 0;
+    if (cloudSaved.data !== localRaw && (localRaw === null || cloudSaved.updatedAt > localTs)) {
+      try {
+        const arr = JSON.parse(cloudSaved.data);
+        if (Array.isArray(arr)) {
+          try { localStorage.setItem('offerbell_saved_messages', cloudSaved.data); } catch {}
+          try { localStorage.setItem('offerbell_saved_messages_ts', String(cloudSaved.updatedAt)); } catch {}
+          setSavedMsgs(arr);
+        }
+      } catch {}
+    }
+  }, [cloudSaved]);
+
   const [expandedDraft, setExpandedDraft] = useState<string | null>(null);
 
   // Toast
@@ -227,14 +279,14 @@ export default function OutreachWriterPage() {
     };
     const updated = [msg, ...savedMsgs].slice(0, 20);
     setSavedMsgs(updated);
-    localStorage.setItem('offerbell_saved_messages', JSON.stringify(updated));
+    persistSaved(updated);
     showToast('Draft saved');
   }
 
   function deleteDraft(id: string) {
     const updated = savedMsgs.filter(m => m.id !== id);
     setSavedMsgs(updated);
-    localStorage.setItem('offerbell_saved_messages', JSON.stringify(updated));
+    persistSaved(updated);
     if (expandedDraft === id) setExpandedDraft(null);
     showToast('Draft deleted');
   }
