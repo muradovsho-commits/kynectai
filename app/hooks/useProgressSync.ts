@@ -344,7 +344,8 @@ export function useProgressSync() {
     timers[key] = setTimeout(() => {
       const uid = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
       if (!uid) return;
-      const data = localStorage.getItem(key) || '[]';
+      const data = typeof window !== 'undefined' ? localStorage.getItem(key) : null;
+      if (data === null) return; // key was removed (e.g. logout wipe) - never overwrite the server with nothing
       const tok = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_session') || undefined) : undefined;
       const args = { userId: uid, data, updatedAt: Date.now(), sessionToken: tok };
       try {
@@ -644,7 +645,8 @@ export function useProgressSync() {
         if (!timers[key]) continue;
         clearTimeout(timers[key]);
         delete timers[key];
-        const data = localStorage.getItem(key) || '[]';
+        const data = localStorage.getItem(key);
+        if (data === null) continue; // key removed (logout wipe) - never overwrite the server with nothing
         const args = { userId: uid, data, updatedAt: now, sessionToken: tok };
         try {
           if (key === 'offerbell_tracker_v3') void upsertTracker(args).catch(() => {});
