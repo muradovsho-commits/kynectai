@@ -630,8 +630,36 @@ export function useProgressSync() {
       }
     };
     window.addEventListener('storage', onStorage);
+
+    // Backup flush: if the page is being hidden or closed (tab close, or as a
+    // second guarantee on logout) while a table push is still pending, fire it
+    // immediately so the edit is not lost. Best-effort over the websocket.
+    const flushPendingTables = () => {
+      const timers = tablePushTimersRef.current;
+      const uid = localStorage.getItem('offerbell_user_id');
+      if (!uid) return;
+      const tok = localStorage.getItem('offerbell_session') || undefined;
+      const now = Date.now();
+      for (const key of TABLE_KEYS) {
+        if (!timers[key]) continue;
+        clearTimeout(timers[key]);
+        delete timers[key];
+        const data = localStorage.getItem(key) || '[]';
+        const args = { userId: uid, data, updatedAt: now, sessionToken: tok };
+        try {
+          if (key === 'offerbell_tracker_v3') void upsertTracker(args).catch(() => {});
+          else if (key === 'offerbell_referral_nodes_v3') void upsertReferral(args).catch(() => {});
+          else if (key === 'offerbell_drill_history') void upsertDrill(args).catch(() => {});
+        } catch {}
+      }
+    };
+    const onPageHide = () => flushPendingTables();
+    window.addEventListener('pagehide', onPageHide);
+    window.addEventListener('beforeunload', onPageHide);
     return () => {
       window.removeEventListener('storage', onStorage);
+      window.removeEventListener('pagehide', onPageHide);
+      window.removeEventListener('beforeunload', onPageHide);
       localStorage.setItem = origSetItem;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
