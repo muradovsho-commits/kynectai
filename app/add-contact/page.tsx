@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { PLAN_LIMITS } from '../lib/plan';
+import { ConvexHttpClient } from 'convex/browser';
+import { api } from '../../convex/_generated/api';
 
 function AddContactInner() {
   const params = useSearchParams();
@@ -11,74 +13,81 @@ function AddContactInner() {
   const [contactName, setContactName] = useState('');
 
   useEffect(() => {
-    try {
-      const fname = params.get('fname') || '';
-      const lname = params.get('lname') || '';
-      const email = params.get('email') || '';
-      const firm = params.get('firm') || '';
-      const role = params.get('role') || '';
-      const contactStatus = params.get('status') || 'drafted';
-      const notes = params.get('notes') || '';
-
-      if (!fname && !lname) {
-        setStatus('error');
-        return;
-      }
-
-      setContactName(`${fname} ${lname}`.trim());
-
-      // Load existing contacts
-      let contacts: any[] = [];
+    (async () => {
       try {
-        const saved = localStorage.getItem('offerbell_tracker_v3');
-        if (saved) contacts = JSON.parse(saved);
-      } catch {}
+        const fname = params.get('fname') || '';
+        const lname = params.get('lname') || '';
+        const email = params.get('email') || '';
+        const firm = params.get('firm') || '';
+        const role = params.get('role') || '';
+        const contactStatus = params.get('status') || 'drafted';
+        const notes = params.get('notes') || '';
 
-      // Check for duplicate (by name or email)
-      const isDuplicate = contacts.some(c => {
-        const nameMatch = c.fname?.toLowerCase() === fname.toLowerCase() &&
-                         c.lname?.toLowerCase() === lname.toLowerCase();
-        const emailMatch = email && c.email?.toLowerCase() === email.toLowerCase();
-        return nameMatch || emailMatch;
-      });
+        if (!fname && !lname) {
+          setStatus('error');
+          return;
+        }
 
-      if (isDuplicate) {
-        setStatus('duplicate');
-        return;
+        setContactName(`${fname} ${lname}`.trim());
+
+        const uid = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_user_id') || '') : '';
+        const tok = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_session') || undefined) : undefined;
+        const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+        if (!uid || !url) { setStatus('error'); return; }
+        const client = new ConvexHttpClient(url);
+
+        // Load existing contacts from the server (for duplicate + plan-cap checks)
+        let contacts: any[] = [];
+        try {
+          const row: any = await client.query(api.outreachTracker.getTracker, { userId: uid, sessionToken: tok });
+          if (row && row.data) { const p = JSON.parse(row.data); if (Array.isArray(p)) contacts = p; }
+        } catch {}
+
+        // Check for duplicate (by name or email)
+        const isDuplicate = contacts.some(c => {
+          const nameMatch = c.fname?.toLowerCase() === fname.toLowerCase() &&
+                           c.lname?.toLowerCase() === lname.toLowerCase();
+          const emailMatch = email && c.email?.toLowerCase() === email.toLowerCase();
+          return nameMatch || emailMatch;
+        });
+
+        if (isDuplicate) {
+          setStatus('duplicate');
+          return;
+        }
+
+        // Free plan: enforce the same contact cap the tracker uses
+        const plan = (localStorage.getItem('offerbell_plan') || 'free').toLowerCase();
+        if (plan !== 'pro' && plan !== 'elite' && contacts.length >= PLAN_LIMITS.outreachContacts.free) {
+          setStatus('limit');
+          return;
+        }
+
+        // Create new contact matching the tracker's Contact type
+        const newContact = {
+          id: `ext_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          fname,
+          lname,
+          email,
+          firm,
+          role,
+          status: contactStatus,
+          angle: '',
+          notes,
+          quality: 'medium',
+          createdAt: Date.now(),
+          lastContact: contactStatus === 'sent' || contactStatus === 'spoken' ? Date.now() : null,
+          source: 'gmail-extension',
+        };
+
+        await client.mutation(api.outreachTracker.appendContacts, { userId: uid, sessionToken: tok, contacts: JSON.stringify([newContact]) });
+        setStatus('saved');
+
+      } catch (err) {
+        console.error('Error saving contact:', err);
+        setStatus('error');
       }
-
-      // Free plan: enforce the same contact cap the tracker uses
-      const plan = (localStorage.getItem('offerbell_plan') || 'free').toLowerCase();
-      if (plan !== 'pro' && plan !== 'elite' && contacts.length >= PLAN_LIMITS.outreachContacts.free) {
-        setStatus('limit');
-        return;
-      }
-
-      // Create new contact matching the tracker's Contact type
-      const newContact = {
-        id: `ext_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-        fname,
-        lname,
-        email,
-        firm,
-        role,
-        status: contactStatus,
-        angle: '',
-        notes,
-        quality: 'medium',
-        createdAt: Date.now(),
-        lastContact: contactStatus === 'sent' || contactStatus === 'spoken' ? Date.now() : null,
-        source: 'gmail-extension',
-      };
-
-      contacts.push(newContact);
-      localStorage.setItem('offerbell_tracker_v3', JSON.stringify(contacts));
-      setStatus('saved');
-
-    } catch (err) {
-      console.error('Error saving contact:', err);
-      setStatus('error');
-    }
+    })();
   }, [params]);
 
   return (

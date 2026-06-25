@@ -259,9 +259,15 @@ export default function OutreachWriterPage() {
       c.fname = parts[0];
       c.lname = parts.slice(1).join(' ');
     }
-    const t = localStorage.getItem('offerbell_tracker_v3');
-    const existing = t ? JSON.parse(t) : [];
-    localStorage.setItem('offerbell_tracker_v3', JSON.stringify([...existing, c]));
+    const uid = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_user_id') || '') : '';
+    const tok = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_session') || undefined) : undefined;
+    const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+    if (uid && url) {
+      try {
+        const client = new ConvexHttpClient(url);
+        void client.mutation(api.outreachTracker.appendContacts, { userId: uid, sessionToken: tok, contacts: JSON.stringify([c]) }).catch(() => {});
+      } catch {}
+    }
     showToast('Saved to Outreach Tracker');
   }
 

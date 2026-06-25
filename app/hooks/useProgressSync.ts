@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { useMutation, useQuery } from 'convex/react';
+import { useEffect, useRef } from 'react';
+import { useMutation } from 'convex/react';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../../convex/_generated/api';
 
@@ -273,101 +273,16 @@ export function useProgressSync() {
   const dirtyFlashTracksRef = useRef<Set<string>>(new Set());
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ── Live cross-device sync: tracker / referral / drills ──────────────────
-  // The server is the source of truth. Each of these has its own Convex table
-  // (single row per user, deduped server-side). We subscribe LIVE so an edit on
-  // ANY device shows up here on its own, and push our own edits debounced.
-  // localStorage is only a local mirror. There is no blob merge for these keys,
-  // so edits and deletes propagate cleanly to any number of devices.
-  const sessTok = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_session') || undefined) : undefined;
-  const upsertTracker = useMutation(api.outreachTracker.upsertTracker);
-  const upsertReferral = useMutation(api.referralNodes.upsertReferral);
-  const upsertDrill = useMutation(api.drillHistory.upsertDrillHistory);
-  const liveTracker = useQuery(api.outreachTracker.getTracker, userId ? { userId, sessionToken: sessTok } : 'skip');
-  const liveReferral = useQuery(api.referralNodes.getReferral, userId ? { userId, sessionToken: sessTok } : 'skip');
-  const liveDrill = useQuery(api.drillHistory.getDrillHistory, userId ? { userId, sessionToken: sessTok } : 'skip');
-  const tableHydratingRef = useRef(false);
-  const tablePushTimersRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
-  const TABLE_KEYS = new Set(['offerbell_tracker_v3', 'offerbell_referral_nodes_v3', 'offerbell_drill_history']);
-  // True once the one-time migration has finished this mount. Driven by state
-  // (not just the localStorage flag) so the adopt effects below RE-RUN the
-  // moment migration completes, even if the live query resolved first. Without
-  // this, a fresh login could skip adopting and show nothing.
-  const [tablesMigrated, setTablesMigrated] = useState<boolean>(() =>
-    typeof window !== 'undefined' && !!localStorage.getItem('offerbell_tables_seeded_v2')
-  );
+  // ── Live cross-device sync for tracker / referral / drills moved OUT ──────
+  // These three features now read and write their own Convex tables DIRECTLY
+  // from their pages (useQuery + useMutation), with no localStorage in between.
+  // This hook used to mirror those tables through localStorage, which raced with
+  // the pages and caused data to flip/revert on login. That bridge is deleted.
+  // The keys stay in EXCLUDE_FROM_SYNC so the blob never touches them either.
 
-  // Server -> local mirror. When a live row arrives or changes (including from
-  // another device), write it into localStorage and tell pages to re-read. Skip
-  // when it already matches so our own just-pushed write does not loop.
-  useEffect(() => {
-    if (liveTracker === undefined || typeof window === 'undefined') return;
-    if (!tablesMigrated) return; // wait for one-time migration (state-driven so this re-runs on completion)
-    const sd = liveTracker && liveTracker.data ? liveTracker.data : null;
-    if (sd === null) { maybeSeedTable('offerbell_tracker_v3'); return; }
-    if (sd === localStorage.getItem('offerbell_tracker_v3')) return;
-    tableHydratingRef.current = true;
-    try { localStorage.setItem('offerbell_tracker_v3', sd); } catch {}
-    tableHydratingRef.current = false;
-    try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
-  }, [liveTracker, tablesMigrated]);
-  useEffect(() => {
-    if (liveReferral === undefined || typeof window === 'undefined') return;
-    if (!tablesMigrated) return; // wait for one-time migration (state-driven so this re-runs on completion)
-    const sd = liveReferral && liveReferral.data ? liveReferral.data : null;
-    if (sd === null) { maybeSeedTable('offerbell_referral_nodes_v3'); return; }
-    if (sd === localStorage.getItem('offerbell_referral_nodes_v3')) return;
-    tableHydratingRef.current = true;
-    try { localStorage.setItem('offerbell_referral_nodes_v3', sd); } catch {}
-    tableHydratingRef.current = false;
-    try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
-  }, [liveReferral, tablesMigrated]);
-  useEffect(() => {
-    if (liveDrill === undefined || typeof window === 'undefined') return;
-    if (!tablesMigrated) return; // wait for one-time migration (state-driven so this re-runs on completion)
-    const sd = liveDrill && liveDrill.data ? liveDrill.data : null;
-    if (sd === null) { maybeSeedTable('offerbell_drill_history'); return; }
-    if (sd === localStorage.getItem('offerbell_drill_history')) return;
-    tableHydratingRef.current = true;
-    try { localStorage.setItem('offerbell_drill_history', sd); } catch {}
-    tableHydratingRef.current = false;
-    try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
-  }, [liveDrill, tablesMigrated]);
+  // (adopt effects removed - pages subscribe to their own tables now)
 
-  // Local -> server. Debounced push of an edit to its own table. Called by the
-  // setItem interceptor below, but never while we are mirroring the server in
-  // (tableHydratingRef), so a server value is never echoed back as a new write.
-  function scheduleTablePush(key: string) {
-    if (!TABLE_KEYS.has(key)) return;
-    const timers = tablePushTimersRef.current;
-    if (timers[key]) clearTimeout(timers[key]);
-    timers[key] = setTimeout(() => {
-      const uid = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
-      if (!uid) return;
-      const data = typeof window !== 'undefined' ? localStorage.getItem(key) : null;
-      if (data === null) return; // key was removed (e.g. logout wipe) - never overwrite the server with nothing
-      const tok = typeof window !== 'undefined' ? (localStorage.getItem('offerbell_session') || undefined) : undefined;
-      const args = { userId: uid, data, updatedAt: Date.now(), sessionToken: tok };
-      try {
-        if (key === 'offerbell_tracker_v3') void upsertTracker(args).catch(() => {});
-        else if (key === 'offerbell_referral_nodes_v3') void upsertReferral(args).catch(() => {});
-        else if (key === 'offerbell_drill_history') void upsertDrill(args).catch(() => {});
-      } catch {}
-    }, 600);
-  }
-
-  // First run on the table-backed model the server has no row yet. If this
-  // device has a non-empty local copy (carried over from the old blob model),
-  // push it up so other devices can pull it. Once seeded the server row is
-  // non-null and this never runs again.
-  function maybeSeedTable(key: string) {
-    try {
-      const local = typeof window !== 'undefined' ? localStorage.getItem(key) : null;
-      if (!local) return;
-      const arr = JSON.parse(local);
-      if (Array.isArray(arr) && arr.length > 0) scheduleTablePush(key);
-    } catch {}
-  }
+  // (scheduleTablePush / maybeSeedTable removed - pages write their tables directly)
 
   // ── Initial sync (one-time HTTP fetch, not a live subscription) ──────────
   useEffect(() => {
@@ -382,34 +297,8 @@ export function useProgressSync() {
 
     (async () => {
       try {
-        // ── One-time migration to the table-backed model ──────────────────
-        // The dedicated tables may still hold stale data from earlier attempts.
-        // This device's current local copy (from the blob model) is the truth,
-        // so overwrite the tables with it once, then mark done. The live adopt
-        // effects below wait for this flag so they never pull stale data first.
-        if (typeof window !== 'undefined' && !localStorage.getItem('offerbell_tables_seeded_v2')) {
-          const uid = localStorage.getItem('offerbell_user_id');
-          const tok = localStorage.getItem('offerbell_session') || undefined;
-          if (uid) {
-            const seedOne = async (key: string) => {
-              try {
-                const local = localStorage.getItem(key);
-                if (!local) return;
-                const arr = JSON.parse(local);
-                if (!Array.isArray(arr) || arr.length === 0) return;
-                const args = { userId: uid, data: local, updatedAt: Date.now(), sessionToken: tok };
-                if (key === 'offerbell_tracker_v3') await upsertTracker(args);
-                else if (key === 'offerbell_referral_nodes_v3') await upsertReferral(args);
-                else if (key === 'offerbell_drill_history') await upsertDrill(args);
-              } catch {}
-            };
-            await seedOne('offerbell_tracker_v3');
-            await seedOne('offerbell_referral_nodes_v3');
-            await seedOne('offerbell_drill_history');
-          }
-          try { localStorage.setItem('offerbell_tables_seeded_v2', '1'); } catch {}
-          setTablesMigrated(true);
-        }
+        // (one-time table migration removed - tables already hold the user's
+        // data and the pages read/write them directly now)
 
         const client = new ConvexHttpClient(url);
 
@@ -613,11 +502,6 @@ export function useProgressSync() {
       if (key.startsWith('offerbell_flash_perf_')) {
         scheduleFlashPush(key.slice('offerbell_flash_perf_'.length));
       }
-      // Live-table keys push to their own Convex table, not the blob. Skip while
-      // we are mirroring a server value into localStorage, so it never loops.
-      if (TABLE_KEYS.has(key) && !tableHydratingRef.current) {
-        scheduleTablePush(key);
-      }
       if (SYNC_KEYS.includes(key) && !EXCLUDE_FROM_SYNC.has(key)) {
         schedulePush();
       }
@@ -632,36 +516,8 @@ export function useProgressSync() {
     };
     window.addEventListener('storage', onStorage);
 
-    // Backup flush: if the page is being hidden or closed (tab close, or as a
-    // second guarantee on logout) while a table push is still pending, fire it
-    // immediately so the edit is not lost. Best-effort over the websocket.
-    const flushPendingTables = () => {
-      const timers = tablePushTimersRef.current;
-      const uid = localStorage.getItem('offerbell_user_id');
-      if (!uid) return;
-      const tok = localStorage.getItem('offerbell_session') || undefined;
-      const now = Date.now();
-      for (const key of TABLE_KEYS) {
-        if (!timers[key]) continue;
-        clearTimeout(timers[key]);
-        delete timers[key];
-        const data = localStorage.getItem(key);
-        if (data === null) continue; // key removed (logout wipe) - never overwrite the server with nothing
-        const args = { userId: uid, data, updatedAt: now, sessionToken: tok };
-        try {
-          if (key === 'offerbell_tracker_v3') void upsertTracker(args).catch(() => {});
-          else if (key === 'offerbell_referral_nodes_v3') void upsertReferral(args).catch(() => {});
-          else if (key === 'offerbell_drill_history') void upsertDrill(args).catch(() => {});
-        } catch {}
-      }
-    };
-    const onPageHide = () => flushPendingTables();
-    window.addEventListener('pagehide', onPageHide);
-    window.addEventListener('beforeunload', onPageHide);
     return () => {
       window.removeEventListener('storage', onStorage);
-      window.removeEventListener('pagehide', onPageHide);
-      window.removeEventListener('beforeunload', onPageHide);
       localStorage.setItem = origSetItem;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

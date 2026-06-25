@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useQuery, useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../components/Sidebar';
 import '../contact-finder/contact-finder.css';
@@ -22,28 +24,16 @@ type Contact = {
   addedAt: number;
 };
 
-const SK = 'offerbell_referral_nodes_v3';
-const TK = 'offerbell_tracker_v3';
-
 const COLORS = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981','#ef4444','#06b6d4','#6366f1','#14b8a6','#e11d48'];
 function getColor(name: string) { let h = 0; for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h); return COLORS[Math.abs(h) % COLORS.length]; }
 function getInitials(name: string) { return name.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?'; }
 
-function load(): Contact[] {
-  try {
-    const r = localStorage.getItem(SK);
-    if (r) {
-      const parsed = JSON.parse(r);
-      return parsed.map((c: any) => ({ ...c, state: c.state || undefined }));
-    }
-    const v3 = localStorage.getItem('offerbell_referral_nodes_v3');
-    if (v3) {
-      return JSON.parse(v3).map((c: any) => ({ ...c, state: undefined }));
-    }
-  } catch {}
-  return [];
+// Referral nodes now live in their own Convex table, read/written DIRECTLY from
+// this page (see serverReferral / upsertReferral below). No localStorage data
+// store, so edits and deletes propagate cross-device and survive login.
+function normalizeContacts(arr: any[]): Contact[] {
+  return arr.map((c: any) => ({ ...c, state: c.state || undefined }));
 }
-function save(c: Contact[]) { localStorage.setItem(SK, JSON.stringify(c)); }
 
 // ═══ NETWORK GRAPH COMPONENT ═══
 function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = '', userState, profilePic }: { contacts: Contact[]; selectedId: string | null; onSelect: (id: string | null) => void; expanded: boolean; searchQuery?: string; userState: string | null; profilePic?: string | null }) {
@@ -427,27 +417,56 @@ export default function ReferralMapPage() {
   const [graphExpanded, setGraphExpanded] = useState(false);
   const [profilePic, setProfilePic] = useState<string | null>(null);
 
+  // Direct Convex read/write for referral nodes. serverReferral is a live
+  // subscription (cross-device, survives login). serverTrackerForImport feeds
+  // the "import from tracker" modal, which used to read localStorage.
+  const [authUid, setAuthUid] = useState('');
+  const [authTok, setAuthTok] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    try {
+      setAuthUid(localStorage.getItem('offerbell_user_id') || '');
+      setAuthTok(localStorage.getItem('offerbell_session') || undefined);
+    } catch {}
+  }, []);
+  const serverReferral = useQuery(api.referralNodes.getReferral, authUid ? { userId: authUid, sessionToken: authTok } : 'skip');
+  const serverTrackerForImport = useQuery(api.outreachTracker.getTracker, authUid ? { userId: authUid, sessionToken: authTok } : 'skip');
+  const upsertReferral = useMutation(api.referralNodes.upsertReferral);
+  // Holds the stringified form of the last data we ADOPTED from the server, so
+  // the persist effect can tell our own server-echo apart from a real edit and
+  // only push genuine local changes.
+  const lastServerStrRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!localStorage.getItem('offerbell_user_id')) { router.replace('/signin'); return; }
-    setContacts(load());
     setUserState(localStorage.getItem('offerbell_user_state'));
     try { const pic = localStorage.getItem('offerbell_profile_pic'); if (pic) setProfilePic(pic); } catch {}
     const t = localStorage.getItem('offerbell-theme');
     if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
   }, [router]);
 
-  useEffect(() => { if (contacts.length > 0) save(contacts); }, [contacts]);
-
-  // After login the sync hook merges the cloud copy into localStorage and fires
-  // this event. Re-read so a change made on another device appears here without
-  // a manual refresh (this page otherwise only loads on mount, before the cloud
-  // data lands).
+  // Adopt the live server row. Runs on load and on any remote change.
   useEffect(() => {
-    const onHydrated = () => setContacts(load());
-    window.addEventListener('offerbell-progress-hydrated', onHydrated);
-    return () => window.removeEventListener('offerbell-progress-hydrated', onHydrated);
-  }, []);
+    if (serverReferral === undefined) return; // loading
+    let arr: Contact[] = [];
+    if (serverReferral && serverReferral.data) {
+      try { const p = JSON.parse(serverReferral.data); if (Array.isArray(p)) arr = normalizeContacts(p); } catch {}
+    }
+    lastServerStrRef.current = JSON.stringify(arr);
+    setContacts(arr);
+  }, [serverReferral && serverReferral.data]);
+
+  // Persist real local edits to the server. Skips the echo from the adopt above
+  // (when contacts already match what we last adopted) and skips before the
+  // first server row has loaded, so it never pushes an empty list over real data.
+  useEffect(() => {
+    if (serverReferral === undefined) return;
+    if (!authUid) return;
+    const str = JSON.stringify(contacts);
+    if (str === lastServerStrRef.current) return;
+    lastServerStrRef.current = str;
+    upsertReferral({ userId: authUid, sessionToken: authTok, data: str, updatedAt: Date.now() }).catch(() => {});
+  }, [contacts]);
 
   const getReferrals = (id: string): Contact[] => contacts.filter(c => c.referredBy === id);
   const getChainSize = (id: string, visited = new Set<string>()): number => {
@@ -473,7 +492,11 @@ export default function ReferralMapPage() {
   const openEdit = (c: Contact) => { setForm({ ...c }); setModal('edit'); };
   const openImport = () => {
     try {
-      const tr = JSON.parse(localStorage.getItem(TK) || '[]') as { fname: string; lname: string; firm: string; role: string }[];
+      let tr: { fname: string; lname: string; firm: string; role: string }[] = [];
+      if (serverTrackerForImport && serverTrackerForImport.data) {
+        const p = JSON.parse(serverTrackerForImport.data);
+        if (Array.isArray(p)) tr = p;
+      }
       const existing = new Set(contacts.map(c => c.name.toLowerCase()));
       setImpList(tr.filter(c => !existing.has(`${c.fname} ${c.lname}`.toLowerCase().trim())).map(c => ({ ...c, sel: false })));
     } catch { setImpList([]); }

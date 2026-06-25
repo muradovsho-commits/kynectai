@@ -3,6 +3,8 @@
 import Sidebar from "../components/Sidebar";
 import ExtensionInstallPrompt from "../components/ExtensionInstallPrompt";
 import { useState, useEffect, useRef } from 'react';
+import { useQuery, useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import Link from 'next/link';
 import { PLAN_LIMITS } from '../lib/plan';
 import { useUserPlan } from '../lib/usePlan';
@@ -91,6 +93,19 @@ function daysSince(ts: number | null) { if (!ts) return null; return Math.floor(
 type Contact = { id: string; fname: string; lname: string; firm: string; role: string; status: string; angle: string; notes: string; quality: string; createdAt: number; lastContact: number | null; sentAt: number | null; lastFollowUpAt: number | null; linkedin: string; scheduledAt: number | null; };
 export default function OutreachTrackerPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
+  // Read/write the tracker's Convex table DIRECTLY (no localStorage data store).
+  // serverTracker is a live subscription: an edit on any device shows up here on
+  // its own, and survives logout/login because the server is the only source.
+  const [authUid, setAuthUid] = useState('');
+  const [authTok, setAuthTok] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    try {
+      setAuthUid(localStorage.getItem('offerbell_user_id') || '');
+      setAuthTok(localStorage.getItem('offerbell_session') || undefined);
+    } catch {}
+  }, []);
+  const serverTracker = useQuery(api.outreachTracker.getTracker, authUid ? { userId: authUid, sessionToken: authTok } : 'skip');
+  const upsertTracker = useMutation(api.outreachTracker.upsertTracker);
   const [isDark, setIsDark] = useState(false);
   const [_userName, _setUserName] = useState({ first: '', last: '' });
 
@@ -148,40 +163,27 @@ export default function OutreachTrackerPage() {
   const visibleColumns = config.columns.filter(c => c.visible);
 
   useEffect(() => {
-    const saved = localStorage.getItem('offerbell_tracker_v3');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      setContacts(parsed.map((c: any) => ({ ...c, linkedin: c.linkedin || '', scheduledAt: c.scheduledAt || null })));
-    }
-    // NOTE: no sample-seeding write here. The Convex table is the source of
-    // truth for contacts; writing an empty list on mount would push [] to the
-    // server and wipe real data on every login. Empty just shows until the live
-    // server data arrives via the sync hook.
     const theme = localStorage.getItem('offerbell-theme');
     if (theme === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); setIsDark(true); }
     setConfig(loadConfig());
   }, []);
 
-  // After login the sync hook merges the cloud copy into localStorage and fires
-  // this event. Re-read contacts so a change made on another device shows up
-  // here without a manual refresh. This page otherwise only loads on mount,
-  // before the cloud data has landed, which is why cross-device edits were not
-  // appearing.
+  // Adopt the live server data into local state. Runs on first load and whenever
+  // the row changes (including edits made on another device). Our own writes echo
+  // back here as the same value, so this never fights an in-progress edit.
   useEffect(() => {
-    const onHydrated = () => {
-      try {
-        const saved = localStorage.getItem('offerbell_tracker_v3');
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          setContacts(parsed.map((c: any) => ({ ...c, linkedin: c.linkedin || '', scheduledAt: c.scheduledAt || null })));
-        }
-      } catch {}
-    };
-    window.addEventListener('offerbell-progress-hydrated', onHydrated);
-    return () => window.removeEventListener('offerbell-progress-hydrated', onHydrated);
-  }, []);
+    if (serverTracker === undefined) return; // still loading
+    let arr: any[] = [];
+    if (serverTracker && serverTracker.data) {
+      try { const p = JSON.parse(serverTracker.data); if (Array.isArray(p)) arr = p; } catch {}
+    }
+    setContacts(arr.map((c: any) => ({ ...c, linkedin: c.linkedin || '', scheduledAt: c.scheduledAt || null })));
+  }, [serverTracker && serverTracker.data]);
 
-  function persist(c: Contact[]) { localStorage.setItem('offerbell_tracker_v3', JSON.stringify(c)); }
+  function persist(c: Contact[]) {
+    if (!authUid) return;
+    upsertTracker({ userId: authUid, sessionToken: authTok, data: JSON.stringify(c), updatedAt: Date.now() }).catch(() => {});
+  }
 
   function showToast(msg: string) {
     setToast(msg);

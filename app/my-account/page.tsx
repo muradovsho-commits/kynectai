@@ -105,7 +105,19 @@ export default function MyAccountPage() {
     // Load real usage data
     try { setSearchesUsed(parseInt(localStorage.getItem('offerbell_searches_used') || '0', 10)); } catch {}
     try { setMessagesUsed(parseInt(localStorage.getItem('offerbell_messages_sent') || '0', 10)); } catch {}
-    try { const t = localStorage.getItem('offerbell_tracker_v3'); if (t) setContactsTracked(JSON.parse(t).length); } catch {}
+    // contactsTracked now comes from the Convex tracker table, not localStorage
+    // (the tracker no longer keeps a localStorage copy).
+    (async () => {
+      try {
+        const uid = localStorage.getItem('offerbell_user_id') || '';
+        const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+        if (!uid || !url) return;
+        const tok = localStorage.getItem('offerbell_session') || undefined;
+        const client = new ConvexHttpClient(url);
+        const row: any = await client.query(api.outreachTracker.getTracker, { userId: uid, sessionToken: tok });
+        if (row && row.data) { const p = JSON.parse(row.data); if (Array.isArray(p)) setContactsTracked(p.length); }
+      } catch {}
+    })();
     try {
       const raw = localStorage.getItem('offerbell_resume_usage');
       if (raw) {

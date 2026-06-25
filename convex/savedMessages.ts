@@ -3,23 +3,18 @@ import { v } from "convex/values";
 import { getUserEmail } from "./_helpers";
 import { requireUser } from "./auth";
 
-// One row per user holding the feature's JSON. Reads return the NEWEST row
-// deterministically and writes collapse any duplicates back to a single row, so
-// a stray duplicate from a past concurrent-insert race can never make the value
-// flip between logins.
+// Saved outreach drafts. One row per user holding saved_messages JSON.
+// Same shape and auth as outreachTracker / referralNodes / drillHistory.
 
 export const getSavedMessages = query({
   args: { userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()) },
   handler: async (ctx, { sessionToken, serverSecret, userId }) => {
     await requireUser({ userId, sessionToken, serverSecret });
-    const rows = await ctx.db
+    const row = await ctx.db
       .query("savedMessages")
       .withIndex("by_user", q => q.eq("userId", userId))
-      .collect();
-    if (rows.length === 0) return null;
-    let best = rows[0];
-    for (const r of rows) if ((r.updatedAt || 0) > (best.updatedAt || 0)) best = r;
-    return { data: best.data, updatedAt: best.updatedAt };
+      .first();
+    return row ? { data: row.data, updatedAt: row.updatedAt } : null;
   },
 });
 
@@ -27,23 +22,26 @@ export const upsertSavedMessages = mutation({
   args: {
     userId: v.string(), sessionToken: v.optional(v.string()), serverSecret: v.optional(v.string()),
     data: v.string(),
-    updatedAt: v.optional(v.number()),
+    updatedAt: v.optional(v.number()), // client edit time, so two devices compare on one clock
   },
   handler: async (ctx, { sessionToken, serverSecret, userId, data, updatedAt }) => {
     await requireUser({ userId, sessionToken, serverSecret });
-    const rows = await ctx.db
+    const existing = await ctx.db
       .query("savedMessages")
       .withIndex("by_user", q => q.eq("userId", userId))
-      .collect();
+      .first();
     const now = updatedAt ?? Date.now();
     const userEmail = await getUserEmail(ctx, userId);
-    if (rows.length === 0) {
-      await ctx.db.insert("savedMessages", { userId, data, updatedAt: now, userEmail });
+    if (existing) {
+      // Monotonic guard: reject any write older than what is already stored, so a
+      // stale device (e.g. one logging back in with an old local copy) can never
+      // overwrite a newer cloud copy. The cloud only moves forward in time. This
+      // is the server-side backstop that makes multi-device safe regardless of
+      // client timing.
+      if (typeof existing.updatedAt === "number" && now < existing.updatedAt) return;
+      await ctx.db.patch(existing._id, { data, updatedAt: now, userEmail });
     } else {
-      let keep = rows[0];
-      for (const r of rows) if ((r.updatedAt || 0) > (keep.updatedAt || 0)) keep = r;
-      await ctx.db.patch(keep._id, { data, updatedAt: now, userEmail });
-      for (const r of rows) if (r._id !== keep._id) await ctx.db.delete(r._id);
+      await ctx.db.insert("savedMessages", { userId, data, updatedAt: now, userEmail });
     }
   },
 });

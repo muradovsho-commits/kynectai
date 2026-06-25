@@ -1,6 +1,8 @@
 // Build: v6-career-aware-tabs
 'use client';
 import { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
+import { useQuery, useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import Sidebar from '../components/Sidebar';
 import { useUserPlan } from '../lib/usePlan';
 import './drills.css';
@@ -225,32 +227,39 @@ function ConceptDrillsInner() {
   }, [loadFlashPerf, perfTick]);
 
   // ─── Drill history (for Question History tab) ────────────────────────────
-  // Stored at offerbell_drill_history (excluded from blob sync via
-  // EXCLUDE_FROM_SYNC). Per-device only. Capped at HISTORY_CAP entries.
+  // Read/written DIRECTLY from its Convex table (no localStorage data store), so
+  // it syncs cross-device and survives login. Capped at HISTORY_CAP entries.
   const [history, setHistory] = useState<DrillHistoryItem[]>([]);
-
-  const loadHistory = useCallback(() => {
+  const [authUid, setAuthUid] = useState('');
+  const [authTok, setAuthTok] = useState<string | undefined>(undefined);
+  useEffect(() => {
     try {
-      const raw = localStorage.getItem('offerbell_drill_history');
-      if (raw) {
-        const arr = JSON.parse(raw);
-        if (Array.isArray(arr)) setHistory(arr);
-      }
+      setAuthUid(localStorage.getItem('offerbell_user_id') || '');
+      setAuthTok(localStorage.getItem('offerbell_session') || undefined);
     } catch {}
   }, []);
+  const serverDrill = useQuery(api.drillHistory.getDrillHistory, authUid ? { userId: authUid, sessionToken: authTok } : 'skip');
+  const upsertDrillHistory = useMutation(api.drillHistory.upsertDrillHistory);
 
+  // Adopt the live server row on load and on any remote change.
   useEffect(() => {
-    loadHistory();
-  }, [loadHistory]);
+    if (serverDrill === undefined) return; // loading
+    let arr: DrillHistoryItem[] = [];
+    if (serverDrill && serverDrill.data) {
+      try { const p = JSON.parse(serverDrill.data); if (Array.isArray(p)) arr = p; } catch {}
+    }
+    setHistory(arr);
+  }, [serverDrill && serverDrill.data]);
 
   // After login, the sync hook hydrates flash_perf into localStorage
-  // asynchronously; re-read profile, history, and stats once it lands so the
-  // page doesn't show 0 / "select a track" until a manual refresh.
+  // asynchronously; re-read profile and stats once it lands so the page doesn't
+  // show 0 / "select a track" until a manual refresh. (Drill history is handled
+  // by its own live server query above, not this event.)
   useEffect(() => {
-    const onHydrated = () => { loadProfile(); loadHistory(); setPerfTick(t => t + 1); };
+    const onHydrated = () => { loadProfile(); setPerfTick(t => t + 1); };
     window.addEventListener('offerbell-progress-hydrated', onHydrated);
     return () => window.removeEventListener('offerbell-progress-hydrated', onHydrated);
-  }, [loadProfile, loadHistory]);
+  }, [loadProfile]);
 
   // Filter history to the current track (switching industry hides past
   // drills from other tracks - keeps the view focused).
@@ -400,15 +409,11 @@ function ConceptDrillsInner() {
   }
 
   function appendHistory(item: DrillHistoryItem) {
-    try {
-      const raw = localStorage.getItem('offerbell_drill_history');
-      const list = raw ? JSON.parse(raw) : [];
-      const arr = Array.isArray(list) ? list : [];
-      arr.unshift(item);
-      const capped = arr.slice(0, HISTORY_CAP);
-      localStorage.setItem('offerbell_drill_history', JSON.stringify(capped));
-      setHistory(capped);
-    } catch {}
+    const next = [item, ...history].slice(0, HISTORY_CAP);
+    setHistory(next);
+    if (authUid) {
+      upsertDrillHistory({ userId: authUid, sessionToken: authTok, data: JSON.stringify(next), updatedAt: Date.now() }).catch(() => {});
+    }
   }
 
   function nextQuestion() {

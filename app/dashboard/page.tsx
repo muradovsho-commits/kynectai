@@ -481,6 +481,36 @@ export default function DashboardPage() {
     } catch {}
   }, []);
 
+  // ─── Live-table features (drill history + outreach tracker) now live ONLY in
+  // their Convex tables. Fetch them once on mount for the read-only dashboard
+  // aggregations and cache into localStorage. These keys are excluded from the
+  // blob and the sync hook no longer pushes them, so this write is a local
+  // display cache that never travels back to the server.
+  useEffect(() => {
+    const uid = typeof window !== 'undefined' ? localStorage.getItem('offerbell_user_id') : null;
+    const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+    if (!uid || !url) return;
+    const tok = localStorage.getItem('offerbell_session') || undefined;
+    (async () => {
+      try {
+        const client = new ConvexHttpClient(url);
+        const [drill, tracker] = await Promise.all([
+          client.query(api.drillHistory.getDrillHistory, { userId: uid, sessionToken: tok }).catch(() => null),
+          client.query(api.outreachTracker.getTracker, { userId: uid, sessionToken: tok }).catch(() => null),
+        ]);
+        const drillData = drill && (drill as any).data ? (drill as any).data : null;
+        const trackerData = tracker && (tracker as any).data ? (tracker as any).data : null;
+        if (drillData) { try { localStorage.setItem('offerbell_drill_history', drillData); } catch {} }
+        if (trackerData) {
+          try { localStorage.setItem('offerbell_tracker_v3', trackerData); } catch {}
+          try { const p = JSON.parse(trackerData); if (Array.isArray(p)) setOutreachContacts(p); } catch {}
+        }
+        // Re-run the drill/diagnostic aggregation now that drill history is cached.
+        try { window.dispatchEvent(new Event('offerbell-progress-hydrated')); } catch {}
+      } catch {}
+    })();
+  }, []);
+
   // ─── Computed: weekly summary stats
   const totalDrills = useMemo(() => drillAgg.items, [drillAgg]);
 

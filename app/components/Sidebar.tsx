@@ -111,9 +111,6 @@ export default function Sidebar({ activePage }: SidebarProps) {
     try { return localStorage.getItem('offerbell_profile_pic') || null; } catch { return null; }
   });
   const updateProfileMut = useMutation((api as any).users?.updateUserProfile);
-  const flushTrackerMut = useMutation(api.outreachTracker.upsertTracker);
-  const flushReferralMut = useMutation(api.referralNodes.upsertReferral);
-  const flushDrillMut = useMutation(api.drillHistory.upsertDrillHistory);
   const picInputRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
 
@@ -275,29 +272,10 @@ export default function Sidebar({ activePage }: SidebarProps) {
   }
 
   async function signOut() {
-    // Flush the live tables FIRST. An edit made within the push debounce may not
-    // have reached the server yet; pushing it here (bounded by a timeout so
-    // logout can never hang) guarantees it is saved before we wipe local data.
-    try {
-      const uid = localStorage.getItem('offerbell_user_id');
-      const tok = localStorage.getItem('offerbell_session') || undefined;
-      if (uid) {
-        const now = Date.now();
-        const jobs: Promise<unknown>[] = [];
-        const t = localStorage.getItem('offerbell_tracker_v3');
-        const r = localStorage.getItem('offerbell_referral_nodes_v3');
-        const d = localStorage.getItem('offerbell_drill_history');
-        if (t) jobs.push(flushTrackerMut({ userId: uid, data: t, updatedAt: now, sessionToken: tok }));
-        if (r) jobs.push(flushReferralMut({ userId: uid, data: r, updatedAt: now, sessionToken: tok }));
-        if (d) jobs.push(flushDrillMut({ userId: uid, data: d, updatedAt: now, sessionToken: tok }));
-        if (jobs.length) {
-          await Promise.race([
-            Promise.allSettled(jobs),
-            new Promise(res => setTimeout(res, 2000)),
-          ]);
-        }
-      }
-    } catch {}
+    // The tracker / referral / drills pages now write their Convex tables on
+    // every edit, so there is nothing pending to flush at logout. The old flush
+    // re-pushed localStorage here, which could overwrite newer server data (from
+    // another device) with this device's stale copy - so it is gone.
     // Clear all offerbell_* keys except theme, remove userId, expire the
     // cookie, hard navigate to home.
     const keys: string[] = [];
