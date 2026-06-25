@@ -83,8 +83,6 @@ const STATUSES: Record<string, { label: string; cls: string }> = {};
 
 const COLORS = ['#6366f1','#0ea5e9','#10b981','#f59e0b','#ec4899','#8b5cf6','#ef4444','#14b8a6','#f97316','#06b6d4'];
 
-const SAMPLE_CONTACTS: any[] = [];
-
 function colorFor(n: string) { let h = 0; for (const c of n) h = c.charCodeAt(0) + ((h << 5) - h); return COLORS[Math.abs(h) % COLORS.length]; }
 function initials(f: string, l: string) { return ((f || '')[0] || '').toUpperCase() + ((l || '')[0] || '').toUpperCase(); }
 function fmtDate(ts: number | null) { if (!ts) return '-'; return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
@@ -154,11 +152,11 @@ export default function OutreachTrackerPage() {
     if (saved) {
       const parsed = JSON.parse(saved);
       setContacts(parsed.map((c: any) => ({ ...c, linkedin: c.linkedin || '', scheduledAt: c.scheduledAt || null })));
-    } else if (!localStorage.getItem('offerbell_tracker_seeded')) {
-      setContacts(SAMPLE_CONTACTS);
-      localStorage.setItem('offerbell_tracker_v3', JSON.stringify(SAMPLE_CONTACTS));
-      localStorage.setItem('offerbell_tracker_seeded', 'true');
     }
+    // NOTE: no sample-seeding write here. The Convex table is the source of
+    // truth for contacts; writing an empty list on mount would push [] to the
+    // server and wipe real data on every login. Empty just shows until the live
+    // server data arrives via the sync hook.
     const theme = localStorage.getItem('offerbell-theme');
     if (theme === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); setIsDark(true); }
     setConfig(loadConfig());
