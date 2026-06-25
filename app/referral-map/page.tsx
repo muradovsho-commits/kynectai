@@ -439,6 +439,16 @@ export default function ReferralMapPage() {
 
   useEffect(() => { if (contacts.length > 0) save(contacts); }, [contacts]);
 
+  // After login the sync hook merges the cloud copy into localStorage and fires
+  // this event. Re-read so a change made on another device appears here without
+  // a manual refresh (this page otherwise only loads on mount, before the cloud
+  // data lands).
+  useEffect(() => {
+    const onHydrated = () => setContacts(load());
+    window.addEventListener('offerbell-progress-hydrated', onHydrated);
+    return () => window.removeEventListener('offerbell-progress-hydrated', onHydrated);
+  }, []);
+
   const getReferrals = (id: string): Contact[] => contacts.filter(c => c.referredBy === id);
   const getChainSize = (id: string, visited = new Set<string>()): number => {
     if (visited.has(id)) return 0;

@@ -164,6 +164,25 @@ export default function OutreachTrackerPage() {
     setConfig(loadConfig());
   }, []);
 
+  // After login the sync hook merges the cloud copy into localStorage and fires
+  // this event. Re-read contacts so a change made on another device shows up
+  // here without a manual refresh. This page otherwise only loads on mount,
+  // before the cloud data has landed, which is why cross-device edits were not
+  // appearing.
+  useEffect(() => {
+    const onHydrated = () => {
+      try {
+        const saved = localStorage.getItem('offerbell_tracker_v3');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          setContacts(parsed.map((c: any) => ({ ...c, linkedin: c.linkedin || '', scheduledAt: c.scheduledAt || null })));
+        }
+      } catch {}
+    };
+    window.addEventListener('offerbell-progress-hydrated', onHydrated);
+    return () => window.removeEventListener('offerbell-progress-hydrated', onHydrated);
+  }, []);
+
   function persist(c: Contact[]) { localStorage.setItem('offerbell_tracker_v3', JSON.stringify(c)); }
 
   function showToast(msg: string) {
