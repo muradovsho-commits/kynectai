@@ -2,7 +2,7 @@
 
 import Sidebar from "../components/Sidebar";
 import ExtensionInstallPrompt from "../components/ExtensionInstallPrompt";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import Link from 'next/link';
@@ -168,21 +168,38 @@ export default function OutreachTrackerPage() {
     setConfig(loadConfig());
   }, []);
 
+  // Warm-start from a read-only local cache so the list paints instantly instead
+  // of flashing empty for the ~100ms until the server query resolves. The cache
+  // is written ONLY from server data / our own edits and read ONLY for first
+  // paint; it never travels back to the server (key is excluded from blob sync
+  // and the sync hook no longer pushes it). useLayoutEffect runs before paint.
+  useLayoutEffect(() => {
+    try {
+      const cached = localStorage.getItem('offerbell_tracker_v3');
+      if (cached) {
+        const p = JSON.parse(cached);
+        if (Array.isArray(p)) setContacts(p.map((c: any) => ({ ...c, linkedin: c.linkedin || '', scheduledAt: c.scheduledAt || null })));
+      }
+    } catch {}
+  }, []);
+
   // Adopt the live server data into local state. Runs on first load and whenever
   // the row changes (including edits made on another device). Our own writes echo
   // back here as the same value, so this never fights an in-progress edit.
   useEffect(() => {
     if (serverTracker === undefined) return; // still loading
+    const raw = serverTracker && serverTracker.data ? serverTracker.data : '[]';
     let arr: any[] = [];
-    if (serverTracker && serverTracker.data) {
-      try { const p = JSON.parse(serverTracker.data); if (Array.isArray(p)) arr = p; } catch {}
-    }
+    try { const p = JSON.parse(raw); if (Array.isArray(p)) arr = p; } catch {}
     setContacts(arr.map((c: any) => ({ ...c, linkedin: c.linkedin || '', scheduledAt: c.scheduledAt || null })));
+    try { localStorage.setItem('offerbell_tracker_v3', raw); } catch {} // refresh warm-start cache
   }, [serverTracker && serverTracker.data]);
 
   function persist(c: Contact[]) {
     if (!authUid) return;
-    upsertTracker({ userId: authUid, sessionToken: authTok, data: JSON.stringify(c), updatedAt: Date.now() }).catch(() => {});
+    const str = JSON.stringify(c);
+    try { localStorage.setItem('offerbell_tracker_v3', str); } catch {} // keep warm-start cache current
+    upsertTracker({ userId: authUid, sessionToken: authTok, data: str, updatedAt: Date.now() }).catch(() => {});
   }
 
   function showToast(msg: string) {

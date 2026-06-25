@@ -2,7 +2,7 @@
 
 import Sidebar from "../components/Sidebar";
 import TutorialOverlay from "../components/TutorialOverlay";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import Link from 'next/link';
 import { useMutation } from 'convex/react';
 import { ConvexHttpClient } from 'convex/browser';
@@ -38,6 +38,14 @@ export default function MyAccountPage() {
   const [searchesUsed, setSearchesUsed] = useState(0);
   const [messagesUsed, setMessagesUsed] = useState(0);
   const [contactsTracked, setContactsTracked] = useState(0);
+  // Warm-start the count from the tracker's read-only cache so it does not flash
+  // 0 before the server fetch lands. The fetch in the mount effect then confirms it.
+  useLayoutEffect(() => {
+    try {
+      const c = localStorage.getItem('offerbell_tracker_v3');
+      if (c) { const p = JSON.parse(c); if (Array.isArray(p)) setContactsTracked(p.length); }
+    } catch {}
+  }, []);
   const [resumeUsed, setResumeUsed] = useState(0);
   const [resumeLifetime, setResumeLifetime] = useState(0);
   const [userPlan, setUserPlan] = useState('free');

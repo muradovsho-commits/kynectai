@@ -1,6 +1,6 @@
 // Build: v6-career-aware-tabs
 'use client';
-import { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
+import { useState, useEffect, useMemo, useCallback, useLayoutEffect, Suspense } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import Sidebar from '../components/Sidebar';
@@ -241,14 +241,27 @@ function ConceptDrillsInner() {
   const serverDrill = useQuery(api.drillHistory.getDrillHistory, authUid ? { userId: authUid, sessionToken: authTok } : 'skip');
   const upsertDrillHistory = useMutation(api.drillHistory.upsertDrillHistory);
 
+  // Warm-start the Question History from a read-only local cache so it does not
+  // flash empty until the server query resolves. Read only for first paint,
+  // written only from server data / our own appends; never pushed back.
+  useLayoutEffect(() => {
+    try {
+      const cached = localStorage.getItem('offerbell_drill_history');
+      if (cached) {
+        const p = JSON.parse(cached);
+        if (Array.isArray(p)) setHistory(p);
+      }
+    } catch {}
+  }, []);
+
   // Adopt the live server row on load and on any remote change.
   useEffect(() => {
     if (serverDrill === undefined) return; // loading
+    const raw = serverDrill && serverDrill.data ? serverDrill.data : '[]';
     let arr: DrillHistoryItem[] = [];
-    if (serverDrill && serverDrill.data) {
-      try { const p = JSON.parse(serverDrill.data); if (Array.isArray(p)) arr = p; } catch {}
-    }
+    try { const p = JSON.parse(raw); if (Array.isArray(p)) arr = p; } catch {}
     setHistory(arr);
+    try { localStorage.setItem('offerbell_drill_history', raw); } catch {} // refresh warm-start cache
   }, [serverDrill && serverDrill.data]);
 
   // After login, the sync hook hydrates flash_perf into localStorage
@@ -411,8 +424,10 @@ function ConceptDrillsInner() {
   function appendHistory(item: DrillHistoryItem) {
     const next = [item, ...history].slice(0, HISTORY_CAP);
     setHistory(next);
+    const str = JSON.stringify(next);
+    try { localStorage.setItem('offerbell_drill_history', str); } catch {} // keep warm-start cache current
     if (authUid) {
-      upsertDrillHistory({ userId: authUid, sessionToken: authTok, data: JSON.stringify(next), updatedAt: Date.now() }).catch(() => {});
+      upsertDrillHistory({ userId: authUid, sessionToken: authTok, data: str, updatedAt: Date.now() }).catch(() => {});
     }
   }
 

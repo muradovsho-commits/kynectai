@@ -455,7 +455,7 @@ export default function DashboardPage() {
   // ─── Outreach tracker data (from localStorage)
   const [outreachContacts, setOutreachContacts] = useState<Array<{ status: string }>>([]);
   const [outreachStatuses, setOutreachStatuses] = useState(DEFAULT_OUTREACH_STATUSES);
-  useEffect(() => {
+  useLayoutEffect(() => {
     try {
       const raw = localStorage.getItem('offerbell_tracker_v3');
       if (raw) {

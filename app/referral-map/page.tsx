@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { useRouter } from 'next/navigation';
@@ -445,15 +445,33 @@ export default function ReferralMapPage() {
     if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
   }, [router]);
 
+  // Warm-start from a read-only local cache so the graph paints instantly rather
+  // than flashing empty until the server query resolves. Read only for first
+  // paint, written only from server data / our own edits; never pushed back (the
+  // first-server-load guard in the persist effect also blocks any warm-start push).
+  useLayoutEffect(() => {
+    try {
+      const cached = localStorage.getItem('offerbell_referral_nodes_v3');
+      if (cached) {
+        const p = JSON.parse(cached);
+        if (Array.isArray(p)) {
+          const arr = normalizeContacts(p);
+          lastServerStrRef.current = JSON.stringify(arr);
+          setContacts(arr);
+        }
+      }
+    } catch {}
+  }, []);
+
   // Adopt the live server row. Runs on load and on any remote change.
   useEffect(() => {
     if (serverReferral === undefined) return; // loading
+    const raw = serverReferral && serverReferral.data ? serverReferral.data : '[]';
     let arr: Contact[] = [];
-    if (serverReferral && serverReferral.data) {
-      try { const p = JSON.parse(serverReferral.data); if (Array.isArray(p)) arr = normalizeContacts(p); } catch {}
-    }
+    try { const p = JSON.parse(raw); if (Array.isArray(p)) arr = normalizeContacts(p); } catch {}
     lastServerStrRef.current = JSON.stringify(arr);
     setContacts(arr);
+    try { localStorage.setItem('offerbell_referral_nodes_v3', raw); } catch {} // refresh warm-start cache
   }, [serverReferral && serverReferral.data]);
 
   // Persist real local edits to the server. Skips the echo from the adopt above
@@ -465,6 +483,7 @@ export default function ReferralMapPage() {
     const str = JSON.stringify(contacts);
     if (str === lastServerStrRef.current) return;
     lastServerStrRef.current = str;
+    try { localStorage.setItem('offerbell_referral_nodes_v3', str); } catch {} // keep warm-start cache current
     upsertReferral({ userId: authUid, sessionToken: authTok, data: str, updatedAt: Date.now() }).catch(() => {});
   }, [contacts]);
 
