@@ -2,7 +2,8 @@
 
 import Sidebar from "../components/Sidebar";
 import ExtensionInstallPrompt from "../components/ExtensionInstallPrompt";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
+import { useQuery, useMutation } from 'convex/react';
 import { ConvexHttpClient } from 'convex/browser';
 import '../contact-finder/contact-finder.css';
 import { api } from '../../convex/_generated/api';
@@ -79,6 +80,38 @@ export default function OutreachWriterPage() {
 
   // Drafts
   const [savedMsgs, setSavedMsgs] = useState<SavedMsg[]>([]);
+  // Saved drafts now read/write their own Convex table DIRECTLY (no blob). The
+  // blob union-merged this key, which re-added deleted drafts on every sync;
+  // a direct upsert means delete actually sticks, cross-device and across logins.
+  const [authUid, setAuthUid] = useState('');
+  const [authTok, setAuthTok] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    try { setAuthUid(localStorage.getItem('offerbell_user_id') || ''); setAuthTok(localStorage.getItem('offerbell_session') || undefined); } catch {}
+  }, []);
+  const serverSaved = useQuery(api.savedMessages.getSavedMessages, authUid ? { userId: authUid, sessionToken: authTok } : 'skip');
+  const upsertSaved = useMutation(api.savedMessages.upsertSavedMessages);
+
+  // Warm-start from a read-only cache so the list paints instantly. Read only for
+  // first paint, written only from server/edits; never pushed back to the server.
+  useLayoutEffect(() => {
+    try { const c = localStorage.getItem('offerbell_saved_messages'); if (c) { const p = JSON.parse(c); if (Array.isArray(p)) setSavedMsgs(p); } } catch {}
+  }, []);
+
+  // Adopt the live server row on load and on any remote change.
+  useEffect(() => {
+    if (serverSaved === undefined) return; // loading
+    const raw = serverSaved && serverSaved.data ? serverSaved.data : '[]';
+    let arr: SavedMsg[] = [];
+    try { const p = JSON.parse(raw); if (Array.isArray(p)) arr = p; } catch {}
+    setSavedMsgs(arr);
+    try { localStorage.setItem('offerbell_saved_messages', raw); } catch {} // refresh warm-start cache
+  }, [serverSaved && serverSaved.data]);
+
+  function persistDrafts(updated: SavedMsg[]) {
+    const str = JSON.stringify(updated);
+    try { localStorage.setItem('offerbell_saved_messages', str); } catch {} // keep warm-start cache current
+    if (authUid) upsertSaved({ userId: authUid, sessionToken: authTok, data: str, updatedAt: Date.now() }).catch(() => {});
+  }
   const [expandedDraft, setExpandedDraft] = useState<string | null>(null);
 
   // Toast
@@ -105,11 +138,7 @@ export default function OutreachWriterPage() {
     const plan = localStorage.getItem('offerbell_plan') || 'free';
     try { const prof = JSON.parse(localStorage.getItem('offerbell_onboarding_profile') || '{}'); setUserPlan(prof.plan || plan); } catch { setUserPlan(plan); }
 
-    // Saved drafts
-    try {
-      const r = localStorage.getItem('offerbell_saved_messages');
-      if (r) setSavedMsgs(JSON.parse(r));
-    } catch {}
+    // (saved drafts are loaded by the warm-start + server adopt above, not here)
 
     // Free-plan message counter
     try {
@@ -227,14 +256,14 @@ export default function OutreachWriterPage() {
     };
     const updated = [msg, ...savedMsgs].slice(0, 20);
     setSavedMsgs(updated);
-    localStorage.setItem('offerbell_saved_messages', JSON.stringify(updated));
+    persistDrafts(updated);
     showToast('Draft saved');
   }
 
   function deleteDraft(id: string) {
     const updated = savedMsgs.filter(m => m.id !== id);
     setSavedMsgs(updated);
-    localStorage.setItem('offerbell_saved_messages', JSON.stringify(updated));
+    persistDrafts(updated);
     if (expandedDraft === id) setExpandedDraft(null);
     showToast('Draft deleted');
   }

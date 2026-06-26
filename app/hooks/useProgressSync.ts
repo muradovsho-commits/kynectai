@@ -122,6 +122,10 @@ const EXCLUDE_FROM_SYNC = new Set([
   'offerbell_tracker_v3',
   'offerbell_referral_nodes_v3',
   'offerbell_drill_history',
+  // Saved outreach drafts. Own Convex table (savedMessages), read/written direct
+  // from the writer page. Kept OUT of the blob so the array union-merge can no
+  // longer re-add drafts you deleted.
+  'offerbell_saved_messages',
 ]);
 
 // Cross-tab coordination: tabs share a "last push" timestamp via localStorage
@@ -187,7 +191,6 @@ const ARRAY_KEYS = new Set([
   'offerbell_flash_review',
   'offerbell_flash_review_log',
   'offerbell_mock_responses',
-  'offerbell_saved_messages',
   'offerbell_tracker_v3',
   'offerbell_referral_nodes_v3',
   'offerbell_drill_history',
