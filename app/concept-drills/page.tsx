@@ -440,6 +440,20 @@ function ConceptDrillsInner() {
     setInfErr('');
     setDrillFilter({ topic: '', difficulty: 'any' });
     setPhase('drilling');
+    // First question is a preset pulled from the existing curated bank: instant,
+    // free, and already vetted. No cold-start wait. The buffer then fills with
+    // AI-generated questions for everything after this one.
+    const bank = trackDef.questions || [];
+    if (bank.length) {
+      const preset = bank[Math.floor(Math.random() * bank.length)];
+      askedRef.current.push(preset.q);
+      setQuestions([preset]);
+      setIdx(0);
+      setLoadingQ(false);
+      topUp(); // start filling the buffer immediately
+      return;
+    }
+    // Fallback (track has no curated bank): generate the first one via the API.
     setLoadingQ(true);
     const q = await fetchInfiniteRetry();
     if (!q) { setInfErr('Could not generate a question. Try again.'); setLoadingQ(false); return; }
@@ -610,7 +624,7 @@ function ConceptDrillsInner() {
                 ) : (
                   <>
                     <div style={{ width: 34, height: 34, border: '3px solid var(--border, rgba(0,0,0,.12))', borderTopColor: 'var(--accent, #3b75ff)', borderRadius: '50%', animation: 'cdspin .7s linear infinite' }} />
-                    <div style={{ color: 'var(--text-3, #888)', fontSize: 14, marginTop: 16 }}>Generating your first question...</div>
+                    <div style={{ color: 'var(--text-3, #888)', fontSize: 14, marginTop: 16 }}>Building your drill. This can take a few seconds...</div>
                   </>
                 )}
               </div>
@@ -730,6 +744,9 @@ function ConceptDrillsInner() {
                   </button>
                 )}
               </div>
+              {infinite && loadingQ && (
+                <div style={{ color: 'var(--text-3, #888)', fontSize: 12, marginTop: 10, textAlign: 'right' }}>Generating your next question. This can take a few seconds...</div>
+              )}
               {infinite && infErr && (
                 <div style={{ color: '#dc2626', fontSize: 13, marginTop: 10, textAlign: 'right' }}>{infErr}</div>
               )}
