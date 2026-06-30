@@ -15,7 +15,8 @@ type Feature = { label: string; free: React.ReactNode; pro: React.ReactNode; eli
 
 const FEATURES: Feature[] = [
   { label: 'Interview Flashcards', free: LIMIT('10% per track'), pro: CHECK, elite: CHECK },
-  { label: 'Concept Drills', free: LIMIT('5 Qs/drill'), pro: CHECK, elite: CHECK },
+  { label: 'Concept Drills', free: LIMIT('5 Qs/drill'), pro: LIMIT('5 Qs/drill'), elite: LIMIT('5 Qs/drill') },
+  { label: 'Infinite AI Drills', free: DASH, pro: CHECK, elite: CHECK },
   { label: 'Diagnostic Review', free: LIMIT('1 track'), pro: CHECK, elite: CHECK },
   { label: 'Career Guides / Quiz', free: CHECK, pro: CHECK, elite: CHECK },
   { label: 'Interview Prep Guides', free: DASH, pro: CHECK, elite: CHECK },
@@ -346,7 +347,7 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
                 {[
                   { icon: CHECK, text: '10% of flashcards per track' },
-                  { icon: DASH, text: 'Save up to 5 questions' },
+                  { icon: CHECK, text: 'Concept Drills (5 Qs per drill)' },
                   { icon: CHECK, text: '1 diagnostic review' },
                   { icon: CHECK, text: 'Activity streak tracking' },
                 ].map((f, i) => (
@@ -389,7 +390,7 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
                 {[
                   'Full flashcard access - all tracks',
-                  'Unlimited concept drills',
+                  'Infinite AI drills (endless, adaptive)',
                   'All diagnostic tracks',
                   'Interview prep guides',
                   'AI Coach (usage-based)',

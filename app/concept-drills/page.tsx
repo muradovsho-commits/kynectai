@@ -42,7 +42,6 @@ const TRACK_LABELS: Record<string, string> = {
 };
 
 const DRILL_SIZE_FREE = 5;
-const DRILL_SIZE_PAID = 10;
 const HISTORY_CAP = 100;
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -164,9 +163,9 @@ function ConceptDrillsInner() {
   const [tab, setTab] = useState<Tab>('practice');
   const [phase, setPhase] = useState<Phase>('landing');
 
-  // ─── Plan-aware drill size: free=5 q/drill, pro/elite=10 q/drill ────────
+  // ─── Drill size: fixed 5 questions for all plans ───────────────────────
   const userPlan = useUserPlan();
-  const drillSize = userPlan === 'free' ? DRILL_SIZE_FREE : DRILL_SIZE_PAID;
+  const drillSize = DRILL_SIZE_FREE; // all plans get 5; startDrill shuffles + serves unseen first
 
   // ─── Drilling state ──────────────────────────────────────────────────────
   const [questions, setQuestions] = useState<DrillQ[]>([]);
