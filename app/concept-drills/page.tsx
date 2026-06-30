@@ -1,6 +1,6 @@
 // Build: v6-career-aware-tabs
 'use client';
-import { useState, useEffect, useMemo, useCallback, useLayoutEffect, Suspense } from 'react';
+import { useState, useEffect, useMemo, useCallback, useLayoutEffect, useRef, Suspense } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import Sidebar from '../components/Sidebar';
@@ -179,6 +179,16 @@ function ConceptDrillsInner() {
   const [drillFilter, setDrillFilter] = useState<{ topic: string; difficulty: Difficulty }>({ topic: '', difficulty: 'any' });
   // Currently-selected filter shown on the Practice tab.
   const [practiceDifficulty, setPracticeDifficulty] = useState<Difficulty>('any');
+
+  // ─── Infinite mode (AI-generated, adaptive, never runs out) ──────────────
+  // Reuses the exact drilling UI + local grading. Does NOT write to drill
+  // history or Convex (it is endless); results are tracked in-session only and
+  // fed back to the model for adaptivity.
+  const [infinite, setInfinite] = useState(false);
+  const [loadingQ, setLoadingQ] = useState(false);
+  const [infErr, setInfErr] = useState('');
+  const askedRef = useRef<string[]>([]);
+  const resultsRef = useRef<{ topic: string; difficulty: string; correct: boolean }[]>([]);
 
   // Only offer difficulty filters that actually exist for this track, so the
   // user can't pick a difficulty that yields an empty drill (some tracks are
@@ -360,6 +370,72 @@ function ConceptDrillsInner() {
     setPhase('drilling');
   }
 
+  // ─── Infinite mode helpers ───────────────────────────────────────────────
+  async function fetchInfinite(): Promise<DrillQ | null> {
+    const res = await fetch('/api/drill-infinite', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        track: selectedTrackKey,
+        trackTitle: trackDef?.title || selectedTrackKey,
+        topics: Array.from(new Set((trackDef?.questions || []).map(q => q.topic))),
+        recent: resultsRef.current.slice(-6),
+        avoid: askedRef.current.slice(-25),
+      }),
+    });
+    if (!res.ok) throw new Error('gen');
+    const data = await res.json();
+    const q = data.question;
+    if (!q || !Array.isArray(q.options) || q.options.length !== 4 || typeof q.correct !== 'number' || q.correct < 0 || q.correct > 3) return null;
+    return q as DrillQ;
+  }
+
+  async function startInfinite() {
+    if (!trackDef) return;
+    askedRef.current = [];
+    resultsRef.current = [];
+    setInfinite(true);
+    setQuestions([]);
+    setIdx(0);
+    setSelected(null);
+    setShowExp(false);
+    setCorrectCount(0);
+    setWrongCount(0);
+    setInfErr('');
+    setDrillFilter({ topic: '', difficulty: 'any' });
+    setPhase('drilling');
+    setLoadingQ(true);
+    try {
+      let q = await fetchInfinite();
+      if (!q) q = await fetchInfinite(); // one retry
+      if (!q) { setInfErr('Could not generate a question. Try again.'); setLoadingQ(false); return; }
+      askedRef.current.push(q.q);
+      setQuestions([q]);
+      setIdx(0);
+    } catch {
+      setInfErr('Could not reach the question generator. Check your connection and try again.');
+    }
+    setLoadingQ(false);
+  }
+
+  async function nextInfinite() {
+    setLoadingQ(true);
+    setInfErr('');
+    try {
+      let q = await fetchInfinite();
+      if (!q) q = await fetchInfinite();
+      if (!q) { setInfErr('Could not generate the next question. Try again.'); setLoadingQ(false); return; }
+      askedRef.current.push(q.q);
+      setQuestions(prev => [...prev, q]);
+      setIdx(i => i + 1);
+      setSelected(null);
+      setShowExp(false);
+    } catch {
+      setInfErr('Could not generate the next question. Try again.');
+    }
+    setLoadingQ(false);
+  }
+
   // ─── Answer / skip ───────────────────────────────────────────────────────
   function answer(ci: number) {
     if (showExp) return;
@@ -370,6 +446,13 @@ function ConceptDrillsInner() {
     setShowExp(true);
     if (ok) setCorrectCount(c => c + 1);
     else setWrongCount(w => w + 1);
+
+    // Infinite mode: track the result in-session for adaptivity, but never
+    // write to drill history or Convex (it is endless).
+    if (infinite) {
+      resultsRef.current.push({ topic: q.topic, difficulty: q.difficulty, correct: ok });
+      return;
+    }
 
     // NOTE: drills intentionally do NOT write to offerbell_flash_perf_{track}.
     // That counter is read only by the Flashcards tab; writing drill answers to
@@ -402,6 +485,11 @@ function ConceptDrillsInner() {
     setShowExp(true);
     setWrongCount(w => w + 1);
 
+    if (infinite) {
+      resultsRef.current.push({ topic: q.topic, difficulty: q.difficulty, correct: false });
+      return;
+    }
+
     // (See note in answer(): drills do not write to flash_perf. The skip is
     // recorded in offerbell_drill_history below.)
 
@@ -432,6 +520,7 @@ function ConceptDrillsInner() {
   }
 
   function nextQuestion() {
+    if (infinite) { nextInfinite(); return; }
     if (idx + 1 >= questions.length) {
       setPhase('done');
       setPerfTick(t => t + 1);
@@ -443,12 +532,54 @@ function ConceptDrillsInner() {
   }
 
   function endDrill() {
+    setInfinite(false);
+    setLoadingQ(false);
+    setInfErr('');
     setPhase('landing');
     setPerfTick(t => t + 1);
   }
 
   // ─── Drilling phase render ──────────────────────────────────────────────
   const currentQ = questions[idx];
+
+  // Infinite mode: first-question loading / error screen (no currentQ yet).
+  if (phase === 'drilling' && infinite && !currentQ) {
+    return (
+      <div className="cd-app">
+        <Sidebar activePage="concept-drills" />
+        <main className="cd-canvas">
+          <div className="cd-page">
+            <div className="cd-drill-inner">
+              <div className="cd-drill-head">
+                <button type="button" className="cd-back-btn" onClick={endDrill} aria-label="Back">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+                </button>
+                <div className="cd-drill-head-text">
+                  <div className="cd-drill-title">Infinite drill</div>
+                  <div className="cd-drill-sub">{trackDef?.title || ''}</div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 16px', textAlign: 'center' }}>
+                {infErr ? (
+                  <>
+                    <div style={{ color: '#dc2626', fontSize: 14, marginBottom: 16 }}>{infErr}</div>
+                    <button type="button" className="cd-btn cd-btn-primary" onClick={startInfinite}>Try again</button>
+                  </>
+                ) : (
+                  <>
+                    <div style={{ width: 34, height: 34, border: '3px solid var(--border, rgba(0,0,0,.12))', borderTopColor: 'var(--accent, #3b75ff)', borderRadius: '50%', animation: 'cdspin .7s linear infinite' }} />
+                    <div style={{ color: 'var(--text-3, #888)', fontSize: 14, marginTop: 16 }}>Generating your first question...</div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </main>
+        <style>{`@keyframes cdspin{to{transform:rotate(360deg)}}`}</style>
+      </div>
+    );
+  }
+
   if (phase === 'drilling' && currentQ) {
     const drillProgress = ((idx + 1) / questions.length) * 100;
     return (
@@ -465,13 +596,15 @@ function ConceptDrillsInner() {
                   </svg>
                 </button>
                 <div className="cd-drill-head-text">
-                  <div className="cd-drill-title">{drillFilter.topic || (trackDef?.title || 'Drill')}</div>
-                  <div className="cd-drill-sub">Question {idx + 1} of {questions.length}</div>
+                  <div className="cd-drill-title">{infinite ? 'Infinite drill' : (drillFilter.topic || (trackDef?.title || 'Drill'))}</div>
+                  <div className="cd-drill-sub">{infinite ? `Question ${idx + 1}` : `Question ${idx + 1} of ${questions.length}`}</div>
                 </div>
               </div>
-              <div className="cd-drill-progress">
-                <div className="cd-drill-progress-fill" style={{ width: `${drillProgress}%` }} />
-              </div>
+              {!infinite && (
+                <div className="cd-drill-progress">
+                  <div className="cd-drill-progress-fill" style={{ width: `${drillProgress}%` }} />
+                </div>
+              )}
 
               <div className="cd-drill-tags">
                 <span className={`cd-tag cd-tag-diff cd-tag-diff-${currentQ.difficulty}`}>{cap(currentQ.difficulty)}</span>
@@ -550,11 +683,15 @@ function ConceptDrillsInner() {
                   <div />
                 )}
                 {showExp && (
-                  <button type="button" className="cd-btn cd-btn-primary" onClick={nextQuestion}>
-                    {idx + 1 >= questions.length ? 'Finish drill' : 'Next question'}
+                  <button type="button" className="cd-btn cd-btn-primary" onClick={nextQuestion} disabled={loadingQ}>
+                    {loadingQ ? 'Generating...' : infinite ? 'Next question' : (idx + 1 >= questions.length ? 'Finish drill' : 'Next question')}
                   </button>
                 )}
               </div>
+              {infinite && infErr && (
+                <div style={{ color: '#dc2626', fontSize: 13, marginTop: 10, textAlign: 'right' }}>{infErr}</div>
+              )}
+              {infinite && <style>{`@keyframes cdspin{to{transform:rotate(360deg)}}`}</style>}
             </div>
           </div>
         </main>
@@ -689,6 +826,16 @@ function ConceptDrillsInner() {
                       <div className="cd-quick-start-text">
                         <div className="cd-quick-start-title">Mixed drill</div>
                         <div className="cd-quick-start-sub">{drillSize} random questions across all {trackDef?.topics.length || 0} topics</div>
+                      </div>
+                    <button
+                      type="button"
+                      className="cd-quick-start"
+                      onClick={() => startInfinite()}
+                      style={{ marginTop: 10 }}
+                    >
+                      <div className="cd-quick-start-text">
+                        <div className="cd-quick-start-title">Infinite drill <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--accent, #3b75ff)', marginLeft: 6 }}>AI</span></div>
+                        <div className="cd-quick-start-sub">Endless AI questions that adapt to you. Never run out.</div>
                       </div>
                       <div className="cd-quick-start-arrow">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
