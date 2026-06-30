@@ -189,6 +189,8 @@ function ConceptDrillsInner() {
   const [infErr, setInfErr] = useState('');
   const askedRef = useRef<string[]>([]);
   const resultsRef = useRef<{ topic: string; difficulty: string; correct: boolean }[]>([]);
+  const nextQRef = useRef<DrillQ | null>(null);
+  const prefetchRef = useRef<Promise<DrillQ | null> | null>(null);
 
   // Only offer difficulty filters that actually exist for this track, so the
   // user can't pick a difficulty that yields an empty drill (some tracks are
@@ -390,10 +392,36 @@ function ConceptDrillsInner() {
     return q as DrillQ;
   }
 
+  // Retry a few times to ride out transient failures / bad generations.
+  async function fetchInfiniteRetry(tries = 3): Promise<DrillQ | null> {
+    for (let i = 0; i < tries; i++) {
+      try {
+        const q = await fetchInfinite();
+        if (q) return q;
+      } catch { /* try again */ }
+    }
+    return null;
+  }
+
+  // Kick off a background fetch for the NEXT question (called the moment the
+  // user answers), so "Next question" is instant. Stores result in nextQRef.
+  function prefetchNext() {
+    if (nextQRef.current || prefetchRef.current) return;
+    const p = (async () => {
+      const q = await fetchInfiniteRetry();
+      nextQRef.current = q;
+      return q;
+    })();
+    prefetchRef.current = p;
+    p.finally(() => { if (prefetchRef.current === p) prefetchRef.current = null; });
+  }
+
   async function startInfinite() {
     if (!trackDef) return;
     askedRef.current = [];
     resultsRef.current = [];
+    nextQRef.current = null;
+    prefetchRef.current = null;
     setInfinite(true);
     setQuestions([]);
     setIdx(0);
@@ -405,35 +433,45 @@ function ConceptDrillsInner() {
     setDrillFilter({ topic: '', difficulty: 'any' });
     setPhase('drilling');
     setLoadingQ(true);
-    try {
-      let q = await fetchInfinite();
-      if (!q) q = await fetchInfinite(); // one retry
-      if (!q) { setInfErr('Could not generate a question. Try again.'); setLoadingQ(false); return; }
-      askedRef.current.push(q.q);
-      setQuestions([q]);
-      setIdx(0);
-    } catch {
-      setInfErr('Could not reach the question generator. Check your connection and try again.');
-    }
+    const q = await fetchInfiniteRetry();
+    if (!q) { setInfErr('Could not generate a question. Try again.'); setLoadingQ(false); return; }
+    askedRef.current.push(q.q);
+    setQuestions([q]);
+    setIdx(0);
     setLoadingQ(false);
+    prefetchNext(); // warm up question 2 in the background
   }
 
   async function nextInfinite() {
-    setLoadingQ(true);
     setInfErr('');
-    try {
-      let q = await fetchInfinite();
-      if (!q) q = await fetchInfinite();
-      if (!q) { setInfErr('Could not generate the next question. Try again.'); setLoadingQ(false); return; }
+    // Fast path: the prefetched question is already here.
+    if (nextQRef.current) {
+      const q = nextQRef.current;
+      nextQRef.current = null;
       askedRef.current.push(q.q);
       setQuestions(prev => [...prev, q]);
       setIdx(i => i + 1);
       setSelected(null);
       setShowExp(false);
-    } catch {
-      setInfErr('Could not generate the next question. Try again.');
+      prefetchNext();
+      return;
     }
+    // Otherwise wait on the in-flight prefetch, or fetch fresh.
+    setLoadingQ(true);
+    let q: DrillQ | null = null;
+    try {
+      if (prefetchRef.current) q = await prefetchRef.current;
+      nextQRef.current = null;
+      if (!q) q = await fetchInfiniteRetry();
+    } catch { q = null; }
+    if (!q) { setInfErr('Could not generate the next question. Try again.'); setLoadingQ(false); return; }
+    askedRef.current.push(q.q);
+    setQuestions(prev => [...prev, q]);
+    setIdx(i => i + 1);
+    setSelected(null);
+    setShowExp(false);
     setLoadingQ(false);
+    prefetchNext();
   }
 
   // ─── Answer / skip ───────────────────────────────────────────────────────
@@ -451,6 +489,7 @@ function ConceptDrillsInner() {
     // write to drill history or Convex (it is endless).
     if (infinite) {
       resultsRef.current.push({ topic: q.topic, difficulty: q.difficulty, correct: ok });
+      prefetchNext();
       return;
     }
 
@@ -487,6 +526,7 @@ function ConceptDrillsInner() {
 
     if (infinite) {
       resultsRef.current.push({ topic: q.topic, difficulty: q.difficulty, correct: false });
+      prefetchNext();
       return;
     }
 

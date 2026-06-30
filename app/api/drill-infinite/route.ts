@@ -81,7 +81,7 @@ Subtopics available for this track: ${topicList}
 NON-NEGOTIABLE QUALITY RULES:
 1. Accuracy: the question must have exactly ONE unambiguously correct option. Verify the correct answer yourself before returning. Never ship a question you are not certain about.
 2. Distractors: all 4 options must be genuinely plausible to a student who half-knows the material. Wrong options are realistic mistakes, common misconceptions, swapped formulas, off-by-one errors, or confused definitions. NEVER write an obviously absurd or joke option.
-3. No giveaways: all 4 options must be similar in length, specificity, and grammatical form. Do NOT make the correct option the longest or most detailed. Do NOT use "All of the above" or "None of the above". Do not telegraph the answer in the wording of the question.
+3. No giveaways: all 4 options MUST be within a few words of each other in length. The correct option must NOT be the longest, most detailed, or most qualified. If your correct answer comes out longer, either trim it or pad the distractors so all four match. Do NOT use "All of the above" or "None of the above". Do not telegraph the answer in the question wording. Vary which position (0-3) the correct answer sits in.
 4. Explanation: 1 to 2 sentences. State why the correct answer is right, and briefly why the most tempting wrong option is wrong.
 5. "topic" must be one real subtopic from the list above. "difficulty" must honestly reflect the question.
 
@@ -94,6 +94,8 @@ ${avoidBlock}`.trim();
     const userPrompt = "Generate the next drill question now as strict JSON.";
 
     const models = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-3-flash-preview"];
+
+    let firstValid: ReturnType<typeof validate> = null;
 
     for (const model of models) {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
@@ -119,21 +121,30 @@ ${avoidBlock}`.trim();
         const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
         if (!text) continue;
 
-        let q: unknown;
+        let parsed: unknown;
         try {
-          q = JSON.parse(text);
+          parsed = JSON.parse(text);
         } catch {
-          // strip any stray code fences and retry parse
           const cleaned = text.replace(/```json|```/g, "").trim();
-          try { q = JSON.parse(cleaned); } catch { continue; }
+          try { parsed = JSON.parse(cleaned); } catch { continue; }
         }
 
-        const valid = validate(q);
-        if (!valid) continue;
-        return NextResponse.json({ question: valid }, { headers: corsHeaders });
+        const v = validate(parsed);
+        if (!v) continue;
+        // Prefer a question whose correct option is not a length outlier. If
+        // this one is balanced, ship it. Otherwise remember it and try the next
+        // model for a cleaner one, falling back to it if nothing better comes.
+        if (balanced(v.options, v.correct)) {
+          return NextResponse.json({ question: v }, { headers: corsHeaders });
+        }
+        if (!firstValid) firstValid = v;
       } catch {
         continue;
       }
+    }
+
+    if (firstValid) {
+      return NextResponse.json({ question: firstValid }, { headers: corsHeaders });
     }
 
     return NextResponse.json(
@@ -144,6 +155,18 @@ ${avoidBlock}`.trim();
     console.error("Drill-infinite error:", error);
     return NextResponse.json({ error: "Failed to process" }, { status: 500, headers: corsHeaders });
   }
+}
+
+// True if the correct option is not a clear length outlier (which would let a
+// student guess by picking the longest/most-detailed answer). Only flags
+// egregious cases so we rarely have to discard an otherwise-good question.
+function balanced(options: string[], correct: number): boolean {
+  const lens = options.map(o => o.length);
+  const correctLen = lens[correct];
+  const others = lens.filter((_, i) => i !== correct);
+  const maxOther = Math.max(...others);
+  if (correctLen > maxOther * 1.35 && correctLen - maxOther > 12) return false;
+  return true;
 }
 
 // Validate + normalize the model output into the exact DrillQ shape the client
