@@ -827,6 +827,14 @@ function ConceptDrillsInner() {
                         <div className="cd-quick-start-title">Mixed drill</div>
                         <div className="cd-quick-start-sub">{drillSize} random questions across all {trackDef?.topics.length || 0} topics</div>
                       </div>
+                      <div className="cd-quick-start-arrow">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="5" y1="12" x2="19" y2="12" />
+                          <polyline points="12 5 19 12 12 19" />
+                        </svg>
+                      </div>
+                    </button>
+
                     <button
                       type="button"
                       className="cd-quick-start"
