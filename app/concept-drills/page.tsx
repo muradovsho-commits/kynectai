@@ -176,8 +176,6 @@ function ConceptDrillsInner() {
   const [wrongCount, setWrongCount] = useState(0);
   // Stored so "Drill again" repeats the same filter.
   const [drillFilter, setDrillFilter] = useState<{ topic: string; difficulty: Difficulty }>({ topic: '', difficulty: 'any' });
-  // Currently-selected filter shown on the Practice tab.
-  const [practiceDifficulty, setPracticeDifficulty] = useState<Difficulty>('any');
 
   // ─── Infinite mode (AI-generated, adaptive, never runs out) ──────────────
   // Reuses the exact drilling UI + local grading. Does NOT write to drill
@@ -192,16 +190,6 @@ function ConceptDrillsInner() {
   const queueRef = useRef<DrillQ[]>([]);   // pre-generated questions ready to serve
   const fillingRef = useRef(false);        // single-flight guard for the buffer filler
 
-  // Only offer difficulty filters that actually exist for this track, so the
-  // user can't pick a difficulty that yields an empty drill (some tracks are
-  // entirely 'hard', etc.).
-  const availableDifficulties = useMemo<Difficulty[]>(() => {
-    const present = new Set((trackDef?.questions || []).map(q => q.difficulty));
-    return (['any', 'easy', 'medium', 'hard'] as Difficulty[]).filter(d => d === 'any' || present.has(d));
-  }, [trackDef]);
-  useEffect(() => {
-    if (!availableDifficulties.includes(practiceDifficulty)) setPracticeDifficulty('any');
-  }, [availableDifficulties, practiceDifficulty]);
 
   // ─── Flash perf (per-track) for current track ────────────────────────────
   // Reads from offerbell_flash_perf_{trackKey}. Same shape the dashboard
@@ -862,26 +850,10 @@ function ConceptDrillsInner() {
                       </div>
                     </div>
 
-                    <div className="cd-filter-row">
-                      <div className="cd-filter-lbl">Difficulty</div>
-                      <div className="cd-filter-options">
-                        {availableDifficulties.map(d => (
-                          <button
-                            key={d}
-                            type="button"
-                            className={`cd-chip${practiceDifficulty === d ? ' active' : ''}`}
-                            onClick={() => setPracticeDifficulty(d)}
-                          >
-                            {cap(d)}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
                     <button
                       type="button"
                       className="cd-quick-start"
-                      onClick={() => startDrill('', practiceDifficulty)}
+                      onClick={() => startDrill('', 'any')}
                     >
                       <div className="cd-quick-start-text">
                         <div className="cd-quick-start-title">Mixed drill</div>
@@ -932,7 +904,7 @@ function ConceptDrillsInner() {
                           key={t.topic}
                           type="button"
                           className="cd-topic-card"
-                          onClick={() => startDrill(t.topic, practiceDifficulty)}
+                          onClick={() => startDrill(t.topic, 'any')}
                           disabled={t.available === 0}
                         >
                           <div className="cd-topic-head">
