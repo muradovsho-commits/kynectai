@@ -826,6 +826,24 @@ export default function CoachPage() {
         if (wk.week === week && wk.count >= 1) setFreeLimitHit(true);
       } catch {}
     }
+    // Restore a previously-hit coach limit (any plan) so the composer stays
+    // disabled across reopens and new chats, with no wasted server call. The
+    // server stays the source of truth; this just mirrors its last verdict.
+    // Cleared automatically when the UTC week resets or the plan changes.
+    try {
+      const n = new Date(); const d = n.getUTCDay(); const diff = d === 0 ? 6 : d - 1;
+      const m = new Date(n); m.setUTCDate(n.getUTCDate() - diff); m.setUTCHours(0, 0, 0, 0);
+      const wkKey = m.toISOString().split('T')[0];
+      const rawL = localStorage.getItem('offerbell_coach_limit');
+      if (rawL) {
+        const saved = JSON.parse(rawL);
+        if (saved.week === wkKey && saved.plan === plan) {
+          setLimitInfo({ plan: saved.plan, used: saved.used ?? 0, limit: saved.limit ?? 1 });
+        } else {
+          localStorage.removeItem('offerbell_coach_limit');
+        }
+      }
+    } catch {}
     // Load saved conversations. Source of truth is now Convex coachConvos
     // table. We hydrate from there with a one-time migration for users whose
     // history still lives only in localStorage.
@@ -1057,6 +1075,18 @@ export default function CoachPage() {
             limit: typeof data.limit === 'number' ? data.limit : 1,
           });
           setShowLimitOverlay(true);
+          // Persist so the input stays disabled on reopen / new chat (no more
+          // wasted requests). Keyed to the UTC week + plan; cleared on reset.
+          try {
+            const n = new Date(); const d = n.getUTCDay(); const diff = d === 0 ? 6 : d - 1;
+            const m = new Date(n); m.setUTCDate(n.getUTCDate() - diff); m.setUTCHours(0, 0, 0, 0);
+            localStorage.setItem('offerbell_coach_limit', JSON.stringify({
+              week: m.toISOString().split('T')[0],
+              plan: (data.plan as string) || (isPro ? 'pro' : 'free'),
+              used: typeof data.used === 'number' ? data.used : 0,
+              limit: typeof data.limit === 'number' ? data.limit : 1,
+            }));
+          } catch {}
         } else {
           setMessages(prev => [...prev, { role: 'assistant', content: ' ' + (data.error || 'Coach is temporarily unavailable.'), time: Date.now() }]);
         }
