@@ -317,6 +317,7 @@ export default defineSchema({
     resumeChat: v.optional(v.number()),
     outreachWriter: v.optional(v.number()),
     mockInterview: v.optional(v.number()),
+    infiniteDrills: v.optional(v.number()),
     updatedAt: v.number(),
   }).index("by_user_week", ["userId", "weekStart"]),
 });

@@ -12,7 +12,7 @@ import { getUserEmail } from "./_helpers";
 // outreachWriter on the free plan is enforced via users.outreachCount
 // (lifetime) instead - see the API route logic.
 
-const VALID_FEATURES = ["coach", "resumeReview", "resumeChat", "outreachWriter", "mockInterview"] as const;
+const VALID_FEATURES = ["coach", "resumeReview", "resumeChat", "outreachWriter", "mockInterview", "infiniteDrills"] as const;
 type Feature = (typeof VALID_FEATURES)[number];
 
 // ISO date string for Monday of the current week, UTC.

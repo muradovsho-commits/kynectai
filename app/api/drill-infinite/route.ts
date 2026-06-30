@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthUserId, unauthorizedResponse, checkRateLimit, getClientIP, getCorsHeaders } from "../_lib/auth";
+import { checkPlanLimit, incrementUsageInConvex } from "../_lib/plan";
 
 // Infinite Drills: generates ONE adaptive multiple-choice drill per call.
 // Mirrors the reps/coach route patterns (GEMINI_API_KEY, model fallback,
@@ -26,6 +27,20 @@ export async function POST(req: NextRequest) {
     const ip = getClientIP(req);
     const limited = checkRateLimit(`drill-inf:${userId || ip}`, 40, 60_000, corsHeaders);
     if (limited) return limited;
+
+    // Pro gate + weekly cap. Convex is the source of truth (a client can't send
+    // its own plan/usage). free=0 => gated; pro/elite have a high weekly cap as
+    // an abuse backstop. Usage is incremented after a successful generation.
+    const check = await checkPlanLimit(userId, "infiniteDrills", corsHeaders);
+    if (!check.allowed) {
+      if (check.plan === "free") {
+        return NextResponse.json(
+          { error: "upgrade", message: "Infinite Drills is a Pro feature. Upgrade to unlock endless AI questions.", plan: check.plan },
+          { status: 403, headers: corsHeaders }
+        );
+      }
+      return check.denied; // pro/elite hit their weekly cap
+    }
 
     const body = await req.json().catch(() => ({}));
     const {
@@ -135,6 +150,7 @@ ${avoidBlock}`.trim();
         // this one is balanced, ship it. Otherwise remember it and try the next
         // model for a cleaner one, falling back to it if nothing better comes.
         if (balanced(v.options, v.correct)) {
+          await incrementUsageInConvex(userId, "infiniteDrills");
           return NextResponse.json({ question: v }, { headers: corsHeaders });
         }
         if (!firstValid) firstValid = v;
@@ -144,6 +160,7 @@ ${avoidBlock}`.trim();
     }
 
     if (firstValid) {
+      await incrementUsageInConvex(userId, "infiniteDrills");
       return NextResponse.json({ question: firstValid }, { headers: corsHeaders });
     }
 

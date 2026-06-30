@@ -187,6 +187,7 @@ function ConceptDrillsInner() {
   const [infinite, setInfinite] = useState(false);
   const [loadingQ, setLoadingQ] = useState(false);
   const [infErr, setInfErr] = useState('');
+  const [showInfPro, setShowInfPro] = useState(false); // Pro-upgrade modal for free users
   const askedRef = useRef<string[]>([]);
   const resultsRef = useRef<{ topic: string; difficulty: string; correct: boolean }[]>([]);
   const queueRef = useRef<DrillQ[]>([]);   // pre-generated questions ready to serve
@@ -506,7 +507,8 @@ function ConceptDrillsInner() {
     if (infinite) {
       resultsRef.current.push({ topic: q.topic, difficulty: q.difficulty, correct: ok });
       topUp();
-      return;
+      // fall through to appendHistory below so infinite drills appear in
+      // Question History and count toward progress, exactly like curated drills.
     }
 
     // NOTE: drills intentionally do NOT write to offerbell_flash_perf_{track}.
@@ -543,7 +545,7 @@ function ConceptDrillsInner() {
     if (infinite) {
       resultsRef.current.push({ topic: q.topic, difficulty: q.difficulty, correct: false });
       topUp();
-      return;
+      // fall through to appendHistory below (same as curated drills).
     }
 
     // (See note in answer(): drills do not write to flash_perf. The skip is
@@ -897,11 +899,11 @@ function ConceptDrillsInner() {
                     <button
                       type="button"
                       className="cd-quick-start"
-                      onClick={() => startInfinite()}
+                      onClick={() => userPlan === 'free' ? setShowInfPro(true) : startInfinite()}
                       style={{ marginTop: 10 }}
                     >
                       <div className="cd-quick-start-text">
-                        <div className="cd-quick-start-title">Infinite drill <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--accent, #3b75ff)', marginLeft: 6 }}>AI</span></div>
+                        <div className="cd-quick-start-title">Infinite drill <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--accent, #3b75ff)', marginLeft: 6 }}>{userPlan === 'free' ? 'PRO' : 'AI'}</span></div>
                         <div className="cd-quick-start-sub">Endless AI questions that adapt to you. Never run out.</div>
                       </div>
                       <div className="cd-quick-start-arrow">
@@ -911,6 +913,18 @@ function ConceptDrillsInner() {
                         </svg>
                       </div>
                     </button>
+
+                    {showInfPro && (
+                      <div onClick={() => setShowInfPro(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}>
+                        <div onClick={e => e.stopPropagation()} style={{ background: 'var(--surface-1, #fff)', borderRadius: 16, padding: '28px 26px', maxWidth: 380, width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,.3)', textAlign: 'center' }}>
+                          <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--accent, #3b75ff)' }}>Pro feature</div>
+                          <div style={{ fontSize: 20, fontWeight: 700, marginTop: 8, color: 'var(--text-1, #111)' }}>Infinite Drills</div>
+                          <div style={{ fontSize: 14, lineHeight: 1.5, color: 'var(--text-3, #666)', marginTop: 10 }}>Endless AI-generated technical questions that adapt to how you answer and never run out. Upgrade to Pro to unlock.</div>
+                          <a href="/my-account" className="cd-btn cd-btn-primary" style={{ display: 'inline-block', marginTop: 18, textDecoration: 'none' }}>View Pro Plans</a>
+                          <div><button type="button" onClick={() => setShowInfPro(false)} style={{ marginTop: 12, background: 'none', border: 'none', color: 'var(--text-3, #888)', fontSize: 13, cursor: 'pointer' }}>Maybe later</button></div>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="cd-section-title">Topics</div>
                     <div className="cd-topics-grid">

@@ -10,7 +10,7 @@ import { api } from "../../../convex/_generated/api";
 // route calls checkPlanLimit at the top, then incrementUsage after a
 // successful response.
 
-export type PlanFeature = "coach" | "resumeReview" | "resumeChat" | "outreachWriter" | "mockInterview";
+export type PlanFeature = "coach" | "resumeReview" | "resumeChat" | "outreachWriter" | "mockInterview" | "infiniteDrills";
 
 // Mirror of app/lib/plan.ts PLAN_LIMITS, server-side. Kept literal so a
 // client tampering with the bundled JS can't change limits.
@@ -20,6 +20,7 @@ const LIMITS: Record<PlanFeature, { free: number; pro: number; elite: number }> 
   resumeChat:     { free: 3,  pro: 20,  elite: 40  },
   outreachWriter: { free: 5,  pro: 20,  elite: 30  }, // free = lifetime, paid = weekly
   mockInterview:  { free: 3,  pro: 999, elite: 999 },
+  infiniteDrills: { free: 0,  pro: 1500, elite: 4000 }, // free=0 => Pro-gated; paid cap is an abuse backstop, weekly
 };
 
 export interface PlanCheckResult {
@@ -144,5 +145,6 @@ function featureDisplayName(feature: PlanFeature): string {
     case "resumeChat": return "Resume Chat";
     case "outreachWriter": return "Outreach";
     case "mockInterview": return "Mock Interview";
+    case "infiniteDrills": return "Infinite Drills";
   }
 }

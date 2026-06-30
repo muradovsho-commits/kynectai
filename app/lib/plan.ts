@@ -22,6 +22,7 @@ export const PLAN_LIMITS = {
   resumeChat: { free: 3, pro: 20, elite: 40 },           // follow-up chat msgs per week
   coach: { free: 1, pro: 40, elite: 80 },                // per week (free), tokens per window (pro/elite)
   mockInterview: { free: 3, pro: 999, elite: 999 },      // per week
+  infiniteDrills: { free: 0, pro: 1500, elite: 4000 },   // free=0 => Pro-gated; weekly cap on paid
 } as const;
 
 // ══════════════════════════════════════════════════════════════
