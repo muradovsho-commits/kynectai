@@ -93,7 +93,7 @@ ${avoidBlock}`.trim();
 
     const userPrompt = "Generate the next drill question now as strict JSON.";
 
-    const models = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-3-flash-preview"];
+    const models = ["gemini-2.5-flash-lite", "gemini-2.5-flash", "gemini-3-flash-preview"];
 
     let firstValid: ReturnType<typeof validate> = null;
 
@@ -105,7 +105,7 @@ ${avoidBlock}`.trim();
         generationConfig: {
           temperature: 0.9,
           topP: 0.95,
-          maxOutputTokens: 700,
+          maxOutputTokens: 500,
           responseMimeType: "application/json",
         },
       };

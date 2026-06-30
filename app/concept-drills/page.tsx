@@ -189,8 +189,8 @@ function ConceptDrillsInner() {
   const [infErr, setInfErr] = useState('');
   const askedRef = useRef<string[]>([]);
   const resultsRef = useRef<{ topic: string; difficulty: string; correct: boolean }[]>([]);
-  const nextQRef = useRef<DrillQ | null>(null);
-  const prefetchRef = useRef<Promise<DrillQ | null> | null>(null);
+  const queueRef = useRef<DrillQ[]>([]);   // pre-generated questions ready to serve
+  const fillingRef = useRef(false);        // single-flight guard for the buffer filler
 
   // Only offer difficulty filters that actually exist for this track, so the
   // user can't pick a difficulty that yields an empty drill (some tracks are
@@ -373,6 +373,8 @@ function ConceptDrillsInner() {
   }
 
   // ─── Infinite mode helpers ───────────────────────────────────────────────
+  const BUFFER_TARGET = 2; // keep this many questions pre-generated and ready
+
   async function fetchInfinite(): Promise<DrillQ | null> {
     const res = await fetch('/api/drill-infinite', {
       method: 'POST',
@@ -382,7 +384,9 @@ function ConceptDrillsInner() {
         trackTitle: trackDef?.title || selectedTrackKey,
         topics: Array.from(new Set((trackDef?.questions || []).map(q => q.topic))),
         recent: resultsRef.current.slice(-6),
-        avoid: askedRef.current.slice(-25),
+        // avoid both already-served and already-queued questions so the buffer
+        // never holds duplicates of each other or of what's been seen.
+        avoid: [...askedRef.current, ...queueRef.current.map(q => q.q)].slice(-25),
       }),
     });
     if (!res.ok) throw new Error('gen');
@@ -392,7 +396,6 @@ function ConceptDrillsInner() {
     return q as DrillQ;
   }
 
-  // Retry a few times to ride out transient failures / bad generations.
   async function fetchInfiniteRetry(tries = 3): Promise<DrillQ | null> {
     for (let i = 0; i < tries; i++) {
       try {
@@ -403,25 +406,30 @@ function ConceptDrillsInner() {
     return null;
   }
 
-  // Kick off a background fetch for the NEXT question (called the moment the
-  // user answers), so "Next question" is instant. Stores result in nextQRef.
-  function prefetchNext() {
-    if (nextQRef.current || prefetchRef.current) return;
-    const p = (async () => {
-      const q = await fetchInfiniteRetry();
-      nextQRef.current = q;
-      return q;
-    })();
-    prefetchRef.current = p;
-    p.finally(() => { if (prefetchRef.current === p) prefetchRef.current = null; });
+  // Keep the buffer topped up to BUFFER_TARGET. Sequential (single-flight) so
+  // concurrent calls don't generate duplicates. Re-triggered on answer/skip and
+  // after each question is consumed, so a fast clicker keeps drawing from it.
+  async function topUp() {
+    if (fillingRef.current) return;
+    fillingRef.current = true;
+    try {
+      while (queueRef.current.length < BUFFER_TARGET) {
+        const q = await fetchInfiniteRetry();
+        if (!q) break; // transient failure; a later trigger will retry
+        if (askedRef.current.includes(q.q) || queueRef.current.some(x => x.q === q.q)) continue;
+        queueRef.current.push(q);
+      }
+    } finally {
+      fillingRef.current = false;
+    }
   }
 
   async function startInfinite() {
     if (!trackDef) return;
     askedRef.current = [];
     resultsRef.current = [];
-    nextQRef.current = null;
-    prefetchRef.current = null;
+    queueRef.current = [];
+    fillingRef.current = false;
     setInfinite(true);
     setQuestions([]);
     setIdx(0);
@@ -439,31 +447,25 @@ function ConceptDrillsInner() {
     setQuestions([q]);
     setIdx(0);
     setLoadingQ(false);
-    prefetchNext(); // warm up question 2 in the background
+    topUp(); // start filling the buffer immediately
   }
 
   async function nextInfinite() {
     setInfErr('');
-    // Fast path: the prefetched question is already here.
-    if (nextQRef.current) {
-      const q = nextQRef.current;
-      nextQRef.current = null;
+    // Fast path: pull a ready question from the buffer.
+    if (queueRef.current.length > 0) {
+      const q = queueRef.current.shift() as DrillQ;
       askedRef.current.push(q.q);
       setQuestions(prev => [...prev, q]);
       setIdx(i => i + 1);
       setSelected(null);
       setShowExp(false);
-      prefetchNext();
+      topUp();
       return;
     }
-    // Otherwise wait on the in-flight prefetch, or fetch fresh.
+    // Buffer empty (user outran it): generate one now with a spinner.
     setLoadingQ(true);
-    let q: DrillQ | null = null;
-    try {
-      if (prefetchRef.current) q = await prefetchRef.current;
-      nextQRef.current = null;
-      if (!q) q = await fetchInfiniteRetry();
-    } catch { q = null; }
+    const q = await fetchInfiniteRetry();
     if (!q) { setInfErr('Could not generate the next question. Try again.'); setLoadingQ(false); return; }
     askedRef.current.push(q.q);
     setQuestions(prev => [...prev, q]);
@@ -471,7 +473,7 @@ function ConceptDrillsInner() {
     setSelected(null);
     setShowExp(false);
     setLoadingQ(false);
-    prefetchNext();
+    topUp();
   }
 
   // ─── Answer / skip ───────────────────────────────────────────────────────
@@ -489,7 +491,7 @@ function ConceptDrillsInner() {
     // write to drill history or Convex (it is endless).
     if (infinite) {
       resultsRef.current.push({ topic: q.topic, difficulty: q.difficulty, correct: ok });
-      prefetchNext();
+      topUp();
       return;
     }
 
@@ -526,7 +528,7 @@ function ConceptDrillsInner() {
 
     if (infinite) {
       resultsRef.current.push({ topic: q.topic, difficulty: q.difficulty, correct: false });
-      prefetchNext();
+      topUp();
       return;
     }
 
