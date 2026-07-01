@@ -200,8 +200,10 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
         });
         const data = await res.json();
         if (data.url) {
-          localStorage.setItem('offerbell_billing_cycle', targetBilling);
-          localStorage.setItem('offerbell_checkout_plan', to);
+          // Deliberately do NOT write offerbell_billing_cycle / checkout_plan
+          // here. The success page sets those from the URL params AFTER a real
+          // completion, so bailing out of the Stripe page can't leave a stale
+          // plan/cycle showing in My Account.
           window.location.href = data.url;
         } else {
           setLoading(null);
