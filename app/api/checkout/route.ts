@@ -34,6 +34,9 @@ export async function POST(request: NextRequest) {
     }
     const plan = body.plan === "elite" ? "elite" : "pro";
     const billing = body.billing === "annual" ? "annual" : body.billing === "6month" ? "6month" : "monthly";
+    // If an existing subscriber is changing plans, this is their current sub.
+    // The webhook cancels it once the new subscription starts (no double bill).
+    const currentSubscriptionId = typeof body.currentSubscriptionId === "string" ? body.currentSubscriptionId : undefined;
 
     const priceId = STRIPE_PRICE_IDS[plan][billing];
 
@@ -51,7 +54,7 @@ export async function POST(request: NextRequest) {
       // so the webhook can look up the right Convex user and attach the
       // newly-created subscription. Also stamped on the subscription itself
       // so future subscription.updated/deleted events still know the user.
-      metadata: { userId, plan, billing },
+      metadata: { userId, plan, billing, ...(currentSubscriptionId ? { oldSubscriptionId: currentSubscriptionId } : {}) },
       subscription_data: {
         metadata: { userId, plan, billing },
       },

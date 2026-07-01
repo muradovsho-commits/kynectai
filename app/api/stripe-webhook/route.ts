@@ -134,6 +134,22 @@ export async function POST(request: NextRequest) {
           plan,
         });
         console.log('[stripe-webhook] Linked subscription', subscriptionId, '→ user', userId, 'plan', plan);
+
+        // If this checkout was an existing subscriber changing plans, cancel
+        // their previous subscription now that the new one is attached. The
+        // user record already points at the NEW sub id (set just above), so the
+        // resulting subscription.deleted event for the OLD id is a no-op: its
+        // handler looks up the user by sub id and finds nobody. Net result:
+        // one active subscription, no double billing, no drop to free.
+        const oldSubscriptionId = session.metadata?.oldSubscriptionId;
+        if (oldSubscriptionId && oldSubscriptionId !== subscriptionId) {
+          try {
+            await stripe.subscriptions.cancel(oldSubscriptionId);
+            console.log('[stripe-webhook] Cancelled old subscription', oldSubscriptionId, 'after switch to', subscriptionId);
+          } catch (cancelErr: any) {
+            console.error('[stripe-webhook] Failed to cancel old subscription', oldSubscriptionId, cancelErr?.message || cancelErr);
+          }
+        }
         break;
       }
 

@@ -173,40 +173,12 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
     // whether to do an instant prorated change (paying more upfront) or
     // schedule at period end (paying less / longer interval downgrades).
     if ((from === 'pro' || from === 'elite') && (to === 'pro' || to === 'elite')) {
-      const tierUpgrade = from === 'pro' && to === 'elite';
-      const tierDowngrade = from === 'elite' && to === 'pro';
-      const sameTier = from === to;
-
-      // Decide message based on what's changing. We can't compute the exact
-      // prorate amount client-side - Stripe does that. We just tell the
-      // user whether to expect a charge today or a scheduled change.
-      const billingLabelMap: Record<string, string> = {
-        monthly: 'Monthly',
-        '6month': '6-Month',
-        annual: 'Annual',
-      };
-      const newPlanLabel = to === 'elite' ? 'Elite' : 'Pro';
-      const newBillingLabel = billingLabelMap[targetBilling] || targetBilling;
-
-      let message: string;
-      if (tierUpgrade) {
-        message = `Upgrade to ${newPlanLabel} ${newBillingLabel}? You will be charged the prorated difference for your current billing period today.`;
-      } else if (tierDowngrade) {
-        message = `Switch to ${newPlanLabel} ${newBillingLabel}? The change takes effect at your next billing cycle - you will keep Elite access until then.`;
-      } else if (sameTier) {
-        // Same tier, different billing cycle. Direction depends on whether
-        // the new billing is a longer commitment (more upfront, instant) or
-        // shorter (scheduled at period end).
-        const goingLonger = (targetBilling === 'annual' && currentCycle !== 'annual')
-          || (targetBilling === '6month' && currentCycle === 'monthly');
-        message = goingLonger
-          ? `Switch to ${newBillingLabel} billing? You will be charged the prorated difference today and locked in at the lower per-month rate.`
-          : `Switch to ${newBillingLabel} billing? The change takes effect at your next billing cycle.`;
-      } else {
-        message = `Switch to ${newPlanLabel} ${newBillingLabel}?`;
-      }
-      if (!confirm(message)) return;
-
+      // Existing subscriber changing to another paid plan (tier or billing).
+      // Send them to the SAME Stripe Checkout page new buyers use, so they can
+      // pick a card and enter promo codes. We pass their current subscription
+      // id; the webhook cancels it once the new subscription starts, so they
+      // end on exactly one plan and are never double-billed. The new price
+      // applies going forward (no proration, no refund).
       setLoading('switch');
       try {
         const userId = localStorage.getItem('offerbell_user_id');
@@ -220,36 +192,21 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
           const user = await client.query((api as any).users.getUser, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) });
           subscriptionId = user?.stripeSubscriptionId || undefined;
         }
-        if (!subscriptionId) {
-          // No active subscription - fall through to a fresh checkout. This
-          // covers users who somehow have a paid `plan` in DB without a
-          // Stripe subscription (legacy promo accounts, manual edits, etc.).
-          handleCheckout(to);
-          return;
-        }
 
-        const res = await fetch('/api/stripe-change-plan', {
+        const res = await fetch('/api/checkout', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId, subscriptionId, targetPlan: to, targetBilling }),
+          body: JSON.stringify({ email, plan: to, billing: targetBilling, userId, currentSubscriptionId: subscriptionId }),
         });
         const data = await res.json();
-        if (!res.ok || !data.success) {
-          alert(`Could not change plan: ${data.error || 'Unknown error'}.`);
-          setLoading(null);
-          return;
-        }
-
-        if (data.immediate) {
-          // Upgrade took effect now. Webhook will catch up the DB.
-          alert(`You're now on ${newPlanLabel} ${newBillingLabel}.`);
+        if (data.url) {
+          localStorage.setItem('offerbell_billing_cycle', targetBilling);
+          localStorage.setItem('offerbell_checkout_plan', to);
+          window.location.href = data.url;
         } else {
-          const when = data.effectiveAt ? new Date(data.effectiveAt).toLocaleDateString() : 'the end of your current period';
-          alert(`Your switch to ${newPlanLabel} ${newBillingLabel} is scheduled for ${when}. You'll keep your current plan until then.`);
+          setLoading(null);
+          alert('Something went wrong. Please try again.');
         }
-        // Don't touch localStorage plan keys. The webhook handles DB state.
-        // Sidebar/my-account will reflect changes via their reactive query.
-        window.location.href = '/my-account';
       } catch (e: any) {
         console.error('[switch] failed:', e);
         alert('Something went wrong. Please try again.');
