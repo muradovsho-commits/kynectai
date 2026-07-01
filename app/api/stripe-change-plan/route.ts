@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../convex/_generated/api";
+import { STRIPE_PRICE_IDS, PRICE_AMOUNTS } from "../_lib/prices";
 
 // Switch tier (pro ↔ elite). Two paths:
 //   • Upgrade (pro → elite): instant. Stripe prorates and bills the diff.
@@ -12,19 +13,6 @@ import { api } from "../../../convex/_generated/api";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-02-25.clover" as any,
 });
-
-const PRICES: Record<string, Record<string, { amount: number; name: string; desc: string; interval: 'month' | 'year'; intervalCount: number }>> = {
-  pro: {
-    monthly: { amount: 2000, name: "OfferBell Pro - Monthly", desc: "Pro plan, monthly billing", interval: "month", intervalCount: 1 },
-    "6month": { amount: 10800, name: "OfferBell Pro - 6 Month", desc: "Pro plan, 6-month billing", interval: "month", intervalCount: 6 },
-    annual: { amount: 19200, name: "OfferBell Pro - Annual", desc: "Pro plan, annual billing", interval: "year", intervalCount: 1 },
-  },
-  elite: {
-    monthly: { amount: 4000, name: "OfferBell Elite - Monthly", desc: "Elite plan, monthly billing", interval: "month", intervalCount: 1 },
-    "6month": { amount: 21600, name: "OfferBell Elite - 6 Month", desc: "Elite plan, 6-month billing", interval: "month", intervalCount: 6 },
-    annual: { amount: 38400, name: "OfferBell Elite - Annual", desc: "Elite plan, annual billing", interval: "year", intervalCount: 1 },
-  },
-};
 
 function billingFromInterval(interval: string | undefined, count: number | undefined): 'monthly' | '6month' | 'annual' {
   if (interval === 'year') return 'annual';
@@ -65,17 +53,35 @@ export async function POST(request: NextRequest) {
     if (!currentItem) {
       return NextResponse.json({ error: "Subscription has no items" }, { status: 400 });
     }
+
+    // Make sure the product this subscription lives on is active. Some older
+    // subscriptions sit on a product that later got archived, and Stripe
+    // refuses to attach a new price to an inactive product - which is exactly
+    // what breaks plan changes ("product is marked as inactive"). Reactivating
+    // is safe: it is a real OfferBell subscription product. Wrapped so a failure
+    // here never blocks the change on its own.
+    const activeProductId = typeof currentItem.price?.product === 'string'
+      ? currentItem.price.product
+      : (currentItem.price?.product as any)?.id;
+    if (activeProductId) {
+      try {
+        await stripe.products.update(activeProductId, { active: true });
+      } catch (reactivateErr: any) {
+        console.error('[stripe-change-plan] could not reactivate product', activeProductId, reactivateErr?.message || reactivateErr);
+      }
+    }
     const currentInterval = currentItem.price?.recurring?.interval;
     const currentIntervalCount = currentItem.price?.recurring?.interval_count;
     const currentBilling = billingFromInterval(currentInterval, currentIntervalCount);
     // Use targetBilling if provided, otherwise preserve current billing.
     const billing = targetBilling || currentBilling;
-    const newPriceCfg = PRICES[targetPlan][billing];
+    const newAmount = PRICE_AMOUNTS[targetPlan][billing];
+    const newPriceId = STRIPE_PRICE_IDS[targetPlan][billing];
 
     const currentAmount = currentItem.price?.unit_amount || 0;
 
     // No-op detection: same tier AND same billing = nothing to change.
-    if (currentAmount === newPriceCfg.amount && currentBilling === billing) {
+    if (currentAmount === newAmount && currentBilling === billing) {
       return NextResponse.json({ error: "Already on this plan" }, { status: 400 });
     }
 
@@ -96,26 +102,16 @@ export async function POST(request: NextRequest) {
     // Schedule for period-end if: tier downgrade (any cycle), or same-tier
     // going to a shorter commitment (lower per-cycle price).
     const isImmediate = isTierUpgrade
-      || (!isTierDowngrade && newPriceCfg.amount > currentAmount);
+      || (!isTierDowngrade && newAmount > currentAmount);
 
     if (isImmediate) {
-      // Instant upgrade/longer-commitment. Stripe prorates and charges the
-      // diff. Reuse the existing product ID rather than creating a new one
-      // inline - Stripe's subscriptions.update API rejects price_data with
-      // product_data and only accepts product (an existing Product ID).
-      // The webhook reads unit_amount to determine the resulting tier, so
-      // keeping the same product is fine.
+      // Instant upgrade / longer-commitment. Stripe prorates and charges the
+      // diff. Swap the subscription item onto the real saved price for the
+      // target plan + billing. The webhook reads unit_amount to set the tier.
       await stripe.subscriptions.update(subscriptionId, {
         items: [{
           id: currentItem.id,
-          price_data: {
-            currency: 'usd',
-            product: typeof currentItem.price?.product === 'string'
-              ? currentItem.price.product
-              : (currentItem.price?.product as any)?.id,
-            unit_amount: newPriceCfg.amount,
-            recurring: { interval: newPriceCfg.interval, interval_count: newPriceCfg.intervalCount },
-          },
+          price: newPriceId,
         }],
         proration_behavior: 'always_invoice',
         metadata: { userId, plan: targetPlan, billing },
@@ -178,20 +174,10 @@ export async function POST(request: NextRequest) {
     await stripe.subscriptionSchedules.update(schedule.id, {
       end_behavior: 'release',
       phases: [
-        // Phase 1: current state until period end.
+        // Phase 1: keep the current price until period end.
         {
           items: [{
-            price_data: {
-              currency: 'usd',
-              product: typeof currentItem.price?.product === 'string'
-                ? currentItem.price.product
-                : (currentItem.price?.product as any)?.id,
-              unit_amount: currentAmount,
-              recurring: {
-                interval: currentInterval as 'month' | 'year',
-                interval_count: currentIntervalCount as number,
-              },
-            } as any,
+            price: currentItem.price?.id as string,
             quantity: 1,
           }],
           start_date: (schedule.phases[0]?.start_date) as any,
@@ -199,21 +185,12 @@ export async function POST(request: NextRequest) {
           proration_behavior: 'none',
           discounts: subDiscounts.length > 0 ? subDiscounts : undefined,
         } as any,
-        // Phase 2: new tier kicks in at period end. Stripe's schedule API
-        // doesn't accept inline `product_data` here - it needs an existing
-        // Product ID. We reuse the current sub's Product and just change
-        // unit_amount. The webhook reads unit_amount to determine the
-        // resulting tier. Discounts carry over so promos persist.
+        // Phase 2: new tier kicks in at period end, on the real saved price for
+        // the target plan + billing. Discounts carry over so promos persist.
+        // The webhook reads unit_amount to determine the resulting tier.
         {
           items: [{
-            price_data: {
-              currency: 'usd',
-              product: typeof currentItem.price?.product === 'string'
-                ? currentItem.price.product
-                : (currentItem.price?.product as any)?.id,
-              unit_amount: newPriceCfg.amount,
-              recurring: { interval: newPriceCfg.interval, interval_count: newPriceCfg.intervalCount },
-            } as any,
+            price: newPriceId,
             quantity: 1,
           }],
           proration_behavior: 'none',
