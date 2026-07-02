@@ -135,19 +135,41 @@ export async function POST(request: NextRequest) {
         });
         console.log('[stripe-webhook] Linked subscription', subscriptionId, '→ user', userId, 'plan', plan);
 
-        // If this checkout was an existing subscriber changing plans, cancel
-        // their previous subscription now that the new one is attached. The
-        // user record already points at the NEW sub id (set just above), so the
-        // resulting subscription.deleted event for the OLD id is a no-op: its
-        // handler looks up the user by sub id and finds nobody. Net result:
-        // one active subscription, no double billing, no drop to free.
-        const oldSubscriptionId = session.metadata?.oldSubscriptionId;
-        if (oldSubscriptionId && oldSubscriptionId !== subscriptionId) {
+        // Guarantee the user ends up with exactly ONE live subscription. A user
+        // can accumulate extras: cancelling at period end then buying a new plan
+        // before the old one lapses, switching plans, or leftover test subs. The
+        // user record already points at the NEW sub id (set just above), so
+        // cancelling the others is safe: their subscription.deleted events look
+        // the user up by sub id and match nobody, so no drop to free.
+        //
+        // We look two ways because checkout with customer_email can create a
+        // fresh Stripe customer each time: (1) same customer, (2) same userId in
+        // subscription metadata across customers. Any billable sub that isn't the
+        // new one gets cancelled, so a real user is never charged for two plans.
+        const BILLABLE_STATUSES = ['active', 'trialing', 'past_due', 'unpaid'];
+        const subsToCancel = new Map<string, true>();
+        try {
+          const byCustomer = await stripe.subscriptions.list({ customer: customerId, limit: 100 });
+          for (const s of byCustomer.data) {
+            if (s.id !== subscriptionId && BILLABLE_STATUSES.includes(s.status)) subsToCancel.set(s.id, true);
+          }
+        } catch (e: any) {
+          console.error('[stripe-webhook] list-by-customer failed', e?.message || e);
+        }
+        try {
+          const byUser = await stripe.subscriptions.search({ query: `metadata['userId']:'${userId}'`, limit: 100 });
+          for (const s of byUser.data) {
+            if (s.id !== subscriptionId && BILLABLE_STATUSES.includes(s.status)) subsToCancel.set(s.id, true);
+          }
+        } catch (e: any) {
+          console.error('[stripe-webhook] search-by-user failed', e?.message || e);
+        }
+        for (const oldId of subsToCancel.keys()) {
           try {
-            await stripe.subscriptions.cancel(oldSubscriptionId);
-            console.log('[stripe-webhook] Cancelled old subscription', oldSubscriptionId, 'after switch to', subscriptionId);
+            await stripe.subscriptions.cancel(oldId);
+            console.log('[stripe-webhook] Cancelled extra subscription', oldId, 'keeping', subscriptionId);
           } catch (cancelErr: any) {
-            console.error('[stripe-webhook] Failed to cancel old subscription', oldSubscriptionId, cancelErr?.message || cancelErr);
+            console.error('[stripe-webhook] Failed to cancel extra subscription', oldId, cancelErr?.message || cancelErr);
           }
         }
         break;
