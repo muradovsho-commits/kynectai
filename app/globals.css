@@ -33,3 +33,7 @@ body {
 
 /* Fixed topbar (Topbar.tsx) offset: pushes all authed page content below the bar. */
 body { padding-top: var(--topbar-h, 0px); }
+
+/* Topbar layout: with the sidebar gone, page content has no left offset, so
+   center the capped content containers instead of letting them hug the left. */
+[class$="-page"], [class$="-page-inner"] { margin-left: auto !important; margin-right: auto !important; }
