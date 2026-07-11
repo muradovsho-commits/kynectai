@@ -16,6 +16,10 @@
   --cream:#fafafa;
   --warm:#efefef;
   --brown:#2f2f2f;
+  --bronze:#b4864a;
+  --bronze-deep:#5d4524;
+  --bronze-light:#c89c60;
+  --bronze-tint:#efdbb9;
   --text:#0f0f0f;
   --text-2:#5c5c5c;
   --text-3:#9a9a9a;
@@ -434,6 +438,34 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 .ow-num{font-family:'Instrument Serif',serif;font-size:32px;line-height:1;color:#a3a3a3}
 .ow-item h3{font-size:18px;font-weight:600;color:#252525;margin-bottom:6px}
 .ow-item p{font-size:15px;line-height:1.6;color:#6d6d6d}
+/* Old Way interactive mascot */
+.oldway2 .ow-head .eyebrow{color:var(--bronze-deep)}
+.ow-bell{position:relative;margin-top:44px;width:232px;max-width:70%;cursor:pointer;user-select:none;outline:none;-webkit-tap-highlight-color:transparent}
+.ow-bell:focus-visible{outline:2px solid var(--bronze);outline-offset:8px;border-radius:16px}
+.ow-bell-anim{animation:owFloat 3.4s ease-in-out infinite;transform-origin:50% 60%}
+.ow-bell-img{width:100%;height:auto;display:block;filter:drop-shadow(0 12px 22px rgba(93,69,36,.20));transform-origin:50% 9%;transition:filter .2s ease}
+.ow-bell:hover .ow-bell-img{filter:drop-shadow(0 16px 28px rgba(93,69,36,.30))}
+.ow-bell.ring .ow-bell-img{animation:owRing .72s ease}
+@keyframes owFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes owRing{0%{transform:rotate(0)}14%{transform:rotate(-10deg)}34%{transform:rotate(8deg)}54%{transform:rotate(-5deg)}74%{transform:rotate(3deg)}100%{transform:rotate(0)}}
+.ow-bubble{position:absolute;top:-16px;left:6px;transform:translateY(-100%);background:var(--white);border:1.5px solid var(--bronze);color:#3a3a3a;font-size:13px;font-weight:600;line-height:1.35;padding:9px 13px;border-radius:13px;box-shadow:0 8px 20px rgba(93,69,36,.15);max-width:214px;z-index:4}
+.ow-bubble::after{content:'';position:absolute;bottom:-8px;left:30px;width:14px;height:14px;background:var(--white);border-right:1.5px solid var(--bronze);border-bottom:1.5px solid var(--bronze);transform:rotate(45deg)}
+.ow-cue{position:absolute;bottom:2px;right:-2px;font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--bronze-deep);background:var(--bronze-tint);border:1px solid var(--bronze-light);padding:3px 10px;border-radius:100px;animation:owPulse 1.8s ease-in-out infinite;pointer-events:none}
+.ow-bell.opened .ow-cue{opacity:0;transform:scale(.85);transition:opacity .3s ease,transform .3s ease;animation:none;pointer-events:none}
+@keyframes owPulse{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.07);opacity:1}}
+.ow-spark{position:absolute;width:7px;height:7px;border-radius:50%;background:radial-gradient(circle,var(--bronze-light),var(--bronze));pointer-events:none;opacity:0;animation:owSpark .85s ease-out forwards;z-index:5}
+@keyframes owSpark{0%{opacity:0;transform:translate(0,0) scale(.4)}22%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1)}}
+/* locked/blurred until the bell reveals them (JS-enhanced only) */
+.ow-js .ow-list{position:relative}
+.ow-js .ow-item{filter:blur(7px);opacity:.4;transform:translateY(10px);transition:filter .55s ease,opacity .55s ease,transform .55s ease}
+.ow-js .ow-item:nth-child(2){transition-delay:.13s}
+.ow-js .ow-item:nth-child(3){transition-delay:.26s}
+.ow-js .ow-list.revealed .ow-item{filter:none;opacity:1;transform:none}
+.ow-js .ow-list.revealed .ow-num{animation:owNumFlash .9s ease}
+.ow-js .ow-list.revealed .ow-item:nth-child(2) .ow-num{animation-delay:.13s}
+.ow-js .ow-list.revealed .ow-item:nth-child(3) .ow-num{animation-delay:.26s}
+@keyframes owNumFlash{0%{color:var(--bronze);text-shadow:0 0 16px rgba(180,134,74,.65)}100%{color:#a3a3a3;text-shadow:none}}
+@media(prefers-reduced-motion:reduce){.ow-bell-anim,.ow-cue,.ow-bell.ring .ow-bell-img{animation:none}.ow-js .ow-item{transition:none}}
 .ow-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:9px;vertical-align:middle}
 /* OUR WAY - warm, light, on-brand */
 .ourway2{position:relative;overflow:hidden;background:var(--cream);padding:104px 0}
@@ -450,7 +482,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 .uw-num{font-family:'Instrument Serif',serif;font-size:32px;line-height:1;color:var(--brown)}
 .uw-item h3{font-size:18px;font-weight:600;color:var(--black);margin-bottom:6px}
 .uw-item p{font-size:15px;line-height:1.6;color:var(--text-2)}
-@media(max-width:860px){.oldway2 .wrap,.ourway2 .wrap{grid-template-columns:1fr;gap:40px}}
+@media(max-width:860px){.oldway2 .wrap,.ourway2 .wrap{grid-template-columns:1fr;gap:40px}.ow-bell{margin-top:8px;width:186px;max-width:60%}}
 /* ===== REDESIGN: tracks ===== */
 .tracks{padding:96px 52px;border-top:1px solid var(--border)}
 .tr-inner{max-width:1180px;margin:0 auto}
@@ -742,8 +774,13 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
       <div class="eyebrow">The old way</div>
       <h2>Outdated tools.<br><em>Outdated results.</em></h2>
       <p>Spreadsheets, random PDFs, and scattered advice were never built for how recruiting actually works.</p>
+      <div class="ow-bell" id="owBell" role="button" tabindex="0" aria-expanded="false" aria-controls="owList" aria-label="Reveal the three problems with the old way">
+        <div class="ow-bubble" id="owBubble">Psst. Want to see what's broken?</div>
+        <div class="ow-bell-anim"><img src="/bell-mascot.png" alt="OfferBell bell mascot" class="ow-bell-img" draggable="false"></div>
+        <div class="ow-cue">Click me</div>
+      </div>
     </div>
-    <div class="ow-list">
+    <div class="ow-list" id="owList">
       <div class="ow-item"><div class="ow-num">01</div><div><h3>Disconnected</h3><p>LinkedIn for sourcing, a spreadsheet for tracking, ChatGPT for messages. Nothing talks to each other.</p></div></div>
       <div class="ow-item"><div class="ow-num">02</div><div><h3>Overwhelming</h3><p>Too much information scattered across too many places. No clarity on what actually matters.</p></div></div>
       <div class="ow-item"><div class="ow-num">03</div><div><h3>Unstructured</h3><p>No system, no progress tracking, no feedback. Just guesswork and hoping for the best.</p></div></div>
@@ -1219,6 +1256,58 @@ addEventListener('scroll',tick,{passive:true});addEventListener('resize',tick);t
   burger.addEventListener('click',function(e){e.stopPropagation();menu.classList.toggle('open');burger.classList.toggle('is-open');});
   menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',close);});
   document.addEventListener('click',function(e){if(menu.classList.contains('open')&&!menu.contains(e.target)&&e.target!==burger)close();});
+})();
+</script>
+<script>
+(function(){
+  var bell=document.getElementById('owBell');
+  var list=document.getElementById('owList');
+  var bubble=document.getElementById('owBubble');
+  if(!bell||!list){return;}
+  var section=bell.closest('.oldway2');
+  if(section){section.classList.add('ow-js');}
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var opened=false;
+  var revealedMsg="There it is. Three ways the old way fails you.";
+
+  function ring(){bell.classList.remove('ring');void bell.offsetWidth;bell.classList.add('ring');}
+  function sparkle(){
+    if(reduce){return;}
+    var anim=bell.querySelector('.ow-bell-anim');
+    if(!anim){return;}
+    for(var i=0;i<12;i++){
+      var s=document.createElement('span');
+      s.className='ow-spark';
+      var ang=Math.random()*Math.PI*2,dist=42+Math.random()*72;
+      s.style.setProperty('--dx',Math.round(Math.cos(ang)*dist)+'px');
+      s.style.setProperty('--dy',Math.round(Math.sin(ang)*dist-18)+'px');
+      s.style.left=(28+Math.random()*60)+'%';
+      s.style.top=(18+Math.random()*52)+'%';
+      s.style.animationDelay=Math.round(Math.random()*90)+'ms';
+      bell.appendChild(s);
+      (function(node){setTimeout(function(){if(node&&node.parentNode){node.parentNode.removeChild(node);}},960);})(s);
+    }
+  }
+  function open(){
+    opened=true;
+    bell.classList.add('opened');
+    bell.setAttribute('aria-expanded','true');
+    list.classList.add('revealed');
+    if(bubble){bubble.textContent=revealedMsg;}
+    ring();sparkle();
+  }
+  function replay(){
+    ring();sparkle();
+    if(bubble){
+      bubble.textContent="Yep. Still broken.";
+      setTimeout(function(){bubble.textContent=revealedMsg;},1400);
+    }
+  }
+  function activate(){opened?replay():open();}
+  bell.addEventListener('click',activate);
+  bell.addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key===' '||e.key==='Spacebar'){e.preventDefault();activate();}
+  });
 })();
 </script>
 </body>
