@@ -27,38 +27,6 @@ const VERTICALS = [
   'Growth Equity',
 ];
 
-// Map onboarding VERTICALS (from app/onboarding/page.tsx) to short pill labels.
-// If the user picks a vertical not listed here, falls back to first 3 chars.
-const INDUSTRY_PILL: Record<string, string> = {
-  'Investment Banking': 'IB',
-  'Private Equity': 'PE',
-  'Hedge Fund': 'HF',
-  'Venture Capital': 'VC',
-  'Growth Equity': 'GE',
-  'Sales & Trading': 'S&T',
-  'Equity Research': 'ER',
-  'Asset Management': 'AM',
-  'Consulting': 'Cons',
-  'Accounting & Audit': 'Aud',
-  'Accounting / Audit / Tax': 'Aud',
-  'Corporate Finance / FP&A': 'CF',
-  'Corporate Development': 'CD',
-  'Real Estate': 'RE',
-  'Credit / Debt': 'Cred',
-  'Restructuring': 'Rx',
-  'Family Office': 'FO',
-  'Endowment / Pension': 'EP',
-};
-
-function abbreviateIndustry(full: string): string {
-  if (!full) return 'IB';
-  if (INDUSTRY_PILL[full]) return INDUSTRY_PILL[full];
-  // Fallback: take initials of first two words, or first 3 chars
-  const parts = full.split(/\s+/);
-  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-  return full.slice(0, 3).toUpperCase();
-}
-
 type ObNavItem = { key: string; label: string; href: string };
 const NAV_SECTIONS: Record<string, { label: string; items: ObNavItem[] }> = {
   learn: { label: 'Learn', items: [
@@ -108,19 +76,6 @@ export default function Topbar({ activePage }: SidebarProps) {
     return { first: '', last: '', email: '' };
   });
 
-  const [industryPill, setIndustryPill] = useState(() => {
-    if (typeof window === 'undefined') return 'IB';
-    try {
-      const raw = localStorage.getItem('offerbell_onboarding_profile');
-      if (raw) {
-        const p = JSON.parse(raw);
-        const target = Array.isArray(p.targetRoles) && p.targetRoles.length > 0 ? p.targetRoles[0] : '';
-        return abbreviateIndustry(target);
-      }
-    } catch {}
-    return 'IB';
-  });
-
   const [currentVertical, setCurrentVertical] = useState(() => {
     if (typeof window === 'undefined') return '';
     try {
@@ -160,7 +115,7 @@ export default function Topbar({ activePage }: SidebarProps) {
   // Zero the left offset; publish the fixed-header height (taller when a sub-tab bar shows).
   useEffect(() => {
     document.documentElement.style.setProperty('--sidebar-w', '0px');
-    document.documentElement.style.setProperty('--topbar-h', openSection ? '104px' : '56px');
+    document.documentElement.style.setProperty('--topbar-h', openSection ? '92px' : '48px');
     return () => { document.documentElement.style.setProperty('--topbar-h', '0px'); };
   }, [openSection]);
 
@@ -178,7 +133,6 @@ export default function Topbar({ activePage }: SidebarProps) {
           const p = JSON.parse(raw);
           setUserName({ first: p.firstName || '', last: p.lastName || '', email: p.email || '' });
           const target = Array.isArray(p.targetRoles) && p.targetRoles.length > 0 ? p.targetRoles[0] : '';
-          setIndustryPill(abbreviateIndustry(target));
           setCurrentVertical(target);
         }
       } catch {}
@@ -235,7 +189,6 @@ export default function Topbar({ activePage }: SidebarProps) {
       const newTargets = [v, ...others];
       const updated = { ...p, targetRoles: newTargets };
       localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(updated));
-      setIndustryPill(abbreviateIndustry(v));
       setCurrentVertical(v);
       setIndustryMenuOpen(false);
       // Notify other components in this same window (storage events only fire cross-tab).
@@ -370,7 +323,7 @@ export default function Topbar({ activePage }: SidebarProps) {
                   <span className="ob-industry-eyebrow">Industry</span>
                   <span className="ob-industry-name">{currentVertical || 'Select'}</span>
                 </div>
-                <span className="ob-industry-pill">{industryPill}</span>
+                <svg className="ob-industry-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
               {industryMenuOpen && (
                 <div className="ob-industry-menu">
@@ -514,104 +467,101 @@ export default function Topbar({ activePage }: SidebarProps) {
 
       <style dangerouslySetInnerHTML={{ __html: `
         .ob-top{position:fixed;top:0;left:0;right:0;z-index:60;
-          background:var(--surface,#ffffff);border-bottom:1px solid var(--border,#e7e5e2);font-family:inherit}
+          background:var(--surface,#ffffff);border-bottom:1px solid var(--border,#e5e7eb);font-family:inherit}
         html[data-theme="dark"] .ob-top{background:#14171c;border-bottom-color:#252b33}
-        .ob-top-inner{height:56px;display:flex;align-items:center;gap:8px;padding:0 20px}
-        .ob-top-brand{display:flex;align-items:center;text-decoration:none;margin-right:10px;flex:0 0 auto}
-        .ob-top-logo-img{height:30px;width:auto;display:block}
+        .ob-top-inner{height:48px;display:flex;align-items:center;gap:8px;padding:0 20px}
+        .ob-top-brand{display:flex;align-items:center;text-decoration:none;margin-right:16px;flex:0 0 auto}
+        .ob-top-logo-img{height:26px;width:auto;display:block}
         html[data-theme="dark"] .ob-top-logo-img{filter:drop-shadow(0 0 0.5px rgba(255,255,255,.9))}
-        .ob-top-nav{display:flex;align-items:center;gap:4px}
-        .ob-top-link{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:0;
-          font-size:14px;font-weight:500;color:var(--text-2,#5b6169);text-decoration:none;background:none;border:1px solid transparent;
+        .ob-top-nav{display:flex;align-items:center;gap:2px}
+        .ob-top-link{display:inline-flex;align-items:center;height:32px;padding:0 14px;border-radius:2px;
+          font-size:13px;font-weight:500;color:#62748e;text-decoration:none;background:none;border:none;
           cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .12s,color .12s}
-        .ob-top-link:hover{color:var(--text,#141414);background:var(--hover,#f4f4f5)}
+        .ob-top-link:hover{color:#1d293d;background:#f8fafc}
         html[data-theme="dark"] .ob-top-link{color:#9aa2ad}
         html[data-theme="dark"] .ob-top-link:hover{color:#fff;background:#20262e}
-        .ob-top-link.active{color:var(--text,#141414);background:var(--surface,#fff);font-weight:600;border-color:transparent;
-          box-shadow:0 1px 2px rgba(16,24,40,.10),0 1px 3px rgba(16,24,40,.08)}
-        html[data-theme="dark"] .ob-top-link.active{color:#fff;background:#20262e;box-shadow:0 1px 3px rgba(0,0,0,.5)}
-        .ob-top-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+        .ob-top-link.active{color:#1d293d;background:#f1f5f9;font-weight:500}
+        html[data-theme="dark"] .ob-top-link.active{color:#fff;background:#20262e}
+        .ob-top-right{display:flex;align-items:center;gap:8px;margin-left:auto}
 
-        /* sub-tab bar (like RecruitU Jobs/Events) */
-        .ob-subbar{border-top:1px solid var(--border,#eeece9);background:var(--surface,#fff)}
+        /* sub-tab bar */
+        .ob-subbar{border-top:1px solid var(--border,#eef0f2);background:var(--surface,#fff)}
         html[data-theme="dark"] .ob-subbar{background:#14171c;border-top-color:#20242b}
-        .ob-subbar-inner{height:48px;display:flex;align-items:center;gap:4px;padding:0 20px 0 calc(20px + 40px)}
-        .ob-subtab{display:inline-flex;align-items:center;height:34px;padding:0 15px;border-radius:0;font-size:13.5px;font-weight:500;
-          color:var(--text-2,#5b6169);text-decoration:none;background:none;border:1px solid transparent;white-space:nowrap;transition:.12s}
-        .ob-subtab:hover{color:var(--text,#141414);background:var(--hover,#f4f4f5)}
-        .ob-subtab.active{color:var(--text,#141414);background:var(--surface,#fff);font-weight:600;
-          box-shadow:0 1px 2px rgba(16,24,40,.10),0 1px 3px rgba(16,24,40,.08)}
+        .ob-subbar-inner{height:44px;display:flex;align-items:center;gap:2px;padding:0 20px 0 58px}
+        .ob-subtab{display:inline-flex;align-items:center;height:30px;padding:0 13px;border-radius:2px;font-size:13px;font-weight:500;
+          color:#62748e;text-decoration:none;background:none;border:none;white-space:nowrap;transition:.12s}
+        .ob-subtab:hover{color:#1d293d;background:#f8fafc}
+        .ob-subtab.active{color:#1d293d;background:#f1f5f9;font-weight:500}
         html[data-theme="dark"] .ob-subtab{color:#9aa2ad}
         html[data-theme="dark"] .ob-subtab:hover{color:#fff;background:#20262e}
-        html[data-theme="dark"] .ob-subtab.active{color:#fff;background:#20262e;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+        html[data-theme="dark"] .ob-subtab.active{color:#fff;background:#20262e}
 
         /* industry switcher */
         .ob-top-industry{position:relative}
-        .ob-industry-row{display:flex;align-items:center;gap:12px;height:40px;padding:0 10px 0 13px;border-radius:0;
-          background:var(--hover,#f5f4f2);border:1px solid var(--border,#e7e5e2);cursor:pointer;font-family:inherit;transition:.12s}
-        .ob-industry-row:hover,.ob-industry-row.open{border-color:var(--text-3,#c9c6c1);background:var(--surface,#fff)}
-        html[data-theme="dark"] .ob-industry-row{background:#1b2028;border-color:#2a313b}
+        .ob-industry-row{display:flex;align-items:center;gap:8px;height:34px;padding:0 9px 0 12px;border-radius:2px;
+          background:none;border:1px solid var(--border,#e5e7eb);cursor:pointer;font-family:inherit;transition:.12s}
+        .ob-industry-row:hover,.ob-industry-row.open{background:#f8fafc;border-color:#cad5e2}
+        html[data-theme="dark"] .ob-industry-row{border-color:#2a313b}
         html[data-theme="dark"] .ob-industry-row:hover,html[data-theme="dark"] .ob-industry-row.open{background:#20262e;border-color:#38414d}
         .ob-industry-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05}
-        .ob-industry-eyebrow{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-3,#9a9a9a)}
-        .ob-industry-name{font-size:13px;font-weight:600;color:var(--text,#1c1c1c);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .ob-industry-eyebrow{font-size:8.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#90a1b9}
+        .ob-industry-name{font-size:12.5px;font-weight:600;color:#1d293d;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
         html[data-theme="dark"] .ob-industry-name{color:#eef1f4}
-        .ob-industry-pill{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:26px;padding:0 8px;
-          border-radius:0;background:#141414;color:#fff;font-size:11px;font-weight:700;letter-spacing:.3px}
-        html[data-theme="dark"] .ob-industry-pill{background:#eef1f4;color:#141414}
-        .ob-industry-menu{position:absolute;top:calc(100% + 8px);right:0;width:288px;max-height:64vh;overflow:auto;z-index:75;
-          background:var(--surface,#fff);border:1px solid var(--border,#e7e5e2);border-radius:2px;padding:6px;
-          box-shadow:0 18px 44px -14px rgba(30,25,15,.30)}
+        .ob-industry-caret{width:14px;height:14px;color:#90a1b9;flex:0 0 auto}
+        .ob-industry-row.open .ob-industry-caret{transform:rotate(180deg)}
+        .ob-industry-menu{position:absolute;top:calc(100% + 7px);right:0;width:264px;max-height:64vh;overflow:auto;z-index:75;
+          background:var(--surface,#fff);border:1px solid var(--border,#e5e7eb);border-radius:2px;padding:5px;
+          box-shadow:0 12px 32px -10px rgba(15,23,42,.22)}
         html[data-theme="dark"] .ob-industry-menu{background:#181c22;border-color:#272e37}
-        .ob-industry-menu-head{font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-3,#9a9a9a);padding:9px 12px 7px}
-        .ob-industry-menu-item{display:flex;align-items:center;width:100%;padding:11px 13px;border:none;border-radius:0;
-          background:none;cursor:pointer;text-align:left;font-family:inherit;font-size:15px;font-weight:500;color:var(--text,#1c1c1c)}
-        .ob-industry-menu-item:hover{background:var(--hover,#f4f4f5)}
-        html[data-theme="dark"] .ob-industry-menu-item{color:#e9edf1}
-        html[data-theme="dark"] .ob-industry-menu-item:hover{background:#222831}
-        .ob-industry-menu-item.active{background:var(--hover,#f0efec);font-weight:600}
-        html[data-theme="dark"] .ob-industry-menu-item.active{background:#232a33}
+        .ob-industry-menu-head{font-size:10px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:#90a1b9;padding:8px 11px 6px}
+        .ob-industry-menu-item{display:flex;align-items:center;width:100%;padding:9px 11px;border:none;border-radius:2px;
+          background:none;cursor:pointer;text-align:left;font-family:inherit;font-size:13.5px;font-weight:500;color:#314158}
+        .ob-industry-menu-item:hover{background:#f8fafc;color:#1d293d}
+        html[data-theme="dark"] .ob-industry-menu-item{color:#cbd5e1}
+        html[data-theme="dark"] .ob-industry-menu-item:hover{background:#222831;color:#fff}
+        .ob-industry-menu-item.active{background:#f1f5f9;color:#1d293d;font-weight:600}
+        html[data-theme="dark"] .ob-industry-menu-item.active{background:#232a33;color:#fff}
 
-        .ob-top-icon{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:0;
-          background:none;border:1px solid transparent;color:var(--text-2,#5b6169);cursor:pointer;transition:.12s}
-        .ob-top-icon:hover{background:var(--hover,#f4f4f5);color:var(--text,#141414);border-color:var(--border,#e7e5e2)}
+        .ob-top-icon{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:2px;
+          background:none;border:1px solid transparent;color:#62748e;cursor:pointer;transition:.12s}
+        .ob-top-icon:hover{background:#f8fafc;color:#1d293d}
         html[data-theme="dark"] .ob-top-icon{color:#9aa2ad}
-        html[data-theme="dark"] .ob-top-icon:hover{background:#20262e;color:#fff;border-color:#2f3742}
+        html[data-theme="dark"] .ob-top-icon:hover{background:#20262e;color:#fff}
 
         .ob-profile-section{position:relative}
-        .ob-profile-trigger{display:flex;align-items:center;gap:8px;height:40px;padding:0 9px 0 6px;border-radius:0;
-          background:none;border:1px solid var(--border,#e7e5e2);cursor:pointer;font-family:inherit;transition:.12s}
-        .ob-profile-trigger:hover,.ob-profile-trigger.open{background:var(--hover,#f5f4f2)}
+        .ob-profile-trigger{display:flex;align-items:center;gap:7px;height:34px;padding:0 8px 0 5px;border-radius:2px;
+          background:none;border:1px solid var(--border,#e5e7eb);cursor:pointer;font-family:inherit;transition:.12s}
+        .ob-profile-trigger:hover,.ob-profile-trigger.open{background:#f8fafc}
         html[data-theme="dark"] .ob-profile-trigger{border-color:#2a313b}
         html[data-theme="dark"] .ob-profile-trigger:hover,html[data-theme="dark"] .ob-profile-trigger.open{background:#20262e}
-        .ob-avatar{width:30px;height:30px;border-radius:50%;background:#141414;color:#fff;display:flex;align-items:center;justify-content:center;
-          font-size:12px;font-weight:700;overflow:hidden;flex:0 0 auto}
+        .ob-avatar{width:28px;height:28px;border-radius:50%;background:#1d293d;color:#fff;display:flex;align-items:center;justify-content:center;
+          font-size:11px;font-weight:700;overflow:hidden;flex:0 0 auto}
         html[data-theme="dark"] .ob-avatar{background:#eef1f4;color:#141414}
-        .ob-plan-chip{font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:2px 7px;border-radius:0}
+        .ob-plan-chip{font-size:9px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:2px 6px;border-radius:2px}
         .ob-plan-chip--pro{background:#fef3c7;color:#92600e}
         .ob-plan-chip--elite{background:#dbeafe;color:#1e40af}
-        .ob-chev{width:15px;height:15px;color:var(--text-3,#9a9a9a)}
-        .ob-profile-menu{position:absolute;top:calc(100% + 8px);right:0;width:252px;z-index:75;
-          background:var(--surface,#fff);border:1px solid var(--border,#e7e5e2);border-radius:2px;padding:6px;
-          box-shadow:0 18px 44px -14px rgba(30,25,15,.30)}
+        .ob-chev{width:14px;height:14px;color:#90a1b9}
+        .ob-profile-menu{position:absolute;top:calc(100% + 7px);right:0;width:244px;z-index:75;
+          background:var(--surface,#fff);border:1px solid var(--border,#e5e7eb);border-radius:2px;padding:5px;
+          box-shadow:0 12px 32px -10px rgba(15,23,42,.22)}
         html[data-theme="dark"] .ob-profile-menu{background:#181c22;border-color:#272e37}
-        .ob-pm-head{padding:10px 11px 11px;border-bottom:1px solid var(--border,#eee);margin-bottom:5px}
+        .ob-pm-head{padding:9px 11px 10px;border-bottom:1px solid #eef0f2;margin-bottom:4px}
         html[data-theme="dark"] .ob-pm-head{border-bottom-color:#272e37}
-        .ob-pm-name{font-size:14px;font-weight:700;color:var(--text,#1c1c1c);display:flex;align-items:center;gap:8px}
+        .ob-pm-name{font-size:13.5px;font-weight:700;color:#1d293d;display:flex;align-items:center;gap:8px}
         html[data-theme="dark"] .ob-pm-name{color:#fff}
-        .ob-pm-plan-tag{font-size:9.5px;font-weight:700;letter-spacing:.3px;padding:2px 7px;border:1px solid;border-radius:0}
-        .ob-pm-email{font-size:12px;color:var(--text-3,#9a9a9a);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-        .ob-pm-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 11px;border:none;border-radius:0;background:none;
-          cursor:pointer;text-align:left;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--text-2,#4b5158);text-decoration:none}
-        .ob-pm-item svg{width:16px;height:16px;flex:0 0 auto}
-        .ob-pm-item:hover{background:var(--hover,#f4f4f5);color:var(--text,#141414)}
+        .ob-pm-plan-tag{font-size:9px;font-weight:700;letter-spacing:.3px;padding:2px 6px;border:1px solid;border-radius:2px}
+        .ob-pm-email{font-size:11.5px;color:#90a1b9;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .ob-pm-item{display:flex;align-items:center;gap:10px;width:100%;padding:8px 11px;border:none;border-radius:2px;background:none;
+          cursor:pointer;text-align:left;font-family:inherit;font-size:13px;font-weight:500;color:#45556c;text-decoration:none}
+        .ob-pm-item svg{width:15px;height:15px;flex:0 0 auto}
+        .ob-pm-item:hover{background:#f8fafc;color:#1d293d}
         html[data-theme="dark"] .ob-pm-item{color:#aab2bd}
         html[data-theme="dark"] .ob-pm-item:hover{background:#222831;color:#fff}
         .ob-pm-item-accent{color:#b4864a}
         .ob-pm-item-accent:hover{background:#f7efe2;color:#8a6232}
 
-        .ob-top-burger{display:none;align-items:center;justify-content:center;width:40px;height:40px;border-radius:0;
-          background:none;border:none;color:var(--text,#141414);cursor:pointer}
+        .ob-top-burger{display:none;align-items:center;justify-content:center;width:38px;height:38px;border-radius:2px;
+          background:none;border:none;color:#1d293d;cursor:pointer}
         .ob-mobile-overlay{display:none}
         .ob-mobile-drawer{display:none}
         @media (max-width:900px){
@@ -619,24 +569,24 @@ export default function Topbar({ activePage }: SidebarProps) {
           .ob-subbar{display:none}
           .ob-top-industry .ob-industry-text{display:none}
           .ob-top-burger{display:flex}
-          .ob-mobile-overlay{display:block;position:fixed;inset:0;background:rgba(15,15,15,.4);z-index:80}
+          .ob-mobile-overlay{display:block;position:fixed;inset:0;background:rgba(15,23,42,.4);z-index:80}
           .ob-mobile-drawer{display:block;position:fixed;top:0;right:0;bottom:0;width:min(320px,86vw);z-index:81;overflow-y:auto;
-            background:var(--surface,#fff);border-left:1px solid var(--border,#e7e5e2);padding:16px 16px 40px}
+            background:var(--surface,#fff);border-left:1px solid var(--border,#e5e7eb);padding:16px 16px 40px}
           html[data-theme="dark"] .ob-mobile-drawer{background:#14171c;border-left-color:#252b33}
           .ob-md-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-          .ob-md-close{background:none;border:none;font-size:17px;color:var(--text-3,#9a9a9a);cursor:pointer}
+          .ob-md-close{background:none;border:none;font-size:17px;color:#90a1b9;cursor:pointer}
           .ob-md-nav,.ob-md-foot{display:flex;flex-direction:column;gap:2px}
-          .ob-md-foot{margin-top:16px;padding-top:14px;border-top:1px solid var(--border,#eee)}
+          .ob-md-foot{margin-top:16px;padding-top:14px;border-top:1px solid #eef0f2}
           html[data-theme="dark"] .ob-md-foot{border-top-color:#252b33}
-          .ob-md-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-3,#9a9a9a);padding:12px 8px 5px}
-          .ob-md-link{display:block;padding:11px 10px;border-radius:0;font-size:14.5px;font-weight:500;color:var(--text,#1c1c1c);
+          .ob-md-label{font-size:10px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:#90a1b9;padding:12px 8px 5px}
+          .ob-md-link{display:block;padding:10px 10px;border-radius:2px;font-size:14px;font-weight:500;color:#1d293d;
             text-decoration:none;background:none;border:none;text-align:left;cursor:pointer;font-family:inherit;width:100%}
-          .ob-md-link:hover{background:var(--hover,#f4f4f5)}
+          .ob-md-link:hover{background:#f8fafc}
           html[data-theme="dark"] .ob-md-link{color:#e9edf1}
           html[data-theme="dark"] .ob-md-link:hover{background:#222831}
           .ob-md-industry-list{display:flex;flex-direction:column;gap:2px;padding:4px 0 8px}
-          .ob-md-ind{padding:10px 10px;border-radius:0;border:none;background:none;font-size:14px;font-weight:500;color:var(--text,#1c1c1c);text-align:left;cursor:pointer}
-          .ob-md-ind.active{background:var(--hover,#f0efec);font-weight:600}
+          .ob-md-ind{padding:9px 10px;border-radius:2px;border:none;background:none;font-size:13.5px;font-weight:500;color:#314158;text-align:left;cursor:pointer}
+          .ob-md-ind.active{background:#f1f5f9;color:#1d293d;font-weight:600}
         }
       ` }} />
     </>
