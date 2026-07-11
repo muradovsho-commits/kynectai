@@ -66,9 +66,10 @@ body {
   flex: 1;
   min-width: 0;
   margin-left: var(--sidebar-w, 240px);
+  margin-top: var(--topbar-h, 0px);
   padding: 0;
   background: var(--surface);
-  min-height: 100vh;
+  min-height: calc(100vh - var(--topbar-h, 0px));
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

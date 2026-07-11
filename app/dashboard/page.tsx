@@ -1,6 +1,6 @@
 "use client";
 
-import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
 import TutorialOverlay from "../components/TutorialOverlay";
 import { useEffect, useLayoutEffect, useState, useMemo, useCallback } from "react";
 import Link from "next/link";
@@ -772,7 +772,7 @@ export default function DashboardPage() {
 
   return (
     <div className="dash-app">
-      <Sidebar activePage="dashboard" />
+      <Topbar activePage="dashboard" />
 
       <div className="dash-canvas">
         <div className="dash-page">
