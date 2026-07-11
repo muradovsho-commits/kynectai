@@ -507,7 +507,7 @@ export default function Topbar({ activePage }: SidebarProps) {
         html[data-theme="dark"] .ob-industry-name{color:#f0efed}
         .ob-industry-caret{width:14px;height:14px;color:#90a1b9;flex:0 0 auto}
         .ob-industry-row.open .ob-industry-caret{transform:rotate(180deg)}
-        .ob-industry-menu{position:absolute;top:calc(100% + 7px);right:0;width:264px;max-height:64vh;overflow:auto;z-index:75;
+        .ob-industry-menu{position:absolute;top:calc(100% + 4px);right:0;width:264px;max-height:64vh;overflow:auto;z-index:75;
           background:var(--surface,#fff);border:1px solid var(--border,#e5e7eb);border-radius:2px;padding:5px;
           box-shadow:0 12px 32px -10px rgba(15,23,42,.22)}
         html[data-theme="dark"] .ob-industry-menu{background:#222221;border-color:#2a2a29}
@@ -539,7 +539,7 @@ export default function Topbar({ activePage }: SidebarProps) {
         .ob-plan-chip--pro{background:#fef3c7;color:#92600e}
         .ob-plan-chip--elite{background:#dbeafe;color:#1e40af}
         .ob-chev{width:14px;height:14px;color:#90a1b9}
-        .ob-profile-menu{position:absolute;top:calc(100% + 7px);right:0;width:244px;z-index:75;
+        .ob-profile-menu{position:absolute;top:calc(100% + 4px);right:0;width:244px;z-index:75;
           background:var(--surface,#fff);border:1px solid var(--border,#e5e7eb);border-radius:2px;padding:5px;
           box-shadow:0 12px 32px -10px rgba(15,23,42,.22)}
         html[data-theme="dark"] .ob-profile-menu{background:#222221;border-color:#2a2a29}

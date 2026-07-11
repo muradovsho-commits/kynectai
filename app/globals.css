@@ -38,7 +38,9 @@ body { padding-top: var(--topbar-h, 0px); }
    center the capped content containers instead of letting them hug the left. */
 [class$="-page"], [class$="-page-inner"] { margin-left: auto !important; margin-right: auto !important; }
 
-/* ===== SITE FONT TEST: Lato (swap this block + the layout/landing font links to change the whole-site font) ===== */
-*:not(code):not(pre):not(kbd):not(samp):not([class*="mono"]):not([class*="code"]) {
-  font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
-}
+
+/* ===== SITE FONTS: Lato body, Nunito rounded headers, mono for code ===== */
+* { font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important; }
+code, pre, kbd, samp, [class*="mono"], [class*="code-"] { font-family: ui-monospace, 'Geist Mono', SFMono-Regular, Menlo, monospace !important; }
+h1, h2, h3, h4, h5, h6,
+[class*="page-title"], [class*="-title"], [class*="page-head"], [class*="hero"] h1, .mb-title, .st, .cmp-h { font-family: 'Nunito', 'Lato', -apple-system, BlinkMacSystemFont, sans-serif !important; }
