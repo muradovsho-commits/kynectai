@@ -59,6 +59,37 @@ function abbreviateIndustry(full: string): string {
   return full.slice(0, 3).toUpperCase();
 }
 
+type ObNavItem = { key: string; label: string; href: string };
+const NAV_SECTIONS: Record<string, { label: string; items: ObNavItem[] }> = {
+  learn: { label: 'Learn', items: [
+    { key: 'learn', label: 'Learning Hub', href: '/learn' },
+    { key: 'coach', label: 'Coach', href: '/coach' },
+    { key: 'reps', label: 'The Desk', href: '/reps' },
+  ] },
+  prep: { label: 'Prep', items: [
+    { key: 'concept-drills', label: 'Concept Drills', href: '/concept-drills' },
+    { key: 'flashcards', label: 'Interview Flashcards', href: '/flashcards' },
+    { key: 'mock-interview', label: 'Mock Interview', href: '/mock-interview' },
+  ] },
+  networking: { label: 'Networking', items: [
+    { key: 'outreach-tracker', label: 'Outreach Tracker', href: '/outreach-tracker' },
+    { key: 'outreach-writer', label: 'Outreach Writer', href: '/outreach-writer' },
+    { key: 'referral-map', label: 'Referral Map', href: '/referral-map' },
+  ] },
+  insights: { label: 'Insights', items: [
+    { key: 'resume-review', label: 'Resume Review', href: '/resume-review' },
+    { key: 'diagnostic-review', label: 'Diagnostic Review', href: '/diagnostic-review' },
+  ] },
+};
+const SECTION_ORDER = ['learn', 'prep', 'networking', 'insights'];
+function sectionOf(page: string): string | null {
+  if (['concept-drills', 'flashcards', 'mock-interview'].includes(page)) return 'prep';
+  if (['outreach-tracker', 'outreach-writer', 'referral-map'].includes(page)) return 'networking';
+  if (['resume-review', 'diagnostic-review'].includes(page)) return 'insights';
+  if (['learn', 'coach', 'reps', 'interview-prep', 'recruiting-manual'].includes(page) || page.endsWith('-interview-prep')) return 'learn';
+  return null;
+}
+
 export default function Topbar({ activePage }: SidebarProps) {
   // Theme: read from DOM (set by blocking script in layout.tsx before hydrate).
   // Mirrors the original Sidebar pattern - state would cause flicker.
@@ -123,17 +154,15 @@ export default function Topbar({ activePage }: SidebarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Broadcast the sidebar's current width to the rest of the app via --sidebar-w.
-  // Everything else (dashboard canvas, contact-finder main, outreach-writer main)
-  // reads margin-left from this variable, so when collapsed flips, content slides
-  // over to fill the freed space instead of leaving a dead strip.
+  // Which section's sub-tab bar is showing. Defaults to the section of the current page.
+  const [openSection, setOpenSection] = useState<string | null>(() => sectionOf(activePage));
+  useEffect(() => { setOpenSection(sectionOf(activePage)); }, [activePage]);
+  // Zero the left offset; publish the fixed-header height (taller when a sub-tab bar shows).
   useEffect(() => {
     document.documentElement.style.setProperty('--sidebar-w', '0px');
-    document.documentElement.style.setProperty('--topbar-h', '58px');
+    document.documentElement.style.setProperty('--topbar-h', openSection ? '104px' : '56px');
     return () => { document.documentElement.style.setProperty('--topbar-h', '0px'); };
-    try { localStorage.setItem('offerbell_sidebar_collapsed', String(collapsed)); }
-    catch {}
-  }, [collapsed]);
+  }, [openSection]);
 
   const [industryMenuOpen, setIndustryMenuOpen] = useState(false);
   const industryMenuRef = useRef<HTMLDivElement>(null);
@@ -304,9 +333,7 @@ export default function Topbar({ activePage }: SidebarProps) {
   const planLabel = userPlan === 'elite' ? 'Elite plan' : userPlan === 'pro' ? 'Pro plan' : 'Free plan';
   const planColor = userPlan === 'elite' ? '#3b82f6' : userPlan === 'pro' ? '#eab308' : '#9ca3af';
 
-  const prepActive = ['concept-drills','flashcards','mock-interview'].includes(activePage);
-  const netActive = ['outreach-tracker','outreach-writer','referral-map'].includes(activePage);
-  const insightsActive = ['resume-review','diagnostic-review'].includes(activePage);
+  const sub = openSection ? NAV_SECTIONS[openSection] : null;
 
   return (
     <>
@@ -319,41 +346,16 @@ export default function Topbar({ activePage }: SidebarProps) {
           <nav className="ob-top-nav">
             <Link href="/dashboard" className={`ob-top-link${activePage === 'dashboard' ? ' active' : ''}`}>Dashboard</Link>
             <Link href="/ob" className={`ob-top-link${activePage === 'ob' ? ' active' : ''}`}>OB</Link>
-
-            <div className="ob-top-group">
-              <button type="button" className={`ob-top-link ob-top-trigger${learnActive ? ' active' : ''}`}>Learn<svg className="ob-top-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg></button>
-              <div className="ob-top-menu">
-                <Link href="/learn" className="ob-top-menu-item">Learning Hub</Link>
-                <Link href="/coach" className="ob-top-menu-item">Coach</Link>
-                <Link href="/reps" className="ob-top-menu-item">The Desk</Link>
-              </div>
-            </div>
-
-            <div className="ob-top-group">
-              <button type="button" className={`ob-top-link ob-top-trigger${prepActive ? ' active' : ''}`}>Prep<svg className="ob-top-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg></button>
-              <div className="ob-top-menu">
-                <Link href="/concept-drills" className="ob-top-menu-item">Concept Drills</Link>
-                <Link href="/flashcards" className="ob-top-menu-item">Interview Flashcards</Link>
-                <Link href="/mock-interview" className="ob-top-menu-item">Mock Interview</Link>
-              </div>
-            </div>
-
-            <div className="ob-top-group">
-              <button type="button" className={`ob-top-link ob-top-trigger${netActive ? ' active' : ''}`}>Networking<svg className="ob-top-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg></button>
-              <div className="ob-top-menu">
-                <Link href="/outreach-tracker" className="ob-top-menu-item">Outreach Tracker</Link>
-                <Link href="/outreach-writer" className="ob-top-menu-item">Outreach Writer</Link>
-                <Link href="/referral-map" className="ob-top-menu-item">Referral Map</Link>
-              </div>
-            </div>
-
-            <div className="ob-top-group">
-              <button type="button" className={`ob-top-link ob-top-trigger${insightsActive ? ' active' : ''}`}>Insights<svg className="ob-top-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg></button>
-              <div className="ob-top-menu">
-                <Link href="/resume-review" className="ob-top-menu-item">Resume Review</Link>
-                <Link href="/diagnostic-review" className="ob-top-menu-item">Diagnostic Review</Link>
-              </div>
-            </div>
+            {SECTION_ORDER.map(key => (
+              <button
+                key={key}
+                type="button"
+                className={`ob-top-link ob-top-sect${openSection === key ? ' active' : ''}`}
+                onClick={() => setOpenSection(key)}
+              >
+                {NAV_SECTIONS[key].label}
+              </button>
+            ))}
           </nav>
 
           <div className="ob-top-right">
@@ -380,8 +382,7 @@ export default function Topbar({ activePage }: SidebarProps) {
                       className={`ob-industry-menu-item${v === currentVertical ? ' active' : ''}`}
                       onClick={() => selectVertical(v)}
                     >
-                      <span className="ob-industry-menu-pill">{abbreviateIndustry(v)}</span>
-                      <span className="ob-industry-menu-label">{v}</span>
+                      {v}
                     </button>
                   ))}
                 </div>
@@ -427,34 +428,34 @@ export default function Topbar({ activePage }: SidebarProps) {
               </button>
               {menuOpen && (
                 <div className="ob-profile-menu">
-              <div className="ob-pm-head">
-                <div className="ob-pm-name">
-                  {displayName}
-                  {(userPlan === 'pro' || userPlan === 'elite') && (
-                    <span className="ob-pm-plan-tag" style={{ color: planColor, borderColor: planColor }}>{planLabel}</span>
+                  <div className="ob-pm-head">
+                    <div className="ob-pm-name">
+                      {displayName}
+                      {(userPlan === 'pro' || userPlan === 'elite') && (
+                        <span className="ob-pm-plan-tag" style={{ color: planColor, borderColor: planColor }}>{planLabel}</span>
+                      )}
+                    </div>
+                    <div className="ob-pm-email">{userName.email || 'No email on file'}</div>
+                  </div>
+                  {userPlan !== 'elite' && (
+                    <Link className="ob-pm-item ob-pm-item-accent" href="/my-account">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                      Manage plan
+                    </Link>
                   )}
+                  <Link className="ob-pm-item" href="/my-account">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3 1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8 1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+                    Settings
+                  </Link>
+                  <Link className="ob-pm-item" href="/feedback">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    Report a Bug
+                  </Link>
+                  <button className="ob-pm-item" type="button" onClick={signOut}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Sign out
+                  </button>
                 </div>
-                <div className="ob-pm-email">{userName.email || 'No email on file'}</div>
-              </div>
-              {userPlan !== 'elite' && (
-                <Link className="ob-pm-item ob-pm-item-accent" href="/my-account">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  Manage plan
-                </Link>
-              )}
-              <Link className="ob-pm-item" href="/my-account">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3 1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8 1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
-                Settings
-              </Link>
-              <Link className="ob-pm-item" href="/feedback">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                Report a Bug
-              </Link>
-              <button className="ob-pm-item" type="button" onClick={signOut}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                Sign out
-              </button>
-            </div>
               )}
             </div>
 
@@ -463,6 +464,19 @@ export default function Topbar({ activePage }: SidebarProps) {
             </button>
           </div>
         </div>
+
+        {sub && (
+          <div className="ob-subbar">
+            <div className="ob-subbar-inner">
+              {sub.items.map(it => {
+                const on = activePage === it.key || (it.key === 'learn' && learnActive);
+                return (
+                  <Link key={it.key} href={it.href} className={`ob-subtab${on ? ' active' : ''}`}>{it.label}</Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </header>
 
       {mobileOpen && <div className="ob-mobile-overlay" onClick={() => setMobileOpen(false)} />}
@@ -475,27 +489,20 @@ export default function Topbar({ activePage }: SidebarProps) {
           <div className="ob-md-nav">
             <Link href="/dashboard" className="ob-md-link">Dashboard</Link>
             <Link href="/ob" className="ob-md-link">OB</Link>
-            <div className="ob-md-label">Learn</div>
-            <Link href="/learn" className="ob-md-link">Learning Hub</Link>
-            <Link href="/coach" className="ob-md-link">Coach</Link>
-            <Link href="/reps" className="ob-md-link">The Desk</Link>
-            <div className="ob-md-label">Prep</div>
-            <Link href="/concept-drills" className="ob-md-link">Concept Drills</Link>
-            <Link href="/flashcards" className="ob-md-link">Interview Flashcards</Link>
-            <Link href="/mock-interview" className="ob-md-link">Mock Interview</Link>
-            <div className="ob-md-label">Networking</div>
-            <Link href="/outreach-tracker" className="ob-md-link">Outreach Tracker</Link>
-            <Link href="/outreach-writer" className="ob-md-link">Outreach Writer</Link>
-            <Link href="/referral-map" className="ob-md-link">Referral Map</Link>
-            <div className="ob-md-label">Insights</div>
-            <Link href="/resume-review" className="ob-md-link">Resume Review</Link>
-            <Link href="/diagnostic-review" className="ob-md-link">Diagnostic Review</Link>
+            {SECTION_ORDER.map(key => (
+              <div key={key}>
+                <div className="ob-md-label">{NAV_SECTIONS[key].label}</div>
+                {NAV_SECTIONS[key].items.map(it => (
+                  <Link key={it.key} href={it.href} className="ob-md-link">{it.label}</Link>
+                ))}
+              </div>
+            ))}
           </div>
           <div className="ob-md-foot">
             <div className="ob-md-label">Industry</div>
-            <div className="ob-md-industry-grid">
+            <div className="ob-md-industry-list">
               {VERTICALS.map(v => (
-                <button key={v} type="button" className={`ob-md-ind${v === currentVertical ? ' active' : ''}`} onClick={() => selectVertical(v)}>{abbreviateIndustry(v)}</button>
+                <button key={v} type="button" className={`ob-md-ind${v === currentVertical ? ' active' : ''}`} onClick={() => selectVertical(v)}>{v}</button>
               ))}
             </div>
             <button type="button" className="ob-md-link" onClick={() => { toggleTheme(); }}>{isDark ? 'Light mode' : 'Dark mode'}</button>
@@ -506,46 +513,42 @@ export default function Topbar({ activePage }: SidebarProps) {
       )}
 
       <style dangerouslySetInnerHTML={{ __html: `
-        :root { --ob-top-h: 58px; }
-        .ob-top{position:fixed;top:0;left:0;right:0;height:var(--ob-top-h);z-index:60;
-          background:var(--surface,#ffffff);border-bottom:1px solid var(--border,#e7e5e2);
-          display:flex;align-items:center;font-family:inherit}
+        .ob-top{position:fixed;top:0;left:0;right:0;z-index:60;
+          background:var(--surface,#ffffff);border-bottom:1px solid var(--border,#e7e5e2);font-family:inherit}
         html[data-theme="dark"] .ob-top{background:#14171c;border-bottom-color:#252b33}
-        .ob-top-inner{width:100%;height:100%;display:flex;align-items:center;gap:8px;padding:0 20px}
-        .ob-top-brand{display:flex;align-items:center;text-decoration:none;margin-right:8px;flex:0 0 auto}
-        .ob-top-logo{font-weight:800;font-size:19px;letter-spacing:-.5px;color:var(--text,#141414)}
+        .ob-top-inner{height:56px;display:flex;align-items:center;gap:8px;padding:0 20px}
+        .ob-top-brand{display:flex;align-items:center;text-decoration:none;margin-right:10px;flex:0 0 auto}
         .ob-top-logo-img{height:30px;width:auto;display:block}
         html[data-theme="dark"] .ob-top-logo-img{filter:drop-shadow(0 0 0.5px rgba(255,255,255,.9))}
-        html[data-theme="dark"] .ob-top-logo{color:#f2f2f2}
-        .ob-top-nav{display:flex;align-items:center;gap:2px}
-        .ob-top-link{display:inline-flex;align-items:center;gap:5px;height:36px;padding:0 13px;border-radius:9px;
+        .ob-top-nav{display:flex;align-items:center;gap:4px}
+        .ob-top-link{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:0;
           font-size:14px;font-weight:500;color:var(--text-2,#5b6169);text-decoration:none;background:none;border:1px solid transparent;
-          cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .15s,color .15s,border-color .15s}
+          cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .12s,color .12s}
         .ob-top-link:hover{color:var(--text,#141414);background:var(--hover,#f4f4f5)}
         html[data-theme="dark"] .ob-top-link{color:#9aa2ad}
         html[data-theme="dark"] .ob-top-link:hover{color:#fff;background:#20262e}
-        .ob-top-link.active{color:var(--text,#141414);background:var(--surface,#fff);border-color:var(--border,#d7d4cf);
-          box-shadow:0 1px 2px rgba(20,20,20,.05);font-weight:600}
-        html[data-theme="dark"] .ob-top-link.active{color:#fff;background:#20262e;border-color:#2f3742}
-        .ob-top-caret{width:13px;height:13px;opacity:.6;margin-left:-1px}
-        .ob-top-group{position:relative}
-        .ob-top-menu{position:absolute;top:calc(100% - 3px);left:0;min-width:210px;padding:6px;z-index:70;
-          background:var(--surface,#fff);border:1px solid var(--border,#e7e5e2);border-radius:13px;
-          box-shadow:0 16px 40px -12px rgba(30,25,15,.28);opacity:0;visibility:hidden;transform:translateY(4px);
-          transition:opacity .14s ease,transform .14s ease,visibility .14s}
-        html[data-theme="dark"] .ob-top-menu{background:#181c22;border-color:#272e37}
-        .ob-top-group:hover .ob-top-menu,.ob-top-group:focus-within .ob-top-menu{opacity:1;visibility:visible;transform:none}
-        .ob-top-menu-item{display:block;padding:9px 12px;border-radius:9px;font-size:13.5px;font-weight:500;
-          color:var(--text-2,#4b5158);text-decoration:none;white-space:nowrap}
-        .ob-top-menu-item:hover{background:var(--hover,#f4f4f5);color:var(--text,#141414)}
-        html[data-theme="dark"] .ob-top-menu-item{color:#aab2bd}
-        html[data-theme="dark"] .ob-top-menu-item:hover{background:#222831;color:#fff}
+        .ob-top-link.active{color:var(--text,#141414);background:var(--surface,#fff);font-weight:600;border-color:transparent;
+          box-shadow:0 1px 2px rgba(16,24,40,.10),0 1px 3px rgba(16,24,40,.08)}
+        html[data-theme="dark"] .ob-top-link.active{color:#fff;background:#20262e;box-shadow:0 1px 3px rgba(0,0,0,.5)}
         .ob-top-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+
+        /* sub-tab bar (like RecruitU Jobs/Events) */
+        .ob-subbar{border-top:1px solid var(--border,#eeece9);background:var(--surface,#fff)}
+        html[data-theme="dark"] .ob-subbar{background:#14171c;border-top-color:#20242b}
+        .ob-subbar-inner{height:48px;display:flex;align-items:center;gap:4px;padding:0 20px 0 calc(20px + 40px)}
+        .ob-subtab{display:inline-flex;align-items:center;height:34px;padding:0 15px;border-radius:0;font-size:13.5px;font-weight:500;
+          color:var(--text-2,#5b6169);text-decoration:none;background:none;border:1px solid transparent;white-space:nowrap;transition:.12s}
+        .ob-subtab:hover{color:var(--text,#141414);background:var(--hover,#f4f4f5)}
+        .ob-subtab.active{color:var(--text,#141414);background:var(--surface,#fff);font-weight:600;
+          box-shadow:0 1px 2px rgba(16,24,40,.10),0 1px 3px rgba(16,24,40,.08)}
+        html[data-theme="dark"] .ob-subtab{color:#9aa2ad}
+        html[data-theme="dark"] .ob-subtab:hover{color:#fff;background:#20262e}
+        html[data-theme="dark"] .ob-subtab.active{color:#fff;background:#20262e;box-shadow:0 1px 3px rgba(0,0,0,.5)}
 
         /* industry switcher */
         .ob-top-industry{position:relative}
-        .ob-industry-row{display:flex;align-items:center;gap:10px;height:40px;padding:0 8px 0 13px;border-radius:11px;
-          background:var(--hover,#f5f4f2);border:1px solid var(--border,#e7e5e2);cursor:pointer;font-family:inherit;transition:.15s}
+        .ob-industry-row{display:flex;align-items:center;gap:12px;height:40px;padding:0 10px 0 13px;border-radius:0;
+          background:var(--hover,#f5f4f2);border:1px solid var(--border,#e7e5e2);cursor:pointer;font-family:inherit;transition:.12s}
         .ob-industry-row:hover,.ob-industry-row.open{border-color:var(--text-3,#c9c6c1);background:var(--surface,#fff)}
         html[data-theme="dark"] .ob-industry-row{background:#1b2028;border-color:#2a313b}
         html[data-theme="dark"] .ob-industry-row:hover,html[data-theme="dark"] .ob-industry-row.open{background:#20262e;border-color:#38414d}
@@ -554,58 +557,51 @@ export default function Topbar({ activePage }: SidebarProps) {
         .ob-industry-name{font-size:13px;font-weight:600;color:var(--text,#1c1c1c);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
         html[data-theme="dark"] .ob-industry-name{color:#eef1f4}
         .ob-industry-pill{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:26px;padding:0 8px;
-          border-radius:7px;background:#141414;color:#fff;font-size:11px;font-weight:700;letter-spacing:.3px}
+          border-radius:0;background:#141414;color:#fff;font-size:11px;font-weight:700;letter-spacing:.3px}
         html[data-theme="dark"] .ob-industry-pill{background:#eef1f4;color:#141414}
-        .ob-industry-menu{position:absolute;top:calc(100% + 8px);right:0;width:280px;max-height:60vh;overflow:auto;z-index:75;
-          background:var(--surface,#fff);border:1px solid var(--border,#e7e5e2);border-radius:14px;padding:7px;
-          box-shadow:0 20px 48px -14px rgba(30,25,15,.32)}
+        .ob-industry-menu{position:absolute;top:calc(100% + 8px);right:0;width:288px;max-height:64vh;overflow:auto;z-index:75;
+          background:var(--surface,#fff);border:1px solid var(--border,#e7e5e2);border-radius:2px;padding:6px;
+          box-shadow:0 18px 44px -14px rgba(30,25,15,.30)}
         html[data-theme="dark"] .ob-industry-menu{background:#181c22;border-color:#272e37}
-        .ob-industry-menu-head{font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-3,#9a9a9a);padding:8px 10px 6px}
-        .ob-industry-menu-item{display:flex;align-items:center;gap:11px;width:100%;padding:9px 10px;border:none;border-radius:9px;
-          background:none;cursor:pointer;text-align:left;font-family:inherit}
+        .ob-industry-menu-head{font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-3,#9a9a9a);padding:9px 12px 7px}
+        .ob-industry-menu-item{display:flex;align-items:center;width:100%;padding:11px 13px;border:none;border-radius:0;
+          background:none;cursor:pointer;text-align:left;font-family:inherit;font-size:15px;font-weight:500;color:var(--text,#1c1c1c)}
         .ob-industry-menu-item:hover{background:var(--hover,#f4f4f5)}
+        html[data-theme="dark"] .ob-industry-menu-item{color:#e9edf1}
         html[data-theme="dark"] .ob-industry-menu-item:hover{background:#222831}
-        .ob-industry-menu-item.active{background:var(--hover,#f0efec)}
+        .ob-industry-menu-item.active{background:var(--hover,#f0efec);font-weight:600}
         html[data-theme="dark"] .ob-industry-menu-item.active{background:#232a33}
-        .ob-industry-menu-pill{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:26px;padding:0 8px;
-          border-radius:7px;background:#141414;color:#fff;font-size:11px;font-weight:700}
-        html[data-theme="dark"] .ob-industry-menu-pill{background:#eef1f4;color:#141414}
-        .ob-industry-menu-label{font-size:13.5px;font-weight:500;color:var(--text,#1c1c1c)}
-        html[data-theme="dark"] .ob-industry-menu-label{color:#e9edf1}
-        .ob-industry-menu-item.active .ob-industry-menu-label{font-weight:600}
 
-        /* dark toggle icon */
-        .ob-top-icon{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;
-          background:none;border:1px solid transparent;color:var(--text-2,#5b6169);cursor:pointer;transition:.15s}
+        .ob-top-icon{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:0;
+          background:none;border:1px solid transparent;color:var(--text-2,#5b6169);cursor:pointer;transition:.12s}
         .ob-top-icon:hover{background:var(--hover,#f4f4f5);color:var(--text,#141414);border-color:var(--border,#e7e5e2)}
         html[data-theme="dark"] .ob-top-icon{color:#9aa2ad}
         html[data-theme="dark"] .ob-top-icon:hover{background:#20262e;color:#fff;border-color:#2f3742}
 
-        /* profile */
         .ob-profile-section{position:relative}
-        .ob-profile-trigger{display:flex;align-items:center;gap:8px;height:40px;padding:0 8px 0 6px;border-radius:100px;
-          background:none;border:1px solid var(--border,#e7e5e2);cursor:pointer;font-family:inherit;transition:.15s}
+        .ob-profile-trigger{display:flex;align-items:center;gap:8px;height:40px;padding:0 9px 0 6px;border-radius:0;
+          background:none;border:1px solid var(--border,#e7e5e2);cursor:pointer;font-family:inherit;transition:.12s}
         .ob-profile-trigger:hover,.ob-profile-trigger.open{background:var(--hover,#f5f4f2)}
         html[data-theme="dark"] .ob-profile-trigger{border-color:#2a313b}
         html[data-theme="dark"] .ob-profile-trigger:hover,html[data-theme="dark"] .ob-profile-trigger.open{background:#20262e}
         .ob-avatar{width:30px;height:30px;border-radius:50%;background:#141414;color:#fff;display:flex;align-items:center;justify-content:center;
           font-size:12px;font-weight:700;overflow:hidden;flex:0 0 auto}
         html[data-theme="dark"] .ob-avatar{background:#eef1f4;color:#141414}
-        .ob-plan-chip{font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:2px 7px;border-radius:100px}
+        .ob-plan-chip{font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:2px 7px;border-radius:0}
         .ob-plan-chip--pro{background:#fef3c7;color:#92600e}
         .ob-plan-chip--elite{background:#dbeafe;color:#1e40af}
-        .ob-chev{width:15px;height:15px;color:var(--text-3,#9a9a9a);margin-right:2px}
-        .ob-profile-menu{position:absolute;top:calc(100% + 8px);right:0;width:250px;z-index:75;
-          background:var(--surface,#fff);border:1px solid var(--border,#e7e5e2);border-radius:14px;padding:7px;
-          box-shadow:0 20px 48px -14px rgba(30,25,15,.32)}
+        .ob-chev{width:15px;height:15px;color:var(--text-3,#9a9a9a)}
+        .ob-profile-menu{position:absolute;top:calc(100% + 8px);right:0;width:252px;z-index:75;
+          background:var(--surface,#fff);border:1px solid var(--border,#e7e5e2);border-radius:2px;padding:6px;
+          box-shadow:0 18px 44px -14px rgba(30,25,15,.30)}
         html[data-theme="dark"] .ob-profile-menu{background:#181c22;border-color:#272e37}
         .ob-pm-head{padding:10px 11px 11px;border-bottom:1px solid var(--border,#eee);margin-bottom:5px}
         html[data-theme="dark"] .ob-pm-head{border-bottom-color:#272e37}
         .ob-pm-name{font-size:14px;font-weight:700;color:var(--text,#1c1c1c);display:flex;align-items:center;gap:8px}
         html[data-theme="dark"] .ob-pm-name{color:#fff}
-        .ob-pm-plan-tag{font-size:9.5px;font-weight:700;letter-spacing:.3px;padding:2px 7px;border:1px solid;border-radius:100px}
+        .ob-pm-plan-tag{font-size:9.5px;font-weight:700;letter-spacing:.3px;padding:2px 7px;border:1px solid;border-radius:0}
         .ob-pm-email{font-size:12px;color:var(--text-3,#9a9a9a);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-        .ob-pm-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 11px;border:none;border-radius:9px;background:none;
+        .ob-pm-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 11px;border:none;border-radius:0;background:none;
           cursor:pointer;text-align:left;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--text-2,#4b5158);text-decoration:none}
         .ob-pm-item svg{width:16px;height:16px;flex:0 0 auto}
         .ob-pm-item:hover{background:var(--hover,#f4f4f5);color:var(--text,#141414)}
@@ -614,13 +610,13 @@ export default function Topbar({ activePage }: SidebarProps) {
         .ob-pm-item-accent{color:#b4864a}
         .ob-pm-item-accent:hover{background:#f7efe2;color:#8a6232}
 
-        /* mobile */
-        .ob-top-burger{display:none;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;
+        .ob-top-burger{display:none;align-items:center;justify-content:center;width:40px;height:40px;border-radius:0;
           background:none;border:none;color:var(--text,#141414);cursor:pointer}
         .ob-mobile-overlay{display:none}
         .ob-mobile-drawer{display:none}
         @media (max-width:900px){
           .ob-top-nav{display:none}
+          .ob-subbar{display:none}
           .ob-top-industry .ob-industry-text{display:none}
           .ob-top-burger{display:flex}
           .ob-mobile-overlay{display:block;position:fixed;inset:0;background:rgba(15,15,15,.4);z-index:80}
@@ -633,15 +629,14 @@ export default function Topbar({ activePage }: SidebarProps) {
           .ob-md-foot{margin-top:16px;padding-top:14px;border-top:1px solid var(--border,#eee)}
           html[data-theme="dark"] .ob-md-foot{border-top-color:#252b33}
           .ob-md-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-3,#9a9a9a);padding:12px 8px 5px}
-          .ob-md-link{display:block;padding:11px 10px;border-radius:9px;font-size:14.5px;font-weight:500;color:var(--text,#1c1c1c);
+          .ob-md-link{display:block;padding:11px 10px;border-radius:0;font-size:14.5px;font-weight:500;color:var(--text,#1c1c1c);
             text-decoration:none;background:none;border:none;text-align:left;cursor:pointer;font-family:inherit;width:100%}
           .ob-md-link:hover{background:var(--hover,#f4f4f5)}
           html[data-theme="dark"] .ob-md-link{color:#e9edf1}
           html[data-theme="dark"] .ob-md-link:hover{background:#222831}
-          .ob-md-industry-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:4px 8px 8px}
-          .ob-md-ind{padding:9px 4px;border-radius:8px;border:1px solid var(--border,#e7e5e2);background:none;font-size:11px;font-weight:700;
-            color:var(--text-2,#5b6169);cursor:pointer}
-          .ob-md-ind.active{background:#141414;color:#fff;border-color:#141414}
+          .ob-md-industry-list{display:flex;flex-direction:column;gap:2px;padding:4px 0 8px}
+          .ob-md-ind{padding:10px 10px;border-radius:0;border:none;background:none;font-size:14px;font-weight:500;color:var(--text,#1c1c1c);text-align:left;cursor:pointer}
+          .ob-md-ind.active{background:var(--hover,#f0efec);font-weight:600}
         }
       ` }} />
     </>
