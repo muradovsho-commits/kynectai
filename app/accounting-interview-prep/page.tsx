@@ -1,6 +1,6 @@
 'use client';
 
-import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -80,7 +80,7 @@ export default function AccountingInterviewPrepPage() {
 
     return (
     <div className="app">
-      <Sidebar activePage="accounting-interview-prep" />
+      <Topbar activePage="accounting-interview-prep" />
 
       <main className="main ib-guide-main acct-theme" ref={contentRef}>
         <div className="ib-back-row">

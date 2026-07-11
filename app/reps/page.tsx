@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '../components/Sidebar';
+import Topbar from '../components/Topbar';
 import '../contact-finder/contact-finder.css'; // global color vars + full-screen session theming
 import './desk.css'; // The Desk landing + scenario-list chrome
 import { REPS_TRACKS, REPS_SCENARIOS, type RepsTrackId, type Scenario, type Persona, type ArtifactSpec } from './reps-data';
@@ -144,7 +144,7 @@ export default function RepsPage() {
   if (planStatus === 'loading') {
     return (
       <div className="desk-app">
-        <Sidebar activePage="reps" />
+        <Topbar activePage="reps" />
         <main className="desk-canvas"><div className="desk-page" /></main>
       </div>
     );
@@ -154,7 +154,7 @@ export default function RepsPage() {
   if (planStatus === 'gated') {
     return (
       <div className="desk-app">
-        <Sidebar activePage="reps" />
+        <Topbar activePage="reps" />
         <main className="desk-canvas">
           <div className="desk-page">
             <div className="desk-page-inner">
@@ -170,7 +170,7 @@ export default function RepsPage() {
   if (scenario) {
     return (
       <div className="desk-app">
-        <Sidebar activePage="reps" />
+        <Topbar activePage="reps" />
         <main className="desk-canvas">
           <SessionView key={scenario.id} scenario={scenario} onExit={() => setActiveScenarioId(null)} />
         </main>
@@ -182,7 +182,7 @@ export default function RepsPage() {
   // empty state when the vertical has no Desk track yet.
   return (
     <div className="desk-app">
-      <Sidebar activePage="reps" />
+      <Topbar activePage="reps" />
       <main className="desk-canvas">
         <div className="desk-page">
           <div className="desk-page-inner">

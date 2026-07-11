@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { ConvexHttpClient } from 'convex/browser';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
-import Sidebar from '../components/Sidebar';
+import Topbar from '../components/Topbar';
 import '../contact-finder/contact-finder.css';
 import './resume.css';
 
@@ -523,7 +523,7 @@ export default function ResumeReviewPage() {
 
   return (
     <div className="rr-app">
-      <Sidebar activePage="resume-review" />
+      <Topbar activePage="resume-review" />
       <div className="rr-canvas">
         <div className="rr-page">
           <div className="rr-page-inner">

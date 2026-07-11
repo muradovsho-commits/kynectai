@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Sidebar from '../components/Sidebar';
+import Topbar from '../components/Topbar';
 import './quiz.css';
 
 // Careers
@@ -212,7 +212,7 @@ export default function QuizPage() {
 
   return (
     <div className="app">
-      <Sidebar activePage="learn" />
+      <Topbar activePage="learn" />
       <main className="quiz-main">
         <div className="quiz-container">
           <Link href="/learn" className="quiz-back-link">

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
-import Sidebar from '../components/Sidebar';
+import Topbar from '../components/Topbar';
 import { useUserPlan } from '../lib/usePlan';
 import './diagnostic.css';
 import { TRACKS as DRILL_TRACKS, DrillQ } from '../concept-drills/drill-data';
@@ -355,7 +355,7 @@ export default function DiagnosticReviewPage() {
     const isTimeOut = selected === -1;
     return (
       <div className="diag-app">
-        <Sidebar activePage="diagnostic-review" />
+        <Topbar activePage="diagnostic-review" />
         <div className="diag-canvas">
           <div className="diag-page">
             <div className="diag-assess-page">
@@ -466,7 +466,7 @@ export default function DiagnosticReviewPage() {
 
     return (
       <div className="diag-app">
-        <Sidebar activePage="diagnostic-review" />
+        <Topbar activePage="diagnostic-review" />
         <div className="diag-canvas">
           <div className="diag-page">
             <div className="diag-page-inner">
@@ -576,7 +576,7 @@ export default function DiagnosticReviewPage() {
     // Fallback if sidebar industry doesn't map to a known track
     return (
       <div className="diag-app">
-        <Sidebar activePage="diagnostic-review" />
+        <Topbar activePage="diagnostic-review" />
         <div className="diag-canvas">
           <div className="diag-page">
             <div className="diag-page-inner">
@@ -606,7 +606,7 @@ export default function DiagnosticReviewPage() {
 
   return (
     <div className="diag-app">
-      <Sidebar activePage="diagnostic-review" />
+      <Topbar activePage="diagnostic-review" />
       <div className="diag-canvas">
         <div className="diag-page">
           <div className="diag-page-inner">

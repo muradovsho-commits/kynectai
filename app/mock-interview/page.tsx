@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useMutation } from 'convex/react';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../../convex/_generated/api';
-import Sidebar from '../components/Sidebar';
+import Topbar from '../components/Topbar';
 import { useIsPro } from '../lib/usePlan';
 import './mock-interview.css';
 import { IB_FLASHCARDS, Flashcard } from '../flashcards/ib-flashcard-data';
@@ -881,7 +881,7 @@ export default function MockInterviewPage() {
 
   return (
     <div className="mi-app">
-      <Sidebar activePage="mock-interview" />
+      <Topbar activePage="mock-interview" />
       <div className="mi-canvas">
         <div className="mi-page">
 

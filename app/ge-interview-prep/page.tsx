@@ -1,6 +1,6 @@
 'use client';
 
-import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -80,7 +80,7 @@ export default function GEInterviewPrepPage() {
 
     return (
     <div className="app">
-      <Sidebar activePage="ge-interview-prep" />
+      <Topbar activePage="ge-interview-prep" />
 
       <main className="main ib-guide-main ge-theme" ref={contentRef}>
         <div className="ib-back-row">

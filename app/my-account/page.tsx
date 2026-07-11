@@ -1,6 +1,6 @@
 'use client';
 
-import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
 import TutorialOverlay from "../components/TutorialOverlay";
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import Link from 'next/link';
@@ -489,7 +489,7 @@ export default function MyAccountPage() {
 
   return (
     <div className="app">
-      <Sidebar activePage="my-account" />
+      <Topbar activePage="my-account" />
 
       <main className="main" style={{ padding: '32px 36px 80px' }}>
         <div style={{ maxWidth: 1180, margin: '0 auto' }}>

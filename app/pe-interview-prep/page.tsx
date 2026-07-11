@@ -1,6 +1,6 @@
 'use client';
 
-import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -102,7 +102,7 @@ export default function PEInterviewPrepPage() {
 
     return (
     <div className="app">
-      <Sidebar activePage="pe-interview-prep" />
+      <Topbar activePage="pe-interview-prep" />
 
       <main className="main ib-guide-main pe-theme" ref={contentRef}>
         {/* Back link */}

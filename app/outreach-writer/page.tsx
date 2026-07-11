@@ -1,6 +1,6 @@
 'use client';
 
-import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
 import ExtensionInstallPrompt from "../components/ExtensionInstallPrompt";
 import { useState, useEffect, useLayoutEffect } from 'react';
 import { useQuery, useMutation } from 'convex/react';
@@ -410,7 +410,7 @@ Rules:
 
   return (
     <div className="ow-app">
-      <Sidebar activePage="outreach-writer" />
+      <Topbar activePage="outreach-writer" />
       <div className="ow-canvas">
         <div className="ow-page">
           <div className="ow-page-inner">

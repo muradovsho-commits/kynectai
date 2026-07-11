@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback, useLayoutEffect, useRef, Suspense } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
-import Sidebar from '../components/Sidebar';
+import Topbar from '../components/Topbar';
 import { useUserPlan } from '../lib/usePlan';
 import './drills.css';
 import { TRACKS as DRILL_TRACKS, DrillQ } from './drill-data';
@@ -591,7 +591,7 @@ function ConceptDrillsInner() {
   if (phase === 'drilling' && infinite && !currentQ) {
     return (
       <div className="cd-app">
-        <Sidebar activePage="concept-drills" />
+        <Topbar activePage="concept-drills" />
         <main className="cd-canvas">
           <div className="cd-page">
             <div className="cd-drill-inner">
@@ -629,7 +629,7 @@ function ConceptDrillsInner() {
     const drillProgress = ((idx + 1) / questions.length) * 100;
     return (
       <div className="cd-app">
-        <Sidebar activePage="concept-drills" />
+        <Topbar activePage="concept-drills" />
         <main className="cd-canvas">
           <div className="cd-page">
             <div className="cd-drill-inner">
@@ -753,7 +753,7 @@ function ConceptDrillsInner() {
     const finalAccuracy = totalAnswered > 0 ? Math.round((correctCount / totalAnswered) * 100) : 0;
     return (
       <div className="cd-app">
-        <Sidebar activePage="concept-drills" />
+        <Topbar activePage="concept-drills" />
         <main className="cd-canvas">
           <div className="cd-page">
             <div className="cd-done-inner">
@@ -796,7 +796,7 @@ function ConceptDrillsInner() {
   // ─── Landing phase: tabs ─────────────────────────────────────────────────
   return (
     <div className="cd-app">
-      <Sidebar activePage="concept-drills" />
+      <Topbar activePage="concept-drills" />
       <main className="cd-canvas">
         <div className="cd-page">
           <div className="cd-page-inner">

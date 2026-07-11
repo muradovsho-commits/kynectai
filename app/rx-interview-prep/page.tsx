@@ -1,6 +1,6 @@
 'use client';
 
-import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -100,7 +100,7 @@ export default function RXInterviewPrepPage() {
 
     return (
     <div className="app">
-      <Sidebar activePage="rx-interview-prep" />
+      <Topbar activePage="rx-interview-prep" />
 
       <main className="main ib-guide-main rx-theme" ref={contentRef}>
         <div className="ib-back-row">

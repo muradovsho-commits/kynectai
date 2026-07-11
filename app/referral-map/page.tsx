@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { useRouter } from 'next/navigation';
-import Sidebar from '../components/Sidebar';
+import Topbar from '../components/Topbar';
 import '../contact-finder/contact-finder.css';
 import { PLAN_LIMITS } from '../lib/plan';
 import { useUserPlan } from '../lib/usePlan';
@@ -575,7 +575,7 @@ export default function ReferralMapPage() {
 
   return (
     <div className="rm-app">
-      <Sidebar activePage="referral-map" />
+      <Topbar activePage="referral-map" />
       <div className="rm-canvas">
         <div className="rm-page">
           <div className="rm-page-inner">

@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Sidebar from '../components/Sidebar';
+import Topbar from '../components/Topbar';
 import TutorialOverlay from '../components/TutorialOverlay';
 import { useIsPro } from '../lib/usePlan';
 import './learn.css';
@@ -140,7 +140,7 @@ export default function LearnPage() {
   return (
     <div className="learn-app">
       {/* ── Sidebar ── */}
-      <Sidebar activePage="learn" />
+      <Topbar activePage="learn" />
 
       {/* ── Main Content (frame area + rounded card pattern) ── */}
       <main className="learn-canvas">

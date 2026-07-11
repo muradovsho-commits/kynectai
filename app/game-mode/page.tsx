@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import Sidebar from '../components/Sidebar';
+import Topbar from '../components/Topbar';
 import '../contact-finder/contact-finder.css';
 import './game.css';
 import { GAME_BANKS, MCQ } from './game-data';
@@ -143,7 +143,7 @@ export default function GameModePage() {
 
   // ═══ MENU ═══
   if (phase === 'menu') return (
-    <div className="app"><Sidebar activePage="game-mode" />
+    <div className="app"><Topbar activePage="game-mode" />
       <main className="main gm-main">
         <div className="gm-menu">
           <div className="gm-badge">⚡ Game Mode</div>
@@ -179,7 +179,7 @@ export default function GameModePage() {
 
   // ═══ COUNTDOWN ═══
   if (phase === 'countdown') return (
-    <div className="app"><Sidebar activePage="game-mode" />
+    <div className="app"><Topbar activePage="game-mode" />
       <main className="main gm-main">
         <div className="gm-countdown">
           <div className="gm-cd-track">{track}</div>
@@ -191,7 +191,7 @@ export default function GameModePage() {
 
   // ═══ PLAYING ═══
   if (phase === 'playing') return (
-    <div className="app"><Sidebar activePage="game-mode" />
+    <div className="app"><Topbar activePage="game-mode" />
       <main className="main gm-main gm-play-main">
         <div className="gm-play">
           <div className="gm-top-bar">
@@ -252,7 +252,7 @@ export default function GameModePage() {
   const isNewHS = highScores[track] != null && score >= highScores[track] && score > 0;
 
   return (
-    <div className="app"><Sidebar activePage="game-mode" />
+    <div className="app"><Topbar activePage="game-mode" />
       <main className="main gm-main">
         <div className="gm-results">
           {isNewHS && <div className="gm-new-hs">🏆 New High Score!</div>}

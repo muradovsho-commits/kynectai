@@ -1,6 +1,6 @@
 'use client';
 
-import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation } from 'convex/react';
@@ -1199,7 +1199,7 @@ export default function CoachPage() {
   // Show nothing until plan status is confirmed
   if (!planLoaded) return (
     <div className="coach-app">
-      <Sidebar activePage="coach" />
+      <Topbar activePage="coach" />
       <main className="coach-canvas">
         <div className="coach-page" />
       </main>
@@ -1223,7 +1223,7 @@ export default function CoachPage() {
 
   return (
     <div className="coach-app">
-      <Sidebar activePage="coach" />
+      <Topbar activePage="coach" />
 
       <main className="coach-canvas">
         <div className="coach-page">

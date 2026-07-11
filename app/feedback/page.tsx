@@ -1,5 +1,5 @@
 'use client';
-import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation } from 'convex/react';
@@ -79,7 +79,7 @@ export default function FeedbackPage() {
 
   return (
     <div className="app">
-      <Sidebar activePage="feedback" />
+      <Topbar activePage="feedback" />
       <main className="main">
         <div style={{ maxWidth: '680px', margin: '0 auto', padding: '0 16px' }}>
           <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: '28px', color: 'var(--text)', margin: '0 0 6px' }}>Feedback</h1>

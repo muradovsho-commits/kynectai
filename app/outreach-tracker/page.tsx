@@ -1,6 +1,6 @@
 'use client';
 
-import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
 import ExtensionInstallPrompt from "../components/ExtensionInstallPrompt";
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useQuery, useMutation } from 'convex/react';
@@ -397,7 +397,7 @@ export default function OutreachTrackerPage() {
     <>
       <div className="app">
         {/* SIDEBAR */}
-        <Sidebar activePage="outreach-tracker" />
+        <Topbar activePage="outreach-tracker" />
 
         {/* MAIN */}
         <main className="main" style={{ padding: '32px 36px' }}>

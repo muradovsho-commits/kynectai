@@ -1,6 +1,6 @@
 'use client';
 
-import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -96,7 +96,7 @@ export default function ConsultingInterviewPrepPage() {
 
     return (
     <div className="app">
-      <Sidebar activePage="consulting-interview-prep" />
+      <Topbar activePage="consulting-interview-prep" />
 
       <main className="main ib-guide-main cons-theme" ref={contentRef}>
         <div className="ib-back-row">

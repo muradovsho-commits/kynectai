@@ -1,6 +1,6 @@
 "use client";
 
-import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -310,7 +310,7 @@ export default function ProfilePage() {
 
   return (
     <div className="app profile-app">
-      <Sidebar activePage="profile" />
+      <Topbar activePage="profile" />
 
       <main className="main profile-main">
         <div className="topbar profile-topbar">

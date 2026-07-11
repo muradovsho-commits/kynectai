@@ -1,6 +1,6 @@
 'use client';
 
-import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import '../contact-finder/contact-finder.css';
@@ -331,7 +331,7 @@ export default function RecruitingManualPage() {
 
   return (
     <div className="app">
-      <Sidebar activePage="recruiting-manual" />
+      <Topbar activePage="recruiting-manual" />
 
       <main className="main" style={{ padding: '32px 36px 80px', flex: 1, height: '100vh', overflowY: 'auto' }}>
         <div style={{ maxWidth: 1180, margin: '0 auto', fontFamily: "'Sora', sans-serif" }}>

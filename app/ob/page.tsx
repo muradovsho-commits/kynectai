@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '../components/Sidebar';
+import Topbar from '../components/Topbar';
 import '../contact-finder/contact-finder.css'; // global color vars + frame theming
 import '../reps/desk.css';                      // .desk-app / .desk-canvas / .desk-page frame
 
@@ -49,7 +49,7 @@ export default function ObPage() {
   if (planStatus === 'loading') {
     return (
       <div className="desk-app">
-        <Sidebar activePage="ob" />
+        <Topbar activePage="ob" />
         <main className="desk-canvas"><div className="desk-page" /></main>
       </div>
     );
@@ -57,7 +57,7 @@ export default function ObPage() {
 
   return (
     <div className="desk-app">
-      <Sidebar activePage="ob" />
+      <Topbar activePage="ob" />
       <main className="desk-canvas">
         <div className="desk-page">
           <div className="desk-page-inner">

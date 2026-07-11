@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '../../components/Sidebar';
+import Topbar from '../../components/Topbar';
 import '../../contact-finder/contact-finder.css';
 import { REPS_SCENARIOS } from '../reps-data';
 import {
@@ -143,12 +143,12 @@ export default function CareerPage() {
   }, [router]);
 
   if (!planAuthorized || phase === 'loading') {
-    return <div className="app"><Sidebar activePage="reps" /><main className="main" style={{ padding: 32 }} /></div>;
+    return <div className="app"><Topbar activePage="reps" /><main className="main" style={{ padding: 32 }} /></div>;
   }
 
   return (
     <div className="app">
-      <Sidebar activePage="reps" />
+      <Topbar activePage="reps" />
       <main className="main" style={{ padding: phase === 'playing' ? 0 : '28px 32px', maxWidth: phase === 'playing' ? '100%' : 1100 }}>
         {phase === 'menu' && (
           <CareerMenu

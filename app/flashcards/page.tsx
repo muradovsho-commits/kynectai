@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { useIsPro } from '../lib/usePlan';
-import Sidebar from '../components/Sidebar';
+import Topbar from '../components/Topbar';
 import './flashcards.css';
 import { IB_FLASHCARDS, Flashcard } from './ib-flashcard-data';
 import { PE_FLASHCARDS } from './pe-flashcard-data';
@@ -406,7 +406,7 @@ function FlashcardsContent() {
 
     return (
       <div className="flash-app">
-        <Sidebar activePage="flashcards" />
+        <Topbar activePage="flashcards" />
         <main className="flash-canvas">
           <div className="flash-page">
             <div className="flash-page-inner">
@@ -551,7 +551,7 @@ function FlashcardsContent() {
   // ═══ DRILL VIEW ═══
   return (
     <div className="flash-app">
-      <Sidebar activePage="flashcards" />
+      <Topbar activePage="flashcards" />
       <main className="flash-canvas">
         <div className="flash-page">
           <div className="flash-page-inner">

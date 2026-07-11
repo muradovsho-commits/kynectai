@@ -30,3 +30,6 @@ body {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* Fixed topbar (Topbar.tsx) offset: pushes all authed page content below the bar. */
+body { padding-top: var(--topbar-h, 0px); }

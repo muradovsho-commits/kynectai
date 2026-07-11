@@ -130,6 +130,7 @@ export default function Topbar({ activePage }: SidebarProps) {
   useEffect(() => {
     document.documentElement.style.setProperty('--sidebar-w', '0px');
     document.documentElement.style.setProperty('--topbar-h', '58px');
+    return () => { document.documentElement.style.setProperty('--topbar-h', '0px'); };
     try { localStorage.setItem('offerbell_sidebar_collapsed', String(collapsed)); }
     catch {}
   }, [collapsed]);
@@ -312,7 +313,7 @@ export default function Topbar({ activePage }: SidebarProps) {
       <header className="ob-top">
         <div className="ob-top-inner">
           <Link href="/dashboard" className="ob-top-brand">
-            <span className="ob-top-logo">OfferBell</span>
+            <img src="/ob-logo.png" alt="OfferBell" className="ob-top-logo-img" />
           </Link>
 
           <nav className="ob-top-nav">
@@ -468,7 +469,7 @@ export default function Topbar({ activePage }: SidebarProps) {
       {mobileOpen && (
         <div className="ob-mobile-drawer">
           <div className="ob-md-head">
-            <span className="ob-top-logo">OfferBell</span>
+            <img src="/ob-logo.png" alt="OfferBell" className="ob-top-logo-img" />
             <button type="button" className="ob-md-close" onClick={() => setMobileOpen(false)} aria-label="Close">&#10005;</button>
           </div>
           <div className="ob-md-nav">
@@ -513,6 +514,8 @@ export default function Topbar({ activePage }: SidebarProps) {
         .ob-top-inner{width:100%;height:100%;display:flex;align-items:center;gap:8px;padding:0 20px}
         .ob-top-brand{display:flex;align-items:center;text-decoration:none;margin-right:8px;flex:0 0 auto}
         .ob-top-logo{font-weight:800;font-size:19px;letter-spacing:-.5px;color:var(--text,#141414)}
+        .ob-top-logo-img{height:30px;width:auto;display:block}
+        html[data-theme="dark"] .ob-top-logo-img{filter:drop-shadow(0 0 0.5px rgba(255,255,255,.9))}
         html[data-theme="dark"] .ob-top-logo{color:#f2f2f2}
         .ob-top-nav{display:flex;align-items:center;gap:2px}
         .ob-top-link{display:inline-flex;align-items:center;gap:5px;height:36px;padding:0 13px;border-radius:9px;

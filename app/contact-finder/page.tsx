@@ -1,6 +1,6 @@
 "use client";
 
-import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
 
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
@@ -70,7 +70,7 @@ export default function ContactFinderPage() {
 
   return (
     <div className="app">
-      <Sidebar activePage="contact-finder" />
+      <Topbar activePage="contact-finder" />
 
       <main className="main" style={{ background: 'var(--bg)', display: 'flex', justifyContent: 'center', padding: '60px 24px', alignItems: 'flex-start' }}>
         <div className="cf-layout">
