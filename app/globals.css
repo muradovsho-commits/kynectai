@@ -44,3 +44,21 @@ body { padding-top: var(--topbar-h, 0px); }
 code, pre, kbd, samp, [class*="mono"], [class*="code-"] { font-family: ui-monospace, 'Geist Mono', SFMono-Regular, Menlo, monospace !important; }
 h1, h2, h3, h4, h5, h6,
 [class*="page-title"], [class*="-title"], [class*="page-head"], [class*="hero"] h1, .mb-title, .st, .cmp-h { font-family: 'Nunito', 'Lato', -apple-system, BlinkMacSystemFont, sans-serif !important; }
+
+/* ===== ICONS: brand bronze (tertiary accent). Explicit per-context icon colors still win. ===== */
+svg { color: #b4864a; }
+
+/* ===== READING SURFACES: soft, legible face for flashcards / drills / module bodies ===== */
+.flash-question,.flash-answer,.flash-back,.flash-grid-front,.flash-grid-back,[class*="flash-card"],[class*="drill-scenario"],[class*="drill-q"],[class*="drill-option-text"],[class*="drill-exp"],[class*="guide-body"],[class*="prep-item-body"],[class*="expand-body"],[class*="-card-body"] {
+  font-family: 'Nunito Sans', 'Lato', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* ===== LIGHT MODE: warmer, softer surfaces so it reads intentional, not flat/generic ===== */
+html:not([data-theme="dark"]) [class$="-app"] {
+  --bg: #f5f3ef !important;
+  --frame: #efece6 !important;
+  --surface: #fdfcfb !important;
+  --surface-2: #f6f4f0 !important;
+  --border: #ebe7e0 !important;
+  --border-2: #e2ddd4 !important;
+}
