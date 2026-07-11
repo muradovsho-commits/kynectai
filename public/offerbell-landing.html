@@ -345,7 +345,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:960px;margin:0 auto}
 .p-card{border:1.5px solid var(--border);border-radius:16px;padding:30px;background:var(--white);position:relative}
 .p-card.feat{border-color:var(--bronze)}
-.p-card.elite{border-color:var(--bronze)}
+.p-card.elite{border-color:#2563eb}
 .p-badge{position:absolute;top:-11px;right:20px;background:var(--bronze-deep);color:var(--white);font-size:9px;font-weight:700;padding:3px 12px;border-radius:100px;letter-spacing:0.3px}
 .p-tier{font-size:12px;font-weight:700;margin-bottom:6px;letter-spacing:0.3px}
 .p-price{font-family:'Instrument Serif',serif;font-size:44px;letter-spacing:-2px;line-height:1;margin-bottom:4px}
@@ -359,7 +359,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 .p-btn-outline{border:1.5px solid var(--border);color:var(--black);background:var(--white)}
 .p-btn-outline:hover{border-color:var(--black)}
 .p-btn-solid{background:var(--black);color:var(--white);border:none}
-.p-btn-blue{background:var(--black);color:var(--white);border:none}
+.p-btn-blue{background:#2563eb;color:var(--white);border:none}
 
 /* ═══ FAQ ═══ */
 .faq{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:88px 52px}
@@ -517,7 +517,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 .cmp-old .cmp-row p{color:#89857f}
 .cmp-new .cmp-row p{color:#6d6d6d}
 .cmp-line{position:absolute;top:0;bottom:0;left:18%;width:2px;background:var(--bronze);transform:translateX(-1px);z-index:4;pointer-events:none;box-shadow:0 0 0 1px rgba(255,255,255,.35)}
-.cmp-bell{position:absolute;top:50%;left:18%;transform:translate(-50%,-50%);width:116px;z-index:6;cursor:grab;touch-action:none}
+.cmp-bell{position:absolute;top:50%;left:18%;transform:translate(-50%,-50%);width:80px;z-index:6;cursor:grab;touch-action:none}
 .cmp-bell:active,.cmp-bell.grab{cursor:grabbing}
 .cmp-bell::before{content:'';position:absolute;inset:-14px -10px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.92),rgba(255,255,255,0) 72%);z-index:-1}
 .cmp-bell img{width:100%;display:block;filter:drop-shadow(0 12px 18px rgba(93,69,36,.32));pointer-events:none}
@@ -537,7 +537,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
   .cmp{height:486px}
   .cmp-inner{padding:26px 22px}
   .cmp-h{font-size:30px;margin-bottom:14px}
-  .cmp-bell{width:84px}
+  .cmp-bell{width:58px}
   .cmp-row p{font-size:12.5px}
   .cmp-foot{flex-direction:column;gap:14px}
 }
@@ -761,10 +761,10 @@ nav#nav.scrolled .n-left a:hover,nav#nav.scrolled .n-signin:hover{color:var(--bl
 nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(--black)}
 
 /* HERO */
-.hero{position:relative;min-height:94vh;overflow:hidden;display:flex;align-items:center;text-align:left;padding:0;
+.hero{position:relative;min-height:94vh;overflow:hidden;display:flex;align-items:center;justify-content:flex-start;text-align:left;padding:0;
   background:radial-gradient(135% 125% at 50% -18%,#3a3a3a 0%,#222222 48%,#0b0b0b 100%)}
 .hero::before,.hero::after{display:none!important}
-.hero-inner2{position:relative;z-index:3;width:100%;max-width:1200px;margin:0 auto;padding:0 56px;transform:translateY(64px)}
+.hero-inner2{position:relative;z-index:3;width:100%;max-width:1200px;margin:0;padding:0 42px;transform:translateY(64px)}
 .hero h1{font-family:'Instrument Serif',serif;color:var(--p-cream);font-size:clamp(46px,7vw,92px);line-height:.97;
   letter-spacing:-2px;margin:0 0 24px;max-width:14ch;font-weight:400}
 .hero h1 em{font-style:italic}
@@ -776,7 +776,7 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
 .hero-cta2:hover{transform:translateY(-2px);box-shadow:0 20px 46px -16px rgba(30,30,30,.6)}
 .hero-art{position:absolute;right:-1%;top:50%;transform:translateY(calc(-52% + var(--leafY,0px))) rotate(var(--leafR,0deg));transform-origin:60% 40%;width:min(56vw,740px);z-index:1;pointer-events:none;will-change:transform}
 .hero-art svg{width:100%;height:auto;display:block;filter:drop-shadow(0 44px 64px rgba(27,27,27,.34))}
-.hero-trusted{position:absolute;left:0;right:0;bottom:46px;z-index:3;width:100%;max-width:1200px;margin:0 auto;padding:0 56px}
+.hero-trusted{position:absolute;left:0;right:0;bottom:46px;z-index:3;width:100%;max-width:1200px;margin:0;padding:0 42px}
 .ht-label{font-size:11px;letter-spacing:2.6px;text-transform:uppercase;color:rgba(233,233,233,.5);margin-bottom:15px}
 .ht-logos{display:flex;gap:40px;align-items:center;flex-wrap:wrap}
 .ht-logos span{font-family:'Instrument Serif',serif;font-size:20px;color:rgba(233,233,233,.6);white-space:nowrap}
@@ -831,7 +831,7 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
   <div class="wrap">
     <div class="mb-head">
       <div class="mb-eyebrow">Meet Bell</div>
-      <h2 class="mb-title">The old way. <em>Or the OfferBell way.</em></h2>
+      <h2 class="mb-title">The old way <em>vs the OB way.</em></h2>
       <p class="mb-sub">Grab Bell and <b>drag right</b> to sweep the mess away.</p>
     </div>
     <div class="cmp-wrap">
@@ -881,7 +881,7 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
     .obx-orb{position:relative;width:100%;max-width:none;height:400px;margin:0;}
     .obx-orb canvas{position:absolute;inset:0;width:100%;height:100%;display:block;animation:obxfloat 7s ease-in-out infinite;}
     .obx-orb::before{content:"";position:absolute;inset:0;pointer-events:none;
-      background:radial-gradient(circle at 50% 50%, rgba(180,134,74,0.16) 0%, rgba(180,134,74,0.06) 42%, transparent 66%);}
+      background:radial-gradient(circle at 50% 50%, rgba(37,99,235,0.10) 0%, rgba(37,99,235,0.035) 42%, transparent 66%);}
     @keyframes obxfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
     .obx-eyebrow{font-size:11px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--text-3);margin-bottom:18px;}
     .obx h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(34px,4.6vw,54px);
@@ -929,7 +929,7 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
   var rF=0.36, cyF=0.5;
   function resize(){var dpr=Math.min(window.devicePixelRatio||1,2);var w=canvas.clientWidth,h=canvas.clientHeight;canvas.width=Math.max(1,Math.floor(w*dpr));canvas.height=Math.max(1,Math.floor(h*dpr));ctx.setTransform(dpr,0,0,dpr,0,0);}
   resize(); window.addEventListener('resize',resize);
-  var lineRGB='180,134,74', lineMul=0.6, nodeRGB='180,134,74', nodeShadow='rgba(180,134,74,0.45)';
+  var lineRGB='37,99,235', lineMul=0.6, nodeRGB='37,99,235', nodeShadow='rgba(37,99,235,0.4)';
   function draw(){
     t+=reduce?0:0.0030;
     var w=canvas.clientWidth,h=canvas.clientHeight;
@@ -1066,7 +1066,7 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
       <a href="/signup" class="p-btn p-btn-solid">Get started</a>
     </div>
     <div class="p-card elite">
-      <div class="p-badge" style="background:var(--bronze-deep)">Best Value</div>
+      <div class="p-badge" style="background:#2563eb">Best Value</div>
       <div class="p-tier">Elite</div>
       <div class="p-price">$40<span>/mo</span></div>
       <div class="p-label">Maximum limits. Priority everything.</div>
