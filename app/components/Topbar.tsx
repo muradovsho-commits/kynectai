@@ -463,7 +463,7 @@ export default function Topbar({ activePage }: SidebarProps) {
       )}
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .ob-top,.ob-top *{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif !important}
+        .ob-top,.ob-top *{font-family:'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important}
         .ob-top{position:fixed;top:0;left:0;right:0;z-index:60;
           background:var(--surface,#ffffff);border-bottom:1px solid var(--border,#e5e7eb);font-family:inherit}
         html[data-theme="dark"] .ob-top{background:#1a1a19;border-bottom-color:#2a2a29}
