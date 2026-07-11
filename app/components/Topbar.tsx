@@ -109,15 +109,12 @@ export default function Topbar({ activePage }: SidebarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Which section's sub-tab bar is showing. Defaults to the section of the current page.
-  const [openSection, setOpenSection] = useState<string | null>(() => sectionOf(activePage));
-  useEffect(() => { setOpenSection(sectionOf(activePage)); }, [activePage]);
   // Zero the left offset; publish the fixed-header height (taller when a sub-tab bar shows).
   useEffect(() => {
     document.documentElement.style.setProperty('--sidebar-w', '0px');
-    document.documentElement.style.setProperty('--topbar-h', openSection ? '92px' : '48px');
+    document.documentElement.style.setProperty('--topbar-h', sectionOf(activePage) ? '92px' : '48px');
     return () => { document.documentElement.style.setProperty('--topbar-h', '0px'); };
-  }, [openSection]);
+  }, [activePage]);
 
   const [industryMenuOpen, setIndustryMenuOpen] = useState(false);
   const industryMenuRef = useRef<HTMLDivElement>(null);
@@ -286,7 +283,8 @@ export default function Topbar({ activePage }: SidebarProps) {
   const planLabel = userPlan === 'elite' ? 'Elite plan' : userPlan === 'pro' ? 'Pro plan' : 'Free plan';
   const planColor = userPlan === 'elite' ? '#3b82f6' : userPlan === 'pro' ? '#eab308' : '#9ca3af';
 
-  const sub = openSection ? NAV_SECTIONS[openSection] : null;
+  const currentSection = sectionOf(activePage);
+  const sub = currentSection ? NAV_SECTIONS[currentSection] : null;
 
   return (
     <>
@@ -300,14 +298,13 @@ export default function Topbar({ activePage }: SidebarProps) {
             <Link href="/dashboard" className={`ob-top-link${activePage === 'dashboard' ? ' active' : ''}`}>Dashboard</Link>
             <Link href="/ob" className={`ob-top-link${activePage === 'ob' ? ' active' : ''}`}>OB</Link>
             {SECTION_ORDER.map(key => (
-              <button
+              <Link
                 key={key}
-                type="button"
-                className={`ob-top-link ob-top-sect${openSection === key ? ' active' : ''}`}
-                onClick={() => setOpenSection(key)}
+                href={NAV_SECTIONS[key].items[0].href}
+                className={`ob-top-link ob-top-sect${currentSection === key ? ' active' : ''}`}
               >
                 {NAV_SECTIONS[key].label}
-              </button>
+              </Link>
             ))}
           </nav>
 
