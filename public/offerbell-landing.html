@@ -569,7 +569,7 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 .tr-incl{margin-top:6px;padding-top:24px;border-top:1px solid var(--border);max-width:560px}
 .tr-incl-label{font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:var(--text-3);margin-bottom:11px}
 .tr-incl-row{font-size:15px;color:var(--text-2);line-height:1.5}
-.tr-incl-row span:not(:first-child)::before{content:"\00B7";margin:0 13px;color:#bbbbbb;font-weight:700}
+.tr-incl-row span:not(:first-child)::before{content:"|";margin:0 12px;color:#cbcbcb;font-weight:300}
 .tr-incl-row em{font-style:italic;color:var(--brown)}
 @media(max-width:860px){.tr-explorer{grid-template-columns:1fr}.tr-panel .pcode{font-size:90px}}
 /* ===== REDESIGN: features flow ===== */
@@ -761,52 +761,36 @@ nav#nav.scrolled .n-left a:hover,nav#nav.scrolled .n-signin:hover{color:var(--bl
 nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(--black)}
 
 /* HERO */
-.hero{position:relative;min-height:94vh;overflow:hidden;display:flex;align-items:center;justify-content:flex-start;text-align:left;padding:0;
+.hero{position:relative;min-height:94vh;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;padding:0;
   background:radial-gradient(135% 125% at 50% -18%,#3a3a3a 0%,#222222 48%,#0b0b0b 100%)}
 .hero::before,.hero::after{display:none!important}
-.hero-inner2{position:relative;z-index:3;width:100%;max-width:1200px;margin:0;padding:0 42px;transform:translateY(64px)}
+.hero-inner2{position:relative;z-index:3;width:100%;max-width:720px;margin:0 auto;padding:0 24px;transform:translateY(38px);text-align:center}
 .hero h1{font-family:'Instrument Serif',serif;color:var(--p-cream);font-size:clamp(46px,7vw,92px);line-height:.97;
-  letter-spacing:-2px;margin:0 0 24px;max-width:14ch;font-weight:400}
+  letter-spacing:-2px;margin:0 auto 22px;max-width:none;font-weight:400}
 .hero h1 em{font-style:italic}
 .hero h1 em{color:var(--bronze-light)}
-.hero-sub2{color:var(--p-tan);font-size:18px;line-height:1.62;max-width:350px;margin:0 0 36px}
+.hero-sub2{color:var(--p-tan);font-size:18px;line-height:1.62;max-width:none;margin:0 auto 34px}
 .hero-cta2{display:inline-flex;align-items:center;gap:9px;background:var(--p-btn);color:var(--p-btn-ink);font-weight:600;text-decoration:none;
   font-size:15px;padding:15px 28px;border-radius:100px;box-shadow:0 14px 34px -14px rgba(30,30,30,.55);
   transition:transform .2s,box-shadow .2s}
 .hero-cta2:hover{transform:translateY(-2px);box-shadow:0 20px 46px -16px rgba(30,30,30,.6)}
-.hero-art{position:absolute;right:-1%;top:50%;transform:translateY(calc(-52% + var(--leafY,0px))) rotate(var(--leafR,0deg));transform-origin:60% 40%;width:min(56vw,740px);z-index:1;pointer-events:none;will-change:transform}
-.hero-art svg{width:100%;height:auto;display:block;filter:drop-shadow(0 44px 64px rgba(27,27,27,.34))}
-.hero-trusted{position:absolute;left:0;right:0;bottom:46px;z-index:3;width:100%;max-width:1200px;margin:0;padding:0 42px}
+.hero-art{position:absolute;right:0.5%;top:50%;transform:translateY(calc(-50% + var(--leafY,0px))) rotate(var(--leafR,0deg));transform-origin:60% 45%;width:min(24vw,320px);z-index:1;pointer-events:none;will-change:transform}
+.hero-art img{width:100%;height:auto;display:block;filter:drop-shadow(0 34px 52px rgba(0,0,0,.5))}
+.hero-trusted{position:absolute;left:0;right:0;bottom:46px;z-index:3;width:100%;max-width:1200px;margin:0 auto;padding:0 42px;text-align:center}
 .ht-label{font-size:11px;letter-spacing:2.6px;text-transform:uppercase;color:rgba(233,233,233,.5);margin-bottom:15px}
-.ht-logos{display:flex;gap:40px;align-items:center;flex-wrap:wrap}
+.ht-logos{display:flex;gap:40px;align-items:center;flex-wrap:wrap;justify-content:center}
 .ht-logos span{font-family:'Instrument Serif',serif;font-size:20px;color:rgba(233,233,233,.6);white-space:nowrap}
 @media(max-width:860px){
   nav#nav .n-left{display:none}
-  .hero-art{opacity:.45;right:-25%;width:96vw}
+  .hero-art{opacity:.32;right:-16%;width:70vw}
   .hero-sub2{max-width:none}
   .ht-logos{gap:22px}.ht-logos span{font-size:16px}
 }
 </style>
 <section class="hero reveal">
-  <div class="hero-art" aria-hidden="true">
-    <svg viewBox="0 0 640 720" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="rib" x1="0.15" y1="0" x2="0.55" y2="1">
-          <stop offset="0" stop-color="#ffffff"/>
-          <stop offset="0.5" stop-color="#eeeeee"/>
-          <stop offset="1" stop-color="#d8d8d8"/>
-        </linearGradient>
-        <linearGradient id="rfold" x1="0.2" y1="0.1" x2="1" y2="1">
-          <stop offset="0" stop-color="#d8d8d8"/>
-          <stop offset="1" stop-color="#bbbbbb"/>
-        </linearGradient>
-      </defs>
-      <path d="M300 706 C246 566 246 402 332 276 C384 188 474 116 566 124 C606 128 614 156 588 188 C520 268 442 312 412 392 C386 460 402 566 360 654 C344 686 322 700 300 706 Z" fill="url(#rib)"/>
-      <path d="M412 392 C442 312 520 268 588 188 C566 318 500 444 424 560 C410 504 406 448 412 392 Z" fill="url(#rfold)"/>
-    </svg>
-  </div>
+  <div class="hero-art" aria-hidden="true"><img src="/bell-welcome.png" alt=""></div>
   <div class="hero-inner2">
-    <h1>Better prep.<br>Better interviews.<br><em>Better offers.</em></h1>
+    <h1>Better prep<br>Better interviews<br><em>Better offers</em></h1>
     <p class="hero-sub2">Land the offer. Ring the bell.</p>
     <a href="/signup" class="hero-cta2">Try For Free Today &rarr;</a>
   </div>
@@ -831,7 +815,7 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
   <div class="wrap">
     <div class="mb-head">
       <div class="mb-eyebrow">Meet Bell</div>
-      <h2 class="mb-title">The old way <em>vs the OB way.</em></h2>
+      <h2 class="mb-title">The old way <em>vs the OB way</em></h2>
       <p class="mb-sub">Grab Bell and <b>drag right</b> to sweep the mess away.</p>
     </div>
     <div class="cmp-wrap">
@@ -839,7 +823,7 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
         <div class="cmp-layer cmp-old">
           <div class="cmp-inner">
             <div class="cmp-label">The old way</div>
-            <div class="cmp-h">Scattered.</div>
+            <div class="cmp-h">Scattered</div>
             <div class="cmp-rows">
               <div class="cmp-row"><div class="cmp-n">01</div><div><h3>Disconnected</h3><p>LinkedIn, a spreadsheet, and ChatGPT. Nothing talks to each other.</p></div></div>
               <div class="cmp-row"><div class="cmp-n">02</div><div><h3>Overwhelming</h3><p>Too much information everywhere. No clarity on what actually matters.</p></div></div>
@@ -850,7 +834,7 @@ nav#nav.scrolled .n-cta{background:var(--black);color:#ffffff;border-color:var(-
         <div class="cmp-layer cmp-new" id="cmpNew">
           <div class="cmp-inner">
             <div class="cmp-label">The OfferBell way</div>
-            <div class="cmp-h">One system.</div>
+            <div class="cmp-h">One system</div>
             <div class="cmp-rows">
               <div class="cmp-row"><div class="cmp-n">01</div><div><h3>Connected</h3><p>Learn, practice, and reach out in one place that works together.</p></div></div>
               <div class="cmp-row"><div class="cmp-n">02</div><div><h3>Curated</h3><p>A clear, guided path built for your exact recruiting track.</p></div></div>
@@ -991,25 +975,25 @@ svg{color:#b4864a}
 
     <div class="node" data-i="0" style="left:290px;top:340px">01</div>
     <div class="stage left" data-i="0" style="left:0px;top:300px;width:230px">
-      <div class="stg-name">Learn</div><div class="stg-desc">Build the foundation for your track.</div>
+      <div class="stg-name">Learn</div><div class="stg-desc">Build the foundation for your track</div>
       <div class="stg-tools"><span>Prep Guides</span><span>Concept Drills</span><span>The Desk</span></div>
     </div>
 
     <div class="node" data-i="1" style="left:590px;top:670px">02</div>
     <div class="stage right" data-i="1" style="left:650px;top:630px;width:230px">
-      <div class="stg-name">Prep</div><div class="stg-desc">Sharpen until you can do it in your sleep.</div>
+      <div class="stg-name">Prep</div><div class="stg-desc">Sharpen until you can do it in your sleep</div>
       <div class="stg-tools"><span>AI Coach</span><span>Flashcards</span><span>Mock Interviews</span></div>
     </div>
 
     <div class="node" data-i="2" style="left:290px;top:1000px">03</div>
     <div class="stage left" data-i="2" style="left:0px;top:960px;width:230px">
-      <div class="stg-name">Network</div><div class="stg-desc">Get in front of the people who decide.</div>
+      <div class="stg-name">Network</div><div class="stg-desc">Get in front of the people who decide</div>
       <div class="stg-tools"><span>Outreach Writer</span><span>Tracker</span><span>Referral Map</span></div>
     </div>
 
     <div class="node" data-i="3" style="left:590px;top:1330px">04</div>
     <div class="stage right" data-i="3" style="left:650px;top:1290px;width:230px">
-      <div class="stg-name">Insights</div><div class="stg-desc">Always know exactly where you stand.</div>
+      <div class="stg-name">Insights</div><div class="stg-desc">Always know exactly where you stand</div>
       <div class="stg-tools"><span>Diagnostic Review</span><span>Resume Review</span></div>
     </div>
 
@@ -1035,7 +1019,7 @@ svg{color:#b4864a}
 <section class="pricing reveal" id="pricing">
   <div class="pricing-center">
     <div class="sl" style="text-align:center">Pricing</div>
-    <div class="st" style="text-align:center;margin:0 auto 12px">Simple pricing.<br><em>Real results.</em></div>
+    <div class="st" style="text-align:center;margin:0 auto 12px">Simple pricing<br><em>Real results</em></div>
     <p class="ss" style="text-align:center;margin:0 auto">Start free. Upgrade when you're ready to go all in.</p>
   </div>
   <div class="pricing-grid">
@@ -1097,7 +1081,7 @@ svg{color:#b4864a}
   <div class="faq-grid">
     <div>
       <div class="sl">FAQ</div>
-      <div class="st">Questions?<br><em>We've got answers.</em></div>
+      <div class="st">Questions?<br><em>We've got answers</em></div>
       <p style="font-size:14px;color:var(--text-2);margin-top:14px;line-height:1.6">Still not sure? Email us at<br><strong>officialofferbell@gmail.com</strong></p>
     </div>
     <div>
