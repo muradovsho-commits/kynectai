@@ -7,7 +7,7 @@
 <meta name="description" content="The complete recruiting toolkit for finance students. Interview prep, AI coaching, outreach tools, and pipeline tracking across IB, PE, consulting, accounting, and more."/>
 <link rel="icon" href="/favicon.ico"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Lato:ital,wght@0,300;0,400;0,600;0,700;0,900;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1341,7 +1341,6 @@ addEventListener('scroll',tick,{passive:true});addEventListener('resize',tick);t
   function move(e){ if(!dragging)return; render(xToPos(e.clientX)); }
   function end(){ dragging=false; bell.classList.remove('grab'); }
   bell.addEventListener('pointerdown',start);
-  wrap.addEventListener('pointerdown',function(e){ if(e.target===bell||bell.contains(e.target))return; touched=true; render(xToPos(e.clientX)); dragging=true; e.preventDefault(); });
   window.addEventListener('pointermove',move,{passive:false});
   window.addEventListener('pointerup',end);
   window.addEventListener('pointercancel',end);
