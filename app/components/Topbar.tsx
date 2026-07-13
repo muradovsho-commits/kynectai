@@ -29,6 +29,10 @@ const VERTICALS = [
 
 type ObNavItem = { key: string; label: string; href: string };
 const NAV_SECTIONS: Record<string, { label: string; items: ObNavItem[] }> = {
+  dashboard: { label: 'Dashboard', items: [
+    { key: 'dashboard', label: 'Dashboard', href: '/dashboard' },
+    { key: 'ob', label: 'OB', href: '/ob' },
+  ] },
   learn: { label: 'Learn', items: [
     { key: 'learn', label: 'Learning Hub', href: '/learn' },
     { key: 'coach', label: 'Coach', href: '/coach' },
@@ -49,8 +53,9 @@ const NAV_SECTIONS: Record<string, { label: string; items: ObNavItem[] }> = {
     { key: 'diagnostic-review', label: 'Diagnostic Review', href: '/diagnostic-review' },
   ] },
 };
-const SECTION_ORDER = ['learn', 'prep', 'networking', 'insights'];
+const SECTION_ORDER = ['dashboard', 'learn', 'prep', 'networking', 'insights'];
 function sectionOf(page: string): string | null {
+  if (['dashboard', 'ob'].includes(page)) return 'dashboard';
   if (['concept-drills', 'flashcards', 'mock-interview'].includes(page)) return 'prep';
   if (['outreach-tracker', 'outreach-writer', 'referral-map'].includes(page)) return 'networking';
   if (['resume-review', 'diagnostic-review'].includes(page)) return 'insights';
@@ -295,8 +300,6 @@ export default function Topbar({ activePage }: SidebarProps) {
           </Link>
 
           <nav className="ob-top-nav">
-            <Link href="/dashboard" className={`ob-top-link${activePage === 'dashboard' ? ' active' : ''}`}>Dashboard</Link>
-            <Link href="/ob" className={`ob-top-link${activePage === 'ob' ? ' active' : ''}`}>OB</Link>
             {SECTION_ORDER.map(key => (
               <Link
                 key={key}
@@ -437,8 +440,6 @@ export default function Topbar({ activePage }: SidebarProps) {
             <button type="button" className="ob-md-close" onClick={() => setMobileOpen(false)} aria-label="Close">&#10005;</button>
           </div>
           <div className="ob-md-nav">
-            <Link href="/dashboard" className="ob-md-link">Dashboard</Link>
-            <Link href="/ob" className="ob-md-link">OB</Link>
             {SECTION_ORDER.map(key => (
               <div key={key}>
                 <div className="ob-md-label">{NAV_SECTIONS[key].label}</div>
