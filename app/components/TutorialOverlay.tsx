@@ -31,7 +31,7 @@ const STEPS = [
   {
     title: 'Meet OB, your flagship',
     description: 'OB is our flagship, a desktop voice assistant built on all of OfferBell. Run mock interviews, company teardowns, and coffee-chat prep just by talking. You will find it right here under Home.',
-    route: '/ob',
+    route: '/dashboard',
     spotlightSelector: '[data-tutorial="subtab-ob"]',
     cta: 'Continue',
     validateBeforeAdvance: false,
@@ -39,7 +39,7 @@ const STEPS = [
   {
     title: 'Learn the material',
     description: 'Under Learn you get Guides for every role, an AI Coach you can chat with, and The Desk, where you work a real day on the job and get graded.',
-    route: '/learn',
+    route: '/dashboard',
     spotlightSelector: '[data-tutorial="nav-learn"]',
     cta: 'Continue',
     validateBeforeAdvance: false,
@@ -47,7 +47,7 @@ const STEPS = [
   {
     title: 'Prep and practice',
     description: 'Prep is where you drill: Concept Drills, Interview Flashcards, and full Mock Interviews to get you rep ready.',
-    route: '/concept-drills',
+    route: '/dashboard',
     spotlightSelector: '[data-tutorial="nav-prep"]',
     cta: 'Continue',
     validateBeforeAdvance: false,
@@ -55,7 +55,7 @@ const STEPS = [
   {
     title: 'Build your network',
     description: 'Network keeps every conversation in one place: an Outreach Tracker, an AI Outreach Writer, and a Referral Map.',
-    route: '/outreach-tracker',
+    route: '/dashboard',
     spotlightSelector: '[data-tutorial="nav-networking"]',
     cta: 'Continue',
     validateBeforeAdvance: false,
@@ -63,7 +63,7 @@ const STEPS = [
   {
     title: 'Sharpen with Insights',
     description: 'Insights grades your work. Resume Review scores your resume section by section, and Diagnostic Review finds your weak spots.',
-    route: '/resume-review',
+    route: '/dashboard',
     spotlightSelector: '[data-tutorial="nav-insights"]',
     cta: 'Continue',
     validateBeforeAdvance: false,
