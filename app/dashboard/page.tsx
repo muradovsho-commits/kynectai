@@ -153,6 +153,12 @@ export default function DashboardPage() {
   const [showCustomize, setShowCustomize] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (sessionStorage.getItem('offerbell_tutorial_replay')) {
+      const step = parseInt(localStorage.getItem('offerbell_tutorial_step') || '1', 10);
+      setTutorialStep(step);
+      setShowTutorial(true);
+      return;
+    }
     const complete = localStorage.getItem('offerbell_tutorial_complete');
     let profileComplete = false;
     try {
@@ -1051,7 +1057,7 @@ export default function DashboardPage() {
         <TutorialOverlay
           userId={typeof window !== 'undefined' ? (localStorage.getItem('offerbell_user_id') || '') : ''}
           initialStep={tutorialStep}
-          onComplete={() => setShowTutorial(false)}
+          onComplete={() => { setShowTutorial(false); try { sessionStorage.removeItem('offerbell_tutorial_replay'); } catch {} }}
         />
       )}
       {historyOpen && (

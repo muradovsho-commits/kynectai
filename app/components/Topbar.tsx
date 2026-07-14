@@ -301,19 +301,26 @@ export default function Topbar({ activePage }: SidebarProps) {
 
           <nav className="ob-top-nav">
             {SECTION_ORDER.map(key => {
-              const link = (
-                <Link
-                  key={key}
-                  href={NAV_SECTIONS[key].items[0].href}
-                  data-tutorial={`nav-${key}`}
-                  className={`ob-top-link ob-top-sect${currentSection === key ? ' active' : ''}`}
-                >
-                  {NAV_SECTIONS[key].label}
-                </Link>
+              const items = NAV_SECTIONS[key].items;
+              const navItem = (
+                <div key={key} className="ob-top-navitem">
+                  <Link
+                    href={items[0].href}
+                    data-tutorial={`nav-${key}`}
+                    className={`ob-top-link ob-top-sect${currentSection === key ? ' active' : ''}`}
+                  >
+                    {NAV_SECTIONS[key].label}
+                  </Link>
+                  <div className="ob-top-dropdown" role="menu">
+                    {items.map(it => (
+                      <Link key={it.key} href={it.href} className={`ob-top-dd-item${activePage === it.key ? ' active' : ''}`}>{it.label}</Link>
+                    ))}
+                  </div>
+                </div>
               );
               return key === 'learn'
-                ? [<span key="div-home-learn" className="ob-top-divider" aria-hidden="true">|</span>, link]
-                : link;
+                ? [<span key="div-home-learn" className="ob-top-divider" aria-hidden="true">|</span>, navItem]
+                : navItem;
             })}
           </nav>
 
@@ -400,6 +407,10 @@ export default function Topbar({ activePage }: SidebarProps) {
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3 1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8 1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
                     Settings
                   </Link>
+                  <button className="ob-pm-item" type="button" onClick={() => { try { sessionStorage.setItem('offerbell_tutorial_replay', '1'); localStorage.setItem('offerbell_tutorial_step', '1'); } catch {} setMenuOpen(false); window.location.href = '/my-account'; }}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    How do I use this site?
+                  </button>
                   <Link className="ob-pm-item" href="/feedback">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                     Report a Bug
@@ -475,6 +486,17 @@ export default function Topbar({ activePage }: SidebarProps) {
         .ob-top-nav{display:flex;align-items:center;gap:2px}
         .ob-top-divider{display:flex;align-items:center;color:#cfcdc9;font-weight:300;font-size:15px;padding:0 8px;user-select:none;line-height:1}
         html[data-theme="dark"] .ob-top-divider{color:#3d3c39}
+        .ob-top-navitem{position:relative;display:inline-flex}
+        .ob-top-dropdown{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(4px);min-width:150px;background:#fff;border:1px solid #e8eaed;border-radius:9px;box-shadow:0 10px 30px rgba(0,0,0,.12);padding:5px;opacity:0;visibility:hidden;transition:opacity .14s ease,transform .14s ease,visibility .14s;z-index:60}
+        .ob-top-dropdown::before{content:"";position:absolute;top:-9px;left:0;right:0;height:9px}
+        .ob-top-navitem:hover .ob-top-dropdown{opacity:1;visibility:visible;transform:translateX(-50%) translateY(2px)}
+        .ob-top-dd-item{display:block;padding:7px 12px;border-radius:5px;font-size:13px;font-weight:500;color:#475569;text-decoration:none;white-space:nowrap}
+        .ob-top-dd-item:hover{background:#f1f5f9;color:#1d293d}
+        .ob-top-dd-item.active{background:#f1f5f9;color:#1d293d;font-weight:600}
+        html[data-theme="dark"] .ob-top-dropdown{background:#1a1a19;border-color:#2a2a29;box-shadow:0 10px 30px rgba(0,0,0,.55)}
+        html[data-theme="dark"] .ob-top-dd-item{color:#a8a6a3}
+        html[data-theme="dark"] .ob-top-dd-item:hover{background:#222221;color:#fff}
+        html[data-theme="dark"] .ob-top-dd-item.active{background:#222221;color:#fff}
         .ob-top-link{display:inline-flex;align-items:center;height:32px;padding:0 14px;border-radius:2px;
           font-size:13px;font-weight:500;color:#62748e;text-decoration:none;background:none;border:none;
           cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .12s,color .12s}
