@@ -29,12 +29,12 @@ const VERTICALS = [
 
 type ObNavItem = { key: string; label: string; href: string };
 const NAV_SECTIONS: Record<string, { label: string; items: ObNavItem[] }> = {
-  dashboard: { label: 'Dashboard', items: [
+  dashboard: { label: 'Home', items: [
     { key: 'dashboard', label: 'Dashboard', href: '/dashboard' },
     { key: 'ob', label: 'OB', href: '/ob' },
   ] },
   learn: { label: 'Learn', items: [
-    { key: 'learn', label: 'Learning Hub', href: '/learn' },
+    { key: 'learn', label: 'Guides', href: '/learn' },
     { key: 'coach', label: 'Coach', href: '/coach' },
     { key: 'reps', label: 'The Desk', href: '/reps' },
   ] },
@@ -43,7 +43,7 @@ const NAV_SECTIONS: Record<string, { label: string; items: ObNavItem[] }> = {
     { key: 'flashcards', label: 'Interview Flashcards', href: '/flashcards' },
     { key: 'mock-interview', label: 'Mock Interview', href: '/mock-interview' },
   ] },
-  networking: { label: 'Networking', items: [
+  networking: { label: 'Network', items: [
     { key: 'outreach-tracker', label: 'Outreach Tracker', href: '/outreach-tracker' },
     { key: 'outreach-writer', label: 'Outreach Writer', href: '/outreach-writer' },
     { key: 'referral-map', label: 'Referral Map', href: '/referral-map' },
@@ -300,15 +300,20 @@ export default function Topbar({ activePage }: SidebarProps) {
           </Link>
 
           <nav className="ob-top-nav">
-            {SECTION_ORDER.map(key => (
-              <Link
-                key={key}
-                href={NAV_SECTIONS[key].items[0].href}
-                className={`ob-top-link ob-top-sect${currentSection === key ? ' active' : ''}`}
-              >
-                {NAV_SECTIONS[key].label}
-              </Link>
-            ))}
+            {SECTION_ORDER.map(key => {
+              const link = (
+                <Link
+                  key={key}
+                  href={NAV_SECTIONS[key].items[0].href}
+                  className={`ob-top-link ob-top-sect${currentSection === key ? ' active' : ''}`}
+                >
+                  {NAV_SECTIONS[key].label}
+                </Link>
+              );
+              return key === 'learn'
+                ? [<span key="div-home-learn" className="ob-top-divider" aria-hidden="true">|</span>, link]
+                : link;
+            })}
           </nav>
 
           <div className="ob-top-right">
@@ -473,6 +478,8 @@ export default function Topbar({ activePage }: SidebarProps) {
         .ob-top-logo-img{height:26px;width:auto;display:block}
         html[data-theme="dark"] .ob-top-logo-img{filter:drop-shadow(0 0 0.5px rgba(255,255,255,.9))}
         .ob-top-nav{display:flex;align-items:center;gap:2px}
+        .ob-top-divider{display:flex;align-items:center;color:#cfcdc9;font-weight:300;font-size:15px;padding:0 8px;user-select:none;line-height:1}
+        html[data-theme="dark"] .ob-top-divider{color:#3d3c39}
         .ob-top-link{display:inline-flex;align-items:center;height:32px;padding:0 14px;border-radius:2px;
           font-size:13px;font-weight:500;color:#62748e;text-decoration:none;background:none;border:none;
           cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .12s,color .12s}
