@@ -947,7 +947,7 @@ export default function MockInterviewPage() {
             <h1 className="mi-page-title">Mock <em>Interviews</em></h1>
             <div className="mi-page-sub">Practice and track your interview performance</div>
           </div>
-          <button type="button" className="mi-start-btn" onClick={openSetup}>
+          <button type="button" className="mi-start-btn" onClick={openSetup} style={!isPro ? { opacity: 0.55, cursor: 'not-allowed' } : undefined}>
             {isPro ? 'Start full interview' : 'Start full interview'}
             {!isPro && <span className="mi-pro-badge">Pro</span>}
           </button>
@@ -994,7 +994,7 @@ export default function MockInterviewPage() {
             <div className="mi-mode-arrow">→</div>
           </button>
 
-          <button type="button" className="mi-mode" onClick={openSetup}>
+          <button type="button" className="mi-mode" onClick={openSetup} style={!isPro ? { opacity: 0.55, cursor: 'not-allowed' } : undefined}>
             <div className="mi-mode-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-6 4 6 4V8z"/></svg>
             </div>
@@ -1273,7 +1273,7 @@ export default function MockInterviewPage() {
   // No track picker any more. activeTrack is auto-set from the sidebar industry
   // when the user enters single-mode (same pattern as flashcards and drills).
   function renderSingle() {
-    if (!activeTrack) return null; // shouldn't happen — set on entry
+    if (!activeTrack) return null; // shouldn't happen - set on entry
     if (!activeQuestion) return renderSingleQuestionPicker();
     return renderSingleRecording();
   }
