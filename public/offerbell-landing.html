@@ -408,8 +408,8 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:44px 5
 .ht-track{display:flex;gap:48px;width:max-content;animation:htScroll 48s linear infinite;will-change:transform;transform:translateZ(0);backface-visibility:hidden}
 .ht-track{align-items:center;gap:18px}
 .ht-item{display:inline-flex;align-items:center;padding:0 24px}
-.ht-logo{height:30px;width:auto;display:block;filter:grayscale(1);opacity:.5;transition:filter .3s ease,opacity .3s ease,transform .3s ease}
-.ht-item:hover .ht-logo{filter:none;opacity:1;transform:translateY(-1px)}
+.ht-logo{height:30px;width:auto;display:block;filter:brightness(0) invert(1);opacity:.6;transition:filter .3s ease,opacity .3s ease,transform .3s ease}
+.ht-item:hover .ht-logo{filter:brightness(0) invert(1);opacity:1;transform:translateY(-1px)}
 .ht-logos:hover .ht-track{animation-play-state:paused}
 @keyframes htScroll{from{transform:translateX(0)}to{transform:translateX(-33.3333%)}}
 
@@ -794,7 +794,7 @@ nav#nav.scrolled .n-burger{color:var(--text)}
     <a href="#pricing">Pricing</a>
     <a href="#faq">FAQ</a>
   </div>
-  <a href="#" class="n-logo" onclick="event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})">OfferBell<em>.</em></a>
+  <a href="#top" class="n-logo" onclick="event.preventDefault();event.stopPropagation();window.scrollTo({top:0,behavior:'smooth'})">OfferBell<em>.</em></a>
   <div class="n-right">
     <a href="/signin" class="n-signin">Sign in</a>
     <a href="/signup" class="n-cta">Get Started</a>
