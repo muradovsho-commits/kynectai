@@ -334,7 +334,7 @@ html[data-theme="dark"] .coach-app {
 /* Input card (used in both hero and chat states) */
 .coach-input-card {
   width: 100%;
-  max-width: 720px;
+  max-width: 900px;
   background: var(--surface);
   border: 1.5px solid var(--accent-soft);
   border-radius: 14px;
@@ -499,7 +499,7 @@ html[data-theme="dark"] .coach-app {
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   width: 100%;
-  max-width: 720px;
+  max-width: 900px;
   margin: 0 auto;
 }
 

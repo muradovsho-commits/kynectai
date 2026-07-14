@@ -157,7 +157,7 @@ export default function RepsPage() {
         <Topbar activePage="reps" />
         <main className="desk-canvas">
           <div className="desk-page">
-            <div className="desk-page-inner">
+            <div className="desk-page-inner desk-inner-wide">
               <ElitePaywall currentPlan={currentPlan} />
             </div>
           </div>
@@ -271,8 +271,10 @@ function ElitePaywall({ currentPlan }: { currentPlan: string | null }) {
   };
 
   return (
-    <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 0 90px', fontFamily: "'Sora', sans-serif" }}>
+    <div style={{ margin: '0 auto', padding: '40px 0 90px', fontFamily: "'Sora', sans-serif" }}>
 
+      <div className="pw-hero">
+      <div className="pw-hero-copy">
       {/* ─── Hero ─── */}
       <h1 style={{
         fontFamily: "'Instrument Serif', serif",
@@ -314,7 +316,8 @@ function ElitePaywall({ currentPlan }: { currentPlan: string | null }) {
           Compare plans
         </button>
       </div>
-
+      </div>
+      <div className="pw-hero-timeline">
       {/* ─── Workday timeline ─── */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: 12,
@@ -377,6 +380,8 @@ function ElitePaywall({ currentPlan }: { currentPlan: string | null }) {
           );
         })}
       </div>
+      </div>
+      </div>
 
       {/* ─── Careers strip ─── */}
       <div style={{ marginTop: 56, paddingTop: 32, borderTop: '1px solid var(--border)' }}>
@@ -401,6 +406,13 @@ function ElitePaywall({ currentPlan }: { currentPlan: string | null }) {
         .beat { opacity: 0; transform: translateY(8px); animation: beatIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
         @keyframes beatIn { to { opacity: 1; transform: translateY(0); } }
         @media (prefers-reduced-motion: reduce) { .beat { animation: none; opacity: 1; transform: none; } }
+        .desk-page-inner.desk-inner-wide { max-width: 1140px; }
+        .pw-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 54px; align-items: start; margin-bottom: 24px; }
+        .pw-hero-copy { min-width: 0; padding-top: 4px; }
+        .pw-hero-timeline { min-width: 0; }
+        @media (max-width: 900px) {
+          .pw-hero { grid-template-columns: 1fr; gap: 40px; }
+        }
         @media (max-width: 880px) {
           .paywall-hero { grid-template-columns: 1fr !important; gap: 32px !important; }
         }
