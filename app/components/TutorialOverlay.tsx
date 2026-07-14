@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, CSSProperties } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
@@ -239,6 +239,24 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
     };
   }, [step, currentStep.spotlightSelector, navigated, needsInteraction]);
 
+  // Position the card near the spotlighted element (below it, or above if no room), else centered.
+  const cardPos: CSSProperties = (() => {
+    if (isLast || !spotlightRect || typeof window === 'undefined') {
+      return { bottom: '50%', left: '50%', transform: 'translate(-50%, 50%)' };
+    }
+    const w = 400, half = w / 2, ch = 250;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const cx = spotlightRect.left + spotlightRect.width / 2;
+    const clampedX = Math.max(half + 16, Math.min(vw - half - 16, cx));
+    if (spotlightRect.bottom + ch + 24 < vh) {
+      return { top: `${Math.round(spotlightRect.bottom + 16)}px`, left: `${Math.round(clampedX)}px`, transform: 'translateX(-50%)' };
+    }
+    if (spotlightRect.top - ch - 24 > 0) {
+      return { bottom: `${Math.round(vh - spotlightRect.top + 16)}px`, left: `${Math.round(clampedX)}px`, transform: 'translateX(-50%)' };
+    }
+    return { bottom: '32px', left: '50%', transform: 'translateX(-50%)' };
+  })();
+
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 99999,
@@ -289,9 +307,7 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
       {/* Card */}
       <div style={{
         position: 'fixed',
-        bottom: isLast ? '50%' : '32px',
-        left: '50%',
-        transform: isLast ? 'translate(-50%, 50%)' : 'translateX(-50%)',
+        ...cardPos,
         width: isLast ? '440px' : '400px',
         maxWidth: '90vw',
         background: '#ffffff',
