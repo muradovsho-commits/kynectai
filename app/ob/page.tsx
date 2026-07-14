@@ -60,7 +60,7 @@ export default function ObPage() {
       <Topbar activePage="ob" />
       <main className="desk-canvas">
         <div className="desk-page">
-          <div className="desk-page-inner">
+          <div className="desk-page-inner ob-inner-wide">
             {planStatus === 'elite' ? <ObElite /> : <ObPaywall currentPlan={currentPlan} />}
           </div>
         </div>
@@ -552,18 +552,9 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
   const goCompare = () => { window.location.href = '/checkout'; };
 
   return (
-    <div style={{ maxWidth: 760, margin: '0 auto', padding: '20px 0 100px', fontFamily: "'Sora', sans-serif", textAlign: 'center' }}>
-      {/* ── Floating OB + a live voice bubble beside it ───────────────── */}
-      <div className="obpw-float">
-        <OBSphere height={400} glow rFactor={0.34} cyFactor={0.46}>
-          <div className="obpw-voice">
-            <svg className="obpw-mic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg>
-            <span key={sayIdx} className="obpw-voice-text">{SAYINGS[sayIdx]}</span>
-          </div>
-        </OBSphere>
-      </div>
-
-      {/* ── the pitch, below the orb ──────────────────────────────────── */}
+    <div style={{ margin: '0 auto', padding: '28px 0 90px', fontFamily: "'Sora', sans-serif" }}>
+      <div className="obpw-hero">
+      <div className="obpw-hero-copy">
       <h1 className="obpw-h1">The recruiting coach you <em>talk to</em>.</h1>
       <p className="obpw-lead">The AI assistant from <em>Iron Man</em>, rebuilt for breaking into finance.</p>
       <p className="obpw-body">
@@ -583,6 +574,18 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
       <div className="obpw-platform">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="13" rx="1.5" /><path d="M8 21h8M12 17v4" /></svg>
         macOS &amp; Windows desktop app
+      </div>
+      </div>
+      <div className="obpw-hero-art">
+        <div className="obpw-float">
+          <OBSphere height={400} glow rFactor={0.34} cyFactor={0.46}>
+            <div className="obpw-voice">
+              <svg className="obpw-mic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg>
+              <span key={sayIdx} className="obpw-voice-text">{SAYINGS[sayIdx]}</span>
+            </div>
+          </OBSphere>
+        </div>
+      </div>
       </div>
 
       {/* ── what OB does (compact, complete) ─────────────────────────── */}
@@ -615,7 +618,11 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .obpw-float{ position:relative; max-width:520px; margin:0 auto 6px; }
+        .desk-page-inner.ob-inner-wide{ max-width:1180px; }
+        .obpw-hero{ display:grid; grid-template-columns:1.02fr 0.98fr; gap:48px; align-items:center; margin-bottom:56px; }
+        .obpw-hero-copy{ min-width:0; }
+        .obpw-hero-art{ display:flex; align-items:center; justify-content:center; }
+        .obpw-float{ position:relative; max-width:440px; width:100%; margin:0; }
         .obpw-voice{
           position:absolute; left:50%; bottom:54px; transform:translateX(-50%);
           display:inline-flex; align-items:center; gap:9px; white-space:nowrap;
@@ -627,13 +634,13 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
         .obpw-voice-text{ font-size:13px; color:#e7eeff; font-style:italic; animation:obpwFade .5s ease; }
         .obpw-h1{
           font-family:'Instrument Serif',serif; font-weight:400; color:var(--text);
-          font-size:52px; line-height:1.02; letter-spacing:-1px; margin:6px auto 14px; max-width:600px;
+          font-size:clamp(38px,3.9vw,54px); line-height:1.03; letter-spacing:-1px; margin:0 0 14px; max-width:none;
         }
         .obpw-h1 em{ font-style:italic; color:#2563eb; }
-        .obpw-lead{ font-size:16.5px; font-weight:600; color:var(--text); line-height:1.45; margin:0 auto 16px; max-width:560px; }
+        .obpw-lead{ font-size:16.5px; font-weight:600; color:var(--text); line-height:1.45; margin:0 0 14px; max-width:none; }
         .obpw-lead em{ font-style:italic; color:#2563eb; }
-        .obpw-body{ font-size:14px; color:var(--text-2); line-height:1.6; margin:0 auto 26px; max-width:540px; }
-        .obpw-cta{ display:flex; align-items:center; justify-content:center; gap:11px; flex-wrap:wrap; }
+        .obpw-body{ font-size:14px; color:var(--text-2); line-height:1.6; margin:0 0 24px; max-width:520px; }
+        .obpw-cta{ display:flex; align-items:center; justify-content:flex-start; gap:11px; flex-wrap:wrap; }
         .obpw-platform{
           display:inline-flex; align-items:center; gap:7px; margin-top:16px;
           font-size:12px; color:var(--text-3); font-weight:500;
@@ -649,12 +656,12 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
           border:1.5px solid var(--border-2); padding:12px 20px; border-radius:11px;
           font-size:13px; font-weight:600; font-family:'Sora',sans-serif;
         }
-        .obpw-caps-wrap{ margin-top:30px; text-align:left; }
+        .obpw-caps-wrap{ margin-top:0; text-align:left; }
         .obpw-kicker{
           font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
           color:var(--text-3); margin-bottom:22px; text-align:center;
         }
-        .obpw-caps{ display:grid; grid-template-columns:repeat(2,1fr); gap:22px 32px; }
+        .obpw-caps{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
         .obpw-cap{ display:flex; gap:13px; align-items:flex-start; padding:17px 18px; border:1px solid var(--border); background:var(--surface); border-radius:14px; }
         .obpw-cap-orb{ width:22px; height:22px; color:#2563eb; flex-shrink:0; margin-top:1px; }
         .obpw-cap-txt{ display:flex; flex-direction:column; gap:3px; min-width:0; }
@@ -667,8 +674,16 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
         }
         .obpw-close-text{ font-size:14px; color:var(--text); font-weight:600; max-width:460px; line-height:1.5; }
         @keyframes obpwFade{ from{ opacity:0; transform:translateY(3px); } to{ opacity:1; transform:translateY(0); } }
-        @media (max-width: 720px){
-          .obpw-h1{ font-size:40px; }
+        @media (max-width: 980px){
+          .obpw-hero{ grid-template-columns:1fr; gap:22px; text-align:center; }
+          .obpw-hero-art{ order:-1; }
+          .obpw-float{ margin:0 auto; }
+          .obpw-h1,.obpw-lead,.obpw-body{ margin-left:auto; margin-right:auto; max-width:600px; }
+          .obpw-cta{ justify-content:center; }
+          .obpw-caps{ grid-template-columns:repeat(2,1fr); }
+        }
+        @media (max-width: 620px){
+          .obpw-h1{ font-size:36px; }
           .obpw-caps{ grid-template-columns:1fr; }
           .obpw-close{ flex-direction:column; align-items:flex-start; }
         }
