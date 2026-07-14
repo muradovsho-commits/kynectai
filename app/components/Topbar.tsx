@@ -44,6 +44,7 @@ const NAV_SECTIONS: Record<string, { label: string; items: ObNavItem[] }> = {
     { key: 'mock-interview', label: 'Mock Interview', href: '/mock-interview' },
   ] },
   networking: { label: 'Network', items: [
+    { key: 'contact-database', label: 'Contact Database', href: '/contact-database' },
     { key: 'outreach-tracker', label: 'Outreach Tracker', href: '/outreach-tracker' },
     { key: 'outreach-writer', label: 'Outreach Writer', href: '/outreach-writer' },
     { key: 'referral-map', label: 'Referral Map', href: '/referral-map' },
@@ -57,7 +58,7 @@ const SECTION_ORDER = ['dashboard', 'learn', 'prep', 'networking', 'insights'];
 function sectionOf(page: string): string | null {
   if (['dashboard', 'ob'].includes(page)) return 'dashboard';
   if (['concept-drills', 'flashcards', 'mock-interview'].includes(page)) return 'prep';
-  if (['outreach-tracker', 'outreach-writer', 'referral-map'].includes(page)) return 'networking';
+  if (['contact-database', 'outreach-tracker', 'outreach-writer', 'referral-map'].includes(page)) return 'networking';
   if (['resume-review', 'diagnostic-review'].includes(page)) return 'insights';
   if (['learn', 'coach', 'reps', 'interview-prep', 'recruiting-manual'].includes(page) || page.endsWith('-interview-prep')) return 'learn';
   return null;
