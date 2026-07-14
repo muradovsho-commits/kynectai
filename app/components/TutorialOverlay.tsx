@@ -22,25 +22,49 @@ const STEPS = [
   },
   {
     title: 'Manage Your Plan',
-    description: 'This is where you manage your plan. You can upgrade to Pro or downgrade anytime.',
+    description: 'This is where you manage your plan. Upgrade to Pro or Elite whenever you want, or downgrade anytime.',
     route: '/my-account',
     spotlightSelector: '[data-tutorial="plan-section"]',
     cta: 'Got it',
     validateBeforeAdvance: false,
   },
   {
-    title: 'Find Your Career Path',
-    description: 'Take the Career Quiz to get a personalized learning path, or explore Career Roadmaps to learn what each finance role does, what they pay, and how to break in.',
-    route: '/learn',
-    spotlightSelector: '[data-tutorial="career-discovery"]',
+    title: 'Meet OB, your flagship',
+    description: 'OB is our flagship, a desktop voice assistant built on all of OfferBell. Run mock interviews, company teardowns, and coffee-chat prep just by talking. You will find it right here under Home.',
+    route: '/ob',
+    spotlightSelector: '[data-tutorial="subtab-ob"]',
     cta: 'Continue',
     validateBeforeAdvance: false,
   },
   {
-    title: 'Get Interview Ready',
-    description: 'Once you know your path, dive into our interview prep guides. Each one covers the technicals, behavioral questions, and study plans for that specific role.',
+    title: 'Learn the material',
+    description: 'Under Learn you get Guides for every role, an AI Coach you can chat with, and The Desk, where you work a real day on the job and get graded.',
     route: '/learn',
-    spotlightSelector: '[data-tutorial="interview-guides"]',
+    spotlightSelector: '[data-tutorial="nav-learn"]',
+    cta: 'Continue',
+    validateBeforeAdvance: false,
+  },
+  {
+    title: 'Prep and practice',
+    description: 'Prep is where you drill: Concept Drills, Interview Flashcards, and full Mock Interviews to get you rep ready.',
+    route: '/concept-drills',
+    spotlightSelector: '[data-tutorial="nav-prep"]',
+    cta: 'Continue',
+    validateBeforeAdvance: false,
+  },
+  {
+    title: 'Build your network',
+    description: 'Network keeps every conversation in one place: an Outreach Tracker, an AI Outreach Writer, and a Referral Map.',
+    route: '/outreach-tracker',
+    spotlightSelector: '[data-tutorial="nav-networking"]',
+    cta: 'Continue',
+    validateBeforeAdvance: false,
+  },
+  {
+    title: 'Sharpen with Insights',
+    description: 'Insights grades your work. Resume Review scores your resume section by section, and Diagnostic Review finds your weak spots.',
+    route: '/resume-review',
+    spotlightSelector: '[data-tutorial="nav-insights"]',
     cta: 'Continue',
     validateBeforeAdvance: false,
   },
@@ -270,11 +294,11 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
         transform: isLast ? 'translate(-50%, 50%)' : 'translateX(-50%)',
         width: isLast ? '440px' : '400px',
         maxWidth: '90vw',
-        background: '#111110',
-        border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: '20px',
-        padding: isLast ? '40px 36px' : '28px 28px 24px',
-        boxShadow: '0 24px 80px rgba(0,0,0,0.5)',
+        background: '#ffffff',
+        border: '1px solid rgba(0,0,0,0.06)',
+        borderRadius: '18px',
+        padding: isLast ? '40px 36px' : '26px 28px 22px',
+        boxShadow: '0 30px 90px rgba(0,0,0,0.45)',
         textAlign: isLast ? 'center' : 'left',
         zIndex: 100001,
       }}>
@@ -284,7 +308,7 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
             {STEPS.slice(0, -1).map((_, i) => (
               <div key={i} style={{
                 height: '3px', flex: 1, borderRadius: '100px',
-                background: i <= step ? '#fff' : 'rgba(255,255,255,0.1)',
+                background: i <= step ? '#a97c3f' : 'rgba(0,0,0,0.08)',
                 transition: 'background .3s',
               }} />
             ))}
@@ -302,8 +326,8 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
 
         <div style={{
           fontFamily: "'Instrument Serif', serif",
-          fontSize: isLast ? '28px' : '22px',
-          color: '#fff',
+          fontSize: isLast ? '30px' : '24px',
+          color: '#1a1a1a',
           marginBottom: '8px',
           letterSpacing: '-0.3px',
         }}>
@@ -312,7 +336,7 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
 
         {currentStep.description && (
           <p style={{
-            fontSize: '14px', color: 'rgba(255,255,255,0.55)',
+            fontSize: '14px', color: '#5a5a5a',
             lineHeight: 1.6, marginBottom: '20px',
           }}>
             {currentStep.description}
@@ -320,14 +344,14 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
         )}
 
         {isLast && (
-          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', lineHeight: 1.6, marginBottom: '24px' }}>
-            Your profile is set up, you've seen the Learning Hub and interview guides. You're ready to start networking and prepping.
+          <p style={{ fontSize: '14px', color: '#5a5a5a', lineHeight: 1.6, marginBottom: '24px' }}>
+            Your profile is set, and you've seen OB, Learn, Prep, Network, and Insights. You're ready to start prepping and networking.
           </p>
         )}
 
         {step === 0 && !profileValid && (
           <div style={{
-            fontSize: '12px', color: '#f59e0b', marginBottom: '14px',
+            fontSize: '12.5px', color: '#b45309', marginBottom: '14px',
             display: 'flex', alignItems: 'center', gap: '6px',
           }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -337,8 +361,8 @@ export default function TutorialOverlay({ userId, initialStep, onComplete }: Tut
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px' }}>
           <button onClick={advance} disabled={step === 0 && !profileValid} style={{
-            background: (step === 0 && !profileValid) ? 'rgba(255,255,255,0.1)' : '#fff',
-            color: (step === 0 && !profileValid) ? 'rgba(255,255,255,0.3)' : '#0c0c0c',
+            background: (step === 0 && !profileValid) ? 'rgba(0,0,0,0.08)' : '#1a1a1a',
+            color: (step === 0 && !profileValid) ? 'rgba(0,0,0,0.3)' : '#ffffff',
             border: 'none', borderRadius: '10px',
             padding: isLast ? '12px 32px' : '10px 22px',
             fontSize: '13px', fontWeight: 700, cursor: (step === 0 && !profileValid) ? 'not-allowed' : 'pointer',

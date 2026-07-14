@@ -305,6 +305,7 @@ export default function Topbar({ activePage }: SidebarProps) {
                 <Link
                   key={key}
                   href={NAV_SECTIONS[key].items[0].href}
+                  data-tutorial={`nav-${key}`}
                   className={`ob-top-link ob-top-sect${currentSection === key ? ' active' : ''}`}
                 >
                   {NAV_SECTIONS[key].label}
@@ -429,7 +430,7 @@ export default function Topbar({ activePage }: SidebarProps) {
               {sub.items.map(it => {
                 const on = activePage === it.key || (it.key === 'learn' && learnActive);
                 return (
-                  <Link key={it.key} href={it.href} className={`ob-subtab${on ? ' active' : ''}`}>{it.label}</Link>
+                  <Link key={it.key} href={it.href} data-tutorial={`subtab-${it.key}`} className={`ob-subtab${on ? ' active' : ''}`}>{it.label}</Link>
                 );
               })}
             </div>
