@@ -37,7 +37,7 @@ html[data-theme="dark"] .coach-app {
 
 .coach-app {
   display: flex;
-  min-height: 100vh;
+  min-height: calc(100vh - var(--topbar-h, 0px));
   background: var(--frame);
   font-family: 'Inter', 'Sora', system-ui, -apple-system, sans-serif;
   color: var(--text);
@@ -49,7 +49,7 @@ html[data-theme="dark"] .coach-app {
   margin-left: var(--sidebar-w, 240px);
   padding: 0;
   background: var(--surface);
-  min-height: 100vh;
+  min-height: calc(100vh - var(--topbar-h, 0px));
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -282,7 +282,7 @@ html[data-theme="dark"] .coach-app {
   justify-content: center;
   padding: 24px 32px 48px;
   text-align: center;
-  max-width: 900px;
+  max-width: 1160px;
   margin: 0 auto;
   width: 100%;
 }
