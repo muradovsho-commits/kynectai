@@ -310,6 +310,7 @@ export default function Topbar({ activePage }: SidebarProps) {
                     className={`ob-top-link ob-top-sect${currentSection === key ? ' active' : ''}`}
                   >
                     {NAV_SECTIONS[key].label}
+                    <svg className="ob-top-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
                   </Link>
                   <div className="ob-top-dropdown" role="menu">
                     {items.map(it => (
@@ -487,6 +488,8 @@ export default function Topbar({ activePage }: SidebarProps) {
         .ob-top-divider{display:flex;align-items:center;color:#cfcdc9;font-weight:300;font-size:15px;padding:0 8px;user-select:none;line-height:1}
         html[data-theme="dark"] .ob-top-divider{color:#3d3c39}
         .ob-top-navitem{position:relative;display:inline-flex}
+        .ob-top-caret{width:11px;height:11px;margin-left:5px;opacity:.45;flex:0 0 auto;transition:transform .15s ease,opacity .15s ease}
+        .ob-top-navitem:hover .ob-top-caret{transform:rotate(180deg);opacity:.75}
         .ob-top-dropdown{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(4px);min-width:150px;background:#fff;border:1px solid #e8eaed;border-radius:9px;box-shadow:0 10px 30px rgba(0,0,0,.12);padding:5px;opacity:0;visibility:hidden;transition:opacity .14s ease,transform .14s ease,visibility .14s;z-index:60}
         .ob-top-dropdown::before{content:"";position:absolute;top:-9px;left:0;right:0;height:9px}
         .ob-top-navitem:hover .ob-top-dropdown{opacity:1;visibility:visible;transform:translateX(-50%) translateY(2px)}
