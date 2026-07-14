@@ -334,7 +334,7 @@ html[data-theme="dark"] .coach-app {
 /* Input card (used in both hero and chat states) */
 .coach-input-card {
   width: 100%;
-  max-width: 900px;
+  max-width: 740px;
   background: var(--surface);
   border: 1.5px solid var(--accent-soft);
   border-radius: 14px;
@@ -499,7 +499,7 @@ html[data-theme="dark"] .coach-app {
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   width: 100%;
-  max-width: 900px;
+  max-width: 740px;
   margin: 0 auto;
 }
 
@@ -542,7 +542,7 @@ html[data-theme="dark"] .coach-app {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  max-width: 920px;
+  max-width: 740px;
   width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
@@ -678,7 +678,7 @@ html[data-theme="dark"] .coach-app {
 }
 
 .coach-bottom-input .coach-input-card {
-  max-width: 920px;
+  max-width: 740px;
 }
 
 /* Rate limited screen */

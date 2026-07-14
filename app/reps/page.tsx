@@ -316,6 +316,23 @@ function ElitePaywall({ currentPlan }: { currentPlan: string | null }) {
           Compare plans
         </button>
       </div>
+
+      <div style={{ marginTop: 34, paddingTop: 30, borderTop: '1px solid var(--border)' }}>
+        <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 26, lineHeight: 1.1, color: 'var(--text)', margin: '0 0 8px', fontWeight: 400 }}>
+          Ten seats. <em style={{ fontStyle: 'italic' }}>Thirty workdays.</em>
+        </h2>
+        <p style={{ fontSize: 13.5, color: 'var(--text-3)', lineHeight: 1.55, margin: '0 0 14px' }}>
+          Switch the seat from the Industry selector. Every career has intro, intermediate, and advanced workdays, each with its own personas, deliverables, and rubric.
+        </p>
+        <div style={{ fontSize: 13.5, color: 'var(--text-2)', lineHeight: 2.0 }}>
+          {careers.map((c, i) => (
+            <span key={c}>
+              {i > 0 && <span style={{ color: 'var(--text-3)', margin: '0 9px' }}>·</span>}
+              <span style={{ fontWeight: 600, color: 'var(--text)' }}>{c}</span>
+            </span>
+          ))}
+        </div>
+      </div>
       </div>
       <div className="pw-hero-timeline">
       {/* ─── Workday timeline ─── */}
@@ -381,25 +398,6 @@ function ElitePaywall({ currentPlan }: { currentPlan: string | null }) {
         })}
       </div>
       </div>
-      </div>
-
-      {/* ─── Careers strip ─── */}
-      <div style={{ marginTop: 56, paddingTop: 32, borderTop: '1px solid var(--border)' }}>
-        <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, lineHeight: 1.1, color: 'var(--text)', margin: '0 0 8px', fontWeight: 400 }}>
-          Ten seats. <em style={{ fontStyle: 'italic' }}>Thirty workdays.</em>
-        </h2>
-        <p style={{ fontSize: 13.5, color: 'var(--text-3)', lineHeight: 1.55, margin: '0 0 18px', maxWidth: 520 }}>
-          Switch the seat from the Industry selector. Every career has intro, intermediate, and advanced workdays, each with its own personas, deliverables, and rubric.
-        </p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {careers.map(c => (
-            <span key={c} style={{
-              padding: '6px 13px', borderRadius: 999,
-              border: '1px solid var(--border)', background: 'var(--surface)',
-              fontSize: 12.5, fontWeight: 600, color: 'var(--text-2)',
-            }}>{c}</span>
-          ))}
-        </div>
       </div>
 
       <style>{`
