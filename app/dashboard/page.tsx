@@ -248,6 +248,7 @@ export default function DashboardPage() {
   // ─── Activity / streak / calendar (from offerbell_activity_days localStorage)
   const [activityDaysSet, setActivityDaysSet] = useState<Set<string>>(new Set());
   const [currentStreak, setCurrentStreak] = useState(0);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [accountCreatedAt, setAccountCreatedAt] = useState<string | null>(null);
   const loadActivity = useCallback(() => {
     try {
@@ -744,6 +745,30 @@ export default function DashboardPage() {
     return { monthLabel, cells };
   }, [activityDaysSet]);
 
+  const activityHistory = useMemo(() => {
+    const days = Array.from(activityDaysSet).sort();
+    let longest = 0, run = 0;
+    let prev: number | null = null;
+    for (const d of days) {
+      const t = new Date(d + 'T00:00:00').getTime();
+      if (prev !== null && t - prev === 86400000) run++; else run = 1;
+      if (run > longest) longest = run;
+      prev = t;
+    }
+    const byMonth: Record<string, number[]> = {};
+    for (const d of days) {
+      const parts = d.split('-');
+      const key = `${parts[0]}-${parts[1]}`;
+      (byMonth[key] = byMonth[key] || []).push(Number(parts[2]));
+    }
+    const months = Object.keys(byMonth).sort().reverse().map(key => {
+      const [y, m] = key.split('-');
+      const label = new Date(Number(y), Number(m) - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      return { label, days: byMonth[key].sort((a, b) => a - b) };
+    });
+    return { total: days.length, longest, months };
+  }, [activityDaysSet]);
+
   // ─── Render
   const displayFirst = profile.first || "there";
   const greeting = (() => {
@@ -917,7 +942,7 @@ export default function DashboardPage() {
                       );
                     })}
                   </div>
-                  <Link className="dash-cal-link" href="/dashboard">View activity history</Link>
+                  <button type="button" className="dash-cal-link" onClick={() => setHistoryOpen(true)}>View activity history</button>
                 </div>
                 )}
 
@@ -1028,6 +1053,33 @@ export default function DashboardPage() {
           initialStep={tutorialStep}
           onComplete={() => setShowTutorial(false)}
         />
+      )}
+      {historyOpen && (
+        <div className="dash-hist-overlay" onClick={() => setHistoryOpen(false)}>
+          <div className="dash-hist-card" onClick={e => e.stopPropagation()}>
+            <div className="dash-hist-head">
+              <h3 className="dash-hist-title">Activity History</h3>
+              <button type="button" className="dash-hist-close" onClick={() => setHistoryOpen(false)} aria-label="Close">✕</button>
+            </div>
+            <div className="dash-hist-stats">
+              <div className="dash-hist-stat"><div className="dash-hist-stat-n">{activityHistory.total}</div><div className="dash-hist-stat-l">Active days</div></div>
+              <div className="dash-hist-stat"><div className="dash-hist-stat-n">{currentStreak}</div><div className="dash-hist-stat-l">Current streak</div></div>
+              <div className="dash-hist-stat"><div className="dash-hist-stat-n">{activityHistory.longest}</div><div className="dash-hist-stat-l">Longest streak</div></div>
+            </div>
+            <div className="dash-hist-list">
+              {activityHistory.months.length === 0 ? (
+                <div className="dash-hist-empty">No activity yet. Complete a drill, mock interview, or coach session and it will show up here.</div>
+              ) : activityHistory.months.map(mo => (
+                <div key={mo.label} className="dash-hist-month">
+                  <div className="dash-hist-month-label">{mo.label}</div>
+                  <div className="dash-hist-days">
+                    {mo.days.map(d => <span key={d} className="dash-hist-day">{d}</span>)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
