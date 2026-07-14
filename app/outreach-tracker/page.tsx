@@ -351,7 +351,7 @@ export default function OutreachTrackerPage() {
   const css = `
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root,[data-theme="light"]{--bg:#fafaf9;--surface:#ffffff;--surface-2:#f5f4f2;--border:#ebebea;--border-2:#dddcda;--text:#0c0c0c;--text-2:#636160;--text-3:#9b9997;--sidebar-w:240px}
-    [data-theme="dark"]{--bg:#111110;--surface:#1a1a19;--surface-2:#222221;--border:#2a2a29;--border-2:#353534;--text:#f0efed;--text-2:#a8a6a3;--text-3:#636160}
+    [data-theme="dark"]{--bg:#1a1a19;--surface:#222221;--surface-2:#2a2a29;--border:#33322f;--border-2:#3d3c39;--text:#f0efed;--text-2:#a8a6a3;--text-3:#636160}
     body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
     .sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:40;overflow-y:auto}
     .sidebar-logo{padding:22px 20px 18px;font-family:'Instrument Serif',serif;font-size:21px;letter-spacing:-.5px;border-bottom:1px solid var(--border);color:var(--text)}

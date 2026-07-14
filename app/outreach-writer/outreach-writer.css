@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   OUTREACH WRITER — redesigned. Three-layer wrapper, scoped vars, single-page
+   OUTREACH WRITER - redesigned. Three-layer wrapper, scoped vars, single-page
    two-column workspace (form on left, drafts on right). No more 3-step wizard.
 ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -25,11 +25,11 @@
   font-family: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 html[data-theme="dark"] .ow-app {
-  --bg: #111110;
-  --surface: #1a1a19;
-  --surface-2: #222221;
-  --surface-3: #2a2a29;
-  --border: #2a2a29;
+  --bg: #1a1a19;
+  --surface: #222221;
+  --surface-2: #2a2a29;
+  --surface-3: #33322f;
+  --border: #33322f;
   --border-2: #353534;
   --text: #f0efed;
   --text-2: #a8a6a3;

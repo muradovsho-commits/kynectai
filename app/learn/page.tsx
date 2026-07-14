@@ -210,7 +210,6 @@ export default function LearnPage() {
                   <div style={{ position: 'absolute', top: 12, right: 12 }}>
                     <svg width="16" height="16" fill="none" stroke="var(--text-3)" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                   </div>
-                  <div className={`learn-card-icon ${g.iconClass}`}>{g.icon}</div>
                   <div className="learn-card-title">{g.title}</div>
                   <div className="learn-card-desc">{g.desc}</div>
                   <div className="learn-card-footer">
@@ -222,7 +221,6 @@ export default function LearnPage() {
             }
             return (
               <Link key={g.id} href={g.href} className="learn-card">
-                <div className={`learn-card-icon ${g.iconClass}`}>{g.icon}</div>
                 <div className="learn-card-title">{g.title}</div>
                 <div className="learn-card-desc">{g.desc}</div>
                 <div className="learn-card-footer">

@@ -387,19 +387,19 @@ html[data-theme="dark"] .learn-app {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--surface-2);
+  color: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 [data-theme="dark"] .learn-quiz-icon {
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--surface-2);
+  color: var(--text);
 }
-.learn-quiz-icon.icon-roadmaps { background: var(--accent-soft); color: var(--accent); }
-[data-theme="dark"] .learn-quiz-icon.icon-roadmaps { background: var(--accent-soft); color: var(--accent); }
+.learn-quiz-icon.icon-roadmaps { background: var(--surface-2); color: var(--text); }
+[data-theme="dark"] .learn-quiz-icon.icon-roadmaps { background: var(--surface-2); color: var(--text); }
 .learn-quiz-icon svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 2; }
 .learn-quiz-content { flex: 1; }
 .learn-quiz-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 4px; letter-spacing: -0.3px; }
