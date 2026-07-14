@@ -341,15 +341,15 @@ body {
 .dash-cal-streak {
   font-size: 11px;
   font-weight: 600;
-  color: #ea580c;
-  background: #fef3c7;
+  color: #1a1a1a;
+  background: #ecebe8;
   padding: 3px 8px;
   border-radius: 999px;
   letter-spacing: 0.02em;
 }
 [data-theme="dark"] .dash-cal-streak {
-  background: #44320c;
-  color: #fbbf24;
+  background: #2a2a29;
+  color: #ffffff;
 }
 .dash-cal-grid {
   display: grid;
@@ -378,7 +378,7 @@ body {
   justify-content: center;
 }
 .dash-cal-day.active {
-  background: #16a34a;
+  background: #63615d;
   color: #fff;
   font-weight: 600;
 }
@@ -388,7 +388,7 @@ body {
   font-weight: 700;
 }
 .dash-cal-day.today.active {
-  background: #16a34a;
+  background: #63615d;
   color: #fff;
   border: 2px solid var(--text);
 }

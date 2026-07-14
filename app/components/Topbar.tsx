@@ -368,13 +368,7 @@ export default function Topbar({ activePage }: SidebarProps) {
                 data-plan={userPlan}
                 onClick={(e) => { e.stopPropagation(); setMenuOpen(o => !o); }}
               >
-                <input ref={picInputRef} type="file" accept="image/*" onChange={handlePicUpload} style={{ display: 'none' }} />
-                <span
-                  className="ob-avatar"
-                  onClick={(e) => { e.stopPropagation(); picInputRef.current?.click(); }}
-                  title="Click avatar to change photo"
-                  style={{ cursor: 'pointer' }}
-                >
+                <span className="ob-avatar">
                   {profilePic ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={profilePic} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit', display: 'block' }} />
@@ -529,7 +523,7 @@ export default function Topbar({ activePage }: SidebarProps) {
         .ob-industry-menu-item.active{background:#f1f5f9;color:#1d293d;font-weight:600}
         html[data-theme="dark"] .ob-industry-menu-item.active{background:#2a2a29;color:#fff}
 
-        .ob-top-icon{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:2px;
+        .ob-top-icon{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:2px;order:1;
           background:none;border:1px solid transparent;color:#62748e;cursor:pointer;transition:.12s}
         .ob-top-icon:hover{background:#f8fafc;color:#1d293d}
         html[data-theme="dark"] .ob-top-icon{color:#a8a6a3}
