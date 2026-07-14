@@ -327,7 +327,7 @@ function ElitePaywall({ currentPlan }: { currentPlan: string | null }) {
         <div style={{ fontSize: 13.5, color: 'var(--text-2)', lineHeight: 2.0 }}>
           {careers.map((c, i) => (
             <span key={c}>
-              {i > 0 && <span style={{ color: 'var(--text-3)', margin: '0 9px' }}>·</span>}
+              {i > 0 && <span style={{ color: 'var(--text-3)', margin: '0 12px', fontWeight: 300 }}>|</span>}
               <span style={{ fontWeight: 600, color: 'var(--text)' }}>{c}</span>
             </span>
           ))}
