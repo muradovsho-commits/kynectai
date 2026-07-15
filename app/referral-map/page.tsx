@@ -403,6 +403,133 @@ function NetworkGraph({ contacts, selectedId, onSelect, expanded, searchQuery = 
 }
 
 // ═══ MAIN PAGE ═══
+// ═══ REFERRAL TREE ═══
+// The map answers "where is my network"; this answers "who is under who".
+// Parentage is carried by indentation and connector lines rather than by
+// position on a spiral, so a chain is readable without tracing an edge.
+// Pure presentation: reads the same `contacts` array the map does and writes
+// nothing. Every mutation goes back through the page's existing handlers.
+function ReferralTree({
+  contacts, search, collapsed, onToggleCollapse, onAdd, onEdit, userName, profilePic,
+}: {
+  contacts: Contact[];
+  search: string;
+  collapsed: Set<string>;
+  onToggleCollapse: (id: string) => void;
+  onAdd: (parentId: string) => void;
+  onEdit: (c: Contact) => void;
+  userName: string;
+  profilePic?: string | null;
+}) {
+  const q = search.trim().toLowerCase();
+  const kidsOf = (id: string) => contacts.filter(c => c.referredBy === id);
+  const isHit = (c: Contact) =>
+    !!q && (c.name.toLowerCase().includes(q) || c.firm.toLowerCase().includes(q) || (c.role || '').toLowerCase().includes(q));
+
+  // A branch survives a search if it or anything beneath it matches, so the
+  // path from You down to a hit stays intact instead of orphaning the hit.
+  const keep = (c: Contact, seen = new Set<string>()): boolean => {
+    if (!q) return true;
+    if (seen.has(c.id)) return false;
+    seen.add(c.id);
+    return isHit(c) || kidsOf(c.id).some(k => keep(k, seen));
+  };
+  const countBelow = (id: string, seen = new Set<string>()): number => {
+    if (seen.has(id)) return 0;
+    seen.add(id);
+    const k = kidsOf(id);
+    return k.length + k.reduce((n, x) => n + countBelow(x.id, seen), 0);
+  };
+
+  const Row = ({ c, depth, isLast, guides }: { c: Contact; depth: number; isLast: boolean; guides: boolean[] }) => {
+    const kids = kidsOf(c.id).filter(k => keep(k));
+    const shut = collapsed.has(c.id);
+    const below = countBelow(c.id);
+    return (
+      <div className="rmt-branch">
+        <div className={`rmt-row${isHit(c) ? ' hit' : ''}`}>
+          {guides.map((g, i) => <span key={i} className={`rmt-guide${g ? ' on' : ''}`} />)}
+          {depth > 0 && <span className={`rmt-elbow${isLast ? ' last' : ''}`} />}
+
+          <button
+            type="button"
+            className={`rmt-twist${kids.length ? '' : ' empty'}${shut ? ' shut' : ''}`}
+            onClick={() => kids.length && onToggleCollapse(c.id)}
+            aria-label={shut ? 'Expand' : 'Collapse'}
+          >
+            {kids.length > 0 && (
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="6 9 12 15 18 9" /></svg>
+            )}
+          </button>
+
+          <span className="rmt-dot" style={{ background: getColor(c.name) }} />
+          <span className="rmt-name">{c.name}</span>
+          {(c.firm || c.role) && (
+            <span className="rmt-meta">{c.firm}{c.firm && c.role ? ' \u00b7 ' : ''}{c.role}</span>
+          )}
+          {c.state && <span className="rmt-state">{c.state}</span>}
+          {below > 0 && <span className="rmt-count">{below} below</span>}
+
+          <span className="rmt-actions">
+            <button type="button" className="rmt-act" onClick={() => onAdd(c.id)} title={`Add someone ${c.name} referred you to`}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14" /></svg>
+              Add referral
+            </button>
+            <button type="button" className="rmt-act" onClick={() => onEdit(c)}>Edit</button>
+          </span>
+        </div>
+
+        {!shut && kids.length > 0 && (
+          <div className="rmt-kids">
+            {kids.map((k, i) => (
+              <Row key={k.id} c={k} depth={depth + 1} isLast={i === kids.length - 1} guides={[...guides, !isLast]} />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const roots = contacts.filter(c => c.referredBy === 'you').filter(k => keep(k));
+  const youShut = collapsed.has('you');
+
+  return (
+    <div className="rmt">
+      <div className="rmt-branch">
+        <div className="rmt-row rmt-you">
+          <button type="button" className={`rmt-twist${roots.length ? '' : ' empty'}${youShut ? ' shut' : ''}`} onClick={() => roots.length && onToggleCollapse('you')} aria-label={youShut ? 'Expand' : 'Collapse'}>
+            {roots.length > 0 && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="6 9 12 15 18 9" /></svg>}
+          </button>
+          {profilePic
+            ? <img className="rmt-avatar" src={profilePic} alt="" />
+            : <span className="rmt-dot rmt-dot-you" />}
+          <span className="rmt-name">{userName || 'You'}</span>
+          <span className="rmt-meta">everyone you reached directly</span>
+          {contacts.length > 0 && <span className="rmt-count">{contacts.length} total</span>}
+          <span className="rmt-actions">
+            <button type="button" className="rmt-act" onClick={() => onAdd('you')} title="Add a contact you reached yourself">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14" /></svg>
+              Add contact
+            </button>
+          </span>
+        </div>
+
+        {!youShut && (
+          <div className="rmt-kids">
+            {roots.map((r, i) => (
+              <Row key={r.id} c={r} depth={1} isLast={i === roots.length - 1} guides={[]} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {q && roots.length === 0 && (
+        <div className="rmt-none">Nobody matches &quot;{search}&quot;.</div>
+      )}
+    </div>
+  );
+}
+
 export default function ReferralMapPage() {
   const router = useRouter();
   const userPlan = useUserPlan();
@@ -415,6 +542,16 @@ export default function ReferralMapPage() {
   const [impList, setImpList] = useState<{ fname: string; lname: string; firm: string; role: string; sel: boolean }[]>([]);
   const [showHelp, setShowHelp] = useState(false);
   const [graphExpanded, setGraphExpanded] = useState(false);
+  // Tree is the default: hierarchy is what people come here to read. The map is
+  // one click away and behaves exactly as it did before.
+  const [view, setView] = useState<'tree' | 'map'>('tree');
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+  const toggleCollapse = (id: string) => setCollapsed(prev => {
+    const n = new Set(prev);
+    if (n.has(id)) n.delete(id); else n.add(id);
+    return n;
+  });
+  const [userName, setUserName] = useState('You');
   const [profilePic, setProfilePic] = useState<string | null>(null);
 
   // Direct Convex read/write for referral nodes. serverReferral is a live
@@ -486,6 +623,17 @@ export default function ReferralMapPage() {
     try { localStorage.setItem('offerbell_referral_nodes_v3', str); } catch {} // keep warm-start cache current
     upsertReferral({ userId: authUid, sessionToken: authTok, data: str, updatedAt: Date.now() }).catch(() => {});
   }, [contacts]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('offerbell_onboarding_profile');
+      if (raw) {
+        const pr = JSON.parse(raw);
+        const n = `${pr.firstName || ''} ${pr.lastName || ''}`.trim();
+        if (n) setUserName(n);
+      }
+    } catch {}
+  }, []);
 
   const getReferrals = (id: string): Contact[] => contacts.filter(c => c.referredBy === id);
   const getChainSize = (id: string, visited = new Set<string>()): number => {
@@ -598,6 +746,16 @@ export default function ReferralMapPage() {
                     <input className="rm-search" placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)} />
                   </div>
                 )}
+                <div className="rm-viewswitch" role="tablist">
+                  <button type="button" role="tab" aria-selected={view === 'tree'} className={`rm-viewtab${view === 'tree' ? ' on' : ''}`} onClick={() => setView('tree')}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 5h8M3 12h13M3 19h18" /></svg>
+                    Tree
+                  </button>
+                  <button type="button" role="tab" aria-selected={view === 'map'} className={`rm-viewtab${view === 'map' ? ' on' : ''}`} onClick={() => setView('map')}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 3 3 5.5v15L9 18l6 3 6-2.5v-15L15 6z" /><path d="M9 3v15M15 6v15" /></svg>
+                    Map
+                  </button>
+                </div>
                 <button className="rm-btn-secondary" onClick={openImport} type="button">
                   <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                   Import from Tracker
@@ -651,8 +809,35 @@ export default function ReferralMapPage() {
             )
           )}
 
+          {/* ═══ REFERRAL TREE ═══ */}
+          {totalContacts > 0 && view === 'tree' && (
+            <div className="rm-tree-container">
+              <div className="rm-tree-head">
+                <div>
+                  <div className="rm-tree-h">Who referred who</div>
+                  <div className="rm-tree-sub">Each name sits under the person who introduced you to them.</div>
+                </div>
+                <div className="rm-tree-head-actions">
+                  <button type="button" className="rm-tree-link" onClick={() => setCollapsed(new Set())}>Expand all</button>
+                  <span className="rm-tree-sep" />
+                  <button type="button" className="rm-tree-link" onClick={() => setCollapsed(new Set(['you', ...contacts.map(c => c.id)]))}>Collapse all</button>
+                </div>
+              </div>
+              <ReferralTree
+                contacts={contacts}
+                search={search}
+                collapsed={collapsed}
+                onToggleCollapse={toggleCollapse}
+                onAdd={(parentId) => openAdd(parentId)}
+                onEdit={(c) => openEdit(c)}
+                userName={userName}
+                profilePic={profilePic}
+              />
+            </div>
+          )}
+
           {/* ═══ NETWORK GRAPH ═══ */}
-          {totalContacts > 0 && (
+          {totalContacts > 0 && view === 'map' && (
             <div className="rm-graph-container">
               <button
                 onClick={() => setGraphExpanded(true)}
@@ -714,7 +899,9 @@ export default function ReferralMapPage() {
           )}
 
           {/* ═══ CHAIN VIEWER ═══ */}
-          {totalContacts > 0 && (() => {
+          {/* Map view only: in tree view this dropdown would be a worse copy of
+              the tree that is already on screen. */}
+          {totalContacts > 0 && view === 'map' && (() => {
             // Build chain options: direct contacts that have referrals = chains, plus standalone directs
             const isContactMatch = (id: string): boolean => {
               const c = contacts.find(x => x.id === id);
