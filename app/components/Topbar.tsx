@@ -44,7 +44,7 @@ const NAV_SECTIONS: Record<string, { label: string; items: ObNavItem[] }> = {
     { key: 'mock-interview', label: 'Mock Interview', href: '/mock-interview' },
   ] },
   networking: { label: 'Network', items: [
-    { key: 'contact-database', label: 'Contact Database', href: '/contact-database' },
+    { key: 'contact-database', label: 'Directory', href: '/contact-database' },
     { key: 'outreach-tracker', label: 'Outreach Tracker', href: '/outreach-tracker' },
     { key: 'outreach-writer', label: 'Outreach Writer', href: '/outreach-writer' },
     { key: 'referral-map', label: 'Referral Map', href: '/referral-map' },

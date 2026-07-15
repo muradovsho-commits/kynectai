@@ -305,6 +305,7 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
               <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Includes</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
                 {[
+                  { icon: CHECK, text: 'Directory: 3 contact unlocks (lifetime)' },
                   { icon: CHECK, text: '10% of flashcards per track' },
                   { icon: CHECK, text: 'Concept Drills (5 Qs per drill)' },
                   { icon: CHECK, text: '1 diagnostic review' },
@@ -348,6 +349,7 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
               <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Everything in Basic, plus</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
                 {[
+                  'Directory: 50 contact unlocks/week',
                   'Full flashcard access - all tracks',
                   'Infinite AI drills (endless, adaptive)',
                   'All diagnostic tracks',
@@ -414,6 +416,7 @@ const handleSwitch = async (from: string, to: 'pro' | 'elite') => {
               <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Everything in Pro, plus</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
                 {[
+                  'Directory: 200 contact unlocks/week',
                   'OB, the voice coach desktop app (macOS)',
                   'The Desk (10 careers, 30 workday scenarios)',
                   'AI Coach (higher limits)',

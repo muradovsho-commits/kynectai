@@ -336,4 +336,16 @@ export default defineSchema({
   }).index("by_user", ["userId"])
     .index("by_user_contact", ["userId", "contactId"])
     .index("by_user_week", ["userId", "weekStart"]),
+
+  // Contact Database bookmarks. One row per (user, contact). Server-side so a
+  // saved list follows the account across devices and survives a logout, the
+  // same as the tracker. Deliberately its own table rather than a field on the
+  // progress blob, so toggling a bookmark costs one small row write.
+  contactSaves: defineTable({
+    userId: v.string(),
+    userEmail: v.optional(v.string()), // Denormalized for dashboard readability.
+    contactId: v.string(),
+    savedAt: v.number(),
+  }).index("by_user", ["userId"])
+    .index("by_user_contact", ["userId", "contactId"]),
 });

@@ -117,6 +117,21 @@ export default function OutreachWriterPage() {
   // Toast
   const [toast, setToast] = useState('');
 
+  // ── Prefill the recipient when handed off from the Directory ──
+  // Reads window.location.search rather than useSearchParams: the latter forces
+  // this client page into a Suspense boundary at build time. Additive only, so
+  // arriving here without params leaves every existing field untouched.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const q = new URLSearchParams(window.location.search);
+      const n = q.get('name'); const f = q.get('firm'); const r = q.get('role');
+      if (n) setContactName(n);
+      if (f) setContactFirm(f);
+      if (r) setContactRole(r);
+    } catch {}
+  }, []);
+
   // ── Hydrate from localStorage on mount ──
   useEffect(() => {
     try {

@@ -3,12 +3,14 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useMutation, useConvex } from 'convex/react';
+import { api } from '../../convex/_generated/api';
+import { PLAN_LIMITS } from '../lib/plan';
 import Topbar from '../components/Topbar';
 import './contact-database.css';
 import { IB_CONTACTS, POSITIONS, type DbContact, type ContactPrivate } from './contact-data';
 
 const LIVE_VERTICAL = 'Investment Banking';
-const SAVED_KEY = 'offerbell_contactdb_saved';
 const PAGE_SIZE = 25;
 
 /* ── icons ── */
@@ -47,6 +49,12 @@ const IconLinkedin = () => (
 );
 const IconMail = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+);
+const IconPlus = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
+);
+const IconPen = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /><path d="m15 5 4 4" /></svg>
 );
 const IconDatabase = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3" /><path d="M3 5v14a9 3 0 0 0 18 0V5" /><path d="M3 12a9 3 0 0 0 18 0" /></svg>
@@ -180,20 +188,47 @@ export default function ContactDatabasePage() {
   const [positions, setPositions] = useState<string[]>([]);
   const [savedOnly, setSavedOnly] = useState(false);
 
-  const [saved, setSaved] = useState<string[]>([]);
+  // Saved contacts live in Convex so the list follows the account. One-shot
+  // query on mount rather than useQuery: a live subscription would re-push the
+  // whole list on every toggle for no benefit.
+  const convex = useConvex();
+  const toggleSaveMut = useMutation(api.contactSaves.toggleSave);
+  const appendToTracker = useMutation(api.outreachTracker.appendContacts);
+
+  const [auth, setAuth] = useState<{ uid: string; tok?: string }>({ uid: '' });
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(SAVED_KEY);
-      const p = raw ? JSON.parse(raw) : [];
-      if (Array.isArray(p)) setSaved(p);
+      setAuth({
+        uid: localStorage.getItem('offerbell_user_id') || '',
+        tok: localStorage.getItem('offerbell_session') || undefined,
+      });
     } catch {}
   }, []);
-  const toggleSave = (id: string) => {
-    setSaved(prev => {
-      const next = prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id];
-      try { localStorage.setItem(SAVED_KEY, JSON.stringify(next)); } catch {}
-      return next;
-    });
+
+  const [saved, setSaved] = useState<string[]>([]);
+  useEffect(() => {
+    if (!auth.uid) return;
+    let alive = true;
+    (async () => {
+      try {
+        const ids = await convex.query(api.contactSaves.listSaves, { userId: auth.uid, sessionToken: auth.tok });
+        if (alive && Array.isArray(ids)) setSaved(ids);
+      } catch {}
+    })();
+    return () => { alive = false; };
+  }, [auth.uid, auth.tok, convex]);
+
+  const toggleSave = async (id: string) => {
+    if (!auth.uid) return;
+    const wasSaved = saved.includes(id);
+    // Optimistic: the row write is small and the mutation is idempotent, so a
+    // failure just reverts.
+    setSaved(prev => (wasSaved ? prev.filter(x => x !== id) : [...prev, id]));
+    try {
+      await toggleSaveMut({ userId: auth.uid, sessionToken: auth.tok, contactId: id });
+    } catch {
+      setSaved(prev => (wasSaved ? [...prev, id] : prev.filter(x => x !== id)));
+    }
   };
 
   const [openId, setOpenId] = useState<string | null>(null);
@@ -285,6 +320,68 @@ export default function ContactDatabasePage() {
     setter(prev => (prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]));
 
   const openContact = (id: string) => { setOpenId(id); setTab('contact'); setUnlockErr(''); };
+
+  // Add to Outreach Tracker. Uses the tracker's own appendContacts mutation,
+  // which dedupes by id and merges server-side, so this can never clobber an
+  // edit made on another device. Free-plan contact cap is enforced the same way
+  // the tracker page enforces it, otherwise this button would be a way around it.
+  const [trackerBusy, setTrackerBusy] = useState(false);
+  const [inTracker, setInTracker] = useState<string[]>([]);
+  const [toast, setToast] = useState('');
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(''), 3200);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  const addToTracker = async (c: DbContact) => {
+    if (!auth.uid || trackerBusy) return;
+    setTrackerBusy(true);
+    try {
+      const plan = credits?.plan || 'free';
+      if (plan !== 'pro' && plan !== 'elite') {
+        const existing: any = await convex.query(api.outreachTracker.getTracker, { userId: auth.uid, sessionToken: auth.tok });
+        let rows: any[] = [];
+        try { const p = JSON.parse(existing?.data || '[]'); if (Array.isArray(p)) rows = p; } catch {}
+        const already = rows.some((r: any) => r && r.id === `cdb-${c.id}`);
+        if (!already && rows.length >= (PLAN_LIMITS.outreachContacts.free as number)) {
+          setToast(`Free plan allows ${PLAN_LIMITS.outreachContacts.free} tracker contacts. Upgrade to Pro for unlimited.`);
+          return;
+        }
+      }
+      const detail = details[c.id];
+      const row = {
+        id: `cdb-${c.id}`,
+        fname: c.first,
+        lname: c.last,
+        firm: c.company,
+        role: c.title,
+        status: 'not_contacted',
+        angle: '',
+        notes: detail?.email ? `Email: ${detail.email}` : '',
+        quality: '',
+        createdAt: Date.now(),
+        lastContact: null,
+        sentAt: null,
+        lastFollowUpAt: null,
+        linkedin: detail?.linkedin || '',
+        scheduledAt: null,
+      };
+      await appendToTracker({ userId: auth.uid, sessionToken: auth.tok, contacts: JSON.stringify([row]) });
+      setInTracker(prev => (prev.includes(c.id) ? prev : [...prev, c.id]));
+      setToast(`${c.first} ${c.last} added to your Outreach Tracker.`);
+    } catch {
+      setToast('Could not add to tracker. Try again.');
+    } finally {
+      setTrackerBusy(false);
+    }
+  };
+
+  // Hand off to the writer with the recipient prefilled.
+  const writeOutreach = (c: DbContact) => {
+    const q = new URLSearchParams({ name: `${c.first} ${c.last}`.trim(), firm: c.company, role: c.title });
+    router.push(`/outreach-writer?${q.toString()}`);
+  };
 
   const remaining = credits ? Math.max(0, credits.limit - credits.used) : null;
   const outOfCredits = remaining === 0;
@@ -521,6 +618,22 @@ export default function ContactDatabasePage() {
                   </>
                 )}
               </div>
+
+              <div className="cdb-actions-row">
+                <button
+                  type="button"
+                  className="cdb-action-btn"
+                  disabled={trackerBusy || inTracker.includes(active.id)}
+                  onClick={() => addToTracker(active)}
+                >
+                  <IconPlus />
+                  {inTracker.includes(active.id) ? 'In your tracker' : 'Add to Outreach Tracker'}
+                </button>
+                <button type="button" className="cdb-action-btn" onClick={() => writeOutreach(active)}>
+                  <IconPen />
+                  Write outreach
+                </button>
+              </div>
             </>
           )}
 
@@ -559,6 +672,8 @@ export default function ContactDatabasePage() {
           )}
         </aside>
       )}
+
+      {toast && <div className="cdb-toast">{toast}</div>}
     </div>
   );
 }

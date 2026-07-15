@@ -517,3 +517,43 @@ html[data-theme="dark"] .cdb-unlock:hover { background: #2563eb; }
   color: #b91c1c;
 }
 html[data-theme="dark"] .cdb-unlock-err { color: #f87171; }
+
+/* ── Panel actions ── */
+.cdb-actions-row { display: flex; flex-direction: column; gap: 8px; margin: -14px 0 26px; }
+.cdb-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--cdb-border);
+  background: var(--cdb-surface);
+  color: var(--cdb-text);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .12s ease, border-color .12s ease;
+}
+.cdb-action-btn:hover:not(:disabled) { background: var(--cdb-bg); border-color: var(--cdb-border-2); }
+.cdb-action-btn:disabled { opacity: .55; cursor: default; }
+
+.cdb-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 80;
+  max-width: 460px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: #14161a;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .28);
+}
+html[data-theme="dark"] .cdb-toast { background: #2a2a29; border: 1px solid #383836; }
