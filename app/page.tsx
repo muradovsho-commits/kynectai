@@ -19,9 +19,8 @@ export default function Home() {
     // dark visitor never sees a white frame around a dark page. The landing owns
     // the choice; this only mirrors it. Same origin, so the key is shared.
     const applyTheme = (t?: string | null) => {
-      const theme = t === 'dark' || t === 'light'
-        ? t
-        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      // Light unless this visitor explicitly chose dark, same rule the landing uses.
+      const theme = t === 'dark' ? 'dark' : 'light';
       if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
       else document.documentElement.removeAttribute('data-theme');
       document.documentElement.style.background = theme === 'dark' ? '#111110' : '#fafafa';
