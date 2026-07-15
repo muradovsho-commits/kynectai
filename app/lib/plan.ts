@@ -23,6 +23,11 @@ export const PLAN_LIMITS = {
   coach: { free: 1, pro: 40, elite: 80 },                // per week (free), tokens per window (pro/elite)
   mockInterview: { free: 3, pro: 999, elite: 999 },      // per week
   infiniteDrills: { free: 0, pro: 1500, elite: 4000 },   // free=0 => Pro-gated; weekly cap on paid
+  // Contact Database unlocks. Free is a lifetime allowance, paid resets weekly.
+  // DISPLAY ONLY. Enforcement lives in convex/contactUnlocks.ts, which is the
+  // one place a browser cannot rewrite. If these change, change that too.
+  contactUnlocks: { free: 3, pro: 50, elite: 200 },
+  contactUnlocksIsLifetime: { free: true, pro: false, elite: false },
 } as const;
 
 // ══════════════════════════════════════════════════════════════

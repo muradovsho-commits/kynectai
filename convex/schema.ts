@@ -320,4 +320,20 @@ export default defineSchema({
     infiniteDrills: v.optional(v.number()),
     updatedAt: v.number(),
   }).index("by_user_week", ["userId", "weekStart"]),
+
+  // Contact Database unlocks. One row per (user, contact) the user has ever
+  // revealed. This table is both the permanence record and the meter:
+  //   free  -> 3 lifetime, counted as all rows for the user
+  //   paid  -> weekly cap, counted as rows matching the current weekStart
+  // Re-opening a contact already in here is free and never inserts twice, so
+  // a user is never charged twice for the same person.
+  contactUnlocks: defineTable({
+    userId: v.string(),
+    userEmail: v.optional(v.string()), // Denormalized for dashboard readability.
+    contactId: v.string(),
+    weekStart: v.string(),
+    unlockedAt: v.number(),
+  }).index("by_user", ["userId"])
+    .index("by_user_contact", ["userId", "contactId"])
+    .index("by_user_week", ["userId", "weekStart"]),
 });

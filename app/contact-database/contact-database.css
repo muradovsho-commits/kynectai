@@ -506,3 +506,14 @@ html[data-theme="dark"] .cdb-unlock:hover { background: #2563eb; }
   transition: background .12s ease, border-color .12s ease;
 }
 .cdb-more:hover { background: var(--cdb-bg); border-color: var(--cdb-border-2); }
+
+/* ── Unlock meter ── */
+.cdb-unlock:disabled { opacity: .55; cursor: not-allowed; }
+.cdb-unlock-err {
+  margin: 8px 0 0;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #b91c1c;
+}
+html[data-theme="dark"] .cdb-unlock-err { color: #f87171; }

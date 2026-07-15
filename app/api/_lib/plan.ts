@@ -23,6 +23,14 @@ const LIMITS: Record<PlanFeature, { free: number; pro: number; elite: number }> 
   infiniteDrills: { free: 0,  pro: 1500, elite: 4000 }, // free=0 => Pro-gated; paid cap is an abuse backstop, weekly
 };
 
+// Contact Database unlocks are NOT in LIMITS above on purpose. They are not
+// metered through weeklyUsage: the contactUnlocks table is both the meter and
+// the permanence record, so checkPlanLimit would read a counter that is never
+// written and wave everyone through. Enforcement is convex/contactUnlocks.ts.
+// Mirrored here for reference only; app/lib/plan.ts carries the same numbers.
+export const CONTACT_UNLOCK_LIMITS = { free: 3, pro: 50, elite: 200 } as const;
+export const CONTACT_UNLOCK_IS_LIFETIME = { free: true, pro: false, elite: false } as const;
+
 export interface PlanCheckResult {
   allowed: boolean;
   plan: "free" | "pro" | "elite";

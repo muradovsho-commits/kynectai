@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect, useMemo, useRef } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Topbar from '../components/Topbar';
 import './contact-database.css';
-import { IB_CONTACTS, POSITIONS, type DbContact } from './contact-data';
+import { IB_CONTACTS, POSITIONS, type DbContact, type ContactPrivate } from './contact-data';
 
 const LIVE_VERTICAL = 'Investment Banking';
 const SAVED_KEY = 'offerbell_contactdb_saved';
@@ -197,7 +198,57 @@ export default function ContactDatabasePage() {
 
   const [openId, setOpenId] = useState<string | null>(null);
   const [tab, setTab] = useState<'contact' | 'experience' | 'education'>('contact');
-  const [unlocked, setUnlocked] = useState<string[]>([]);
+
+  // Unlock state is server-owned. `details` only ever holds contacts this user
+  // has actually paid for; everything else has no address on the client at all.
+  const [details, setDetails] = useState<Record<string, ContactPrivate>>({});
+  const [credits, setCredits] = useState<{ plan: string; used: number; limit: number; lifetime: boolean } | null>(null);
+  const [unlocking, setUnlocking] = useState(false);
+  const [unlockErr, setUnlockErr] = useState('');
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const r = await fetch('/api/contact-unlock', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ action: 'status' }),
+        });
+        if (!r.ok) return;
+        const d = await r.json();
+        if (!alive) return;
+        setDetails(d.details || {});
+        setCredits({ plan: d.plan, used: d.used, limit: d.limit, lifetime: d.lifetime });
+      } catch {}
+    })();
+    return () => { alive = false; };
+  }, []);
+
+  const doUnlock = async (id: string) => {
+    setUnlocking(true); setUnlockErr('');
+    try {
+      const r = await fetch('/api/contact-unlock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ action: 'unlock', contactId: id }),
+      });
+      const d = await r.json();
+      if (!r.ok) {
+        setUnlockErr(d?.message || 'Could not unlock this contact. Try again.');
+        if (typeof d?.used === 'number') setCredits({ plan: d.plan, used: d.used, limit: d.limit, lifetime: d.lifetime });
+        return;
+      }
+      setDetails(prev => ({ ...prev, [id]: d.detail }));
+      setCredits({ plan: d.plan, used: d.used, limit: d.limit, lifetime: d.lifetime });
+    } catch {
+      setUnlockErr('Could not reach the server. Try again.');
+    } finally {
+      setUnlocking(false);
+    }
+  };
 
   const companyOptions = useMemo(
     () => Array.from(new Set(IB_CONTACTS.map(c => c.company).filter(Boolean))).sort(),
@@ -233,7 +284,15 @@ export default function ContactDatabasePage() {
   const toggle = (setter: React.Dispatch<React.SetStateAction<string[]>>) => (v: string) =>
     setter(prev => (prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]));
 
-  const openContact = (id: string) => { setOpenId(id); setTab('contact'); };
+  const openContact = (id: string) => { setOpenId(id); setTab('contact'); setUnlockErr(''); };
+
+  const remaining = credits ? Math.max(0, credits.limit - credits.used) : null;
+  const outOfCredits = remaining === 0;
+  const creditNote = credits === null
+    ? ''
+    : credits.lifetime
+      ? `${remaining} of ${credits.limit} free unlocks remaining`
+      : `${remaining} of ${credits.limit} unlocks left this week. Resets Monday.`;
 
   /* ── Verticals without a dataset yet ── */
   if (vertical && vertical !== LIVE_VERTICAL) {
@@ -419,37 +478,46 @@ export default function ContactDatabasePage() {
                 <div className="cdb-contact-row">
                   <IconLinkedin />
                   <span className="cdb-contact-key">LinkedIn</span>
-                  {!unlocked.includes(active.id) ? (
-                    <span className="cdb-redact"><span style={{ width: 84 }} /><span style={{ width: 62 }} /></span>
-                  ) : active.linkedin ? (
-                    <a className="cdb-contact-val cdb-link" href={active.linkedin} target="_blank" rel="noopener noreferrer">
-                      {active.linkedin.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
+                  {details[active.id] ? (
+                    <a className="cdb-contact-val cdb-link" href={details[active.id].linkedin} target="_blank" rel="noopener noreferrer">
+                      {details[active.id].linkedin.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
                     </a>
                   ) : (
-                    <span className="cdb-contact-val cdb-none">Not on file</span>
+                    <span className="cdb-redact"><span style={{ width: 84 }} /><span style={{ width: 62 }} /></span>
                   )}
                 </div>
                 <div className="cdb-contact-row">
                   <IconMail />
                   <span className="cdb-contact-key">Email</span>
-                  {!unlocked.includes(active.id) ? (
-                    <span className="cdb-redact"><span style={{ width: 96 }} /><span style={{ width: 70 }} /></span>
-                  ) : active.email ? (
-                    <a className="cdb-contact-val cdb-link" href={`mailto:${active.email}`}>{active.email}</a>
+                  {details[active.id] ? (
+                    <a className="cdb-contact-val cdb-link" href={`mailto:${details[active.id].email}`}>{details[active.id].email}</a>
                   ) : (
-                    <span className="cdb-contact-val cdb-none">Not on file</span>
+                    <span className="cdb-redact"><span style={{ width: 96 }} /><span style={{ width: 70 }} /></span>
                   )}
                 </div>
-                {!unlocked.includes(active.id) && (
+
+                {!details[active.id] && (
                   <>
                     <button
                       type="button"
                       className="cdb-unlock"
-                      onClick={() => setUnlocked(u => [...u, active.id])}
+                      disabled={unlocking || outOfCredits}
+                      onClick={() => doUnlock(active.id)}
                     >
-                      Unlock contact info
+                      {unlocking ? 'Unlocking...' : outOfCredits ? 'No unlocks left' : 'Unlock contact info'}
                     </button>
-                    <p className="cdb-unlock-note">Included with your plan</p>
+                    {creditNote && (
+                      <p className="cdb-unlock-note">
+                        {creditNote}
+                        {outOfCredits && credits?.plan !== 'elite' && (
+                          <>
+                            {' '}
+                            <Link href="/checkout" className="cdb-link">Upgrade</Link>
+                          </>
+                        )}
+                      </p>
+                    )}
+                    {unlockErr && <p className="cdb-unlock-err">{unlockErr}</p>}
                   </>
                 )}
               </div>
