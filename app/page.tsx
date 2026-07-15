@@ -15,7 +15,24 @@ export default function Home() {
       setShowLanding(true);
     }
 
+    // Keep the shell behind the iframe on the same theme as the landing, so a
+    // dark visitor never sees a white frame around a dark page. The landing owns
+    // the choice; this only mirrors it. Same origin, so the key is shared.
+    const applyTheme = (t?: string | null) => {
+      const theme = t === 'dark' || t === 'light'
+        ? t
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+      else document.documentElement.removeAttribute('data-theme');
+      document.documentElement.style.background = theme === 'dark' ? '#111110' : '#fafafa';
+    };
+    try { applyTheme(localStorage.getItem('offerbell-theme')); } catch {}
+
     const handleMessage = (e: MessageEvent) => {
+      if (e.data?.type === 'theme') {
+        applyTheme(e.data.theme);
+        return;
+      }
       if (e.data?.type === 'navigate' && e.data?.url) {
         // Fade out the iframe wrapper before navigating
         const wrapper = document.getElementById('landing-wrapper');
