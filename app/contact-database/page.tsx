@@ -8,6 +8,7 @@ import { IB_CONTACTS, POSITIONS, type DbContact } from './contact-data';
 
 const LIVE_VERTICAL = 'Investment Banking';
 const SAVED_KEY = 'offerbell_contactdb_saved';
+const PAGE_SIZE = 25;
 
 /* ── icons ── */
 const IconSearch = () => (
@@ -199,25 +200,33 @@ export default function ContactDatabasePage() {
   const [unlocked, setUnlocked] = useState<string[]>([]);
 
   const companyOptions = useMemo(
-    () => Array.from(new Set(IB_CONTACTS.map(c => c.company))).sort(),
+    () => Array.from(new Set(IB_CONTACTS.map(c => c.company).filter(Boolean))).sort(),
     []
   );
   const schoolOptions = useMemo(
-    () => Array.from(new Set(IB_CONTACTS.map(c => c.school))).sort(),
+    () => Array.from(new Set(IB_CONTACTS.map(c => c.school).filter(Boolean))).sort(),
     []
   );
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
     return IB_CONTACTS.filter(c => {
-      if (q && !`${c.first} ${c.last}`.toLowerCase().includes(q)) return false;
-      if (companies.length && !companies.includes(c.company)) return false;
-      if (schools.length && !schools.includes(c.school)) return false;
+      if (q && !`${c.first} ${c.last} ${c.company} ${c.title}`.toLowerCase().includes(q)) return false;
+      // Substring rather than exact match: the sheet stores school as a full
+      // degree line ("Boston College - Carroll School of Management"), so an
+      // exact match would split one school across several options.
+      if (companies.length && !companies.some(v => c.company.toLowerCase().includes(v.toLowerCase()))) return false;
+      if (schools.length && !schools.some(v => c.school.toLowerCase().includes(v.toLowerCase()))) return false;
       if (positions.length && !positions.includes(c.seniority)) return false;
       if (savedOnly && !saved.includes(c.id)) return false;
       return true;
     });
   }, [query, companies, schools, positions, savedOnly, saved]);
+
+  // The list is over a thousand rows, so render a page at a time.
+  const [shown, setShown] = useState(PAGE_SIZE);
+  useEffect(() => { setShown(PAGE_SIZE); }, [query, companies, schools, positions, savedOnly]);
+  const page = results.slice(0, shown);
 
   const active = openId ? IB_CONTACTS.find(c => c.id === openId) || null : null;
 
@@ -312,7 +321,7 @@ export default function ContactDatabasePage() {
             <div className="cdb-empty">No people match these filters.</div>
           ) : (
             <div className="cdb-cards">
-              {results.map(c => (
+              {page.map(c => (
                 <div
                   key={c.id}
                   className={`cdb-card${openId === c.id ? ' active' : ''}`}
@@ -328,14 +337,18 @@ export default function ContactDatabasePage() {
                       <span className="cdb-role">{c.title}</span>
                     </span>
                     <div className="cdb-subrow">
-                      <span className="cdb-sub">
-                        <IconSchool />
-                        <span className="cdb-sub-school">{c.school}</span>
-                      </span>
-                      <span className="cdb-sub">
-                        <IconPin />
-                        {c.location}
-                      </span>
+                      {c.school && (
+                        <span className="cdb-sub">
+                          <IconSchool />
+                          <span className="cdb-sub-school">{c.school}</span>
+                        </span>
+                      )}
+                      {c.location && (
+                        <span className="cdb-sub">
+                          <IconPin />
+                          {c.location}
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -359,6 +372,11 @@ export default function ContactDatabasePage() {
                   </div>
                 </div>
               ))}
+              {shown < results.length && (
+                <button type="button" className="cdb-more" onClick={() => setShown(n => n + PAGE_SIZE)}>
+                  Load {Math.min(PAGE_SIZE, results.length - shown)} more
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -379,13 +397,13 @@ export default function ContactDatabasePage() {
               <span className="cdb-dot">·</span>
               <span className="cdb-role">{active.title}</span>
             </span>
-            <span className="cdb-metarow">
-              <IconSchool />
-              <span className="cdb-sub-school" style={{ fontSize: 13 }}>{active.school}</span>
-              <span className="cdb-dot">·</span>
-              <span className="cdb-role">Class of {active.classYear}</span>
-            </span>
-            <span className="cdb-sub"><IconPin size={13} />{active.location}</span>
+            {active.school && (
+              <span className="cdb-metarow">
+                <IconSchool />
+                <span className="cdb-sub-school" style={{ fontSize: 13 }}>{active.school}</span>
+              </span>
+            )}
+            {active.location && <span className="cdb-sub"><IconPin size={13} />{active.location}</span>}
           </div>
 
           <div className="cdb-tabs">
@@ -401,19 +419,25 @@ export default function ContactDatabasePage() {
                 <div className="cdb-contact-row">
                   <IconLinkedin />
                   <span className="cdb-contact-key">LinkedIn</span>
-                  {unlocked.includes(active.id) ? (
-                    <span className="cdb-contact-val">{active.linkedin}</span>
-                  ) : (
+                  {!unlocked.includes(active.id) ? (
                     <span className="cdb-redact"><span style={{ width: 84 }} /><span style={{ width: 62 }} /></span>
+                  ) : active.linkedin ? (
+                    <a className="cdb-contact-val cdb-link" href={active.linkedin} target="_blank" rel="noopener noreferrer">
+                      {active.linkedin.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
+                    </a>
+                  ) : (
+                    <span className="cdb-contact-val cdb-none">Not on file</span>
                   )}
                 </div>
                 <div className="cdb-contact-row">
                   <IconMail />
                   <span className="cdb-contact-key">Email</span>
-                  {unlocked.includes(active.id) ? (
-                    <span className="cdb-contact-val">{active.email}</span>
-                  ) : (
+                  {!unlocked.includes(active.id) ? (
                     <span className="cdb-redact"><span style={{ width: 96 }} /><span style={{ width: 70 }} /></span>
+                  ) : active.email ? (
+                    <a className="cdb-contact-val cdb-link" href={`mailto:${active.email}`}>{active.email}</a>
+                  ) : (
+                    <span className="cdb-contact-val cdb-none">Not on file</span>
                   )}
                 </div>
                 {!unlocked.includes(active.id) && (
@@ -436,21 +460,17 @@ export default function ContactDatabasePage() {
             <>
               <p className="cdb-sect-label">Experience</p>
               <div className="cdb-exp">
-                {active.experience.map(x => (
-                  <div className="cdb-exp-co" key={x.company}>
-                    <div className="cdb-exp-co-name">{x.company}</div>
-                    <div className="cdb-exp-co-dur">{x.duration}</div>
-                    <div className="cdb-exp-roles">
-                      {x.roles.map(r => (
-                        <div key={r.title + r.dates}>
-                          <div className="cdb-exp-role-title">{r.title}</div>
-                          <div className="cdb-exp-role-sub">{r.dates} · {r.duration}</div>
-                          <div className="cdb-exp-role-loc"><IconPin />{r.location}</div>
-                        </div>
-                      ))}
+                <div className="cdb-exp-co">
+                  <div className="cdb-exp-co-name">{active.company}</div>
+                  <div className="cdb-exp-co-dur">Current</div>
+                  <div className="cdb-exp-roles">
+                    <div>
+                      <div className="cdb-exp-role-title">{active.title}</div>
+                      {active.location && <div className="cdb-exp-role-loc"><IconPin />{active.location}</div>}
                     </div>
                   </div>
-                ))}
+                </div>
+                <p className="cdb-tab-note">Full role history is not on file yet. Open their LinkedIn for the rest.</p>
               </div>
             </>
           )}
@@ -459,13 +479,13 @@ export default function ContactDatabasePage() {
             <>
               <p className="cdb-sect-label">Education</p>
               <div className="cdb-edu">
-                {active.education.map(e => (
-                  <div key={e.school}>
-                    <div className="cdb-edu-school">{e.school}</div>
-                    <div className="cdb-edu-sub">{e.degree}</div>
-                    <div className="cdb-edu-sub">{e.dates}</div>
+                {active.school ? (
+                  <div>
+                    <div className="cdb-edu-school">{active.school}</div>
                   </div>
-                ))}
+                ) : (
+                  <p className="cdb-tab-note">No school on file for this contact.</p>
+                )}
               </div>
             </>
           )}

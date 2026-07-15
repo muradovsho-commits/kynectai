@@ -485,3 +485,24 @@ html[data-theme="dark"] .cdb-unlock:hover { background: #2563eb; }
   .cdb-listcol.shifted { margin-right: 0; }
   .cdb-panel { width: 100%; }
 }
+
+/* ── Real-data additions ── */
+.cdb-link { color: var(--cdb-accent-dark); text-decoration: none; }
+.cdb-link:hover { text-decoration: underline; }
+.cdb-none { color: var(--cdb-text-3); font-style: italic; }
+.cdb-tab-note { margin: 14px 0 0; font-size: 12px; line-height: 1.6; color: var(--cdb-text-3); }
+.cdb-more {
+  align-self: center;
+  margin-top: 8px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  border: 1px solid var(--cdb-border);
+  background: var(--cdb-surface);
+  color: var(--cdb-text);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .12s ease, border-color .12s ease;
+}
+.cdb-more:hover { background: var(--cdb-bg); border-color: var(--cdb-border-2); }
