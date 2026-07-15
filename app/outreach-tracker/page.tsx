@@ -400,7 +400,10 @@ export default function OutreachTrackerPage() {
         <Topbar activePage="outreach-tracker" />
 
         {/* MAIN */}
-        <main className="main" style={{ padding: '32px 36px' }}>
+        {/* background/min-height mirror referral-map's .rm-canvas: contact-finder's
+            .main paints nothing, so the body's --bg (#111110) showed through and
+            this tab read darker than every other page. */}
+        <main className="main" style={{ padding: '32px 36px', background: 'var(--surface)', minHeight: '100vh' }}>
 
           {/* Header */}
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24 }}>
