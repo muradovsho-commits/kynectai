@@ -434,7 +434,7 @@ html[data-theme="dark"] .flash-app {
 .flash-show-btn:hover { background: var(--text); }
 .flash-show-btn.shown { background: var(--surface); color: var(--text-3); border: 1.5px solid var(--border); }
 .flash-show-btn.shown:hover { border-color: #999; color: var(--text); }
-.flash-answer { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 14px; line-height: 1.7; color: var(--text); }
+.flash-answer { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 14px; line-height: 1.7; color: var(--text); white-space: pre-line; }
 
 /* Navigation */
 .flash-nav-row { display: flex; align-items: center; justify-content: space-between; }
