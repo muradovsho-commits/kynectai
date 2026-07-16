@@ -354,7 +354,7 @@ function FlashcardsContent() {
     window.addEventListener('keydown', h); return () => window.removeEventListener('keydown', h);
   }, [goNext, goPrev, showAnswer, card, perfKey, savePerf]);
 
-  const openTrack = (id: string) => { setActiveTrack(id); setFilterCat('All'); setFilterDiff('All'); setIdx(0); resetCardState(); setShuffleKey(0); setShowBookmarksOnly(false); setViewState('drill'); };
+  const openTrack = (id: string) => { setActiveTrack(id); setFilterCat('All'); setIdx(0); resetCardState(); setShuffleKey(0); setShowBookmarksOnly(false); setViewState('drill'); };
 
   // Return to the hub. Doesn't nullify activeTrack - the hub still needs it.
   const goBack = () => { setViewState('hub'); setIdx(0); resetCardState(); };
@@ -362,7 +362,6 @@ function FlashcardsContent() {
   // Enter drill mode from the hub. Optional topic filter or bookmarks-only mode.
   const enterDrill = (opts: { topic?: string; bookmarksOnly?: boolean } = {}) => {
     setFilterCat(opts.topic || 'All');
-    setFilterDiff('All');
     setShowBookmarksOnly(!!opts.bookmarksOnly);
     setShuffleKey(0);
     setIdx(0);
@@ -378,7 +377,6 @@ function FlashcardsContent() {
     const card = (activeTrack ? CARD_MAP[activeTrack] : []).find(c => c.q === b.q);
     if (!card) return;
     setFilterCat(card.category);
-    setFilterDiff('All');
     setShowBookmarksOnly(false);
     setShuffleKey(0);
     setPendingJumpQ(b.q);
