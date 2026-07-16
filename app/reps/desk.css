@@ -39,7 +39,7 @@ html[data-theme="dark"] .desk-app {
 
 .desk-app {
   display: flex;
-  min-height: 100vh;
+  min-height: calc(100vh - var(--topbar-h, 0px));
   background: var(--bg);
   font-family: 'Sora', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
@@ -49,7 +49,7 @@ html[data-theme="dark"] .desk-app {
   min-width: 0;
   margin-left: var(--sidebar-w, 240px);
   background: var(--surface);
-  min-height: 100vh;
+  min-height: calc(100vh - var(--topbar-h, 0px));
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -84,8 +84,8 @@ html[data-theme="dark"] .desk-app {
   margin-bottom: 10px;
 }
 .desk-title {
-  font-family: 'Instrument Serif', 'Times New Roman', serif;
-  font-size: 42px;
+  font-family: 'Instrument Serif', 'Times New Roman', serif !important;
+  font-size: 44px;
   font-weight: 400;
   letter-spacing: -1px;
   line-height: 1.04;
@@ -120,169 +120,112 @@ html[data-theme="dark"] .desk-app {
   gap: 18px;
 }
 
-/* ── How-it-works strip ──────────────────────────────────────────────────── */
+/* ── How it works: quiet disclosure ────────────────────────────────────── */
+.desk-howto-toggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: 0; padding: 0; margin-top: 14px;
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  color: var(--text-3); cursor: pointer; transition: color 0.12s;
+}
+.desk-howto-toggle:hover { color: var(--text); }
+.desk-howto-toggle svg { transition: transform 0.15s; }
+.desk-howto-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
 .desk-howto {
-  position: relative;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px 22px;
-}
-.desk-howto-x {
-  position: absolute;
-  top: 18px; right: 18px;
-  background: none; border: none;
-  color: var(--text-3);
-  cursor: pointer;
-  padding: 4px;
-  line-height: 0;
-  transition: color 0.12s;
-}
-.desk-howto-x:hover { color: var(--text); }
-.desk-howto-eyebrow {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 10px;
-}
-.desk-howto-body {
-  font-size: 13.5px;
-  color: var(--text-2);
-  line-height: 1.6;
-  max-width: 660px;
-  margin-bottom: 16px;
-}
-.desk-howto-steps {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 18px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-}
-.desk-howto-step {
-  background: none;
-  border: none;
-  padding: 0;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+  margin-top: 18px; padding: 18px 0 2px; border-top: 1px solid var(--border);
 }
 .desk-howto-step-n {
-  font-family: 'Instrument Serif', 'Times New Roman', serif;
-  font-style: italic;
-  font-size: 20px;
-  line-height: 1;
-  color: var(--text-3);
-  margin-bottom: 6px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+  font-size: 10px; letter-spacing: 0.1em; color: #b4864a; margin-bottom: 7px;
 }
-.desk-howto-step-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 5px;
+.desk-howto-step-title { font-size: 12.5px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.desk-howto-step-body { font-size: 12px; line-height: 1.55; color: var(--text-3); }
+
+/* ── Filter row: mirrors Concept Drills' chips ─────────────────────────── */
+.desk-filter-row {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin: 26px 0 4px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
 }
-.desk-howto-step-body {
-  font-size: 12px;
-  color: var(--text-3);
-  line-height: 1.55;
+.desk-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: none; border: 1px solid var(--border-2); border-radius: 100px;
+  padding: 6px 13px; cursor: pointer; font-family: inherit;
+  font-size: 12px; font-weight: 600; color: var(--text-2);
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+.desk-chip:hover { border-color: var(--border-strong); color: var(--text); }
+.desk-chip.active { background: var(--text); border-color: var(--text); color: var(--surface); }
+.desk-chip-n {
+  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+  font-size: 10.5px; opacity: 0.65;
+}
+.desk-filter-count {
+  margin-left: auto; font-size: 11.5px; color: var(--text-3);
+  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
 }
 
-/* ── Scenario list ───────────────────────────────────────────────────────── */
-.desk-scn-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* ── Stage sections: the progression stays legible at any count ────────── */
+.desk-stage { margin-top: 30px; }
+.desk-stage-head {
+  display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px;
+}
+.desk-stage-name {
+  font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: -0.01em;
+}
+.desk-stage-note { font-size: 11.5px; color: var(--text-3); }
+
+/* ── Scenario grid: auto-fill, scales from 3 to 300 ────────────────────── */
+.desk-scn-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(272px, 1fr)); gap: 12px;
 }
 .desk-scn-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  width: 100%;
-  text-align: left;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 18px 22px;
-  cursor: pointer;
-  font-family: inherit;
-  transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
+  display: flex; flex-direction: column; align-items: stretch;
+  width: 100%; text-align: left; cursor: pointer; font-family: inherit;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 18px 14px;
+  position: relative; overflow: hidden;
+  transition: border-color 0.12s, background 0.12s;
 }
-.desk-scn-card:hover {
-  border-color: var(--border-strong);
-  background: var(--surface-2);
+.desk-scn-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: #b4864a; transform: scaleY(0); transform-origin: top;
+  transition: transform 0.16s ease;
 }
-.desk-scn-card:hover .desk-scn-chev {
-  color: var(--text);
-  transform: translateX(2px);
-}
-.desk-scn-main {
-  flex: 1;
-  min-width: 0;
-}
-.desk-scn-meta {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  flex-wrap: wrap;
-  margin-bottom: 9px;
-}
-.desk-scn-tag {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-.desk-scn-tag.desk-diff-intro { color: #16a34a; }
-.desk-scn-tag.desk-diff-mid   { color: #d97706; }
-.desk-scn-tag.desk-diff-adv   { color: #dc2626; }
-.desk-scn-dot {
-  width: 3px; height: 3px;
-  border-radius: 50%;
-  background: var(--border-2);
-  flex-shrink: 0;
+.desk-scn-card:hover { border-color: var(--border-strong); }
+.desk-scn-card:hover::before { transform: scaleY(1); }
+.desk-scn-card:focus-visible { outline: 2px solid #b4864a; outline-offset: -2px; }
+
+.desk-scn-when {
+  display: block;
+  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+  font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase;
+  color: #b4864a; margin-bottom: 8px;
 }
 .desk-scn-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 6px;
-  letter-spacing: -0.01em;
+  display: block; font-family: 'Lato', sans-serif !important;
+  font-size: 14.5px; font-weight: 700; color: var(--text);
+  line-height: 1.35; letter-spacing: -0.01em; margin-bottom: 6px;
 }
 .desk-scn-summary {
-  font-size: 13px;
-  color: var(--text-2);
-  line-height: 1.6;
-  margin-bottom: 0;
-  max-width: 720px;
+  display: block; font-size: 12.5px; color: var(--text-2);
+  line-height: 1.55; margin-bottom: 14px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
-.desk-scn-build {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
+.desk-scn-foot {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: auto; padding-top: 11px; border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+  font-size: 10px; color: var(--text-3); letter-spacing: 0.03em;
 }
-.desk-scn-build-text {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--text-2);
-}
-.desk-scn-fmts {
-  display: flex;
-  gap: 5px;
-}
-.desk-scn-chev {
-  flex-shrink: 0;
-  color: var(--text-3);
-  transition: color 0.12s, transform 0.12s;
-}
+.desk-scn-foot-sep { opacity: 0.4; }
+.desk-scn-builds { margin-left: auto; text-align: right; color: var(--text-3); opacity: 0.85; }
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .desk-page-inner { padding: 28px 20px 48px; }
+  .desk-scn-grid { grid-template-columns: 1fr; }
+  .desk-howto { grid-template-columns: 1fr; gap: 16px; }
+  .desk-filter-count { display: none; }
   .desk-title { font-size: 34px; }
   .desk-canvas { margin-left: 0; }
 }

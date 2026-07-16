@@ -550,32 +550,7 @@ function InitialsAvatar({ persona, size }: { persona: Persona; size: number }) {
 // ═══════════════════════════════════════════════════════════════════════════
 // Helpers
 // ═══════════════════════════════════════════════════════════════════════════
-function whatYoullBuild(scenario: Scenario): string {
-  const labels = scenario.artifacts.map(a => a.label);
-  if (labels.length === 0) return '';
-  if (labels.length === 1) return `Build the ${labels[0]}.`;
-  if (labels.length === 2) return `Build the ${labels[0]} and ${labels[1]}.`;
-  return `Build the ${labels.slice(0, -1).join(', ')}, and ${labels[labels.length - 1]}.`;
-}
 
-const FORMAT_PILL_STYLE: Record<string, { bg: string; fg: string }> = {
-  xlsx: { bg: '#dcfce7', fg: '#166534' },
-  docx: { bg: '#dbeafe', fg: '#1e40af' },
-  pptx: { bg: '#fee2e2', fg: '#991b1b' },
-  pdf:  { bg: '#fef3c7', fg: '#854d0e' },
-};
-
-function FormatPill({ format }: { format: string }) {
-  return (
-    <span style={{
-      fontSize: 9, fontWeight: 700, letterSpacing: '.6px',
-      padding: '3px 7px', borderRadius: 5,
-      background: 'transparent', color: 'var(--text-2)',
-      border: '1px solid var(--border-2)',
-      textTransform: 'uppercase',
-    }}>{format}</span>
-  );
-}
 
 const DIFFICULTY_ORDER: Record<string, number> = {
   'Intro': 0,
@@ -592,86 +567,127 @@ function difficultyClass(d: string): string {
 // ═══════════════════════════════════════════════════════════════════════════
 // How-it-works strip (dismissible, once per user)
 // ═══════════════════════════════════════════════════════════════════════════
-function DeskHowTo({ onDismiss }: { onDismiss: () => void }) {
+function DeskHowTo({ open, onToggle }: { open: boolean; onToggle: () => void }) {
   return (
-    <div className="desk-howto">
-      <button type="button" className="desk-howto-x" onClick={onDismiss} aria-label="Dismiss">
-        <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+    <>
+      <button type="button" className="desk-howto-toggle" aria-expanded={open} onClick={onToggle}>
+        How it works
+        <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9" /></svg>
       </button>
-      <div className="desk-howto-eyebrow">How a workday works</div>
-      <div className="desk-howto-body">
-        You drop into a junior seat. Personas message you in the voice of MDs and senior associates, you build the actual deliverable in your own tools, and the AI grades the file on craft, citing specific cells, numbers, and lines.
-      </div>
-      <div className="desk-howto-steps">
-        {[
-          { n: '1', title: 'Pick a scenario', body: 'Choose a workday below, ordered from intro to advanced.' },
-          { n: '2', title: 'Do the work', body: 'Build it in Excel, Word, or PowerPoint and upload the file.' },
-          { n: '3', title: 'Get graded', body: 'The persona reviews your file and pushes back in chat.' },
-        ].map(s => (
-          <div key={s.n} className="desk-howto-step">
-            <div className="desk-howto-step-n">{s.n}</div>
-            <div className="desk-howto-step-title">{s.title}</div>
-            <div className="desk-howto-step-body">{s.body}</div>
-          </div>
-        ))}
-      </div>
-    </div>
+      {open && (
+        <div className="desk-howto">
+          {[
+            { n: '01', title: 'Pick a workday', body: 'Ordered from your first week to the all-nighter.' },
+            { n: '02', title: 'Do the work', body: 'Build it in Excel, Word, or PowerPoint. Upload the file.' },
+            { n: '03', title: 'Get marked up', body: 'The persona reviews your file and pushes back in chat.' },
+          ].map(st => (
+            <div key={st.n} className="desk-howto-step">
+              <div className="desk-howto-step-n">{st.n}</div>
+              <div className="desk-howto-step-title">{st.title}</div>
+              <div className="desk-howto-step-body">{st.body}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
   );
 }
+
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Scenario list - scenarios for the career selected in the sidebar
 // ═══════════════════════════════════════════════════════════════════════════
 function ScenarioList({ track, scenarios, onPick }: { track: typeof REPS_TRACKS[number]; scenarios: Scenario[]; onPick: (id: string) => void; }) {
   const [showHowTo, setShowHowTo] = useState(false);
+  const [filter, setFilter] = useState<string>('All');
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!localStorage.getItem('offerbell_reps_welcomed')) setShowHowTo(true);
   }, []);
 
-  function dismissHowTo() {
-    setShowHowTo(false);
-    if (typeof window !== 'undefined') localStorage.setItem('offerbell_reps_welcomed', '1');
+  function toggleHowTo() {
+    setShowHowTo(v => {
+      const next = !v;
+      if (typeof window !== 'undefined' && !next) localStorage.setItem('offerbell_reps_welcomed', '1');
+      return next;
+    });
   }
 
-  // Sort by difficulty ascending (Intro first). Stable within a difficulty.
-  const sortedScenarios = useMemo(() => {
-    return [...scenarios].sort((a, b) => {
-      const da = DIFFICULTY_ORDER[a.difficulty] ?? 99;
-      const db = DIFFICULTY_ORDER[b.difficulty] ?? 99;
-      return da - db;
-    });
+  const STAGES = ['Intro', 'Intermediate', 'Advanced'];
+  const STAGE_NOTE: Record<string, string> = {
+    Intro: 'Your first asks. The associate is checking whether you can be trusted with real work.',
+    Intermediate: 'A normal week. Live deadlines, a VP who will mark it up.',
+    Advanced: 'The deal is moving and the thesis just changed. Deliver anyway.',
+  };
+
+  const counts = useMemo(() => {
+    const m: Record<string, number> = { All: scenarios.length };
+    for (const st of STAGES) m[st] = scenarios.filter(s => s.difficulty === st).length;
+    return m;
   }, [scenarios]);
+
+  const visible = useMemo(
+    () => filter === 'All' ? scenarios : scenarios.filter(s => s.difficulty === filter),
+    [scenarios, filter]
+  );
+
+  // Group into stages so the progression stays readable however many exist.
+  const grouped = useMemo(() => {
+    return STAGES
+      .map(st => ({ stage: st, items: visible.filter(s => s.difficulty === st) }))
+      .filter(g => g.items.length > 0);
+  }, [visible]);
 
   return (
     <div className="desk-tab-pane">
-      {showHowTo && <DeskHowTo onDismiss={dismissHowTo} />}
+      <DeskHowTo open={showHowTo} onToggle={toggleHowTo} />
 
-      <div className="desk-scn-list">
-        {sortedScenarios.map(s => (
-          <button key={s.id} type="button" className="desk-scn-card" onClick={() => onPick(s.id)}>
-            <div className="desk-scn-main">
-              <div className="desk-scn-meta">
-                <span className="desk-scn-tag">{s.timeframe}</span>
-                <span className="desk-scn-dot" />
-                <span className="desk-scn-tag">{s.duration}</span>
-                <span className="desk-scn-dot" />
-                <span className={`desk-scn-tag ${difficultyClass(s.difficulty)}`}>{s.difficulty}</span>
-              </div>
-              <div className="desk-scn-title">{s.title}</div>
-              <div className="desk-scn-summary">{s.summary}</div>
-              <div className="desk-scn-build">
-                <span className="desk-scn-build-text">{whatYoullBuild(s)}</span>
-                <span className="desk-scn-fmts">
-                  {s.artifacts.map(a => <FormatPill key={a.id} format={a.format} />)}
-                </span>
-              </div>
-            </div>
-            <svg className="desk-scn-chev" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6" /></svg>
+      <div className="desk-filter-row">
+        {['All', ...STAGES].filter(f => (counts[f] ?? 0) > 0 || f === 'All').map(f => (
+          <button
+            key={f}
+            type="button"
+            className={`desk-chip${filter === f ? ' active' : ''}`}
+            aria-pressed={filter === f}
+            onClick={() => setFilter(f)}
+          >
+            {f}
+            <span className="desk-chip-n">{counts[f] ?? 0}</span>
           </button>
         ))}
+        <span className="desk-filter-count">
+          {visible.length} {visible.length === 1 ? 'workday' : 'workdays'}
+        </span>
       </div>
+
+      {grouped.length === 0 ? (
+        <div className="desk-empty">No workdays here yet. Try another filter.</div>
+      ) : grouped.map(g => (
+        <section key={g.stage} className="desk-stage">
+          <div className="desk-stage-head">
+            <h2 className="desk-stage-name">{g.stage}</h2>
+            <span className="desk-stage-note">{STAGE_NOTE[g.stage]}</span>
+          </div>
+          <div className="desk-scn-grid">
+            {g.items.map(s => (
+              <button key={s.id} type="button" className="desk-scn-card" onClick={() => onPick(s.id)}>
+                <span className="desk-scn-when">{s.timeframe}</span>
+                <span className="desk-scn-title">{s.title}</span>
+                <span className="desk-scn-summary">{s.summary}</span>
+                <span className="desk-scn-foot">
+                  {s.duration}
+                  <span className="desk-scn-foot-sep">/</span>
+                  {s.artifacts.length} {s.artifacts.length === 1 ? 'file' : 'files'}
+                  <span className="desk-scn-builds">
+                    {s.artifacts.map(a => a.format.toUpperCase()).join(' ')}
+                  </span>
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+      ))}
     </div>
   );
 }
@@ -1018,7 +1034,7 @@ The student must complete deliverables sequentially in this scenario. If they as
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', fontFamily: "'Sora',sans-serif" }}>
+    <div style={{ display: 'flex', height: 'calc(100vh - var(--topbar-h, 0px))', overflow: 'hidden', fontFamily: "'Sora',sans-serif" }}>
 
       {/* LEFT PANE: chat */}
       <section style={{ flex: '0 0 480px', display: 'flex', flexDirection: 'column', borderRight: '1px solid var(--border)', background: 'var(--bg)' }}>
