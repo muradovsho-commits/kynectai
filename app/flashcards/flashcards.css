@@ -284,9 +284,6 @@ html[data-theme="dark"] .flash-app {
   border-radius: 4px;
   font-weight: 500;
 }
-.flash-saved-diff {
-  color: var(--text-3);
-}
 .flash-saved-more {
   font-size: 12px;
   color: var(--text-3);
@@ -419,11 +416,7 @@ html[data-theme="dark"] .flash-app {
 .flash-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; padding: 3px 9px; border-radius: 6px; }
 .flash-tag-cat { background: var(--surface-2); color: var(--text-2); }
 [data-theme="dark"] .flash-tag-cat { background: #1e293b; color: #94a3b8; }
-.flash-tag-diff-intermediate { background: #fef3c7; color: #d97706; }
-.flash-tag-diff-advanced { background: #fee2e2; color: #dc2626; }
-[data-theme="dark"] .flash-tag-diff-intermediate { background: #451a03; color: #fbbf24; }
-[data-theme="dark"] .flash-tag-diff-advanced { background: #450a0a; color: #f87171; }
-.flash-question { font-size: 17px; font-weight: 600; line-height: 1.6; color: var(--text); flex: 1; margin-bottom: 16px; }
+[data-theme="dark"] [data-theme="dark"] .flash-question { font-size: 17px; font-weight: 600; line-height: 1.6; color: var(--text); flex: 1; margin-bottom: 16px; }
 .flash-firm-row { margin-bottom: 16px; }
 .flash-firm-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; color: var(--text-3); background: var(--surface-2); border: 1px solid var(--border); padding: 3px 10px; border-radius: 20px; }
 [data-theme="dark"] .flash-firm-tag { background: var(--border); border-color: var(--border-2); }

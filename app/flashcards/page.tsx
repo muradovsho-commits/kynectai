@@ -140,7 +140,6 @@ function FlashcardsContent() {
   const [idx, setIdx] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [filterCat, setFilterCat] = useState('All');
-  const [filterDiff, setFilterDiff] = useState('All');
   const [shuffleKey, setShuffleKey] = useState(0);
   // Pro features
   const [viewMode, setViewMode] = useState<'single' | 'grid'>('single');
@@ -301,12 +300,11 @@ function FlashcardsContent() {
   const categories = useMemo(() => ['All', ...Array.from(new Set(accessibleCards.map(c => c.category)))], [accessibleCards]);
   const filtered = useMemo(() => {
     let base = filterCat === 'All' ? accessibleCards : accessibleCards.filter(c => c.category === filterCat);
-    if (filterDiff !== 'All') base = base.filter(c => c.difficulty === filterDiff);
     if (showBookmarksOnly) base = base.filter(c => isBookmarked(c.q));
     if (shuffleKey > 0) { const a = [...base]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
     return base;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessibleCards, filterCat, filterDiff, shuffleKey, showBookmarksOnly, bookmarkSet]);
+  }, [accessibleCards, filterCat, shuffleKey, showBookmarksOnly, bookmarkSet]);
 
   const card = filtered[idx] || null;
   useEffect(() => { if (idx >= filtered.length && filtered.length > 0) setIdx(0); }, [idx, filtered.length]);
@@ -518,7 +516,6 @@ function FlashcardsContent() {
                             <div className="flash-saved-q">{card.q}</div>
                             <div className="flash-saved-meta">
                               <span className="flash-saved-tag">{card.category}</span>
-                              {card.difficulty && <span className="flash-saved-diff">{card.difficulty}</span>}
                             </div>
                           </button>
                         );
@@ -565,7 +562,6 @@ function FlashcardsContent() {
             {/* Filter bar */}
             <div className="flash-filter-bar">
               <Dropdown label="Topic" value={filterCat} options={categories} onChange={v => { setFilterCat(v); setIdx(0); resetCardState(); setGridFlipped({}); }} />
-              <Dropdown label="Difficulty" value={filterDiff} options={['All','Intermediate','Advanced']} onChange={v => { setFilterDiff(v); setIdx(0); resetCardState(); setGridFlipped({}); }} />
               <div className="flash-filter-spacer" />
               {/* View toggle */}
               <div className="flash-view-toggle">
@@ -621,7 +617,6 @@ function FlashcardsContent() {
                   <div className="flash-card-single">
                     <div className="flash-card-tags">
                       <span className="flash-tag flash-tag-cat">{card.category}</span>
-                      {card.difficulty && <span className={`flash-tag flash-tag-diff-${card.difficulty.toLowerCase()}`}>{card.difficulty}</span>}
                       <button className={`flash-bookmark-btn${isBookmarked(card.q) ? ' active' : ''}`} onClick={() => toggleBookmark(card)} type="button" title={isBookmarked(card.q) ? 'Remove bookmark' : 'Bookmark this question'}>
                         {isBookmarked(card.q) ? BM_ICON_FILLED : BM_ICON}
                       </button>
@@ -734,7 +729,6 @@ function FlashcardsContent() {
                         <div className="flash-grid-front">
                           <div className="flash-card-tags" style={{marginBottom:10}}>
                             <span className="flash-tag flash-tag-cat">{c.category}</span>
-                            {c.difficulty && <span className={`flash-tag flash-tag-diff-${c.difficulty.toLowerCase()}`}>{c.difficulty}</span>}
                             <button className={`flash-bookmark-btn${isBookmarked(c.q) ? ' active' : ''}`} onClick={(e) => { e.stopPropagation(); toggleBookmark(c); }} type="button" title={isBookmarked(c.q) ? 'Remove bookmark' : 'Bookmark'}>
                               {isBookmarked(c.q) ? BM_ICON_FILLED : BM_ICON}
                             </button>
