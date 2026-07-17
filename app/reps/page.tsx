@@ -187,17 +187,33 @@ export default function RepsPage() {
         <div className="desk-page">
           <div className="desk-page-inner">
             <header className="desk-head">
-              <div className="desk-eyebrow">The Desk</div>
-              <h1 className="desk-title">
-                {track
-                  ? <>Live a day in <em>{track.title}</em>.</>
-                  : <>Live a day in <em>the seat</em>.</>}
-              </h1>
-              <p className="desk-sub">
-                {track
-                  ? 'Pick a workday scenario below. Build the deliverable, upload it, and get graded on craft against the rubric an MD would actually use. Switch career from the Industry selector in the sidebar.'
-                  : 'The Desk drops you into a junior seat on a real workday. Choose your career from the Industry selector in the sidebar to begin.'}
-              </p>
+              <div className="desk-hero-row">
+                <div>
+                  <div className="desk-eyebrow">The Desk</div>
+                  <h1 className="desk-title">
+                    {track
+                      ? <>Live a day in <em>{track.title}</em>.</>
+                      : <>Live a day in <em>the seat</em>.</>}
+                  </h1>
+                  <p className="desk-sub">
+                    {track
+                      ? 'Pick a workday below. Build the real deliverable, upload it, and get marked up on craft by the person who asked for it.'
+                      : 'The Desk drops you into a junior seat on a real workday. Choose your career from the Industry selector to begin.'}
+                  </p>
+                </div>
+                {track && (
+                  <div className="desk-hero-stats">
+                    <div>
+                      <div className="desk-hero-stat-val">{scenarios.length}</div>
+                      <div className="desk-hero-stat-label">Workdays</div>
+                    </div>
+                    <div>
+                      <div className="desk-hero-stat-val">{scenarios.reduce((n, s) => n + s.artifacts.length, 0)}</div>
+                      <div className="desk-hero-stat-label">Deliverables</div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </header>
 
             {!track ? (
@@ -599,7 +615,6 @@ function DeskHowTo({ open, onToggle }: { open: boolean; onToggle: () => void }) 
 // ═══════════════════════════════════════════════════════════════════════════
 function ScenarioList({ track, scenarios, onPick }: { track: typeof REPS_TRACKS[number]; scenarios: Scenario[]; onPick: (id: string) => void; }) {
   const [showHowTo, setShowHowTo] = useState(false);
-  const [filter, setFilter] = useState<string>('All');
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -621,48 +636,19 @@ function ScenarioList({ track, scenarios, onPick }: { track: typeof REPS_TRACKS[
     Advanced: 'The deal is moving and the thesis just changed. Deliver anyway.',
   };
 
-  const counts = useMemo(() => {
-    const m: Record<string, number> = { All: scenarios.length };
-    for (const st of STAGES) m[st] = scenarios.filter(s => s.difficulty === st).length;
-    return m;
-  }, [scenarios]);
-
-  const visible = useMemo(
-    () => filter === 'All' ? scenarios : scenarios.filter(s => s.difficulty === filter),
-    [scenarios, filter]
-  );
-
   // Group into stages so the progression stays readable however many exist.
   const grouped = useMemo(() => {
     return STAGES
-      .map(st => ({ stage: st, items: visible.filter(s => s.difficulty === st) }))
+      .map(st => ({ stage: st, items: scenarios.filter(s => s.difficulty === st) }))
       .filter(g => g.items.length > 0);
-  }, [visible]);
+  }, [scenarios]);
 
   return (
     <div className="desk-tab-pane">
       <DeskHowTo open={showHowTo} onToggle={toggleHowTo} />
 
-      <div className="desk-filter-row">
-        {['All', ...STAGES].filter(f => (counts[f] ?? 0) > 0 || f === 'All').map(f => (
-          <button
-            key={f}
-            type="button"
-            className={`desk-chip${filter === f ? ' active' : ''}`}
-            aria-pressed={filter === f}
-            onClick={() => setFilter(f)}
-          >
-            {f}
-            <span className="desk-chip-n">{counts[f] ?? 0}</span>
-          </button>
-        ))}
-        <span className="desk-filter-count">
-          {visible.length} {visible.length === 1 ? 'workday' : 'workdays'}
-        </span>
-      </div>
-
       {grouped.length === 0 ? (
-        <div className="desk-empty">No workdays here yet. Try another filter.</div>
+        <div className="desk-empty">No workdays for this career yet.</div>
       ) : grouped.map(g => (
         <section key={g.stage} className="desk-stage">
           <div className="desk-stage-head">
@@ -676,11 +662,12 @@ function ScenarioList({ track, scenarios, onPick }: { track: typeof REPS_TRACKS[
                 <span className="desk-scn-title">{s.title}</span>
                 <span className="desk-scn-summary">{s.summary}</span>
                 <span className="desk-scn-foot">
-                  {s.duration}
-                  <span className="desk-scn-foot-sep">/</span>
-                  {s.artifacts.length} {s.artifacts.length === 1 ? 'file' : 'files'}
-                  <span className="desk-scn-builds">
-                    {s.artifacts.map(a => a.format.toUpperCase()).join(' ')}
+                  <span className="desk-scn-meta">
+                    {s.artifacts.length} {s.artifacts.length === 1 ? 'Deliverable' : 'Deliverables'}
+                  </span>
+                  <span className="desk-scn-link">
+                    Start
+                    <svg viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
                   </span>
                 </span>
               </button>
