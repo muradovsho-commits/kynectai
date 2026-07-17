@@ -10,14 +10,31 @@ import './outreach-writer.css';
 
 type SavedMsg = { id: string; contact: string; firm: string; angle: string; subject: string; body: string; date: string };
 
-const ANGLES: { key: string; label: string; sub: string; rate: string }[] = [
-  { key: 'alumni',   label: 'Alumni',           sub: 'Same school, club, or program', rate: '68%' },
-  { key: 'deal',     label: 'Deal Reference',   sub: 'Reference a recent transaction', rate: '41%' },
-  { key: 'interest', label: 'Shared Interest',  sub: 'Common topic or research area',  rate: '54%' },
-  { key: 'mutual',   label: 'Mutual Connection',sub: 'Someone referred you to them',   rate: '37%' },
-  { key: 'career',   label: 'Career Path',      sub: 'Following a similar trajectory', rate: '32%' },
-  { key: 'cold',     label: 'No Connection',    sub: 'Pure cold outreach',             rate: '8%'  },
+/* The `rate` field used to carry hardcoded reply rates (68% / 54% / 41% ...)
+   presented to users as fact. They had no source, and the ordering gave them
+   away: Mutual Connection sat at 37%, below a cold Alumni email at 68%, when a
+   named referral is the strongest signal in outreach. Replaced with the user's
+   OWN rate, computed from their tracker. `trackerLabel` is the angle string the
+   tracker stores, which is how the two are joined. */
+const ANGLES: { key: string; label: string; sub: string; trackerLabel: string }[] = [
+  { key: 'alumni',   label: 'Alumni',           sub: 'Same school, club, or program',  trackerLabel: 'Alumni' },
+  { key: 'deal',     label: 'Deal Reference',   sub: 'Reference a recent transaction', trackerLabel: 'Deal Reference' },
+  { key: 'interest', label: 'Shared Interest',  sub: 'Common topic or research area',  trackerLabel: 'Shared Interest' },
+  { key: 'mutual',   label: 'Mutual Connection',sub: 'Someone referred you to them',   trackerLabel: 'Mutual Connection' },
+  { key: 'career',   label: 'Career Path',      sub: 'Following a similar trajectory', trackerLabel: 'Career Path' },
+  { key: 'cold',     label: 'No Connection',    sub: 'Pure cold outreach',             trackerLabel: 'Cold' },
 ];
+
+/* A reply is a status you only reach by them writing back. Everything from
+   'sent' through 'fu3' and 'noresp' was attempted and did not land. 'drafted'
+   was never sent, so it is not in the denominator. */
+const REPLIED_STATUSES = new Set(['scheduled', 'spoken', 'stay']);
+const ATTEMPTED_STATUSES = new Set(['sent', 'fu1', 'fu2', 'fu3', 'noresp', 'scheduled', 'spoken', 'stay']);
+
+/* Below this, a rate is noise. 1 of 1 is not "100%". */
+const MIN_SENT_FOR_RATE = 4;
+
+type AngleStat = { sent: number; replied: number };
 
 const CTX_LABELS: Record<string, string> = {
   alumni: 'What do you have in common?',
@@ -82,6 +99,7 @@ export default function OutreachWriterPage() {
   // Saved drafts now read/write their own Convex table DIRECTLY (no blob). The
   // blob union-merged this key, which re-added deleted drafts on every sync;
   // a direct upsert means delete actually sticks, cross-device and across logins.
+  const [angleStats, setAngleStats] = useState<Record<string, AngleStat> | null>(null);
   const [authUid, setAuthUid] = useState('');
   const [authTok, setAuthTok] = useState<string | undefined>(undefined);
   useEffect(() => {
@@ -202,6 +220,44 @@ export default function OutreachWriterPage() {
     }
     window.addEventListener('offerbell-profile-changed', refresh);
     return () => window.removeEventListener('offerbell-profile-changed', refresh);
+  }, []);
+
+  // Per-angle reply rates from the user's OWN tracker. One-shot HTTP fetch, not
+  // a reactive useQuery, matching the plan-hydration effect below: the writer
+  // does not need a live subscription for this and Convex bandwidth is not free.
+  // Fails silent - no stats simply means no claim is shown.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const userId = localStorage.getItem('offerbell_user_id');
+    if (!userId) return;
+    const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+    if (!url) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const client = new ConvexHttpClient(url);
+        const row: any = await client.query(api.outreachTracker.getTracker, {
+          userId,
+          sessionToken: localStorage.getItem('offerbell_session') || undefined,
+        });
+        if (cancelled || !row?.data) return;
+        const contacts = JSON.parse(row.data);
+        if (!Array.isArray(contacts)) return;
+        const stats: Record<string, AngleStat> = {};
+        for (const c of contacts) {
+          const label = typeof c?.angle === 'string' ? c.angle : '';
+          const status = typeof c?.status === 'string' ? c.status : '';
+          if (!label || !ATTEMPTED_STATUSES.has(status)) continue;
+          const a = ANGLES.find(x => x.trackerLabel === label);
+          if (!a) continue;
+          if (!stats[a.key]) stats[a.key] = { sent: 0, replied: 0 };
+          stats[a.key].sent += 1;
+          if (REPLIED_STATUSES.has(status)) stats[a.key].replied += 1;
+        }
+        setAngleStats(stats);
+      } catch {}
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   // Hydrate plan + outreach usage from Convex (source of truth). Without this,
@@ -427,6 +483,30 @@ Rules:
 
   const selectedAngle = ANGLES.find(a => a.key === angle);
 
+  /* Only speak when the sample supports it. Under MIN_SENT_FOR_RATE we show the
+     raw count instead of a percentage, and with nothing sent we say nothing at
+     all. A blank is more honest than a number we made up. */
+  function angleStat(key: string): { text: string; strong: boolean } | null {
+    const st = angleStats?.[key];
+    if (!st || st.sent === 0) return null;
+    if (st.sent < MIN_SENT_FOR_RATE) {
+      return { text: `${st.replied}/${st.sent}`, strong: false };
+    }
+    const pct = Math.round((st.replied / st.sent) * 100);
+    return { text: `${pct}%`, strong: pct >= 40 };
+  }
+
+  const bestAngleKey = (() => {
+    if (!angleStats) return '';
+    let best = '', bestPct = -1;
+    for (const [k, st] of Object.entries(angleStats)) {
+      if (st.sent < MIN_SENT_FOR_RATE) continue;
+      const pct = st.replied / st.sent;
+      if (pct > bestPct) { bestPct = pct; best = k; }
+    }
+    return bestPct > 0 ? best : '';
+  })();
+
   return (
     <div className="ow-app">
       <Topbar activePage="outreach-writer" />
@@ -500,7 +580,11 @@ Rules:
                       <div className="ow-section-head">
                         <div>
                           <div className="ow-section-title">Pick your angle</div>
-                          <div className="ow-section-sub">Alumni and deal reference angles get the highest reply rates</div>
+                          <div className="ow-section-sub">
+                            {bestAngleKey
+                              ? <>Your best angle so far is <b>{ANGLES.find(a => a.key === bestAngleKey)?.label}</b>. Rates are from your own tracker.</>
+                              : <>Reply rates appear here once you have sent a few and logged them in the tracker.</>}
+                          </div>
                         </div>
                       </div>
                       <div className="ow-angles">
@@ -513,7 +597,11 @@ Rules:
                           >
                             <div className="ow-angle-row">
                               <div className="ow-angle-name">{a.label}</div>
-                              <div className="ow-angle-rate">{a.rate}</div>
+                              {(() => {
+                                const st = angleStat(a.key);
+                                if (!st) return null;
+                                return <div className={`ow-angle-rate${st.strong ? ' strong' : ''}`}>{st.text}</div>;
+                              })()}
                             </div>
                             <div className="ow-angle-sub">{a.sub}</div>
                           </button>
@@ -645,7 +733,12 @@ Rules:
                       <div className="ow-output-foot">
                         <span className="ow-foot-stat"><strong>{output.split(/\s+/).filter(Boolean).length}</strong> words</span>
                         <span className="ow-foot-stat"><strong>{output.length}</strong> chars</span>
-                        <span className="ow-foot-badge">{selectedAngle?.rate} avg reply rate</span>
+                        {(() => {
+                          const st = angleStat(angle);
+                          if (!st) return null;
+                          const raw = angleStats?.[angle];
+                          return <span className="ow-foot-badge">{raw!.replied} of {raw!.sent} replied</span>;
+                        })()}
                       </div>
                     </div>
                     <ExtensionInstallPrompt variant="writer" />
