@@ -355,9 +355,9 @@ export default function OutreachTrackerPage() {
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root,[data-theme="light"]{--bg:#fafaf9;--surface:#ffffff;--surface-2:#f5f4f2;--border:#ebebea;--border-2:#dddcda;--text:#0c0c0c;--text-2:#636160;--text-3:#9b9997;--sidebar-w:240px}
     [data-theme="dark"]{--bg:#1a1a19;--surface:#222221;--surface-2:#2a2a29;--border:#33322f;--border-2:#3d3c39;--text:#f0efed;--text-2:#a8a6a3;--text-3:#636160}
-    body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+    body{background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
     .sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:40;overflow-y:auto}
-    .sidebar-logo{padding:22px 20px 18px;font-family:'Instrument Serif',serif;font-size:21px;letter-spacing:-.5px;border-bottom:1px solid var(--border);color:var(--text)}
+    .sidebar-logo{padding:22px 20px 18px;font-size:21px;letter-spacing:-.5px;border-bottom:1px solid var(--border);color:var(--text)}
     .sidebar-logo em{font-style:italic}
     .sidebar-user{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--border)}
     .user-avi{width:34px;height:34px;border-radius:50%;background:var(--text);color:var(--surface);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -476,7 +476,7 @@ export default function OutreachTrackerPage() {
               borderRadius: 10, fontSize: 12, color: 'var(--text-3)',
             }}>
               <span><strong style={{ color: 'var(--text)' }}>{contacts.length}</strong> of <strong style={{ color: 'var(--text)' }}>{PLAN_LIMITS.outreachContacts.free}</strong> contacts used. Upgrade for unlimited contacts and full pipeline tracking.</span>
-              <a href="/checkout" style={{ padding: '5px 12px', borderRadius: 7, fontSize: 11, fontWeight: 700, background: 'var(--text)', color: 'var(--surface)', textDecoration: 'none', fontFamily: "'Sora', sans-serif", flexShrink: 0, marginLeft: 12 }}>Upgrade</a>
+              <a href="/checkout" style={{ padding: '5px 12px', borderRadius: 7, fontSize: 11, fontWeight: 700, background: 'var(--text)', color: 'var(--surface)', textDecoration: 'none', flexShrink: 0, marginLeft: 12 }}>Upgrade</a>
             </div>
           )}
 
@@ -494,21 +494,30 @@ export default function OutreachTrackerPage() {
             />
           ) : (
           <div className="ot-pane">
-          {/* Filters */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 1 }}>Filter:</span>
+          {/* Filters: inline lockup. Pills were the one thing every other
+              tab had already dropped. */}
+          <div className="ot-filter">
+            <span className="ot-filter-lbl">Filter</span>
             {[
               { key: 'all', label: 'All' }, { key: 'drafted', label: sl('drafted', 'Drafted') }, { key: 'sent', label: sl('sent', 'Sent') },
               { key: 'followup', label: 'Following Up' }, { key: 'needsfu', label: 'Needs Follow Up' }, { key: 'spoken', label: sl('spoken', 'Spoken With') },
               { key: 'stay', label: sl('stay', 'Stay in Touch') }, { key: 'noresp', label: sl('noresp', 'No Response') },
-            ].map(f => (
-              <button key={f.key} onClick={() => setActiveFilter(f.key)} style={{ padding: '5px 12px', borderRadius: 100, border: '1.5px solid', borderColor: activeFilter === f.key ? 'var(--text)' : 'var(--border-2)', background: activeFilter === f.key ? 'var(--text)' : 'var(--surface)', color: activeFilter === f.key ? 'var(--surface)' : 'var(--text-2)', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Sora, sans-serif', transition: 'all .15s' }}>
-                {f.label}
-              </button>
+            ].map((f, i) => (
+              <span key={f.key} style={{ display: 'inline-flex', alignItems: 'center' }}>
+                {i > 0 && <span className="ot-filter-sep">/</span>}
+                <button
+                  type="button"
+                  onClick={() => setActiveFilter(f.key)}
+                  className={`ot-filter-item${activeFilter === f.key ? ' active' : ''}`}
+                  aria-pressed={activeFilter === f.key}
+                >
+                  {f.label}
+                </button>
+              </span>
             ))}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--surface)', border: '1.5px solid var(--border-2)', borderRadius: 8, padding: '6px 12px', marginLeft: 'auto' }}>
+            <div className="ot-search">
               <svg width="14" height="14" fill="none" stroke="var(--text-3)" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search name or firm…" style={{ border: 'none', background: 'none', fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', outline: 'none', width: 180 }} />
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search name or firm" />
             </div>
           </div>
 
@@ -526,9 +535,9 @@ export default function OutreachTrackerPage() {
               <tbody>
                 {filtered.length === 0 ? (
                   <tr><td colSpan={visibleColumns.length + 1} style={{ padding: '60px 20px', textAlign: 'center' }}>
-                    <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 20, fontStyle: 'italic', color: 'var(--text)', marginBottom: 8 }}>No contacts here yet</div>
+                    <div style={{ fontSize: 20, fontStyle: 'italic', color: 'var(--text)', marginBottom: 8 }}>No contacts here yet</div>
                     <div style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 20 }}>Add your first contact to start tracking.</div>
-                    <button onClick={() => setModalOpen(true)} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif' }}>+ Add Contact</button>
+                    <button onClick={() => setModalOpen(true)} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 8, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>+ Add Contact</button>
                   </td></tr>
                 ) : filtered.map(c => {
                   const daysSent2 = daysSince(c.sentAt);
@@ -619,7 +628,7 @@ export default function OutreachTrackerPage() {
         <div onClick={e => { if (e.target === e.currentTarget) setModalOpen(false); }} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.4)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, backdropFilter: 'blur(4px)' }}>
           <div style={{ background: 'var(--surface)', borderRadius: 18, width: '100%', maxWidth: 560, overflow: 'hidden' }}>
             <div style={{ padding: '18px 22px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontFamily: 'Instrument Serif, serif', fontSize: 20, color: 'var(--text)' }}>Add Contact</span>
+              <span style={{ fontSize: 20, color: 'var(--text)' }}>Add Contact</span>
               <button onClick={() => setModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: 'var(--text-3)' }}>×</button>
             </div>
             <div style={{ padding: '20px 22px', display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -631,7 +640,7 @@ export default function OutreachTrackerPage() {
                   {row.map((f: any) => (
                     <div key={f.label}>
                       <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--text)', marginBottom: 5 }}>{f.label}</label>
-                      <input value={f.val} onChange={e => f.set(e.target.value)} placeholder={f.ph} style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none' }} />
+                      <input value={f.val} onChange={e => f.set(e.target.value)} placeholder={f.ph} style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, color: 'var(--text)', background: 'var(--bg)', outline: 'none' }} />
                     </div>
                   ))}
                 </div>
@@ -639,13 +648,13 @@ export default function OutreachTrackerPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
                   <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--text)', marginBottom: 5 }}>Status</label>
-                  <select value={aStatus} onChange={e => setAStatus(e.target.value)} style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none' }}>
+                  <select value={aStatus} onChange={e => setAStatus(e.target.value)} style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, color: 'var(--text)', background: 'var(--bg)', outline: 'none' }}>
                     {Object.entries(STATUSES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
                   </select>
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--text)', marginBottom: 5 }}>Angle</label>
-                  <select value={aAngle} onChange={e => setAAngle(e.target.value)} style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none' }}>
+                  <select value={aAngle} onChange={e => setAAngle(e.target.value)} style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, color: 'var(--text)', background: 'var(--bg)', outline: 'none' }}>
                     <option value="">-</option>
                     {['Alumni','Deal Reference','Shared Interest','Mutual Connection','Career Path','Cold'].map(a => <option key={a}>{a}</option>)}
                   </select>
@@ -653,20 +662,20 @@ export default function OutreachTrackerPage() {
               </div>
               <div>
                 <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--text)', marginBottom: 5 }}>Date <span style={{ fontWeight: 400, color: 'var(--text-3)' }}>(optional)</span></label>
-                <input type="date" value={aDate} onChange={e => setADate(e.target.value)} style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none', colorScheme: isDark ? 'dark' : 'light' }} />
+                <input type="date" value={aDate} onChange={e => setADate(e.target.value)} style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, color: 'var(--text)', background: 'var(--bg)', outline: 'none', colorScheme: isDark ? 'dark' : 'light' }} />
               </div>
               <div>
                 <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--text)', marginBottom: 5 }}>Notes <span style={{ fontWeight: 400, color: 'var(--text-3)' }}>(optional)</span></label>
-                <textarea value={aNotes} onChange={e => setANotes(e.target.value)} placeholder="What did you talk about? Any follow-up items?" style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none', resize: 'vertical', minHeight: 70, lineHeight: 1.5 }} />
+                <textarea value={aNotes} onChange={e => setANotes(e.target.value)} placeholder="What did you talk about? Any follow-up items?" style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, color: 'var(--text)', background: 'var(--bg)', outline: 'none', resize: 'vertical', minHeight: 70, lineHeight: 1.5 }} />
               </div>
               <div>
                 <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--text)', marginBottom: 5 }}>LinkedIn URL <span style={{ fontWeight: 400, color: 'var(--text-3)' }}>(optional)</span></label>
-                <input value={aLinkedin} onChange={e => setALinkedin(e.target.value)} placeholder="linkedin.com/in/name" style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none' }} />
+                <input value={aLinkedin} onChange={e => setALinkedin(e.target.value)} placeholder="linkedin.com/in/name" style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, color: 'var(--text)', background: 'var(--bg)', outline: 'none' }} />
               </div>
             </div>
             <div style={{ padding: '14px 22px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-              <button onClick={() => setModalOpen(false)} style={{ background: 'none', border: '1.5px solid var(--border-2)', color: 'var(--text-2)', padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Sora, sans-serif' }}>Cancel</button>
-              <button onClick={saveAdd} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', padding: '8px 20px', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif' }}>Add Contact</button>
+              <button onClick={() => setModalOpen(false)} style={{ background: 'none', border: '1.5px solid var(--border-2)', color: 'var(--text-2)', padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+              <button onClick={saveAdd} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', padding: '8px 20px', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>Add Contact</button>
             </div>
           </div>
         </div>
@@ -690,7 +699,7 @@ export default function OutreachTrackerPage() {
               <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'var(--text-3)', marginBottom: 8 }}>Status</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
                 {Object.entries(STATUSES).map(([k, v]) => (
-                  <button key={k} onClick={() => { setDrawerStatus(k); if (['spoken','stay','scheduled'].includes(k) && !drawerDate) setDrawerDate(new Date().toISOString().split('T')[0]); }} style={{ padding: '8px 10px', borderRadius: 8, border: '1.5px solid', borderColor: drawerStatus === k ? 'var(--text)' : 'var(--border)', background: drawerStatus === k ? 'var(--text)' : 'var(--surface)', color: drawerStatus === k ? 'var(--surface)' : 'var(--text-2)', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Sora, sans-serif', textAlign: 'center' }}>
+                  <button key={k} onClick={() => { setDrawerStatus(k); if (['spoken','stay','scheduled'].includes(k) && !drawerDate) setDrawerDate(new Date().toISOString().split('T')[0]); }} style={{ padding: '8px 10px', borderRadius: 8, border: '1.5px solid', borderColor: drawerStatus === k ? 'var(--text)' : 'var(--border)', background: drawerStatus === k ? 'var(--text)' : 'var(--surface)', color: drawerStatus === k ? 'var(--surface)' : 'var(--text-2)', fontSize: 12, fontWeight: 600, cursor: 'pointer', textAlign: 'center' }}>
                     {v.label}
                   </button>
                 ))}
@@ -699,7 +708,7 @@ export default function OutreachTrackerPage() {
             {showDateField && (
               <div>
                 <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'var(--text-3)', marginBottom: 8 }}>{dateFieldLabel}</div>
-                <input type="date" value={drawerDate} onChange={e => setDrawerDate(e.target.value)} style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none', colorScheme: isDark ? 'dark' : 'light' }} />
+                <input type="date" value={drawerDate} onChange={e => setDrawerDate(e.target.value)} style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, color: 'var(--text)', background: 'var(--bg)', outline: 'none', colorScheme: isDark ? 'dark' : 'light' }} />
                 <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 5 }}>Used to calculate days since last action</div>
               </div>
             )}
@@ -708,7 +717,7 @@ export default function OutreachTrackerPage() {
               <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'var(--text-3)', marginBottom: 8 }}>Conversation quality</div>
               <div style={{ display: 'flex', gap: 6 }}>
                 {['great', 'ok', 'cold'].map(q => (
-                  <button key={q} onClick={() => setDrawerQuality(q)} style={{ flex: 1, padding: 8, borderRadius: 8, border: '1.5px solid', borderColor: drawerQuality === q ? 'var(--text)' : 'var(--border)', background: drawerQuality === q ? 'var(--text)' : 'var(--surface)', color: drawerQuality === q ? 'var(--surface)' : 'var(--text-2)', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif', textTransform: 'capitalize', textAlign: 'center' }}>
+                  <button key={q} onClick={() => setDrawerQuality(q)} style={{ flex: 1, padding: 8, borderRadius: 8, border: '1.5px solid', borderColor: drawerQuality === q ? 'var(--text)' : 'var(--border)', background: drawerQuality === q ? 'var(--text)' : 'var(--surface)', color: drawerQuality === q ? 'var(--surface)' : 'var(--text-2)', fontSize: 12, fontWeight: 700, cursor: 'pointer', textTransform: 'capitalize', textAlign: 'center' }}>
                     {q.charAt(0).toUpperCase() + q.slice(1)}
                   </button>
                 ))}
@@ -717,14 +726,14 @@ export default function OutreachTrackerPage() {
             )}
             <div>
               <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'var(--text-3)', marginBottom: 8 }}>Notes</div>
-              <textarea value={drawerNotes} onChange={e => setDrawerNotes(e.target.value)} placeholder="What did you discuss? Who did they mention? Any follow-up items?" style={{ width: '100%', padding: '10px 12px', border: '1.5px solid var(--border-2)', borderRadius: 9, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none', resize: 'none', minHeight: 100, lineHeight: 1.6 }} />
+              <textarea value={drawerNotes} onChange={e => setDrawerNotes(e.target.value)} placeholder="What did you discuss? Who did they mention? Any follow-up items?" style={{ width: '100%', padding: '10px 12px', border: '1.5px solid var(--border-2)', borderRadius: 9, fontSize: 13, color: 'var(--text)', background: 'var(--bg)', outline: 'none', resize: 'none', minHeight: 100, lineHeight: 1.6 }} />
             </div>
             <div>
               <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'var(--text-3)', marginBottom: 8 }}>LinkedIn</div>
-              <input value={drawerLinkedin} onChange={e => setDrawerLinkedin(e.target.value)} placeholder="linkedin.com/in/name" style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, fontFamily: 'Sora, sans-serif', color: 'var(--text)', background: 'var(--bg)', outline: 'none' }} />
+              <input value={drawerLinkedin} onChange={e => setDrawerLinkedin(e.target.value)} placeholder="linkedin.com/in/name" style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, color: 'var(--text)', background: 'var(--bg)', outline: 'none' }} />
             </div>
-            <button onClick={saveDrawer} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 9, padding: 10, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif', width: '100%' }}>Save</button>
-            <button onClick={deleteContact} style={{ background: 'none', border: '1.5px solid #fecaca', color: '#dc2626', borderRadius: 9, padding: 9, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif', width: '100%' }}>Remove from tracker</button>
+            <button onClick={saveDrawer} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 9, padding: 10, fontSize: 13, fontWeight: 700, cursor: 'pointer', width: '100%' }}>Save</button>
+            <button onClick={deleteContact} style={{ background: 'none', border: '1.5px solid #fecaca', color: '#dc2626', borderRadius: 9, padding: 9, fontSize: 12, fontWeight: 700, cursor: 'pointer', width: '100%' }}>Remove from tracker</button>
           </div>
         </>}
       </div>
@@ -742,7 +751,7 @@ export default function OutreachTrackerPage() {
             <div style={{ padding: '20px 28px', borderBottom: '2px solid var(--text)', display: 'flex', alignItems: 'center', gap: 14 }}>
               <svg width="18" height="18" fill="none" stroke="var(--text)" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
               <div>
-                <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22, color: 'var(--text)', letterSpacing: '-0.4px' }}>Customize <em style={{ fontStyle: 'italic' }}>Tracker</em></div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.4px' }}>Customize <em style={{ fontStyle: 'italic' }}>Tracker</em></div>
                 <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>Toggle columns and rename statuses to match your workflow</div>
               </div>
             </div>
@@ -784,9 +793,9 @@ export default function OutreachTrackerPage() {
                           const next = { ...config, statuses: config.statuses.map((st, i) => i === si ? { ...st, label: e.target.value } : st) };
                           setConfig(next); saveConfig(next);
                         }}
-                        style={{ flex: 1, border: 'none', background: 'transparent', fontSize: 14, fontWeight: 600, color: 'var(--text)', fontFamily: "'Sora', sans-serif", outline: 'none', padding: '4px 0' }}
+                        style={{ flex: 1, border: 'none', background: 'transparent', fontSize: 14, fontWeight: 600, color: 'var(--text)', outline: 'none', padding: '4px 0' }}
                       />
-                      <span style={{ fontSize: 10, color: 'var(--text-3)', fontFamily: "'SFMono-Regular', monospace" }}>{s.key}</span>
+                      <span style={{ fontSize: 10, color: 'var(--text-3)' }}>{s.key}</span>
                     </div>
                   ))}
                 </div>
@@ -865,7 +874,7 @@ export default function OutreachTrackerPage() {
                                 width: 48, padding: '5px 6px', textAlign: 'center',
                                 border: '1.5px solid var(--border)', borderRadius: 6,
                                 fontSize: 13, fontWeight: 700, color: 'var(--text)',
-                                background: 'var(--surface)', fontFamily: "'Sora', sans-serif",
+                                background: 'var(--surface)',
                                 outline: 'none',
                               }}
                             />
@@ -884,7 +893,7 @@ export default function OutreachTrackerPage() {
                   const fresh = { columns: DEFAULT_COLUMNS.map(c => ({ ...c })), statuses: DEFAULT_STATUSES.map(s => ({ ...s })), alerts: DEFAULT_ALERTS.map(a => ({ ...a })), alertsGlobal: true };
                   setConfig(fresh); saveConfig(fresh);
                   showToast('Reset to defaults');
-                }} type="button" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 100, border: '1.5px solid #fecaca', background: 'none', color: '#dc2626', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>
+                }} type="button" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 100, border: '1.5px solid #fecaca', background: 'none', color: '#dc2626', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                   <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
                   Reset to Defaults
                 </button>
@@ -940,7 +949,7 @@ export default function OutreachTrackerPage() {
             {/* Footer */}
             <div style={{ padding: '14px 28px', borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ fontSize: 11, color: 'var(--text-3)' }}>Changes save automatically</div>
-              <button onClick={() => setDevMode(false)} type="button" style={{ padding: '10px 24px', borderRadius: 100, background: 'var(--text)', color: 'var(--surface)', border: 'none', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: "'Sora', sans-serif", letterSpacing: '0.3px', textTransform: 'uppercase' }}>Done</button>
+              <button onClick={() => setDevMode(false)} type="button" style={{ padding: '10px 24px', borderRadius: 100, background: 'var(--text)', color: 'var(--surface)', border: 'none', fontSize: 12, fontWeight: 700, cursor: 'pointer', letterSpacing: '0.3px', textTransform: 'uppercase' }}>Done</button>
             </div>
           </div>
         </div>

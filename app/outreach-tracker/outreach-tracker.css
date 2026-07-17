@@ -205,7 +205,47 @@
 .ot-done b { color: var(--text); font-weight: 700; }
 
 /* ── Body pane (shared margins for the table view) ────────────────────────── */
-.ot-pane { margin: 0 40px; }
+/* Matches the Today tab's rhythm. Was margin:0, which jammed the filter row
+   flush against the tab bar while Today got 30px of air. */
+.ot-pane { margin: 30px 40px 0; }
+
+/* ── Filter row: inline lockup, not pills ─────────────────────────────────── */
+.ot-filter {
+  display: flex; align-items: center; gap: 0;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.ot-filter-lbl {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text-3);
+  margin-right: 14px;
+}
+.ot-filter-item {
+  background: none; border: 0; padding: 4px 0;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  color: var(--text-3); cursor: pointer;
+  transition: color 0.12s;
+}
+.ot-filter-item:hover { color: var(--text-2); }
+.ot-filter-item.active { color: var(--text); }
+.ot-filter-sep {
+  color: var(--text-3); opacity: 0.4;
+  margin: 0 10px; font-size: 12px; user-select: none;
+}
+.ot-search {
+  display: flex; align-items: center; gap: 7px;
+  margin-left: auto;
+  border-bottom: 1.5px solid var(--border);
+  padding: 5px 2px;
+  transition: border-color 0.12s;
+}
+.ot-search:focus-within { border-color: var(--text); }
+.ot-search input {
+  border: none; background: none; outline: none;
+  font-family: inherit; font-size: 13px; color: var(--text);
+  width: 190px; padding: 0;
+}
+.ot-search input::placeholder { color: var(--text-3); }
 
 @media (max-width: 900px) {
   .ot-head, .ot-tabs, .ot-sec { margin-left: 20px; margin-right: 20px; }
