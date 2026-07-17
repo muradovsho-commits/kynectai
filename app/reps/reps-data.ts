@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Reps content data. 10 careers × 3 scenarios = 30 scenarios.
+// Reps content data. 10 careers, 3 to 6 scenarios each.
 // Each scenario has 1-3 graded deliverables with full rubrics.
 //
 // Rubrics are written verbosely on purpose, the AI grader needs specific
@@ -413,6 +413,269 @@ End with verdict in Jordan's voice (under 60 words). Cite the IRR/MOIC they got 
 // ═════════════════════════════════════════════════════════════════════════════
 // PRIVATE EQUITY
 // ═════════════════════════════════════════════════════════════════════════════
+
+const IB_4: Scenario = {
+  id: 'ib-4',
+  trackId: 'ib',
+  title: 'Precedent transactions screen, medtech',
+  summary: 'Six deals, one of them junk. Build the precedent set and tell the VP what Meridian is worth.',
+  timeframe: 'Thursday AM',
+  duration: '30 min',
+  difficulty: 'Intro',
+  context: `Middle-market healthcare group. You are two weeks in. The team is pitching Project Meridian, a single-use surgical instruments business doing $52M LTM EBITDA on $210M of revenue. The VP wants a precedent transactions screen before the Friday internal. She has already pulled the deal list off the desk marks and dropped it in your inbox, so this is not a research exercise, it is a math and judgment exercise. One of the six deals has a negative LTM EBITDA target and needs to be flagged nm rather than dropped silently. One trades way above the pack because the target was growing 40%. The VP wants to know what you do with both.`,
+  personas: [
+    { id: 'vp', name: 'Nadia Ellington', title: 'Vice President', firm: 'Healthcare / Middle Market', style: 'Warm but exacting. Explains the why once, expects you to remember it. Hates a number presented without a range. Will ask "and what would make you wrong" about every conclusion.', voice: 'warm-exacting', initials: 'NE' },
+  ],
+  opening: [
+    { personaId: 'vp', text: `Morning. Need a precedent screen on Project Meridian before the Friday internal.` },
+    { personaId: 'vp', text: `Meridian is single-use surgical instruments. $210M revenue, $52M LTM EBITDA, so about a 25% margin. Growing high single digits. Not a rocket ship, a good steady business.` },
+    { personaId: 'vp', text: `Deal list is off our desk marks, use these, do not go hunting: Baxter / Hillrom, EV $10,500M on $700M LTM EBITDA. BD / Bard, EV $24,000M on $1,150M. Boston Scientific / BTG, EV $4,200M on $260M. Teleflex / Z-Medica, EV $500M on $27M. Stryker / Wright Medical, EV $5,400M on $180M. Medtronic / Mazor Robotics, EV $1,600M on negative LTM EBITDA.` },
+    { personaId: 'vp', text: `Compute EV/LTM EBITDA for each, then give me the median and apply it to Meridian's $52M. I want the mean on the page too, but I want you to tell me which one you would actually use and why.` },
+    { personaId: 'vp', text: `Two of those deals will try to trick you. Deal with them explicitly, do not just delete the row. One tab, .xlsx, before lunch.` },
+  ],
+  artifacts: [
+    {
+      id: 'precedents',
+      label: 'Precedent Transactions',
+      format: 'xlsx',
+      prompt: `Build a precedent transactions screen for Project Meridian using the six deals Nadia gave you. Show:
+• Acquirer / Target, and the EV and LTM EBITDA as provided
+• EV/LTM EBITDA for each deal
+• Mazor flagged nm (negative LTM EBITDA), not deleted
+• Median and Mean of the valid multiples, stated separately
+• Meridian implied EV at the median, applied to $52M LTM EBITDA
+• Meridian implied EV at the mean, so the difference is visible
+• A short note saying which you would use and why
+
+Upload as .xlsx.`,
+      rubric: `Grade as a healthcare IB VP reviewing a two-week analyst's precedent screen. Score 1-10:
+
+ACCURACY (1-10)
+- Multiples: Hillrom 15.0x, Bard 20.9x, BTG 16.2x, Z-Medica 18.5x, Wright 30.0x. Mazor nm.
+- Median of the five valid = 18.5x. Mean = 20.1x. Both must appear.
+- Meridian at median: 18.5 x $52M = $962M. At mean: 20.1 x $52M = about $1,046M.
+- The $84M gap between the two is the whole point of the exercise. If they only show one, mark it down.
+
+HANDLING THE TWO TRAPS (1-10)
+- Mazor: negative LTM EBITDA. Correct treatment is a visible nm flag and exclusion from the median, NOT a deleted row. Deleting it silently is the single worst outcome here.
+- Wright Medical at 30.0x: it is not an error, the target was growing far faster. It should stay in the set and the analyst should note WHY it is high. Excluding it to make the median prettier is a judgment failure.
+
+JUDGMENT (1-10)
+- Did they pick the median and say why? Correct reasoning: five data points, one outlier at 30x drags the mean up, the median is what a typical deal in this set cleared at.
+- Anyone who says "use the mean because it uses all the data" has missed it.
+- Bonus if they note precedents include a control premium, so this range sits above where Meridian would trade publicly.
+
+FORMATTING (1-10)
+- One tab. Multiples to one decimal. nm visibly flagged. Median and mean labelled, not just a number at the bottom of a column.
+
+End with verdict in Nadia's voice (under 60 words). One of: "Good, this goes in the book.", "Close. Fix [X] and resend before the internal.", "Come find me, we need to talk through what a median is for." Cite 1-2 specific cells.`,
+      requestedBy: 'vp',
+    },
+  ],
+};
+
+const IB_5: Scenario = {
+  id: 'ib-5',
+  trackId: 'ib',
+  title: 'Accretion / dilution, cash versus stock',
+  summary: 'The MD wants to know what we can pay before it goes dilutive, and whether to pay in cash or paper.',
+  timeframe: 'Board pre-read',
+  duration: '40 min',
+  difficulty: 'Intermediate',
+  context: `You cover industrials. Our client Calder Industries ($CLD, public) is looking at buying Renwick Controls ($RNW, public). The board meets Monday and the MD needs the accretion / dilution math and a single slide. Calder: 100M shares at $40.00, so a $4.0B market cap, $200M net income, $2.00 EPS, 20.0x P/E. Renwick: 40M shares, currently trading $24.00, $60M net income, $1.50 EPS. Calder can raise acquisition debt at 6.0%. Effective tax rate 25%. The MD wants the deal run at three offer prices, $30.00, $33.00 and $36.00, each in two structures, all cash funded with debt, and all stock issued at Calder's $40.00. He wants the breakeven price for each structure and he wants a view, not just a grid.`,
+  personas: [
+    { id: 'md', name: 'Tobias Renner', title: 'Managing Director', firm: 'Industrials', style: 'Blunt, quick, allergic to hedging. Wants the answer in the first sentence and the reasoning after. Will interrupt. If you give him a grid with no recommendation he will ask what he is paying you for.', voice: 'blunt-fast', initials: 'TR' },
+    { id: 'vp', name: 'Grace Okafor', title: 'Vice President', firm: 'Industrials', style: 'Calm, catches errors before the MD does. Will quietly tell you what Tobias actually wants when he has been unclear.', voice: 'calm-precise', initials: 'GO' },
+  ],
+  opening: [
+    { personaId: 'md', text: `Calder / Renwick. Board sees this Monday. I need to know what we can pay.` },
+    { personaId: 'md', text: `Calder: 100M shares, $40 a share, $200M of net income. Renwick: 40M shares, trades at $24, $60M of net income. We can borrow at 6%. Tax 25%.` },
+    { personaId: 'md', text: `Run it at $30, $33 and $36. Cash funded entirely with debt, and all stock at our $40. Six cells. Then tell me the breakeven price for each structure.` },
+    { personaId: 'vp', text: `To translate: he wants the grid, but what he actually wants is the one line at the top telling him which structure buys him more room. Lead with that.` },
+    { personaId: 'md', text: `Model in Excel, one slide for the board. Do not send me a slide with six numbers and no recommendation.` },
+  ],
+  artifacts: [
+    {
+      id: 'accretion-model',
+      label: 'Accretion / Dilution Model',
+      format: 'xlsx',
+      prompt: `Build the accretion / dilution analysis for Calder / Renwick. Assumptions:
+• Calder: 100M shares, $40.00, $200M net income (EPS $2.00, 20.0x P/E)
+• Renwick: 40M shares, $24.00 unaffected, $60M net income (EPS $1.50)
+• Cash structure: 100% funded with new debt at 6.0%, 25% tax rate
+• Stock structure: new Calder shares issued at $40.00
+• No synergies. Do not model transaction fees.
+• Offer prices: $30.00, $33.00, $36.00
+
+Show for each price and structure: purchase equity value, new shares issued (stock) or interest expense after tax (cash), pro forma net income, pro forma share count, pro forma EPS, and accretion / dilution versus $2.00.
+
+Also solve for the breakeven offer price under each structure.
+
+Upload as .xlsx.`,
+      rubric: `Grade as an industrials MD reviewing an analyst's accretion / dilution model. Score 1-10:
+
+CORE MATH (1-10)
+Check these exact figures.
+- At $30: equity $1,200M. CASH: interest $72.0M, after tax $54.0M, PF NI $206.0M, EPS $2.06, +3.0% accretive. STOCK: 30.0M new shares, 130.0M total, PF NI $260M, EPS $2.00, neutral (0.0%).
+- At $33: equity $1,320M. CASH: EPS $2.006, +0.3%. STOCK: 33.0M new shares, EPS $1.955, -2.3% dilutive.
+- At $36: equity $1,440M. CASH: interest $86.4M, after tax $64.8M, EPS $1.952, -2.4%. STOCK: 36.0M new shares, 136.0M total, EPS $1.912, -4.4% dilutive.
+Anything off by more than a cent on EPS is a problem. The most common error is forgetting to tax-effect the interest.
+
+BREAKEVEN (1-10)
+- STOCK breakeven is exactly $30.00. CASH breakeven is $33.33.
+- If they got $30.00 for stock but cannot explain WHY it is exactly $30, they got lucky. The reason: at $30 Renwick's P/E is 20.0x, identical to Calder's. Stock deals are neutral when the multiples match.
+
+THE INSIGHT (1-10)
+This is what separates a good analyst here.
+- Calder's 20.0x P/E is a 5.0% earnings yield. Debt at 6.0% pre-tax is 4.5% after tax.
+- Cash is accretive whenever 4.5% is cheaper than what you buy. Stock is accretive only when the target P/E is below 20.0x.
+- That is why cash buys roughly $3.33 more room per share than stock here.
+- Full marks only if the model or the note says something equivalent. A grid with no reasoning is a 5.
+
+JUDGMENT (1-10)
+- Did they note that accretion is not the same as value creation? Cash looks better here purely because debt is cheap and it adds leverage and risk that EPS does not show.
+- Did they flag that no synergies are modeled, so this is a floor?
+
+End with verdict in Tobias's voice (under 60 words). One of: "Good. This goes to the board.", "Math is right, the recommendation is missing. Add it.", "Redo it, you did not tax-effect the interest." Cite 1-2 specific cells.`,
+      requestedBy: 'md',
+    },
+    {
+      id: 'board-slide',
+      label: 'Board Slide',
+      format: 'pptx',
+      prompt: `Build a single board slide for the Calder / Renwick accretion analysis.
+
+Requirements:
+• One slide. Not two.
+• The headline must be the recommendation, not a label. "Cash structure supports up to $33 before dilution" beats "Accretion / Dilution Analysis".
+• Show the 3 x 2 grid (three prices, two structures), accretion / dilution percentage in each cell
+• Mark both breakevens visibly
+• One line of takeaway. Not a paragraph.
+• Footnote the assumptions: no synergies, 6.0% debt, 25% tax, stock issued at $40.00
+
+Upload as .pptx.`,
+      rubric: `Grade as an industrials MD who will put this in front of a board on Monday. Score 1-10:
+
+HEADLINE (1-10)
+- Does the title say something, or is it a label? "Accretion / Dilution Analysis" is a label and scores 3. The headline should state the conclusion.
+- A board member reading only the headline should learn the answer.
+
+THE GRID (1-10)
+- Six cells, correct: cash +3.0% / +0.3% / -2.4%, stock 0.0% / -2.3% / -4.4%.
+- Accretive and dilutive visually distinguishable at a glance.
+
+BREAKEVENS (1-10)
+- $30.00 stock and $33.33 cash both present and marked.
+
+DISCIPLINE (1-10)
+- One slide. Assumptions footnoted, not in the body. No decoration. No clip art. Numbers aligned.
+- Does the takeaway line say what to do rather than restate the grid?
+
+End with verdict in Tobias's voice (under 60 words). One of: "That works, send it.", "Headline is a label. Rewrite it and resend.", "This is two slides pretending to be one." Cite the headline verbatim.`,
+      requestedBy: 'md',
+    },
+  ],
+};
+
+const IB_6: Scenario = {
+  id: 'ib-6',
+  trackId: 'ib',
+  title: 'QofE lands at 9pm and the deal just got worse',
+  summary: 'Diligence cut $12M of EBITDA out of the target. Reprice it and tell the MD what it does to the deal.',
+  timeframe: '9pm Friday',
+  duration: '50 min',
+  difficulty: 'Advanced',
+  context: `Sell-side, and it is going badly. We are advising Northvale Packaging on its sale to a sponsor. Signed LOI at 11.0x on $85M of adjusted EBITDA, so a $935M enterprise value. The buyer's quality of earnings report landed at 8:40pm tonight and it strips $12M out of adjusted EBITDA: $5M of owner compensation below market that will not persist, $4M of "one-time" restructuring charges that have now appeared in three consecutive years, and $3M of a customer rebate accrual that was released into earnings. Real adjusted EBITDA is $73M. The buyer has not said what they will do yet, but they will call at 8am Monday and they will not be paying $935M. The MD wants to walk into that call knowing every number.`,
+  personas: [
+    { id: 'md', name: 'Eleni Sarkis', title: 'Managing Director', firm: 'Industrials / Sell-side', style: 'Composed under pressure, which makes her harder to read than a shouter. Wants to know what she does not know. Will ask you what the buyer is going to argue and expects you to have thought about it first.', voice: 'composed-probing', initials: 'ES' },
+  ],
+  opening: [
+    { personaId: 'md', text: `QofE just hit. It is not good. Read it tonight, I need the repricing before Monday.` },
+    { personaId: 'md', text: `We signed at 11.0x on $85M, so $935M. They are cutting $12M out. $5M of below-market owner comp, $4M of restructuring that has now shown up three years running, $3M of a rebate accrual release.` },
+    { personaId: 'md', text: `So real adjusted EBITDA is $73M. I need three things. What is the deal worth at 11.0x on the new number. What multiple are they paying if they hold the $935M. And which of those three add-backs can we actually fight.` },
+    { personaId: 'md', text: `Be honest with me on the third one. If we go into Monday defending an add-back we cannot defend, we lose credibility on the two that matter.` },
+    { personaId: 'md', text: `Model in Excel, memo in Word, both by 7am Sunday. I want the memo short enough that I can read it in the car.` },
+  ],
+  artifacts: [
+    {
+      id: 'reprice',
+      label: 'Repricing Bridge',
+      format: 'xlsx',
+      prompt: `Build the repricing analysis for Northvale.
+
+Show:
+• The EBITDA bridge: $85M reported adjusted, less the three QofE adjustments, to $73M
+• Value at 11.0x on $73M
+• The price drop versus the $935M LOI
+• The implied multiple if the buyer holds $935M against real EBITDA of $73M
+• A sensitivity: enterprise value across multiples 10.0x to 12.0x and EBITDA of $73M, $77M and $85M, so the MD can see what winning back each add-back is worth
+• Per add-back, the value at stake at 11.0x
+
+Upload as .xlsx.`,
+      rubric: `Grade as a sell-side MD reading this at 6am before a call she cannot lose. Score 1-10:
+
+THE BRIDGE (1-10)
+- $85M less $5M owner comp, less $4M restructuring, less $3M rebate release = $73M. Each adjustment on its own line, labelled.
+- Value at 11.0x x $73M = $803M.
+- Drop versus $935M = $132M. This is the number the MD says out loud on Monday. It must be correct and it must be findable in under three seconds.
+- Implied multiple holding $935M: $935M / $73M = 12.8x. If they wrote 11.0x they do not understand the question.
+
+VALUE PER ADD-BACK (1-10)
+- At 11.0x, each $1M of EBITDA is worth $11M of EV. So owner comp is worth $55M, restructuring $44M, rebate $33M.
+- This is what tells the MD which fight is worth having.
+
+SENSITIVITY (1-10)
+- A 3 x 3 grid at minimum. At 11.0x: $73M gives $803M, $77M gives $847M, $85M gives $935M.
+- Correct grid, correctly labelled axes.
+
+JUDGMENT (1-10)
+- Did they rank the add-backs by defensibility rather than by size?
+- The honest read: owner comp is the STRONGEST fight, since a new owner genuinely will not pay the founder above market, and that is a real normalization every buyer accepts. The rebate release is arguable but weak, it flattered earnings and the buyer is right to question it. The restructuring is INDEFENSIBLE, three consecutive years of "one-time" charges is a run rate, not a one-off, and arguing it costs credibility on the other two.
+- An analyst who fights all three, or who ranks them by dollar value, has missed what the MD asked.
+
+End with verdict in Eleni's voice (under 60 words). One of: "This is what I needed. See you Monday.", "The math is right, the ranking is wrong. Call me.", "You are fighting the restructuring. Read the three-year history again." Cite 1-2 specific cells.`,
+      requestedBy: 'md',
+    },
+    {
+      id: 'md-memo',
+      label: 'Monday Call Memo',
+      format: 'docx',
+      prompt: `Write the memo Eleni reads in the car before the 8am call.
+
+Requirements:
+• One page. Hard limit.
+• Open with the number: what the deal is worth now and what the drop is.
+• The three add-backs, ranked by whether we can defend them, with the value at stake on each
+• What you expect the buyer to open with, and what our counter is
+• The walk-away line: at what price does the client stop
+• No throat-clearing. She has read the QofE. Do not summarize it back to her.
+
+Upload as .docx.`,
+      rubric: `Grade as a sell-side MD who has 6 minutes in a car. Score 1-10:
+
+LEADS WITH THE ANSWER (1-10)
+- First sentence must contain $803M or the $132M drop. If the memo opens with background, score 3.
+- No summary of the QofE. She read it.
+
+THE RANKING (1-10)
+- Add-backs ranked by defensibility, not size: owner comp (defensible, $55M at stake), rebate release (weak, $33M), restructuring (indefensible, $44M).
+- The reasoning must be present, not just the ranking. Three years of one-time charges is the whole argument on the restructuring.
+
+ANTICIPATES THE BUYER (1-10)
+- Does it say what the buyer opens with? The likely open is all three cuts stand, price is $803M.
+- Is there a counter, and is it credible? Conceding the restructuring immediately to buy credibility on owner comp is the strong play.
+
+THE WALK-AWAY (1-10)
+- Is there a number? A memo that will not name the floor is not useful in a negotiation.
+
+DISCIPLINE (1-10)
+- One page. Short sentences. No hedging language. No "it should be noted that".
+
+End with verdict in Eleni's voice (under 60 words). One of: "Good. This is exactly the call I am making.", "You buried the number. Rewrite the first line.", "You are still fighting all three. Pick." Quote the first sentence back.`,
+      requestedBy: 'md',
+    },
+  ],
+};
 
 const PE_1: Scenario = {
   id: 'pe-1',
@@ -2686,7 +2949,7 @@ End with verdict in James's voice (under 70 words): "Make the changes, re-submit
 // ═════════════════════════════════════════════════════════════════════════════
 
 export const REPS_SCENARIOS: Record<RepsTrackId, Scenario[]> = {
-  ib: [IB_1, IB_2, IB_3],
+  ib: [IB_1, IB_2, IB_3, IB_4, IB_5, IB_6],
   pe: [PE_1, PE_2, PE_3],
   consulting: [CON_1, CON_2, CON_3],
   rx: [RX_1, RX_2, RX_3],
