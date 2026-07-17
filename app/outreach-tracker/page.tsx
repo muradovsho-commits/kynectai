@@ -9,7 +9,8 @@ import Link from 'next/link';
 import { PLAN_LIMITS } from '../lib/plan';
 import { useUserPlan } from '../lib/usePlan';
 import '../contact-finder/contact-finder.css';
-import RemindersPanel from './RemindersPanel';
+import './outreach-tracker.css';
+import TodayQueue, { useOutreachQueue } from './TodayQueue';
 
 type AlertRule = {
   status: string;
@@ -126,6 +127,8 @@ export default function OutreachTrackerPage() {
   }, []);
   const _displayName = (_userName.first + ' ' + _userName.last).trim() || 'User';
   const _displayInitials = ((_userName.first[0] || '') + (_userName.last[0] || '')).toUpperCase() || 'U';
+
+  const [tab, setTab] = useState<'today' | 'all'>('today');
 
   const [activeFilter, setActiveFilter] = useState('all');
   const [search, setSearch] = useState('');
@@ -393,43 +396,75 @@ export default function OutreachTrackerPage() {
     .b-ghosted{background:#fce7f3;color:#be185d;border:1px solid #fbcfe8}
   `;
 
+  // One engine for the headline, the tab count and the list.
+  const { queue, snooze, thresholds, inFlight } = useOutreachQueue(contacts, config.alerts, config.alertsGlobal);
+  const queueCount = queue.length;
+
   return (
     <>
-      <div className="app">
-        {/* SIDEBAR */}
+      <div className="ot-app">
         <Topbar activePage="outreach-tracker" />
 
-        {/* MAIN */}
-        {/* background/min-height mirror referral-map's .rm-canvas: contact-finder's
-            .main paints nothing, so the body's --bg (#111110) showed through and
-            this tab read darker than every other page. */}
-        <main className="main" style={{ padding: '32px 36px', background: 'var(--surface)', minHeight: '100vh' }}>
+        {/* Scoped wrapper, matching .rm-app / .learn-app. Replaces the legacy
+            .app/.main pair borrowed from contact-finder, which painted nothing
+            and let the body --bg show through. */}
+        <main className="ot-canvas">
+          <div className="ot-page">
+          <div className="ot-page-inner">
 
-          {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24 }}>
-            <div>
-              <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 28, letterSpacing: '-.5px', color: 'var(--text)', marginBottom: 3 }}>
-                Outreach <em style={{ fontStyle: 'italic' }}>Tracker</em>
+          {/* Hero: left aligned, stats right. Mirrors .learn-hero. */}
+          <header className="ot-head">
+            <div className="ot-hero-row">
+              <div>
+                <div className="ot-eyebrow">Outreach Tracker</div>
+                <h1 className="ot-title">
+                  {queueCount > 0
+                    ? <>{queueCount === 1 ? 'One person is' : `${queueCount} people are`} <em>waiting on you</em>.</>
+                    : <>You are <em>all caught up</em>.</>}
+                </h1>
+                <p className="ot-sub">
+                  Your cadence decides who to chase and when. This queue is built from your own
+                  follow-up rules, ranked by how late you are.
+                </p>
+                <div className="ot-head-actions">
+                  <button onClick={() => setModalOpen(true)} type="button" className="ot-hbtn ot-hbtn-solid">
+                    Add contact
+                  </button>
+                  <a href="https://chromewebstore.google.com/detail/ecmiggmdjpohgidmdonhbcbnlhdagmkp" target="_blank" rel="noopener noreferrer" className="ot-hbtn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
+                    Extension
+                  </a>
+                  <button onClick={() => setDevMode(true)} type="button" className="ot-hbtn">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                    Customize
+                  </button>
+                </div>
               </div>
-              <div style={{ fontSize: 13, color: 'var(--text-3)' }}>
-                Track every networking conversation in one place. Click any row to update.
+              <div className="ot-stats">
+                <div>
+                  <div className="ot-stat-val">{queueCount}</div>
+                  <div className="ot-stat-label">Need action</div>
+                </div>
+                <div>
+                  <div className="ot-stat-val">{total}</div>
+                  <div className="ot-stat-label">Tracked</div>
+                </div>
+                <div>
+                  <div className="ot-stat-val">{spoken}</div>
+                  <div className="ot-stat-label">{sl('spoken', 'Spoken with')}</div>
+                </div>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-              <a href="https://chromewebstore.google.com/detail/ecmiggmdjpohgidmdonhbcbnlhdagmkp" target="_blank" rel="noopener noreferrer" title="Get the Chrome extension" aria-label="Get the Chrome extension" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '8px 12px', borderRadius: 10, border: '1.5px solid var(--border)', background: 'var(--surface)', cursor: 'pointer', transition: 'border-color 0.15s', fontSize: 12, fontWeight: 600, color: 'var(--text-2)', fontFamily: "'Sora', sans-serif", textDecoration: 'none' }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--text)')}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                Extension
-              </a>
-              <button onClick={() => setDevMode(true)} type="button" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10, border: '1.5px solid var(--border)', background: 'var(--surface)', cursor: 'pointer', transition: 'border-color 0.15s', fontSize: 12, fontWeight: 600, color: 'var(--text-2)', fontFamily: "'Sora', sans-serif" }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--text)')}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}>
-                <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                Customize
-              </button>
-              <button onClick={() => setModalOpen(true)} style={{ background: 'var(--text)', color: 'var(--surface)', border: 'none', borderRadius: 10, padding: '9px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora, sans-serif' }}>+ Add Contact</button>
-            </div>
+          </header>
+
+          {/* Tabs */}
+          <div className="ot-tabs">
+            <button type="button" className={`ot-tab${tab === 'today' ? ' active' : ''}`} onClick={() => setTab('today')}>
+              Today<span className="ot-tab-n">{queueCount}</span>
+            </button>
+            <button type="button" className={`ot-tab${tab === 'all' ? ' active' : ''}`} onClick={() => setTab('all')}>
+              All contacts<span className="ot-tab-n">{total}</span>
+            </button>
           </div>
 
           {/* Free user limit indicator */}
@@ -446,34 +481,19 @@ export default function OutreachTrackerPage() {
           )}
 
 
-          {/* Reminders */}
-          <RemindersPanel contacts={contacts} onOpenContact={(id) => {
-            const c = contacts.find(ct => ct.id === id);
-            if (c) openDrawer(c);
-          }} />
-
-          {/* Extension install prompt (self-hides if already installed) */}
-          <ExtensionInstallPrompt variant="tracker" />
-
-          {/* Stats */}
-          <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
-            {[
-              { label: 'Total', val: total, sub: 'contacts tracked' },
-              { label: sl('sent', 'Sent'), val: sent, sub: 'emails out' },
-              { label: 'Following Up', val: fu, sub: 'awaiting reply' },
-              { label: sl('spoken', 'Spoken With'), val: spoken, sub: 'calls completed', highlight: true },
-              { label: 'Completion Rate', val: rate, sub: 'of all sent' },
-            ].map(s => (
-              <div key={s.label} style={{ background: s.highlight ? '#0c0c0c' : 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12, padding: '14px 18px', flex: 1, minWidth: 100 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: s.highlight ? 'rgba(255,255,255,0.5)' : 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.5px', marginBottom: 6 }}>{s.label}</div>
-                <div style={{ fontFamily: "'Instrument Serif', 'Times New Roman', serif", fontSize: 32, fontWeight: 400, color: s.highlight ? '#ffffff' : 'var(--text)', letterSpacing: '-0.5px', lineHeight: 1 }}>{s.val}</div>
-                <div style={{ fontSize: 11, color: s.highlight ? 'rgba(255,255,255,0.5)' : 'var(--text-3)', marginTop: 4 }}>{s.sub}</div>
-              </div>
-            ))}
-          </div>
-
-
-
+          {tab === 'today' ? (
+            <TodayQueue
+              queue={queue}
+              thresholds={thresholds}
+              inFlight={inFlight}
+              alertsEnabled={config.alertsGlobal}
+              totalContacts={total}
+              statusLabel={sl}
+              onSnooze={snooze}
+              onOpenContact={(id) => { const c = contacts.find(ct => ct.id === id); if (c) openDrawer(c); }}
+            />
+          ) : (
+          <div className="ot-pane">
           {/* Filters */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
             <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 1 }}>Filter:</span>
@@ -586,6 +606,10 @@ export default function OutreachTrackerPage() {
                 })}
               </tbody>
             </table>
+          </div>
+          </div>
+          )}
+          </div>
           </div>
         </main>
       </div>

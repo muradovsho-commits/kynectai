@@ -129,6 +129,11 @@ export default function OutreachWriterPage() {
       if (n) setContactName(n);
       if (f) setContactFirm(f);
       if (r) setContactRole(r);
+      // Handed off from the tracker's queue, which already knows the angle you
+      // picked for this contact. Validated against ANGLES so a bad param is
+      // ignored rather than wedging the selector on an unknown key.
+      const a = q.get('angle');
+      if (a && ANGLES.some(x => x.key === a)) setAngle(a);
     } catch {}
   }, []);
 

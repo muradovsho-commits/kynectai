@@ -1,0 +1,217 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Outreach Tracker
+   Scoped chrome for the tracker. Mirrors the wrapper pattern used by
+   referral-map (.rm-app) and learn (.learn-app) so this tab stops borrowing
+   contact-finder.css.
+
+   FONTS: this file declares NONE. globals.css owns the site font
+   (Lato body, Nunito headers) via !important. Declaring a face here would
+   punch a hole in the next site-wide font change. font-family: inherit on
+   buttons/inputs is the one exception, since form controls do not inherit.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Wrapper: three layers, matching .rm-app / .learn-app ─────────────────── */
+.ot-app {
+  display: flex;
+  min-height: calc(100vh - var(--topbar-h, 0px));
+  background: var(--bg);
+}
+.ot-canvas {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface);
+  min-height: calc(100vh - var(--topbar-h, 0px));
+  box-sizing: border-box;
+}
+.ot-page {
+  flex: 1;
+  background: var(--surface);
+  max-width: 1400px;
+  width: 100%;
+  margin: 0;
+}
+.ot-page-inner {
+  padding: 0 0 48px;
+}
+
+/* ── Hero: left aligned, stats pinned right (mirrors .learn-hero) ─────────── */
+.ot-head { margin: 40px 40px 0; }
+.ot-hero-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.ot-eyebrow {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 14px;
+}
+.ot-title {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  color: var(--text);
+  margin: 0 0 16px;
+}
+.ot-title em { font-style: italic; }
+.ot-sub {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.65;
+  max-width: 620px;
+  margin: 0;
+}
+.ot-stats { display: flex; gap: 32px; flex-shrink: 0; }
+.ot-stat-val {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  line-height: 1;
+}
+.ot-stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-top: 4px;
+}
+
+/* ── Header actions ───────────────────────────────────────────────────────── */
+.ot-head-actions { display: flex; gap: 8px; flex-shrink: 0; margin-top: 18px; }
+.ot-hbtn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px; border-radius: 10px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  color: var(--text); font-family: inherit;
+  font-size: 12.5px; font-weight: 600; cursor: pointer;
+  transition: border-color 0.12s;
+  text-decoration: none;
+}
+.ot-hbtn:hover { border-color: var(--text); }
+.ot-hbtn-solid { background: var(--text); color: var(--surface); border-color: var(--text); }
+.ot-hbtn-solid:hover { opacity: 0.88; border-color: var(--text); }
+
+/* ── Tabs: Today | All contacts ───────────────────────────────────────────── */
+.ot-tabs {
+  display: flex; gap: 28px;
+  margin: 30px 40px 0;
+  border-bottom: 1.5px solid var(--border);
+}
+.ot-tab {
+  background: none; border: 0; padding: 0 0 12px;
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  color: var(--text-3); cursor: pointer; position: relative;
+  transition: color 0.12s;
+}
+.ot-tab:hover { color: var(--text-2); }
+.ot-tab.active { color: var(--text); }
+.ot-tab.active::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -1.5px;
+  height: 2px; background: var(--text);
+}
+.ot-tab-n { font-size: 12px; opacity: 0.55; margin-left: 6px; }
+
+/* ── Section head ─────────────────────────────────────────────────────────── */
+.ot-sec {
+  display: flex; align-items: baseline; gap: 12px;
+  margin: 30px 40px 0;
+}
+.ot-sec-name { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; color: var(--text); margin: 0; }
+.ot-sec-note { font-size: 12.5px; color: var(--text-3); }
+
+/* ── The queue ────────────────────────────────────────────────────────────── */
+.ot-q { margin: 14px 40px 0; border-top: 1px solid var(--border); }
+.ot-q-row {
+  display: grid;
+  grid-template-columns: 3px 40px 1fr 190px 230px;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.12s;
+}
+.ot-q-row:hover { background: var(--surface-2); }
+.ot-q-mark { width: 3px; height: 34px; border-radius: 2px; background: transparent; }
+.ot-urg-overdue .ot-q-mark { background: #c0392b; }
+.ot-urg-due     .ot-q-mark { background: #b4864a; }
+.ot-urg-today   .ot-q-mark { background: #3a7d5c; }
+
+.ot-q-av {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--surface-2); border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: var(--text-2);
+  cursor: pointer;
+}
+.ot-q-main { display: block; min-width: 0; cursor: pointer; }
+.ot-q-top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.ot-q-name { font-size: 15px; font-weight: 700; color: var(--text); }
+.ot-q-firm { font-size: 12.5px; color: var(--text-3); }
+.ot-q-why { display: block; font-size: 12.5px; color: var(--text-2); margin-top: 3px; }
+.ot-q-state { display: block; }
+.ot-q-tag { display: block; font-size: 12px; font-weight: 700; }
+.ot-urg-overdue .ot-q-tag { color: #c0392b; }
+.ot-urg-due     .ot-q-tag { color: #b4864a; }
+.ot-urg-today   .ot-q-tag { color: #3a7d5c; }
+.ot-q-status { display: block; font-size: 11.5px; color: var(--text-3); margin-top: 3px; }
+
+.ot-q-act { display: flex; gap: 8px; justify-content: flex-end; position: relative; }
+.ot-btn {
+  font-family: inherit; font-size: 12.5px; font-weight: 600;
+  padding: 8px 14px; border-radius: 8px; cursor: pointer; white-space: nowrap;
+  transition: border-color 0.12s, opacity 0.12s;
+  text-decoration: none; display: inline-flex; align-items: center;
+}
+.ot-btn-primary { background: var(--text); color: var(--surface); border: 1.5px solid var(--text); }
+.ot-btn-primary:hover { opacity: 0.88; }
+.ot-btn-ghost { background: none; color: var(--text-2); border: 1.5px solid var(--border); }
+.ot-btn-ghost:hover { border-color: var(--border-2); color: var(--text); }
+
+/* ── Snooze menu ──────────────────────────────────────────────────────────── */
+.ot-snooze-menu {
+  position: absolute; top: calc(100% + 6px); right: 0; z-index: 20;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 6px; min-width: 148px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+}
+[data-theme="dark"] .ot-snooze-menu { box-shadow: 0 8px 28px rgba(0,0,0,0.4); }
+.ot-snooze-item {
+  display: block; width: 100%; text-align: left;
+  background: none; border: 0; border-radius: 7px;
+  padding: 8px 10px; cursor: pointer; font-family: inherit;
+  font-size: 12.5px; font-weight: 600; color: var(--text);
+}
+.ot-snooze-item:hover { background: var(--surface-2); }
+
+/* ── Empty / done state ───────────────────────────────────────────────────── */
+.ot-done {
+  margin: 28px 40px 60px;
+  padding: 22px 24px;
+  border: 1.5px dashed var(--border);
+  border-radius: 14px;
+  font-size: 13px;
+  color: var(--text-3);
+  line-height: 1.65;
+}
+.ot-done b { color: var(--text); font-weight: 700; }
+
+/* ── Body pane (shared margins for the table view) ────────────────────────── */
+.ot-pane { margin: 0 40px; }
+
+@media (max-width: 900px) {
+  .ot-head, .ot-tabs, .ot-sec { margin-left: 20px; margin-right: 20px; }
+  .ot-q, .ot-done, .ot-pane { margin-left: 20px; margin-right: 20px; }
+  .ot-title { font-size: 30px; }
+  .ot-q-row { grid-template-columns: 3px 1fr; gap: 10px; padding: 14px 0; }
+  .ot-q-av, .ot-q-state { display: none; }
+  .ot-q-act { justify-content: flex-start; grid-column: 2; }
+}
