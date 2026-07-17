@@ -5,7 +5,6 @@ import ExtensionInstallPrompt from "../components/ExtensionInstallPrompt";
 import { useState, useEffect, useLayoutEffect } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { ConvexHttpClient } from 'convex/browser';
-import '../contact-finder/contact-finder.css';
 import { api } from '../../convex/_generated/api';
 import './outreach-writer.css';
 
