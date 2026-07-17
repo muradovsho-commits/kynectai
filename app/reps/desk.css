@@ -41,7 +41,6 @@ html[data-theme="dark"] .desk-app {
   display: flex;
   min-height: calc(100vh - var(--topbar-h, 0px));
   background: var(--bg);
-  font-family: 'Sora', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
 .desk-canvas {
@@ -65,14 +64,6 @@ html[data-theme="dark"] .desk-app {
   overflow: hidden;
 }
 
-.desk-page,
-.desk-page-inner,
-.desk-page-inner button,
-.desk-page-inner p,
-.desk-page-inner span,
-.desk-page-inner div {
-  font-family: 'Sora', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
-}
 .desk-page-inner {
   max-width: 1400px;
   width: 100%;
@@ -104,7 +95,6 @@ html[data-theme="dark"] .desk-app {
   margin-bottom: 14px;
 }
 .desk-title {
-  font-family: 'Instrument Serif', serif !important;
   font-size: 42px;
   font-weight: 400;
   letter-spacing: -1px;
@@ -122,7 +112,6 @@ html[data-theme="dark"] .desk-app {
 }
 .desk-hero-stats { display: flex; gap: 32px; flex-shrink: 0; }
 .desk-hero-stat-val {
-  font-family: 'Instrument Serif', serif !important;
   font-size: 32px;
   font-weight: 400;
   letter-spacing: -0.5px;
@@ -164,7 +153,6 @@ html[data-theme="dark"] .desk-app {
   margin: 32px 40px 0;
 }
 .desk-stage-name {
-  font-family: 'Instrument Serif', serif !important;
   font-size: 24px; font-weight: 400; letter-spacing: -0.5px; color: var(--text);
 }
 .desk-stage-note { font-size: 12.5px; color: var(--text-3); }
@@ -199,7 +187,6 @@ html[data-theme="dark"] .desk-app {
 }
 .desk-scn-title {
   display: block;
-  font-family: 'Sora', sans-serif !important;
   font-size: 17px; font-weight: 700; color: var(--text);
   line-height: 1.25; margin-bottom: 8px;
 }
