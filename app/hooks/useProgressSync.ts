@@ -56,6 +56,19 @@ const SYNC_KEYS = [
   'offerbell_flash_bookmarks',
   'offerbell_flash_review',
   'offerbell_flash_review_log',
+  // Adaptive flashcard memory (per-card got/almost/missed -> weak-spots + adaptive
+  // ordering). Small per-track blobs, so they ride the blob sync rather than a
+  // dedicated table like flash_perf. NOT in EXCLUDE_FROM_SYNC below.
+  'offerbell_flash_mem_ib',
+  'offerbell_flash_mem_pe',
+  'offerbell_flash_mem_rx',
+  'offerbell_flash_mem_consulting',
+  'offerbell_flash_mem_accounting',
+  'offerbell_flash_mem_am',
+  'offerbell_flash_mem_st',
+  'offerbell_flash_mem_er',
+  'offerbell_flash_mem_re',
+  'offerbell_flash_mem_vc',
   // Diagnostic
   'offerbell_diag_history',
   // Concept drills - per-question history for the Question History tab.
@@ -72,6 +85,7 @@ const SYNC_KEYS = [
   'offerbell_messages_sent',
   'offerbell_outreach_weekly',
   'offerbell_dismissed_reminders',
+  'offerbell_snoozed_contacts',
   // Referral map
   'offerbell_referral_nodes_v3',
   // Resume
