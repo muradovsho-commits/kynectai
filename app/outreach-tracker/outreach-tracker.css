@@ -255,3 +255,14 @@
   .ot-q-av, .ot-q-state { display: none; }
   .ot-q-act { justify-content: flex-start; grid-column: 2; }
 }
+
+/* ── Help ("?") button: circular, matches the header action row ──────────── */
+.ot-help-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--surface); border: 1.5px solid var(--border);
+  color: var(--text-2); cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+.ot-help-btn:hover { border-color: var(--text); color: var(--text); background: var(--surface-2); }

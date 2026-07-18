@@ -135,6 +135,7 @@ export default function OutreachTrackerPage() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const [drawerContact, setDrawerContact] = useState<Contact | null>(null);
   const [drawerNotes, setDrawerNotes] = useState('');
   const [drawerQuality, setDrawerQuality] = useState('');
@@ -232,6 +233,13 @@ export default function OutreachTrackerPage() {
     setContacts(updated); persist(updated);
     showToast('Updated to ' + STATUSES[status]?.label);
   }
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setDrawerOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [drawerOpen]);
 
   function openDrawer(c: Contact) {
     setDrawerContact(c);
@@ -439,6 +447,9 @@ export default function OutreachTrackerPage() {
                   <button onClick={() => setDevMode(true)} type="button" className="ot-hbtn">
                     <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                     Customize
+                  </button>
+                  <button onClick={() => setHelpOpen(true)} type="button" className="ot-help-btn" aria-label="How this works" title="How this works">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                   </button>
                 </div>
               </div>
@@ -693,10 +704,46 @@ export default function OutreachTrackerPage() {
         </div>
       )}
 
+      {/* HELP: how this tab works. Backdrop closes on click. */}
+      <div
+        onClick={() => setHelpOpen(false)}
+        style={{ position: 'fixed', inset: 0, zIndex: 59, background: 'rgba(0,0,0,0.32)', opacity: helpOpen ? 1 : 0, pointerEvents: helpOpen ? 'auto' : 'none', transition: 'opacity .2s ease' }}
+      />
+      <div style={{ position: 'fixed', top: '50%', left: '50%', width: 560, maxWidth: '92vw', maxHeight: '86vh', overflowY: 'auto', transform: `translate(-50%, -50%) scale(${helpOpen ? 1 : 0.97})`, opacity: helpOpen ? 1 : 0, pointerEvents: helpOpen ? 'auto' : 'none', transition: 'opacity .2s ease, transform .2s ease', zIndex: 60, background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 18, boxShadow: '0 24px 64px rgba(0,0,0,0.22)', padding: '32px 34px' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 6 }}>
+          <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.4px' }}>How the tracker works</div>
+          <button onClick={() => setHelpOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: 'var(--text-3)', lineHeight: 1, marginTop: -2 }}>&times;</button>
+        </div>
+        <div style={{ fontSize: 13.5, color: 'var(--text-2)', lineHeight: 1.6, marginBottom: 22 }}>
+          This isn't a spreadsheet. It watches your outreach and tells you who to chase, who's going cold, and what to say next.
+        </div>
+        {[
+          { n: '01', t: 'Today is your list', d: 'Every morning, the people who need action rise to the top, ranked by how overdue they are. Each row has the reason and a ready draft. You edit, send, move on.' },
+          { n: '02', t: 'Follow-up rules run themselves', d: 'Set how many days before a nudge under Customize. A contact goes quiet past that window and they surface here on their own. Snooze to push one, and it comes back when it should.' },
+          { n: '03', t: 'Warmth is computed, not typed', d: 'Every contact gets a warm / neutral / cold score from where they are in your funnel, how recent your last touch was, and whether things are moving. It updates itself as the relationship changes.' },
+          { n: '04', t: 'Going cold catches the quiet ones', d: 'People you already talked to who are drifting silent show up in their own section, before the relationship slips away. One click drafts a reconnect.' },
+          { n: '05', t: 'All contacts is your archive', d: 'The full table lives one tab over: every contact, filter by status, search, and open any row to edit status, notes, and dates.' },
+        ].map(step => (
+          <div key={step.n} style={{ display: 'flex', gap: 16, padding: '14px 0', borderTop: '1px solid var(--border)' }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#b4864a', flexShrink: 0, width: 20, paddingTop: 1 }}>{step.n}</div>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>{step.t}</div>
+              <div style={{ fontSize: 12.5, color: 'var(--text-3)', lineHeight: 1.55 }}>{step.d}</div>
+            </div>
+          </div>
+        ))}
+        <button onClick={() => setHelpOpen(false)} className="ot-hbtn ot-hbtn-solid" style={{ marginTop: 22, width: '100%', justifyContent: 'center', padding: '11px 0' }}>Got it</button>
+      </div>
+
+      {/* DRAWER backdrop: click anywhere outside to close. */}
+      <div
+        onClick={() => setDrawerOpen(false)}
+        style={{ position: 'fixed', inset: 0, zIndex: 49, background: 'rgba(0,0,0,0.28)', opacity: drawerOpen ? 1 : 0, pointerEvents: drawerOpen ? 'auto' : 'none', transition: 'opacity .22s ease' }}
+      />
       {/* DRAWER */}
-      <div style={{ position: 'fixed', right: 0, top: 0, bottom: 0, width: 380, background: 'var(--surface)', borderLeft: '1.5px solid var(--border)', zIndex: 50, transform: drawerOpen ? 'translateX(0)' : 'translateX(100%)', transition: 'transform .28s ease', display: 'flex', flexDirection: 'column', boxShadow: '-4px 0 32px rgba(0,0,0,.07)' }}>
+      <div style={{ position: 'fixed', right: 0, top: 0, bottom: 0, width: 440, maxWidth: '92vw', background: 'var(--surface)', borderLeft: '1.5px solid var(--border)', zIndex: 50, transform: drawerOpen ? 'translateX(0)' : 'translateX(100%)', transition: 'transform .28s ease', display: 'flex', flexDirection: 'column', boxShadow: '-4px 0 32px rgba(0,0,0,.07)' }}>
         {drawerContact && <>
-          <div style={{ padding: '18px 20px 14px', borderBottom: '1px solid var(--border)', position: 'relative' }}>
+          <div style={{ padding: '22px 26px 16px', borderBottom: '1px solid var(--border)', position: 'relative' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ width: 38, height: 38, borderRadius: '50%', background: colorFor(drawerContact.fname + drawerContact.lname), display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: '#fff', flexShrink: 0 }}>{initials(drawerContact.fname, drawerContact.lname)}</div>
               <div>
@@ -706,7 +753,7 @@ export default function OutreachTrackerPage() {
             </div>
             <button onClick={() => setDrawerOpen(false)} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: 'var(--text-3)' }}>×</button>
           </div>
-          <div style={{ flex: 1, overflowY: 'auto', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '22px 26px', display: 'flex', flexDirection: 'column', gap: 18 }}>
             <div>
               <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'var(--text-3)', marginBottom: 8 }}>Status</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
