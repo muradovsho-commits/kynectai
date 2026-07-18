@@ -769,25 +769,32 @@ html[data-theme="dark"] .coach-app {
 
 .coach-cat-sep { color: var(--text-3); opacity: 0.4; margin: 0 10px; user-select: none; font-size: 13px; }
 
-
 /* ═══════════════════════════════════════════════════════════════════════════
-   LAYOUT OVERRIDE - force the empty-state hero to a hard left edge.
-   Earlier rules (and inline margin:0 auto on the input card) were centering
-   individual children, which read as a big empty left margin. This wins the
-   cascade because it is last and equally specific.
+   LAYOUT OVERRIDE - mirror .learn-hero exactly (Guides tab).
+   Guides: hero has margin:40px 40px 0, no centering, children fill the width.
+   Every value below is copied from learn.css so Coach's empty state sits at the
+   same hard-left edge with the same rhythm. Last in the file so it wins.
    ═══════════════════════════════════════════════════════════════════════════ */
 .coach-app .coach-canvas { margin-left: 0 !important; }
-.coach-app .coach-page { max-width: none !important; width: 100% !important; margin: 0 !important; }
+.coach-app .coach-page { max-width: 1400px !important; width: 100% !important; margin: 0 !important; }
 .coach-app .coach-hero {
+  display: flex !important;
+  flex-direction: column !important;
   align-items: stretch !important;
   max-width: none !important;
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 40px 40px 64px !important;
+  width: auto !important;
+  margin: 40px 40px 0 !important;
+  padding: 0 0 64px !important;
+  text-align: left !important;
 }
+.coach-app .coach-hero-logo { margin-left: 0 !important; }
 .coach-app .coach-hero-title,
-.coach-app .coach-hero-sub { margin-left: 0 !important; margin-right: 0 !important; }
-.coach-app .coach-hero-sub { max-width: 680px !important; }
-.coach-app .coach-input-card { margin: 0 !important; max-width: 860px !important; }
-.coach-app .coach-chips-grid { margin: 0 !important; max-width: 860px !important; }
-.coach-app .coach-cat-tabs { margin-left: 0 !important; justify-content: flex-start !important; }
+.coach-app .coach-hero-sub { margin-left: 0 !important; margin-right: 0 !important; max-width: none !important; }
+.coach-app .coach-hero-sub { max-width: 720px !important; }
+/* input + chips: full width of the hero, no centered narrow column */
+.coach-app .coach-input-card { margin: 0 !important; max-width: none !important; width: 100% !important; }
+.coach-app .coach-chips-grid { margin: 0 !important; max-width: none !important; width: 100% !important; }
+.coach-app .coach-cat-tabs { margin: 24px 0 14px 0 !important; justify-content: flex-start !important; }
+/* and make the CHAT view match, so both states share the same left edge */
+.coach-app .coach-msgs { max-width: 1400px !important; margin: 0 !important; padding-left: 40px !important; padding-right: 40px !important; }
+.coach-app .coach-bottom-input { max-width: 1400px !important; margin: 0 !important; padding-left: 40px !important; padding-right: 40px !important; }
