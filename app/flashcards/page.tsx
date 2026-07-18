@@ -147,6 +147,9 @@ function FlashcardsContent() {
   const [lastRating, setLastRating] = useState<CardRating | null>(null);
   const [adaptiveMode, setAdaptiveMode] = useState(false);
   const [weakOnly, setWeakOnly] = useState(false);
+  // Frozen card order for the current adaptive/weak session. Computed once at
+  // drill entry so rating a card never reshuffles the deck under you.
+  const [frozenOrder, setFrozenOrder] = useState<string[] | null>(null);
   // Pro features
   const [viewMode, setViewMode] = useState<'single' | 'grid'>('single');
   const [showProModal, setShowProModal] = useState(false);
@@ -309,18 +312,18 @@ function FlashcardsContent() {
   const filtered = useMemo(() => {
     let base = filterCat === 'All' ? accessibleCards : accessibleCards.filter(c => c.category === filterCat);
     if (showBookmarksOnly) base = base.filter(c => isBookmarked(c.q));
-    // Weak-spots mode: only the cards you've missed or half-known.
-    if (weakOnly) {
-      const weak = weakCards(base, deckMem);
-      base = weak.length > 0 ? weak : base;
+    // Adaptive / weak sessions run off a frozen order captured at drill entry.
+    // Rating a card updates deckMem for NEXT time but must not reorder THIS
+    // session, so we replay the snapshot instead of recomputing from deckMem.
+    if ((adaptiveMode || weakOnly) && frozenOrder) {
+      const byKey = new Map(base.map(c => [cardKey(c.q), c]));
+      const ordered = frozenOrder.map(k => byKey.get(k)).filter((c): c is typeof base[number] => !!c);
+      if (ordered.length > 0) return ordered;
     }
-    // Adaptive mode: order by how much you need each card (misses first, known
-    // cards buried). This is what a static bank cannot do.
-    if (adaptiveMode) return adaptiveOrder(base, deckMem);
     if (shuffleKey > 0) { const a = [...base]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
     return base;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessibleCards, filterCat, shuffleKey, showBookmarksOnly, bookmarkSet, adaptiveMode, weakOnly, deckMem]);
+  }, [accessibleCards, filterCat, shuffleKey, showBookmarksOnly, bookmarkSet, adaptiveMode, weakOnly, frozenOrder]);
 
   const card = filtered[idx] || null;
   useEffect(() => { if (idx >= filtered.length && filtered.length > 0) setIdx(0); }, [idx, filtered.length]);
@@ -384,10 +387,21 @@ function FlashcardsContent() {
 
   // Enter drill mode from the hub. Optional topic filter or bookmarks-only mode.
   const enterDrill = (opts: { topic?: string; bookmarksOnly?: boolean; adaptive?: boolean; weak?: boolean } = {}) => {
+    const isAdaptive = !!opts.adaptive || !!opts.weak;
     setFilterCat(opts.topic || 'All');
     setShowBookmarksOnly(!!opts.bookmarksOnly);
-    setAdaptiveMode(!!opts.adaptive || !!opts.weak);
+    setAdaptiveMode(isAdaptive);
     setWeakOnly(!!opts.weak);
+    // Freeze the order NOW, from current memory. This runs once per session, so
+    // rating cards mid-drill can't reshuffle the deck you're working through.
+    if (isAdaptive) {
+      const mem = loadMemory(activeTrack || '');
+      let base = accessibleCards;
+      if (opts.weak) { const w = weakCards(base, mem); base = w.length > 0 ? w : base; }
+      setFrozenOrder(adaptiveOrder(base, mem).map(c => cardKey(c.q)));
+    } else {
+      setFrozenOrder(null);
+    }
     setShuffleKey(0);
     setIdx(0);
     setLastRating(null);
