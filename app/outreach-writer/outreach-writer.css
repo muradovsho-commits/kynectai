@@ -695,3 +695,27 @@ html[data-theme="dark"] .ow-app {
   .ow-grid-2 { grid-template-columns: 1fr; }
   .ow-angles { grid-template-columns: 1fr; }
 }
+
+/* ── Message-type toggle: initial vs follow-up ────────────────────────────── */
+.ow-type-toggle {
+  display: inline-flex;
+  gap: 0;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.ow-type-btn {
+  padding: 9px 18px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.ow-type-btn + .ow-type-btn { border-left: 1.5px solid var(--border); }
+.ow-type-btn:hover { color: var(--text); }
+.ow-type-btn.active { background: var(--text); color: var(--surface); }

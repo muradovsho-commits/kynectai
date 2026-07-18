@@ -168,6 +168,10 @@ export default function TodayQueue({
     if (c.role) p.set('role', c.role);
     const a = c.angle ? ANGLE_TO_WRITER[c.angle] : '';
     if (a) p.set('angle', a);
+    // A contact in the sent/follow-up funnel is being chased for a reply -> the
+    // writer should draft a follow-up, not a fresh cold intro.
+    const isFollowup = ['sent', 'fu1', 'fu2', 'fu3'].includes(c.status);
+    p.set('type', isFollowup ? 'followup' : 'initial');
     return `/outreach-writer?${p.toString()}`;
   }
 
@@ -299,7 +303,7 @@ export default function TodayQueue({
                     <span className="ot-q-status">{statusLabel(c.status, c.status)}</span>
                   </span>
                   <span className="ot-q-act" onClick={e => e.stopPropagation()}>
-                    <a className="ot-btn ot-btn-primary" href={`/outreach-writer?${new URLSearchParams({ name: `${c.fname} ${c.lname}`.trim(), ...(c.firm ? { firm: c.firm } : {}), ...(c.role ? { role: c.role } : {}) }).toString()}`}>Reconnect</a>
+                    <a className="ot-btn ot-btn-primary" href={`/outreach-writer?${new URLSearchParams({ name: `${c.fname} ${c.lname}`.trim(), ...(c.firm ? { firm: c.firm } : {}), ...(c.role ? { role: c.role } : {}), type: 'followup' }).toString()}`}>Reconnect</a>
                   </span>
                 </div>
               );

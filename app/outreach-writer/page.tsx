@@ -86,6 +86,7 @@ export default function OutreachWriterPage() {
 
   // Message config
   const [angle, setAngle] = useState('alumni');
+  const [msgType, setMsgType] = useState<'initial' | 'followup'>('initial');
   const [ctx, setCtx] = useState('');
 
   // Generation
@@ -151,6 +152,8 @@ export default function OutreachWriterPage() {
       // ignored rather than wedging the selector on an unknown key.
       const a = q.get('angle');
       if (a && ANGLES.some(x => x.key === a)) setAngle(a);
+      const t = q.get('type');
+      if (t === 'followup' || t === 'initial') setMsgType(t);
     } catch {}
   }, []);
 
@@ -398,16 +401,32 @@ export default function OutreachWriterPage() {
     setSubject('');
 
     const angleLabel = ANGLES.find(a => a.key === angle)?.label || angle;
-    const prompt = `Write a compelling cold email for an undergraduate student to a finance professional.
+    const isFollowup = msgType === 'followup';
+    const opening = isFollowup
+      ? `Write a short, polite follow-up email for an undergraduate student to a finance professional they have ALREADY emailed once with no reply. This is a gentle nudge, not a first introduction.`
+      : `Write a compelling cold email for an undergraduate student to a finance professional they have NOT contacted before.`;
+
+    const typeRules = isFollowup
+      ? `\nFollow-up specific rules:
+A. This is a SECOND email. Do NOT re-introduce the student from scratch or repeat a full pitch. Assume the first email covered that.
+B. Keep it short: 2 to 4 sentences. Acknowledge you reached out before, briefly restate interest, make it easy to reply.
+C. Do not guilt-trip or say things like "I know you're busy but". No desperation. Warm, brief, respectful of their time.
+D. The subject line should read like a reply to the original thread (e.g. "Re: [original topic]" or "Following up"), not a brand-new pitch subject.`
+      : `\nInitial-outreach specific rules:
+A. This is a FIRST email. Introduce the student concisely and give a clear reason for reaching out.
+B. Length around 4 to 8 sentences, enough detail without being desperate.`;
+
+    const prompt = `${opening}
 Student Info: name=${yourName}, school=${yourSchool}, year=${yourYear}, target role=${yourTarget}.
 Contact Info: name=${contactName}, firm=${contactFirm}, role=${contactRole}, school=${contactSchool}.
 Networking Angle: ${angleLabel}. Context: ${ctx || 'None provided'}.
+${typeRules}
 
-Rules:
+General rules:
 1. Do not use overly formal or robotic words like "delve", "robust", "thrilled", or "tapestry".
-2. Make it sound like a natural, ambitious college student. Length should be around 4 to 8 sentences, providing enough detail without being desperate.
+2. Make it sound like a natural, ambitious college student.
 3. The very first line must be exactly "Subject: [your subject here]". Then two newlines, then the email body. Do not include any other commentary before or after.
-4. Ensure the subject line uses grammatically correct Title Case (e.g., capitalize the first letter of each major word).
+4. Ensure the subject line uses grammatically correct Title Case.
 5. Pay close attention to the contact's specific role and firm. Do not mistakenly refer to the contact's job as the student's target role if they are different.`;
 
     try {
@@ -572,6 +591,36 @@ Rules:
                           <label className="ow-label">Their school (optional)</label>
                           <input className="ow-input" value={contactSchool} onChange={e => setContactSchool(e.target.value)} placeholder="e.g. NYU Stern" />
                         </div>
+                      </div>
+                    </div>
+
+                    {/* Section: message type */}
+                    <div className="ow-section">
+                      <div className="ow-section-head">
+                        <div>
+                          <div className="ow-section-title">Message type</div>
+                          <div className="ow-section-sub">
+                            {msgType === 'followup'
+                              ? 'A short nudge on someone you already emailed.'
+                              : 'A first introduction to someone new.'}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="ow-type-toggle">
+                        <button
+                          type="button"
+                          className={`ow-type-btn${msgType === 'initial' ? ' active' : ''}`}
+                          onClick={() => setMsgType('initial')}
+                        >
+                          Initial outreach
+                        </button>
+                        <button
+                          type="button"
+                          className={`ow-type-btn${msgType === 'followup' ? ' active' : ''}`}
+                          onClick={() => setMsgType('followup')}
+                        >
+                          Follow-up
+                        </button>
                       </div>
                     </div>
 

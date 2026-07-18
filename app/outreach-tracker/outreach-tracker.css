@@ -53,8 +53,8 @@
   margin-bottom: 14px;
 }
 .ot-title {
-  font-size: 40px;
-  font-weight: 800;
+  font-size: 36px;
+  font-weight: 400;
   letter-spacing: -1px;
   line-height: 1.1;
   color: var(--text);
@@ -71,7 +71,7 @@
 .ot-stats { display: flex; gap: 32px; flex-shrink: 0; }
 .ot-stat-val {
   font-size: 32px;
-  font-weight: 800;
+  font-weight: 400;
   letter-spacing: -0.5px;
   color: var(--text);
   line-height: 1;
