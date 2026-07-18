@@ -15,6 +15,8 @@ import { ST_FLASHCARDS } from './st-flashcard-data';
 import { ER_FLASHCARDS, RE_FLASHCARDS, VC_FLASHCARDS, RX_FLASHCARDS } from './other-flashcard-data';
 
 type Track = { id: string; title: string; desc: string; cards: number; iconClass: string; icon: React.ReactNode };
+import { recordRating, loadMemory, adaptiveOrder, weakCards, cardKey, RATING_META, type DeckMemory, type CardRating } from './adaptive';
+
 type PerfData = { seen: number; pass: number; partial: number; fail: number; byCat: Record<string, { seen: number; pass: number }> };
 type Bookmark = { track: string; q: string; savedAt: number };
 
@@ -141,6 +143,10 @@ function FlashcardsContent() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [filterCat, setFilterCat] = useState('All');
   const [shuffleKey, setShuffleKey] = useState(0);
+  const [deckMem, setDeckMem] = useState<DeckMemory>({});
+  const [lastRating, setLastRating] = useState<CardRating | null>(null);
+  const [adaptiveMode, setAdaptiveMode] = useState(false);
+  const [weakOnly, setWeakOnly] = useState(false);
   // Pro features
   const [viewMode, setViewMode] = useState<'single' | 'grid'>('single');
   const [showProModal, setShowProModal] = useState(false);
@@ -222,6 +228,7 @@ function FlashcardsContent() {
   }, [activeTrack]);
 
   const perfKey = activeTrack ? `offerbell_flash_perf_${activeTrack}` : 'offerbell_flash_perf';
+  useEffect(() => { setDeckMem(loadMemory(activeTrack || '')); }, [activeTrack]);
   const upsertPerfMut = useMutation(api.flashPerf.upsertPerf);
   const savePerf = useCallback((p: PerfData) => {
     setPerf(p);
@@ -296,15 +303,24 @@ function FlashcardsContent() {
     }
     return result;
   }, [allCards, isPro]);
+  const weakCount = useMemo(() => weakCards(accessibleCards, deckMem).length, [accessibleCards, deckMem]);
 
   const categories = useMemo(() => ['All', ...Array.from(new Set(accessibleCards.map(c => c.category)))], [accessibleCards]);
   const filtered = useMemo(() => {
     let base = filterCat === 'All' ? accessibleCards : accessibleCards.filter(c => c.category === filterCat);
     if (showBookmarksOnly) base = base.filter(c => isBookmarked(c.q));
+    // Weak-spots mode: only the cards you've missed or half-known.
+    if (weakOnly) {
+      const weak = weakCards(base, deckMem);
+      base = weak.length > 0 ? weak : base;
+    }
+    // Adaptive mode: order by how much you need each card (misses first, known
+    // cards buried). This is what a static bank cannot do.
+    if (adaptiveMode) return adaptiveOrder(base, deckMem);
     if (shuffleKey > 0) { const a = [...base]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
     return base;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessibleCards, filterCat, shuffleKey, showBookmarksOnly, bookmarkSet]);
+  }, [accessibleCards, filterCat, shuffleKey, showBookmarksOnly, bookmarkSet, adaptiveMode, weakOnly, deckMem]);
 
   const card = filtered[idx] || null;
   useEffect(() => { if (idx >= filtered.length && filtered.length > 0) setIdx(0); }, [idx, filtered.length]);
@@ -327,8 +343,15 @@ function FlashcardsContent() {
   const resetCardState = useCallback(() => {
     setShowAnswer(false); setShowInsight(false);
   }, []);
-  const goNext = useCallback(() => { if (idx < filtered.length - 1) { setIdx(idx + 1); resetCardState(); } }, [idx, filtered.length, resetCardState]);
-  const goPrev = useCallback(() => { if (idx > 0) { setIdx(idx - 1); resetCardState(); } }, [idx, resetCardState]);
+  const rateCard = useCallback((r: CardRating) => {
+    if (!card) return;
+    const mem = recordRating(activeTrack || '', card.q, r);
+    setDeckMem(mem);
+    setLastRating(r);
+  }, [card, activeTrack]);
+
+  const goNext = useCallback(() => { if (idx < filtered.length - 1) { setIdx(idx + 1); resetCardState(); setLastRating(null); } }, [idx, filtered.length, resetCardState]);
+  const goPrev = useCallback(() => { if (idx > 0) { setIdx(idx - 1); resetCardState(); setLastRating(null); } }, [idx, resetCardState]);
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
@@ -360,11 +383,14 @@ function FlashcardsContent() {
   const goBack = () => { setViewState('hub'); setIdx(0); resetCardState(); };
 
   // Enter drill mode from the hub. Optional topic filter or bookmarks-only mode.
-  const enterDrill = (opts: { topic?: string; bookmarksOnly?: boolean } = {}) => {
+  const enterDrill = (opts: { topic?: string; bookmarksOnly?: boolean; adaptive?: boolean; weak?: boolean } = {}) => {
     setFilterCat(opts.topic || 'All');
     setShowBookmarksOnly(!!opts.bookmarksOnly);
+    setAdaptiveMode(!!opts.adaptive || !!opts.weak);
+    setWeakOnly(!!opts.weak);
     setShuffleKey(0);
     setIdx(0);
+    setLastRating(null);
     resetCardState();
     setViewState('drill');
   };
@@ -442,6 +468,30 @@ function FlashcardsContent() {
                 <button
                   type="button"
                   className="flash-action flash-action-primary"
+                  onClick={() => enterDrill({ adaptive: true })}
+                  disabled={trackCards.length === 0}
+                >
+                  <div>
+                    <div className="flash-action-title">Adaptive drill</div>
+                    <div className="flash-action-sub">Cards you keep missing come back more. The deck learns what you don't know{trackInfo ? ` in ${trackInfo.title}` : ''}.</div>
+                  </div>
+                  <span className="flash-action-arrow">{ARROW_R}</span>
+                </button>
+                <button
+                  type="button"
+                  className="flash-action flash-action-secondary"
+                  onClick={() => enterDrill({ weak: true })}
+                  disabled={weakCount === 0}
+                >
+                  <div>
+                    <div className="flash-action-title">Weak spots{weakCount > 0 ? ` (${weakCount})` : ''}</div>
+                    <div className="flash-action-sub">{weakCount === 0 ? 'Rate some cards and your weak ones collect here' : `Drill only the ${weakCount} card${weakCount === 1 ? '' : 's'} you've missed`}</div>
+                  </div>
+                  {weakCount > 0 && <span className="flash-action-arrow">{ARROW_R}</span>}
+                </button>
+                <button
+                  type="button"
+                  className="flash-action flash-action-secondary"
                   onClick={() => enterDrill({})}
                   disabled={trackCards.length === 0}
                 >
@@ -652,6 +702,21 @@ function FlashcardsContent() {
                           {showAnswer ? 'Hide Answer' : 'Show Answer'}
                         </button>
                         {showAnswer && <div className="flash-answer">{card.a}</div>}
+                        {showAnswer && (
+                          <div className="flash-rate-row">
+                            <span className="flash-rate-label">How did you do?</span>
+                            {(['missed', 'almost', 'got'] as const).map(r => (
+                              <button
+                                key={r}
+                                type="button"
+                                className={`flash-rate-btn flash-rate-${r}${lastRating === r ? ' active' : ''}`}
+                                onClick={() => rateCard(r)}
+                              >
+                                {RATING_META[r].label}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                         {showAnswer && isPro && insight && (
                           <>
                             {!showInsight ? (

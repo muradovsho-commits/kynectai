@@ -614,3 +614,36 @@ html[data-theme="dark"] .flash-app {
 .flash-bookmarks-toggle svg { width: 14px; height: 14px; }
 .flash-bm-count { font-size: 11px; font-weight: 700; }
 .flash-track-saved { font-size: 10px; font-weight: 700; color: #f59e0b; }
+
+/* ── Per-card self-rating row (feeds the adaptive engine) ─────────────────── */
+.flash-rate-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border, #e8e8e8);
+  flex-wrap: wrap;
+}
+.flash-rate-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-3, #9a9a9a);
+  margin-right: 4px;
+}
+.flash-rate-btn {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 15px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border, #e8e8e8);
+  background: var(--surface, #fff);
+  color: var(--text-2, #52525b);
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+.flash-rate-btn:hover { border-color: var(--text-2, #52525b); }
+.flash-rate-missed.active { background: #c0392b; border-color: #c0392b; color: #fff; }
+.flash-rate-almost.active { background: #b4864a; border-color: #b4864a; color: #fff; }
+.flash-rate-got.active { background: #3a7d5c; border-color: #3a7d5c; color: #fff; }
