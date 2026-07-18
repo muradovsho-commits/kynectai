@@ -1366,15 +1366,18 @@ export default function CoachPage() {
 
                 {/* Category tabs */}
                 <div className="coach-cat-tabs">
-                  {trackCategories.map(cat => (
-                    <button
-                      key={cat.name}
-                      type="button"
-                      className={`coach-cat-tab${selectedCategory === cat.name ? ' active' : ''}`}
-                      onClick={() => setSelectedCategory(cat.name)}
-                    >
-                      {cat.name}
-                    </button>
+                  {trackCategories.map((cat, i) => (
+                    <span key={cat.name} style={{ display: 'inline-flex', alignItems: 'center' }}>
+                      {i > 0 && <span className="coach-cat-sep">/</span>}
+                      <button
+                        type="button"
+                        className={`coach-cat-tab${selectedCategory === cat.name ? ' active' : ''}`}
+                        aria-pressed={selectedCategory === cat.name}
+                        onClick={() => setSelectedCategory(cat.name)}
+                      >
+                        {cat.name}
+                      </button>
+                    </span>
                   ))}
                 </div>
 
@@ -1555,7 +1558,7 @@ export default function CoachPage() {
             }}>
               <svg width="24" height="24" fill="none" stroke="var(--text-3)" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             </div>
-            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: 'var(--text)', letterSpacing: '-0.5px', marginBottom: 10 }}>
+            <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.5px', marginBottom: 10 }}>
               Usage limit <em style={{ fontStyle: 'italic' }}>reached</em>
             </div>
             <div style={{ fontSize: 13.5, color: 'var(--text-2)', lineHeight: 1.65, marginBottom: 8 }}>
@@ -1570,14 +1573,13 @@ export default function CoachPage() {
                   display: 'block', padding: '13px 0', borderRadius: 10,
                   background: 'var(--text)', color: 'var(--surface)',
                   fontSize: 14, fontWeight: 700, textDecoration: 'none',
-                  fontFamily: "'Sora', sans-serif",
                 }}>Upgrade to {nextTier} for higher limits</a>
               )}
               <button onClick={() => setShowLimitOverlay(false)} type="button" style={{
                 padding: '12px 0', borderRadius: 10,
                 background: 'none', border: '1.5px solid var(--border)',
                 color: 'var(--text-2)', fontSize: 13, fontWeight: 600,
-                cursor: 'pointer', fontFamily: "'Sora', sans-serif",
+                cursor: 'pointer',
               }}>Got it</button>
             </div>
           </div>
