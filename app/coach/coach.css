@@ -768,3 +768,26 @@ html[data-theme="dark"] .coach-app {
 }
 
 .coach-cat-sep { color: var(--text-3); opacity: 0.4; margin: 0 10px; user-select: none; font-size: 13px; }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LAYOUT OVERRIDE - force the empty-state hero to a hard left edge.
+   Earlier rules (and inline margin:0 auto on the input card) were centering
+   individual children, which read as a big empty left margin. This wins the
+   cascade because it is last and equally specific.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.coach-app .coach-canvas { margin-left: 0 !important; }
+.coach-app .coach-page { max-width: none !important; width: 100% !important; margin: 0 !important; }
+.coach-app .coach-hero {
+  align-items: stretch !important;
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 40px 40px 64px !important;
+}
+.coach-app .coach-hero-title,
+.coach-app .coach-hero-sub { margin-left: 0 !important; margin-right: 0 !important; }
+.coach-app .coach-hero-sub { max-width: 680px !important; }
+.coach-app .coach-input-card { margin: 0 !important; max-width: 860px !important; }
+.coach-app .coach-chips-grid { margin: 0 !important; max-width: 860px !important; }
+.coach-app .coach-cat-tabs { margin-left: 0 !important; justify-content: flex-start !important; }
