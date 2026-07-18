@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
+import { computeWarmth, WARMTH_COLOR, WARMTH_LABEL } from './warmth';
 
 /* ═══════════════════════════════════════════════════════════════════════════
    TodayQueue
@@ -108,13 +109,32 @@ export function useOutreachQueue(contacts: QContact[], rules: AlertRule[], alert
     [contacts, thresholds, queue]
   );
 
-  return { queue, snooze, thresholds, inFlight: Math.max(inFlight, 0) };
+  // Cooling: relationships you've already built (talked / staying in touch) that
+  // are drifting cold from silence. These aren't in the follow-up queue because
+  // there's no pending reply to chase - the risk is quiet neglect, not a missed
+  // follow-up. This is the recruiting version of "reconnect before it's too late".
+  const queuedIds = useMemo(() => new Set(queue.map(q => q.c.id)), [queue]);
+  const cooling = useMemo(() => {
+    const out: { c: QContact; score: number }[] = [];
+    for (const c of contacts) {
+      if (queuedIds.has(c.id)) continue;
+      if (c.status !== 'stay' && c.status !== 'spoken') continue;
+      const w = computeWarmth({ status: c.status, lastContact: c.lastContact });
+      // surface the ones that have slipped to neutral/cold, worst first
+      if (w.score < 60) out.push({ c, score: w.score });
+    }
+    out.sort((a, b) => a.score - b.score);
+    return out.slice(0, 5);
+  }, [contacts, queuedIds]);
+
+  return { queue, cooling, snooze, thresholds, inFlight: Math.max(inFlight, 0) };
 }
 
 export default function TodayQueue({
-  queue, thresholds, inFlight, alertsEnabled, totalContacts, statusLabel, onSnooze, onOpenContact,
+  queue, cooling, thresholds, inFlight, alertsEnabled, totalContacts, statusLabel, onSnooze, onOpenContact,
 }: {
   queue: QueueItem[];
+  cooling: { c: QContact; score: number }[];
   thresholds: Record<string, number>;
   inFlight: number;
   alertsEnabled: boolean;
@@ -172,6 +192,13 @@ export default function TodayQueue({
         <span className="ot-q-state">
           <span className="ot-q-tag">{tag}</span>
           <span className="ot-q-status">
+            {(() => {
+              const w = computeWarmth({ status: c.status, lastContact: c.lastContact });
+              return <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, marginRight: 8 }} title={`Warmth ${w.score}/100`}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: WARMTH_COLOR[w.band] }} />
+                <span style={{ color: WARMTH_COLOR[w.band], fontWeight: 600 }}>{WARMTH_LABEL[w.band]}</span>
+              </span>;
+            })()}
             {statusLabel(c.status, c.status)}{c.angle ? ` / ${c.angle}` : ''}
           </span>
         </span>
@@ -210,7 +237,7 @@ export default function TodayQueue({
     );
   }
 
-  if (queue.length === 0) {
+  if (queue.length === 0 && cooling.length === 0) {
     return (
       <div className="ot-done">
         {totalContacts === 0
@@ -241,6 +268,42 @@ export default function TodayQueue({
           </div>
           <div className="ot-q">
             {dueToday.map(q => <Row key={q.c.id} q={q} />)}
+          </div>
+        </>
+      )}
+      {cooling.length > 0 && (
+        <>
+          <div className="ot-sec">
+            <h2 className="ot-sec-name">Going cold</h2>
+            <span className="ot-sec-note">People you've already built with, drifting quiet. Reconnect before it's too late.</span>
+          </div>
+          <div className="ot-q">
+            {cooling.map(({ c }) => {
+              const w = computeWarmth({ status: c.status, lastContact: c.lastContact });
+              const days = daysSince(c.lastContact);
+              return (
+                <div key={c.id} className="ot-q-row ot-urg-due">
+                  <span className="ot-q-mark" style={{ background: WARMTH_COLOR[w.band] }} />
+                  <span className="ot-q-av" onClick={() => onOpenContact(c.id)}>
+                    {((c.fname || '')[0] || '').toUpperCase()}{((c.lname || '')[0] || '').toUpperCase()}
+                  </span>
+                  <span className="ot-q-main" onClick={() => onOpenContact(c.id)}>
+                    <span className="ot-q-top">
+                      <span className="ot-q-name">{`${c.fname} ${c.lname}`.trim()}</span>
+                      <span className="ot-q-firm">{[c.firm, c.role].filter(Boolean).join(' / ')}</span>
+                    </span>
+                    <span className="ot-q-why">{days === null ? 'No recent contact.' : `Last spoke ${days} days ago. Warmth is fading.`}</span>
+                  </span>
+                  <span className="ot-q-state">
+                    <span className="ot-q-tag" style={{ color: WARMTH_COLOR[w.band] }}>{WARMTH_LABEL[w.band]}</span>
+                    <span className="ot-q-status">{statusLabel(c.status, c.status)}</span>
+                  </span>
+                  <span className="ot-q-act" onClick={e => e.stopPropagation()}>
+                    <a className="ot-btn ot-btn-primary" href={`/outreach-writer?${new URLSearchParams({ name: `${c.fname} ${c.lname}`.trim(), ...(c.firm ? { firm: c.firm } : {}), ...(c.role ? { role: c.role } : {}) }).toString()}`}>Reconnect</a>
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </>
       )}

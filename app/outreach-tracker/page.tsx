@@ -11,6 +11,7 @@ import { useUserPlan } from '../lib/usePlan';
 import '../contact-finder/contact-finder.css';
 import './outreach-tracker.css';
 import TodayQueue, { useOutreachQueue } from './TodayQueue';
+import { computeWarmth, WARMTH_COLOR, WARMTH_LABEL } from './warmth';
 
 type AlertRule = {
   status: string;
@@ -29,6 +30,7 @@ const DEFAULT_COLUMNS = [
   { key: 'name', label: 'Contact', visible: true },
   { key: 'firmRole', label: 'Firm & Role', visible: true },
   { key: 'status', label: 'Status', visible: true },
+  { key: 'warmth', label: 'Warmth', visible: true },
   { key: 'angle', label: 'Angle', visible: false },
   { key: 'linkedin', label: 'LinkedIn', visible: true },
   { key: 'dateAdded', label: 'Date Added', visible: false },
@@ -397,7 +399,7 @@ export default function OutreachTrackerPage() {
   `;
 
   // One engine for the headline, the tab count and the list.
-  const { queue, snooze, thresholds, inFlight } = useOutreachQueue(contacts, config.alerts, config.alertsGlobal);
+  const { queue, cooling, snooze, thresholds, inFlight } = useOutreachQueue(contacts, config.alerts, config.alertsGlobal);
   const queueCount = queue.length;
 
   return (
@@ -484,6 +486,7 @@ export default function OutreachTrackerPage() {
           {tab === 'today' ? (
             <TodayQueue
               queue={queue}
+              cooling={cooling}
               thresholds={thresholds}
               inFlight={inFlight}
               alertsEnabled={config.alertsGlobal}
@@ -589,6 +592,15 @@ export default function OutreachTrackerPage() {
                     </a> : <span style={{ color: 'var(--text-3)', fontSize: 12 }}>-</span>,
                     dateAdded: <span style={{ fontSize: 12, color: 'var(--text-3)', whiteSpace: 'nowrap' }}>{fmtDate(c.createdAt)}</span>,
                     daysSince: <span style={{ fontSize: 12, fontWeight: 600, color: daysCls2, whiteSpace: 'nowrap' }}>{daysStr2}</span>,
+                    warmth: (() => {
+                      const w = computeWarmth({ status: c.status, lastContact: c.lastContact });
+                      return (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }} title={`Warmth ${w.score}/100 - computed from status, recency, and momentum`}>
+                          <span style={{ width: 7, height: 7, borderRadius: '50%', background: WARMTH_COLOR[w.band] }} />
+                          <span style={{ fontSize: 12, fontWeight: 600, color: WARMTH_COLOR[w.band] }}>{WARMTH_LABEL[w.band]}</span>
+                        </span>
+                      );
+                    })(),
                     quality: c.quality === 'great' ? <span style={{ color: '#16a34a', fontWeight: 700, fontSize: 12 }}>Great</span>
                       : c.quality === 'ok' ? <span style={{ color: '#d97706', fontWeight: 700, fontSize: 12 }}>OK</span>
                       : c.quality === 'cold' ? <span style={{ color: '#dc2626', fontWeight: 700, fontSize: 12 }}>Cold</span>
@@ -932,6 +944,7 @@ export default function OutreachTrackerPage() {
                               else if (col.key === 'linkedin') content = row.linkedin ? <span style={{ fontSize: 9, color: '#0a66c2', fontWeight: 600 }}>Profile</span> : <span style={{ color: 'var(--text-3)', fontSize: 9 }}>-</span>;
                               else if (col.key === 'dateAdded') content = <span style={{ fontSize: 9, color: 'var(--text-3)' }}>{row.date}</span>;
                               else if (col.key === 'daysSince') content = <span style={{ fontSize: 9, color: 'var(--text-3)' }}>{row.date}</span>;
+                              else if (col.key === 'warmth') { const w = computeWarmth({ status: row.status, lastContact: Date.now() - 5 * 864e5 }); content = <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><span style={{ width: 6, height: 6, borderRadius: '50%', background: WARMTH_COLOR[w.band] }} /><span style={{ fontSize: 9, fontWeight: 700, color: WARMTH_COLOR[w.band] }}>{WARMTH_LABEL[w.band]}</span></span>; }
                               else if (col.key === 'quality') content = row.quality ? <span style={{ fontSize: 9, fontWeight: 700 }}>{row.quality}</span> : '-';
                               else if (col.key === 'notes') content = <span style={{ fontSize: 9, color: 'var(--text-3)' }}>{row.notes || '-'}</span>;
                               return <td key={col.key} style={{ padding: '10px 10px', fontSize: 11, color: 'var(--text)' }}>{content}</td>;
