@@ -164,14 +164,13 @@ html[data-theme="dark"] .flash-app {
   cursor: not-allowed;
 }
 .flash-action-primary {
-  background: var(--text);
-  color: var(--surface);
-  border-color: var(--text);
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--accent);
 }
 .flash-action-primary:not(:disabled):hover {
-  background: var(--text);
-  filter: brightness(1.1);
-  border-color: var(--text);
+  border-color: var(--accent);
+  transform: translateY(-2px);
 }
 .flash-action-title {
   font-size: 16px;
@@ -211,9 +210,12 @@ html[data-theme="dark"] .flash-app {
 
 .flash-topic-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
 }
+@media (max-width: 1100px) { .flash-topic-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 760px)  { .flash-topic-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .flash-topic-grid { grid-template-columns: 1fr; } }
 .flash-topic-card {
   background: var(--surface);
   border: 1px solid var(--border);
