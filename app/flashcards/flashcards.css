@@ -166,10 +166,10 @@ html[data-theme="dark"] .flash-app {
 .flash-action-primary {
   background: var(--surface);
   color: var(--text);
-  border-color: var(--accent);
+  border-color: var(--border);
 }
 .flash-action-primary:not(:disabled):hover {
-  border-color: var(--accent);
+  border-color: var(--text-2, #999);
   transform: translateY(-2px);
 }
 .flash-action-title {
@@ -209,14 +209,13 @@ html[data-theme="dark"] .flash-app {
 }
 
 .flash-topic-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 12px;
 }
-@media (max-width: 1100px) { .flash-topic-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 760px)  { .flash-topic-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 480px)  { .flash-topic-grid { grid-template-columns: 1fr; } }
 .flash-topic-card {
+  flex: 1 1 260px;
+  max-width: calc(25% - 9px);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -226,6 +225,9 @@ html[data-theme="dark"] .flash-app {
   font-family: inherit;
   transition: border-color 0.15s, background 0.15s;
 }
+@media (max-width: 1100px) { .flash-topic-card { max-width: calc(33.333% - 8px); } }
+@media (max-width: 760px)  { .flash-topic-card { max-width: calc(50% - 6px); } }
+@media (max-width: 480px)  { .flash-topic-card { max-width: 100%; } }
 .flash-topic-card:hover {
   border-color: var(--accent);
   background: var(--accent-soft);
