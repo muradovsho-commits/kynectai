@@ -220,7 +220,7 @@ function OBShowcase() {
     <div className="obshow">
       <style dangerouslySetInnerHTML={{ __html: `
         .obshow{
-          position:relative; border-radius:22px; overflow:hidden; min-height:380px;
+          position:relative; border-radius:22px; overflow:hidden; min-height:320px;
           background:radial-gradient(120% 100% at 50% 35%, #0a1124 0%, #060a16 50%, #03050b 100%);
           border:1px solid rgba(59,130,246,0.20);
           box-shadow:0 24px 60px -30px rgba(37,99,235,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
@@ -232,10 +232,10 @@ function OBShowcase() {
           background-size:26px 26px;
         }
         .obshow-head{ position:absolute; top:16px; left:18px; z-index:2; }
-        .obshow-ob{ font-family:'Instrument Serif',serif; font-size:22px; color:#e8eeff; line-height:1; }
-        .obshow-sub{ font-family:'Sora',sans-serif; font-size:8.5px; letter-spacing:0.18em; color:rgba(150,170,215,0.6); margin-top:4px; }
+        .obshow-ob{ font-size:22px; color:#e8eeff; line-height:1; }
+        .obshow-sub{ font-size:8.5px; letter-spacing:0.18em; color:rgba(150,170,215,0.6); margin-top:4px; }
         .obshow-by{ position:absolute; left:0; right:0; bottom:62px; text-align:center; z-index:2;
-          font-family:'Sora',sans-serif; font-size:11px; color:rgba(150,170,215,0.45); }
+          font-size:11px; color:rgba(150,170,215,0.45); }
         .obshow-dock{ position:absolute; left:50%; transform:translateX(-50%); bottom:20px; z-index:2;
           display:flex; align-items:center; gap:16px; padding:9px 16px; border-radius:13px;
           background:rgba(10,16,32,0.7); border:1px solid rgba(90,130,220,0.22); backdrop-filter:blur(4px); }
@@ -244,7 +244,7 @@ function OBShowcase() {
         <div className="obshow-ob">OB</div>
         <div className="obshow-sub">AN OFFERBELL PRODUCT</div>
       </div>
-      <OBSphere height={380} glow={false} darkBg />
+      <OBSphere height={320} glow={false} darkBg />
       <div className="obshow-by">Brought to you by OfferBell</div>
       <div className="obshow-dock">
         {dockIcon(<><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></>)}
@@ -295,7 +295,7 @@ function ObElite() {
 
   const pill = (active: boolean): React.CSSProperties => ({
     padding: '7px 16px', borderRadius: 999, cursor: 'pointer', fontSize: 13, fontWeight: 600,
-    fontFamily: "'Sora', sans-serif", border: '1px solid ' + (active ? 'transparent' : 'var(--border-2)'),
+    border: '1px solid ' + (active ? 'transparent' : 'var(--border-2)'),
     background: active ? 'var(--text)' : 'transparent', color: active ? 'var(--surface)' : 'var(--text-2)',
   });
 
@@ -315,17 +315,9 @@ function ObElite() {
   );
 
   return (
-    <div style={{ maxWidth: 1180, margin: 0, padding: '40px 0 90px' }}>
-      <div className="ob-hero" style={{ marginBottom: 44 }}>
+    <div style={{ maxWidth: 1180, margin: 0, padding: '32px 0 64px' }}>
+      <div className="ob-hero" style={{ marginBottom: 32 }}>
         <div className="ob-hero-copy">
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 7, marginBottom: 20,
-            color: '#3b82f6', fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase',
-          }}>
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor' }} />
-            Elite plan
-          </div>
-
           <h1 className="ob-hero-title" style={{
             fontSize: 44, lineHeight: 1.08, letterSpacing: '-1.5px',
             color: 'var(--text)', margin: '0 0 18px', fontWeight: 800,
@@ -384,7 +376,7 @@ function ObElite() {
                 <a href={OB_DOWNLOAD_URL} download style={{
                   display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 6,
                   background: 'var(--text)', color: 'var(--surface)', textDecoration: 'none',
-                  padding: '9px 18px', borderRadius: 9, fontSize: 13, fontWeight: 700, fontFamily: "'Sora', sans-serif",
+                  padding: '9px 18px', borderRadius: 9, fontSize: 13, fontWeight: 700,
                 }}>
                   Download OB.zip
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12l7 7 7-7" /></svg>
@@ -407,7 +399,7 @@ function ObElite() {
                     position: 'absolute', top: 10, right: 10, cursor: 'pointer',
                     background: copied ? '#16a34a' : 'rgba(255,255,255,0.08)', color: '#fff',
                     border: '1px solid rgba(255,255,255,0.16)', borderRadius: 7, padding: '5px 11px',
-                    fontSize: 11.5, fontWeight: 700, fontFamily: "'Sora', sans-serif",
+                    fontSize: 11.5, fontWeight: 700,
                   }}>{copied ? 'Copied' : 'Copy'}</button>
                 </div>
               </div>
@@ -436,7 +428,7 @@ function ObElite() {
                 <a href={OB_DOWNLOAD_URL} download style={{
                   display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 6,
                   background: 'var(--text)', color: 'var(--surface)', textDecoration: 'none',
-                  padding: '9px 18px', borderRadius: 9, fontSize: 13, fontWeight: 700, fontFamily: "'Sora', sans-serif",
+                  padding: '9px 18px', borderRadius: 9, fontSize: 13, fontWeight: 700,
                 }}>
                   Download OB.zip
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12l7 7 7-7" /></svg>
@@ -459,7 +451,7 @@ function ObElite() {
                     position: 'absolute', top: 10, right: 10, cursor: 'pointer',
                     background: copiedWin ? '#16a34a' : 'rgba(255,255,255,0.08)', color: '#fff',
                     border: '1px solid rgba(255,255,255,0.16)', borderRadius: 7, padding: '5px 11px',
-                    fontSize: 11.5, fontWeight: 700, fontFamily: "'Sora', sans-serif",
+                    fontSize: 11.5, fontWeight: 700,
                   }}>{copiedWin ? 'Copied' : 'Copy'}</button>
                 </div>
               </div>
@@ -484,7 +476,8 @@ function ObElite() {
         )}
       </div>
 
-      {/* How to use OB */}
+      {/* How to use OB - only once an OS is chosen, so it's part of the setup flow */}
+      {os !== null && (
       <div style={{ border: '1px solid var(--border)', background: 'var(--surface)', borderRadius: 16, padding: '24px 24px 26px', marginBottom: 44 }}>
         <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', marginBottom: 18 }}>Using OB</div>
 
@@ -499,7 +492,7 @@ function ObElite() {
               position: 'absolute', top: 9, right: 9, cursor: 'pointer',
               background: copiedOpen ? '#16a34a' : 'rgba(255,255,255,0.08)', color: '#fff',
               border: '1px solid rgba(255,255,255,0.16)', borderRadius: 7, padding: '5px 11px',
-              fontSize: 11.5, fontWeight: 700, fontFamily: "'Sora', sans-serif",
+              fontSize: 11.5, fontWeight: 700,
             }}>{copiedOpen ? 'Copied' : 'Copy'}</button>
           </div>
           <div style={{ fontSize: 12.5, color: 'var(--text-3)', lineHeight: 1.55 }}>
@@ -537,11 +530,12 @@ function ObElite() {
           </div>
         </div>
       </div>
+      )}
 
       <style>{`
         .ob-hero{ display:flex; gap:48px; align-items:flex-start; padding-top:8px; }
         .ob-hero-copy{ flex:1; min-width:0; }
-        .ob-hero-art{ width:360px; flex-shrink:0; }
+        .ob-hero-art{ width:340px; flex-shrink:0; }
         @media (max-width: 820px){
           .ob-hero{ flex-direction:column-reverse; gap:26px; }
           .ob-hero-art{ width:100%; max-width:420px; }
@@ -576,7 +570,7 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
   const goCompare = () => { window.location.href = '/checkout'; };
 
   return (
-    <div style={{ margin: '0 auto', padding: '28px 0 90px', fontFamily: "'Sora', sans-serif" }}>
+    <div style={{ margin: '0 auto', padding: '28px 0 90px' }}>
       <div className="obpw-hero">
       <div className="obpw-hero-copy">
       <h1 className="obpw-h1">The recruiting coach you <em>talk to</em>.</h1>
@@ -657,7 +651,7 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
         .obpw-mic{ color:#5b9bff; flex-shrink:0; }
         .obpw-voice-text{ font-size:13px; color:#e7eeff; font-style:italic; animation:obpwFade .5s ease; }
         .obpw-h1{
-          font-family:'Instrument Serif',serif; font-weight:400; color:var(--text);
+          font-weight:400; color:var(--text);
           font-size:clamp(38px,3.9vw,54px); line-height:1.03; letter-spacing:-1px; margin:0 0 14px; max-width:none;
         }
         .obpw-h1 em{ font-style:italic; color:#2563eb; }
@@ -672,13 +666,13 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
         .obpw-btn-primary{
           display:inline-flex; align-items:center; gap:8px; cursor:pointer;
           background:#2563eb; color:#fff; border:none; padding:12px 22px; border-radius:11px;
-          font-size:13.5px; font-weight:700; font-family:'Sora',sans-serif;
+          font-size:13.5px; font-weight:700; 
           box-shadow:0 10px 28px -10px rgba(37,99,235,0.9);
         }
         .obpw-btn-ghost{
           cursor:pointer; background:transparent; color:var(--text-2);
           border:1.5px solid var(--border-2); padding:12px 20px; border-radius:11px;
-          font-size:13px; font-weight:600; font-family:'Sora',sans-serif;
+          font-size:13px; font-weight:600; 
         }
         .obpw-caps-wrap{ margin-top:0; text-align:left; }
         .obpw-kicker{
