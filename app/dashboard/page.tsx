@@ -984,7 +984,6 @@ export default function DashboardPage() {
                         <div className="dash-focus-body">
                           <div className="dash-focus-head">
                             <span className="dash-focus-title">{f.title}</span>
-                            <span className={`dash-focus-dot ${f.urgency}`} />
                           </div>
                           <div className="dash-focus-desc">{f.desc}</div>
                         </div>
