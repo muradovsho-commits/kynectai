@@ -321,7 +321,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
           <Link href="/dashboard" className="ob-side-brand">
             <div className="ob-side-brand-mark">
               <Image
-                src="/offerbell-logo.jpeg"
+                src="/offerbell-logo.png"
                 alt="OfferBell"
                 width={30}
                 height={30}

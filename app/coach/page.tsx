@@ -1299,7 +1299,7 @@ export default function CoachPage() {
             {isEmpty ? (
               <div className="coach-hero">
                 <div className="coach-hero-logo">
-                  <img src="/offerbell-logo.jpeg" alt="OfferBell" />
+                  <img src="/offerbell-logo.png" alt="OfferBell" />
                 </div>
                 <h1 className="coach-hero-title">OfferBell <em>Coach Suite</em></h1>
                 <p className="coach-hero-sub">
