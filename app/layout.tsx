@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "OfferBell - Land Your Dream Finance Offer",
+  title: "OfferBell",
   description: "The all-in-one platform for college students breaking into finance. Contact finder, AI coach, interview prep, and outreach tools.",
 };
 
