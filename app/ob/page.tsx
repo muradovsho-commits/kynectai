@@ -210,46 +210,18 @@ function OBSphere({ height = 380, glow = false, darkBg = false, rFactor = 0.30, 
 
 // The boxed "device panel" version (used in the Elite get-started hero).
 function OBShowcase() {
-  const dockIcon = (path: React.ReactNode) => (
-    <span style={{ display: 'inline-flex', color: '#7da2e6' }}>
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{path}</svg>
-    </span>
-  );
-
   return (
     <div className="obshow">
       <style dangerouslySetInnerHTML={{ __html: `
         .obshow{
-          position:relative; border-radius:22px; overflow:hidden; min-height:300px;
-          background:radial-gradient(120% 100% at 50% 35%, #0a1124 0%, #060a16 50%, #03050b 100%);
-          border:1px solid rgba(59,130,246,0.20);
-          box-shadow:0 24px 60px -30px rgba(37,99,235,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
+          position:relative; min-height:300px;
+          display:flex; align-items:center; justify-content:center;
         }
-        .obshow::before{
-          content:""; position:absolute; inset:0; pointer-events:none;
-          background-image:linear-gradient(rgba(90,130,220,0.05) 1px, transparent 1px),
-                           linear-gradient(90deg, rgba(90,130,220,0.05) 1px, transparent 1px);
-          background-size:26px 26px;
-        }
-        .obshow-head{ position:absolute; top:16px; left:18px; z-index:2; }
-        .obshow-ob{ font-size:22px; color:#e8eeff; line-height:1; }
-        .obshow-sub{ font-size:8.5px; letter-spacing:0.18em; color:rgba(150,170,215,0.6); margin-top:4px; }
-        .obshow-by{ position:absolute; left:0; right:0; bottom:62px; text-align:center; z-index:2;
-          font-size:11px; color:rgba(150,170,215,0.45); }
-        .obshow-dock{ position:absolute; left:50%; transform:translateX(-50%); bottom:20px; z-index:2;
-          display:flex; align-items:center; gap:16px; padding:9px 16px; border-radius:13px;
-          background:rgba(10,16,32,0.7); border:1px solid rgba(90,130,220,0.22); backdrop-filter:blur(4px); }
+        .obshow-orb{ width:100%; animation:obFloat 7s ease-in-out infinite; }
+        @keyframes obFloat{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-10px) } }
       ` }} />
-      <div className="obshow-head">
-        <div className="obshow-ob">OB</div>
-        <div className="obshow-sub">AN OFFERBELL PRODUCT</div>
-      </div>
-      <OBSphere height={300} glow={false} darkBg />
-      <div className="obshow-by">Brought to you by OfferBell</div>
-      <div className="obshow-dock">
-        {dockIcon(<><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></>)}
-        {dockIcon(<><path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h7M15 18h5" /><circle cx="16" cy="6" r="2" /><circle cx="8" cy="12" r="2" /><circle cx="13" cy="18" r="2" /></>)}
-        {dockIcon(<><path d="M12 4v8" /><path d="M7 7a8 8 0 1 0 10 0" /></>)}
+      <div className="obshow-orb">
+        <OBSphere height={300} glow={false} />
       </div>
     </div>
   );
