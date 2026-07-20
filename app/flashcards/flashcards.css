@@ -649,5 +649,5 @@ html[data-theme="dark"] .flash-app {
 }
 .flash-rate-btn:hover { border-color: var(--text-2, #52525b); }
 .flash-rate-missed.active { background: #c0392b; border-color: #c0392b; color: #fff; }
-.flash-rate-almost.active { background: #b4864a; border-color: #b4864a; color: #fff; }
+.flash-rate-almost.active { background: #d97706; border-color: #d97706; color: #fff; }
 .flash-rate-got.active { background: #3a7d5c; border-color: #3a7d5c; color: #fff; }

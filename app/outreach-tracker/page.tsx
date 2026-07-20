@@ -725,7 +725,7 @@ export default function OutreachTrackerPage() {
           { n: '05', t: 'All contacts is your archive', d: 'The full table lives one tab over: every contact, filter by status, search, and open any row to edit status, notes, and dates.' },
         ].map(step => (
           <div key={step.n} style={{ display: 'flex', gap: 16, padding: '14px 0', borderTop: '1px solid var(--border)' }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#b4864a', flexShrink: 0, width: 20, paddingTop: 1 }}>{step.n}</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#2563eb', flexShrink: 0, width: 20, paddingTop: 1 }}>{step.n}</div>
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>{step.t}</div>
               <div style={{ fontSize: 12.5, color: 'var(--text-3)', lineHeight: 1.55 }}>{step.d}</div>

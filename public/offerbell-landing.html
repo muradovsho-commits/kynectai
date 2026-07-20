@@ -50,10 +50,13 @@
   --cream:#fafafa;
   --warm:#efefef;
   --brown:#8a6232;
-  --bronze:#b4864a;
-  --bronze-deep:#5d4524;
-  --bronze-light:#c89c60;
-  --bronze-tint:#efdbb9;
+  --bronze:#2563eb;
+  --bronze-deep:#1d4ed8;
+  --bronze-light:#3b82f6;
+  --bronze-tint:#dbeafe;
+  /* pricing keeps the original bronze via scoped vars below */
+  --price-gold:#b4864a;
+  --price-gold-deep:#5d4524;
   --text:#0f0f0f;
   --text-2:#5c5c5c;
   --text-3:#9a9a9a;
@@ -91,10 +94,12 @@ html[data-theme="dark"]{
   --text-3:#6b6a67;
   --border:#2a2a29;
   --warm:#222221;
-  --bronze:#c89b58;
-  --bronze-light:#d8b075;
-  --bronze-deep:#8a6232;
-  --bronze-tint:#3a2e1c;
+  --bronze:#3b82f6;
+  --bronze-light:#60a5fa;
+  --bronze-deep:#2563eb;
+  --bronze-tint:#1e293b;
+  --price-gold:#c89b58;
+  --price-gold-deep:#8a6232;
   color-scheme:dark;
 }
 html[data-theme="dark"] img.shot-light{display:none}
@@ -428,9 +433,9 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:44px
 .pricing-center{text-align:center;margin-bottom:40px}
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:960px;margin:0 auto}
 .p-card{border:1.5px solid var(--border);border-radius:16px;padding:30px;background:var(--surface);position:relative;display:flex;flex-direction:column}
-.p-card.feat{border-color:var(--bronze)}
+.p-card.feat{border-color:var(--price-gold)}
 .p-card.elite{border-color:#2563eb}
-.p-badge{position:absolute;top:-11px;right:20px;background:var(--bronze-deep);color:var(--on-ink);font-size:9px;font-weight:700;padding:3px 12px;border-radius:100px;letter-spacing:0.3px}
+.p-badge{position:absolute;top:-11px;right:20px;background:var(--price-gold-deep);color:var(--on-ink);font-size:9px;font-weight:700;padding:3px 12px;border-radius:100px;letter-spacing:0.3px}
 .p-tier{font-size:12px;font-weight:700;margin-bottom:6px;letter-spacing:0.3px}
 .p-price{font-family:'Instrument Serif',serif;font-size:44px;letter-spacing:-2px;line-height:1;margin-bottom:4px}
 .p-price span{font-size:15px;font-family:'DM Sans',sans-serif;color:var(--text-3);letter-spacing:0;font-weight:400}
@@ -733,6 +738,32 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:44px
 .tr-incl-row em{font-style:italic;color:var(--brown)}
 @media(max-width:860px){.tr-explorer{grid-template-columns:1fr}.tr-panel .pcode{font-size:90px}}
 /* ===== REDESIGN: features flow ===== */
+/* ═══ ARSENAL: prep depth grid (our numbers, our fonts) ═══ */
+.arsenal{padding:96px 52px;border-top:1px solid var(--border);background:var(--bg)}
+.ar-inner{max-width:1180px;margin:0 auto}
+.ar-head{text-align:center;max-width:680px;margin:0 auto 56px}
+.ar-head .sl{margin-bottom:14px}
+.ar-head .ss{margin-top:14px}
+.ar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.ar-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:30px 28px;transition:transform .18s ease,border-color .18s ease}
+.ar-card:hover{transform:translateY(-3px);border-color:var(--bronze)}
+.ar-card-n{font-family:'DM Sans',sans-serif;font-size:46px;font-weight:700;line-height:1;letter-spacing:-1.5px;color:var(--bronze);margin-bottom:6px}
+.ar-card-n span{font-size:24px;font-weight:700;letter-spacing:-0.5px}
+.ar-card-t{font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:var(--text);margin-bottom:10px}
+.ar-card-d{font-family:'DM Sans',sans-serif;font-size:13.5px;line-height:1.6;color:var(--text-2)}
+.ar-card-d b{color:var(--text);font-weight:600}
+.ar-card-wide{grid-column:span 3;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;background:var(--ink-surface)}
+.ar-card-wide .ar-card-t,.ar-card-wide .ar-card-d{color:var(--on-ink)}
+.ar-card-wide .ar-card-d{opacity:.72}
+.ar-wide-left{max-width:520px}
+.ar-wide-tags{display:flex;flex-wrap:wrap;gap:8px}
+.ar-tag{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--on-ink);border:1px solid rgba(255,255,255,0.22);border-radius:999px;padding:6px 13px;white-space:nowrap}
+@media (max-width:820px){
+  .arsenal{padding:60px 16px}
+  .ar-grid{grid-template-columns:1fr}
+  .ar-card-wide{grid-column:span 1;flex-direction:column;align-items:flex-start}
+}
+
 .flow{padding:90px 24px 40px;border-top:1px solid var(--border)}
 .fl-head{text-align:center;margin-bottom:40px}
 .fl-layer{position:relative;width:880px;max-width:100%;height:1640px;margin:0 auto}
@@ -986,10 +1017,10 @@ nav#nav.scrolled .n-cta{background:var(--btn-bg);color:var(--btn-fg);border-colo
 <!-- STATS BAND -->
 <section class="stats">
   <div class="wrap">
-    <div class="stat"><div class="n">6,000+</div><div class="l">Questions</div></div>
-    <div class="stat"><div class="n">1,000+</div><div class="l">Drills</div></div>
-    <div class="stat"><div class="n">10</div><div class="l">Career tracks</div></div>
-    <div class="stat"><div class="n">11</div><div class="l">Prep tools</div></div>
+    <div class="stat"><div class="n">6,487</div><div class="l">Flashcards</div></div>
+    <div class="stat"><div class="n">11</div><div class="l">Career tracks</div></div>
+    <div class="stat"><div class="n">8</div><div class="l">Ways to practice</div></div>
+    <div class="stat"><div class="n">1</div><div class="l">Place for all of it</div></div>
   </div>
 </section>
 
@@ -1077,8 +1108,8 @@ nav#nav.scrolled .n-cta{background:var(--btn-bg);color:var(--btn-fg);border-colo
  code, pre, kbd, samp { font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important; }
 h1, h2, h3, h4, [class*=\"title\"], .st, .mb-title, .cmp-h, .fline, .stg-name { font-family: 'Nunito', 'Lato', -apple-system, BlinkMacSystemFont, sans-serif !important; }
 
-/* SITE ICONS: bronze */
-svg{color:#b4864a}
+/* SITE ICONS: blue */
+svg{color:#2563eb}
 </style>
   <div class="obx-inner">
     <div class="obx-copy">
@@ -1136,6 +1167,50 @@ svg{color:#b4864a}
     <div class="tr-explorer">
       <div class="tr-list" id="trList"></div>
       <div class="tr-panel"><div class="tr-content" id="trContent"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ARSENAL: prep depth (real numbers, out-punches the competition) ═══ -->
+<section class="arsenal" id="arsenal">
+  <div class="ar-inner">
+    <div class="ar-head">
+      <div class="sl">The Arsenal</div>
+      <div class="st">More prep than <em>anywhere else.</em></div>
+      <p class="ss">Other tools brag about a couple thousand questions. We built the deepest bank in recruiting, then wrapped it in eight different ways to drill it.</p>
+    </div>
+    <div class="ar-grid">
+      <div class="ar-card">
+        <div class="ar-card-n">6,487</div>
+        <div class="ar-card-t">Flashcards</div>
+        <div class="ar-card-d">Across seven disciplines. <b>2,000 for investment banking alone</b>, plus PE, consulting, S&amp;T, asset management, accounting, and more. Every card written for the way these questions actually get asked.</div>
+      </div>
+      <div class="ar-card">
+        <div class="ar-card-n">11</div>
+        <div class="ar-card-t">Career tracks</div>
+        <div class="ar-card-d">IB, private equity, consulting, sales &amp; trading, asset management, equity research, real estate, venture, restructuring, and audit. Each one with its own bank, guide, and mocks.</div>
+      </div>
+      <div class="ar-card">
+        <div class="ar-card-n">8</div>
+        <div class="ar-card-t">Ways to practice</div>
+        <div class="ar-card-d">Flashcards, timed quizzes, concept drills, mock interviews, The Desk, diagnostic review, game mode, and a live AI coach. Same content, eight angles of attack.</div>
+      </div>
+      <div class="ar-card ar-card-wide">
+        <div class="ar-wide-left">
+          <div class="ar-card-t">One place, not eighteen tabs open at 2am.</div>
+          <div class="ar-card-d">Every question, drill, mock, and guide lives under one roof, tied to your track and your progress. No stitching together five sites the night before a superday.</div>
+        </div>
+        <div class="ar-wide-tags">
+          <span class="ar-tag">Flashcards</span>
+          <span class="ar-tag">Quiz</span>
+          <span class="ar-tag">Concept Drills</span>
+          <span class="ar-tag">Mock Interview</span>
+          <span class="ar-tag">The Desk</span>
+          <span class="ar-tag">Diagnostic Review</span>
+          <span class="ar-tag">Game Mode</span>
+          <span class="ar-tag">AI Coach</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1319,6 +1394,9 @@ svg{color:#b4864a}
         <a href="mailto:officialofferbell@gmail.com" style="width:32px;height:32px;border-radius:8px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;transition:border-color 0.15s" onmouseover="this.style.borderColor='var(--text)'" onmouseout="this.style.borderColor='var(--border)'">
           <svg width="16" height="16" fill="none" stroke="var(--text)" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
         </a>
+        <a href="https://discord.gg/JsycDGZCwj" target="_blank" rel="noopener noreferrer" aria-label="Discord" style="width:32px;height:32px;border-radius:8px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;transition:border-color 0.15s" onmouseover="this.style.borderColor='var(--text)'" onmouseout="this.style.borderColor='var(--border)'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--text)"><path d="M20.32 4.37A19.8 19.8 0 0015.45 3a13.5 13.5 0 00-.62 1.27 18.3 18.3 0 00-5.67 0A13.5 13.5 0 008.53 3a19.8 19.8 0 00-4.87 1.37A20.3 20.3 0 00.14 18.06a19.9 19.9 0 006.05 3.06c.49-.67.92-1.38 1.29-2.12a12.9 12.9 0 01-2.03-.98c.17-.12.34-.25.5-.38a14.2 14.2 0 0012.1 0c.16.13.33.26.5.38-.65.39-1.33.72-2.03.98.37.74.8 1.45 1.29 2.12a19.8 19.8 0 006.05-3.06 20.3 20.3 0 00-3.52-13.69zM8.02 15.33c-1.18 0-2.15-1.09-2.15-2.42s.95-2.42 2.15-2.42 2.17 1.09 2.15 2.42c0 1.33-.95 2.42-2.15 2.42zm7.96 0c-1.18 0-2.15-1.09-2.15-2.42s.95-2.42 2.15-2.42 2.17 1.09 2.15 2.42c0 1.33-.94 2.42-2.15 2.42z"/></svg>
+        </a>
       </div>
     </div>
     <div class="ft-col">
@@ -1345,8 +1423,7 @@ svg{color:#b4864a}
       <div class="ft-col-t">Get Started</div>
       <a href="/signup">Sign Up</a>
       <a href="/signin">Sign In</a>
-      <!-- TODO: replace # with the actual Discord invite link once finalized -->
-      <a href="#" target="_blank" rel="noopener noreferrer">Discord</a>
+      <a href="https://discord.gg/JsycDGZCwj" target="_blank" rel="noopener noreferrer">Discord</a>
     </div>
   </div>
   <div class="ft-bottom">

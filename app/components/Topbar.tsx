@@ -584,7 +584,7 @@ export default function Topbar({ activePage }: SidebarProps) {
         .ob-pm-item:hover{background:#f8fafc;color:#1d293d}
         html[data-theme="dark"] .ob-pm-item{color:#a8a6a3}
         html[data-theme="dark"] .ob-pm-item:hover{background:#222221;color:#fff}
-        .ob-pm-item-accent{color:#b4864a}
+        .ob-pm-item-accent{color:#2563eb}
         .ob-pm-item-accent:hover{background:#f7efe2;color:#8a6232}
 
         .ob-top-burger{display:none;align-items:center;justify-content:center;width:38px;height:38px;border-radius:2px;
