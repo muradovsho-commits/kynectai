@@ -481,9 +481,9 @@ export default function Topbar({ activePage }: SidebarProps) {
         .ob-top{position:fixed;top:0;left:0;right:0;z-index:60;
           background:var(--surface,#ffffff);border-bottom:1px solid var(--border,#e5e7eb);font-family:inherit}
         html[data-theme="dark"] .ob-top{background:#1a1a19;border-bottom-color:#2a2a29}
-        .ob-top-inner{height:48px;display:flex;align-items:center;gap:8px;padding:0 20px}
-        .ob-top-brand{display:flex;align-items:center;text-decoration:none;margin-right:16px;flex:0 0 auto}
-        .ob-top-logo-img{height:26px;width:auto;display:block}
+        .ob-top-inner{height:48px;display:flex;align-items:center;gap:8px;padding:0 28px}
+        .ob-top-brand{display:flex;align-items:center;justify-content:center;text-decoration:none;margin-right:26px;margin-left:6px;flex:0 0 auto}
+        .ob-top-logo-img{height:30px;width:auto;display:block}
         html[data-theme="dark"] .ob-top-logo-img{filter:drop-shadow(0 0 0.5px rgba(255,255,255,.9))}
         .ob-top-nav{display:flex;align-items:center;gap:2px}
         .ob-top-divider{display:flex;align-items:center;color:#cfcdc9;font-weight:300;font-size:15px;padding:0 8px;user-select:none;line-height:1}
