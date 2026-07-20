@@ -220,7 +220,7 @@ function OBShowcase() {
     <div className="obshow">
       <style dangerouslySetInnerHTML={{ __html: `
         .obshow{
-          position:relative; border-radius:22px; overflow:hidden; min-height:320px;
+          position:relative; border-radius:22px; overflow:hidden; min-height:300px;
           background:radial-gradient(120% 100% at 50% 35%, #0a1124 0%, #060a16 50%, #03050b 100%);
           border:1px solid rgba(59,130,246,0.20);
           box-shadow:0 24px 60px -30px rgba(37,99,235,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
@@ -244,7 +244,7 @@ function OBShowcase() {
         <div className="obshow-ob">OB</div>
         <div className="obshow-sub">AN OFFERBELL PRODUCT</div>
       </div>
-      <OBSphere height={320} glow={false} darkBg />
+      <OBSphere height={300} glow={false} darkBg />
       <div className="obshow-by">Brought to you by OfferBell</div>
       <div className="obshow-dock">
         {dockIcon(<><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></>)}
@@ -319,22 +319,37 @@ function ObElite() {
       <div className="ob-hero" style={{ marginBottom: 32 }}>
         <div className="ob-hero-copy">
           <h1 className="ob-hero-title" style={{
-            fontSize: 44, lineHeight: 1.08, letterSpacing: '-1.5px',
-            color: 'var(--text)', margin: '0 0 18px', fontWeight: 800,
+            fontSize: 36, lineHeight: 1.05, letterSpacing: '-1px',
+            color: 'var(--text)', margin: '0 0 18px', fontWeight: 400,
           }}>
             Your OB is ready.
           </h1>
 
-          <p style={{ fontSize: 15, color: 'var(--text-2)', lineHeight: 1.65, margin: 0, maxWidth: 460 }}>
-            OB is a desktop voice assistant built on everything in OfferBell, like the AI from Iron Man, but for finance recruiting. Run a mock interview, tear down a company, prep a coffee chat, or get a market brief, just by talking. Set it up below.
+          <p style={{ fontSize: 15, color: 'var(--text-2)', lineHeight: 1.65, margin: '0 0 26px', maxWidth: 460 }}>
+            OB is a desktop voice assistant built on everything in OfferBell, like the AI from Iron Man, but for finance recruiting. Run a mock interview, tear down a company, prep a coffee chat, or get a market brief, just by talking.
           </p>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <button type="button" onClick={() => { setOs('mac'); document.getElementById('ob-setup')?.scrollIntoView({ behavior: 'smooth' }); }} style={{
+              display: 'inline-flex', alignItems: 'center', gap: 9, padding: '13px 22px', borderRadius: 11, cursor: 'pointer',
+              background: 'var(--text)', color: 'var(--surface)', border: 'none', fontSize: 14, fontWeight: 700, fontFamily: 'inherit',
+            }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 12.04c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.09-2.01-3.76-2.04-1.6-.16-3.12.94-3.93.94-.81 0-2.06-.92-3.39-.9-1.74.03-3.35 1.01-4.25 2.57-1.81 3.15-.46 7.81 1.3 10.37.86 1.25 1.88 2.66 3.22 2.61 1.29-.05 1.78-.83 3.34-.83 1.56 0 2 .83 3.37.81 1.39-.03 2.27-1.28 3.12-2.54.98-1.46 1.39-2.87 1.41-2.94-.03-.01-2.7-1.04-2.73-4.1-.02-2.56 2.09-3.79 2.19-3.85M14.5 4.5c.71-.87 1.2-2.06 1.06-3.26-1.03.04-2.29.69-3.03 1.55-.66.76-1.24 1.99-1.09 3.16 1.15.09 2.33-.58 3.06-1.45"/></svg>
+              Get OB for {typeof navigator !== 'undefined' && /Win/.test(navigator.platform) ? 'Windows' : 'Mac'}
+            </button>
+            <button type="button" onClick={() => document.getElementById('ob-setup')?.scrollIntoView({ behavior: 'smooth' })} style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6, padding: '13px 20px', borderRadius: 11, cursor: 'pointer',
+              background: 'transparent', color: 'var(--text-2)', border: '1.5px solid var(--border)', fontSize: 14, fontWeight: 600, fontFamily: 'inherit',
+            }}>
+              Setup steps
+            </button>
+          </div>
         </div>
 
         <div className="ob-hero-art"><OBShowcase /></div>
       </div>
 
       {/* Install instructions */}
-      <div style={{ border: '1px solid var(--border)', background: 'var(--surface)', borderRadius: 16, padding: '24px 24px 26px', marginBottom: 44 }}>
+      <div id="ob-setup" style={{ border: '1px solid var(--border)', background: 'var(--surface)', borderRadius: 16, padding: '24px 24px 26px', marginBottom: 44 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: os === null ? 0 : 20 }}>
           <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>{os === null ? 'Get OB' : `Get OB on your ${os === 'mac' ? 'Mac' : 'PC'}`}</div>
           {os !== null && (
@@ -533,9 +548,9 @@ function ObElite() {
       )}
 
       <style>{`
-        .ob-hero{ display:flex; gap:48px; align-items:flex-start; padding-top:8px; }
+        .ob-hero{ display:flex; gap:48px; align-items:center; padding-top:0; }
         .ob-hero-copy{ flex:1; min-width:0; }
-        .ob-hero-art{ width:340px; flex-shrink:0; }
+        .ob-hero-art{ width:320px; flex-shrink:0; }
         @media (max-width: 820px){
           .ob-hero{ flex-direction:column-reverse; gap:26px; }
           .ob-hero-art{ width:100%; max-width:420px; }
