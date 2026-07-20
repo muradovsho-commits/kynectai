@@ -170,16 +170,6 @@ html[data-theme="dark"] .mi-app {
 }
 .mi-mode:hover { border-color: var(--border-strong); background: var(--surface-2); }
 .mi-mode:active { transform: scale(0.998); }
-.mi-mode-primary {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  border-color: #1d4ed8;
-}
-.mi-mode-primary .mi-mode-title,
-.mi-mode-primary .mi-mode-sub,
-.mi-mode-primary .mi-mode-arrow { color: #fff; }
-.mi-mode-primary .mi-mode-sub { opacity: 0.85; }
-.mi-mode-primary .mi-mode-icon { background: rgba(255,255,255,0.15); color: #fff; }
-.mi-mode-primary:hover { background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%); }
 .mi-mode-icon {
   width: 44px; height: 44px;
   border-radius: 10px;

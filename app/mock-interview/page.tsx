@@ -977,7 +977,7 @@ export default function MockInterviewPage() {
         </div>
 
         <div className="mi-modes">
-          <button type="button" className="mi-mode mi-mode-primary" onClick={() => {
+          <button type="button" className="mi-mode" onClick={() => {
             const t = TRACKS.find(t => t.id === sidebarTrackId) || TRACKS[0];
             setActiveTrack(t);
             setExpandedCats(new Set());
