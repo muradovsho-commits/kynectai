@@ -317,15 +317,32 @@ export default function DashboardPage() {
     (async () => {
       try {
         const client = new ConvexHttpClient(url);
-        const [m, c] = await Promise.all([
+        const [m, c, u] = await Promise.all([
           client.query((api as any).mockResponses.getMockStats, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) }),
           client.query((api as any).coachConvos.getCoachStats, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) }),
+          client.query((api as any).users.getUser, { userId, sessionToken: (typeof window!=='undefined'?localStorage.getItem('offerbell_session')||undefined:undefined) }).catch(() => null),
         ]);
         if (!cancelled) {
           setMockStats(m);
           setCoachStats(c);
           try { localStorage.setItem('offerbell_dash_mock_stats', JSON.stringify(m)); } catch {}
           try { localStorage.setItem('offerbell_dash_coach_stats', JSON.stringify(c)); } catch {}
+          // Refresh the displayed name from the server (source of truth). The
+          // local onboarding_profile can be stale after a name change on another
+          // device or session, so reconcile it here and notify listeners
+          // (topbar, sidebar) via the shared profile-changed event.
+          if (u && u.firstName) {
+            try {
+              const raw = localStorage.getItem('offerbell_onboarding_profile');
+              const existing = raw ? JSON.parse(raw) : {};
+              if (existing.firstName !== u.firstName || existing.lastName !== (u.lastName || existing.lastName)) {
+                const merged = { ...existing, firstName: u.firstName, lastName: u.lastName || existing.lastName || '' };
+                localStorage.setItem('offerbell_onboarding_profile', JSON.stringify(merged));
+                window.dispatchEvent(new Event('offerbell-profile-changed'));
+              }
+            } catch {}
+            setProfile(prev => ({ ...prev, first: u.firstName }));
+          }
         }
       } catch {}
     })();
