@@ -329,19 +329,16 @@ function ObElite() {
             OB is a desktop voice assistant built on everything in OfferBell, like the AI from Iron Man, but for finance recruiting. Run a mock interview, tear down a company, prep a coffee chat, or get a market brief, just by talking.
           </p>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <button type="button" onClick={() => { setOs('mac'); document.getElementById('ob-setup')?.scrollIntoView({ behavior: 'smooth' }); }} style={{
-              display: 'inline-flex', alignItems: 'center', gap: 9, padding: '13px 22px', borderRadius: 11, cursor: 'pointer',
+            <button type="button" onClick={() => document.getElementById('ob-setup')?.scrollIntoView({ behavior: 'smooth' })} style={{
+              display: 'inline-flex', alignItems: 'center', gap: 9, padding: '13px 24px', borderRadius: 11, cursor: 'pointer',
               background: 'var(--text)', color: 'var(--surface)', border: 'none', fontSize: 14, fontWeight: 700, fontFamily: 'inherit',
             }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 12.04c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.09-2.01-3.76-2.04-1.6-.16-3.12.94-3.93.94-.81 0-2.06-.92-3.39-.9-1.74.03-3.35 1.01-4.25 2.57-1.81 3.15-.46 7.81 1.3 10.37.86 1.25 1.88 2.66 3.22 2.61 1.29-.05 1.78-.83 3.34-.83 1.56 0 2 .83 3.37.81 1.39-.03 2.27-1.28 3.12-2.54.98-1.46 1.39-2.87 1.41-2.94-.03-.01-2.7-1.04-2.73-4.1-.02-2.56 2.09-3.79 2.19-3.85M14.5 4.5c.71-.87 1.2-2.06 1.06-3.26-1.03.04-2.29.69-3.03 1.55-.66.76-1.24 1.99-1.09 3.16 1.15.09 2.33-.58 3.06-1.45"/></svg>
-              Get OB for {typeof navigator !== 'undefined' && /Win/.test(navigator.platform) ? 'Windows' : 'Mac'}
+              Get OB
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12l7 7 7-7" /></svg>
             </button>
-            <button type="button" onClick={() => document.getElementById('ob-setup')?.scrollIntoView({ behavior: 'smooth' })} style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6, padding: '13px 20px', borderRadius: 11, cursor: 'pointer',
-              background: 'transparent', color: 'var(--text-2)', border: '1.5px solid var(--border)', fontSize: 14, fontWeight: 600, fontFamily: 'inherit',
-            }}>
-              Setup steps
-            </button>
+            <span style={{ display: 'inline-flex', alignItems: 'center', fontSize: 13, color: 'var(--text-3)' }}>
+              Mac &amp; Windows
+            </span>
           </div>
         </div>
 
