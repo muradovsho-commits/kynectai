@@ -973,20 +973,20 @@ nav#nav.scrolled .n-cta{background:var(--btn-bg);color:var(--btn-fg);border-colo
       <div class="lt-back" aria-hidden="true"></div>
       <span class="lt-cam"></span>
       <div class="lt-shots">
-        <img src="/app-dashboard.jpg" class="on" alt="OfferBell dashboard">
-        <img src="/app-flashcards.jpg" alt="Interview flashcards">
-        <img src="/app-drills.jpg" alt="Concept drills">
-        <img src="/app-coach.jpg" alt="AI coach">
-        <img src="/app-desk.jpg" alt="The Desk">
-        <img src="/app-mock.jpg" alt="Mock interviews">
-        <img src="/app-guides.jpg" alt="Interview guides">
-        <img src="/app-directory.jpg" alt="Contact directory">
-        <img src="/app-tracker.jpg" alt="Outreach tracker">
-        <img src="/app-writer.jpg" alt="Outreach writer">
-        <img src="/app-referral.jpg" alt="Referral map">
-        <img src="/app-diagnostic.jpg" alt="Diagnostic review">
-        <img src="/app-ob.jpg" alt="OB voice assistant">
-        <img src="/app-resume.jpg" alt="AI resume review">
+        <img src="/app-dashboard.jpg" data-light="/app-dashboard.jpg" data-dark="/app-dashboard-dark.jpg" class="on" alt="OfferBell dashboard">
+        <img src="/app-flashcards.jpg" data-light="/app-flashcards.jpg" data-dark="/app-flashcards-dark.jpg" alt="Interview flashcards">
+        <img src="/app-drills.jpg" data-light="/app-drills.jpg" data-dark="/app-drills-dark.jpg" alt="Concept drills">
+        <img src="/app-coach.jpg" data-light="/app-coach.jpg" data-dark="/app-coach-dark.jpg" alt="AI coach">
+        <img src="/app-desk.jpg" data-light="/app-desk.jpg" data-dark="/app-desk-dark.jpg" alt="The Desk">
+        <img src="/app-mock.jpg" data-light="/app-mock.jpg" data-dark="/app-mock-dark.jpg" alt="Mock interviews">
+        <img src="/app-guides.jpg" data-light="/app-guides.jpg" data-dark="/app-guides-dark.jpg" alt="Interview guides">
+        <img src="/app-directory.jpg" data-light="/app-directory.jpg" data-dark="/app-directory-dark.jpg" alt="Contact directory">
+        <img src="/app-tracker.jpg" data-light="/app-tracker.jpg" data-dark="/app-tracker-dark.jpg" alt="Outreach tracker">
+        <img src="/app-writer.jpg" data-light="/app-writer.jpg" data-dark="/app-writer-dark.jpg" alt="Outreach writer">
+        <img src="/app-referral.jpg" data-light="/app-referral.jpg" data-dark="/app-referral-dark.jpg" alt="Referral map">
+        <img src="/app-diagnostic.jpg" data-light="/app-diagnostic.jpg" data-dark="/app-diagnostic-dark.jpg" alt="Diagnostic review">
+        <img src="/app-ob.jpg" data-light="/app-ob.jpg" data-dark="/app-ob-dark.jpg" alt="OB voice assistant">
+        <img src="/app-resume.jpg" data-light="/app-resume.jpg" data-dark="/app-resume.jpg" alt="AI resume review">
       </div>
     </div>
     <div class="lt-base"></div>
@@ -1591,7 +1591,19 @@ show(0);start();})();
     else document.documentElement.removeAttribute('data-theme');
     try{ localStorage.setItem('offerbell-theme', next); }catch(err){}
     try{ parent.postMessage({ type:'theme', theme: next }, '*'); }catch(err){}
+    swapShots();
   });
+
+  // Swap the laptop showcase images between light/dark variants to match theme.
+  function swapShots(){
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var imgs = document.querySelectorAll('.lt-shots img');
+    for(var i=0;i<imgs.length;i++){
+      var want = dark ? imgs[i].getAttribute('data-dark') : imgs[i].getAttribute('data-light');
+      if(want && imgs[i].getAttribute('src') !== want) imgs[i].setAttribute('src', want);
+    }
+  }
+  swapShots();
 })();
 </script>
 </body>
