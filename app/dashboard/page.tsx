@@ -924,7 +924,7 @@ export default function DashboardPage() {
                               className="dash-heatmap-bar"
                               style={{
                                 width: `${row.accuracy}%`,
-                                background: row.accuracy >= 75 ? '#16a34a' : row.accuracy >= 50 ? '#f59e0b' : '#ef4444',
+                                background: row.accuracy >= 75 ? '#5b9e77' : row.accuracy >= 50 ? '#cf9a53' : '#c77b7b',
                               }}
                             />
                           </div>
