@@ -484,7 +484,7 @@ export default function Topbar({ activePage }: SidebarProps) {
         .ob-top-inner{height:48px;display:flex;align-items:center;gap:8px;padding:0 28px}
         .ob-top-brand{display:flex;align-items:center;justify-content:center;text-decoration:none;margin-right:26px;margin-left:6px;flex:0 0 auto}
         .ob-top-logo-img{height:30px;width:auto;display:block}
-        html[data-theme="dark"] .ob-top-logo-img{filter:drop-shadow(0 0 0.5px rgba(255,255,255,.9))}
+        
         .ob-top-nav{display:flex;align-items:center;gap:2px}
         .ob-top-divider{display:flex;align-items:center;color:#cfcdc9;font-weight:300;font-size:15px;padding:0 8px;user-select:none;line-height:1}
         html[data-theme="dark"] .ob-top-divider{color:#3d3c39}
