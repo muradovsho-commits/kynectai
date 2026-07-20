@@ -505,18 +505,32 @@ html[data-theme="dark"] .cd-app {
 
 /* ── Tags ─────────────────────────────────────────────────────────────────── */
 .cd-tag {
-  display: inline-block;
-  font-size: 10.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 3px 9px;
-  border-radius: 999px;
+  color: var(--text-2);
+  letter-spacing: 0.01em;
 }
-.cd-tag-topic { background: rgba(59,130,246,0.12); color: var(--accent); }
-.cd-tag-diff-easy   { background: rgba(22,163,74,0.12); color: #16a34a; }
-.cd-tag-diff-medium { background: rgba(245,158,11,0.12); color: #d97706; }
-.cd-tag-diff-hard   { background: rgba(239,68,68,0.12); color: #ef4444; }
+/* difficulty is a small color dot, not a filled pill */
+.cd-tag-diff::before {
+  content: '';
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--text-3);
+}
+.cd-tag-diff-easy::before   { background: #16a34a; }
+.cd-tag-diff-medium::before { background: #d97706; }
+.cd-tag-diff-hard::before   { background: #ef4444; }
+.cd-tag-topic { color: var(--text-3); }
+/* thin divider between the two */
+.cd-drill-tags .cd-tag-topic::before {
+  content: '';
+  width: 1px; height: 11px;
+  background: var(--border);
+  margin-right: 10px;
+}
 
 /* ── Drilling view ───────────────────────────────────────────────────────── */
 .cd-drill-inner {

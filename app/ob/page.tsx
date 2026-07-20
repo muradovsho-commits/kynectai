@@ -259,7 +259,7 @@ function OBShowcase() {
 // ObElite - get-started / download for Elite members
 // ═══════════════════════════════════════════════════════════════════════════
 function ObElite() {
-  const [os, setOs] = useState<'mac' | 'win'>('mac');
+  const [os, setOs] = useState<'mac' | 'win' | null>(null);
   const [copied, setCopied] = useState(false);
   const [copiedWin, setCopiedWin] = useState(false);
   const [copiedOpen, setCopiedOpen] = useState(false);
@@ -315,28 +315,26 @@ function ObElite() {
   );
 
   return (
-    <div style={{ maxWidth: 820, margin: '0 auto', padding: '40px 0 90px', fontFamily: "'Sora', sans-serif" }}>
-      <div className="ob-hero" style={{ marginBottom: 40 }}>
+    <div style={{ maxWidth: 1180, margin: 0, padding: '40px 0 90px' }}>
+      <div className="ob-hero" style={{ marginBottom: 44 }}>
         <div className="ob-hero-copy">
           <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 11px', marginBottom: 18,
-            background: 'rgba(37, 99, 235, 0.12)', color: '#3b82f6',
-            border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: 999,
-            fontSize: 10, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase',
+            display: 'inline-flex', alignItems: 'center', gap: 7, marginBottom: 20,
+            color: '#3b82f6', fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase',
           }}>
-            <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor' }} />
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor' }} />
             Elite plan
           </div>
 
-          <h1 style={{
-            fontFamily: "'Instrument Serif', serif", fontSize: 50, lineHeight: 1.02, letterSpacing: '-1px',
-            color: 'var(--text)', margin: '0 0 16px', fontWeight: 400,
+          <h1 className="ob-hero-title" style={{
+            fontSize: 44, lineHeight: 1.08, letterSpacing: '-1.5px',
+            color: 'var(--text)', margin: '0 0 18px', fontWeight: 800,
           }}>
-            Your <em style={{ fontStyle: 'italic' }}>OB</em> is ready.
+            Your OB is ready.
           </h1>
 
-          <p style={{ fontSize: 14.5, color: 'var(--text-2)', lineHeight: 1.6, margin: 0 }}>
-            OB is a desktop voice assistant built on everything in OfferBell, like the AI from <em style={{ fontStyle: 'italic' }}>Iron Man</em>, but for finance recruiting. Run a mock interview, tear down a company, prep a coffee chat, or get a market brief, just by talking. Set it up below.
+          <p style={{ fontSize: 15, color: 'var(--text-2)', lineHeight: 1.65, margin: 0, maxWidth: 460 }}>
+            OB is a desktop voice assistant built on everything in OfferBell, like the AI from Iron Man, but for finance recruiting. Run a mock interview, tear down a company, prep a coffee chat, or get a market brief, just by talking. Set it up below.
           </p>
         </div>
 
@@ -345,15 +343,41 @@ function ObElite() {
 
       {/* Install instructions */}
       <div style={{ border: '1px solid var(--border)', background: 'var(--surface)', borderRadius: 16, padding: '24px 24px 26px', marginBottom: 44 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 20 }}>
-          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>Get OB on your {os === 'mac' ? 'Mac' : 'PC'}</div>
-          <div style={{ display: 'flex', gap: 6 }}>
-            <button type="button" onClick={() => setOs('mac')} style={pill(os === 'mac')}>macOS</button>
-            <button type="button" onClick={() => setOs('win')} style={pill(os === 'win')}>Windows</button>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: os === null ? 0 : 20 }}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>{os === null ? 'Get OB' : `Get OB on your ${os === 'mac' ? 'Mac' : 'PC'}`}</div>
+          {os !== null && (
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button type="button" onClick={() => setOs('mac')} style={pill(os === 'mac')}>macOS</button>
+              <button type="button" onClick={() => setOs('win')} style={pill(os === 'win')}>Windows</button>
+            </div>
+          )}
         </div>
 
-        {os === 'mac' ? (
+        {os === null ? (
+          <div>
+            <div style={{ fontSize: 13.5, color: 'var(--text-3)', margin: '4px 0 18px' }}>Pick your computer to get the right setup steps.</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              {([['mac', 'macOS', 'Mac laptop or desktop'], ['win', 'Windows', 'PC laptop or desktop']] as const).map(([key, label, sub]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setOs(key)}
+                  style={{
+                    display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4,
+                    padding: '20px 22px', borderRadius: 12, cursor: 'pointer', textAlign: 'left',
+                    background: 'var(--surface)', border: '1.5px solid var(--border)', fontFamily: 'inherit',
+                    transition: 'border-color 0.12s, box-shadow 0.12s',
+                  }}
+                  onMouseOver={e => { e.currentTarget.style.borderColor = '#3b82f6'; e.currentTarget.style.boxShadow = '0 2px 10px rgba(37,99,235,0.10)'; }}
+                  onMouseOut={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.boxShadow = 'none'; }}
+                >
+                  <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>{label}</span>
+                  <span style={{ fontSize: 12.5, color: 'var(--text-3)' }}>{sub}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : os === 'mac' ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
             {stepRow(1, 'Download OB', (
               <div>
@@ -515,9 +539,9 @@ function ObElite() {
       </div>
 
       <style>{`
-        .ob-hero{ display:flex; gap:34px; align-items:center; }
+        .ob-hero{ display:flex; gap:48px; align-items:flex-start; padding-top:8px; }
         .ob-hero-copy{ flex:1; min-width:0; }
-        .ob-hero-art{ width:312px; flex-shrink:0; }
+        .ob-hero-art{ width:360px; flex-shrink:0; }
         @media (max-width: 820px){
           .ob-hero{ flex-direction:column-reverse; gap:26px; }
           .ob-hero-art{ width:100%; max-width:420px; }
