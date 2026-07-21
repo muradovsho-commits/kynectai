@@ -171,9 +171,6 @@ export default function LearnPage() {
         {/* Quiz Banner */}
         <div data-tutorial="career-discovery">
         <div className="learn-quiz-banner" style={{ marginTop: '20px' }}>
-          <div className="learn-quiz-icon">
-            <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-          </div>
           <div className="learn-quiz-content">
             <div className="learn-quiz-title">Not sure where to start?</div>
             <div className="learn-quiz-desc">Take our 2-minute quiz and get a personalized learning path.</div>
@@ -183,9 +180,6 @@ export default function LearnPage() {
 
         {/* Career Roadmaps Banner */}
         <div className="learn-quiz-banner" style={{ marginTop: '16px' }}>
-          <div className="learn-quiz-icon icon-roadmaps">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-          </div>
           <div className="learn-quiz-content">
             <div className="learn-quiz-title">Career Roadmaps</div>
             <div className="learn-quiz-desc">Not sure which path is right? Explore 10+ career tracks - IB, PE, consulting, S&T, equity research, asset management, accounting, venture capital, real estate, restructuring, and more.</div>

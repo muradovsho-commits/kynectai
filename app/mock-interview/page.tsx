@@ -984,9 +984,6 @@ export default function MockInterviewPage() {
             setActiveQuestion(null);
             setView('single');
           }}>
-            <div className="mi-mode-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.5-2.5 2-2.5 4M12 17.5h.01"/></svg>
-            </div>
             <div className="mi-mode-body">
               <div className="mi-mode-title">Practice a single question</div>
               <div className="mi-mode-sub">Pick any question from the flashcard bank. Record once. Get focused feedback. Free to use.</div>
@@ -995,9 +992,6 @@ export default function MockInterviewPage() {
           </button>
 
           <button type="button" className="mi-mode" onClick={openSetup} style={!isPro ? { opacity: 0.55, cursor: 'not-allowed' } : undefined}>
-            <div className="mi-mode-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-6 4 6 4V8z"/></svg>
-            </div>
             <div className="mi-mode-body">
               <div className="mi-mode-title">
                 Start a full interview
@@ -1042,11 +1036,6 @@ export default function MockInterviewPage() {
 
         {allSessions.length === 0 && (
           <div className="mi-empty">
-            <div className="mi-empty-icons">
-              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-6 4 6 4V8z"/></svg></span>
-              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/></svg></span>
-              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M8.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM20 8v6M23 11h-6"/></svg></span>
-            </div>
             <div className="mi-empty-title">No interviews yet</div>
             <div className="mi-empty-sub">Start your first mock interview to see your results here</div>
             <button type="button" className="mi-empty-btn" onClick={openSetup}>
