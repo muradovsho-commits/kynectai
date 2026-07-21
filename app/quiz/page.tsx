@@ -184,6 +184,12 @@ export default function QuizPage() {
     else setCurrentQ(currentQ + 1);
   };
 
+  // Move past a question the user feels none of the options fit, without scoring it.
+  const skipQuestion = () => {
+    if (currentQ + 1 >= questions.length) setShowResult(true);
+    else setCurrentQ(currentQ + 1);
+  };
+
   const resetQuiz = () => { setScores(Object.fromEntries(ALL_KEYS.map(k => [k, 0]))); setCurrentQ(0); setShowResult(false); };
 
   // Compute relative strengths - normalize against the top score so the #1 career is always 100%
@@ -227,88 +233,83 @@ export default function QuizPage() {
               </div>
               <div className="quiz-header">
                 <span className="quiz-step">Question {currentQ + 1} of {questions.length}</span>
-                <h1 className="quiz-question">{questions[currentQ].question}</h1>
+                <h1 className="quiz-question-title">{questions[currentQ].question}</h1>
               </div>
               <div className="quiz-options">
                 {questions[currentQ].options.map((opt, i) => (
                   <button key={i} className="quiz-option-btn" onClick={() => handleSelect(opt.w)} type="button">
-                    {opt.text}
+                    <span className="quiz-option-key">{String.fromCharCode(65 + i)}</span>
+                    <span>{opt.text}</span>
                   </button>
                 ))}
+              </div>
+              <div className="quiz-qfoot">
+                <span className="quiz-qhint">Pick the one that fits best, even if it's close.</span>
+                <button className="quiz-skip-btn" onClick={skipQuestion} type="button">None really fit &rarr;</button>
               </div>
             </div>
           ) : (
             <div className="quiz-result fade-in">
               <div className="quiz-result-top">
-                <h2 className="quiz-result-heading">Your Career <em>Profile</em></h2>
-                <p className="quiz-result-sub">Based on your personality and preferences, here's where you naturally align.</p>
+                <h2 className="quiz-result-heading-title">Where you naturally <em>fit</em></h2>
+                <p className="quiz-result-sub">Based on how you think, what motivates you, and how you like to work.</p>
               </div>
 
-              {/* Top match - big and clear */}
-              <div className="quiz-top-match" style={{ borderColor: CAREERS[topCareer.key].color + '40' }}>
-                <div className="quiz-top-badge">Your Strongest Fit</div>
-                <div className="quiz-top-title" style={{ color: CAREERS[topCareer.key].color }}>{CAREERS[topCareer.key].title}</div>
+              {/* Top match */}
+              <div className="quiz-top-match">
+                <div className="quiz-top-badge">Strongest Fit</div>
+                <div className="quiz-top-title-name">{CAREERS[topCareer.key].title}</div>
+                <div className="quiz-top-match-pct">{topCareer.strength}% match</div>
                 <p className="quiz-top-desc">{DESCS[topCareer.key]}</p>
-                <Link href={isPaid ? CAREERS[topCareer.key].href : '/checkout'} className="quiz-top-cta" style={{ background: CAREERS[topCareer.key].color }}>
-                  {isPaid ? 'Start Preparing →' : 'Unlock Prep Guide →'}
+                <Link href={isPaid ? CAREERS[topCareer.key].href : '/checkout'} className="quiz-top-cta">
+                  {isPaid ? 'Start preparing →' : 'Unlock prep guide →'}
                 </Link>
               </div>
 
-              {/* Strong fits (70%+) - show as clear contenders */}
+              {/* Strong fits (70%+) */}
               {strongFit.length > 1 && (
                 <div className="quiz-tier">
-                  <div className="quiz-tier-label">Also a strong fit</div>
-                  <div className="quiz-tier-cards">
-                    {strongFit.slice(1).map(s => {
-                      const c = CAREERS[s.key];
-                      return (
-                        <Link key={s.key} href={isPaid ? c.href : '/checkout'} className="quiz-tier-card" style={{ borderColor: c.color + '30' }}>
-                          <div className="quiz-tc-bar" style={{ background: c.color, width: `${s.strength}%` }} />
-                          <div className="quiz-tc-name">{c.title}</div>
-                          <div className="quiz-tc-strength" style={{ color: c.color }}>{s.strength}%</div>
-                        </Link>
-                      );
-                    })}
-                  </div>
+                  <div className="quiz-tier-label">Also strong for you</div>
+                  {strongFit.slice(1).map((s, i) => (
+                    <Link key={s.key} href={isPaid ? CAREERS[s.key].href : '/checkout'} className="quiz-rank-row">
+                      <span className="quiz-rank-num">{i + 2}</span>
+                      <span className="quiz-rank-name">{CAREERS[s.key].title}</span>
+                      <span className="quiz-rank-bar-wrap"><span className="quiz-rank-bar" style={{ width: `${s.strength}%` }} /></span>
+                      <span className="quiz-rank-pct">{s.strength}%</span>
+                    </Link>
+                  ))}
                 </div>
               )}
 
-              {/* Good fits (40-69%) - worth exploring */}
+              {/* Good fits (40-69%) */}
               {goodFit.length > 0 && (
                 <div className="quiz-tier">
-                  <div className="quiz-tier-label">Worth exploring</div>
-                  <div className="quiz-tier-list">
-                    {goodFit.map(s => {
-                      const c = CAREERS[s.key];
-                      return (
-                        <div key={s.key} className="quiz-tier-row">
-                          <div className="quiz-tr-name">{c.title}</div>
-                          <div className="quiz-tr-bar-wrap">
-                            <div className="quiz-tr-bar" style={{ width: `${s.strength}%`, background: c.color }} />
-                          </div>
-                          <div className="quiz-tr-strength">{s.strength}%</div>
-                          <Link href={isPaid ? c.href : '/checkout'} className="quiz-tr-link">{isPaid ? 'Explore →' : 'Unlock →'}</Link>
-                        </div>
-                      );
-                    })}
-                  </div>
+                  <div className="quiz-tier-label">Worth a look</div>
+                  {goodFit.map((s, i) => (
+                    <Link key={s.key} href={isPaid ? CAREERS[s.key].href : '/checkout'} className="quiz-rank-row">
+                      <span className="quiz-rank-num">{strongFit.length + i + 1}</span>
+                      <span className="quiz-rank-name">{CAREERS[s.key].title}</span>
+                      <span className="quiz-rank-bar-wrap"><span className="quiz-rank-bar" style={{ width: `${s.strength}%` }} /></span>
+                      <span className="quiz-rank-pct">{s.strength}%</span>
+                    </Link>
+                  ))}
                 </div>
               )}
 
-              {/* Lower fits - collapsed, just names */}
+              {/* Lower fits - inline, quiet */}
               {lowerFit.length > 0 && (
-                <div className="quiz-tier quiz-tier-low">
+                <div className="quiz-tier">
                   <div className="quiz-tier-label">Lower alignment</div>
                   <div className="quiz-low-list">
                     {lowerFit.map(s => (
-                      <span key={s.key} className="quiz-low-item">{CAREERS[s.key].title} · {s.strength}%</span>
+                      <span key={s.key} className="quiz-low-item"><b>{CAREERS[s.key].title}</b> {s.strength}%</span>
                     ))}
                   </div>
                 </div>
               )}
 
               <div className="quiz-result-actions">
-                <button className="quiz-secondary-btn" onClick={resetQuiz} type="button">Retake Quiz</button>
+                <button className="quiz-secondary-btn" onClick={resetQuiz} type="button">Retake quiz</button>
               </div>
             </div>
           )}
