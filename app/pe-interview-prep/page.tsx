@@ -113,21 +113,6 @@ export default function PEInterviewPrepPage() {
           </Link>
         </div>
 
-        {/* Module Navigation Bar */}
-        <nav className="ib-module-nav">
-          <div className="ib-module-nav-inner">
-            {MODULES.map(m => (
-              <button
-                key={m.id}
-                className={'ib-nav-tab' + (activeModule === m.id ? ' active' : '')}
-                onClick={() => setActiveModule(m.id)}
-              >
-                {m.navTitle}
-              </button>
-            ))}
-          </div>
-        </nav>
-
         {activeModule === '' ? (
           /* ═══════════════ LANDING / OVERVIEW ═══════════════ */
           <div className="ib-landing">
@@ -179,7 +164,37 @@ export default function PEInterviewPrepPage() {
           </div>
         ) : (
           /* ═══════════════ MODULE READING VIEW ═══════════════ */
-          <div className="ib-container">
+          <div className="ib-layout">
+            <aside className="ib-rail">
+              <div className="ib-rail-inner">
+                <div className="ib-rail-label">Modules</div>
+                {MODULES.filter(m => !['behavioral','markets'].includes(m.id)).map((m, i) => (
+                  <button
+                    key={m.id}
+                    className={'ib-rail-item' + (activeModule === m.id ? ' active' : '')}
+                    onClick={() => setActiveModule(m.id)}
+                  >
+                    <span className="ib-rail-num">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="ib-rail-title">{m.navTitle}</span>
+                  </button>
+                ))}
+                {MODULES.some(m => ['behavioral','markets'].includes(m.id)) && (
+                  <div className="ib-rail-divider" />
+                )}
+                {MODULES.filter(m => ['behavioral','markets'].includes(m.id)).map(m => (
+                  <button
+                    key={m.id}
+                    className={'ib-rail-item' + (activeModule === m.id ? ' active' : '')}
+                    onClick={() => setActiveModule(m.id)}
+                  >
+                    <span className="ib-rail-num">&middot;</span>
+                    <span className="ib-rail-title">{m.navTitle}</span>
+                  </button>
+                ))}
+              </div>
+            </aside>
+
+            <div className="ib-container">
             {/* Module Header Card */}
             <div className="ib-module-header-card">
               <div className="ib-mh-num">{mod.moduleNum}</div>
@@ -238,6 +253,7 @@ export default function PEInterviewPrepPage() {
                 );
               })()}
             </div>
+          </div>
           </div>
         )}
       </main>

@@ -68,10 +68,6 @@ export default function VCInterviewPrepPage() {
       <main className="main ib-guide-main vc-theme" ref={contentRef}>
         <div className="ib-back-row"><Link href="/learn" className="ib-back-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back to Learning Hub</Link></div>
 
-        <nav className="ib-module-nav"><div className="ib-module-nav-inner">
-          {MODULES.map(m => (<button key={m.id} className={'ib-nav-tab' + (activeModule === m.id ? ' active' : '')} onClick={() => setActiveModule(m.id)}>{m.navTitle}</button>))}
-        </div></nav>
-
         {activeModule === '' ? (
           <div className="ib-landing">
             <div className="ib-hero">
@@ -99,7 +95,37 @@ export default function VCInterviewPrepPage() {
             </div>
           </div>
         ) : (
-          <div className="ib-container">
+          <div className="ib-layout">
+            <aside className="ib-rail">
+              <div className="ib-rail-inner">
+                <div className="ib-rail-label">Modules</div>
+                {MODULES.filter(m => !['behavioral','markets'].includes(m.id)).map((m, i) => (
+                  <button
+                    key={m.id}
+                    className={'ib-rail-item' + (activeModule === m.id ? ' active' : '')}
+                    onClick={() => setActiveModule(m.id)}
+                  >
+                    <span className="ib-rail-num">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="ib-rail-title">{m.navTitle}</span>
+                  </button>
+                ))}
+                {MODULES.some(m => ['behavioral','markets'].includes(m.id)) && (
+                  <div className="ib-rail-divider" />
+                )}
+                {MODULES.filter(m => ['behavioral','markets'].includes(m.id)).map(m => (
+                  <button
+                    key={m.id}
+                    className={'ib-rail-item' + (activeModule === m.id ? ' active' : '')}
+                    onClick={() => setActiveModule(m.id)}
+                  >
+                    <span className="ib-rail-num">&middot;</span>
+                    <span className="ib-rail-title">{m.navTitle}</span>
+                  </button>
+                ))}
+              </div>
+            </aside>
+
+            <div className="ib-container">
             <div className="ib-module-header-card"><div className="ib-mh-num">{mod.moduleNum}</div><h2>{mod.title}</h2><p>{mod.sub}</p></div>
             {mod.sections.length > 2 && (<div className="ib-section-toc"><h4>In This Module</h4><ol>
               {mod.sections.map((s, i) => (<li key={i}><button onClick={() => scrollToSection(i)} className="ib-toc-link">{cleanSectionTitle(s.title)}</button></li>))}
@@ -116,6 +142,7 @@ export default function VCInterviewPrepPage() {
                 {next ? (<button className="ib-bottom-nav-btn ib-bn-next" onClick={() => setActiveModule(next.id)}><span>{next.navTitle}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>) : <div />}
               </>); })()}
             </div>
+          </div>
           </div>
         )}
       </main>
