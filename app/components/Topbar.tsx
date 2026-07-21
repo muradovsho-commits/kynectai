@@ -355,6 +355,8 @@ export default function Topbar({ activePage }: SidebarProps) {
               )}
             </div>
 
+            <span className="ob-top-vsep" aria-hidden="true"></span>
+
             <button
               type="button"
               className="ob-top-icon"
@@ -375,15 +377,17 @@ export default function Topbar({ activePage }: SidebarProps) {
                 data-plan={userPlan}
                 onClick={(e) => { e.stopPropagation(); setMenuOpen(o => !o); }}
               >
-                <span className="ob-avatar">
-                  {profilePic ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={profilePic} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit', display: 'block' }} />
-                  ) : displayInitials}
+                <span className="ob-avatar-wrap">
+                  <span className="ob-avatar">
+                    {profilePic ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={profilePic} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit', display: 'block' }} />
+                    ) : displayInitials}
+                  </span>
+                  {(userPlan === 'pro' || userPlan === 'elite') && (
+                    <span className={`ob-avatar-dot ob-avatar-dot--${userPlan}`} aria-hidden="true"></span>
+                  )}
                 </span>
-                {(userPlan === 'pro' || userPlan === 'elite') && (
-                  <span className={`ob-plan-chip ob-plan-chip--${userPlan}`}>{userPlan === 'elite' ? 'Elite' : 'Pro'}</span>
-                )}
                 <svg className="ob-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
               {menuOpen && (
@@ -509,6 +513,8 @@ export default function Topbar({ activePage }: SidebarProps) {
         .ob-top-link.active{color:#2563eb;border-bottom-color:#2563eb;font-weight:700}
         html[data-theme="dark"] .ob-top-link.active{color:#60a5fa;border-bottom-color:#60a5fa;font-weight:700}
         .ob-top-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+        .ob-top-vsep{width:1px;height:22px;background:var(--border,#e5e7eb);flex:0 0 auto;margin:0 4px}
+        html[data-theme="dark"] .ob-top-vsep{background:#2a2a29}
 
         /* sub-tab bar */
         .ob-subbar{border-top:1px solid var(--border,#eef0f2);background:var(--surface,#fff)}
@@ -524,11 +530,11 @@ export default function Topbar({ activePage }: SidebarProps) {
 
         /* industry switcher */
         .ob-top-industry{position:relative}
-        .ob-industry-row{display:flex;align-items:center;gap:8px;height:34px;padding:0 9px 0 12px;border-radius:2px;
-          background:none;border:1px solid var(--border,#e5e7eb);cursor:pointer;font-family:inherit;transition:.12s}
-        .ob-industry-row:hover,.ob-industry-row.open{background:#f8fafc;border-color:#cad5e2}
-        html[data-theme="dark"] .ob-industry-row{border-color:#2a2a29}
-        html[data-theme="dark"] .ob-industry-row:hover,html[data-theme="dark"] .ob-industry-row.open{background:#222221;border-color:#3a3a39}
+        .ob-industry-row{display:flex;align-items:center;gap:8px;height:34px;padding:0 8px;border-radius:9px;
+          background:none;border:1px solid transparent;cursor:pointer;font-family:inherit;transition:.12s}
+        .ob-industry-row:hover,.ob-industry-row.open{background:#f8fafc;border-color:transparent}
+        html[data-theme="dark"] .ob-industry-row{border-color:transparent}
+        html[data-theme="dark"] .ob-industry-row:hover,html[data-theme="dark"] .ob-industry-row.open{background:#222221;border-color:transparent}
         .ob-industry-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05}
         .ob-industry-eyebrow{font-size:8.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#90a1b9}
         .ob-industry-name{font-size:12.5px;font-weight:600;color:#1d293d;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -548,14 +554,14 @@ export default function Topbar({ activePage }: SidebarProps) {
         .ob-industry-menu-item.active{background:#f1f5f9;color:#1d293d;font-weight:600}
         html[data-theme="dark"] .ob-industry-menu-item.active{background:#2a2a29;color:#fff}
 
-        .ob-top-icon{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:2px;order:1;
-          background:none;border:1px solid transparent;color:#62748e;cursor:pointer;transition:.12s}
+        .ob-top-icon{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;order:1;
+          background:none;border:1px solid var(--border,#e5e7eb);color:#62748e;cursor:pointer;transition:.12s}
         .ob-top-icon:hover{background:#f8fafc;color:#1d293d}
-        html[data-theme="dark"] .ob-top-icon{color:#a8a6a3}
+        html[data-theme="dark"] .ob-top-icon{color:#a8a6a3;border-color:#2a2a29}
         html[data-theme="dark"] .ob-top-icon:hover{background:#222221;color:#fff}
 
         .ob-profile-section{position:relative}
-        .ob-profile-trigger{display:flex;align-items:center;gap:7px;height:34px;padding:0 8px 0 5px;border-radius:2px;
+        .ob-profile-trigger{display:flex;align-items:center;gap:7px;height:34px;padding:0 8px 0 5px;border-radius:9px;
           background:none;border:1px solid var(--border,#e5e7eb);cursor:pointer;font-family:inherit;transition:.12s}
         .ob-profile-trigger:hover,.ob-profile-trigger.open{background:#f8fafc}
         html[data-theme="dark"] .ob-profile-trigger{border-color:#2a2a29}
@@ -563,6 +569,11 @@ export default function Topbar({ activePage }: SidebarProps) {
         .ob-avatar{width:28px;height:28px;border-radius:50%;background:#1d293d;color:#fff;display:flex;align-items:center;justify-content:center;
           font-size:11px;font-weight:700;overflow:hidden;flex:0 0 auto}
         html[data-theme="dark"] .ob-avatar{background:#f0efed;color:#141414}
+        .ob-avatar-wrap{position:relative;display:inline-flex;flex:0 0 auto}
+        .ob-avatar-dot{position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border-radius:50%;border:2px solid var(--surface,#fff)}
+        html[data-theme="dark"] .ob-avatar-dot{border-color:#1a1a19}
+        .ob-avatar-dot--elite{background:#2563eb}
+        .ob-avatar-dot--pro{background:#d97706}
         .ob-plan-chip{font-size:9px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:2px 6px;border-radius:2px}
         .ob-plan-chip--pro{background:#fef3c7;color:#92600e}
         .ob-plan-chip--elite{background:#dbeafe;color:#1e40af}
