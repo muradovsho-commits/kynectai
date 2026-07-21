@@ -142,6 +142,10 @@ export default function OutreachTrackerPage() {
   const [drawerLinkedin, setDrawerLinkedin] = useState('');
   const [drawerStatus, setDrawerStatus] = useState('');
   const [drawerDate, setDrawerDate] = useState('');
+  const [drawerFname, setDrawerFname] = useState('');
+  const [drawerLname, setDrawerLname] = useState('');
+  const [drawerFirm, setDrawerFirm] = useState('');
+  const [drawerRole, setDrawerRole] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [aFname, setAFname] = useState('');
   const [aLname, setALname] = useState('');
@@ -247,6 +251,10 @@ export default function OutreachTrackerPage() {
     setDrawerQuality(c.quality || '');
     setDrawerStatus(c.status);
     setDrawerLinkedin(c.linkedin || '');
+    setDrawerFname(c.fname || '');
+    setDrawerLname(c.lname || '');
+    setDrawerFirm(c.firm || '');
+    setDrawerRole(c.role || '');
     if (c.status === 'sent' && c.sentAt) {
       setDrawerDate(new Date(c.sentAt).toISOString().split('T')[0]);
     } else if (c.status === 'scheduled' && c.scheduledAt) {
@@ -284,7 +292,7 @@ export default function OutreachTrackerPage() {
         else if (['fu1','fu2','fu3'].includes(drawerStatus)) { lastFollowUpAt = now; lastContact = now; }
         else if (drawerStatus !== 'drafted') { lastContact = now; }
       }
-      return { ...c, notes: drawerNotes, quality: drawerQuality, status: drawerStatus, lastContact, sentAt, lastFollowUpAt, linkedin: drawerLinkedin.trim(), createdAt, scheduledAt };
+      return { ...c, fname: drawerFname.trim(), lname: drawerLname.trim(), firm: drawerFirm.trim(), role: drawerRole.trim(), notes: drawerNotes, quality: drawerQuality, status: drawerStatus, lastContact, sentAt, lastFollowUpAt, linkedin: drawerLinkedin.trim(), createdAt, scheduledAt };
     });
     setContacts(updated); persist(updated);
     setDrawerOpen(false); showToast('Saved');
@@ -745,15 +753,24 @@ export default function OutreachTrackerPage() {
         {drawerContact && <>
           <div style={{ padding: '22px 26px 16px', borderBottom: '1px solid var(--border)', position: 'relative' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 38, height: 38, borderRadius: '50%', background: colorFor(drawerContact.fname + drawerContact.lname), display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: '#fff', flexShrink: 0 }}>{initials(drawerContact.fname, drawerContact.lname)}</div>
+              <div style={{ width: 38, height: 38, borderRadius: '50%', background: colorFor(drawerFname + drawerLname), display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: '#fff', flexShrink: 0 }}>{initials(drawerFname, drawerLname)}</div>
               <div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>{drawerContact.fname} {drawerContact.lname}</div>
-                <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 2 }}>{[drawerContact.role, drawerContact.firm].filter(Boolean).join(' · ')}</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>{drawerFname} {drawerLname}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 2 }}>{[drawerRole, drawerFirm].filter(Boolean).join(' · ')}</div>
               </div>
             </div>
             <button onClick={() => setDrawerOpen(false)} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: 'var(--text-3)' }}>×</button>
           </div>
           <div style={{ flex: 1, overflowY: 'auto', padding: '22px 26px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'var(--text-3)', marginBottom: 10 }}>Contact</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                <input value={drawerFname} onChange={e => setDrawerFname(e.target.value)} placeholder="First name" style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, color: 'var(--text)', background: 'var(--bg)', outline: 'none' }} />
+                <input value={drawerLname} onChange={e => setDrawerLname(e.target.value)} placeholder="Last name" style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, color: 'var(--text)', background: 'var(--bg)', outline: 'none' }} />
+                <input value={drawerFirm} onChange={e => setDrawerFirm(e.target.value)} placeholder="Firm" style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, color: 'var(--text)', background: 'var(--bg)', outline: 'none' }} />
+                <input value={drawerRole} onChange={e => setDrawerRole(e.target.value)} placeholder="Role" style={{ width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-2)', borderRadius: 8, fontSize: 13, color: 'var(--text)', background: 'var(--bg)', outline: 'none' }} />
+              </div>
+            </div>
             <div>
               <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.8px', color: 'var(--text-3)', marginBottom: 8 }}>Status</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
