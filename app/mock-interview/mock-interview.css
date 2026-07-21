@@ -996,13 +996,13 @@ html[data-theme="dark"] .mi-q-card-fb { background: rgba(22, 163, 74, 0.15); }
   text-transform: uppercase;
   padding: 3px 7px;
   border-radius: 6px;
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  color: #18181b;
+  background: #2563eb;
+  color: #fff;
   vertical-align: middle;
 }
 .mi-pro-badge--on-dark {
   background: rgba(255, 255, 255, 0.95);
-  color: #0c4a6e;
+  color: #2563eb;
 }
 
 .mi-pro-modal {
@@ -1020,12 +1020,12 @@ html[data-theme="dark"] .mi-q-card-fb { background: rgba(22, 163, 74, 0.15); }
   width: 56px;
   height: 56px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  background: #2563eb;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 4px auto 18px;
-  color: #18181b;
+  color: #fff;
 }
 .mi-pro-modal-icon svg { width: 28px; height: 28px; }
 .mi-pro-modal-title {
@@ -1062,7 +1062,7 @@ html[data-theme="dark"] .mi-q-card-fb { background: rgba(22, 163, 74, 0.15); }
 .mi-pro-modal-dot {
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: #f59e0b;
+  background: #2563eb;
   margin-top: 7px;
   flex-shrink: 0;
 }
