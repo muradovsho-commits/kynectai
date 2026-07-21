@@ -1,4 +1,6 @@
 /* ═══ CAREER QUIZ ═══ (inherits site fonts: Lato body / Nunito headers) */
+.quiz-app { --bg: #f5f3ef; }
+html[data-theme="dark"] .quiz-app { --bg: #111110; }
 .quiz-main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; overflow-y: auto; margin-left: var(--sidebar-w); background: var(--bg); }
 .quiz-container { width: 100%; max-width: 640px; margin-top: 20px; }
 .quiz-back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-3); text-decoration: none; font-size: 14px; font-weight: 500; margin-bottom: 28px; }

@@ -217,7 +217,7 @@ export default function QuizPage() {
   const progressPct = (currentQ / questions.length) * 100;
 
   return (
-    <div className="app">
+    <div className="quiz-app">
       <Topbar activePage="learn" />
       <main className="quiz-main">
         <div className="quiz-container">
