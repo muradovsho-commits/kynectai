@@ -89,7 +89,7 @@ html[data-theme="dark"] .ow-app {
   color: var(--text-3);
   margin-top: 6px;
   line-height: 1.5;
-  max-width: 560px;
+  max-width: 720px;
 }
 .ow-top-chips {
   display: flex;

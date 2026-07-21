@@ -549,7 +549,6 @@ General rules:
                   Extension
                 </a>
                 <div className={chipClass} style={{ opacity: hydrated ? 1 : 0, transition: 'opacity 0.15s' }}>
-                  <span className="ow-chip-dot" />
                   {atLimit
                     ? 'Weekly limit reached'
                     : isPaid
