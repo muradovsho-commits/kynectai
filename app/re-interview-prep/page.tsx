@@ -118,26 +118,13 @@ export default function REInterviewPrepPage() {
             <aside className="ib-rail">
               <div className="ib-rail-inner">
                 <div className="ib-rail-label">Modules</div>
-                {MODULES.filter(m => !['behavioral','markets'].includes(m.id)).map((m, i) => (
+                {MODULES.filter(m => m.id !== 'quiz').map((m, i) => (
                   <button
                     key={m.id}
                     className={'ib-rail-item' + (activeModule === m.id ? ' active' : '')}
                     onClick={() => setActiveModule(m.id)}
                   >
                     <span className="ib-rail-num">{String(i + 1).padStart(2, '0')}</span>
-                    <span className="ib-rail-title">{m.navTitle}</span>
-                  </button>
-                ))}
-                {MODULES.some(m => ['behavioral','markets'].includes(m.id)) && (
-                  <div className="ib-rail-divider" />
-                )}
-                {MODULES.filter(m => ['behavioral','markets'].includes(m.id)).map(m => (
-                  <button
-                    key={m.id}
-                    className={'ib-rail-item' + (activeModule === m.id ? ' active' : '')}
-                    onClick={() => setActiveModule(m.id)}
-                  >
-                    <span className="ib-rail-num">&middot;</span>
                     <span className="ib-rail-title">{m.navTitle}</span>
                   </button>
                 ))}
