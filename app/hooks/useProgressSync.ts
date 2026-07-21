@@ -77,6 +77,7 @@ const SYNC_KEYS = [
   // Mock interview
   'offerbell_mock_responses',
   'offerbell_mock_weekly',
+  'offerbell_mock_interviews',
   // Outreach
   'offerbell_tracker_v3',
   'offerbell_tracker_config',
@@ -114,7 +115,6 @@ const EXCLUDE_FROM_SYNC = new Set([
   // Excluding them from the blob means saves of these keys no longer cause
   // ~500KB round trips through userProgress.data.
   'offerbell_mock_responses',
-  'offerbell_mock_interviews',
   'offerbell_coach_history',
   // Moved to dedicated Convex tables (flashPerf, diagHistory) - same reason
   // as above. Hydrated into localStorage from those tables on init below.
