@@ -320,9 +320,7 @@ export default function Topbar({ activePage }: SidebarProps) {
                   </div>
                 </div>
               );
-              return key === 'learn'
-                ? [<span key="div-home-learn" className="ob-top-divider" aria-hidden="true">|</span>, navItem]
-                : navItem;
+              return navItem;
             })}
           </nav>
 
@@ -485,7 +483,7 @@ export default function Topbar({ activePage }: SidebarProps) {
         .ob-top-brand{display:flex;align-items:center;justify-content:center;text-decoration:none;margin-right:26px;margin-left:6px;flex:0 0 auto}
         .ob-top-logo-img{height:30px;width:auto;display:block}
         
-        .ob-top-nav{display:flex;align-items:center;gap:2px}
+        .ob-top-nav{display:flex;align-items:center;gap:4px}
         .ob-top-divider{display:flex;align-items:center;color:#cfcdc9;font-weight:300;font-size:15px;padding:0 8px;user-select:none;line-height:1}
         html[data-theme="dark"] .ob-top-divider{color:#3d3c39}
         .ob-top-navitem{position:relative;display:inline-flex}
@@ -501,27 +499,28 @@ export default function Topbar({ activePage }: SidebarProps) {
         html[data-theme="dark"] .ob-top-dd-item{color:#a8a6a3}
         html[data-theme="dark"] .ob-top-dd-item:hover{background:#222221;color:#fff}
         html[data-theme="dark"] .ob-top-dd-item.active{background:#222221;color:#fff}
-        .ob-top-link{display:inline-flex;align-items:center;height:32px;padding:0 14px;border-radius:2px;
-          font-size:13px;font-weight:500;color:#62748e;text-decoration:none;background:none;border:none;
-          cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .12s,color .12s}
-        .ob-top-link:hover{color:#1d293d;background:#f8fafc}
+        .ob-top-link{display:inline-flex;align-items:center;height:48px;box-sizing:border-box;padding:0 14px;
+          font-size:13.5px;font-weight:600;color:#62748e;text-decoration:none;background:none;border:none;
+          border-bottom:2px solid transparent;
+          cursor:pointer;white-space:nowrap;font-family:inherit;transition:border-color .12s,color .12s}
+        .ob-top-link:hover{color:#1d293d}
         html[data-theme="dark"] .ob-top-link{color:#a8a6a3}
-        html[data-theme="dark"] .ob-top-link:hover{color:#fff;background:#222221}
-        .ob-top-link.active{color:#1d293d;background:#f1f5f9;font-weight:500}
-        html[data-theme="dark"] .ob-top-link.active{color:#fff;background:#222221}
+        html[data-theme="dark"] .ob-top-link:hover{color:#fff}
+        .ob-top-link.active{color:#2563eb;border-bottom-color:#2563eb;font-weight:700}
+        html[data-theme="dark"] .ob-top-link.active{color:#60a5fa;border-bottom-color:#60a5fa;font-weight:700}
         .ob-top-right{display:flex;align-items:center;gap:8px;margin-left:auto}
 
         /* sub-tab bar */
         .ob-subbar{border-top:1px solid var(--border,#eef0f2);background:var(--surface,#fff)}
         html[data-theme="dark"] .ob-subbar{background:#1a1a19;border-top-color:#2a2a29}
-        .ob-subbar-inner{height:44px;display:flex;align-items:center;gap:2px;padding:0 20px 0 58px}
-        .ob-subtab{display:inline-flex;align-items:center;height:30px;padding:0 13px;border-radius:2px;font-size:13px;font-weight:500;
-          color:#62748e;text-decoration:none;background:none;border:none;white-space:nowrap;transition:.12s}
-        .ob-subtab:hover{color:#1d293d;background:#f8fafc}
-        .ob-subtab.active{color:#1d293d;background:#f1f5f9;font-weight:500}
+        .ob-subbar-inner{height:44px;display:flex;align-items:center;gap:4px;padding:0 20px 0 90px}
+        .ob-subtab{display:inline-flex;align-items:center;height:44px;box-sizing:border-box;padding:0 14px;font-size:13px;font-weight:600;
+          color:#62748e;text-decoration:none;background:none;border:none;border-bottom:2px solid transparent;white-space:nowrap;transition:border-color .12s,color .12s}
+        .ob-subtab:hover{color:#1d293d}
+        .ob-subtab.active{color:#1d293d;border-bottom-color:#94a3b8;font-weight:700}
         html[data-theme="dark"] .ob-subtab{color:#a8a6a3}
-        html[data-theme="dark"] .ob-subtab:hover{color:#fff;background:#222221}
-        html[data-theme="dark"] .ob-subtab.active{color:#fff;background:#222221}
+        html[data-theme="dark"] .ob-subtab:hover{color:#fff}
+        html[data-theme="dark"] .ob-subtab.active{color:#fff;border-bottom-color:#5a5a57}
 
         /* industry switcher */
         .ob-top-industry{position:relative}
