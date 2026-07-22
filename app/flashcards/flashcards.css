@@ -570,7 +570,7 @@ html[data-theme="dark"] .flash-app {
 .flash-grid-card { position: relative; width: 100%; }
 .flash-grid-card:not(.flipped) .flash-grid-back { display: none; }
 .flash-grid-card.flipped .flash-grid-front { display: none; }
-.flash-grid-front, .flash-grid-back { border-radius: 12px; border: 1.5px solid var(--border); background: var(--surface); padding: 20px; display: flex; flex-direction: column; }
+.flash-grid-front, .flash-grid-back { border-radius: 12px; border: 1.5px solid var(--border); background: var(--surface); padding: 20px; display: flex; flex-direction: column; min-height: 200px; }
 @keyframes flashReveal { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 .flash-grid-card.flipped .flash-grid-back { animation: flashReveal 0.26s ease; }
 .flash-grid-card:not(.flipped) .flash-grid-front { animation: flashReveal 0.2s ease; }
