@@ -60,14 +60,14 @@ html[data-theme="dark"] .desk-app {
   background: var(--surface);
   max-width: 1400px;
   width: 100%;
-  margin: 0;
+  margin: 0 auto;
   overflow: hidden;
 }
 
 .desk-page-inner {
-  max-width: 1400px;
+  max-width: 1280px;
   width: 100%;
-  margin: 0;
+  margin: 0 auto;
   padding: 0 0 48px;
 }
 

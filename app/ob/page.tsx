@@ -620,7 +620,7 @@ function ObPaywall({ currentPlan }: { currentPlan: string | null }) {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .desk-page-inner.ob-inner-wide{ max-width:1180px; }
+        .desk-page-inner.ob-inner-wide{ max-width:1280px; }
         .obpw-hero{ display:grid; grid-template-columns:1.02fr 0.98fr; gap:48px; align-items:center; margin-bottom:56px; }
         .obpw-hero-copy{ min-width:0; }
         .obpw-hero-art{ display:flex; align-items:center; justify-content:center; }
