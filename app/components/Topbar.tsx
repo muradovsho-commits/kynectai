@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useUserPlan } from '../lib/usePlan';
+import AnnouncementsBell from './AnnouncementsBell';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 
@@ -356,6 +357,8 @@ export default function Topbar({ activePage }: SidebarProps) {
             </div>
 
             <span className="ob-top-vsep" aria-hidden="true"></span>
+
+            <AnnouncementsBell />
 
             <button
               type="button"

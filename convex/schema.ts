@@ -27,6 +27,9 @@ export default defineSchema({
     recruitYear: v.optional(v.string()),
     targetFirms: v.optional(v.array(v.string())),
     profilePic: v.optional(v.string()),
+    // Set to true BY HAND in the Convex dashboard for your own row. Grants
+    // access to /admin/announcements. Absent or false for every normal user.
+    isAdmin: v.optional(v.boolean()),
     // Stripe / subscription fields. All optional - populated by webhook on
     // first successful checkout, or remain unset for users who never paid.
     stripeCustomerId: v.optional(v.string()),
@@ -336,6 +339,34 @@ export default defineSchema({
   }).index("by_user", ["userId"])
     .index("by_user_contact", ["userId", "contactId"])
     .index("by_user_week", ["userId", "weekStart"]),
+
+  // Platform announcements composed at /admin/announcements and surfaced in
+  // the topbar bell. Its own table, never the userProgress blob: rows are tiny
+  // and are read with a one-shot HTTP query, not a live subscription.
+  // `active` undefined counts as active (rows created before the field existed
+  // and rows created without it are visible).
+  announcements: defineTable({
+    title: v.string(),
+    body: v.string(),
+    // 'all' | 'free' | 'pro' | 'elite'. Matched against users.plan.
+    audience: v.string(),
+    link: v.optional(v.string()),
+    linkLabel: v.optional(v.string()),
+    active: v.optional(v.boolean()),
+    emailSent: v.optional(v.boolean()),
+    emailCount: v.optional(v.number()),
+    createdAt: v.number(),
+  }).index("by_createdAt", ["createdAt"]),
+
+  // Per-user read receipts for announcements. One row per (user, announcement),
+  // written only when the user opens the bell, so it stays off the sync path.
+  announcementReads: defineTable({
+    userId: v.string(),
+    userEmail: v.optional(v.string()), // Denormalized for dashboard readability.
+    announcementId: v.string(),
+    readAt: v.number(),
+  }).index("by_user", ["userId"])
+    .index("by_user_ann", ["userId", "announcementId"]),
 
   // Contact Database bookmarks. One row per (user, contact). Server-side so a
   // saved list follows the account across devices and survives a logout, the
